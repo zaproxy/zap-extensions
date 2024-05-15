@@ -74,11 +74,6 @@ class PopupMenuCallGraph extends PopupMenuHttpMessageContainer {
         }
     }
 
-    @Override
-    public boolean precedeWithSeparator() {
-        return true;
-    }
-
     private static class CallGraphPopupMenuItem extends PopupMenuItemHttpMessageContainer {
 
         private static final long serialVersionUID = -4108212857830575776L;

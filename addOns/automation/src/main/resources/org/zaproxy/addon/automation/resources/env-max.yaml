@@ -1,0 +1,55 @@
+--- # ZAP automation configuration file, for more details see https://www.zaproxy.org/docs/automate/automation-framework/
+env:                                   # The environment, mandatory
+  contexts :                           # List of 1 or more contexts, mandatory
+    - name: context 1                  # Name to be used to refer to this context in other jobs, mandatory
+      urls:                            # A mandatory list of top level urls, everything under each url will be included
+      includePaths:                    # An optional list of regexes to include
+      excludePaths:                    # An optional list of regexes to exclude
+      authentication:
+        method:                        # String, one of 'manual', 'http', 'form', 'json' or 'script'
+        parameters:                    # May include any required for scripts. All of the parameters support vars except for the port 
+          hostname:                    # String, only for 'http' authentication
+          port:                        # Int, only for 'http' authentication
+          realm:                       # String, only for 'http' authentication
+          loginPageUrl:                # String, the login page URL to read prior to making the request, only for 'form' or 'json' authentication
+          loginRequestUrl:             # String, the login URL to request, only for 'form' or 'json' authentication
+          loginRequestBody:            # String, the login request body - if not supplied a GET request will be used, only for 'form' or 'json' authentication
+          script:                      # String, path to script, only for 'script' authentication
+          scriptEngine:                # String, the name of the script engine to use, only for 'script' authentication
+        verification:
+          method:                      # String, one of 'response', 'request', 'both', 'poll'
+          loggedInRegex:               # String, regex pattern for determining if logged in
+          loggedOutRegex:              # String, regex pattern for determining if logged out
+          pollFrequency:               # Int, the poll frequency, only for 'poll' verification
+          pollUnits:                   # String, the poll units, one of 'requests', 'seconds', only for 'poll' verification
+          pollUrl:                     # String, the URL to poll, only for 'poll' verification
+          pollPostData:                # String, post dat to include in the poll, only for 'poll' verification
+          pollAdditionalHeaders:       # List of additional headers for poll request, only for 'poll' verification
+          - header:                    # The header name
+            value:                     # The header value
+      sessionManagement:
+        method:                        # String, one of 'cookie', 'http', 'script'
+        parameters:                    # List of 0 or more parameters - may include any required for scripts
+          script:                      # String, path to script, only for 'script' session management
+          scriptEngine:                # String, the name of the script engine to use, only for 'script' session management
+      technology:
+        exclude:                       # List of tech to exclude, as per https://www.zaproxy.org/techtags/ (just use last names)
+        include:                       # List of tech to include, should only be used when targeting specific techs, the exclude takes precedence when configuring the context.
+      users:                           # List of one or more users available to use for authentication
+      - name:                          # String, the name to be used by the jobs
+        credentials:                   # List of user credentials - may include any required for scripts, vars supported
+          username:                    # String, the username to use when authenticating
+          password:                    # String, the password to use when authenticating
+  vars:                                # List of 0 or more variables, can be used in urls and selected other parameters
+  parameters:
+    failOnError: true                  # If set exit on an error         
+    failOnWarning: false               # If set exit on a warning
+    progressToStdout: true             # If set will write job progress to stdout
+  proxy:                               # Optional upstream proxy settings
+    hostname:                          # String, the proxy host
+    port:                              # Int, the proxy port
+    realm:                             # String, the proxy realm
+    username:                          # String, the proxy username
+    password:                          # String, the proxy password
+
+jobs:

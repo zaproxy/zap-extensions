@@ -32,10 +32,17 @@ ZAP должен иметь доступ к этому URL-адресу для �
 
 <h3>Используйте паука ajax </h3>
 
-Паук ajax исследует приложение, запуская выбранный вами браузер и нажимая на найденные ссылки.
-Is медленнее, чем традиционный паук, но хорошо обрабатывает JavaScript. <br>
+The ajax spider explores the application by launching the browser you have chosen and clicking on the links it finds. 
+It is slower than the traditional spider but handles JavaScript well.<br>
 Этот параметр отображается только в том случае, если установлено дополнение ajax Spider.
 Если он недоступен, вы можете загрузить и установить его бесплатно с ZAP Marketplace. 
+<br><br>
+The options available are:
+<ul>
+<li>Never: you will then need to use the traditional spider
+<li>If Modern: will run if ZAP identifies the target as a modern app - for this you need to use the traditional spider
+<li>Always: if you choose this option then you do not need to run the traditional spider
+</ul>
 
 <h2>Ручное исследование </h2>
 

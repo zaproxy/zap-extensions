@@ -742,7 +742,8 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         Map<String, String> tags = alert.getTags();
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(tags, hasKey("CWE-538"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE.getTag()));

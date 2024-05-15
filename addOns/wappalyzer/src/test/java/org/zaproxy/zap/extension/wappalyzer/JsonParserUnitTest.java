@@ -62,4 +62,19 @@ class JsonParserUnitTest {
         assertEquals("Apache", app.getName());
         assertEquals(1, app.getMetas().size());
     }
+
+    @Test
+    void shouldErrorOnBrokenPatterns() {
+        // Given
+        List<String> errs = Collections.synchronizedList(new ArrayList<>());
+        List<Exception> parsingExceptions = Collections.synchronizedList(new ArrayList<>());
+        WappalyzerJsonParser wjp =
+                new WappalyzerJsonParser(
+                        (pattern, e) -> errs.add(e.toString()), parsingExceptions::add);
+        // When
+        wjp.parse("categories.json", Collections.singletonList("broken.json"), true);
+        // Then
+        assertEquals(3, errs.size());
+        assertEquals(0, parsingExceptions.size());
+    }
 }

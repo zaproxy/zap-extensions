@@ -5,7 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [15] - 2024-04-11
+### Changed
 - Maintenance changes.
+- Update Active and Passive Script Templates to include a `getMetadata` function. This will allow them to be used as regular scan rules.
+- Depend on the `commonlib` add-on for scan rule scripts.
+- Update minimum `scripts` add-on version to 45.1.0.
 
 ## [14] - 2023-12-19
 ### Changed
@@ -95,6 +102,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/jython-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/jython-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/jython-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/jython-v12

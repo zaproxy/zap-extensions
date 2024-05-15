@@ -7,7 +7,7 @@ require 'java'
 java_package 'org.zaproxy.zap.extension.pscan'
 java_import 'org.zaproxy.zap.extension.scripts.scanrules.PassiveScript'
 java_import 'org.zaproxy.zap.extension.pscan.PluginPassiveScanner'
-java_import 'org.zaproxy.zap.extension.scripts.scanrules.ScriptsPassiveScanner'
+java_import 'org.zaproxy.zap.extension.scripts.scanrules.PassiveScriptHelper'
 java_import 'org.parosproxy.paros.network.HttpMessage'
 java_import 'net.htmlparser.jericho.Source'
 java_import 'org.parosproxy.paros.view.View'
@@ -15,7 +15,7 @@ java_import 'org.parosproxy.paros.view.View'
 class JRubyPassiveScript 
   include Java::org.zaproxy.zap.extension.scripts.scanrules.PassiveScript
 
-  java_signature 'scan(ScriptsPassiveScanner, HttpMessage, Source)'
+  java_signature 'scan(PassiveScriptHelper, HttpMessage, Source)'
   def scan(ps, msg, src)
     # Test the request and/or response here
     # Debugging can be done to the Output tab like this

@@ -189,6 +189,18 @@ public class RunScriptAction extends ScriptAction {
                                 parameters.getName()));
                 return;
             }
+
+            if (!getSupportedScriptTypes().contains(script.getTypeName())) {
+                progress.error(
+                        Constant.messages.getString(
+                                "scripts.automation.error.scriptTypeNotSupported",
+                                jobName,
+                                script.getTypeName(),
+                                getName(),
+                                String.join(", ", getSupportedScriptTypes())));
+                return;
+            }
+
             if (parameters.getType().equals(ExtensionScript.TYPE_TARGETED)) {
                 URI targetUri = new URI(parameters.getTarget(), true);
                 SiteNode siteNode =

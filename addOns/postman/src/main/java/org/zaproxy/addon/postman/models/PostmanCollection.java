@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.List;
 import org.zaproxy.addon.postman.deserializers.ListDeserializer;
+import org.zaproxy.addon.postman.deserializers.ListItemDeserializer;
 
 /**
  * Represents a collection in the Postman format.
@@ -32,7 +33,7 @@ import org.zaproxy.addon.postman.deserializers.ListDeserializer;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PostmanCollection {
 
-    @JsonDeserialize(using = ListDeserializer.class)
+    @JsonDeserialize(using = ListItemDeserializer.class)
     private List<AbstractItem> item;
 
     @JsonDeserialize(using = ListDeserializer.class)

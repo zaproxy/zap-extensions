@@ -1,0 +1,128 @@
+{
+    "Test Entry": {
+      "cats": [
+        36
+      ],
+      "css": "\\.example",
+      "html": [
+        "example\\.com/test\\.html[^>]+></iframe>{", // Unbalanced repetition braces (1 error)
+        "<!-- (?:End )?Test Entry -->"
+      ],
+      "headers": {
+        "Test": "Test Entry"
+      },
+      "icon": "Test Entry.svg",
+      "js": {
+        "Test_Entry_": "",
+        "__test_entry_urls": ""
+      },
+      "meta": {
+        "generator": [
+          "Generator 1",
+          "Generator 2"
+        ]
+      },
+      "cookies": {
+        "foo": "bar"
+      },
+      "dom": {
+        "a[href='https://www.example.com'][title*='version]": { // Unbalanced single quote (counts as 2 errors)
+          "attributes": {
+            "title": "^version ([0-9.]+)$\\;version:\\1"
+          },
+          "text":
+            "Example",
+          "properties": {
+            "data-value": "1"
+          }
+        }
+      },
+      "scriptSrc": [
+        "testentry\\.com/",
+        "ad\\.ca\\.testentry\\.net"
+      ],
+      "description": "Test Entry is a test entry for UnitTests",
+      "url": "^https?://test\\.example\\.com",
+      "website": "https://www.example.com/testentry"
+    },
+     "Test Entry2": {
+      "cats": [
+        36
+      ],
+      "dom": "script[src*='sites/g/files']",
+      "description": "Test Entry2 is a test entry for UnitTests",
+      "url": "^https?://test\\.example\\.com",
+      "website": "https://www.example.com/testentry2"
+    },
+     "1C-Bitrix": {
+      "cats": [
+        1,
+        6
+      ],
+      "headers": {
+        "Set-Cookie": "BITRIX_",
+        "X-Powered-CMS": "Bitrix Site Manager"
+      },
+      "html": "(?:<link[^>]+components/bitrix|(?:src|href)=\"/bitrix/(?:js|templates))",
+      "icon": "1C-Bitrix.png",
+      "implies": "PHP",
+      "scriptSrc": "1c-bitrix",
+      "website": "http://www.1c-bitrix.ru"
+    },
+    "Apache": {
+      "cats": [
+        22
+      ],
+      "cpe": "cpe:/a:apache:http_server",
+      "headers": {
+        "Server": "(?:Apache(?:$|/([\\d.]+)|[^/-])|(?:^|\\b)HTTPD)\\;version:\\1"
+      },
+      "dom": {
+        "a[href='https://www.apache.com'][title*='version']": {
+          "attributes": {
+            "title": "^version ([0-9.]+)$\\;version:\\1"
+          }
+       }
+      },
+      "icon": "Apache.svg",
+      "meta": {
+        "generator": "Apache"
+      },
+      "website": "http://apache.org"
+    },
+    "Modernizr": {
+      "cats": [
+        59
+      ],
+      "icon": "Modernizr.svg",
+      "js": {
+        "Modernizr._version": "^(.+)$\\;version:\\1"
+      },
+      "dom": {
+        "a[href='https://www.modern.com']": {
+          "text":
+            "Modern"
+        }
+      },
+      "scriptSrc": [
+        "([\\d.]+)?/modernizr(?:\\.([\\d.]+))?.*\\.js\\;version:\\1?\\1:\\2"
+      ],
+      "website": "https://modernizr.com"
+    },
+    "PHP": {
+      "cats": [
+        27
+      ],
+      "cookies": {
+        "PHPSESSID": ""
+      },
+      "cpe": "cpe:/a:php:php",
+      "headers": {
+        "Server": "php/?([\\d.]+)?\\;version:\\1",
+        "X-Powered-By": "^php/?([\\d.]+)?\\;version:\\1"
+      },
+      "icon": "PHP.svg",
+      "url": "\\.php(?:$|\\?)",
+      "website": "http://php.net"
+    }
+}

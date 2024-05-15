@@ -109,6 +109,7 @@ public class PopupMenuSaveRawMessage extends AbstractPopupMenuSaveMessage {
         }
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_SAVE_RAW_WEIGHT;
     }

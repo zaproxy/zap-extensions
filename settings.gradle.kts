@@ -62,6 +62,7 @@ var addOns = listOf(
     "graaljs",
     "graphql",
     "groovy",
+    "grpc",
     "highlighter",
     "imagelocationscanner",
     "invoke",

@@ -25,6 +25,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -36,6 +39,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import javax.swing.Timer;
+import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
@@ -50,6 +54,9 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
@@ -278,7 +285,11 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                 Constant.messages.getString(
                         "automation.cmdline.out.template", f.getAbsolutePath()));
         try (FileWriter fw = new FileWriter(f)) {
-            fw.write(AutomationEnvironment.getTemplateFileData());
+            if (incAll) {
+                fw.write(AutomationEnvironment.getTemplateFileDataMax());
+            } else {
+                fw.write(AutomationEnvironment.getTemplateFileDataMin());
+            }
 
             jobs.values().stream()
                     .sorted()
@@ -582,7 +593,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                         1,
                         null,
                         "",
-                        "-autorun <filename>      "
+                        "-autorun <source>        "
                                 + Constant.messages.getString("automation.cmdline.autorun.help"));
         arguments[ARG_AUTO_GEN_MIN_IDX] =
                 new CommandLineArgument(
@@ -617,21 +628,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     @Override
     public void execute(CommandLineArgument[] args) {
         if (arguments[ARG_AUTO_RUN_IDX].isEnabled()) {
-            AutomationProgress progress =
-                    runAutomationFile(arguments[ARG_AUTO_RUN_IDX].getArguments().firstElement());
-            if (ProcessType.cmdline.equals(ZAP.getProcessType())) {
-                if (progress.hasErrors()) {
-                    Control.getSingleton()
-                            .setExitStatus(
-                                    1,
-                                    "Automation Framework setting exit status to due to plan errors");
-                } else if (progress.hasWarnings()) {
-                    Control.getSingleton()
-                            .setExitStatus(
-                                    2,
-                                    "Automation Framework setting exit status to due to plan warnings");
-                }
-            }
+            runPlanCommandLine(arguments[ARG_AUTO_RUN_IDX].getArguments().firstElement());
         }
         if (arguments[ARG_AUTO_GEN_MIN_IDX].isEnabled()) {
             generateTemplateFile(
@@ -643,6 +640,69 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
         if (arguments[ARG_AUTO_GEN_CONF_IDX].isEnabled()) {
             generateConfigFile(arguments[ARG_AUTO_GEN_CONF_IDX].getArguments().firstElement());
+        }
+    }
+
+    private void runPlanCommandLine(String source) {
+        URI uri = createUri(source);
+        if (uri != null) {
+            Path file;
+            try {
+                HttpMessage message = new HttpMessage(uri);
+                new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR).sendAndReceive(message);
+                int statusCode = message.getResponseHeader().getStatusCode();
+                if (statusCode != HttpStatusCode.OK) {
+                    setExitStatus(
+                            1,
+                            "non-200 response (" + statusCode + ") for remote plan: " + source,
+                            true);
+                    return;
+                }
+
+                file = Files.createTempFile("zap-af-plan-", ".yaml");
+                Files.write(file, message.getResponseBody().getBytes());
+            } catch (IOException e) {
+                setExitStatus(1, "I/O error getting remote plan: " + e.getMessage(), true);
+                return;
+            }
+            source = file.toAbsolutePath().toString();
+        }
+
+        AutomationProgress progress = runAutomationFile(source);
+        if (progress == null || progress.hasErrors()) {
+            setExitStatus(1, "plan errors", false);
+        } else if (progress.hasWarnings()) {
+            setExitStatus(2, "plan warnings", false);
+        }
+    }
+
+    private static URI createUri(String source) {
+        try {
+            new URL(source).toURI();
+            URI uri = new URI(source, true);
+            String scheme = uri.getScheme();
+            if (HttpHeader.HTTP.equalsIgnoreCase(scheme)
+                    || HttpHeader.HTTPS.equalsIgnoreCase(scheme)) {
+                return uri;
+            }
+            LOGGER.debug("Skipping non-HTTP(S) URI, will attempt to run plan as file.");
+        } catch (Exception e) {
+            LOGGER.debug("Failed to parse {} as URI, attempting to run plan as file.", source, e);
+        }
+        return null;
+    }
+
+    private static void setExitStatus(int status, String logMessage, boolean error) {
+        if (ProcessType.cmdline.equals(ZAP.getProcessType())) {
+            String fullMessage =
+                    "Automation Framework setting exit status to "
+                            + status
+                            + " due to "
+                            + logMessage;
+            if (error) {
+                CommandLine.error(fullMessage);
+            }
+            Control.getSingleton().setExitStatus(status, fullMessage);
         }
     }
 

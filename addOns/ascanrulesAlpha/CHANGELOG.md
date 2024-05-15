@@ -4,7 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Update minimum ZAP version to 2.15.0.
 
+## [47] - 2024-03-28
+### Changed
+- References for the LDAP Injection scan rule's Alerts were updated (Issue 8262).
 
 ## [46] - 2024-01-26
 ### Changed
@@ -369,6 +374,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[47]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v44

@@ -46,6 +46,7 @@ public class PopupMenuItemSpiderDialogWithContext extends PopupContextTreeMenu {
                 });
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_CONTEXT_AJAX_WEIGHT;
     }

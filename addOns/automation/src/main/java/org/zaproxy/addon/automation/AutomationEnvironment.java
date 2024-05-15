@@ -19,8 +19,10 @@
  */
 package org.zaproxy.addon.automation;
 
+import java.net.PasswordAuthentication;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +32,14 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.automation.gui.EnvironmentDialog;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.common.HttpProxy;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
 
@@ -41,8 +47,10 @@ public class AutomationEnvironment {
 
     public static final String AUTOMATION_CONTEXT_NAME = "Automation Context";
 
-    private static final String YAML_FILE = "env.yaml";
+    private static final String YAML_FILE_MIN = "env-min.yaml";
+    private static final String YAML_FILE_MAX = "env-max.yaml";
     private static final Pattern varPattern = Pattern.compile("\\$\\{(.+?)\\}");
+    private static final String EMPTY_STRING = "";
 
     static final Supplier<Map<String, String>> DEFAULT_ENV = System::getenv;
     static Supplier<Map<String, String>> envSupplier = DEFAULT_ENV;
@@ -87,6 +95,14 @@ public class AutomationEnvironment {
                 progress);
         this.progress.setOutputToStdout(this.getData().getParameters().getProgressToStdout());
 
+        LinkedHashMap<?, ?> proxy = (LinkedHashMap<?, ?>) envData.get("proxy");
+        JobUtils.applyParamsToObject(
+                proxy,
+                this.getData().getProxy(true),
+                Constant.messages.getString("automation.env.name"),
+                null,
+                progress);
+
         Object contextsObject = envData.get("contexts");
         if (contextsObject == null) {
             progress.error(Constant.messages.getString("automation.error.env.nocontexts", envData));
@@ -115,6 +131,10 @@ public class AutomationEnvironment {
         this.contexts.add(new ContextWrapper(context));
     }
 
+    private static ExtensionNetwork getExtensionNetwork() {
+        return Control.getSingleton().getExtensionLoader().getExtension(ExtensionNetwork.class);
+    }
+
     public void create(Session session, AutomationProgress progress) {
 
         this.created = true;
@@ -122,6 +142,33 @@ public class AutomationEnvironment {
         boolean hasUrls = false;
         this.errors.clear();
         this.warnings.clear();
+
+        if (getData().getProxy() != null
+                && StringUtils.isNotBlank(getData().getProxy().getHostname())) {
+            String realm = getData().getProxy().getRealm();
+            if (realm == null) {
+                realm = EMPTY_STRING;
+            }
+            String username = getData().getProxy().getUsername();
+            char[] password = new char[0];
+            if (StringUtils.isNotBlank(username)) {
+                if (getData().getProxy().getPassword() != null) {
+                    password = getData().getProxy().getPassword().toCharArray();
+                }
+            } else {
+                username = EMPTY_STRING;
+            }
+
+            HttpProxy proxy =
+                    new HttpProxy(
+                            getData().getProxy().getHostname(),
+                            getData().getProxy().getPort(),
+                            realm,
+                            new PasswordAuthentication(username, password));
+
+            getExtensionNetwork().setHttpProxy(proxy);
+            getExtensionNetwork().setHttpProxyEnabled(true);
+        }
 
         for (ContextWrapper context : this.contexts) {
             context.createContext(session, this, progress);
@@ -151,23 +198,45 @@ public class AutomationEnvironment {
             this.combinedVars = new HashMap<>(this.getData().getVars());
             this.combinedVars.putAll(envSupplier.get());
         }
-        String text = value.toString();
+
+        return replaceRecursively(value.toString(), new HashSet<>(), new HashSet<>());
+    }
+
+    private String replaceRecursively(
+            String text, Set<String> warnedVars, Set<String> replacedVars) {
         Matcher matcher = varPattern.matcher(text);
         StringBuilder sb = new StringBuilder();
 
+        var replaced = new HashSet<String>();
+        boolean changed = false;
         while (matcher.find()) {
-            String val = this.combinedVars.get(matcher.group(1));
+            String varName = matcher.group(1);
+            String val = this.combinedVars.get(varName);
             if (val != null) {
+                if (replacedVars.contains(varName)) {
+                    if (!warnedVars.contains(varName)) {
+                        warnedVars.add(varName);
+                        progress.warn(
+                                Constant.messages.getString(
+                                        "automation.error.env.loopvar", matcher.group(1)));
+                    }
+                    continue;
+                }
+                replaced.add(varName);
                 matcher.appendReplacement(sb, "");
                 sb.append(val);
-            } else {
+                changed = true;
+            } else if (!warnedVars.contains(varName)) {
+                warnedVars.add(varName);
                 progress.warn(
                         Constant.messages.getString(
                                 "automation.error.env.novar", matcher.group(1)));
             }
         }
-        matcher.appendTail(sb);
-        return sb.toString();
+        replacedVars.addAll(replaced);
+
+        String result = matcher.appendTail(sb).toString();
+        return changed ? replaceRecursively(result, warnedVars, replacedVars) : result;
     }
 
     public Map<String, String> replaceMapVars(Map<String, String> map) {
@@ -184,11 +253,15 @@ public class AutomationEnvironment {
     }
 
     public static String getConfigFileData() {
-        return ExtensionAutomation.getResourceAsString(YAML_FILE);
+        return ExtensionAutomation.getResourceAsString(YAML_FILE_MIN);
     }
 
-    public static String getTemplateFileData() {
-        return ExtensionAutomation.getResourceAsString(YAML_FILE);
+    public static String getTemplateFileDataMin() {
+        return ExtensionAutomation.getResourceAsString(YAML_FILE_MIN);
+    }
+
+    public static String getTemplateFileDataMax() {
+        return ExtensionAutomation.getResourceAsString(YAML_FILE_MAX);
     }
 
     public void addContext(ContextWrapper.Data contextData) {
@@ -360,6 +433,7 @@ public class AutomationEnvironment {
     public static class Data extends AutomationData {
         private List<ContextWrapper.Data> contexts = new ArrayList<>();
         private Parameters parameters;
+        private Proxy proxy;
         private Map<String, String> vars = new LinkedHashMap<>();
 
         public Data() {
@@ -380,6 +454,24 @@ public class AutomationEnvironment {
 
         public void setParameters(Parameters parameters) {
             this.parameters = parameters;
+        }
+
+        public Proxy getProxy(boolean create) {
+            if (create && proxy == null) {
+                proxy = new Proxy();
+            } else if (!create && proxy != null && StringUtils.isBlank(proxy.getHostname())) {
+                proxy = null;
+            }
+
+            return proxy;
+        }
+
+        public Proxy getProxy() {
+            return getProxy(false);
+        }
+
+        public void setProxy(Proxy proxy) {
+            this.proxy = proxy;
         }
 
         public Map<String, String> getVars() {
@@ -427,6 +519,54 @@ public class AutomationEnvironment {
 
         public void setProgressToStdout(boolean progressToStdout) {
             this.progressToStdout = progressToStdout;
+        }
+    }
+
+    public static class Proxy extends AutomationData {
+        private String hostname;
+        private int port;
+        private String realm;
+        private String username;
+        private String password;
+
+        public String getHostname() {
+            return hostname;
+        }
+
+        public void setHostname(String hostname) {
+            this.hostname = hostname;
+        }
+
+        public int getPort() {
+            return port;
+        }
+
+        public void setPort(int port) {
+            this.port = port;
+        }
+
+        public String getRealm() {
+            return realm;
+        }
+
+        public void setRealm(String realm) {
+            this.realm = realm;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
         }
     }
 }

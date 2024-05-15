@@ -388,7 +388,7 @@
     },
     "oss": true,
     "probe": {
-      "/magento_version": "magento"
+      "/magento_version": ""
     },
     "scriptSrc": [
       "js/mage",
@@ -800,6 +800,22 @@
     "oss": true,
     "scriptSrc": "maplibre-gl@([\\d\\.]+)/dist/maplibre-gl\\.js\\;version:\\1",
     "website": "https://github.com/maplibre/maplibre-gl-js"
+  },
+  "MapPress": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "MapPress is a WordPress plugin that provides easy integration of interactive maps into WordPress websites.",
+    "dom": "link[href*='wp-content/plugins/mappress-google-maps-for-wordpress/'], #mappress-leaflet-css, #mappress-css",
+    "icon": "MapPress.png",
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://mappresspro.com"
   },
   "Mapbox GL JS": {
     "cats": [
@@ -2019,6 +2035,21 @@
     },
     "website": "https://office.microsoft.com/word"
   },
+  "Microweber": {
+    "cats": [
+      1
+    ],
+    "description": "Open Source drag and drop style hosted CMS system.",
+    "dom": "meta[content='Microweber']",
+    "icon": "Microweber.svg",
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "scriptSrc": "[Mm]icroweber(?:\\/includes)?(?:\\/api)?(?:\\/libs)?[\\w\\.\\/-]{0,45}(?:\\.min)?\\.js",
+    "website": "https://microweber.com"
+  },
   "Miestro": {
     "cats": [
       6
@@ -2217,6 +2248,17 @@
     },
     "website": "https://join.misskey.page/"
   },
+  "Mithril": {
+    "cats": [
+      12,
+      59
+    ],
+    "description": "A Javascript Framework for building applications.",
+    "icon": "Mithril.svg",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?mithril(?:[\\.-]min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "website": "https://mithril.js.org/"
+  },
   "Mittwald": {
     "cats": [
       88
@@ -2269,6 +2311,15 @@
     ],
     "saas": true,
     "website": "https://mixin.ir"
+  },
+  "Mixitup": {
+    "cats": [
+      59
+    ],
+    "description": "A CSS3 and jQuery Filter & Sort Plugin.",
+    "icon": "kunkalabs.svg",
+    "scriptSrc": "mixitup(?:\\.min)?\\.js",
+    "website": "https://www.kunkalabs.com/mixitup/"
   },
   "Mixpanel": {
     "cats": [

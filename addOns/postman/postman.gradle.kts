@@ -7,6 +7,21 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/postman-support/")
 
+        extensions {
+            register("org.zaproxy.addon.postman.automation.ExtensionPostmanAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.postman.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">=0.31.0")
+                        }
+                    }
+                }
+            }
+        }
+
         dependencies {
             addOns {
                 register("commonlib") {
@@ -31,6 +46,7 @@ crowdin {
 }
 
 dependencies {
+    zapAddOn("automation")
     zapAddOn("commonlib")
 
     testImplementation(project(":testutils"))

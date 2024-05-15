@@ -161,7 +161,15 @@ class PostmanParserUnitTest extends TestUtils {
         final String IMPORT_FORMAT_ERROR = "postman.import.error.format";
         String noItemError = Constant.messages.getString("postman.import.error.noItem");
         return Stream.of(
-                arguments("{\"item\":{}}", List.of(noItemError)),
+                arguments(
+                        "{\"item\":{}}",
+                        List.of(
+                                Constant.messages.getString(
+                                        IMPORT_FORMAT_ERROR,
+                                        "Unnamed Item",
+                                        Constant.messages.getString(
+                                                "postman.import.errorMsg.reqNotPresent")),
+                                noItemError)),
                 arguments(
                         "{\"item\":{\"name\":\"test\"}}",
                         List.of(
@@ -486,5 +494,34 @@ class PostmanParserUnitTest extends TestUtils {
         assertEquals("Value is " + value, message.getRequestBody().toString());
         assertEquals(value.toUpperCase(Locale.ROOT), message.getRequestHeader().getMethod());
         assertEquals(value, message.getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE));
+    }
+
+    @Test
+    void shouldFindItemUnderItemGroups() throws JsonProcessingException {
+        // Given
+        var collection =
+                "{\n"
+                        + "  \"item\" : [ {\n"
+                        + "    \"name\" : \"JIM\",\n"
+                        + "    \"item\" : [ {\n"
+                        + "      \"name\" : \"BOB\",\n"
+                        + "      \"request\" : {\n"
+                        + "        \"method\" : \"GET\",\n"
+                        + "        \"url\" : {\n"
+                        + "          \"raw\" : \"https://example.com/\"\n"
+                        + "        }\n"
+                        + "      }\n"
+                        + "    } ]\n"
+                        + "  } ]\n"
+                        + "}";
+        PostmanParser parser = new PostmanParser();
+
+        // When
+        List<HttpMessage> messages = parser.getHttpMessages(collection, "", new ArrayList<>());
+
+        // Then
+        HttpMessage message = messages.get(0);
+        assertEquals("https://example.com/", message.getRequestHeader().getURI().toString());
+        assertEquals("GET", message.getRequestHeader().getMethod());
     }
 }

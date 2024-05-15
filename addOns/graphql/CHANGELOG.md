@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## Unreleased
 
 
+## [0.24.0] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Dependency updates.
+
 ## [0.23.0] - 2024-02-22
 ### Added
 - Video link in help for Automation Framework job.
@@ -188,6 +193,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
   - Import a GraphQL Schema
   - Generate Queries from an imported Schema
 
+[0.24.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.24.0
 [0.23.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.23.0
 [0.22.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.21.0

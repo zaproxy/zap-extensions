@@ -10,6 +10,7 @@
 				<tocitem text="Automation" target="addon.scripts.automation" />
 				<tocitem text="Console" target="addon.scripts.console" />
 				<tocitem text="Options" target="addon.scripts.options" />
+				<tocitem text="Scan Rules" target="addon.scripts.scanrules" />
 				<tocitem text="Tree" target="addon.scripts.tree" />
 			</tocitem>
 		</tocitem>

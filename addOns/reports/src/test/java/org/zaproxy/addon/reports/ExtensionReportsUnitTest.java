@@ -220,7 +220,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(counts.get(2), is(equalTo(4)));
     }
 
-    private HttpMessage newMsg(String uri) {
+    private static HttpMessage newMsg(String uri) {
         try {
             HttpMessage msg = new HttpMessage(new URI(uri + ILLEGAL_XML_CHRS, true));
             msg.getRequestHeader().setHeader("Test", "Foo-Header" + ILLEGAL_XML_CHRS);
@@ -233,9 +233,23 @@ class ExtensionReportsUnitTest extends TestUtils {
         }
     }
 
-    private AlertNode newAlertNode(
+    private static AlertNode newAlertNode(
             int pluginId, int level, String name, String uri, int childCount) {
         Alert alert = new Alert(pluginId);
+        setAlertData(uri, alert);
+        AlertNode alertNode = new AlertNode(level, name + ILLEGAL_XML_CHRS);
+        alertNode.setUserObject(alert);
+        for (int i = 0; i < childCount; i++) {
+            AlertNode childNode = new AlertNode(level, name + ILLEGAL_XML_CHRS);
+            Alert childAlert = new Alert(pluginId);
+            setAlertData(uri, childAlert);
+            childNode.setUserObject(childAlert);
+            alertNode.add(childNode);
+        }
+        return alertNode;
+    }
+
+    private static void setAlertData(String uri, Alert alert) {
         alert.setUri(uri + ILLEGAL_XML_CHRS);
         alert.setName("Foo-name" + ILLEGAL_XML_CHRS);
         alert.setDescription("Foo-Desc" + ILLEGAL_XML_CHRS);
@@ -248,16 +262,6 @@ class ExtensionReportsUnitTest extends TestUtils {
 
         alert.setParam("Foo-param" + ILLEGAL_XML_CHRS);
         alert.setMessage(newMsg(uri));
-        AlertNode alertNode = new AlertNode(level, name + ILLEGAL_XML_CHRS);
-        alertNode.setUserObject(alert);
-        for (int i = 0; i < childCount; i++) {
-            AlertNode childNode = new AlertNode(level, name + ILLEGAL_XML_CHRS);
-            Alert childAlert = new Alert(pluginId);
-            childAlert.setMessage(newMsg(uri));
-            childNode.setUserObject(childAlert);
-            alertNode.add(childNode);
-        }
-        return alertNode;
     }
 
     @Test
@@ -544,7 +548,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(ExtensionReports.isIncluded(reportData, alertNode3), is(equalTo(false)));
     }
 
-    private ReportData getTestReportData() {
+    private static ReportData getTestReportData() {
         ReportData reportData = new ReportData();
         AlertNode root = new AlertNode(0, "Test");
         reportData.setAlertTreeRootNode(root);
@@ -1226,7 +1230,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(logEvents, not(hasItem(startsWith("ERROR"))));
     }
 
-    private ReportData setupReportData() {
+    private static ReportData setupReportData() {
         ReportData reportData = getTestReportData();
         AlertNode root = new AlertNode(0, "Alerts");
         root.add(newAlertNode(1, Alert.RISK_HIGH, "Alert High 1", "https://www.example.com", 1));
@@ -1238,6 +1242,14 @@ class ExtensionReportsUnitTest extends TestUtils {
                         "Alert Low 2",
                         "https://www.example.com",
                         8));
+        // Cover cases where the HTTP message is missing.
+        AlertNode noMsgAlertNode =
+                newAlertNode(
+                        4, Alert.RISK_HIGH, "Alert No HTTP Message", "https://www.example.com", 2);
+        noMsgAlertNode.getUserObject().setMessage(null);
+        noMsgAlertNode.getChildAt(0).getUserObject().setMessage(null);
+        root.add(noMsgAlertNode);
+
         reportData.setAlertTreeRootNode(root);
         String site1 = "https://www.example.com";
         reportData.setSites(List.of(site1 + NOT_ILLEGAL_XML_CHRS));

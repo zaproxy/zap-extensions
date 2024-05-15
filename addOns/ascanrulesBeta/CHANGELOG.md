@@ -5,9 +5,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.15.0.
+- Maintenance changes.
+
+## [53] - 2024-03-28
+### Changed
+- Change links to use HTTPS in other info of Insecure HTTP Method (Issue 8262).
+
+## [52] - 2024-03-25
+### Changed
 - Updated reference for scan rule: Possible Username Enumeration (Issue 8262)
 - Cookie Slack Detector scan rule now has a more specific CWE.
 - Possible Username Enumeration scan rule now includes CWE-204 as a reference link.
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Relative Path Confusion
+    - Integer Overflow Error
+
+### Removed 
+- Removed HTTP only reference for scan rule: Integer Overflow Error (Issue 8262)
 
 ## [51] - 2024-02-16
 ### Changed
@@ -504,6 +519,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[53]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v53
+[52]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v52
 [51]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v49

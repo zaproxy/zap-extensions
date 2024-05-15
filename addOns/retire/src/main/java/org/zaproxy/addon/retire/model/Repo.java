@@ -29,6 +29,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -254,6 +255,9 @@ public class Repo {
      */
     private static Map<String, Set<String>> isVersionVulnerable(
             List<Vulnerability> vulnerabilities, String versionString) {
+        if (!isGoodCandidate(versionString)) {
+            return Map.of();
+        }
         // Do a match for each of the above vulnerabilities
         Map<String, Set<String>> results = new HashMap<>();
         ListIterator<Vulnerability> viterator = vulnerabilities.listIterator();
@@ -286,5 +290,21 @@ public class Repo {
             }
         }
         return results;
+    }
+
+    private static boolean isGoodCandidate(String version) {
+        String[] v1 = version.split("[._-]");
+        if (v1.length == 1) {
+            // There were no separators in the "version" being checked
+            // Likely a cache buster string, ex: 7a06f256
+            return false;
+        }
+        int isAllZeros = 9; // Placeholder
+        try {
+            isAllZeros = Arrays.stream(v1).mapToInt(Integer::parseInt).sum();
+        } catch (NumberFormatException nfe) {
+            // Nothing to do, it might happen
+        }
+        return isAllZeros != 0; // Not a good value if all zero
     }
 }

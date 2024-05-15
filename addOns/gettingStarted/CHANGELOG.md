@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [17] - 2024-05-07
+### Changed
+- Update Getting Started Guide for 2.15.0.
+
 ## [16] - 2023-10-12
 ### Changed
 - Update Getting Started Guide.
@@ -83,6 +87,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[17]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v14

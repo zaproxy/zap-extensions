@@ -15,7 +15,7 @@ configurations {
 }
 
 dependencies {
-    compileOnly("org.zaproxy:zap:2.14.0")
+    compileOnly("org.zaproxy:zap:2.15.0")
     implementation(project(":addOns:network"))
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
 

@@ -38,7 +38,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.17.0 & < 2.0.0")
+                    version.set(">= 1.26.0 & < 2.0.0")
                 }
             }
         }
@@ -62,8 +62,19 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("spider")
 
-    implementation("io.swagger.parser.v3:swagger-parser:2.1.20")
-    implementation("io.swagger:swagger-compat-spec-parser:1.0.69") {
+    implementation("io.swagger.parser.v3:swagger-parser:2.1.22") {
+        // Provided by commonlib add-on:
+        exclude(group = "com.fasterxml.jackson")
+        exclude(group = "com.fasterxml.jackson.core")
+        exclude(group = "com.fasterxml.jackson.dataformat")
+        exclude(group = "com.fasterxml.jackson.datatype")
+    }
+    implementation("io.swagger:swagger-compat-spec-parser:1.0.70") {
+        // Provided by commonlib add-on:
+        exclude(group = "com.fasterxml.jackson")
+        exclude(group = "com.fasterxml.jackson.core")
+        exclude(group = "com.fasterxml.jackson.dataformat")
+        exclude(group = "com.fasterxml.jackson.datatype")
         // Not needed:
         exclude(group = "com.github.java-json-tools", module = "json-schema-validator")
         exclude(group = "org.apache.httpcomponents", module = "httpclient")

@@ -6,10 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [3.2.0] - 2024-04-11
+### Changed
 - Update minimum ZAP version to 2.14.0.
 - Maintenance changes.
 - Replace usage of singletons with injected variables (e.g. `model`, `control`) in scripts.
 - Dependency updates.
+- Update Active and Passive Script Templates to include a `getMetadata` function. This will allow them to be used as regular scan rules.
+- Depend on the `commonlib` and `scripts` add-ons for scan rule scripts.
 
 ### Fixed
 - Updated encode-decode script template to conform to the latest method signatures.
@@ -46,5 +52,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial Release
 
+[3.2.0]: https://github.com/zaproxy/zap-extensions/releases/groovy-v3.2.0
 [3.1.0]: https://github.com/zaproxy/zap-extensions/releases/groovy-v3.1.0
 [3.0.0]: https://github.com/zaproxy/zap-extensions/releases/groovy-v3.0.0

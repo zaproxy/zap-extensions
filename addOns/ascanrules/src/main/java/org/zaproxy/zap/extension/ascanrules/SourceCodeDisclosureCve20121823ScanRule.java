@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -169,18 +170,7 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin
                         sourceCode = matcher2.group(1);
                     }
 
-                    // bingo.
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setDescription(
-                                    Constant.messages.getString(
-                                            "ascanrules.sourcecodedisclosurecve-2012-1823.desc"))
-                            .setOtherInfo(sourceCode)
-                            .setSolution(
-                                    Constant.messages.getString(
-                                            "ascanrules.sourcecodedisclosurecve-2012-1823.soln"))
-                            .setMessage(attackmsg)
-                            .raise();
+                    buildAlert(sourceCode).setMessage(attackmsg).raise();
                 }
             }
         } catch (Exception e) {
@@ -189,6 +179,18 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin
                     e.getMessage(),
                     e);
         }
+    }
+
+    private AlertBuilder buildAlert(String otherInfo) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(
+                        Constant.messages.getString(
+                                "ascanrules.sourcecodedisclosurecve-2012-1823.desc"))
+                .setOtherInfo(otherInfo)
+                .setSolution(
+                        Constant.messages.getString(
+                                "ascanrules.sourcecodedisclosurecve-2012-1823.soln"));
     }
 
     private static URI createAttackUri(URI originalURI, String attackParam) {
@@ -227,5 +229,10 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("<?php $x=0; echo '<h1>Welcome!</h1>'; ?>").build());
     }
 }

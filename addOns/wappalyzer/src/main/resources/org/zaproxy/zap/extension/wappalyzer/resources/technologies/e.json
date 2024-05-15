@@ -252,6 +252,15 @@
     "website": "https://www.easy-orders.net",
     "xhr": "api\\.easy-orders\\.net/"
   },
+  "Easy Pie Chart": {
+    "cats": [
+      59
+    ],
+    "description": "Lightweight jQuery plugin to render and animate nice pie charts with the HTML5 canvas element.",
+    "oss": true,
+    "scriptSrc": "[Ee]asy-?[Pp]ie-?[Cc]hart(?:\\.min)?\\.js",
+    "website": "https://rendro.github.io/easy-pie-chart/"
+  },
   "Easy Redirects": {
     "cats": [
       100
@@ -704,6 +713,19 @@
     "scriptSrc": "/wp-content/plugins/elementor(?:-pro)?/.+frontend-modules\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://elementor.com"
   },
+  "Elementor Addon Elements": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Widgets and extensions to extend the Elementor Page Builder.",
+    "dom": "link[href*='/wp-content/plugins/addon-elements-for-elementor-page-builder/']",
+    "icon": "Elementor Addon Elements.png",
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "addon-elements-for-elementor-page-builder(?:\\/assets)?(?:\\/js)?(?:\\/lib)?(?:\\/animated-main)?(?:\\/build)?(?:\\/eae)?(?:\\/iconHelper)?(?:\\/index)?(?:\\/magnific)?(?:\\/particles)?(?:\\/vegas){0,2}(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/addon-elements-for-elementor-page-builder"
+  },
   "Elementor Cloud": {
     "cats": [
       88
@@ -928,6 +950,19 @@
     "scriptSrc": "elqCfg\\.js",
     "website": "https://eloqua.com"
   },
+  "Email Encoder for Wordpress": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Protect email addresses and phone numbers from spambots.",
+    "dom": "link#eeb-css-frontend-css, link[href*='/wp-content/plugins/email-encoder-bundle/']",
+    "icon": "Email Encoder for Wordpress.png",
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "email-encoder-bundle(?:\\/core)?(?:\\/includes)?(?:\\/assets)?(?:\\/js)?(?:\\/custom)?(?:\\/encoder-form)?\\.js",
+    "website": "https://wordpress.org/plugins/email-encoder-bundle"
+  },
   "EmailJS": {
     "cats": [
       75
@@ -978,6 +1013,18 @@
     "saas": true,
     "website": "https://www.ematicsolutions.com"
   },
+  "Embed Any Document": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Embed PDF, DOC, PPT and XLS documents easily on your WordPress website.",
+    "dom": "#awsm-ead-public-css, link[href*='/wp-content/plugins/embed-any-document/']",
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "embed-any-document(?:\\/js)?(?:\\/embed-public)?(?:\\/pdfobject)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/embed-any-document"
+  },
   "EmbedPlus": {
     "cats": [
       87
@@ -991,6 +1038,19 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/youtube-embed-plus(?:-pro)?/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.embedplus.com"
+  },
+  "EmbedPress": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Embed videos, images, posts, audio, maps and upload PDF, DOC, PPT in Wordpress.",
+    "dom": "#embedpress-css, #embedpress-elementor-css-css, #embedpress_blocks-cgb-style-css-css, link[href*='/wp-content/plugins/embedpress/']",
+    "icon": "EmbedPress.png",
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "embedpress(?:\\/assets)?(?:\\/js)?(?:\\/ads)?(?:\\/pdfobject)?(?:\\/front)?(?:\\/documents-viewer-script)?(?:\\/vimeo-player)?(?:\\/initplyr)?(?:\\/plyr)?(?:\\.polyfilled)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/embedpress"
   },
   "EmbedSocial": {
     "cats": [
@@ -1125,6 +1185,15 @@
     "oss": true,
     "requires": "WordPress",
     "website": "https://github.com/bluehost/endurance-page-cache"
+  },
+  "EngagementHQ": {
+    "cats": [
+      1
+    ],
+    "description": "Essential software for changemakers. Facilitate, centralize, and analyze two-way conversations between you and your community.",
+    "icon": "EngagementHQ.svg",
+    "dom": "link[href*='ehq-production-']",
+    "website": "https://granicus.com/solution/govdelivery/engagementhq/"
   },
   "Engagio": {
     "cats": [
@@ -1437,6 +1506,24 @@
     ],
     "saas": true,
     "website": "https://errorception.com"
+  },
+  "EspoCRM": {
+    "cats": [
+      10,
+      53
+    ],
+    "description": "Open Source CRM Software.",
+    "dom": "meta[content*='EspoCRM'], link[href*='/espo/']",
+    "icon": "EspoCRM.svg",
+    "oss": true,
+    "pricing": [
+      "low",
+      "mid",
+      "freemium",
+      "recurring"
+    ],
+    "scriptSrc": "espo(?:\\.min)?\\.js",
+    "website": "https://www.espocrm.com/"
   },
   "Essent SiteBuilder Pro": {
     "cats": [

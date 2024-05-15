@@ -26,8 +26,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public interface PassiveScript {
 
-    void scan(ScriptsPassiveScanner scriptsPassiveScanner, HttpMessage msg, Source source)
-            throws ScriptException;
+    void scan(PassiveScriptHelper helper, HttpMessage msg, Source source) throws ScriptException;
 
     /**
      * Tells whether the scanner applies to the given history type.

@@ -4,8 +4,28 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [45.3.0] - 2024-05-07
+### Added
+- Support for code and help links for script scan rules.
+
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Allow to set raw parameter values from Active Rules, by calling `as.setEscapedParam(HttpMessage msg, String param, String value)`.
+
+## [45.2.0] - 2024-04-11
+### Added
+- Active and Passive Scripts with a `getMetadata()` function are now treated as first-class scan rules (Issue 7105).
+
+### Fixed
+- Error when trying to run an unsupported script type through the Automation Framework.
+- The "Scripts Passive Scanner" scan rule was being loaded twice.
+
+## [45.1.0] - 2024-03-25
 ### Added
 - Support for menu weights (Issue 8369)
+
 ### Fixed
 - Propagate script errors to the Automation Framework when running them.
 
@@ -299,6 +319,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.3.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.3.0
+[45.2.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.2.0
+[45.1.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.1.0
 [45.0.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.0.0
 [44]: https://github.com/zaproxy/zap-extensions/releases/scripts-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/scripts-v43

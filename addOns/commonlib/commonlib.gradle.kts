@@ -42,13 +42,14 @@ crowdin {
 dependencies {
     zapAddOn("formhandler")
 
-    api(platform("com.fasterxml.jackson:jackson-bom:2.16.0"))
+    api(platform("com.fasterxml.jackson:jackson-bom:2.17.0"))
     api("com.fasterxml.jackson.core:jackson-databind")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
-    implementation("commons-io:commons-io:2.15.0")
+    implementation("commons-io:commons-io:2.16.1")
     implementation("org.apache.commons:commons-csv:1.10.0")
     implementation("org.apache.commons:commons-collections4:4.4")
 

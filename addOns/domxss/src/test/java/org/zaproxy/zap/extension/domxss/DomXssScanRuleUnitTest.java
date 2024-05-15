@@ -23,12 +23,14 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.hamcrest.Matchers;
@@ -38,19 +40,23 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.zap.extension.ascan.VariantFactory;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.SeleniumOptions;
 import org.zaproxy.zap.testutils.ActiveScannerTestUtils;
 import org.zaproxy.zap.testutils.NanoServerHandler;
+import org.zaproxy.zap.utils.I18N;
 
 class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
 
@@ -61,8 +67,12 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
         WebDriverManager.firefoxdriver().setup();
         WebDriverManager.chromedriver().setup();
 
+        Constant.messages = new I18N(Locale.ROOT);
+        Model model = mock(Model.class);
+        Model.setSingletonForTesting(model);
+        given(model.getVariantFactory()).willReturn(new VariantFactory());
+        given(model.getOptionsParam()).willReturn(new OptionsParam());
         extensionNetwork = new ExtensionNetwork();
-        Model model = Model.getSingleton();
         extensionNetwork.initModel(model);
         Control.initSingletonForTesting(model, mock(ExtensionLoader.class));
         extensionNetwork.init();

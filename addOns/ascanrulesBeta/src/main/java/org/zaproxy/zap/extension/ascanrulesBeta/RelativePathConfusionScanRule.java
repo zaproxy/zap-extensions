@@ -617,13 +617,8 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
                                                 MESSAGE_PREFIX + "extrainfo.nocontenttype");
                 }
 
-                // alert it..
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                buildAlert(hackedUri.toString(), extraInfo, relativeReferenceEvidence)
                         .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                        .setAttack(hackedUri.toString())
-                        .setOtherInfo(extraInfo)
-                        .setEvidence(relativeReferenceEvidence)
                         .setMessage(hackedMessage)
                         .raise();
 
@@ -640,6 +635,14 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
             LOGGER.error(
                     "Error scanning a request for Relative Path confusion: {}", e.getMessage(), e);
         }
+    }
+
+    private AlertBuilder buildAlert(String attack, String otherInfo, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setAttack(attack)
+                .setOtherInfo(otherInfo)
+                .setEvidence(evidence);
     }
 
     @Override
@@ -660,5 +663,16 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "https://example.com/profile/ybpsv/bqmmn/?foo=bar",
+                                Constant.messages.getString(
+                                        MESSAGE_PREFIX + "extrainfo.nocontenttype"),
+                                "background: url(image.png)")
+                        .build());
     }
 }

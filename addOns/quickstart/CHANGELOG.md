@@ -4,9 +4,35 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [47] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+### Fixed
+- Sub panel names.
+
+## [46] - 2024-04-23
+### Changed
+- Maintenance changes.
+- AJAX spider selection to include "if modern" option.
+
+### Fixed
+- Help content typos.
+
+## [45] - 2024-03-25
+### Changed
+- Tweaked OSF sponsorship links.
+
+## [44] - 2024-03-13
+### Added
+- Support panel.
+
 ### Changed
 - Maintenance changes.
 - Dropped "to Clipboard" from ZAP copy menu items and buttons (Issue 8179).
+- Panels to include OSF image and link.
 
 ## [43] - 2023-10-12
 ### Changed
@@ -230,6 +256,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[47]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v47
+[46]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v46
+[45]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v45
+[44]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v41

@@ -5,6 +5,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.15.0.
+- Updated with enthec upstream icon and pattern changes.
+- Maintenance changes (standardize on "Technology Detection" naming).
+
+## [21.36.0] - 2024-05-02
+### Fixed
+- Implemented a change to address a resource contention issue when loading Tech Detection details (Issue 8464).
+
+### Changed
+- Suppress further un-helpful messages from the jsvg library logger.
+
+## [21.35.0] - 2024-04-23
+### Changed
+- Maintenance changes.
+
+### Fixed
+- A typo in the help content.
+
+## [21.34.0] - 2024-04-11
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+- Parallelize loading of the technology files, to improve install/start-up performance.
+
+## [21.33.0] - 2024-03-28
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+
+## [21.32.0] - 2024-03-04
+### Changed
+- Updated with enthec upstream icon and pattern changes.
 - Maintenance changes.
 
 ## [21.31.0] - 2024-02-09
@@ -331,6 +361,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.36.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.36.0
+[21.35.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.35.0
+[21.34.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.34.0
+[21.33.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.33.0
+[21.32.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.32.0
 [21.31.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.31.0
 [21.30.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.30.0
 [21.29.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.29.0

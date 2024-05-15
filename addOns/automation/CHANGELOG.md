@@ -4,8 +4,59 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.40.0] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [0.39.0] - 2024-04-23
+### Added
+- Allow reports to know the number of Sites tree nodes actively scanned (Issue 7022).
+
+### Changed
+- Allow to run remote plans through the command line.
+
+## [0.38.0] - 2024-04-11
+### Fixed
+- Correctly expose all information in the `planProgress` API view (Issue 8433). This might break existing clients as the format has changed.
+  - JSON changed to, e.g.:
+  ```json
+  {
+    "warn" : [ ],
+    "planId" : 0,
+    "started" : "2024-04-08T00:00:00.615Z",
+    "finished" : "2024-04-08T00:00:00.702Z",
+    "error" : [ ],
+    "info" : [ "Job requestor started", "Job requestor finished, time taken: 00:00:00" ]
+  }
+  ```
+  - XML changed to, e.g.:
+  ```xml
+   <planProgress type="set">
+     <planId>0</planId>
+     <started>2024-04-08T00:00:00.615Z</started>
+     <finished>2024-04-08T00:00:00.702Z</finished>
+     <info type="list">
+       <message>Job requestor started</message>
+       <message>Job requestor finished, time taken: 00:00:00</message>
+     </info>
+     <warn type="list"/>
+     <error type="list"/>
+   </planProgress>
+  ```
+
+## [0.37.0] - 2024-03-28
+### Changed
+- Allow to use variables composed of multiple variables.
+
+## [0.36.0] - 2024-03-25
+### Added
+- Support for upstream proxy in environment (Issue 8360).
+
 ### Changed
 - Maintenance changes.
+- Cut down env data when generating min template.
 
 ### Fixed
 - Correct parsing of attack strength and alert threshold in some locales.
@@ -337,6 +388,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.40.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.40.0
+[0.39.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.39.0
+[0.38.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.38.0
+[0.37.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.37.0
+[0.36.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.36.0
 [0.35.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.35.0
 [0.34.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.34.0
 [0.33.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.33.0

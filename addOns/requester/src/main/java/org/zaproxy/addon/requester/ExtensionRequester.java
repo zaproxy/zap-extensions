@@ -37,7 +37,6 @@ import org.zaproxy.addon.requester.internal.AbstractHttpMessageEditorDialog;
 import org.zaproxy.addon.requester.internal.ManualHttpRequestEditorPanel;
 import org.zaproxy.addon.requester.internal.RequesterOptionsPanel;
 import org.zaproxy.addon.requester.internal.RequesterPanel;
-import org.zaproxy.addon.requester.internal.ResendHttpMessageEditorDialog;
 import org.zaproxy.addon.requester.internal.RightClickMsgMenuRequester;
 import org.zaproxy.addon.requester.internal.SendHttpMessageEditorDialog;
 import org.zaproxy.addon.requester.internal.ToolsMenuItemRequester;
@@ -65,7 +64,6 @@ public class ExtensionRequester extends ExtensionAdaptor {
     private RequesterOptionsPanel requesterOptionsPanel;
 
     private AbstractHttpMessageEditorDialog sendDialog;
-    private AbstractHttpMessageEditorDialog resendDialog;
 
     public ExtensionRequester() {
         super(NAME);
@@ -105,7 +103,8 @@ public class ExtensionRequester extends ExtensionAdaptor {
 
         if (hasView()) {
             sendDialog =
-                    new SendHttpMessageEditorDialog(new ManualHttpRequestEditorPanel("manual"));
+                    new SendHttpMessageEditorDialog(
+                            this, new ManualHttpRequestEditorPanel("manual"));
             sendDialog.load(extensionHook);
 
             extensionHook.addOptionsChangedListener(getRequesterPanel());
@@ -118,10 +117,6 @@ public class ExtensionRequester extends ExtensionAdaptor {
             menu.addPopupMenuItem(getPopupMsgMenuRequester());
             // ToolsMenuItem
             menu.addToolsMenuItem(new ToolsMenuItemRequester(this));
-
-            ManualHttpRequestEditorPanel panel = new ManualHttpRequestEditorPanel("resend");
-            resendDialog = new ResendHttpMessageEditorDialog(panel);
-            resendDialog.load(extensionHook);
         }
     }
 
@@ -150,8 +145,8 @@ public class ExtensionRequester extends ExtensionAdaptor {
     }
 
     /*
-     * *Hack to get the selected Message. Used when using the Open in Requester keyboard shortcut.
-     *  It returns the focused message at Requester or the message set in the main Request/Response panel
+     * Hack to get the selected Message. Used when using the Open in Requester keyboard shortcut.
+     * It returns the focused message at Requester or the message set in the main Request/Response panel
      */
     public Message getSelectedMsg() {
         Component focusedComponent = getView().getMainFrame().getFocusOwner();
@@ -207,10 +202,6 @@ public class ExtensionRequester extends ExtensionAdaptor {
     public void unload() {
         if (hasView()) {
             getRequesterPanel().unload();
-
-            if (resendDialog != null) {
-                resendDialog.unload();
-            }
 
             if (sendDialog != null) {
                 sendDialog.unload();

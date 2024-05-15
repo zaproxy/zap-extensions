@@ -1605,6 +1605,20 @@
     "saas": true,
     "website": "https://circle.so"
   },
+  "Citizen Space": {
+    "cats": [
+      1
+    ],
+    "description": "Next-generation engagement tools for 21st century democracy.",
+    "dom": "a[href='https://www.delib.net/citizen_space']",
+    "icon": "CitizenSpace.png",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "/static/vendor/dlb-admin-ui/",
+    "website": "https://www.delib.net/citizen_space"
+  },
   "CitrusPay": {
     "cats": [
       41
@@ -3056,6 +3070,20 @@
     "scriptSrc": "/concrete/js/",
     "website": "https://www.concretecms.com/"
   },
+  "Conditional Fields for Contact Form 7": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Adds conditional logic to Contact Form 7.",
+    "dom": "link[href*='/wp-content/plugins/cf7-conditional-fields/']",
+    "icon": "Conditional Fields for Contact Form 7.png",
+    "implies": "Contact Form 7",
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "cf7-conditional-fields(?:\\/js)?(?:\\/scripts)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/cf7-conditional-fields"
+  },
   "Conekta": {
     "cats": [
       41
@@ -3357,6 +3385,18 @@
     ],
     "saas": true,
     "website": "https://www.contentstack.com"
+  },
+  "Contextual Related Posts": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Add related posts to your WordPress site with inbuilt caching.",
+    "dom": "link[href*='/wp-content/plugins/contextual-related-posts/']",
+    "icon": "Contextual Related Posts.png",
+    "oss": true,
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/contextual-related-posts/"
   },
   "Contlo": {
     "cats": [
@@ -3698,6 +3738,17 @@
     "scriptSrc": "consent\\.cookiebot\\.com",
     "website": "https://www.cookiebot.com"
   },
+  "Cool Timeline": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Creates vertical and horizontal history timeline blocks.",
+    "dom": "link[href*='/plugins/cool-timeline/'], script[src*='/cool-timeline/'], .cooltimeline-body",
+    "oss": true,
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/cool-timeline"
+  },
   "Cooladata": {
     "cats": [
       97
@@ -3783,6 +3834,18 @@
     ],
     "website": "https://corebine.com"
   },
+  "Cornerstone": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Enhanced content management for WordPress.",
+    "dom": "#cornerstone-generated-css",
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "cornerstone(?:\\/assets)?(?:\\/js)?(?:\\/site)?(?:\\/cs-classic)?\\.?((?:\\d+\\.)+\\d+)?\\.js\\;version:\\1",
+    "website": "https://wordpress.org/plugins/cornerstone"
+  },
   "Correos": {
     "cats": [
       99
@@ -3852,6 +3915,17 @@
     },
     "icon": "CouchDB.png",
     "website": "https://couchdb.apache.org"
+  },
+  "Countdown Timer Ultimate": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Add and display responsive Countdown timer on your website.",
+    "dom": "link[href*='/wp-content/plugins/countdown-timer-ultimate/']",
+    "oss": true,
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/countdown-timer-ultimate"
   },
   "Countly": {
     "cats": [
@@ -4030,6 +4104,23 @@
     ],
     "saas": true,
     "website": "https://www.cratejoy.com"
+  },
+  "Crayon Syntax Highlighter": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Syntax Highlighter supporting multiple languages, themes, fonts, highlighting from a URL, local file or post text.",
+    "dom": "link#crayon-css, link#crayon",
+    "js": {
+      "CrayonSyntaxSettings": "",
+      "CrayonSyntaxStrings": "",
+      "CrayonTagEditorSettings": ""
+    },
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "crayon-syntax-highlighter(?:\\/js)?(?:\\/min)?(?:\\/crayon)?(?:\\.te)?(?:\\.min)?\\.js(?:\\?v(?:er)?=_((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/crayon-syntax-highlighter/"
   },
   "Crazy Egg": {
     "cats": [
@@ -4390,6 +4481,17 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/custom-fonts/",
     "website": "https://github.com/brainstormforce/custom-fonts"
+  },
+  "Custom Twitter Feeds": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Custom Twitter Feeds for Wordpress.",
+    "dom": "link[href*='/wp-content/plugins/custom-twitter-feeds/']",
+    "requires": "WordPress",
+    "scriptSrc": "custom-twitter-feeds(?:\\/js)?(?:\\/ctf-scripts)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/custom-twitter-feeds"
   },
   "Customer.io": {
     "cats": [

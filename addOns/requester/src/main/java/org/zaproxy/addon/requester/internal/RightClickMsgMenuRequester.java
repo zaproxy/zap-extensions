@@ -61,6 +61,7 @@ public class RightClickMsgMenuRequester extends PopupMenuItemHttpMessageContaine
         return true;
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_OPEN_REQUESTER_WEIGHT;
     }

@@ -73,6 +73,7 @@ public class PopupMenuCopyUrls extends PopupMenuItemHistoryReferenceContainer
         // Ignore
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_COPY_URLS_WEIGHT;
     }

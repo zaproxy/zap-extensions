@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vulnerabilities xmlns="http://tempuri.org/XMLSchemaOptions.xsd">
+<vulnerabilities>
 
 <vuln_items>wasc_1</vuln_items>
 <vuln_item_wasc_1>
@@ -9,7 +9,7 @@
 Para paglibot sa pag-establisar sa pagpamatuod, pipila ka mga kapanguhaan kay protektado pinaagi sa "nagtago" ang piho nga lokasyon ug dili ang sumpay na lokasyon ngadto sa nag-unang web site o uban na publikong mga lugar. Bisan pa niana, kini nga paagi kay wala nay lain kay sa "Kasiguraduhan Gikan sa Ngitngit". Kini kay importante nga masabtan nga bisan ang usa ka tinubdan wala mahibal-an sa usa ka tig-atake, kini gihapon nga mapabilin nga diretso nga direktang pinaagi sa usa ka piho nga URL. Ang piho nga URL mahimong modiskobrehan pinaagi sa Kabangis na pagsulay alang sa kasagaran nga file ug direktoryo nga mga dapit (/ admin alang sa panig-ingnan), mga mensahe sa sayop, mga log sa nagtudlo, o mga dokumentasyon sama sa mga file sa pagtabang. Kini nga mga kapanguhaan, bisan kini nga sulod-sa-kaayohan nga gipalihok, kinahanglan nga igong mapanalipdan.</desc>
 	<solution>Phase: Arkitektura ug Disenyo
 Gamiton ang pagmatood sa framework o ang librarya sama sa OWASP ESAPI Pagmamatood na bahin niini.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Authentication</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/287.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/284.html</reference>
 </vuln_item_wasc_1>
@@ -27,11 +27,11 @@ Usa ka makita kaayo na pananglitan kay pagka 2005 nga pagpatik sa proseso sa apl
  
 Dili igo na datos sa pagmamatuod
 
-Daghang mga aplikasyon na gibutyag sa nagpahipi nga mga tigpaila sa datos sa usa ka URL. Pananglitan, kon mag-access sa medikal nga rekord sa usa ka sistema na ang usa mahimong adunany usa ka URL sama sa:
+Daghang mga aplikasyon na gibutyag sa nagpahipi nga mga tigpaila sa datos sa usa ka URL. For example, when accessing a medical record on a system one might have a URL such as:
 
-http://example.com/RecordView?id=12345
+https://example.com/RecordView?id=12345
 
-Kung ang aplikasyon kay dili motan-aw sa pagmamatuod sa ID sa tiggamit kay naay katungod sa pagbasa, unya kini mahimong magpakita sa datos ngadto sa tiggamit nga dili makita sa tiggamitay.
+If the application does not check that the authenticated user ID has read rights, then it could display data to the user that the user should not see.
 
 Dili Sakto nga Datos na Pagmamatuod kay labaw pa sa komon kaysa sa Katungdanan na Pagmamatuod tungod kay ang mga programmer kay kasagaran adunay kompleto nga kahibalo sa aplikasyon na katuyoan, pero dili kini permanente na adunay kumpleto na pagmapa sa tanan na datos na ang aplikasyon kay mo-access. Mga mga programmer kay kasagaran adunay hugot na kontrol sa function sa pagmatuod na mga mekanismo, apan pagsalig sa uban na mga sistema sama sa mga database nga nagbuhat ug datos na pagmatuod.</desc>
 	<solution>Mga hugna: Arkitektura ug Disenyo; Operasyon
@@ -39,7 +39,7 @@ Mahimong pag-amping ug maayo sa pagdumala sa pagpahimtang, pagdumala, ug pagguni
 
 Hugna: Arkitektura ug Disenyo
 Siguroduha nga agnay na compartmentalization kay gitukod ngadto sa sistema sa disenyo ug nga ang compartmentalization nagsilbi nga tugotan ug dugang pagpalig-on sa pagpahigayon sa pribilehiyo nga pagbulag. Ang mga arkitekto ug mga tigdesinyo kay kinahanglan nga mosalig sa prinsipyo sa labing gamay nga pribilehiyo sa pagdesisyon kung kini tukma nga gamiton ug aron ihulog ang mga pribilehiyo sa sistema.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Authorization</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/284.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/285.html</reference>
 </vuln_item_wasc_2>
@@ -74,7 +74,6 @@ Pag-amping usab sa pag-asoy para sa 32-bit, 64-bit, ug uban pang potensyal nga k
 
 Hugna: Pagpatuman
 Susiha ang compiler na mga pasidaan sa pag-ayo ug pagwagtang sa kalagmitan sa seguridad nga mga problema, sama sa gipirmahan / sa wala gipirmahan nga dili pareha. Bisan kon ang kahuyang panagsa ra nga mapahimuslan, ng usa ka kapakyasan mahimong modala ngadto sa pagkompromiso sa tibuok nga sistema.</solution>
-	<reference>http://projects.webappsec.org/Integer-Overflows</reference>
 	<reference>https://cwe.mitre.org/data/definitions/190.html</reference>
 </vuln_item_wasc_3>
 
@@ -122,7 +121,7 @@ Kung imong gamiton ang industriya nga giaprobahang mga teknik, kinahanglan nimo 
 Bahin: Pagpatuman
 Gamita ang pagpangalan sa mga kombensiyon ug kusog sa mga matang sa pagbuhat ug sayon nga lugar kung sensitibo ang datos nga gigamit. Kung nagbuhat ng mga istraktura, mga butang, o uban pa nga komplikado nga mga butang, gibulag ang sensitibo ug dili sensitibo nga datos nga kutob sa mahimo.
 Kini nagpasayon sa lugar nga mga dapit sa code na diin ang datos kay gigamit sa dili pag-encrypt.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Transport-Layer-Protection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/311.html</reference>
 </vuln_item_wasc_4>
 
@@ -160,7 +159,7 @@ Kining kamahinungdanon nga nagpaubos sa kahigayunan sa usa ka tig-atake nga maka
 Mga Bahin: Arkitektura ug Disenyo: Pagpatuman
 Sabta na ang tanan na potensyal na mga lugar nga diin dili masaligan na mga pagpasulod kay makasulod kini sa imong software: mga parameter o mga argumento, mga cookie, ug uban pa nga mabasa sa network, environment na mga variable, mga reverse DNS nga lookup, mga resulta sa query, mga hangyo sa mga header, URL nga mga komponent, e-mail, mga file, mga database, ug bisag unsang gawas nga mga sistema nga naghatag ug dayon sa aplikasyon. Hinumdomi kana nga mga gipangsulod kay mahimong makaangkon ug dili diretso pinaagi sa API nga mga tawag.
 Daghan na file nga pagsulod nga mga problema na mahitabo tungod ang tig-program magtuo nga ang piho nga mga gipangsulod kay dili na mausab, ilabi na ang mga cookie ug URL nga mga komponent.</solution>
-	<reference>http://projects.webappsec.org/Remote-File-Inclusion</reference>
+	<reference>https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.2-Testing_for_Remote_File_Inclusion</reference>
 	<reference>https://cwe.mitre.org/data/definitions/98.html</reference>
 </vuln_item_wasc_5>
 
@@ -182,7 +181,7 @@ Bahin: Pagpatuman
 Siguroha nga ang tanan nga format string na mga kalihokan kay nagpasa ug usa ka static na string nga dili makontrol sa usa ka tiggamit ug nga ang tukmang numero sa mga argumento kay kanunay nga gipadala ngadto nianang buluhatonon ug ingon man. Kon posible ang tanan, gamita ang kalihokan nga dili mosuporta sa %n na operator sa format na mga string.
 Pagtukod: Sunda ang mga pasidaan sa mga compiler ug mga linker, kay tungod sila mahimong nga moalerto kanimo sa dili saktong paggamit.
 </solution>
-	<reference>http://projects.webappsec.org/Format-String</reference>
+	<reference>https://owasp.org/www-community/attacks/Format_string_attack</reference>
 	<reference>https://cwe.mitre.org/data/definitions/134.html</reference>
 </vuln_item_wasc_6>
 
@@ -229,7 +228,7 @@ Hugna: Pagpatuman
 
 Ilisan ang wala sa linya nga nakopya nga mga gimbuhaton nga naay susama nga gamit mosuporta sa gitas-on sa mga argumento, sama sa strcpy uban sa strncpy. Paghimo niini kung sila kay dili magamit.
 </solution>
-	<reference>http://projects.webappsec.org/Buffer-Overflow</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/Buffer_Overflow</reference>
 	<reference>https://cwe.mitre.org/data/definitions/119.html</reference>
 </vuln_item_wasc_7>
 
@@ -267,7 +266,7 @@ Sa paghimo sa pagpasulod na pagbalido, hunahunaa ang tanan nga kalabutan sa mga 
 
 Ensure that you perform input validation at well-defined interfaces within the application. Kini makatabang sa pagpanalipod sa aplikasyon na bisan kon usa ka komponent kay gigamit pag-usab o pagbalhin sa ubang dapit.
 	</solution>
-	<reference>http://projects.webappsec.org/Cross-Site-Scripting</reference>
+	<reference>https://owasp.org/www-community/attacks/xss/</reference>
 	<reference>https://cwe.mitre.org/data/definitions/79.html</reference>
 </vuln_item_wasc_8>
 
@@ -303,7 +302,7 @@ Ayaw gamita ang GET na pamaagi para sa bisag unsa hangyo nga nag-aghat sa pagbag
 
 Bahin: Pagpatuman
 Tan-awa ang HTTP Referer nga header para matan-aw kung ang gihangko nga naggikan sa gilauman nga pahina. Kini kay mahimong makabungkag sa lehitimo nga katayuon, tungod kay ang mga tiggamit o mga proxy kay tinggali dili naka-disable sa pagpadala sa Referer para sa privacy nga mga rason.</solution>
-	<reference>http://projects.webappsec.org/Cross-Site-Request-Forgery</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/352.html</reference>
 </vuln_item_wasc_9>
 
@@ -331,7 +330,7 @@ Siguroha nga ang mga protocol kay adunay mga limitasyon sa gibutang ibabaw kanil
 
 Bahin: Pagpatuman
 Siguroha nga tanan nga mga kapakyasan sa gigahin na kapanguhaan kay nagbutang sa sistema na luwas nga postura.</solution>
-	<reference>http://projects.webappsec.org/Denial-of-Service</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/400.html</reference>
 </vuln_item_wasc_10>
 
@@ -352,7 +351,7 @@ Ang labing komon na type sa usa ka brute force na atake sa web na mga aplikasyon
 It is important that the techniques used to limit user access to the system be implemented properly in order to prevent abuses and negative side effects such as denial of service.
 
 Additionally consider migrating to password-less authentication mechanisms like passkeys.</solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11a>
 
 <vuln_items>wasc_11b</vuln_items>
@@ -363,7 +362,7 @@ Additionally consider migrating to password-less authentication mechanisms like 
 Sukad na ang HTTP kay usa ka stateless na protocol, aron pagmintinar ang estado na web na mga aplikasyon kay nagkinahanglan na siguruhon na ang sesyon na tig-tanaw kay nagpadala sa browser sa matag hangyo. Ang sesyon nga tig-tanaw kay pinaka komon na gitipigan sa HTTP cookie o URL. Gamit ang brute force na atake, ang tig-atake kay makatagna sa sesyon na tig-tanaw sa uban nga tiggamit. Mahimo kini nga ang tig-atake pagpakaaron-ingnon an ang tiggamit, pagkuha sa personal na impormasyon ug pagbuhat sa mga aksyon alang sa tiggamit.
 	</desc>
 	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11b>
 
 <vuln_items>wasc_11c</vuln_items>
@@ -376,7 +375,7 @@ Kung ang mga file naa sa sulod sa mga direktoryo ug nagserbisyo sa web server pe
 Usa ka brute force na atake kay naningkamot nga makit-an ang wala nakasumpay sa file pinaagi sa pag-access sa usa ka dako nga numero sa mga file. Ang listahan sa gipugos na mga pangalan sa file kay mahimong makuha gikan sa listahan sa nailhan na potensyal na mga file o base sa mga laing mga makita na mga file sa web site. Daghan na impormasyon sa brute forcing na mga direktoryo ug mga file kay makita sa nahilakip na kahuyang, nahibal-an na kapanguhaan nga dapit.
 	</desc>
 	<solution>Never rely on "security by obscurity" mechanisms to restrict access to sensitive files and directories on a web server. Implement appropriate access control measures if hosting sensitive information is required.</solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Forced_browsing</reference>
 </vuln_item_wasc_11c>
 
 <vuln_items>wasc_11d</vuln_items>
@@ -407,7 +406,7 @@ Phase: Operation
 Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
 
 </solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11d>
 
 <vuln_items>wasc_12</vuln_items>
@@ -418,14 +417,14 @@ Regularly monitor and review your security measures and adapt to evolving threat
 Text Lamang na Spoofing sa Sulod
 Usa ka komon pagduol sa pagusab-usab na pagtukod sa mga panid naglangkit sa lumalabay sa lawas o mga bahin sa kana nga mga panid gamit ang query string na bili. Sa pagduol niini ay usa ka komon sa mga sayop na mga panid, o mga site nga nagahatag ug istorya o mga balita sa mga gipangsulod. Ang sulod nga bungat sa parameter kay sa ulahi na makita sa panid para paghatag sa sulod para sa panid.
  
-Markup Reflected na Spoofing sa Sulod. For example, the source location of a frame <frame src="http://foo.example/file.html"/>) could be specified by a URL parameter value. (http://foo.example/page?frame_src=http://foo.example/file.html). Ang usa ka tig-atake kay mahimong makailis sa "frame_src" na parameter na bili nga anaay "frame_src=http://attacker.example/spoof.html". Dili pareha sa mga redirector, kon ang resulta sa web page kay naggahatag sa browser location bar kay dayag na nagpabilin ubos sa tiggamit na gilauman na domain (foo.example), pero ang langyaw na datos (attacker.example) kay gitabangan pinaagi sa lehitimong sulod.
+Markup Reflected na Spoofing sa Sulod. For example, the source location of a frame <frame src="https://foo.example/file.html"/>) could be specified by a URL parameter value. (https://foo.example/page?frame_src=https://foo.example/file.html). An attacker may be able to replace the "frame_src" parameter value with "frame_src=https://attacker.example/spoof.html". Dili pareha sa mga redirector, kon ang resulta sa web page kay naggahatag sa browser location bar kay dayag na nagpabilin ubos sa tiggamit na gilauman na domain (foo.example), pero ang langyaw na datos (attacker.example) kay gitabangan pinaagi sa lehitimong sulod.
 
-Ilabi na ang gihimo na mga link kay mahimong mapadala ngadto sa usa ka tiggamit gamit ang e-mail, paspas nga mga mensahe, nahibilin sa gipang-post sa bulletin board, o nagpugos sa mga tiggamit pinaagi ka sa usa ka Cross-site Scripting na pag-atake. Kung ang tig-atake kay makadawat sa usa ka tiggamit nga mobisita sa usa ka web page na gitudlo pinaagi sa ilang malisyosong URL, ang tiggamit kay motuo siya na nagtan-aw ug tunuod na sulod gika sa usa ka lokasyon kon dili siya. Ang mga tiggamit lay hingpit na mosalig sa naka-spoof na sulod na sukad ang lokasyon sa browser kay nagpakita ug http://foo.example, na sa pagkatinuod ang nasa ubos na HTML frame kay naghisgot sa http://attacker.example.
+Ilabi na ang gihimo na mga link kay mahimong mapadala ngadto sa usa ka tiggamit gamit ang e-mail, paspas nga mga mensahe, nahibilin sa gipang-post sa bulletin board, o nagpugos sa mga tiggamit pinaagi ka sa usa ka Cross-site Scripting na pag-atake. Kung ang tig-atake kay makadawat sa usa ka tiggamit nga mobisita sa usa ka web page na gitudlo pinaagi sa ilang malisyosong URL, ang tiggamit kay motuo siya na nagtan-aw ug tunuod na sulod gika sa usa ka lokasyon kon dili siya. Users will implicitly trust the spoofed content since the browser location bar displays https://foo.example, when in fact the underlying HTML frame is referencing https://attacker.example.
 
 Kini nga atake kay nagpahimulos sa pagsalig nga relasyon nga gitukod tali sa tiggamit ug sa web site. Ang teknik kay gigamit sa paghimo ug mga peke nga mga web page lakip na ang login na mga form, mga defacement, mga bakak na gipanggawas sa press, ug uban pa.
 	</desc>
 	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
-	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
+	<reference>https://owasp.org/www-community/attacks/Content_Spoofing</reference>
 </vuln_item_wasc_12>
 
 <vuln_items>wasc_13</vuln_items>
@@ -439,7 +438,6 @@ Mga numero sa software bersyon ug verbose na sayop na mga mensahe (sama sa ASP.N
 
 Mga panid kay naghatag ug lainlaing mga tubag base sa pagkabalido sa datos na mahimo usab nga magdala sa Impormasyon na Pagka-awas; ilabina na kon ang datos kay giisip na kompidensyal na gipadayag isip resulta sa disenyo sa web aplikasyon. Mga pananglitan sa sensitibo nga datos naglakip (apan dili limitado sa): mga numero sa account, mga identifier sa tiggamitan (Numero sa lisensya sa driver, Numero sa passport, Mga numero sa Social Security, ug uban pa.) ug tiggamit-espesipiko na impormasyon (mga password, mga sesyon, ug mga address). Ang Pag-awas sa Impormasyon niini nga konteksto kay naghisgot sa pagkaladlad sa yano nga datos sa gumagamit nga giisip na kompidensyal, o sekreto, nga dili dapat kinahanglan ibutyag sa plain na pagtan-aw, na bisan ang tiggamit. Ang mga numero sa credit card ug uban pa na hilabihan nga gikontrol nga kasayuran kay maoy pangunang mga panig-ingnan sa datos sa tiggamitan na nagkinahanglan ug gugang na pagprotektar gikan sa pagkaladlad o pag-awas na bisan pa ang tukmang pag-encrypt ug pagsulod sa mga kontrol na anaa nakabutang.</desc>
 	<solution>Pagpili sa imong sistema aron makabaton ug "luwas" nga mga lugar nga diin ang pagsalig na mga utlanan kay mahimong tin-aw nga paaagi nga mapaggawas. Ayaw tugota ang sensitibo nga datos sa paggawas sa pagsalig nga utlanan ug permanenteng mag-amping kung pag-interface gamit ang lawak sa gawas sa luwas nga lugar.</solution>
-	<reference>http://projects.webappsec.org/Information-Leakage</reference>
 	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
@@ -451,8 +449,13 @@ Mga panid kay naghatag ug lainlaing mga tubag base sa pagkabalido sa datos na ma
 Ang mga server kay mahimong maglakip ug inila nga default na mga account ug mga password. Pagpakyas sa hingpit na pagkagapos o pagmagahi sa server kay mahimong mobiya nga dili angay na ipagtakda sa file ug direktoryo na mga pagtugot. Mga sayop na mga kumpigurasyon sa SSL na mga sertipiko ug mga pag-encrypt na setting, ang paggamit sa default na mga sertipiko, ug dili sakto na pagmatuod nga pagpatuman uban sa gawas nga mga sistema na mahimong makakomprimiso sa confidentiality sa impormasyon.
 
 Verbose ug informative na sayop na mga mensahe kay mahimong moresulta sa pagkawala sa datos, ug ang impormasyon kay gipadayag kay mahimong magamit sa paghimo sa sunod na lebel sa pag-atake. Ang dili sakto nga mga kumpigurasyon sa server software kay mahimong motugot sa direktoryo na pag-index ug pag-atake sa agianan na traversal.</desc>
-	<solution/>
-	<reference>http://projects.webappsec.org/Server-Misconfiguration</reference>
+	<solution>
+    * Don't use default credentials. Replace all default usernames and passwords with strong and unique credentials. Periodically update them.
+    * Implement an appropriate error message handling strategy that doesn't leak sensitive and debug information.
+    * Ensure that administrative functions are not accessible to unauthorized users. Implement strong authentication and authorization mechanisms.
+    * Follow the best practices and security guidelines for your specific server.
+   </solution>
+	<reference>https://owasp.org/www-project-mobile-top-10/2023-risks/m8-security-misconfiguration</reference>
 </vuln_item_wasc_14>
 
 <vuln_items>wasc_15</vuln_items>
@@ -461,16 +464,20 @@ Verbose ug informative na sayop na mga mensahe kay mahimong moresulta sa pagkawa
 	<desc>Ang dili sakto nga kumpigurasyon sa aplikasyon na mga atake kay nagpahimulos sa kumpigurasyon na pagkahuyang na makita sa web na mga aplikasyon. Daghan nga mga aplikasyon kay moabot uban sa wala kinahanglana ug dili luwas na mga bahin, sana sa pag-debug ug QA sa mga bahin, nga nakahimo pinaagi sa default. Kini nga mga bahin kay mahimong maghatag ug usa ka paaagi sa ug ka hacker para i-bypass ang pagkatinuod nga mga pamaagi ug makaangkon ug access para sa sensitibo na impormasyon, tingali uban ang taas nga mga pribilehiyo.
 
 Mao usab, ang default na mga installation kay mahimong maglakip sa ilado na mga username ug mga password, mga account na naka hard code backdoor, espesyal access na mga mekanismo, ug dili sakto na mga pagtugot na gibutang para sa mga file na makasulod gamit sa mga web server. Default na mga sample kay mahimong ma-access sa produksyon na mga environment. Base sa aplikasyon na configurasyon na mga file na dili maayo pagkatrangka kay mahimong mopadayag sa tin-aw nga teksto na koneksyon na mga string ngadto sa database, ug ang default na mga string sa configurasyon na mga file kay mahimong wala naka-set ug seguridad sa hunahuna. Tanan niini nga dili sakto nga configurasyon kay mopadulong sa dili awtorisado na access ngadto sa sensitibo na impormasyon.</desc>
-	<solution/>
-	<reference>http://projects.webappsec.org/Application-Misconfiguration</reference>
+	<solution>
+    * Ensure that debug and QA features are deactivated.
+    * Ensure the error messages doesn't leak sensitive and debug information.
+    * Follow the best practices and security guidelines for your specific application tech stack.
+	</solution>
+	<reference>https://cwe.mitre.org/data/definitions/16.html</reference>
 </vuln_item_wasc_15>
 
 <vuln_items>wasc_16</vuln_items>
 <vuln_item_wasc_16>
 	<alert>Direktoryo sa Pag-index</alert>
-	<desc>Usa ka awtomatiko na direktoryo na paglista/pagindex sa usa ka web server na function na naglista sa tanan nga mga file na naa sa sulod sa gipangayo nga direktoryo kung ang normal base na file (index.html/home.html/default.htm/default.asp/default.aspx/index.php) kay wala diha. Sa dihang ang usa ka tiggamit kay hangyo sa pangunahing panid sa usa ka web site, sila kasagaran nagsulat sa usa ka URL sama sa: http://www.example.com/directory1/ - paggamit sa pangalan sa domain ug pagwalay labot sa usa ka espesipiko na file. Ang web server kay nagproseso sa hangyo niini ug nagpangita sa dokumento na root sa direktoryo para sa default na pangalan sa file ug nagpdala sa panid ngadto sa kliyente. Kung kining panid kay wala dinhi, ang web server kay naghinayhinay ug isyu sa usa ka listahan sa direktoryo ug nagpadala sa output ngadto sa kliyente. Pagkatinuod, kini kay pareha sa paghatag ug "ls" (Unix) o "dir" (Windows) na sugo sa sulod sa kini nga direktoryo ug nagpakita ug mga resulta sa HTML na form. Gikan sa usa ka pag-atake ug panglantaw sa countermeasure, kini kay importante na makaamgo nianang wala'y labot na mga listahan sa direktoryo mahimong posible tungod sa pagkahuyang sa software (gihisgutan sa panig-ingnan sa ubos na seksyon) inubanan sa usa ka piho nga paghangyo sa web.</desc>
+	<desc>Usa ka awtomatiko na direktoryo na paglista/pagindex sa usa ka web server na function na naglista sa tanan nga mga file na naa sa sulod sa gipangayo nga direktoryo kung ang normal base na file (index.html/home.html/default.htm/default.asp/default.aspx/index.php) kay wala diha. When a user requests the main page of a web site, they normally type in a URL such as: https://www.example.com/directory1/ - using the domain name and excluding a specific file. Ang web server kay nagproseso sa hangyo niini ug nagpangita sa dokumento na root sa direktoryo para sa default na pangalan sa file ug nagpdala sa panid ngadto sa kliyente. Kung kining panid kay wala dinhi, ang web server kay naghinayhinay ug isyu sa usa ka listahan sa direktoryo ug nagpadala sa output ngadto sa kliyente. Pagkatinuod, kini kay pareha sa paghatag ug "ls" (Unix) o "dir" (Windows) na sugo sa sulod sa kini nga direktoryo ug nagpakita ug mga resulta sa HTML na form. Gikan sa usa ka pag-atake ug panglantaw sa countermeasure, kini kay importante na makaamgo nianang wala'y labot na mga listahan sa direktoryo mahimong posible tungod sa pagkahuyang sa software (gihisgutan sa panig-ingnan sa ubos na seksyon) inubanan sa usa ka piho nga paghangyo sa web.</desc>
 	<solution>Mga rekomendasyon kay naglakip sa pagpugong sa pag-access sa mga importante na mga direktoryo o mga file pinaagi sa pagsagop sa panginahanglan nga mahibal-an na mga kinahanglanon para sa duha na dokumento ug server root, ug pagpatay sa mga bahin sama sa Awtomatik na Paglista sa mga Direktoryo nga mahimong ibutyag sa pribado nga mga file ug maghatag ug impormasyon nga mahimo gamiton sa usa ka tig-atake sa paghimo niini o pagdumala ug usa ka atake.</solution>
-	<reference>http://projects.webappsec.org/Directory-Indexing</reference>
+	<reference>https://owasp.org/www-community/attacks/Path_Traversal</reference>
 	<reference>https://cwe.mitre.org/data/definitions/548.html</reference>
 </vuln_item_wasc_16>
 
@@ -479,7 +486,7 @@ Mao usab, ang default na mga installation kay mahimong maglakip sa ilado na mga 
 	<alert>Dili sakto na Filesystem na mga Pagtugot</alert>
 	<desc>Ang dili sakto nga filesystem na mga pagtugot kay usa ka hulga sa pagkakompidensyal, integridad ug pagkabaton ug usa ka web aplikasyon. Ang problema motindog kon sayop na filesystem na mga permiso kay natakda sa mga file, mga folder, ug mga symbolic link. Kun kanus-a ang dili sakto nga mga permiso kay gitakda, ang usa ka tig-atake kay mamahimong maka-access sa gilimitahan nga mga file o mga direktoryo ug pagbag-o o tangtangon ang ilang mga sulod. Pananglitan, kon ang usa ka wala mailhi nga tiggamit na account kay adunay pagsulat na permiso sa usa ka file, unya ang usa ka tig-atake kay makabag-o sa mga sulod sa file na nag-impluwensyasa web aplikasyon sa dili gusto nga mga pamaagi. Ang usa ka tig-atake kay mahimo usab na pahimuslan ang dili sakto na mga symlink para sa pagdako sa ilang mga pribilehiyo ug/o access sa dili awtorisado nga mga file; pananglitan, ang usa ka symlink nga nagtudlo sa usa ka direktoryo sa gawas sa web root.</desc>
 	<solution>Very carefully manage the setting, management and handling of permissions. Tin-aw nga pagdumala sa mga trust zone sa software.</solution>
-	<reference>http://projects.webappsec.org/Improper-Filesystem-Permissions</reference>
+	<reference>https://owasp.org/www-community/Broken_Access_Control</reference>
 	<reference>https://cwe.mitre.org/data/definitions/280.html</reference>
 </vuln_item_wasc_17>
 
@@ -490,7 +497,8 @@ Mao usab, ang default na mga installation kay mahimong maglakip sa ilado na mga 
 
 Daghan na mga web site kay gidesinyo sa pagpamatuod ug pagsubay sa usa ka tiggamit kung ang komunikasyon kay una natukod. Para himoon kini, ang mga tiggamit kay kailangan na pamatud-an ang iyang pagkatawo sa web site, na kasagaran ang pagbutang sa username/password (mga kredensyal) na mga kumbinasyon. Inay nga moagi sa pagpasa sa kini nga mga kompidensyal na mga kredensyal na pabalikbalik sa matag transaksiyon, mga web site kay makahimo ug usa ka talagsaong "sesyon ID" para ilhon ang sesyon sa tiggamit ingon nga tinuod. Pagkahuman na komunikasyon tali sa tiggamit ug sa web site kay naka-tag niini ug sesyon ID ingon nga "pagmatuod" sa gipamatud-an na sesyon. Kung ang tig-atake kay mahibaw-an o matag-anan ang sesyon ID sa lain nga tiggamit, malimbongon na aktibidad kay posible.</desc>
 	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
-	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
+	<reference>https://owasp.org/www-community/attacks/Session_Prediction</reference>
 </vuln_item_wasc_18>
 
 <vuln_items>wasc_19</vuln_items>
@@ -525,7 +533,8 @@ When constructing SQL query strings, use stringent allow lists that limit the ch
 Timan-i nga angay ang output nga pag-encode, pag-ikyas ug pag-quote sa pinaka epektibo nga solusyon para pugngan ang SQL Injection, bisan pa sa pag-validate sa input mahimong mohatag og pipila ka depende sa nasa ilalom. Tungod kini epektibo sa paglimitar sa unsa ang gilauman sa output. Pag-validate sa sa pagpasulod kay dili permanente nga SQL injection, ilabi na kon gikinahanglan ug suporta sa usa ka libre nga porma sa teksyo sa mga field nga mahimong adunay usa ka na arbitraty sa mga karakter. Pananglitan, ang pangalan na "O'Reilly" na lagmit moagi sa pag-balido nga lakang, kay kini dili komon sa apelyedo sa English language. Bisan pa ni, dili kini mamahimong direkta nga pagpagsal-ot ngadto sa database tungod kay kini anaay sulod na "'" apostrophe na karakter nga gikinahanglan na mo-ikyas o kon dili nagunitan. Sa kaso niini, paghukas sa apostrophe kay mahimong makunhoran ang risgo sa SQL ina injection, apan kini naggahimo ug dili sakto nga kinaiya tungod kay sayop ang pangalan na madala unta.
 
 Kung mahimo, kini mahimo nga labing luwas sa pagdili pagtugot sa meta-mga karakter sa kinatibuk-an, na hinoon sa pag-ikyas kanila. Kini kay paghatag og pipila ka mga depensa sa lawom. Paghuman ang datos nasudlan ug datos sa database, sa ulahi nga mga proseso kay mahimong magpasagad sa pag-ikyas sa meta-na mga karakter sa dili pa mogamit, ug ikaw kay posible na walay kontrol sa ibabaw niana nga mga proseso.</solution>
-	<reference>http://projects.webappsec.org/SQL-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/SQL_Injection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html</reference>
 </vuln_item_wasc_19>
 
 <vuln_items>wasc_20</vuln_items>
@@ -567,7 +576,8 @@ Mga gipasulod kay dapat na-decode ug ma-canonicalized ang usa ka aplikasyon na k
 Hunahunaa ang pagbuhat sa nagbalikbalik na canonicalization hangtod na ang imong gipasulod kay dili mausab bisan unsa pa. Kini ay naglikay sa doble nga pag-decode ug susama nga mga sitwasyon, apan kini mahimo nga wala tuyoa mausab ang mga gipangsulod nga gitugutan nga maglangkob ug sakto nga pag-encode sa delikado nga sulod.
 
 Kung kanus-a pag pagbaylobaylo ug mga datos tali sa mga komponent, siguradoha na ang duha ka mga komponent kay naggamit ug pareha nga karakter nga pag-encode. Siguradoha na ang sakto nga pag-encode kay gipadapat sa matag interface. Tin-aw nga pagtakda sa pag-encode na imong ginagamit sa matag higayon na ang protocol nagtugot kanimo nga buhaton kini.</solution>
-	<reference>http://projects.webappsec.org/Improper-Input-Handling</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/Improper_Data_Validation</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/89.html</reference>
 </vuln_item_wasc_20>
 
@@ -598,8 +608,9 @@ Ang web aplikasyon na functionality nga mao ang kanunay nga usa ka target para s
 7. **Monitoring and Logging:** Regularly monitor and log user activities to identify and respond to unusual patterns indicative of automation.
 
 A combination of these measures is often more effective in preventing automated attacks.</solution>
-	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
+	<reference>https://owasp.org/www-project-automated-threats-to-web-applications/</reference>
 	<reference>https://cwe.mitre.org/data/definitions/116.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/799.html</reference>
 </vuln_item_wasc_21>
 
 <vuln_items>wasc_22</vuln_items>
@@ -633,7 +644,7 @@ Sa daghang mga kaso, ang input na balidasyon kay mahimong usa ka importanteng es
 Gamita ang input na balidasyon ingon nga usa ka pagdepensa-sa kinatibuk-an sa pagsukod sa pagpakunhod sa kalagmitan sa output na pag-encode na mga sayop (tan-awa ang CWE-20).
 
 Kung kanus-a pag pagbaylobaylo ug mga datos tali sa mga komponent, siguradoha na ang duha ka mga komponent kay naggamit ug pareha nga karakter nga pag-encode. Siguradoha na ang sakto nga pag-encode kay gipadapat sa matag interface. Tin-aw nga pagtakda sa pag-encode na imong ginagamit sa matag higayon na ang protocol nagtugot kanimo nga buhaton kini.</solution>
-	<reference>http://projects.webappsec.org/Improper-Output-Handling</reference>
+	<reference>https://owasp.org/www-project-proactive-controls/v3/en/c4-encode-escape-data</reference>
 </vuln_item_wasc_22>
 
 <vuln_items>wasc_23</vuln_items>
@@ -641,7 +652,9 @@ Kung kanus-a pag pagbaylobaylo ug mga datos tali sa mga komponent, siguradoha na
 	<alert>XML Injection</alert>
 	<desc>Ang XML na Injection kay usa ka atake na teknik na gigamit para manipular o pagkompromiso sa lohika sa usa ka XML na aplikasyon o serbisyo. Ang injection kay wala tuyoa nga XML na sulod ug/o na mga istraktura padung sa XML na mensahe nga mahimong makausab sa tuyo na lohika sa aplikasyon. Dugang pa, ang XML na injection kay hinungdan sa pagpasulod sa mga malisyoso na mga sulod padung sa pagkaresulta sa mensahe/dokumento.</desc>
 	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
-	<reference>http://projects.webappsec.org/XML-Injection</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_Security_Cheat_Sheet.html</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html</reference>
 </vuln_item_wasc_23>
 
 <vuln_items>wasc_24</vuln_items>
@@ -651,8 +664,9 @@ Kung kanus-a pag pagbaylobaylo ug mga datos tali sa mga komponent, siguradoha na
 	<solution>Avoid using CRLF as a special sequence.
 
 Appropriately filter or quote CRLF sequences in user-controlled input.</solution>
-	<reference>http://projects.webappsec.org/HTTP-Request-Splitting</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/CRLF_Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/93.html</reference>
+	<reference>https://portswigger.net/web-security/request-smuggling</reference>
 </vuln_item_wasc_24>
 
 <vuln_items>wasc_25</vuln_items>
@@ -667,7 +681,7 @@ Ang esensya sa HTTP na Tubag sa Pagkabuwag sa abilidad sa tig-atake para makahat
 
 Ang HTTP na Tubag sa Pagkabulag nga mga atake kay mahitabo diin ang server na nag script nag-embed sa datos sa user sa HTTP na tubag sa mga header. Kini kasagaran mahitabo kung ang script nag-embed ug datos sa tiggamit sa giusab nga URL sa usa ka giusab na tubag (HTTP status code 3xxx), o diin ang script kay nag-embed sa datos sa tiggamitan sa usa ka bili sa cookie o pangalan na kon ang tubag kay nagtakda sa usa ka cookie.</desc>
 	<solution>Pagbuhat sa HTTP na mga header pag-ayo, paglikaw sa gigamit na dili naka-balido na gipangsulod na datos.</solution>
-	<reference>http://projects.webappsec.org/HTTP-Response-Splitting</reference>
+	<reference>https://owasp.org/www-community/attacks/HTTP_Response_Splitting</reference>
 	<reference>https://cwe.mitre.org/data/definitions/113.html</reference>
 </vuln_item_wasc_25>
 
@@ -682,7 +696,6 @@ Gamita lamang ang SSL na komunikasyon.
 Pag-undang sa sesyon sa kliyente human sa matag usa ka hangyo.
 
 Baliha ang tanang panid ngadto sa dili makacache.</solution>
-	<reference>http://projects.webappsec.org/HTTP-Request-Smuggling</reference>
 	<reference>https://cwe.mitre.org/data/definitions/444.html</reference>
 </vuln_item_wasc_26>
 
@@ -695,8 +708,24 @@ Usa ka gamit para sa kini nga teknik kay ang pagdugang sa batakang HTTP na tubag
 
 Ang HTTP na tubag sa pagpayuhot kay makahimo paggamit sa HTTP na tubag na pareho sa pagpayuhot na mga teknik para magpahimulos sa mga kalainan tali sa kung unsa ang anti-HTTP na Tubag sa Pagpayuhot na mekanismo (o usa ka proxy server) na hunahunaa na mahimong HTTP tubag na stream, ug ang tubag na stream kay ingon nga gisusi sa usa ka proxy server (o usa ka browser). Busa, samtang usa ka anti-HTTP na tubag sa pagkabulag na mekanismo kay mahimong hunahunaon ang usa ka partikular na tubag na stream na dili makadaot (solo na HTTP na tubag), usa ka proxy/browser kay mahimo pa nga i-parse kini sa duha ka HTTP na mga tubag, ug busa mahimong dali nga mahitabo sa tanan na mga mahitabo sa orihinal na HTTP na tubag sa pagkabulag na teknik (sa unang paggamit nga kaso) o pag-ayo sa panid sa pag-spoof (sa ikaduha nga kaso). Pananglitan, daghang anti-HTTP na tubag sa pagkabulang na mga mekanismo na gigamit sa daghan aplikasyon na mga makina nga nagdumili sa aplikasyon sa pagpasulod sa header nga naa'y sulod na CR+LF sa tubag. Apan usa ka tig-atake kay mamahimong mopugos sa aplikasyon sa pagsal-ot sa usa ka header nga adunay sulod na CR, sa ingon wala na ang depensa nga mekanismo. Sa daghan na mga proxy na server nga mahimo pa gihapon ang pagtagad sa CR (lamang) sa usa ka header (ug nagtubag) sa nagabuwag, ug ingon nga ang kumbinasyon sa web server ug proxy server kay sa gihapon mahuyang sa usa ka atake na naghilo sa cache sa proxy.
 	</desc>
-	<solution/>
-	<reference>http://projects.webappsec.org/HTTP-Response-Smuggling</reference>
+	<solution>Use HTTP/2 for backend connections. While HTTP/2 doesn't entirely prevent request smuggling, it does introduce certain changes that makes it difficult for attacker to exploit this.
+
+		Utilize a Web Application Firewall (WAF) that has built-in mitigation to detect abnormal requests/responses.
+
+		Whenever a HTTP message contains both Transfer-Encoding and Content-Length either prioritize the Transfer-Encoding header or just completely reject the HTTP message. Make this behavior consistent in the back-end server and any intermediary HTTP agents.
+
+		Disallow Malformed/Invalid Transfer-Encoding Headers used in obfuscation, such as:
+			* Headers with no space before the value “chunked”
+			* Headers with extra spaces
+			* Headers beginning with trailing characters
+			* Headers providing a value “chunk” instead of “chunked” (the server normalizes this as chunked encoding)
+			* Headers with multiple spaces before the value “chunked”
+			* Headers with quoted values (whether single or double quotations)
+			* Headers with CRLF characters before the value “chunked”
+			* Values with invalid characters
+	</solution>
+	<reference>https://owasp.org/www-community/attacks/HTTP_Response_Splitting</reference>
+	<reference>https://capec.mitre.org/data/definitions/273.html</reference>
 </vuln_item_wasc_27>
 
 <vuln_items>wasc_28</vuln_items>
@@ -716,7 +745,7 @@ Gamita ug paghingalan ang usa ka kusgan na output na pag-encode (sama sa ISO 885
 Do not rely exclusively on deny list validation to detect malicious input or to encode output. Aduna sad nga daghan na mga pamaagi sa pag-encode sa karakter; nga imong nakalimtan ang pipila ka mga variant.
 
 Mga gipasulod kay dapat na-decode ug ma-canonicalized ang usa ka aplikasyon na kasamtangan nga internal na representasyon bag-o naghimo ug pagbalido. Siguradoha kanang imong aplikasyon kay dili magatuyo ug pag-decode sa pareho nga gipasulod ug kaduha. Such errors could be used to bypass allow list schemes by introducing dangerous inputs after they have been checked.</solution>
-	<reference>http://projects.webappsec.org/Null-Byte-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/Embedding_Null_Code</reference>
 	<reference>https://cwe.mitre.org/data/definitions/158.html</reference>
 </vuln_item_wasc_28>
 
@@ -729,7 +758,8 @@ Ang Lightweight Directory Access Protocol (LDAP) kay usa ka bukas nga sukaranan 
 
 Kung ang usa ka web aplikasyon kay mapakyas sa sakto na pag-sanitize sa gisulod sa tiggamitan, kini kay posible para sa usa ka tig-atake pahuman sa paghimo sa LDAP na pamahayag. Kung ang usa ka tig-atake kay mohimo ug pagusab sa usa ka LDAP na pamahayag, ang proseso kay modagan pareho ug mga pagtugot ingon nga sangkap na magpadagan sa sugo. (pan. Database server, Web application server, Web server, ug uban pa). Mahimo kini nga hinungdan sa grabe na problema sa seguridad na kung ang mga pagtugot kay gitugotan ug mga katungod sa query, pagbag-o o pagkuha ug bisag unsa sa sulod sa LDAP tree. Ang pareho na abante na pagpahimulos na mga teknik na magamit sa SQL Injection kay usab nga managsama sa gipadapat sa LDAP Injection.</desc>
 	<solution>Hunahunaa nga ang tanan nga input kay malisyoso. Use an appropriate combination of black lists and white lists to neutralize LDAP syntax from user-controlled input.</solution>
-	<reference>http://projects.webappsec.org/LDAP-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/LDAP_Injection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/LDAP_Injection_Prevention_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/90.html</reference>
 </vuln_item_wasc_29>
 
@@ -752,7 +782,6 @@ Hunahunaa ang pagbuhat sa nagbalikbalik na canonicalization hangtod na ang imong
 Kung kanus-a pag pagbaylobaylo ug mga datos tali sa mga komponent, siguradoha na ang duha ka mga komponent kay naggamit ug pareha nga karakter nga pag-encode. Siguradoha na ang sakto nga pag-encode kay gipadapat sa matag interface. Tin-aw nga pagtakda sa pag-encode na imong ginagamit sa matag higayon na ang protocol nagtugot kanimo nga buhaton kini.
 
 Kung ang imong aplikasyon kay nakighiusa sa datos gikan sa daghan nga mga tinubdan, para lang makabuhat sa balidasyon paghuman sa mga tinubdan na gihiusa. Ang indibidwal nga datos nga mga elemento kay makapasar sa balidasyon na lakang apan naglapas sa gituyo na mga pagdili ug human na sila adunay gihiusa.</solution>
-	<reference>http://projects.webappsec.org/Mail-Command-Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/88.html</reference>
 </vuln_item_wasc_30>
 
@@ -792,7 +821,8 @@ When constructing OS command strings, use stringent allow lists that limit the c
 Timan-i nga angay ang output nga pag-encode, pag-ikyas, o pag-quote sa pinaka epektibo na solusyon para mapugngan ang OS command na injection, bisan pa sa pagbalido sa input mahimong mohatag ug pipila nga dependa sa gilaymon. Tungod kini epektibo sa paglimitar sa unsa ang gilauman sa output. Ang input na pagbalido kay dili permanent nga OS command na injection, ilabi na kon ang gikinahanglan ug suporta sa usa ka libre na porma sa teksto sa mga field na mahimong adunay usa ka arbitrary na mga karakter. Pananglitan, kung nagpatawag ug usa ka mail na program, kinahanglan nimo na itugot ang hilisgutan para adunay sulod na dili-delikado nga mga input sama sa ";" ug ">" na mga karakter, nga gikinahanglan na makaespapo o kon dili pagdumala. Sa kaso niini, paghukas sa karakter kay mahimong makunhoran ang risgo sa OS command na injection, apan kini naggahimo ug dili sakto nga kinaiya tungod sa subject field na mahimo na dili maka rekord ingon nga gituyo sa tiggamit. Kini daw kay usa ka gamay nga kahasol, apan mahimo kini ug importante kung ang programa mosalig sa nindot nga istraktura sa suject na mga linya aron molabay sa mga mensahe para sa uban na mga komponent.
 
 Bisan kung ikaw nakahimo ug sayop sa imong pagbalido (sama sa paglimot sa usa gikan sa 100 ka mga input na mga field), angay na encoding kay mahimo gihapon moprotektar sa imoha gikan sa injection based na mga atake. Hangtod na kini dili mahuman sa pagsubay, input na pagbalido kay usa gihapon ka mapuslanon nga pamaagi, kay tungod kini makakunhod ug maayo sa mga atake sa ubos, nagtugot sa imoha nga makita ang daghan nga mga atake, ug maghatag ug uban na mga benepisyo sa seguridad na sakto nga pag-encode nga dili sa imong address.</solution>
-	<reference>http://projects.webappsec.org/OS-Commanding</reference>
+	<reference>https://owasp.org/www-community/attacks/Command_Injection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/OS_Command_Injection_Defense_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/78.html</reference>
 </vuln_item_wasc_31>
 
@@ -803,13 +833,13 @@ Bisan kung ikaw nakahimo ug sayop sa imong pagbalido (sama sa paglimot sa usa gi
 
 Ang Routing na mga Detour kay usa ka matang sa "Tawo nga anaa sa Tunga" ang atake na diin ang mga Intermediate kay pwede maka reject o "gikawat" sa sensitibo nga ruta sa mga mensahe padung sa gawas na lugar. Ang Routing na impormasyon (mahimo man sa HTTP header o sa WS-Routing na header) kay pwede mausab sa en route para magtimaan sa routing na pwede matangtang gika sa header ug mensahe ingon niana ang pagdawat sa aplikasyon na wala ang maalamon na ang routing detour kay nahitabo. Ang header ug ang pagpasulod sa header na mga object kay kasagaran dili kaayo protektado kaysa sa mensahe; kini kay tungod sa kamatuoran nga ang header kay gigamit para madakpan ang tanan para sa metadata na mahitungod sa transaksyon sama sa pagkatinuod, routing, pag-format, schema, canonicalization, mga namespace, ug uban pa. Usab, daghan na mga proseso ang mahimong moapil sa pagdugang sa/pagproseso sa header sa usa ka XML na dokumento. Sa daghan nga mga implementasyon sa routing na impormasyon kay mahimo magagikan sa gawas na web na serbisyo (naggamit sa WS-Referral para sa pananglitan) na nagahatag ug espesipiko na routing para sa transakyon.
 
-Ang WS-Addressing kay usa ka bag-o na standard na naka-tala gammit ang W3C para mohatag ug routing na paggamit sa SOAP na mga mensahe. Isa sa hinungdan nga kalainan tali sa WS-Routing ug WS-Addressing kay mao ang WS-Addressing lamang ang nagahatag sa sunod na lugar sa ruta. Samtang gamay nga panukiduki ang nahimo ngadto sa susceptibility sa WS-Addressing hangtod sa Routing Detour na Atake, labing menos isa ka papel (tan-awa ang reperensiya #6 sa ubos) nagsugyot na ang WS-Addressing kay usa ka huyang sa Pag-Routing Detour ingon man.</desc>
+Ang WS-Addressing kay usa ka bag-o na standard na naka-tala gammit ang W3C para mohatag ug routing na paggamit sa SOAP na mga mensahe. Isa sa hinungdan nga kalainan tali sa WS-Routing ug WS-Addressing kay mao ang WS-Addressing lamang ang nagahatag sa sunod na lugar sa ruta. While little research has been done into the susceptibility of WS-Addressing to Routing Detour Attack, some research suggests that WS-Addressing is vulnerable to Routing Detour as well.</desc>
 	<solution>Kanunay nga hingpit ang pagmatuod sa duha na nagtapos sa bisag unsa nga komunikasyon na channel.
 
 Pagsugod sa prinsipyo sa paghuman sa paghusay.
 
 Usa ka sertipiko nga naglambo sa pagila sa usa ka cryptographic na yawe para sa pagpamatuod sa pagpakigsulti na partido. Kasagaran, ang sertipiko kay nikuha ug naka-encrypt na porma sa hash para mahibaw-an ang subject, ang pampubliko na yawe, ug ang impormasyon na sama sa panahon sa isyu o pagkahuman sa paggamit sa pribado na yawo sa naghatag. Ang sertipiko kay pwede mabalido sa pagsabut sa sertipiko nga adunay pampublikong yawe sa nagahatag. Tan-awa sad ang X.509 na sertipiko nga pirma na mga kadena ug ang PGP na sertipikasyon nga istruktura.</solution>
-	<reference>http://projects.webappsec.org/Routing-Detour</reference>
+	<reference>https://learn.microsoft.com/en-us/previous-versions/ms951244(v=msdn.10)</reference>
 	<reference>https://cwe.mitre.org/data/definitions/300.html</reference>
 </vuln_item_wasc_32>
 
@@ -845,7 +875,7 @@ Ang OS nga lebel nga mga pananglitan kay naglakip sa Unix chroot jail, AppArmor,
 
 Kini dili mahimo nga solusyon, ug kini lamang naglimit sa epekto sa operating system; ug uban pa sa imong aplikasyon kay mahimong magpasakop gihapon aron makompromiso.
 </solution>
-	<reference>http://projects.webappsec.org/Path-Traversal</reference>
+	<reference>https://owasp.org/www-community/attacks/Path_Traversal</reference>
 	<reference>https://cwe.mitre.org/data/definitions/22.html</reference>
 </vuln_item_wasc_33>
 
@@ -858,7 +888,7 @@ Kini dili lamang na pagtabang sa pag-ila sa site nga nawong nga mahimong mogiya 
 	<solution>Apply appropriate access control authorizations for each access to all restricted URLs, scripts or files.
 
 Consider using MVC based frameworks such as Struts.</solution>
-	<reference>http://projects.webappsec.org/Predictable-Resource-Location</reference>
+	<reference>https://owasp.org/www-community/attacks/Forced_browsing</reference>
 	<reference>https://cwe.mitre.org/data/definitions/425.html</reference>
 </vuln_item_wasc_34>
 
@@ -869,7 +899,7 @@ Consider using MVC based frameworks such as Struts.</solution>
 	<solution> Pagbuhat sa igo na pagpasulod na balidasyon batok sa bisan unsa nga bili na nagimpluwensya sa gidaghanon sa panumduman na gigahin. Ihubit ang angay na estratehiya para sa paggunit sa mga hangyo nga molapas sa utlanan, ug hunahunaa ang pag-suporta sa usa ka configurasyon na opsyon na aron ang tagdumala kay makainat sa gidaghanon sa panumduman na gamitonon kung kinahanglan.
 
 Padagana ang imong programa nga naggamit sa gihatag sa sistema na kahinguhaan para sa paglimitar sa panumduman. Mmahimo kini magpadayon ang programa para maguba o mogaas, apan ang epekto sa tanang sistema kay mapahinay.</solution>
-	<reference>http://projects.webappsec.org/SOAP-Array-Abuse</reference>
+	<reference>https://capec.mitre.org/data/definitions/256.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/789.html</reference>
 </vuln_item_wasc_35>
 
@@ -885,7 +915,7 @@ Kung ang usa ka tig-atake kay nagsumiter ug Server na bahin nga naglakip sa paha
 - Kini lamang kay gipagana ang SSI na mga direktiba na kinahanglan para sa kini nga panid ug dili pagpagana sa uban pa.
 - HTML na entidad na gi-encode sa tiggamitan na gihatag na datos sa dili pa pagpasa ngadto padulong sa panid nga adunay SSI na pagpadagan na mga pagtugot.
 - Gamita ang SUExec para makakuha ug panid na nagpadagan ingon nga tag-iya sa file inay sa user sa web server.</solution>
-	<reference>http://projects.webappsec.org/SSI-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/Server-Side_Includes_(SSI)_Injection</reference>
 </vuln_item_wasc_36>
 
 <vuln_items>wasc_37</vuln_items>
@@ -901,7 +931,9 @@ Sukwahi sa pagkuha sa usa ka sesyon ID sa mga tiggamit paghuman nakasulod sila s
 	<solution>Ang pag dili pagbalido sa bisag unsa na sesyon sa mga tigtan-aw sa dili pa ang awtorisado sa usa ka bag-o na sesyon sa tiggamit
 
 Para sa mga platform na sama sa ASP nga kay dili mohimo ug mga bili para sa sessionid na mga cookie, paggamit sa ikaduha na cookie. Niini nga pamaagi, pagbutang sa ikaduha nga cookie sa browser sa tiggamit ngadto sa usa ka panalagma na bili ug pagbutang sa sesyon na variable ngadto sa pareha na bili. Kung ang usa ka sesyon na variable ug ang cookie na bili kay dili gayud magkaparis, ayaw ibalido ang sesyon, ug pugsa ang tiggamit na mosulod pag-usab.</solution>
-	<reference>http://projects.webappsec.org/Session-Fixation</reference>
+	<reference>https://owasp.org/www-community/attacks/Session_fixation</reference>
+	<reference>https://owasp.org/www-community/controls/Session_Fixation_Protection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/384.html</reference>
 </vuln_item_wasc_37>
 
@@ -919,12 +951,12 @@ Gamita ang intermediate na pagsaway na panid na nagahatag sa tiggamitan ug tin-a
 
 Sa diha nga ang hugpong sa gipangdawat na mga object, sama sa mga filename o mga URL, kay limitado o nailhan, paghimo ug usa ka pagmapa na gikan sa usa ka natino na input na mga bili (sama sa numeric na mga ID) sa sa tinuod na mga filename o mga URL, ug pagsalikway sa tanan na uban na mga gipangsulod.
 
-Pananglitan, ang ID 1 kay mahimong magmapa sa "/login.asp" ug ID 2 na mahimong magmapa sa "http://www.example.com/". Mga butang sama sa ESAPI AccessReferenceMap kay naghatag niini nga kapasidad.
+For example, ID 1 could map to "/login.asp" and ID 2 could map to "https://www.example.com/". Mga butang sama sa ESAPI AccessReferenceMap kay naghatag niini nga kapasidad.
 
 Sabta na ang tanan na potensyal na mga lugar na diin dili masaligan na mga pagpasulod kay makasulod kini sa imong software: mga parameter o mga argumento, mga cookie, ug uban pa nga mabasa sa network, environment na mga variable, mga reserve DNS nga mga lookup, mga resulta sa query, mga hangyo sa mga header, URL na mga komponent, email, mga file, mga database, ug bisag unsang gawas nga mga sistema nga naghatag ug dayon sa aplikasyon. Hinumdomi kana nga mga gipangsulod kay mahimong makaangkon ug dili diretso pinaagi sa API nga mga tawag.
 
 Daghang abli nga gi-redirekta na mga problema ang mahitabo tungod kay ang tig-program magtuo na ang piho na mga gipasulod kay dili na mausab, sama sa mga cookie ug dili makita na porma na mga field.</solution>
-	<reference>http://projects.webappsec.org/URL-Redirector-Abuse</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/601.html</reference>
 </vuln_item_wasc_38>
 
@@ -937,7 +969,8 @@ Kung ang usa ka aplikasyon kay gagamit ug run-time XPath na query na gihimo, ang
 	<solution>Gamita ang parameterized na XPath na mga query (pan. gamita ang XQuery). Kini kay makatabang na mosigurado sa pagkabulag tali sa datos plane ug kontrol plane.
 
 Sakto nga pagbalido sa tiggamit na input. Gisalikway na datos kay angay, pag-filter na kung ang angay ug pag-ikyas kung angay. Siguroha nga ang gipasulod kay gamiton sa XPath na mga query kay luwas sa kana nga konteksto.</solution>
-	<reference>http://projects.webappsec.org/XPath-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/XPATH_Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/Blind_XPath_Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/643.html</reference>
 </vuln_item_wasc_39>
 
@@ -952,7 +985,8 @@ Ang "Pagdumala sa agos" kay nagtumong sa multi-step na mga proseso nga nagkinaha
 
 "Logic sa negosyo" kay nagtumong sa konteksto diin usa ka proseso kay padaganon ingon nga gidumala sa kinahanglanon sa negosyo. Pagpahimulos sa usa ka negosyo sa kahuyang sa lohika nga nanginahanglan ug kahibalo sa negosyo; kung walay kahibalo nga kinahanglanon sa pagpahimulos niini, dayon lagmit kini dili usa ka kulangan sa lohika sa negosyo. Tungod niini, kasagaran na pagsukod sa seguridad sama sa mga scan ug pagtan-aw sa code kay dili makakita sa unsa ang klase sa kahuyang niini. Usa ka paagi sa pagsulay kay gihatag sa OWASP sa iyang Pagsulay na Giya.</desc>
 	<solution/>
-	<reference>http://projects.webappsec.org/Insufficient-Process-Validation</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
+	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>
 
 <vuln_items>wasc_41</vuln_items>
@@ -972,7 +1006,7 @@ Sa ikaduha nga solusyon kay yano nga pagkalisod aron sa epektibo nga institute -
 Siguroha nga ang mga protocol kay adunay mga limitasyon sa gibutang ibabaw kanila.
 
 Siguroha nga tanan nga mga kapakyasan sa gigahin na kapanguhaan kay nagbutang sa sistema na luwas nga postura.</solution>
-	<reference>http://projects.webappsec.org/XML-Attribute-Blowup</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_Security_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/400.html</reference>
 </vuln_item_wasc_41>
 
@@ -981,7 +1015,7 @@ Siguroha nga tanan nga mga kapakyasan sa gigahin na kapanguhaan kay nagbutang sa
 	<alert>Abusar sa Pag-obra</alert>
 	<desc>Abusar sa Pag-obra kay usa ka teknik nga atake nga mogamit sa kaugalingong mga bahin sa usa ka web site ug katuyoan sa kaugalingong atake o ang uban. Abusar sa Pag-obra kay mahimong mahulagway ingon nga ang pag-abuso sa usa ka intensyon sa aplikasyon na katuyoan para mobugat sa gustong resulta. Kini nga mga atake kay adunay kalahiang mga resulta sama sa pagsumo sa mga kapanguhaan, paglikay sa pag-access sa mga kontrol, o pagka-awas sa impormasyon. Ang potensyal ug lebel sa abuso kay magkausab-usab na gikan sa web site padung sa web site ug aplikasyon padung sa aplikasyon. Pag-abuso na katuyuan kay niatake sa kanunay na usa ka kombinasyon sa lain na mga tipo nga atake ug/o paggamit ug uban na take nga mga vektor.</desc>
 	<solution>Kanunay na paggamit sa mga API sa gitudlo nga paagi.</solution>
-	<reference>http://projects.webappsec.org/Abuse-of-Functionality</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Abuse_Case_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/227.html</reference>
 </vuln_item_wasc_42>
 
@@ -991,7 +1025,9 @@ Siguroha nga tanan nga mga kapakyasan sa gigahin na kapanguhaan kay nagbutang sa
 	<desc>Kini nga teknik kay nagkuha ug bentaha sa bahin niini sa XML para mahimo ug mga dokumento nga mausab sa oras sa pagproseso. Ang XML na mensahe kay mahimo man na makahatag ug datos na tin-aw o sa pagtudlo sa usa ka URI na kung asa ang datos anaa. Sa teknik sa atake, gawas na mga entidad kay makapuli sa entidad na bili na adunay malisyoso na datos, alternatibo na mga referral o mahimong makompromiso sa seguridad sa datos sa server/XML aplikasyon nga adunay access sad.
 	Ang mga tig-atake kay mahimo usab ang Gawas na mga Entidad aron makabaton sa web na mga serbisyo na server download sa malisyoso na code o sulod sa server para gamiton sa ikaduha o sunod nga mga atake.</desc>
 	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
-	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/611.html</reference>
 </vuln_item_wasc_43>
 
 <vuln_items>wasc_44</vuln_items>
@@ -1003,7 +1039,6 @@ Ang malisyoso na XML na mensahe kay gigamit para mopugos ug recursibo na pagpala
 	<solution>Kung posible, gidili ang paggamit sa mga DTD o paggamit sa usa ka XML parser na naglimitar sa pagpalabad sa recursibo na DTD na mga entidad.
 
 Sa dili pa magparse sa mga XML file na nalangkit sa mga DTD, scan alang sa recursibo na entidad na mga deklarasyon ug dili mopadayon sa pag-parse sa kalagmitan nga eksplosibo nga sulod.</solution>
-	<reference>http://projects.webappsec.org/XML-Entity-Expansion</reference>
 	<reference>https://cwe.mitre.org/data/definitions/776.html</reference>
 </vuln_item_wasc_44>
 
@@ -1026,7 +1061,7 @@ Ang daghan na pag-fingerprint sa pareha sa iyang mga gisundan, ang TCP/IP na Fig
 5. **Regular Updates:** Keep software, platforms, and configurations up-to-date to patch known vulnerabilities and prevent accurate identification based on outdated information.
 
 There is no one-size-fits-all solution, and a combination of these measures may be most effective.</solution>
-	<reference>http://projects.webappsec.org/Fingerprinting</reference>
+	<reference>https://cwe.mitre.org/data/definitions/205.html</reference>
 </vuln_item_wasc_45>
 
 <vuln_items>wasc_46</vuln_items>
@@ -1036,7 +1071,8 @@ There is no one-size-fits-all solution, and a combination of these measures may 
 	<solution>Gamita ang parameterized na mga query. Kini kay makatabang na mosigurado sa pagkabulag tali sa datos plane ug kontrol plane.
 
 Sakto nga pagbalido sa tiggamit na input. Gisalikway na datos kay angay, pag-filter na kung ang angay ug pag-ikyas kung angay. Siguroha nga ang gipasulod kay gamiton sa XQL na mga query kay luwas sa kana nga konteksto.</solution>
-	<reference>http://projects.webappsec.org/XQuery-Injection</reference>
+	<reference>https://owasp.org/www-community/Injection_Theory</reference>
+	<reference>https://owasp.org/www-community/Injection_Flaws</reference>
 	<reference>https://cwe.mitre.org/data/definitions/652.html</reference>
 </vuln_item_wasc_46>
 
@@ -1051,7 +1087,8 @@ Ang sesyon na pag-expire kay naglangkob ug duha ka timeout na mga tipo: dili akt
 
 Usa ka Web aplikasyon kay dapat mopawala sa usa ka sesyon paghuman sa una nga gihulagway nga nag-urong na oras kay nilabay (usa ka timeout) ug naghatag sa tiggamit sa paagi sa pagpawala sa iyang kaugalingon nga sesyon, pan. logout; kini nakatabang na pagbantay sa gitas-on sa kinabuhi sa usa ka sesyon ID na sama sa mubo sa kutob sa mahimo ug gikinahanglan sa pagpakigbahin sa pagkompute sa environment kung sobra sa usa nga tawo nga adunay dili mapugngan na physical access sa usa ka computer. Ang logout na function kay dapat na labing importante na makita sa tiggamit, tin-aw na pagkawala sa usa ka sesyon sa tiggamit ug dili pagtugot sa paggamit ug balik sa sesyon token.</desc>
 	<solution>Pagtakda sa mga sesyon/mga kredensyal na petsa nga expiration.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Session-Expiration</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
+	<reference>https://owasp.org/www-community/Session_Timeout</reference>
 	<reference>https://cwe.mitre.org/data/definitions/613.html</reference>
 </vuln_item_wasc_47>
 
@@ -1068,13 +1105,13 @@ Usa ka Web aplikasyon kay dapat mopawala sa usa ka sesyon paghuman sa una nga gi
 6. **Security Headers:** Utilize security headers (e.g., Content Security Policy) to control how browsers and search engines interact with your website.
 
 A proactive and layered approach to security is crucial for safeguarding against Insecure Indexing.</solution>
-	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
+	<reference>https://cwe.mitre.org/data/definitions/612.html</reference>
 </vuln_item_wasc_48>
 
 <vuln_items>wasc_49</vuln_items>
 <vuln_item_wasc_49>
 	<alert>Dili sakto na Pagkuha sa Password</alert>
-	<desc>Dili sakto na Pagkuha sa Password mao ang usa ka web site nga nagtugot sa tig-atake na mo iligal ug kuha, pag-usab o pagkuha ug balik sa lain nga password sa tiggamit. Kinaiya na web site na pagkatinuod na mga pamaagi kay nagkinahanglan sa mga tiggamit na mopili ug timan-an ang password o passphrase. Ang tiggamit kay dapat ang tawo lamang na nakabalo sa password ug dapat na mahinumdoman niya na tukma. Sa paglabay sa panahon, ang abilidad sa tiggamit na hinumduman ang password kay nawala. Ang butang kay layo na komplikado kung ang kasagaran na tiggamit kay mobisita sa 20 ka mga site kay nagkinahanglan nila na mo butang ug usa passowrd.  (RSA Survey: http://news.bbc.co.uk/1/hi/technology/3639679.stm) Busa, ang pagkakuha sa password kay usa ka importanteng parte sa serbisyo sa mga online na mga tiggamit.
+	<desc>Dili sakto na Pagkuha sa Password mao ang usa ka web site nga nagtugot sa tig-atake na mo iligal ug kuha, pag-usab o pagkuha ug balik sa lain nga password sa tiggamit. Kinaiya na web site na pagkatinuod na mga pamaagi kay nagkinahanglan sa mga tiggamit na mopili ug timan-an ang password o passphrase. Ang tiggamit kay dapat ang tawo lamang na nakabalo sa password ug dapat na mahinumdoman niya na tukma. Sa paglabay sa panahon, ang abilidad sa tiggamit na hinumduman ang password kay nawala. Ang butang kay layo na komplikado kung ang kasagaran na tiggamit kay mobisita sa 20 ka mga site kay nagkinahanglan nila na mo butang ug usa passowrd. Thus, password recovery is an important part in servicing online users.
 
 Pananglitan ang awtomatik na password na pagkuha na mga proseso kay naglakip kay gikinahanglan ang tiggamit para tubagon ang "sekreto na pangutana" na gihubit isip kabahin sa proseso sa pagparehistro sa tiggamit. Kini nga pangutana kay mahimo man na pilion gikan sa usa ka listahan sa canned na mga panguatana o nakabutang pinaagi sa tiggamit. Laing mikanismo na magamit kay mao ang tiggamit na makahatag ug "timaan" sa panahon sa pagrehistro na makatabang sa usa ka tiggamit para matiman-an ang iyang password. Other mechanisms require the user to provide several pieces of personal data such as their social security number, home address, zip code etc. to validate their identity. Paghuman sa tiggamit na makapamatuod kung kinsa siya, ang pagkuha na sistema kay mopakita i mo email sa ilaha ug bag-o na password.
 
@@ -1090,7 +1127,8 @@ Kinahanglan na ang tiggamit kay sakto nga makatubag sa seguridad na pangutanan s
 Ayaw tugoti ang tiggamit na mokontrol kung unsa ang e-mail address sa bag-o na password kay ipadala sa password na pagkuha nga mekanismo.
 
 Pagtudlog usa ka bag-o na temporaryo nga password kay sa paghatag sa orihinal na password.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Password-Recovery</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/640.html</reference>
 </vuln_item_wasc_49>
 

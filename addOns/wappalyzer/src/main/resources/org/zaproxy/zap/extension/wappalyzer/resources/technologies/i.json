@@ -850,6 +850,21 @@
     "scriptSrc": "instafeed(?:\\.min)?\\.js",
     "website": "https://instafeedjs.com/"
   },
+  "Instagram Feed for WordPress": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Display Instagram photos from any non-private Instagram accounts.",
+    "dom": "link[href*='/wp-content/plugins/instagram-feed'], a[data-full-res*='/wp-content/uploads/sb-instagram-feed-images/'], img[src*='/wp-content/uploads/sb-instagram-feed-images/'], img[src*='/wp-content/plugins/instagram-feed/'], img[data-src*='/wp-content/uploads/sb-instagram-feed-images/']",
+    "oss": true,
+    "pricing": [
+      "low"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "instagram-feed(?:\\/js)?(?:\\/sbi-scripts)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/instagram-feed/"
+  },
   "Instamojo": {
     "cats": [
       41

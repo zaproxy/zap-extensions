@@ -49,6 +49,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadataProvider;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.VariantFactory;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -435,6 +436,8 @@ class ScriptsActiveScannerUnitTest extends TestUtils {
         given(scriptWrapper.isEnabled()).willReturn(true);
         given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extensionScript);
         given(extensionScript.getInterface(scriptWrapper, scriptClass)).willReturn(script);
+        given(extensionScript.getInterface(scriptWrapper, ScanRuleMetadataProvider.class))
+                .willReturn(null);
         return scriptWrapper;
     }
 

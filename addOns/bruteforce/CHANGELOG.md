@@ -4,8 +4,18 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [16] - 2024-05-07
 ### Added
-- Support for menu weights (Issue 8369)
+- Support for menu weights (Issue 8369).
+
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Maintenance changes.
+
+### Fixed
+- Help content typos.
 
 ## [15] - 2023-10-12
 ### Changed
@@ -100,6 +110,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release as an add-on, previously bundled with ZAP core.
 
+[16]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v13

@@ -28,10 +28,13 @@
 		</p>
 		<p data-th-text="#{report.zapVersion(${zapVersion})}">ZAP Version
 		</p>
+		<p>
+			ZAP is supported by the <a href="https://crashoverride.com/?zap=rep">Crash Override Open Source Fellowship</a>
+		</p>
 	</header>
 
 	<main
-		data-th-with="MAX_CONFIDENCE_CODE=4, MAX_RISK_CODE=3, alerts=${helper.getDepthFirstChildren(alertTree, false)}, includedConfidenceCodes=${#reportData=reportData, #numbers.sequence(MAX_CONFIDENCE_CODE, 0, -1).{? #code=#this, #reportData.isIncludeConfidence(#code)}}, includedRiskCodes=${#reportData=reportData, #numbers.sequence(MAX_RISK_CODE, 0, -1).{? #code=#this, #reportData.isIncludeRisk(#code)}}, includedConfidenceCodesSize=${includedConfidenceCodes.size()}, includedRiskCodesSize=${includedRiskCodes.size()}, sitesWithAlerts=${#alerts=alerts, #helper=helper, reportData.sites.{? #site=#this, !#alerts.{^ #userObject=#this.userObject, #msgUri=#userObject.msgUri, #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) == #userObject.message.requestHeader.hostPort &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}.isEmpty()}}">
+		data-th-with="MAX_CONFIDENCE_CODE=4, MAX_RISK_CODE=3, alerts=${helper.getDepthFirstChildren(alertTree, false)}, includedConfidenceCodes=${#reportData=reportData, #numbers.sequence(MAX_CONFIDENCE_CODE, 0, -1).{? #code=#this, #reportData.isIncludeConfidence(#code)}}, includedRiskCodes=${#reportData=reportData, #numbers.sequence(MAX_RISK_CODE, 0, -1).{? #code=#this, #reportData.isIncludeRisk(#code)}}, includedConfidenceCodesSize=${includedConfidenceCodes.size()}, includedRiskCodesSize=${includedRiskCodes.size()}, sitesWithAlerts=${#alerts=alerts, #helper=helper, reportData.sites.{? #site=#this, !#alerts.{^ #userObject=#this.userObject, #msgUri=#userObject.msgUri, #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) == #helper.getPortForSite(#msgUri.toString()) &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}.isEmpty()}}">
 
 		<section data-th-if="${reportData.isIncludeSection('contents')}"
 			id="contents" class="contents">
@@ -355,7 +358,7 @@
 								data-th-text="#{report.template.site}">Site</th>
 							<th scope="row" data-th-text="${site}">Site</th>
 							<th-block
-								data-th-with="countsForRow=${#site=site, #helper=helper, #alerts=alerts, includedRiskCodes.{#riskCode=#this, #alerts.{? #userObject=#this.userObject, #msgUri=#userObject.msgUri, #userObject.confidence != 0 &amp;&amp; #userObject.risk == #riskCode &amp;&amp; #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) == #userObject.message.requestHeader.hostPort &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}.size()}}">
+								data-th-with="countsForRow=${#site=site, #helper=helper, #alerts=alerts, includedRiskCodes.{#riskCode=#this, #alerts.{? #userObject=#this.userObject, #msgUri=#userObject.msgUri, #userObject.confidence != 0 &amp;&amp; #userObject.risk == #riskCode &amp;&amp; #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) ==  #helper.getPortForSite(#msgUri.toString()) &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}.size()}}">
 							<td data-th-each="count, iterStat: ${countsForRow}"><span
 								data-th-text="${count}">count</span><br> <span
 								class="additional-info-percentages"
@@ -443,7 +446,7 @@
 					</h3>
 					<ol>
 						<th-block data-th-each="site: ${sitesWithAlerts}"
-							data-th-with="filteredAlerts=${#helper=helper, #site=site, filteredAlerts.{? #userObject=#this.userObject, #msgUri=#userObject.msgUri, #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) == #userObject.message.requestHeader.hostPort &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}}">
+							data-th-with="filteredAlerts=${#helper=helper, #site=site, filteredAlerts.{? #userObject=#this.userObject, #msgUri=#userObject.msgUri, #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) == #helper.getPortForSite(#msgUri.toString()) &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}}">
 						<li data-th-unless="${filteredAlerts.isEmpty()}"
 							class="alerts--site-li">
 							<h4>
@@ -615,7 +618,7 @@
 				data-th-replace="~{::nl2p(text=${userObject.otherInfo})}">Other
 			info</th-block></td>
 	</tr>
-	<tr>
+	<tr data-th-if="${userObject.message}">
 		<th scope="row" data-th-text="#{report.template.alertsTable.request}">Request</th>
 		<td><details
 				data-th-with="requestHeader=${userObject.message.requestHeader}, headerLength=${requestHeader.toString().length}"
@@ -645,7 +648,7 @@
 				</th-block>
 			</details></td>
 	</tr>
-	<tr>
+	<tr data-th-if="${userObject.message}">
 		<th scope="row" data-th-text="#{report.template.alertsTable.response}">Response</th>
 		<td><details
 				data-th-with="responseHeader=${userObject.message.responseHeader}, headerLength=${responseHeader.toString().length}"

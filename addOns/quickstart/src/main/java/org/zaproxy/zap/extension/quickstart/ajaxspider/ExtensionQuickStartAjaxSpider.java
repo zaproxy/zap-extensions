@@ -26,6 +26,7 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.quickstart.ExtensionQuickStart;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
@@ -39,7 +40,7 @@ public class ExtensionQuickStartAjaxSpider extends ExtensionAdaptor {
     public static final String NAME = "ExtensionQuickStartAjaxSpider";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            List.of(ExtensionAjax.class, ExtensionSelenium.class);
+            List.of(ExtensionAjax.class, ExtensionSelenium.class, ExtensionPassiveScan.class);
 
     private AjaxSpiderExplorer ase;
 

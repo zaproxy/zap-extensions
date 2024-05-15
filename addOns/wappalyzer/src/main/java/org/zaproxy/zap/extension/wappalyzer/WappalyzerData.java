@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.wappalyzer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ import java.util.Map;
 public class WappalyzerData {
 
     private Map<String, String> categories = new HashMap<>();
-    private List<Application> applications = new ArrayList<>();
+    private List<Application> applications = Collections.synchronizedList(new ArrayList<>());
 
     public void addCategory(String key, String value) {
         this.categories.put(key, value);

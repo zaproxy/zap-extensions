@@ -47,8 +47,6 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
-import org.zaproxy.zap.extension.custompages.CustomPage;
-import org.zaproxy.zap.model.Context;
 
 /**
  * Active scan rule which checks whether various URL paths are exposed.
@@ -141,22 +139,6 @@ public class HiddenFilesScanRule extends AbstractHostPlugin implements CommonAct
                 raiseAlert(testMsg, Alert.CONFIDENCE_LOW, Alert.RISK_INFO, file);
             }
         }
-    }
-
-    /** FIXME Remove this call after 2.15.0 to call the fixed version in the parent. */
-    @Override
-    protected boolean isPage200(HttpMessage msg) {
-        Context context = getParent().getContext();
-        if (context != null) {
-            if (context.isCustomPage(msg, CustomPage.Type.NOTFOUND_404)
-                    || context.isCustomPage(msg, CustomPage.Type.ERROR_500)) {
-                return false;
-            }
-            if (context.isCustomPage(msg, CustomPage.Type.OK_200)) {
-                return true;
-            }
-        }
-        return HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode());
     }
 
     private static String generatePath(String baseUriPath, String hiddenFile) {

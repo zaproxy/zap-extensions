@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [58] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- The library (htmlunit-csp) used by the Content Security Policy scan rule was updated to v4.0.0, which includes support for the wasm-unsafe-eval source expression.
+
+### Fixed
+- A typo in the Other Info of one of the Retrieved from Cache Alerts.
+
+## [57] - 2024-03-28
+### Changed
+- Use of HTTP for example URLs in the descriptions or other info details for the following rules have been updated to HTTPS (Issue 8262):
+    - Cookie Poisoning
+    - Open Redirect
+    - X-Debug-Token Information Leak
+
 ## [56] - 2024-02-16
 
 ### Added
@@ -522,6 +537,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[58]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v58
+[57]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v57
 [56]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v56
 [55]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v54

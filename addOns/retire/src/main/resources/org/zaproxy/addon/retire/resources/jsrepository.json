@@ -236,7 +236,8 @@
         "atOrAbove": "3.0.0-rc.1",
         "below": "3.0.0",
         "cwe": [
-          "CWE-400"
+          "CWE-400",
+          "CWE-674"
         ],
         "severity": "high",
         "identifiers": {
@@ -326,12 +327,14 @@
         "/\\*!? jQuery v(§§version§§)",
         "\\* jQuery JavaScript Library v(§§version§§)",
         "\\* jQuery (§§version§§) - New Wave Javascript",
+        "/\\*![\\s]+\\* jQuery JavaScript Library v(§§version§§)",
         "// \\$Id: jquery.js,v (§§version§§)",
         "/\\*! jQuery v(§§version§§)",
         "[^a-z]f=\"(§§version§§)\",.*[^a-z]jquery:f,",
         "[^a-z]m=\"(§§version§§)\",.*[^a-z]jquery:m,",
         "[^a-z.]jquery:[ ]?\"(§§version§§)\"",
-        "\\$\\.documentElement,Q=e.jQuery,Z=e\\.\\$,ee=\\{\\},te=\\[\\],ne=\"(§§version§§)\""
+        "\\$\\.documentElement,Q=e.jQuery,Z=e\\.\\$,ee=\\{\\},te=\\[\\],ne=\"(§§version§§)\"",
+        "=\"(§§version§§)\",.{50,300}(.)\\.fn=(\\2)\\.prototype=\\{jquery:"
       ],
       "filecontentreplace": [
         "/var [a-z]=[a-z]\\.document,([a-z])=\"(§§version§§)\",([a-z])=.{130,160};\\3\\.fn=\\3\\.prototype=\\{jquery:\\1/$2/"
@@ -441,6 +444,20 @@
         "info": [
           "https://github.com/advisories/GHSA-ffmh-x56j-9rc3",
           "https://github.com/jquery-validation/jquery-validation/commit/5bbd80d27fc6b607d2f7f106c89522051a9fb0dd"
+        ]
+      },
+      {
+        "below": "1.20.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "Potential XSS via showLabel",
+          "PR": "2462"
+        },
+        "info": [
+          "https://github.com/jquery-validation/jquery-validation/blob/master/changelog.md#1200--2023-10-10"
         ]
       }
     ],
@@ -993,6 +1010,24 @@
         ]
       },
       {
+        "below": "2.3.0",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "XSS vulnerabilities in actionscript/Jplayer.as in the Flash SWF component",
+          "CVE": [
+            "CVE-2013-2022"
+          ],
+          "githubID": "GHSA-3jcq-cwr7-6332"
+        },
+        "info": [
+          "http://jplayer.org/latest/release-notes/",
+          "https://nvd.nist.gov/vuln/detail/CVE-2013-2022"
+        ]
+      },
+      {
         "below": "2.3.1",
         "severity": "medium",
         "cwe": [
@@ -1008,24 +1043,6 @@
         "info": [
           "http://jplayer.org/latest/release-notes/",
           "https://nvd.nist.gov/vuln/detail/CVE-2013-2023"
-        ]
-      },
-      {
-        "below": "2.3.23",
-        "severity": "medium",
-        "cwe": [
-          "CWE-79"
-        ],
-        "identifiers": {
-          "summary": "XSS vulnerabilities in actionscript/Jplayer.as in the Flash SWF component",
-          "CVE": [
-            "CVE-2013-2022"
-          ],
-          "release": "2.3.23"
-        },
-        "info": [
-          "http://jplayer.org/latest/release-notes/",
-          "https://nvd.nist.gov/vuln/detail/CVE-2013-2022"
         ]
       }
     ],
@@ -1631,6 +1648,54 @@
           "https://github.com/tinymce/tinymce/releases/tag/6.7.3",
           "https://tiny.cloud/docs/release-notes/release-notes5109/",
           "https://tiny.cloud/docs/tinymce/6/6.7.3-release-notes/"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "6.8.1",
+        "cwe": [
+          "CWE-79"
+        ],
+        "severity": "medium",
+        "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability in handling iframes",
+          "CVE": [
+            "CVE-2024-29203"
+          ],
+          "githubID": "GHSA-438c-3975-5x3f"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-438c-3975-5x3f",
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-438c-3975-5x3f",
+          "https://nvd.nist.gov/vuln/detail/CVE-2024-29203",
+          "https://github.com/tinymce/tinymce/commit/bcdea2ad14e3c2cea40743fb48c63bba067ae6d1",
+          "https://github.com/tinymce/tinymce",
+          "https://www.tiny.cloud/docs/tinymce/6/6.8.1-release-notes/#new-convert_unsafe_embeds-option-that-controls-whether-object-and-embed-elements-will-be-converted-to-more-restrictive-alternatives-namely-img-for-image-mime-types-video-for-video-mime-types-audio-audio-mime-types-or-iframe-for-other-or-unspecified-mime-types",
+          "https://www.tiny.cloud/docs/tinymce/7/7.0-release-notes/#sandbox_iframes-editor-option-is-now-defaulted-to-true"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "7.0.0",
+        "cwe": [
+          "CWE-79"
+        ],
+        "severity": "medium",
+        "identifiers": {
+          "summary": "TinyMCE Cross-Site Scripting (XSS) vulnerability in handling external SVG files through Object or Embed elements",
+          "CVE": [
+            "CVE-2024-29881"
+          ],
+          "githubID": "GHSA-5359-pvf2-pw78"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-5359-pvf2-pw78",
+          "https://github.com/tinymce/tinymce/security/advisories/GHSA-5359-pvf2-pw78",
+          "https://nvd.nist.gov/vuln/detail/CVE-2024-29881",
+          "https://github.com/tinymce/tinymce/commit/bcdea2ad14e3c2cea40743fb48c63bba067ae6d1",
+          "https://github.com/tinymce/tinymce",
+          "https://www.tiny.cloud/docs/tinymce/6/6.8.1-release-notes/#new-convert_unsafe_embeds-option-that-controls-whether-object-and-embed-elements-will-be-converted-to-more-restrictive-alternatives-namely-img-for-image-mime-types-video-for-video-mime-types-audio-audio-mime-types-or-iframe-for-other-or-unspecified-mime-types",
+          "https://www.tiny.cloud/docs/tinymce/7/7.0-release-notes/#convert_unsafe_embeds-editor-option-is-now-defaulted-to-true"
         ]
       }
     ],
@@ -3134,6 +3199,30 @@
         },
         "info": [
           "https://github.com/advisories/GHSA-qwqh-hm9m-p5hr"
+        ]
+      },
+      {
+        "atOrAbove": "1.3.0",
+        "below": "999",
+        "cwe": [
+          "CWE-1333"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "angular vulnerable to super-linear runtime due to backtracking",
+          "CVE": [
+            "CVE-2024-21490"
+          ],
+          "githubID": "GHSA-4w4v-5hc9-xrr2"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-4w4v-5hc9-xrr2",
+          "https://nvd.nist.gov/vuln/detail/CVE-2024-21490",
+          "https://github.com/angular/angular.js",
+          "https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWER-6241746",
+          "https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-6241747",
+          "https://security.snyk.io/vuln/SNYK-JS-ANGULAR-6091113",
+          "https://stackblitz.com/edit/angularjs-vulnerability-ng-srcset-redos"
         ]
       },
       {
@@ -5681,6 +5770,31 @@
       },
       {
         "atOrAbove": "0.8.1",
+        "below": "0.28.0",
+        "cwe": [
+          "CWE-352"
+        ],
+        "severity": "medium",
+        "identifiers": {
+          "summary": "Axios Cross-Site Request Forgery Vulnerability",
+          "CVE": [
+            "CVE-2023-45857"
+          ],
+          "githubID": "GHSA-wf5p-g6vw-rhxx"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-wf5p-g6vw-rhxx",
+          "https://nvd.nist.gov/vuln/detail/CVE-2023-45857",
+          "https://github.com/axios/axios/issues/6006",
+          "https://github.com/axios/axios/issues/6022",
+          "https://github.com/axios/axios/pull/6028",
+          "https://github.com/axios/axios/commit/96ee232bd3ee4de2e657333d4d2191cd389e14d0",
+          "https://github.com/axios/axios/releases/tag/v1.6.0",
+          "https://security.snyk.io/vuln/SNYK-JS-AXIOS-6032459"
+        ]
+      },
+      {
+        "atOrAbove": "1.0.0",
         "below": "1.6.0",
         "cwe": [
           "CWE-352"
@@ -5703,6 +5817,20 @@
           "https://github.com/axios/axios/releases/tag/v1.6.0",
           "https://security.snyk.io/vuln/SNYK-JS-AXIOS-6032459"
         ]
+      },
+      {
+        "below": "1.6.8",
+        "severity": "medium",
+        "cwe": [
+          "CWE-200"
+        ],
+        "identifiers": {
+          "summary": "Versions before 1.6.8 depends on follow-redirects before 1.15.6 which could leak the proxy authentication credentials",
+          "PR": "6300"
+        },
+        "info": [
+          "https://github.com/axios/axios/pull/6300"
+        ]
       }
     ],
     "extractors": {
@@ -5713,7 +5841,10 @@
         "axios-(§§version§§)(\\.min)?\\.js"
       ],
       "filecontent": [
-        "/\\* *axios v(§§version§§) "
+        "/\\* *axios v(§§version§§) ",
+        "// Axios v(§§version§§) C",
+        "return\"\\[Axios v(§§version§§)\\] Transitional",
+        "\\\"axios\\\",\\\"version\\\":\\\"(§§version§§)\\\""
       ],
       "func": [
         "axios && axios.VERSION"
@@ -5806,6 +5937,21 @@
           "https://github.com/markdown-it/markdown-it/blob/master/CHANGELOG.md",
           "https://nvd.nist.gov/vuln/detail/CVE-2022-21670",
           "https://security.snyk.io/vuln/SNYK-JS-MARKDOWNIT-2331914"
+        ]
+      },
+      {
+        "below": "13.0.2",
+        "severity": "medium",
+        "cwe": [
+          "CWE-400"
+        ],
+        "identifiers": {
+          "summary": "Fixed crash/infinite loop caused by linkify inline rule",
+          "issue": "957"
+        },
+        "info": [
+          "https://github.com/markdown-it/markdown-it/issues/957",
+          "https://github.com/markdown-it/markdown-it/compare/13.0.1...13.0.2"
         ]
       }
     ],
@@ -6444,6 +6590,25 @@
         "info": [
           "https://github.com/froala/wysiwyg-editor/releases/tag/v4.0.11"
         ]
+      },
+      {
+        "below": "4.1.4",
+        "atOrAbove": "4.0.1",
+        "severity": "medium",
+        "cwe": [
+          "CWE-79"
+        ],
+        "identifiers": {
+          "summary": "Froala Editor v4.0.1 to v4.1.1 was discovered to contain a cross-site scripting (XSS) vulnerability.",
+          "CVE": [
+            "CVE-2023-41592"
+          ],
+          "githubID": "GHSA-hvpq-7vcc-5hj5"
+        },
+        "info": [
+          "https://froala.com/wysiwyg-editor/changelog/#4.1.4",
+          "https://github.com/advisories/GHSA-hvpq-7vcc-5hj5"
+        ]
       }
     ],
     "extractors": {
@@ -6678,9 +6843,10 @@
       {
         "below": "4.17.5",
         "cwe": [
-          "CWE-471"
+          "CWE-471",
+          "CWE-1321"
         ],
-        "severity": "low",
+        "severity": "medium",
         "identifiers": {
           "summary": "Prototype Pollution in lodash",
           "CVE": [
@@ -6747,6 +6913,7 @@
       {
         "below": "4.17.12",
         "cwe": [
+          "CWE-1321",
           "CWE-20"
         ],
         "severity": "high",
@@ -7109,6 +7276,68 @@
       "func": [
         "UAParser.VERSION",
         "$.ua.version"
+      ]
+    }
+  },
+  "mathjax": {
+    "vulnerabilities": [
+      {
+        "atOrAbove": "0",
+        "below": "2.7.4",
+        "cwe": [
+          "CWE-79"
+        ],
+        "severity": "medium",
+        "identifiers": {
+          "summary": "Macro in MathJax running untrusted Javascript within a web browser",
+          "CVE": [
+            "CVE-2018-1999024"
+          ],
+          "githubID": "GHSA-3c48-6pcv-88rm"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-3c48-6pcv-88rm",
+          "https://nvd.nist.gov/vuln/detail/CVE-2018-1999024",
+          "https://github.com/mathjax/MathJax/commit/a55da396c18cafb767a26aa9ad96f6f4199852f1",
+          "https://blog.bentkowski.info/2018/06/xss-in-google-colaboratory-csp-bypass.html",
+          "https://github.com/advisories/GHSA-3c48-6pcv-88rm",
+          "https://github.com/mathjax/MathJax"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "999",
+        "cwe": [
+          "CWE-1333"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "MathJax Regular expression Denial of Service (ReDoS)",
+          "CVE": [
+            "CVE-2023-39663"
+          ],
+          "githubID": "GHSA-v638-q856-grg8"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-v638-q856-grg8",
+          "https://nvd.nist.gov/vuln/detail/CVE-2023-39663",
+          "https://github.com/mathjax/MathJax/issues/3074"
+        ]
+      }
+    ],
+    "extractors": {
+      "uri": [
+        "/mathjax@(§§version§§)/",
+        "/mathjax/(§§version§§)/"
+      ],
+      "filecontent": [
+        "\\.MathJax\\.config\\.startup;{10,100}.\\.VERSION=\"(§§version§§)\"",
+        "\\.MathJax=\\{version:\"(§§version§§)\"",
+        "MathJax.{0,100}.\\.VERSION=void 0,.\\.VERSION=\"(§§version§§)\"",
+        "MathJax\\.version=\"(§§version§§)\";"
+      ],
+      "func": [
+        "MathJax.version"
       ]
     }
   },

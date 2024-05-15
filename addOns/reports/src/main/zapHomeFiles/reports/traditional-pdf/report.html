@@ -143,6 +143,10 @@ td {
 	<h3>
 		<th:block th:text="#{report.zapVersion(${zapVersion})}">ZAP Version</th:block>
 	</h3>
+	<h4>
+		ZAP is supported by the <a href="https://crashoverride.com/?zap=rep">Crash
+			Override Open Source Fellowship</a>
+	</h4>
 
 	<th:block th:if="${reportData.isIncludeSection('alertcount')}">
 		<h3 th:text="#{report.alerts.summary}" class="left-header">Summary
@@ -215,8 +219,10 @@ td {
 					<tr>
 						<td th:text="#{report.alerts.detail.url}" width="20%"
 							class="indent1">URL</td>
-						<td width="80%"><a th:href="${instance.userObject.uri}"
-							th:text="${instance.userObject.uri}" href="url.html">URL</a></td>
+						<td width="80%"><a
+							th:href="${helper.escapeXml(instance.userObject.uri)}"
+							th:text="${helper.escapeXml(instance.userObject.uri)}"
+							href="url.html">URL</a></td>
 					</tr>
 					<tr>
 						<td th:text="#{report.alerts.detail.method}" width="20%"
@@ -226,18 +232,20 @@ td {
 					<tr>
 						<td th:text="#{report.alerts.detail.attack}" width="20%"
 							class="indent2">Attack</td>
-						<td th:text="${instance.userObject.attack}" width="80%">Attack</td>
+						<td th:text="${helper.escapeXml(instance.userObject.attack)}"
+							width="80%">Attack</td>
 					</tr>
 					<tr>
 						<td th:text="#{report.alerts.detail.evidence}" width="20%"
 							class="indent2">Evidence</td>
-						<td th:text="${instance.userObject.evidence}" width="80%">Evidence</td>
+						<td th:text="${helper.escapeXml(instance.userObject.evidence)}"
+							width="80%">Evidence</td>
 					</tr>
 					<tr>
 						<td th:text="#{report.alerts.detail.otherinfo}" width="20%"
 							class="indent2">Other Info</td>
-						<td th:text="${instance.userObject.otherinfo}" width="80%">Other
-							Info</td>
+						<td th:text="${helper.escapeXml(instance.userObject.otherinfo)}"
+							width="80%">Other Info</td>
 					</tr>
 				</th:block>
 				<tr>

@@ -38,11 +38,6 @@ public class PopupMenuInvokers extends PopupMenuHttpMessageContainer {
     }
 
     @Override
-    public int getMenuIndex() {
-        return 3;
-    }
-
-    @Override
     protected boolean isButtonEnabledForNumberOfSelectedMessages(int numberOfSelectedMessages) {
         return true;
     }
@@ -64,6 +59,7 @@ public class PopupMenuInvokers extends PopupMenuHttpMessageContainer {
         add(confPopup);
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_RUN_APP_WEIGHT;
     }

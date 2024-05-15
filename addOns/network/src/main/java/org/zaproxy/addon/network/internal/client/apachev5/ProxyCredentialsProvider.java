@@ -28,7 +28,7 @@ import org.apache.hc.client5.http.auth.StandardAuthScheme;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.zaproxy.addon.network.ConnectionOptions;
-import org.zaproxy.addon.network.internal.client.HttpProxy;
+import org.zaproxy.addon.network.common.HttpProxy;
 
 /** A {@link CredentialsProvider} that provides the credentials for the configured HTTP proxy. */
 public class ProxyCredentialsProvider implements CredentialsProvider {

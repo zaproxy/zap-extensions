@@ -17,6 +17,22 @@
     ],
     "website": "https://www.j2store.org"
   },
+  "Jadu": {
+    "cats": [
+      1
+    ],
+    "description": "The Jadu Digital Platform provides the foundation of accessible, responsive and award-winning Websites, Forms, CRM and Portal solutions.",
+    "dom": "a[href*='www.jadu.net']",
+    "headers": {
+      "Node": "jadu-web-1"
+    },
+    "icon": "jadu.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.jadu.net/"
+  },
   "JANet": {
     "cats": [
       71

@@ -141,6 +141,11 @@ td {
 		<th:block th:text="#{report.zapVersion(${zapVersion})}">ZAP Version</th:block>
 	</h3>
 
+	<h4>
+		ZAP is supported by the <a href="https://crashoverride.com/?zap=rep">Crash
+			Override Open Source Fellowship</a>
+	</h4>
+
 	<th:block th:if="${reportData.isIncludeSection('alertcount')}">
 		<h3 th:text="#{report.alerts.summary}" class="left-header">Summary
 			of Alerts</h3>

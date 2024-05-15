@@ -4,11 +4,21 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [45] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Update Zest library to 0.21.0:
+  - Update Selenium to version 4.20.0.
+  - Update HtmlUnit to major version 3.
+
+## [44] - 2024-04-11
 ### Added
 - Support for menu weights (Issue 8369)
 
 ### Changed
-- Update minimum Scripts add-on version to 45.
+- Update minimum `scripts` add-on version to 45.1.0.
 - Maintenance changes.
 
 ## [43] - 2023-12-19
@@ -319,6 +329,8 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[45]: https://github.com/zaproxy/zap-extensions/releases/zest-v45
+[44]: https://github.com/zaproxy/zap-extensions/releases/zest-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/zest-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/zest-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/zest-v41

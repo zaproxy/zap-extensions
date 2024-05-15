@@ -24,5 +24,5 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public interface ActiveScript2 {
 
-    void scanNode(ScriptsActiveScanner sas, HttpMessage msg) throws ScriptException;
+    void scanNode(ActiveScriptHelper helper, HttpMessage msg) throws ScriptException;
 }

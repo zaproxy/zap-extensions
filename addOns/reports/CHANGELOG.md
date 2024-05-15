@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [0.32.0] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- The following reports now include the number of Sites tree nodes actively scanned:
+  - Traditional HTML with Requests and Responses
+
+## [0.31.0] - 2024-03-25
+### Changed
+- Tweaked OSF sponsorship links.
+
+### Fixed
+- Handle alerts without HTTP message gracefully (Issue 6880).
+- More issues with illegal XML characters in pdf reports (Issue 8330).
+
+## [0.30.0] - 2024-03-13
+### Changed
+- Added OSF sponsorship line to reports.
+
 ## [0.29.0] - 2024-02-12
 ### Fixed
 - Error message to give report name.
@@ -264,6 +282,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.32.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.32.0
+[0.31.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.31.0
+[0.30.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.30.0
 [0.29.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.29.0
 [0.28.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.28.0
 [0.27.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.27.0

@@ -21,11 +21,14 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
@@ -46,8 +49,6 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
-import org.zaproxy.zap.utils.FontUtils;
-import org.zaproxy.zap.utils.FontUtils.Size;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.LayoutHelper;
 
@@ -66,6 +67,8 @@ public class QuickStartPanel extends AbstractPanel {
     private JPanel buttonPanel;
     private JButton learnMoreButton = null;
     private JButton exploreButton = null;
+    private JButton servicesButton = null;
+    private SupportPanel supportPanel;
     private LearnMorePanel learnMorePanel;
     private DefaultExplorePanel defaultExplorePanel;
     private QuickStartSubPanel explorePanel;
@@ -73,6 +76,7 @@ public class QuickStartPanel extends AbstractPanel {
     private JLabel topTitle;
 
     private NewsItem newsItem;
+    private static ImageIcon osfIcon;
 
     public QuickStartPanel(ExtensionQuickStart extension) {
         super();
@@ -102,13 +106,8 @@ public class QuickStartPanel extends AbstractPanel {
         this.add(jScrollPane, BorderLayout.CENTER);
 
         panelContent.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
-
-        topTitle = new JLabel(Constant.messages.getString("quickstart.top.panel.title"));
-        topTitle.setBackground(panelContent.getBackground());
-        topTitle.setFont(FontUtils.getFont(Size.much_larger));
-        topTitle.setHorizontalAlignment(SwingConstants.CENTER);
         panelContent.add(
-                topTitle,
+                new TitlePanel(Constant.messages.getString("quickstart.top.panel.title")),
                 LayoutHelper.getGBC(
                         0,
                         panelY,
@@ -117,7 +116,7 @@ public class QuickStartPanel extends AbstractPanel {
                         0.0D,
                         GridBagConstraints.BOTH,
                         GridBagConstraints.CENTER,
-                        new Insets(0, 0, 0, 0)));
+                        new Insets(5, 5, 5, 5)));
         panelContent.add(
                 QuickStartHelper.getWrappedLabel("quickstart.top.panel.message1"),
                 LayoutHelper.getGBC(0, ++panelY, 4, 1.0D, new Insets(5, 5, 5, 5)));
@@ -132,6 +131,7 @@ public class QuickStartPanel extends AbstractPanel {
         buttonPanel.setBackground(panelContent.getBackground());
         buttonPanel.add(this.getAttackButton());
         buttonPanel.add(this.getExploreButton());
+        buttonPanel.add(this.getSupportButton());
         buttonPanel.add(this.getLearnMoreButton());
 
         panelContent.add(buttonPanel, LayoutHelper.getGBC(0, ++panelY, 5, 1.0D, 1.0D));
@@ -142,6 +142,32 @@ public class QuickStartPanel extends AbstractPanel {
 
         getAttackPanel().setMode(Control.getSingleton().getMode());
         getLearnMorePanel();
+    }
+
+    public static ImageIcon getOsfIcon() {
+        if (osfIcon == null) {
+            osfIcon =
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    QuickStartPanel.class.getResource(
+                                            ExtensionQuickStart.RESOURCES + "/co-osf.png")));
+        }
+        return osfIcon;
+    }
+
+    protected static JLabel getOsfImageLabel() {
+        JLabel label = new JLabel();
+        label.setIcon(getOsfIcon());
+        label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        label.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        Stats.incCounter("stats.ui.link.osf");
+                        DesktopUtils.openUrlInBrowser("https://crashoverride.com/?zap=ui");
+                    }
+                });
+        return label;
     }
 
     @Override
@@ -189,6 +215,36 @@ public class QuickStartPanel extends AbstractPanel {
             attackButton.addActionListener(e -> jScrollPane.setViewportView(getAttackPanel()));
         }
         return attackButton;
+    }
+
+    private JButton getSupportButton() {
+        if (servicesButton == null) {
+            servicesButton = new JButton();
+            servicesButton.setText(
+                    Constant.messages.getString("quickstart.top.button.label.support"));
+            servicesButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    getClass()
+                                            .getResource(
+                                                    ExtensionQuickStart.RESOURCES
+                                                            + "/zap-cs64x64.png"))));
+            servicesButton.setVerticalTextPosition(AbstractButton.BOTTOM);
+            servicesButton.setHorizontalTextPosition(AbstractButton.CENTER);
+            servicesButton.setToolTipText(
+                    Constant.messages.getString("quickstart.top.button.tooltip.support"));
+            servicesButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
+
+            servicesButton.addActionListener(e -> jScrollPane.setViewportView(getSupportPanel()));
+        }
+        return servicesButton;
+    }
+
+    public SupportPanel getSupportPanel() {
+        if (supportPanel == null) {
+            supportPanel = new SupportPanel(this.extension, this);
+        }
+        return supportPanel;
     }
 
     public LearnMorePanel getLearnMorePanel() {

@@ -73,11 +73,6 @@ public class SyntaxMenu extends ExtensionPopupMenu {
         return false;
     }
 
-    @Override
-    public boolean precedeWithSeparator() {
-        return true;
-    }
-
     public void updateState(SyntaxHighlightTextArea httpPanelTextArea) {
 
         Vector<SyntaxStyle> styles = httpPanelTextArea.getSyntaxStyles();

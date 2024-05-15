@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
@@ -91,6 +92,20 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     @Test

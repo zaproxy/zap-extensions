@@ -80,7 +80,7 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
         assertThat(alerts.size(), is(equalTo(1)));
         Alert alert = alerts.get(0);
         Map<String, String> tags = alert.getTags();
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }

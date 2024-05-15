@@ -465,6 +465,7 @@
   },
   "Sakai": {
     "cats": [
+      1,
       21
     ],
     "cookies": {
@@ -3092,6 +3093,14 @@
     ],
     "website": "https://www.signal.co/"
   },
+  "SignalR": {
+    "cats": [
+      59
+    ],
+    "description": "Realtime web communication framework from Microsoft for ASP.NET.",
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/jquery\\.)?signal[rR](?:-((?:\\d+\\.)+\\d+))?(?:\\.min)?\\.js\\;version:\\1\\2",
+    "website": "https://dotnet.microsoft.com/es-es/apps/aspnet/signalr"
+  },
   "Signifyd": {
     "cats": [
       10,
@@ -4465,6 +4474,15 @@
     "saas": true,
     "website": "https://www.smugmug.com"
   },
+  "Snabbt": {
+    "cats": [
+      59
+    ],
+    "description": "Minimalistic animation library in javascript Snabbt.js.",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?snabbt(?:[\\.-]min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "website": "https://daniel-lundin.github.io/snabbt.js/"
+  },
   "Snap": {
     "cats": [
       18,
@@ -4695,6 +4713,19 @@
     "scriptSrc": "socialladder\\.rkiapps\\.com/",
     "website": "https://socialladderapp.com"
   },
+  "Social Pinpoint": {
+    "cats": [
+      1
+    ],
+    "description": "Social Pinpoint is a comprehensive online platform that facilitates meaningful and accessible engagement opportunities that bring your community together.",
+    "dom": "a[href*='www.socialpinpoint.com']",
+    "icon": "socialpinpoint.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.socialpinpoint.com/"
+  },
   "Societe des Avis Garantis": {
     "cats": [
       87,
@@ -4710,6 +4741,17 @@
     "saas": true,
     "scriptSrc": "/wp-content/plugins/ag-core/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.societe-des-avis-garantis.fr"
+  },
+  "SockJS": {
+    "cats": [
+      18,
+      59
+    ],
+    "description": "SockJS is a browser JavaScript library that provides a WebSocket-like object.",
+    "icon": "SockJS.png",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?sockjs(?:-((?:\\d+\\.)+\\d+))?(?:\\.min)?\\.js\\;version:\\1\\2",
+    "website": "https://sockjs.org"
   },
   "Socket.io": {
     "cats": [
@@ -5087,6 +5129,20 @@
     "saas": true,
     "scriptSrc": "(?:^[^/]*//[^/]*viglink\\.com/api/|vglnk\\.js)",
     "website": "https://www.sovrn.com/publishers/commerce/"
+  },
+  "Spark CMS": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "BNI_SparkCMSLB": ""
+    },
+    "description": "The CMS has been custom built by our web developers based on feedback from our clients, ensuring an easy to use platform that's been designed in consultation with the end user in mind.",
+    "dom": "link[href*='sparkcms.com.au']",
+    "icon": "Spark.png",
+    "oss": false,
+    "scriptSrc": "/spark-scripts/",
+    "website": "https://www.councilconnect.com.au/our-websites/about-spark-cms.aspx"
   },
   "SparkPost": {
     "cats": [
@@ -6967,6 +7023,18 @@
     "saas": true,
     "website": "https://www.supporthero.com/"
   },
+  "Surge": {
+    "cats": [
+      31
+    ],
+    "description": "Static website publishing.",
+    "dom": "link[href*='surge.sh']",
+    "icon": "Surge.svg",
+    "oss": true,
+    "scriptSrc": "surge\\.sh(?:\\/[-\\w]{0,40})?\\.js",
+    "url": "surge\\.sh",
+    "website": "https://surge.sh"
+  },
   "Survicate": {
     "cats": [
       73
@@ -7445,6 +7513,15 @@
     "scriptSrc": "shine(?:\\.min)?\\.js",
     "website": "https://bigspaceship.github.io/shine.js/"
   },
+  "sidr": {
+    "cats": [
+      59
+    ],
+    "description": "Sidr is a jQuery plugin for creating side menus.",
+    "oss": true,
+    "scriptSrc": "sidr(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://www.albertovarela.net/sidr/"
+  },
   "siimple": {
     "cats": [
       66
@@ -7460,6 +7537,19 @@
     "icon": "siimple.svg",
     "oss": true,
     "website": "https://siimple.xyz"
+  },
+  "slideout": {
+    "cats": [
+      59
+    ],
+    "description": "A touch slideout navigation menu for your mobile web apps.",
+    "icon": "slideout.png",
+    "js": {
+      "slideout": ""
+    },
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?slideout(?:-init)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "website": "https://slideout.js.org/"
   },
   "snigel AdConsent": {
     "cats": [

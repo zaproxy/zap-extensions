@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [5] - 2024-04-11
+### Changed
 - Update minimum ZAP version to 2.14.0.
 - Maintenance changes.
 
@@ -43,6 +47,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Promoted to beta and separated from the passive scan alpha add-on.
 
+[5]: https://github.com/zaproxy/zap-extensions/releases/imagelocationscanner-v5
 [4]: https://github.com/zaproxy/zap-extensions/releases/imagelocationscanner-v4
 [3]: https://github.com/zaproxy/zap-extensions/releases/imagelocationscanner-v3
 [2]: https://github.com/zaproxy/zap-extensions/releases/imagelocationscanner-v2

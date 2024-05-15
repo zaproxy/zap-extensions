@@ -56,7 +56,6 @@ public class PopupIncludeWebSocketInContextMenu extends ExtensionPopupMenuItem {
     public PopupIncludeWebSocketInContextMenu() {
         super(Constant.messages.getString("context.new.title"));
         this.context = null;
-        this.setPrecedeWithSeparator(true);
 
         initialize();
     }

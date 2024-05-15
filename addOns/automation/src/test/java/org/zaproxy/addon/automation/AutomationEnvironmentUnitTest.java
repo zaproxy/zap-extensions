@@ -23,12 +23,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.withSettings;
 
 import java.io.ByteArrayInputStream;
+import java.net.PasswordAuthentication;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -38,12 +42,20 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.yaml.snakeyaml.Yaml;
+import org.zaproxy.addon.automation.AutomationEnvironment.Proxy;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.common.HttpProxy;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.I18N;
 
@@ -799,6 +811,155 @@ class AutomationEnvironmentUnitTest {
     }
 
     @Test
+    void shouldReplaceVarsInVars() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  vars:\n"
+                        + "    a: a\n"
+                        + "    b: ${a}b\n"
+                        + "    c: ${b}${b}\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // When
+        String result = env.replaceVars("${c}");
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(result, is(equalTo("abab")));
+    }
+
+    @Test
+    void shouldWarnOnMissingVarsOnce() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  vars:\n"
+                        + "    a: a\n"
+                        + "    b: ${a}b\n"
+                        + "    c: ${b}${z}${b}\n"
+                        + "    d: ${c}${z}\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // When
+        String result = env.replaceVars("${d}");
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings(), contains("!automation.error.env.novar!"));
+        assertThat(result, is(equalTo("ab${z}ab${z}")));
+    }
+
+    @Test
+    void shouldWarnOnVarWithSelfReference() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  vars:\n"
+                        + "    a: ${a}\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // When
+        String result = env.replaceVars("${a}");
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings(), contains("!automation.error.env.loopvar!"));
+        assertThat(result, is(equalTo("${a}")));
+    }
+
+    @Test
+    void shouldWarnOnVarsWithLoop() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  vars:\n"
+                        + "    a: ${b}\n"
+                        + "    b: ${a}\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // When
+        String result = env.replaceVars("${a}");
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings(), contains("!automation.error.env.loopvar!"));
+        assertThat(result, is(equalTo("${a}")));
+    }
+
+    @Test
+    void shouldWarnOncePerLoopVar() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  vars:\n"
+                        + "    a: ${b}\n"
+                        + "    b: ${a}${c}\n"
+                        + "    c: ${b}\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // When
+        String result = env.replaceVars("${c}");
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(
+                progress.getWarnings(),
+                contains("!automation.error.env.loopvar!", "!automation.error.env.loopvar!"));
+        assertThat(result, is(equalTo("${b}${c}")));
+    }
+
+    @Test
     void shouldUseSystemEnvVarsOverConfigVars() {
         // Given
         String contextStr =
@@ -885,5 +1046,269 @@ class AutomationEnvironmentUnitTest {
                 progress.getWarnings().get(0),
                 is(equalTo("!automation.error.context.url.deprecated!")));
         assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldSetUpProxyInfo() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  proxy:\n"
+                        + "    hostname: https://www.example.proxy\n"
+                        + "    port: 8090\n"
+                        + "    realm: test-realm\n"
+                        + "    username: admin@example.com\n"
+                        + "    password: password123!\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        Proxy proxy = env.getData().getProxy();
+        assertThat(proxy, is(notNullValue()));
+        assertThat(proxy.getHostname(), is("https://www.example.proxy"));
+        assertThat(proxy.getPort(), is(8090));
+        assertThat(proxy.getRealm(), is("test-realm"));
+        assertThat(proxy.getUsername(), is("admin@example.com"));
+        assertThat(proxy.getPassword(), is("password123!"));
+    }
+
+    @Test
+    void shouldReturnNullIfNoProxy() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        Proxy proxy = env.getData().getProxy();
+        assertThat(proxy, is(nullValue()));
+    }
+
+    @Test
+    void shouldReturnProxyIfCreate() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        Proxy proxy = env.getData().getProxy(true);
+        assertThat(proxy, is(notNullValue()));
+    }
+
+    @Test
+    void shouldIgnoreProxyWithNoHostName() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  proxy:\n"
+                        + "    hostname: \n"
+                        + "    port: 8090\n"
+                        + "    realm: test-realm\n"
+                        + "    username: admin@example.com\n"
+                        + "    password: password123!\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        Proxy proxy = env.getData().getProxy();
+        assertThat(proxy, is(nullValue()));
+    }
+
+    @Test
+    void shouldSetUpProxyFullDetails() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  proxy:\n"
+                        + "    hostname: https://www.example.proxy\n"
+                        + "    port: 8090\n"
+                        + "    realm: test-realm\n"
+                        + "    username: admin@example.com\n"
+                        + "    password: password123!\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionNetwork extNetwork = mock(ExtensionNetwork.class);
+        given(extensionLoader.getExtension(ExtensionNetwork.class)).willReturn(extNetwork);
+        ArgumentCaptor<HttpProxy> proxyCaptor = ArgumentCaptor.forClass(HttpProxy.class);
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        verify(extNetwork).setHttpProxy(proxyCaptor.capture());
+
+        HttpProxy proxy = proxyCaptor.getValue();
+        assertThat(proxy, is(notNullValue()));
+        assertThat(proxy.getHost(), is("https://www.example.proxy"));
+        assertThat(proxy.getPort(), is(8090));
+        assertThat(proxy.getRealm(), is("test-realm"));
+
+        PasswordAuthentication pa = proxy.getPasswordAuthentication();
+        assertThat(pa, is(notNullValue()));
+        assertThat(pa.getUserName(), is("admin@example.com"));
+        assertThat(new String(pa.getPassword()), is("password123!"));
+    }
+
+    @Test
+    void shouldSetUpProxyNoCreds() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  proxy:\n"
+                        + "    hostname: https://www.example.proxy\n"
+                        + "    port: 8090\n"
+                        + "    realm: test-realm\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionNetwork extNetwork = mock(ExtensionNetwork.class);
+        given(extensionLoader.getExtension(ExtensionNetwork.class)).willReturn(extNetwork);
+        ArgumentCaptor<HttpProxy> proxyCaptor = ArgumentCaptor.forClass(HttpProxy.class);
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        verify(extNetwork).setHttpProxy(proxyCaptor.capture());
+
+        HttpProxy proxy = proxyCaptor.getValue();
+        assertThat(proxy, is(notNullValue()));
+        assertThat(proxy.getHost(), is("https://www.example.proxy"));
+        assertThat(proxy.getPort(), is(8090));
+        assertThat(proxy.getRealm(), is("test-realm"));
+
+        PasswordAuthentication pa = proxy.getPasswordAuthentication();
+        assertThat(pa, is(notNullValue()));
+        assertThat(pa.getUserName(), is(""));
+        assertThat(new String(pa.getPassword()), is(""));
+    }
+
+    @Test
+    void shouldSetUpProxyNoRealm() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  proxy:\n"
+                        + "    hostname: https://www.example.proxy\n"
+                        + "    port: 8090\n"
+                        + "    username: admin@example.com\n"
+                        + "    password: password123!\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionNetwork extNetwork = mock(ExtensionNetwork.class);
+        given(extensionLoader.getExtension(ExtensionNetwork.class)).willReturn(extNetwork);
+        ArgumentCaptor<HttpProxy> proxyCaptor = ArgumentCaptor.forClass(HttpProxy.class);
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        env.create(session, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        verify(extNetwork).setHttpProxy(proxyCaptor.capture());
+
+        HttpProxy proxy = proxyCaptor.getValue();
+        assertThat(proxy, is(notNullValue()));
+        assertThat(proxy.getHost(), is("https://www.example.proxy"));
+        assertThat(proxy.getPort(), is(8090));
+        assertThat(proxy.getRealm(), is(""));
+
+        PasswordAuthentication pa = proxy.getPasswordAuthentication();
+        assertThat(pa, is(notNullValue()));
+        assertThat(pa.getUserName(), is("admin@example.com"));
+        assertThat(new String(pa.getPassword()), is("password123!"));
     }
 }

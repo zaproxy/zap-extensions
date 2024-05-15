@@ -4,6 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [21] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [20] - 2024-04-02
 ### Added
 - Video link in help for Automation Framework job.
 
@@ -132,6 +139,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[21]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v21
+[20]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v17

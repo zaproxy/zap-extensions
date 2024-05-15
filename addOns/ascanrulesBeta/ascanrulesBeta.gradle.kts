@@ -40,7 +40,7 @@ dependencies {
     zapAddOn("oast")
 
     implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
-    implementation("org.jsoup:jsoup:1.14.3")
+    implementation("org.jsoup:jsoup:1.17.2")
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(project(":testutils"))

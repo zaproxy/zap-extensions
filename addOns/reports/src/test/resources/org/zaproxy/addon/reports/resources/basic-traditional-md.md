@@ -1,5 +1,7 @@
 # Test Title
 
+ZAP is supported by the [Crash Override Open Source Fellowship](https://crashoverride.com/?zap=rep).
+
 
 ## !reports.report.alerts.summary!
 

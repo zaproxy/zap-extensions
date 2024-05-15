@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vulnerabilities xmlns="http://tempuri.org/XMLSchemaOptions.xsd">
+<vulnerabilities>
 
 <vuln_items>wasc_1</vuln_items>
 <vuln_item_wasc_1>
@@ -9,7 +9,7 @@
 Чтобы обойти настройку аутентификации, некоторые ресурсы защищены "скрытием" определенного местоположения и не связывают расположение в основной веб-сайт или другие общественные места. Однако, такой подход-не более чем "Безопасность Через Неизвестность". Важно понимать что несмотря на то что ресурс неизвестен злоумышленнику, он по-прежнему остается доступным непосредственно через определенный URL-адрес. Конкретный URL-адрес может быть обнаружен с помощью зондирования грубой силы для общих расположений файлов и каталогов (/admin для образец), Сообщений об ошибках, журналов ссылок или документации, таких как файлы справки. Эти ресурсы, независимо от того управляются ли они контентом или функциональностью, должны быть надлежащим образом защищены.</desc>
 	<solution>Фаза: Архитектура и дизайн
 Использовать систему проверки подлинности или библиотеки такие как средство проверки подлинности сообщество owasp ESAPI.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Authentication</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/287.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/284.html</reference>
 </vuln_item_wasc_1>
@@ -27,11 +27,11 @@
  
 Недостаточная Авторизация Данных
 
-Многие приложения предоставляют базовые идентификаторы данных в URL-адресе. Например при доступе к медицинской записи в системе может быть URL-адрес, такой как:
+Многие приложения предоставляют базовые идентификаторы данных в URL-адресе. For example, when accessing a medical record on a system one might have a URL such as:
 
-http://example.com/RecordView?id=12345
+https://example.com/RecordView?id=12345
 
-Если приложение не проверяет имеет ли удостоверенный идентификатор пользователя права на чтение, затем он может отображать данные пользователя которые пользователь не должен видеть.
+If the application does not check that the authenticated user ID has read rights, then it could display data to the user that the user should not see.
 
 Nsufficient данные для авторизации является более распространенным чем недостаточная функция авторизации, потому что программисты как правило имеют полное представление о функциональности приложения, но не всегда есть полное сопоставление всех данных к которым приложение будет иметь доступ. Программисты часто имеют жесткий контроль над механизмами авторизации функций, но полагаться на другие системы такие как базы данных для выполнения авторизации данных.</desc>
 	<solution>Фазы: Архитектура и дизайн; Операция
@@ -39,7 +39,7 @@ Nsufficient данные для авторизации является боле
 
 Фаза: Архитектура и дизайн 
 Обеспечить надлежащее разделение заложено в конструкцию системы и что обособление служит для возможности и для дальнейшего укрепления привилегия разделению функционала. Архитекторы и дизайнеры должны полагаться на принцип наименьших привилегий чтобы решить когда это целесообразно использовать и отказаться от системных привилегий.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Authorization</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/284.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/285.html</reference>
 </vuln_item_wasc_2>
@@ -73,7 +73,6 @@ Understand your programming language's underlying representation and how it inte
 
 Фаза: Реализация
 Внимательно изучите предупреждения и ликвидации возможных серьезных проблем, например несоответствие подписанных / неподписанных. Даже если слабость редко эксплуатируется, один сбой может привести к компрометации всей системы.</solution>
-	<reference>http://projects.webappsec.org/Integer-Overflows</reference>
 	<reference>https://cwe.mitre.org/data/definitions/190.html</reference>
 </vuln_item_wasc_3>
 
@@ -122,7 +121,7 @@ Understand your programming language's underlying representation and how it inte
 Фаза: Реализация
 Использовать соглашения об именовании и сильный Тип чтобы сделать его легче обнаружить когда конфиденциальные данные используется. При создании структур объектов, объекты, или другие сложные объекты как можно больше разделяют конфиденциальные и не чувствительные данные.
 Это облегчает обнаружение мест в коде где используются незашифрованные данные.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Transport-Layer-Protection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/311.html</reference>
 </vuln_item_wasc_4>
 
@@ -160,7 +159,7 @@ PHP is particularly vulnerable to RFI attacks due to the extensive use of "file 
 Фазы: архитектура и дизайн; Реализация
 Поймите все потенциальные области, в которых ненадежные входные данные могут попасть в ваше программное обеспечение: параметры или аргументы, файлы cookie, все, что считывается из сети, переменные среды, обратный поиск DNS, результаты запросов, заголовки запросов, компоненты URL, электронная почта, файлы, базы данных и любые внешние системы, которые предоставляют данные приложению.  Помните, что такие входные данные могут быть получены косвенно через вызовы API. 
 Многие проблемы с включением файлов возникают из-за того, что программист предполагал, что определенные входные данные нельзя изменить, особенно для файлов cookie и компонентов URL. </solution>
-	<reference>http://projects.webappsec.org/Remote-File-Inclusion</reference>
+	<reference>https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.2-Testing_for_Remote_File_Inclusion</reference>
 	<reference>https://cwe.mitre.org/data/definitions/98.html</reference>
 </vuln_item_wasc_5>
 
@@ -183,7 +182,7 @@ PHP is particularly vulnerable to RFI attacks due to the extensive use of "file 
 Убедитесь, что все функции форматирования строки передаются статической строкой, которой не может управлять пользователь, и что правильное количество аргументов также всегда отправляется этой функции.  По возможности используйте функции, которые не поддерживают оператор% n в строках формата. 
 Сборка: обратите внимание на предупреждения компиляторов и компоновщиков, так как они могут предупредить вас о неправильном использовании. 
 </solution>
-	<reference>http://projects.webappsec.org/Format-String</reference>
+	<reference>https://owasp.org/www-community/attacks/Format_string_attack</reference>
 	<reference>https://cwe.mitre.org/data/definitions/134.html</reference>
 </vuln_item_wasc_6>
 
@@ -232,7 +231,7 @@ Examples include the Safe C String Library (SafeStr) by Messier and Viega, and t
 
 Замените функции неограниченного копирования аналогичными функциями, которые поддерживают аргументы длины, например strcpy на strncpy.  Создайте их, если они недоступны. 
 </solution>
-	<reference>http://projects.webappsec.org/Buffer-Overflow</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/Buffer_Overflow</reference>
 	<reference>https://cwe.mitre.org/data/definitions/119.html</reference>
 </vuln_item_wasc_7>
 
@@ -270,7 +269,7 @@ Examples include the Safe C String Library (SafeStr) by Messier and Viega, and t
 
 Убедитесь, что вы выполняете проверку ввода на четко определенных интерфейсах в приложении.  Это поможет защитить приложение, даже если компонент будет повторно использован или перемещен в другое место. 
 	</solution>
-	<reference>http://projects.webappsec.org/Cross-Site-Scripting</reference>
+	<reference>https://owasp.org/www-community/attacks/xss/</reference>
 	<reference>https://cwe.mitre.org/data/definitions/79.html</reference>
 </vuln_item_wasc_8>
 
@@ -306,7 +305,7 @@ CSRF в основном использовался для выполнения 
 
 Этап: реализация
 Проверьте заголовок HTTP Referer, чтобы узнать, исходит ли запрос от ожидаемой страницы.  Это может нарушить законную функциональность, поскольку пользователи или прокси-серверы могли отключить отправку Referer по соображениям конфиденциальности. </solution>
-	<reference>http://projects.webappsec.org/Cross-Site-Request-Forgery</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/352.html</reference>
 </vuln_item_wasc_9>
 
@@ -334,7 +333,7 @@ CSRF в основном использовался для выполнения 
 
 Этап: реализация
 Убедитесь, что все сбои в распределении ресурсов переводят систему в безопасное состояние. </solution>
-	<reference>http://projects.webappsec.org/Denial-of-Service</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/400.html</reference>
 </vuln_item_wasc_10>
 
@@ -355,7 +354,7 @@ CSRF в основном использовался для выполнения 
 It is important that the techniques used to limit user access to the system be implemented properly in order to prevent abuses and negative side effects such as denial of service.
 
 Additionally consider migrating to password-less authentication mechanisms like passkeys.</solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11a>
 
 <vuln_items>wasc_11b</vuln_items>
@@ -366,7 +365,7 @@ Additionally consider migrating to password-less authentication mechanisms like 
 Поскольку HTTP является протоколом без сохранения состояния, для поддержания состояния веб-приложениям необходимо гарантировать, что идентификатор сеанса отправляется браузером с каждым запросом.  Идентификатор сеанса обычно хранится в файле cookie HTTP или URL-адресе.  Используя атаку методом грубой силы, злоумышленник может угадать идентификатор сеанса другого пользователя.  Это может привести к тому, что злоумышленник выдаст себя за пользователя, получит личную информацию и выполнит действия от имени пользователя. 
 	</desc>
 	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11b>
 
 <vuln_items>wasc_11c</vuln_items>
@@ -379,7 +378,7 @@ Additionally consider migrating to password-less authentication mechanisms like 
 Атака методом грубой силы пытается найти несвязанный файл, пытаясь получить доступ к большому количеству файлов.  Список возможных имен файлов может быть взят из списка известных потенциальных файлов или на основе вариантов видимых файлов на веб-сайте.  Более подробную информацию о каталогах и файлах методом перебора можно найти в соответствующей уязвимости и предсказуемом расположении ресурсов. 
 	</desc>
 	<solution>Never rely on "security by obscurity" mechanisms to restrict access to sensitive files and directories on a web server. Implement appropriate access control measures if hosting sensitive information is required.</solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Forced_browsing</reference>
 </vuln_item_wasc_11c>
 
 <vuln_items>wasc_11d</vuln_items>
@@ -410,7 +409,7 @@ Phase: Operation
 Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
 
 </solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11d>
 
 <vuln_items>wasc_12</vuln_items>
@@ -422,14 +421,14 @@ Regularly monitor and review your security measures and adapt to evolving threat
 Обычный подход к динамическому построению страниц включает передачу тела или его частей на страницу через значение строки запроса.  Этот подход распространен на страницах с ошибками или на сайтах, содержащих статьи или новости.  Содержимое, указанное в этом параметре, позже отражается на странице, чтобы предоставить содержимое для страницы. 
  
 Подмена отраженного содержимого разметки
-Некоторые веб-страницы обслуживаются с использованием динамически создаваемых источников содержимого HTML.  Например, исходное местоположение кадра  <frame src="http://foo.example/file.html"/>) может быть указано значением параметра URL.  (http://foo.example/page?frame_src=http://foo.example/file.html). Злоумышленник может заменить значение параметра frame_src на frame_src = http: //attacker.example/spoof.html.  В отличие от перенаправителей, когда результирующая веб-страница обслуживается, строка местоположения браузера явно остается под ожидаемым пользователем доменом (foo.example), но внешние данные (attacker.example) скрыты легитимным содержимым. 
+Некоторые веб-страницы обслуживаются с использованием динамически создаваемых источников содержимого HTML.  Например, исходное местоположение кадра  <frame src="https://foo.example/file.html"/>) может быть указано значением параметра URL.  (https://foo.example/page?frame_src=https://foo.example/file.html). An attacker may be able to replace the "frame_src" parameter value with "frame_src=https://attacker.example/spoof.html". В отличие от перенаправителей, когда результирующая веб-страница обслуживается, строка местоположения браузера явно остается под ожидаемым пользователем доменом (foo.example), но внешние данные (attacker.example) скрыты легитимным содержимым. 
 
-Специально созданные ссылки могут быть отправлены пользователю по электронной почте, в мгновенных сообщениях, оставлены на досках объявлений или навязаны пользователям с помощью атаки межсайтового скриптинга.  Если злоумышленник заставляет пользователя посетить веб-страницу, обозначенную их вредоносным URL-адресом, пользователь будет полагать, что просматривает подлинный контент из одного места, а это не так.  Пользователи будут неявно доверять поддельному контенту, поскольку в строке местоположения браузера отображается http: //foo.example, тогда как на самом деле базовый HTML-фрейм ссылается на http: //attacker.example. 
+Специально созданные ссылки могут быть отправлены пользователю по электронной почте, в мгновенных сообщениях, оставлены на досках объявлений или навязаны пользователям с помощью атаки межсайтового скриптинга.  Если злоумышленник заставляет пользователя посетить веб-страницу, обозначенную их вредоносным URL-адресом, пользователь будет полагать, что просматривает подлинный контент из одного места, а это не так.  Users will implicitly trust the spoofed content since the browser location bar displays https://foo.example, when in fact the underlying HTML frame is referencing https://attacker.example.
 
 Эта атака использует доверительные отношения, установленные между пользователем и веб-сайтом.  Этот метод использовался для создания поддельных веб-страниц, включая формы входа, искажения, ложные пресс-релизы и т. д.
 	</desc>
 	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
-	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
+	<reference>https://owasp.org/www-community/attacks/Content_Spoofing</reference>
 </vuln_item_wasc_12>
 
 <vuln_items>wasc_13</vuln_items>
@@ -443,7 +442,6 @@ Regularly monitor and review your security measures and adapt to evolving threat
 
 Страницы, которые предоставляют разные ответы в зависимости от достоверности данных, также могут привести к утечке информации; особенно когда данные, которые считаются конфиденциальными, раскрываются в результате разработки веб-приложения.  Примеры конфиденциальных данных включают (но не ограничиваются ими): номера учетных записей, идентификаторы пользователей (номер водительской лицензии, номер паспорта, номера социального страхования и т. Д.) И информацию о пользователях (пароли, сеансы, адреса).  Утечка информации в этом контексте связана с раскрытием ключевых пользовательских данных, считающихся конфиденциальными или секретными, которые не должны быть открыты для всеобщего обозрения даже пользователю.  Номера кредитных карт и другая строго регулируемая информация являются яркими примерами пользовательских данных, которые необходимо дополнительно защитить от раскрытия или утечки даже при наличии надлежащего шифрования и контроля доступа. </desc>
 	<solution>Разделите свою систему, чтобы иметь «безопасные» области, где можно однозначно провести границы доверия.  Не допускайте выхода конфиденциальных данных за пределы границ доверия и всегда будьте осторожны при взаимодействии с отсеком за пределами безопасной зоны.</solution>
-	<reference>http://projects.webappsec.org/Information-Leakage</reference>
 	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
@@ -455,8 +453,13 @@ Regularly monitor and review your security measures and adapt to evolving threat
 Серверы могут включать в себя общеизвестные учетные записи и пароли по умолчанию.  Неспособность полностью заблокировать или укрепить сервер может привести к неправильной настройке прав доступа к файлам и каталогам.  Неверно настроенные сертификаты SSL и параметры шифрования, использование сертификатов по умолчанию и неправильная реализация аутентификации с внешними системами могут поставить под угрозу конфиденциальность информации. 
 
 Подробные и информативные сообщения об ошибках могут привести к утечке данных, а раскрытая информация может быть использована для формулирования следующего уровня атаки.  Неправильная конфигурация серверного программного обеспечения может допускать атаки индексации каталогов и обхода пути. </desc>
-	<solution/>
-	<reference>http://projects.webappsec.org/Server-Misconfiguration</reference>
+	<solution>
+    * Don't use default credentials. Replace all default usernames and passwords with strong and unique credentials. Periodically update them.
+    * Implement an appropriate error message handling strategy that doesn't leak sensitive and debug information.
+    * Ensure that administrative functions are not accessible to unauthorized users. Implement strong authentication and authorization mechanisms.
+    * Follow the best practices and security guidelines for your specific server.
+   </solution>
+	<reference>https://owasp.org/www-project-mobile-top-10/2023-risks/m8-security-misconfiguration</reference>
 </vuln_item_wasc_14>
 
 <vuln_items>wasc_15</vuln_items>
@@ -465,16 +468,20 @@ Regularly monitor and review your security measures and adapt to evolving threat
 	<desc>Атаки из-за неправильной конфигурации приложений используют недостатки конфигурации, обнаруженные в веб-приложениях.  Многие приложения поставляются с ненужными и небезопасными функциями, такими как функции отладки и контроля качества, включенные по умолчанию.  Эти функции могут предоставить хакеру возможность обойти методы аутентификации и получить доступ к конфиденциальной информации, возможно, с повышенными привилегиями. 
 
 Аналогичным образом, установки по умолчанию могут включать хорошо известные имена пользователей и пароли, жестко запрограммированные учетные записи бэкдора, специальные механизмы доступа и неправильные разрешения, установленные для файлов, доступных через веб-серверы.  Образцы по умолчанию могут быть доступны в производственных средах.  Файлы конфигурации на основе приложений, которые не заблокированы должным образом, могут отображать четкие текстовые строки подключения к базе данных, а параметры по умолчанию в файлах конфигурации могут быть заданы не с учетом требований безопасности.  Все эти неправильные конфигурации могут привести к несанкционированному доступу к конфиденциальной информации. </desc>
-	<solution/>
-	<reference>http://projects.webappsec.org/Application-Misconfiguration</reference>
+	<solution>
+    * Ensure that debug and QA features are deactivated.
+    * Ensure the error messages doesn't leak sensitive and debug information.
+    * Follow the best practices and security guidelines for your specific application tech stack.
+	</solution>
+	<reference>https://cwe.mitre.org/data/definitions/16.html</reference>
 </vuln_item_wasc_15>
 
 <vuln_items>wasc_16</vuln_items>
 <vuln_item_wasc_16>
 	<alert>Индексирование каталогов </alert>
-	<desc>Автоматический список / индексирование каталогов - это функция веб-сервера, которая перечисляет все файлы в запрошенном каталоге, если обычный базовый файл (index.html / home.html / default.htm / default.asp / default.aspx / index.php) нет.  Когда пользователь запрашивает главную страницу веб-сайта, он обычно вводит URL-адрес, например: http://www.example.com/directory1/ - используя имя домена и исключая конкретный файл.  Веб-сервер обрабатывает этот запрос и ищет в корневом каталоге документов имя файла по умолчанию и отправляет эту страницу клиенту.  Если эта страница отсутствует, веб-сервер динамически выдаст список каталогов и отправит результат клиенту.  По сути, это эквивалентно выполнению команды «ls» (Unix) или «dir» (Windows) в этом каталоге и отображению результатов в форме HTML.  С точки зрения атаки и противодействия важно понимать, что непреднамеренное перечисление каталогов может быть возможным из-за уязвимостей программного обеспечения (обсуждаемых в разделе примеров ниже) в сочетании с конкретным веб-запросом. </desc>
+	<desc>Автоматический список / индексирование каталогов - это функция веб-сервера, которая перечисляет все файлы в запрошенном каталоге, если обычный базовый файл (index.html / home.html / default.htm / default.asp / default.aspx / index.php) нет.  When a user requests the main page of a web site, they normally type in a URL such as: https://www.example.com/directory1/ - using the domain name and excluding a specific file. Веб-сервер обрабатывает этот запрос и ищет в корневом каталоге документов имя файла по умолчанию и отправляет эту страницу клиенту.  Если эта страница отсутствует, веб-сервер динамически выдаст список каталогов и отправит результат клиенту.  По сути, это эквивалентно выполнению команды «ls» (Unix) или «dir» (Windows) в этом каталоге и отображению результатов в форме HTML.  С точки зрения атаки и противодействия важно понимать, что непреднамеренное перечисление каталогов может быть возможным из-за уязвимостей программного обеспечения (обсуждаемых в разделе примеров ниже) в сочетании с конкретным веб-запросом. </desc>
 	<solution>Рекомендации включают ограничение доступа к важным каталогам или файлам путем принятия требования о необходимости знать как для документа, так и для корня сервера, а также отключение таких функций, как автоматические списки каталогов, которые могут раскрывать личные файлы и предоставлять информацию, которая может быть использована злоумышленником при формулировании или проведение нападения. </solution>
-	<reference>http://projects.webappsec.org/Directory-Indexing</reference>
+	<reference>https://owasp.org/www-community/attacks/Path_Traversal</reference>
 	<reference>https://cwe.mitre.org/data/definitions/548.html</reference>
 </vuln_item_wasc_16>
 
@@ -483,7 +490,7 @@ Regularly monitor and review your security measures and adapt to evolving threat
 	<alert>Неправильные разрешения файловой системы </alert>
 	<desc>Неправильные разрешения файловой системы представляют собой угрозу конфиденциальности, целостности и доступности веб-приложения.  Проблема возникает, когда для файлов, папок и символических ссылок установлены неправильные разрешения файловой системы.  Если установлены неправильные разрешения, злоумышленник может получить доступ к файлам или каталогам с ограниченным доступом и изменить или удалить их содержимое.  Например, если учетная запись анонимного пользователя имеет разрешение на запись в файл, злоумышленник может изменить содержимое файла, влияя на веб-приложение нежелательными способами.  Злоумышленник также может использовать неправильные символические ссылки для повышения своих привилегий и / или доступа к неавторизованным файлам; например, символическая ссылка, указывающая на каталог за пределами корневого веб-каталога. </desc>
 	<solution>Очень тщательно управляйте настройкой, управлением и обработкой разрешений.  Явно управляйте зонами доверия в программном обеспечении. </solution>
-	<reference>http://projects.webappsec.org/Improper-Filesystem-Permissions</reference>
+	<reference>https://owasp.org/www-community/Broken_Access_Control</reference>
 	<reference>https://cwe.mitre.org/data/definitions/280.html</reference>
 </vuln_item_wasc_17>
 
@@ -494,7 +501,8 @@ Regularly monitor and review your security measures and adapt to evolving threat
 
 Многие веб-сайты предназначены для аутентификации и отслеживания пользователя при первом установлении связи.  Для этого пользователи должны подтвердить свою личность на веб-сайте, обычно путем предоставления комбинации имени пользователя и пароля (учетных данных).  Вместо того, чтобы передавать эти конфиденциальные учетные данные туда и обратно с каждой транзакцией, веб-сайты будут генерировать уникальный «идентификатор сеанса», чтобы идентифицировать сеанс пользователя как аутентифицированный.  Последующее общение между пользователем и веб-сайтом помечается идентификатором сеанса как «доказательство» аутентифицированного сеанса.  Если злоумышленник может предсказать или угадать идентификатор сеанса другого пользователя, возможна мошенническая деятельность. </desc>
 	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
-	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
+	<reference>https://owasp.org/www-community/attacks/Session_Prediction</reference>
 </vuln_item_wasc_18>
 
 <vuln_items>wasc_19</vuln_items>
@@ -529,7 +537,8 @@ Regularly monitor and review your security measures and adapt to evolving threat
 Обратите внимание, что правильное кодирование вывода, экранирование и цитирование являются наиболее эффективным решением для предотвращения внедрения SQL, хотя проверка ввода может обеспечить некоторую глубинную защиту.  Это потому, что он эффективно ограничивает то, что будет отображаться на выходе.  Проверка ввода не всегда предотвращает внедрение SQL, особенно если вам необходимо поддерживать текстовые поля произвольной формы, которые могут содержать произвольные символы.  Например, имя «О'Рейли», скорее всего, пройдет этап проверки, поскольку это обычная фамилия на английском языке.  Однако его нельзя напрямую вставить в базу данных, потому что он содержит символ апострофа «'», который нужно было бы экранировать или обработать иным образом.  В этом случае удаление апострофа может снизить риск SQL-инъекции, но приведет к неправильному поведению, поскольку будет записано неправильное имя. 
 
 По возможности, безопаснее всего полностью запретить метасимволы вместо их экранирования.  Это обеспечит некоторую глубокую защиту.  После ввода данных в базу данных более поздние процессы могут игнорировать экранирование метасимволов перед использованием, и вы можете не контролировать эти процессы. </solution>
-	<reference>http://projects.webappsec.org/SQL-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/SQL_Injection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html</reference>
 </vuln_item_wasc_19>
 
 <vuln_items>wasc_20</vuln_items>
@@ -571,7 +580,8 @@ Regularly monitor and review your security measures and adapt to evolving threat
 Рассмотрите возможность повторной канонизации, пока ваш ввод больше не изменится.  Это позволит избежать двойного декодирования и подобных сценариев, но может непреднамеренно изменить входные данные, которым разрешено содержать правильно закодированный опасный контент. 
 
 При обмене данными между компонентами убедитесь, что оба компонента используют одинаковую кодировку символов.  Убедитесь, что на каждом интерфейсе применяется правильная кодировка.  Явно установите кодировку, которую вы используете, когда протокол позволяет вам это сделать. </solution>
-	<reference>http://projects.webappsec.org/Improper-Input-Handling</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/Improper_Data_Validation</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/89.html</reference>
 </vuln_item_wasc_20>
 
@@ -602,8 +612,9 @@ Regularly monitor and review your security measures and adapt to evolving threat
 7. **Monitoring and Logging:** Regularly monitor and log user activities to identify and respond to unusual patterns indicative of automation.
 
 A combination of these measures is often more effective in preventing automated attacks.</solution>
-	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
+	<reference>https://owasp.org/www-project-automated-threats-to-web-applications/</reference>
 	<reference>https://cwe.mitre.org/data/definitions/116.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/799.html</reference>
 </vuln_item_wasc_21>
 
 <vuln_items>wasc_22</vuln_items>
@@ -637,7 +648,7 @@ A combination of these measures is often more effective in preventing automated 
 Используйте проверку входных данных в качестве меры глубокой защиты, чтобы снизить вероятность ошибок кодирования выходных данных (см. CWE-20). 
 
 При обмене данными между компонентами убедитесь, что оба компонента используют одинаковую кодировку символов.  Убедитесь, что на каждом интерфейсе применяется правильная кодировка.  Явно установите кодировку, которую вы используете, когда протокол позволяет вам это сделать. </solution>
-	<reference>http://projects.webappsec.org/Improper-Output-Handling</reference>
+	<reference>https://owasp.org/www-project-proactive-controls/v3/en/c4-encode-escape-data</reference>
 </vuln_item_wasc_22>
 
 <vuln_items>wasc_23</vuln_items>
@@ -645,7 +656,9 @@ A combination of these measures is often more effective in preventing automated 
 	<alert>XML-инъекция </alert>
 	<desc>XML-инъекция - это метод атаки, используемый для манипулирования или компрометации логики XML-приложения или службы.  Внедрение непреднамеренного XML-содержимого и / или структур в XML-сообщение может изменить логику намерений приложения.  Кроме того, внедрение XML может вызвать вставку вредоносного содержимого в итоговое сообщение / документ. </desc>
 	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
-	<reference>http://projects.webappsec.org/XML-Injection</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_Security_Cheat_Sheet.html</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html</reference>
 </vuln_item_wasc_23>
 
 <vuln_items>wasc_24</vuln_items>
@@ -655,8 +668,9 @@ A combination of these measures is often more effective in preventing automated 
 	<solution>Избегайте использования CRLF в качестве специальной последовательности. 
 
 Соответственно фильтруйте или цитируйте последовательности CRLF во вводе, управляемом пользователем. </solution>
-	<reference>http://projects.webappsec.org/HTTP-Request-Splitting</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/CRLF_Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/93.html</reference>
+	<reference>https://portswigger.net/web-security/request-smuggling</reference>
 </vuln_item_wasc_24>
 
 <vuln_items>wasc_25</vuln_items>
@@ -671,7 +685,7 @@ A combination of these measures is often more effective in preventing automated 
 
 Атаки с разделением HTTP-ответа имеют место, когда серверный сценарий встраивает пользовательские данные в заголовки HTTP-ответа.  Обычно это происходит, когда сценарий встраивает данные пользователя в URL-адрес перенаправления ответа на перенаправление (код состояния HTTP 3xx) или когда сценарий встраивает данные пользователя в значение или имя файла cookie, когда ответ устанавливает файл cookie. </desc>
 	<solution>Создавайте заголовки HTTP очень тщательно, избегая использования непроверенных входных данных. </solution>
-	<reference>http://projects.webappsec.org/HTTP-Response-Splitting</reference>
+	<reference>https://owasp.org/www-community/attacks/HTTP_Response_Splitting</reference>
 	<reference>https://cwe.mitre.org/data/definitions/113.html</reference>
 </vuln_item_wasc_25>
 
@@ -686,7 +700,6 @@ A combination of these measures is often more effective in preventing automated 
 Завершайте клиентский сеанс после каждого запроса. 
 
 Turn all pages to non-cacheable.</solution>
-	<reference>http://projects.webappsec.org/HTTP-Request-Smuggling</reference>
 	<reference>https://cwe.mitre.org/data/definitions/444.html</reference>
 </vuln_item_wasc_26>
 
@@ -699,8 +712,24 @@ Turn all pages to non-cacheable.</solution>
 
 Контрабанда HTTP-ответов использует методы, похожие на контрабанду HTTP-запросов, чтобы использовать несоответствия между тем, что анти-HTTP-механизм разделения ответа (или прокси-сервер) будет рассматривать как поток HTTP-ответа, и поток ответа, анализируемый прокси-сервером. (или браузер).  Таким образом, в то время как механизм разделения ответа HTTP может считать конкретный поток ответа безвредным (один HTTP-ответ), прокси / браузер может по-прежнему анализировать его как два HTTP-ответа и, следовательно, быть восприимчивым ко всем результатам исходного разделения HTTP-ответа. техники (в первом случае использования) или подвержены спуфингу страницы (во втором случае).  Например, некоторые механизмы разделения ответа HTTP, используемые некоторыми механизмами приложений, запрещают приложению вставлять в ответ заголовок, содержащий CR + LF.  Тем не менее, злоумышленник может заставить приложение вставить заголовок, содержащий CR, тем самым обойдя механизм защиты.  Некоторые прокси-серверы могут по-прежнему рассматривать CR (только) как разделитель заголовка (и ответа), и поэтому комбинация веб-сервера и прокси-сервера по-прежнему будет уязвима для атаки, которая может отравить кеш прокси. 
 	</desc>
-	<solution/>
-	<reference>http://projects.webappsec.org/HTTP-Response-Smuggling</reference>
+	<solution>Use HTTP/2 for backend connections. While HTTP/2 doesn't entirely prevent request smuggling, it does introduce certain changes that makes it difficult for attacker to exploit this.
+
+		Utilize a Web Application Firewall (WAF) that has built-in mitigation to detect abnormal requests/responses.
+
+		Whenever a HTTP message contains both Transfer-Encoding and Content-Length either prioritize the Transfer-Encoding header or just completely reject the HTTP message. Make this behavior consistent in the back-end server and any intermediary HTTP agents.
+
+		Disallow Malformed/Invalid Transfer-Encoding Headers used in obfuscation, such as:
+			* Headers with no space before the value “chunked”
+			* Headers with extra spaces
+			* Headers beginning with trailing characters
+			* Headers providing a value “chunk” instead of “chunked” (the server normalizes this as chunked encoding)
+			* Headers with multiple spaces before the value “chunked”
+			* Headers with quoted values (whether single or double quotations)
+			* Headers with CRLF characters before the value “chunked”
+			* Values with invalid characters
+	</solution>
+	<reference>https://owasp.org/www-community/attacks/HTTP_Response_Splitting</reference>
+	<reference>https://capec.mitre.org/data/definitions/273.html</reference>
 </vuln_item_wasc_27>
 
 <vuln_items>wasc_28</vuln_items>
@@ -720,7 +749,7 @@ URL-адреса ограничены набором символов US-ASCII �
 Не полагайтесь исключительно на проверку списка запретов для обнаружения вредоносных входных данных или кодирования выходных данных.  Существует слишком много вариантов кодирования символа; вы скорее всего пропустите некоторые варианты. 
 
 Перед проверкой входные данные должны быть декодированы и канонизированы в текущее внутреннее представление приложения.  Убедитесь, что ваше приложение не декодирует один и тот же ввод дважды.  Такие ошибки можно использовать для обхода схем разрешенных списков путем введения опасных входных данных после их проверки. </solution>
-	<reference>http://projects.webappsec.org/Null-Byte-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/Embedding_Null_Code</reference>
 	<reference>https://cwe.mitre.org/data/definitions/158.html</reference>
 </vuln_item_wasc_28>
 
@@ -733,7 +762,8 @@ URL-адреса ограничены набором символов US-ASCII �
 
 Когда веб-приложению не удается должным образом очистить вводимые пользователем данные, злоумышленник может изменить конструкцию оператора LDAP.  Когда злоумышленник может изменить инструкцию LDAP, процесс будет запущен с теми же разрешениями, что и компонент, выполнивший команду.  (например, сервер базы данных, сервер веб-приложений, веб-сервер и т. д.).  Это может вызвать серьезные проблемы с безопасностью, когда разрешения предоставляют права запрашивать, изменять или удалять что-либо внутри дерева LDAP.  Те же передовые методы эксплуатации, которые доступны в SQL Injection, могут быть аналогичным образом применены и в LDAP Injection. </desc>
 	<solution>Предположим, что весь ввод злонамерен.  Используйте соответствующую комбинацию черных списков и белых списков, чтобы нейтрализовать синтаксис LDAP от ввода, управляемого пользователем. </solution>
-	<reference>http://projects.webappsec.org/LDAP-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/LDAP_Injection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/LDAP_Injection_Prevention_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/90.html</reference>
 </vuln_item_wasc_29>
 
@@ -756,7 +786,6 @@ URL-адреса ограничены набором символов US-ASCII �
 При обмене данными между компонентами убедитесь, что оба компонента используют одинаковую кодировку символов.  Убедитесь, что на каждом интерфейсе применяется правильная кодировка.  Явно установите кодировку, которую вы используете, когда протокол позволяет вам это сделать. 
 
 Если ваше приложение объединяет данные из нескольких источников, выполните проверку после объединения источников.  Отдельные элементы данных могут пройти этап проверки, но нарушить намеченные ограничения после того, как они были объединены. </solution>
-	<reference>http://projects.webappsec.org/Mail-Command-Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/88.html</reference>
 </vuln_item_wasc_30>
 
@@ -796,7 +825,8 @@ URL-адреса ограничены набором символов US-ASCII �
 Обратите внимание, что правильное кодирование вывода, экранирование и цитирование являются наиболее эффективным решением для предотвращения внедрения команд ОС, хотя проверка ввода может обеспечить некоторую глубинную защиту.  Это потому, что он эффективно ограничивает то, что будет отображаться на выходе.  Проверка ввода не всегда предотвращает внедрение команд ОС, особенно если требуется поддерживать текстовые поля произвольной формы, которые могут содержать произвольные символы.  Например, при вызове почтовой программы вам может потребоваться разрешить поле темы содержать опасные в противном случае вводы, такие как ";" и символы ">", которые необходимо экранировать или обрабатывать иным образом.  В этом случае удаление символа может снизить риск внедрения команды ОС, но приведет к некорректному поведению, поскольку поле темы не будет записано так, как задумал пользователь.  Это может показаться незначительным неудобством, но это может быть более важным, когда программа полагается на хорошо структурированные строки темы для передачи сообщений другим компонентам. 
 
 Даже если вы допустили ошибку при проверке (например, забыли одно из 100 полей ввода), соответствующая кодировка все равно может защитить вас от атак на основе инъекций.  Пока это не выполняется изолированно, проверка входных данных по-прежнему является полезным методом, поскольку она может значительно уменьшить поверхность атаки, позволить вам обнаруживать некоторые атаки и обеспечить другие преимущества безопасности, которые не учитываются при правильном кодировании. </solution>
-	<reference>http://projects.webappsec.org/OS-Commanding</reference>
+	<reference>https://owasp.org/www-community/attacks/Command_Injection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/OS_Command_Injection_Defense_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/78.html</reference>
 </vuln_item_wasc_31>
 
@@ -807,13 +837,13 @@ URL-адреса ограничены набором символов US-ASCII �
 
 Объезды маршрутизации - это тип атаки «человек посередине», при которой посредники могут быть введены или «захвачены» для маршрутизации конфиденциальных сообщений во внешнее расположение.  Информация о маршрутизации (либо в заголовке HTTP, либо в заголовке WS-Routing) может быть изменена в пути, а следы маршрутизации могут быть удалены из заголовка и сообщения, чтобы принимающее приложение не знало, что произошел обход маршрутизации.  The header and the insertion of header objects is often less protected than the message; this is due to the fact that the header is used as a catch all for metadata about the transaction such as authentication, routing, formatting, schema, canonicalization, namespaces, etc. Also, many processes may be involved in adding to/processing the header of an XML document. In many implementations the routing info can come from an external web service (using WS-Referral for example) that provides the specific routing for the transaction.
 
-WS-Addressing is a newer standard published by the W3C to provide routing functionality to SOAP messages. One of the key differences between WS-Routing and WS-Addressing is that WS-Addressing only provides the next location in the route. While little research has been done into the susceptibility of WS-Addressing to Routing Detour Attack, at least one paper (see reference #6 below) suggests that WS-Addressing is vulnerable to Routing Detour as well.</desc>
+WS-Addressing is a newer standard published by the W3C to provide routing functionality to SOAP messages. One of the key differences between WS-Routing and WS-Addressing is that WS-Addressing only provides the next location in the route. While little research has been done into the susceptibility of WS-Addressing to Routing Detour Attack, some research suggests that WS-Addressing is vulnerable to Routing Detour as well.</desc>
 	<solution>Всегда полностью аутентифицируйте оба конца любого канала связи. 
 
 Придерживайтесь принципа полной медиации. 
 
 Сертификат связывает личность с криптографическим ключом для аутентификации взаимодействующей стороны.  Часто сертификат принимает зашифрованную форму хэша идентичности субъекта, открытого ключа и такой информации, как время выпуска или истечения срока действия с использованием закрытого ключа эмитента.  Сертификат может быть подтвержден путем расшифровки сертификата с помощью открытого ключа эмитента.  Смотри также цепочки подписей сертификатов X.509 и структуру сертификации PGP. </solution>
-	<reference>http://projects.webappsec.org/Routing-Detour</reference>
+	<reference>https://learn.microsoft.com/en-us/previous-versions/ms951244(v=msdn.10)</reference>
 	<reference>https://cwe.mitre.org/data/definitions/300.html</reference>
 </vuln_item_wasc_32>
 
@@ -849,7 +879,7 @@ WS-Addressing is a newer standard published by the W3C to provide routing functi
 
 Это может быть невыполнимым решением, и оно только ограничивает влияние на операционную систему; остальная часть вашего приложения все еще может быть скомпрометирована. 
 </solution>
-	<reference>http://projects.webappsec.org/Path-Traversal</reference>
+	<reference>https://owasp.org/www-community/attacks/Path_Traversal</reference>
 	<reference>https://cwe.mitre.org/data/definitions/22.html</reference>
 </vuln_item_wasc_33>
 
@@ -862,7 +892,7 @@ WS-Addressing is a newer standard published by the W3C to provide routing functi
 	<solution>Примените соответствующие разрешения управления доступом для каждого доступа ко всем ограниченным URL-адресам, скриптам или файлам. 
 
 Рассмотрите возможность использования фреймворков на основе MVC, таких как Struts. </solution>
-	<reference>http://projects.webappsec.org/Predictable-Resource-Location</reference>
+	<reference>https://owasp.org/www-community/attacks/Forced_browsing</reference>
 	<reference>https://cwe.mitre.org/data/definitions/425.html</reference>
 </vuln_item_wasc_34>
 
@@ -873,7 +903,7 @@ WS-Addressing is a newer standard published by the W3C to provide routing functi
 	<solution> Выполните адекватную проверку ввода по любому значению, которое влияет на объем выделяемой памяти.  Определите подходящую стратегию обработки запросов, превышающих лимит, и рассмотрите возможность поддержки параметра конфигурации, чтобы администратор мог при необходимости увеличить объем используемой памяти. 
 
 Запустите вашу программу, используя системные ограничения ресурсов для памяти.  Это по-прежнему может привести к сбою программы или выходу из нее, но влияние на остальную систему будет сведено к минимуму. </solution>
-	<reference>http://projects.webappsec.org/SOAP-Array-Abuse</reference>
+	<reference>https://capec.mitre.org/data/definitions/256.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/789.html</reference>
 </vuln_item_wasc_35>
 
@@ -890,7 +920,7 @@ If an attacker submits a Server-side Include statement, he may have the ability 
 - Включите только те директивы SSI, которые необходимы для этой страницы, и отключите все остальные. 
 - Сущность HTML кодирует предоставленные пользователем данные перед их передачей на страницу с разрешениями на выполнение SSI. 
 - Используйте SUExec, чтобы страница выполнялась как владелец файла, а не как пользователь веб-сервера. </solution>
-	<reference>http://projects.webappsec.org/SSI-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/Server-Side_Includes_(SSI)_Injection</reference>
 </vuln_item_wasc_36>
 
 <vuln_items>wasc_37</vuln_items>
@@ -906,7 +936,9 @@ If an attacker submits a Server-side Include statement, he may have the ability 
 	<solution>Аннулировать все существующие идентификаторы сеанса до авторизации нового сеанса пользователя
 
 Для таких платформ, как ASP, которые не генерируют новые значения для файлов cookie с идентификатором сеанса, используйте дополнительный файл cookie.  В этом подходе установите вторичный файл cookie в браузере пользователя на случайное значение и задайте такое же значение переменной сеанса.  Если переменная сеанса и значение cookie никогда не совпадают, сделайте сеанс недействительным и заставьте пользователя снова войти в систему. </solution>
-	<reference>http://projects.webappsec.org/Session-Fixation</reference>
+	<reference>https://owasp.org/www-community/attacks/Session_fixation</reference>
+	<reference>https://owasp.org/www-community/controls/Session_Fixation_Protection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/384.html</reference>
 </vuln_item_wasc_37>
 
@@ -924,12 +956,12 @@ If an attacker submits a Server-side Include statement, he may have the ability 
 
 Когда набор допустимых объектов, таких как имена файлов или URL-адресов, ограничен или известен, создайте сопоставление из набора фиксированных входных значений (например, числовых идентификаторов) с фактическими именами файлов или URL-адресами и отклоните все остальные входные данные. 
 
-Например, идентификатор 1 может отображаться на «/login.asp», а идентификатор 2 может отображаться на «http://www.example.com/».  Такие функции, как ESAPI AccessReferenceMap, предоставляют эту возможность. 
+For example, ID 1 could map to "/login.asp" and ID 2 could map to "https://www.example.com/". Такие функции, как ESAPI AccessReferenceMap, предоставляют эту возможность. 
 
 Поймите все потенциальные области, в которых ненадежные входные данные могут попасть в ваше программное обеспечение: параметры или аргументы, файлы cookie, все, что считывается из сети, переменные среды, обратный поиск DNS, результаты запросов, заголовки запросов, компоненты URL, электронная почта, файлы, базы данных и любые внешние системы, которые предоставляют данные приложению.  Помните, что такие входные данные могут быть получены косвенно через вызовы API. 
 
 Многие проблемы с открытым перенаправлением возникают из-за того, что программист предполагал, что определенные входные данные не могут быть изменены, такие как файлы cookie и скрытые поля формы. </solution>
-	<reference>http://projects.webappsec.org/URL-Redirector-Abuse</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/601.html</reference>
 </vuln_item_wasc_38>
 
@@ -942,7 +974,8 @@ If an attacker submits a Server-side Include statement, he may have the ability 
 	<solution>Используйте параметризованные запросы XPath (например, с помощью XQuery).  Это поможет обеспечить разделение между плоскостью данных и плоскостью управления. 
 
 Правильно проверяйте вводимые пользователем данные.  Отклоняйте данные, где это необходимо, фильтруйте, где это необходимо, и избегайте, когда это необходимо.  Убедитесь, что ввод, который будет использоваться в запросах XPath, безопасен в этом контексте. </solution>
-	<reference>http://projects.webappsec.org/XPath-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/XPATH_Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/Blind_XPath_Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/643.html</reference>
 </vuln_item_wasc_39>
 
@@ -957,7 +990,8 @@ If an attacker submits a Server-side Include statement, he may have the ability 
 
 «Бизнес-логика» относится к контексту, в котором процесс будет выполняться в соответствии с бизнес-требованиями.  Использование слабых мест бизнес-логики требует знания бизнеса; если для его использования не нужны знания, то, скорее всего, это не ошибка бизнес-логики.  По этой причине типичные меры безопасности, такие как сканирование и проверка кода, не обнаруживают этот класс слабых мест.  Один из подходов к тестированию предлагается OWASP в их Руководстве по тестированию. </desc>
 	<solution/>
-	<reference>http://projects.webappsec.org/Insufficient-Process-Validation</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
+	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>
 
 <vuln_items>wasc_41</vuln_items>
@@ -977,7 +1011,7 @@ If an attacker submits a Server-side Include statement, he may have the ability 
 Убедитесь, что протоколы имеют определенные ограничения масштаба. 
 
 Убедитесь, что все сбои в распределении ресурсов переводят систему в безопасное состояние. </solution>
-	<reference>http://projects.webappsec.org/XML-Attribute-Blowup</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_Security_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/400.html</reference>
 </vuln_item_wasc_41>
 
@@ -986,7 +1020,7 @@ If an attacker submits a Server-side Include statement, he may have the ability 
 	<alert>Злоупотребление функциональностью </alert>
 	<desc>Злоупотребление функциональностью - это метод атаки, при котором используются собственные функции и функции веб-сайта для атаки на себя или других.  Злоупотребление функциональностью можно описать как злоупотребление предполагаемой функциональностью приложения для достижения нежелательного результата.  Эти атаки приводят к различным результатам, таким как потребление ресурсов, обход средств контроля доступа или утечка информации.  Потенциал и уровень злоупотреблений будут варьироваться от веб-сайта к веб-сайту и от приложения к приложению.  Атаки со злоупотреблением функциональностью часто представляют собой комбинацию других типов атак и / или используют другие векторы атак. </desc>
 	<solution>Всегда используйте API указанным образом. </solution>
-	<reference>http://projects.webappsec.org/Abuse-of-Functionality</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Abuse_Case_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/227.html</reference>
 </vuln_item_wasc_42>
 
@@ -996,7 +1030,9 @@ If an attacker submits a Server-side Include statement, he may have the ability 
 	<desc>Этот метод использует преимущества XML для динамического создания документов во время обработки.  Сообщение XML может либо предоставлять данные явно, либо указывать на URI, в котором данные существуют.  В методе атаки внешние объекты могут заменить значение объекта вредоносными данными, альтернативными ссылками или могут поставить под угрозу безопасность данных, к которым сервер / приложение XML имеет доступ. 
 	Злоумышленники также могут использовать внешние объекты, чтобы сервер веб-служб загружал вредоносный код или контент на сервер для использования во вторичных или последующих атаках. </desc>
 	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
-	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/611.html</reference>
 </vuln_item_wasc_43>
 
 <vuln_items>wasc_44</vuln_items>
@@ -1008,7 +1044,6 @@ If an attacker submits a Server-side Include statement, he may have the ability 
 	<solution>Если возможно, запретите использование DTD или используйте синтаксический анализатор XML, который ограничивает расширение рекурсивных сущностей DTD. 
 
 Перед синтаксическим анализом файлов XML со связанными DTD просканируйте объявления рекурсивных сущностей и не продолжайте синтаксический анализ потенциально взрывоопасного содержимого. </solution>
-	<reference>http://projects.webappsec.org/XML-Entity-Expansion</reference>
 	<reference>https://cwe.mitre.org/data/definitions/776.html</reference>
 </vuln_item_wasc_44>
 
@@ -1031,7 +1066,7 @@ If an attacker submits a Server-side Include statement, he may have the ability 
 5. **Regular Updates:** Keep software, platforms, and configurations up-to-date to patch known vulnerabilities and prevent accurate identification based on outdated information.
 
 There is no one-size-fits-all solution, and a combination of these measures may be most effective.</solution>
-	<reference>http://projects.webappsec.org/Fingerprinting</reference>
+	<reference>https://cwe.mitre.org/data/definitions/205.html</reference>
 </vuln_item_wasc_45>
 
 <vuln_items>wasc_46</vuln_items>
@@ -1041,7 +1076,8 @@ There is no one-size-fits-all solution, and a combination of these measures may 
 	<solution>Используйте параметризованные запросы.  Это поможет обеспечить разделение между плоскостью данных и плоскостью управления. 
 
 Правильно проверяйте вводимые пользователем данные.  Отклоняйте данные, где это необходимо, фильтруйте, где это необходимо, и избегайте, когда это необходимо.  Убедитесь, что ввод, который будет использоваться в запросах XQL, безопасен в этом контексте. </solution>
-	<reference>http://projects.webappsec.org/XQuery-Injection</reference>
+	<reference>https://owasp.org/www-community/Injection_Theory</reference>
+	<reference>https://owasp.org/www-community/Injection_Flaws</reference>
 	<reference>https://cwe.mitre.org/data/definitions/652.html</reference>
 </vuln_item_wasc_46>
 
@@ -1056,7 +1092,8 @@ There is no one-size-fits-all solution, and a combination of these measures may 
 
 Веб-приложение должно аннулировать сеанс после истечения заранее определенного времени простоя (тайм-аут) и предоставлять пользователю средства для аннулирования своего собственного сеанса, т. Е. Выхода из системы; это помогает максимально сократить срок жизни идентификатора сеанса и необходимо в общей вычислительной среде, где более одного человека имеют неограниченный физический доступ к компьютеру.  Функция выхода из системы должна быть хорошо видна пользователю, явно аннулировать сеанс пользователя и запрещать повторное использование токена сеанса. </desc>
 	<solution>Установите дату истечения срока действия сеансов / учетных данных. </solution>
-	<reference>http://projects.webappsec.org/Insufficient-Session-Expiration</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
+	<reference>https://owasp.org/www-community/Session_Timeout</reference>
 	<reference>https://cwe.mitre.org/data/definitions/613.html</reference>
 </vuln_item_wasc_47>
 
@@ -1073,13 +1110,13 @@ There is no one-size-fits-all solution, and a combination of these measures may 
 6. **Security Headers:** Utilize security headers (e.g., Content Security Policy) to control how browsers and search engines interact with your website.
 
 A proactive and layered approach to security is crucial for safeguarding against Insecure Indexing.</solution>
-	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
+	<reference>https://cwe.mitre.org/data/definitions/612.html</reference>
 </vuln_item_wasc_48>
 
 <vuln_items>wasc_49</vuln_items>
 <vuln_item_wasc_49>
 	<alert>Недостаточное восстановление пароля </alert>
-	<desc>Недостаточное восстановление пароля - это когда веб-сайт позволяет злоумышленнику незаконно получить, изменить или восстановить пароль другого пользователя.  Обычные методы аутентификации веб-сайта требуют от пользователей выбора и запоминания пароля или ключевой фразы.  Пользователь должен быть единственным человеком, который знает пароль, и его необходимо точно запомнить.  Со временем способность пользователя запоминать пароль ослабевает.  Ситуация еще более усложняется, когда средний пользователь посещает 20 сайтов, требующих от них ввода пароля.   (Обзор RSA: http://news.bbc.co.uk/1/hi/technology/3639679.stm) Таким образом, восстановление пароля является важной частью обслуживания онлайн-пользователей. 
+	<desc>Недостаточное восстановление пароля - это когда веб-сайт позволяет злоумышленнику незаконно получить, изменить или восстановить пароль другого пользователя.  Обычные методы аутентификации веб-сайта требуют от пользователей выбора и запоминания пароля или ключевой фразы.  Пользователь должен быть единственным человеком, который знает пароль, и его необходимо точно запомнить.  Со временем способность пользователя запоминать пароль ослабевает.  Ситуация еще более усложняется, когда средний пользователь посещает 20 сайтов, требующих от них ввода пароля.  Thus, password recovery is an important part in servicing online users.
 
 Примеры автоматизированных процессов восстановления пароля включают требование к пользователю ответить на «секретный вопрос», определенный как часть процесса регистрации пользователя.  Этот вопрос может быть выбран из списка стандартных вопросов или задан пользователем.  Другой используемый механизм - это предоставление пользователем «подсказки» во время регистрации, которая поможет пользователю вспомнить свой пароль.  Другие механизмы требуют, чтобы пользователь предоставил несколько частей личных данных, таких как номер социального страхования, домашний адрес, почтовый индекс и т. Д., Чтобы подтвердить свою личность.  После того, как пользователь подтвердит, кто он, система восстановления отобразит новый пароль или отправит ему по электронной почте. 
 
@@ -1095,7 +1132,8 @@ A proactive and layered approach to security is crucial for safeguarding against
 Никогда не позволяйте пользователю контролировать, на какой адрес электронной почты будет отправлен новый пароль в механизме восстановления пароля. 
 
 Назначьте новый временный пароль вместо того, чтобы раскрывать исходный пароль. </solution>
-	<reference>http://projects.webappsec.org/Insufficient-Password-Recovery</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/640.html</reference>
 </vuln_item_wasc_49>
 

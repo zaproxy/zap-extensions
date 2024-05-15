@@ -42,7 +42,7 @@ allprojects {
 
     project.plugins.withType(JavaPlugin::class) {
         dependencies {
-            "errorprone"("com.google.errorprone:error_prone_core:2.23.0")
+            "errorprone"("com.google.errorprone:error_prone_core:2.26.1")
         }
 
         java {

@@ -66,6 +66,12 @@
 					<th:block th:text="#{report.zapVersion(${zapVersion})}">ZAP Version</th:block>
 				</h3>
 
+				<h4>
+					ZAP is supported by the <a
+						href="https://crashoverride.com/?zap=rep">Crash Override Open
+						Source Fellowship</a>
+				</h4>
+
 				<th:block th:if="${reportData.isIncludeSection('chart')}">
 					<!--  Hidden divs just to allow us to get hold of the right CSS colors -->
 					<div class="risk-3-chart" style="display: none;"></div>
@@ -453,7 +459,7 @@
 											class="indent2">Evidence</td>
 										<td th:text="${instance.userObject.evidence}" width="80%">Evidence</td>
 									</tr>
-									<tr>
+									<tr data-th-if="${instance.userObject.message}">
 										<td width="20%" class="indent2">
 											<div th:id="${'alert-' + instance.userObject.alertId}">
 												<a
@@ -464,7 +470,7 @@
 										</td>
 										<td width="80%"></td>
 									</tr>
-									<tr>
+									<tr data-th-if="${instance.userObject.message}">
 										<td width="20%" class="indent2"><th:block
 												th:text="#{report.alerts.detail.request.header}">Request Header</th:block>
 											<th:block
@@ -482,7 +488,7 @@
 											</div>
 										</td>
 									</tr>
-									<tr>
+									<tr data-th-if="${instance.userObject.message}">
 										<td width="20%" class="indent2"><th:block
 												th:text="#{report.alerts.detail.request.body}">Request Body</th:block>
 											<th:block
@@ -500,7 +506,7 @@
 											</div>
 										</td>
 									</tr>
-									<tr>
+									<tr data-th-if="${instance.userObject.message}">
 										<td width="20%" class="indent2"><th:block
 												th:text="#{report.alerts.detail.response.header}">Response Header</th:block>
 											<th:block
@@ -518,7 +524,7 @@
 											</div>
 										</td>
 									</tr>
-									<tr>
+									<tr data-th-if="${instance.userObject.message}">
 										<td width="20%" class="indent2"><th:block
 												th:text="#{report.alerts.detail.response.body}">Response Body</th:block>
 											<th:block

@@ -154,6 +154,19 @@
     "icon": "HTTP3.svg",
     "website": "https://httpwg.org/"
   },
+  "HT Mega": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Elementor addons package for Elementor.",
+    "dom": "link[href*='/wp-content/plugins/ht-mega-for-elementor/']",
+    "icon": "HT Mega.png",
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "ht-mega-for-elementor(?:\\/admin)?\\/assets\\/js(?:\\/admin)?(?:\\/(?:htb)?bootstrap)?(?:\\/jquery)?(?:\\/popper)?(?:\\/slick)?(?:\\/waypoints)?(?:\\.counterup)?(?:\\/htmega-widgets-active)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/ht-mega-for-elementor/"
+  },
   "Haddock": {
     "cats": [
       4

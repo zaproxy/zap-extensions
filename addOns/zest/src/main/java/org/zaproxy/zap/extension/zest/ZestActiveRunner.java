@@ -27,14 +27,14 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.scripts.scanrules.ActiveScript;
-import org.zaproxy.zap.extension.scripts.scanrules.ScriptsActiveScanner;
+import org.zaproxy.zap.extension.scripts.scanrules.ActiveScriptHelper;
 import org.zaproxy.zest.core.v1.ZestRequest;
 import org.zaproxy.zest.core.v1.ZestResponse;
 
 public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
 
     private ZestScriptWrapper script = null;
-    private ScriptsActiveScanner sas = null;
+    private ActiveScriptHelper scriptHelper = null;
     private HttpMessage msg = null;
     private String param = null;
     private ExtensionZest extension = null;
@@ -49,15 +49,15 @@ public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
     }
 
     @Override
-    public void scan(ScriptsActiveScanner sas, HttpMessage msg, String param, String value)
+    public void scan(ActiveScriptHelper helper, HttpMessage msg, String param, String value)
             throws ScriptException {
         LOGGER.debug("Zest ActiveScan script: {}", this.script.getName());
-        this.sas = sas;
+        this.scriptHelper = helper;
         this.msg = msg;
         this.param = param;
 
         try {
-            sas.setParam(msg, param, "{{target}}");
+            helper.setParam(msg, param, "{{target}}");
             this.run(
                     script.getZestScript(),
                     ZestZapUtils.toZestRequest(msg, false, true, extension.getParam()),
@@ -71,7 +71,7 @@ public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
     public ZestResponse send(ZestRequest request) throws IOException {
         HttpMessage msg = ZestZapUtils.toHttpMessage(request, null /*response*/);
 
-        this.sas.sendAndReceive(msg, false /*isFollowRedirect*/);
+        scriptHelper.sendAndReceive(msg, false /*isFollowRedirect*/);
 
         ZestResponse response = ZestZapUtils.toZestResponse(msg);
         return response;
@@ -80,7 +80,8 @@ public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
     @Override
     public void alertFound(Alert alert) {
         // Override this as we can put in more info from the script and message
-        sas.newAlert()
+        scriptHelper
+                .newAlert()
                 .setRisk(alert.getRisk())
                 .setConfidence(alert.getConfidence())
                 .setName(alert.getName())

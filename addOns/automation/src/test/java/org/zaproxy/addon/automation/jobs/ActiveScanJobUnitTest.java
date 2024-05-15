@@ -56,8 +56,12 @@ import org.mockito.quality.Strictness;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
+import org.parosproxy.paros.core.scanner.PluginFactory;
+import org.parosproxy.paros.core.scanner.PluginFactoryTestHelper;
+import org.parosproxy.paros.core.scanner.PluginTestHelper;
 import org.parosproxy.paros.core.scanner.ScannerParam;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
@@ -79,6 +83,7 @@ class ActiveScanJobUnitTest {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
     private ExtensionActiveScan extAScan;
+    private static AbstractPlugin plugin;
 
     @TempDir static Path tempDir;
 
@@ -88,11 +93,19 @@ class ActiveScanJobUnitTest {
 
         Constant.setZapHome(
                 Files.createDirectory(tempDir.resolve("home")).toAbsolutePath().toString());
+
+        PluginFactoryTestHelper.init();
+        plugin = new PluginTestHelper();
+        PluginFactory.loadedPlugin(plugin);
     }
 
     @AfterAll
     static void close() {
         mockedCmdLine.close();
+
+        if (plugin != null) {
+            PluginFactory.unloadedPlugin(plugin);
+        }
     }
 
     @BeforeEach
@@ -196,8 +209,9 @@ class ActiveScanJobUnitTest {
                 job.getConfigParameters(new ScannerParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(11)));
+        assertThat(params.size(), is(equalTo(12)));
 
+        assertThat(params.containsKey("encodeCookieValues"), is(equalTo(true)));
         assertThat(params.containsKey("addQueryParam"), is(equalTo(true)));
         assertThat(params.containsKey("defaultPolicy"), is(equalTo(true)));
         assertThat(params.containsKey("delayInMs"), is(equalTo(true)));
@@ -477,8 +491,6 @@ class ActiveScanJobUnitTest {
 
     @Test
     void shouldDisableAllRulesWithString() throws MalformedURLException {
-        // There is one built in rule, and mocking more is tricky outside of the package :/
-
         // Given
         ActiveScanJob job = new ActiveScanJob();
         AutomationProgress progress = new AutomationProgress();
@@ -505,8 +517,6 @@ class ActiveScanJobUnitTest {
 
     @Test
     void shouldSetSpecifiedRuleConfigs() throws MalformedURLException {
-        // There is one built in rule, and mocking more is tricky outside of the package :/
-
         // Given
         ActiveScanJob job = new ActiveScanJob();
         AutomationProgress progress = new AutomationProgress();
@@ -550,8 +560,6 @@ class ActiveScanJobUnitTest {
 
     @Test
     void shouldTurnOffSpecifiedRule() throws MalformedURLException {
-        // There is one built in rule, and mocking more is tricky outside of the package :/
-
         // Given
         ActiveScanJob job = new ActiveScanJob();
         AutomationProgress progress = new AutomationProgress();

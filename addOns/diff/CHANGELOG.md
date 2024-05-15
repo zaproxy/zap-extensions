@@ -6,8 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Updated
 - Add-on help content.
+
+## [15] - 2024-05-07
 ### Added
-- Support for menu weights (Issue 8369)
+- Support for menu weights (Issue 8369).
+
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Maintenance changes.
 
 ## [14] - 2023-10-12
 ### Changed
@@ -77,6 +83,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/diff-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/diff-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/diff-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/diff-v12

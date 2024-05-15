@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [66] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [65] - 2024-03-28
+### Changed
+- Change link to use HTTPS in other info of SQL Injection - SQLite (Issue 8262).
+
+## [64] - 2024-03-25
+### Changed
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Source Code Disclosure - CVE-2012-1823
+    - Remote Code Execution - CVE-2012-1823
+    - Server Side Include
+    - Cross Site Scripting (Reflected)
+- The Alerts from the Remote Code Execution - CVE-2012-1823 scan rule no longer have evidence duplicated in the Other Info field.
+- The GET for POST scan rule now uses a different comparison mechanism which should be more tolerant of unrelated response differences.
+
 ## [63] - 2024-02-12
 ### Changed
 - Maintenance changes.
@@ -506,6 +524,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[66]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v66
+[65]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v65
+[64]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v64
 [63]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v63
 [62]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v62
 [61]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v61

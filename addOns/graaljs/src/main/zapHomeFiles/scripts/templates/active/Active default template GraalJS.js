@@ -1,13 +1,37 @@
 // Note that new active scripts will initially be disabled
 // Right click the script in the Scripts tree and select "enable"  
 
+const ScanRuleMetadata = Java.type("org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata");
+
+function getMetadata() {
+	return ScanRuleMetadata.fromYaml(`
+id: 12345
+name: Active Vulnerability Title
+description: Full description
+solution: The solution
+references:
+  - Reference 1
+  - Reference 2
+category: INJECTION  # info_gather, browser, server, misc, injection
+risk: INFO  # info, low, medium, high
+confidence: LOW  # false_positive, low, medium, high, user_confirmed
+cweId: 0
+wascId: 0
+alertTags:
+  name1: value1
+  name2: value2
+otherInfo: Any other Info
+status: alpha
+`);
+}
+
 /**
  * Scans a "node", i.e. an individual entry in the Sites Tree.
  * The scanNode function will typically be called once for every page. 
  * 
  * @param as - the ActiveScan parent object that will do all the core interface tasks 
  *     (i.e.: sending and receiving messages, providing access to Strength and Threshold settings,
- *     raising alerts, etc.). This is an ScriptsActiveScanner object.
+ *     raising alerts, etc.). This is an ActiveScriptHelper object.
  * @param msg - the HTTP Message being scanned. This is an HttpMessage object.
  */
 function scanNode(as, msg) {
@@ -47,7 +71,7 @@ function scanNode(as, msg) {
  * 
  * @param as - the ActiveScan parent object that will do all the core interface tasks 
  *     (i.e.: sending and receiving messages, providing access to Strength and Threshold settings,
- *     raising alerts, etc.). This is an ScriptsActiveScanner object.
+ *     raising alerts, etc.). This is an ActiveScriptHelper object.
  * @param msg - the HTTP Message being scanned. This is an HttpMessage object.
  * @param {string} param - the name of the parameter being manipulated for this test/scan.
  * @param {string} value - the original parameter value.
@@ -68,21 +92,10 @@ function scan(as, msg, param, value) {
 	
 	// Test the response here, and make other requests as required
 	if (true) {	// Change to a test which detects the vulnerability
-		// risk: 0: info, 1: low, 2: medium, 3: high
-		// confidence: 0: falsePositive, 1: low, 2: medium, 3: high, 4: confirmed
 		as.newAlert()
-			.setRisk(1)
-			.setConfidence(1)
-			.setName('Active Vulnerability title')
-			.setDescription('Full description')
 			.setParam(param)
 			.setAttack('Your attack')
 			.setEvidence('Evidence')
-			.setOtherInfo('Any other info')
-			.setSolution('The solution')
-			.setReference('References')
-			.setCweId(0)
-			.setWascId(0)
 			.setMessage(msg)
 			.raise();
 	}

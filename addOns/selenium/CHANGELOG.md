@@ -5,8 +5,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [15.23.0] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [15.22.0] - 2024-04-26
+### Changed
+- Update Selenium to version 4.20.0.
+
+## [15.21.0] - 2024-04-02
+### Changed
+- Update Selenium to version 4.19.1.
+
+## [15.20.0] - 2024-03-28
 ### Added
-- Support for menu weights (Issue 8369)
+- Support for menu weights (Issue 8369).
+
+### Changed
+- Update Selenium to version 4.19.0.
+- Update HtmlUnit to major version 3.
+
+### Fixed
+- A typo on the intro page in the add-on's help.
 
 ## [15.19.0] - 2024-02-22
 ### Changed
@@ -214,6 +236,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.23.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.23.0
+[15.22.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.22.0
+[15.21.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.21.0
+[15.20.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.20.0
 [15.19.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.19.0
 [15.18.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.18.0
 [15.17.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.17.0

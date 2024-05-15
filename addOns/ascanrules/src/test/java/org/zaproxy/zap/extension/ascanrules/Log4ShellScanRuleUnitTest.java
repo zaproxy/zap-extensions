@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -133,12 +134,14 @@ class Log4ShellScanRuleUnitTest extends ActiveScannerTest<Log4ShellScanRule> {
         // Then
         assertThat(alerts.size(), is(equalTo(2)));
         assertThat(alert1.getAlertRef(), is(equalTo("40043-1")));
-        assertThat(alert1.getTags().size(), is(equalTo(5)));
+        assertThat(alert1.getTags().size(), is(equalTo(6)));
+        assertThat(alert1.getTags(), hasKey("CWE-117"));
         assertThat(alert1.getTags().containsKey("CVE-2021-44228"), is(equalTo(true)));
         assertThat(alert1.getName(), is(equalTo("Log4Shell (CVE-2021-44228)")));
         assertThat(alert2.getAlertRef(), is(equalTo("40043-2")));
         assertThat(alert2.getTags().containsKey("CVE-2021-45046"), is(equalTo(true)));
-        assertThat(alert2.getTags().size(), is(equalTo(5)));
+        assertThat(alert2.getTags().size(), is(equalTo(6)));
+        assertThat(alert2.getTags(), hasKey("CWE-117"));
         assertThat(alert2.getName(), is(equalTo("Log4Shell (CVE-2021-45046)")));
     }
 

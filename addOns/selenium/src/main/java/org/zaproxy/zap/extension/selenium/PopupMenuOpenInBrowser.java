@@ -36,12 +36,6 @@ public class PopupMenuOpenInBrowser extends PopupMenuHttpMessageContainer {
     }
 
     @Override
-    public int getMenuIndex() {
-        // This currently puts the menu just above the 'Open URL in System Browser' item
-        return 7;
-    }
-
-    @Override
     protected boolean isButtonEnabledForNumberOfSelectedMessages(int numberOfSelectedMessages) {
         return true;
     }
@@ -63,6 +57,7 @@ public class PopupMenuOpenInBrowser extends PopupMenuHttpMessageContainer {
         return super.isEnableForMessageContainer(invoker);
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_OPEN_BROWSER_WEIGHT;
     }

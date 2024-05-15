@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [10] - 2024-03-25
+### Changed
 - Update minimum ZAP version to 2.14.0.
 - Maintenance changes.
 - Link website alert pages and help (Issues 8189).
@@ -74,6 +78,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Initial version
 
+[10]: https://github.com/zaproxy/zap-extensions/releases/accessControl-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/accessControl-v9
 [8]: https://github.com/zaproxy/zap-extensions/releases/accessControl-v8
 [7]: https://github.com/zaproxy/zap-extensions/releases/accessControl-v7
