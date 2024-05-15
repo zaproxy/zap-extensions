@@ -20,8 +20,10 @@
 package org.zaproxy.addon.grpc.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.NameValuePair;
@@ -34,35 +36,60 @@ public class VariantGrpc implements Variant {
     private final ProtoBufMessageEncoder protoBufMessageEncoder = new ProtoBufMessageEncoder();
     private final ProtoBufMessageDecoder protoBufMessageDecoder = new ProtoBufMessageDecoder();
 
+    private String requestDecodedBody = null;
+
     @Override
     public void setMessage(HttpMessage msg) {
-        String contentType = msg.getRequestHeader().getHeader("content-type");
-        if (contentType != null && isValidContentType(contentType)) {
+        if (isValidContentType(msg)) {
             try {
                 byte[] body = Base64.getDecoder().decode(msg.getRequestBody().getBytes());
                 byte[] payload = DecoderUtils.extractPayload(body);
-                this.protoBufMessageDecoder.decode(payload);
-                this.parseContent(protoBufMessageDecoder.getDecodedToList());
+                protoBufMessageDecoder.decode(payload);
+                parseContent(protoBufMessageDecoder.getDecodedToList(), "");
+                requestDecodedBody = protoBufMessageDecoder.getDecodedOutput();
             } catch (Exception e) {
                 LOGGER.error("Parsing message body failed: {}", e.getMessage());
             }
         }
     }
 
-    public void parseContent(List<String> decodedList) {
+    private void parseContent(List<String> decodedList, String commonPrefixForNestedMessage)
+            throws InvalidProtobufFormatException {
         for (String pair : decodedList) {
             String[] nameValuePair = pair.split("::", 2);
-            params.add(
-                    new NameValuePair(
-                            NameValuePair.TYPE_JSON,
-                            nameValuePair[0],
-                            nameValuePair[1],
-                            params.size()));
+            if (commonPrefixForNestedMessage.isEmpty()) {
+                params.add(
+                        new NameValuePair(
+                                NameValuePair.TYPE_JSON,
+                                nameValuePair[0],
+                                nameValuePair[1],
+                                params.size()));
+
+            } else {
+                params.add(
+                        new NameValuePair(
+                                NameValuePair.TYPE_JSON,
+                                commonPrefixForNestedMessage + '.' + nameValuePair[0],
+                                nameValuePair[1],
+                                params.size()));
+            }
+            String[] fieldNumAndWireType = nameValuePair[0].split(":", 2);
+            if (fieldNumAndWireType[1].length() > 1 && fieldNumAndWireType[1].charAt(1) == 'N') {
+                String nestedMessage = EncoderUtils.removeFirstAndLastCurlyBraces(nameValuePair[1]);
+                List<String> nestedMessagePairList = EncoderUtils.parseIntoList(nestedMessage);
+                if (commonPrefixForNestedMessage.isEmpty()) {
+                    parseContent(nestedMessagePairList, nameValuePair[0]);
+                } else {
+                    parseContent(
+                            nestedMessagePairList,
+                            commonPrefixForNestedMessage + '.' + nameValuePair[0]);
+                }
+            }
         }
     }
 
-    public boolean isValidContentType(String contentType) {
-        return contentType.startsWith("application/grpc-web-text");
+    private boolean isValidContentType(HttpMessage msg) {
+        return msg.getRequestHeader().hasContentType("application/grpc-web-text");
     }
 
     @Override
@@ -73,15 +100,23 @@ public class VariantGrpc implements Variant {
     @Override
     public String setParameter(
             HttpMessage msg, NameValuePair originalPair, String param, String value) {
-        NameValuePair currentPair = params.get(originalPair.getPosition());
-        String reqBody = buildNewBodyContent(currentPair, param, value);
         try {
-            setEncodedReqBodyMessage(msg, reqBody);
-            return value;
+            List<String> decodedList = EncoderUtils.parseIntoList(requestDecodedBody);
+            String newContent = buildNewBodyContent(decodedList, originalPair, param, value);
+            setEncodedReqBodyMessage(msg, newContent);
+            return newContent;
         } catch (Exception e) {
-            LOGGER.warn("Failed to set parameter in GraphQL message: {}", e.getMessage());
+            LOGGER.warn("Failed to set parameter in Grpc message: {}", e.getMessage());
             return null;
         }
+    }
+
+    private String buildNewBodyContent(
+            List<String> decodedList, NameValuePair originalPair, String param, String value)
+            throws InvalidProtobufFormatException {
+        String currentPairName = originalPair.getName();
+        String[] nestedMessageParams = currentPairName.split("\\.");
+        return findParamAndPutPayload(decodedList, nestedMessageParams, param, value);
     }
 
     private void setEncodedReqBodyMessage(HttpMessage msg, String newContent) throws Exception {
@@ -91,24 +126,42 @@ public class VariantGrpc implements Variant {
         msg.getRequestBody().setBody(encodedMessage);
     }
 
-    private String buildNewBodyContent(NameValuePair currentPair, String param, String value) {
-        StringBuilder sb = new StringBuilder();
+    private String findParamAndPutPayload(
+            List<String> decodedList, String[] nestedMessageParam, String param, String value)
+            throws InvalidProtobufFormatException {
+        StringBuilder newContent = new StringBuilder();
+        for (String val : decodedList) {
+            String[] nameValuePair = val.split("::", 2);
+            if (nestedMessageParam.length > 0
+                    && Objects.equals(nestedMessageParam[0], nameValuePair[0])) {
+                newContent.append(nameValuePair[0]);
+                newContent.append("::");
+                nestedMessageParam =
+                        Arrays.copyOfRange(nestedMessageParam, 1, nestedMessageParam.length);
+                if (nestedMessageParam.length == 0) {
+                    if (Objects.equals(nameValuePair[0].split(":", 2)[1], "2")) {
+                        newContent.append("\"").append(value).append("\"");
+                    } else {
+                        newContent.append(value);
+                    }
+                } else {
+                    List<String> nestedMessageList =
+                            EncoderUtils.parseIntoList(
+                                    EncoderUtils.removeFirstAndLastCurlyBraces(nameValuePair[1]));
 
-        for (NameValuePair pair : params) {
-            sb.append(pair.getName());
-            sb.append("::");
-            if (pair == currentPair) {
-                String curPairName = currentPair.getName();
-                String[] nameType = curPairName.split(":", 2);
-                if (nameType[1].charAt(0) == '2') sb.append('"').append(value).append('"');
-                else sb.append(value);
+                    String s =
+                            "{\n"
+                                    + findParamAndPutPayload(
+                                            nestedMessageList, nestedMessageParam, param, value)
+                                    + "}";
+                    newContent.append(s);
+                }
             } else {
-                sb.append(pair.getValue());
+                newContent.append(val);
             }
-            sb.append("\n");
+            newContent.append('\n');
         }
-
-        return sb.toString();
+        return newContent.toString();
     }
 
     @Override
@@ -127,7 +180,7 @@ public class VariantGrpc implements Variant {
             protoBufMessageDecoder.decode(payload);
             msg.getResponseBody().setBody(protoBufMessageDecoder.getDecodedOutput());
         } catch (Exception e) {
-            LOGGER.error("Error decoding the Response Body: {}", e.getMessage());
+            LOGGER.warn("Error decoding the Response Body: {}", e.getMessage());
         }
     }
 }
