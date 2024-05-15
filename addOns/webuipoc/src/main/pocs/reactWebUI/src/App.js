@@ -6,10 +6,16 @@ import axios from 'axios';
 const App = () => {
     const [childNode,SetChildNode] = useState(null);
     const WebClickZAP = async () => {
+
         try {
-            const response = await axios.get('http://localhost:1337/JSON/core/view/childNodes/');
+            if (process.env.NODE_ENV === "development") {
+             axios.defaults.baseURL = "http://localhost:1337"; //Specify ZAP API URL here in development environment
+            } else {
+                axios.defaults.baseURL = ""
+            }
+
+            const response = await axios.get('/JSON/core/view/childNodes/');
             SetChildNode(response.data.childNodes);
-            console.log(childNode)
         } catch (error) {
             console.error('Error fetching data:', error);
         }
