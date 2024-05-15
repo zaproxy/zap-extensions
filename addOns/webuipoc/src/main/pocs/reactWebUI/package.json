@@ -10,11 +10,12 @@
     "axios": "^1.6.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "PUBLIC_URL=/reactWebUI/ BUILD_PATH=./dist react-scripts build",
+    "build": "PUBLIC_URL=/web-ui/ BUILD_PATH=./dist react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
