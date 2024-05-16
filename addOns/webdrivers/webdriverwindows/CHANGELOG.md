@@ -4,25 +4,20 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Update ChromeDriver to 125.0.6422.60.
 
 ## [85] - 2024-05-14
 ### Changed
 - Update ChromeDriver to 124.0.6367.207.
 
-
-
 ## [84] - 2024-05-10
 ### Changed
 - Update ChromeDriver to 124.0.6367.201.
 
-
-
 ## [83] - 2024-05-08
 ### Changed
 - Update ChromeDriver to 124.0.6367.155.
-
-
 
 ## [82] - 2024-05-07
 ### Changed
