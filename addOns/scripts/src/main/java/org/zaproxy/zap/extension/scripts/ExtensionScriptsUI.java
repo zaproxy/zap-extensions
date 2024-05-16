@@ -195,6 +195,11 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             ExtensionHelp.enableHelpKey(getConsolePanel(), "addon.scripts.console");
             ExtensionHelp.enableHelpKey(getScriptsPanel(), "addon.scripts.tree");
         }
+
+        if (org.zaproxy.zap.extension.script.ScriptAPI.class.getAnnotation(Deprecated.class)
+                != null) {
+            extensionHook.addApiImplementor(new ScriptApi(getExtScript()));
+        }
     }
 
     @Override
