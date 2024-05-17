@@ -36,6 +36,8 @@ public class VariantGrpc implements Variant {
     private final ProtoBufMessageEncoder protoBufMessageEncoder = new ProtoBufMessageEncoder();
     private final ProtoBufMessageDecoder protoBufMessageDecoder = new ProtoBufMessageDecoder();
 
+    // TODO - This must be define in NameValuePair class
+    public static final int TYPE_GRPC_WEB_TEXT = 39;
     private String requestDecodedBody = null;
 
     @Override
@@ -60,7 +62,7 @@ public class VariantGrpc implements Variant {
             if (commonPrefixForNestedMessage.isEmpty()) {
                 params.add(
                         new NameValuePair(
-                                NameValuePair.TYPE_GRPC_WEB_TEXT,
+                                TYPE_GRPC_WEB_TEXT,
                                 nameValuePair[0],
                                 nameValuePair[1],
                                 params.size()));
@@ -68,7 +70,7 @@ public class VariantGrpc implements Variant {
             } else {
                 params.add(
                         new NameValuePair(
-                                NameValuePair.TYPE_GRPC_WEB_TEXT,
+                                TYPE_GRPC_WEB_TEXT,
                                 commonPrefixForNestedMessage + '.' + nameValuePair[0],
                                 nameValuePair[1],
                                 params.size()));
@@ -167,7 +169,7 @@ public class VariantGrpc implements Variant {
     @Override
     public String setEscapedParameter(
             HttpMessage msg, NameValuePair originalPair, String param, String value) {
-        return "";
+        return setParameter(msg, originalPair, param, value);
     }
 
     @Override

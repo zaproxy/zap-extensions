@@ -53,7 +53,7 @@ public class VariantGrpcUnitTest {
         String param = "2:2N.3:2N.3:2N.1:2";
         String payload = "../../../../admin/";
         NameValuePair originalPair =
-                new NameValuePair(NameValuePair.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
+                new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
         String newMessageWithPayload =
                 variantGrpc.setParameter(httpMessage, originalPair, param, payload);
 
@@ -78,7 +78,7 @@ public class VariantGrpcUnitTest {
         String param = "1:2";
         String payload = "../../../../admin/";
         NameValuePair originalPair =
-                new NameValuePair(NameValuePair.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
+                new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
         String newMessageWithPayload =
                 variantGrpc.setParameter(httpMessage, originalPair, param, payload);
 
