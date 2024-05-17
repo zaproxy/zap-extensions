@@ -60,7 +60,7 @@ public class VariantGrpc implements Variant {
             if (commonPrefixForNestedMessage.isEmpty()) {
                 params.add(
                         new NameValuePair(
-                                NameValuePair.TYPE_JSON,
+                                NameValuePair.TYPE_GRPC_WEB_TEXT,
                                 nameValuePair[0],
                                 nameValuePair[1],
                                 params.size()));
@@ -68,7 +68,7 @@ public class VariantGrpc implements Variant {
             } else {
                 params.add(
                         new NameValuePair(
-                                NameValuePair.TYPE_JSON,
+                                NameValuePair.TYPE_GRPC_WEB_TEXT,
                                 commonPrefixForNestedMessage + '.' + nameValuePair[0],
                                 nameValuePair[1],
                                 params.size()));
