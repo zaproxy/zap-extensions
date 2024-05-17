@@ -30,7 +30,7 @@ const App = () => {
                     <div className="w-1/3 p-4" onClick={WebClickZAP}>
                       <p className='font-mono'>Click to fetch</p>
                       {childNode && childNode.map((node) => (
-                     <p className=''>{node.name}</p>
+                     <p className='' key={childNode}>{node.name}</p>
                       ))}
                     </div>
                 </div>
