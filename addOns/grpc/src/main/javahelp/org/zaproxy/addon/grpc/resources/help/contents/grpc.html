@@ -7,20 +7,20 @@
 </HEAD>
 <BODY>
 <h1>gRPC Support</h1>
-This add-on will allow you to inspect, attack gRPC endpoints, and decode protobuf messages. It is currently under development.
+This add-on will allow you to inspect, attack gRPC endpoints, decode and encode protobuf messages. It is currently under development.
 
-<p>gRPC APIs have become increasingly popular for building efficient and robust microservices architectures. However, testing these APIs effectively can be challenging, especially when dealing with Protobuf message encoding and decoding. In this blog post, we&#39;ll explore a custom extension designed to streamline the process of testing gRPC endpoints and handling Protobuf messages.</p>
 <p>The add-on is still in an early stage, so the range of its functionality is limited. However, you can combine it with existing ZAP functionality to abuse gRPC endpoints in many different ways.</p>
 
 <h2 >Introducing the gRPC Add-on</h2>
-<p>This extension aims to simplify the testing process by providing tools for:</p>
+<p>This add-on aims to simplify the testing process by providing tools for:</p>
 <ul>
     <li><strong>Encoding and Decoding</strong>: Easily encode and decode Protobuf messages for testing purposes.</li>
     <li><strong>Testing gRPC Endpoints</strong>: You can combine it with existing ZAP functionality to abuse gRPC endpoints in many different ways.</li>
 </ul>
 
 <h2 id=>How to see gRPC decoded Message</h2>
-<p><img src="../../common/images/grpc-message-panel.png" alt="gRPCResponseBody"></img>
+<p>In the Message View panel, change the Body to gRPC.</p>
+<img src="../../common/images/grpc-message-panel.png" alt="gRPCResponseBody" width="600"/>
 
 
 <h2>Understanding Decoded Protobuf Messages</h2>
