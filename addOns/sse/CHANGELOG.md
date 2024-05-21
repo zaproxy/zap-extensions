@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [13] - 2024-05-21
 ### Changed
 - Update minimum ZAP version to 2.15.0.
 - Maintenance changes.
@@ -76,6 +76,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[13]: https://github.com/zaproxy/zap-extensions/releases/sse-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/sse-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/sse-v11
 [10]: https://github.com/zaproxy/zap-extensions/releases/sse-v10
