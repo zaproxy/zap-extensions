@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+    <TITLE>
+        gRPC Support
+    </TITLE>
+</HEAD>
+<BODY>
+<h1>gRPC Support</h1>
+This add-on will allow you to inspect, attack gRPC endpoints, decode and encode protobuf messages.
+
+<p>The add-on is still in an early stage, so the range of its functionality is limited. However, you can combine it with existing ZAP functionality to abuse gRPC endpoints in many different ways.</p>
+
+<h2 >Introducing the gRPC Add-on</h2>
+<p>This add-on aims to simplify the testing process by providing tools for:</p>
+<ul>
+    <li><strong>Encoding and Decoding</strong>: Easily encode and decode Protobuf messages for testing purposes.</li>
+    <li><strong>Testing gRPC Endpoints</strong>: You can combine it with existing ZAP functionality to abuse gRPC endpoints in many different ways.</li>
+</ul>
+
+<h2 id=>How to see gRPC decoded Message</h2>
+<p>In the Message View panel, change the Body to gRPC.</p>
+<img src="../../common/images/grpc-message-panel.png" alt="gRPCResponseBody" width="600"/>
+
+
+<h2>Understanding Decoded Protobuf Messages</h2>
+<p>When decoding Protobuf messages, it&#39;s essential to understand the structure of the decoded data. Protobuf messages consist of fields, each with a field number, wire type, and value. Let&#39;s delve deeper into these components:</p>
+<h3 >Field Structure</h3>
+<ul>
+    <li><strong>Field Number</strong>: Each field in a Protobuf message is assigned a unique field number. This number is used to identify and distinguish between different fields within the message.</li>
+    <li><strong>Wire Type</strong>: The wire type determines how the field&#39;s value is encoded and provides information about the type of data stored in the field.</li>
+    <li><strong>Value</strong>: The actual data contained within the field, encoded according to its wire type.</li>
+</ul>
+<h2 >Let&#39;s understand the decoded Protobuf Message Structure using below example</h2>
+<p>This is the Base64 encoded form of the binary text received by ZAP.</p>
+<p>AAAAAIYJZCZMzMzcXkAVrseHQhi5YCDqrcDlJCixqAM1QEIPADOQSGVsbG8sIFByb3RvYnVmIUJMCgsxMjMgTWFpbiBTdBIGT X1DaXR5GgUxMjMONSIuCgtIZWxsbyBXb3JsZBIITXkgV29ybGQaCllvdXIgV29ybGQiCU91ciBXb3JsZEjqrcDLJA==</p>
+<p>On the left side, we have the original message retrieved by the gRPC endpoint in the backend. On the right side, we have the decoded message from the above encoded text, processed by the ZAP gRPC addon.</p>
+<p><img src="../../common/images/original-message.png" alt="OriginalMessage" width="400"/>   <img src="../../common/images/decoded-message.png" alt="DecodedMessage" width="400"/></p>
+<ul>
+    <li>Each field in the message is represented as &quot;field number:wire type::value&quot;.</li>
+    <li>Each key-value pair starts on a new line.</li>
+    <li>Additional specifiers are only used for double (<code>1D</code>), float (<code>5F</code>), and nested messages (<code>2N</code>).</li>
+    <li>For wire type <code>2</code>, the value should be enclosed in double quotes, except for nested messages (<code>2N</code>).</li>
+    <li>For nested messages(<code>2N</code>):<ul>
+        <li>After the field number and wire type (<code>fieldNumber:2N::</code>), an open curly brace is placed and start adding nested message fields from new line.</li>
+        <li>The nested message is closed with a closing curly brace on a separate new line.</li>
+    </ul>
+    </li>
+    <li>Please don&#39;t use unnecessary space.</li>
+</ul>
+<h2 >Writing and Editing Decoded Protobuf Messages</h2>
+<p>You can only edit this Decoded Message in Requester and Manual request editor window simply change the part after (&quot;::&quot;) which contain value or you can write new fields by following above mentioned rules.</p>
+<p><img src="../../common/images/edit-demo.gif" alt="EditDemo"></p>
+
+
+</BODY>
+</HTML>
