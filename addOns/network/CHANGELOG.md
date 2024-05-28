@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Guard against user without authentication state.
+
 ## [0.16.0] - 2024-05-07
 ### Changed
 - Update minimum ZAP version to 2.15.0.
