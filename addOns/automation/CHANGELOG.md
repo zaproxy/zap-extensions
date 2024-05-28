@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.40.1] - 2024-05-28
 ### Fixed
 - Address HTTP authentication failure when the realm is not configured.
 
@@ -389,6 +389,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.40.1]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.40.1
 [0.40.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.40.0
 [0.39.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.39.0
 [0.38.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.38.0
