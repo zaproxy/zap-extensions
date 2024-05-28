@@ -223,8 +223,12 @@ public class AuthenticationData extends AutomationData {
                     httpAuthMethod.setHostname(
                             env.replaceVars(
                                     getParameters().get(AuthenticationData.PARAM_HOSTNAME)));
-                    httpAuthMethod.setRealm(
-                            env.replaceVars(getParameters().get(AuthenticationData.PARAM_REALM)));
+                    var realm =
+                            env.replaceVars(getParameters().get(AuthenticationData.PARAM_REALM));
+                    if (realm == null) {
+                        realm = "";
+                    }
+                    httpAuthMethod.setRealm(realm);
                     try {
                         httpAuthMethod.setPort(
                                 Integer.parseInt(
