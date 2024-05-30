@@ -61,12 +61,12 @@ public class VariantGrpcUnitTest {
     }
 
     @Test
-    void shouldSetParameter() throws HttpMalformedHeaderException {
+    void shouldSetParameterWithSpecialCharacterPayload() throws HttpMalformedHeaderException {
 
         String encodedRequestBody =
                 "AAAAAEEKEEhlbGxvLCBQcm90b2J1ZiESJwoESm9obhIGTWlsbGVyGhcKBEpvaG4QAhoNCgtIZWxsbyBXb3JsZBjqrcDlJA";
         String expectedOutput =
-                "1:2::\"../../../../admin/\"\n2:2N::{\n1:2::\"John\"\n2:2::\"Miller\"\n3:2N::{\n1:2::\"John\"\n2:0::2\n3:2N::{\n1:2::\"Hello World\"\n}\n}\n}\n3:0::9876543210\n";
+                "1:2::\"John\r\rSmith:\t67 Marcus' Rd\"\n2:2N::{\n1:2::\"John\"\n2:2::\"Miller\"\n3:2N::{\n1:2::\"John\"\n2:0::2\n3:2N::{\n1:2::\"Hello World\"\n}\n}\n}\n3:0::9876543210\n";
 
         HttpRequestHeader httpRequestHeader = new HttpRequestHeader();
         httpRequestHeader.setMessage("POST /abc/xyz HTTP/1.1");
@@ -76,7 +76,32 @@ public class VariantGrpcUnitTest {
 
         variantGrpc.setMessage(httpMessage);
         String param = "1:2";
-        String payload = "../../../../admin/";
+        String payload = "John\r\rSmith:\t67 Marcus' Rd";
+        NameValuePair originalPair =
+                new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
+        String newMessageWithPayload =
+                variantGrpc.setParameter(httpMessage, originalPair, param, payload);
+
+        assertEquals(expectedOutput, newMessageWithPayload);
+    }
+
+    @Test
+    void shouldSetParameterWithSimplePayload() throws HttpMalformedHeaderException {
+
+        String encodedRequestBody =
+                "AAAAAEEKEEhlbGxvLCBQcm90b2J1ZiESJwoESm9obhIGTWlsbGVyGhcKBEpvaG4QAhoNCgtIZWxsbyBXb3JsZBjqrcDlJA";
+        String expectedOutput =
+                "1:2::\"ls ../../../../../admin/\"\n2:2N::{\n1:2::\"John\"\n2:2::\"Miller\"\n3:2N::{\n1:2::\"John\"\n2:0::2\n3:2N::{\n1:2::\"Hello World\"\n}\n}\n}\n3:0::9876543210\n";
+
+        HttpRequestHeader httpRequestHeader = new HttpRequestHeader();
+        httpRequestHeader.setMessage("POST /abc/xyz HTTP/1.1");
+        httpRequestHeader.setHeader(HttpHeader.CONTENT_TYPE, "application/grpc-web-text");
+        HttpMessage httpMessage = new HttpMessage(httpRequestHeader);
+        httpMessage.setRequestBody(encodedRequestBody);
+
+        variantGrpc.setMessage(httpMessage);
+        String param = "1:2";
+        String payload = "ls ../../../../../admin/";
         NameValuePair originalPair =
                 new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
         String newMessageWithPayload =

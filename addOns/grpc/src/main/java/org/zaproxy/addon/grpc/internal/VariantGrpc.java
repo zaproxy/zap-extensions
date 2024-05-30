@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.grpc.internal;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -91,7 +92,7 @@ public class VariantGrpc implements Variant {
     }
 
     private boolean isValidContentType(HttpMessage msg) {
-        return msg.getRequestHeader().hasContentType("application/grpc-web-text");
+        return msg.getRequestHeader().hasContentType("application/grpc");
     }
 
     @Override
@@ -107,8 +108,8 @@ public class VariantGrpc implements Variant {
             String newContent = buildNewBodyContent(decodedList, originalPair, param, value);
             setEncodedReqBodyMessage(msg, newContent);
             return newContent;
-        } catch (Exception e) {
-            LOGGER.warn("Failed to set parameter in Grpc message: {}", e.getMessage());
+        } catch (InvalidProtobufFormatException | IOException | NumberFormatException e) {
+            LOGGER.warn("Failed to set parameter in gRPC message: {}", e.getMessage());
             return null;
         }
     }
@@ -121,7 +122,8 @@ public class VariantGrpc implements Variant {
         return findParamAndPutPayload(decodedList, nestedMessageParams, param, value);
     }
 
-    private void setEncodedReqBodyMessage(HttpMessage msg, String newContent) throws Exception {
+    private void setEncodedReqBodyMessage(HttpMessage msg, String newContent)
+            throws InvalidProtobufFormatException, IOException {
         protoBufMessageEncoder.encode(EncoderUtils.parseIntoList(newContent));
         byte[] encodedMessage = protoBufMessageEncoder.getOutputEncodedMessage();
         encodedMessage = Base64.getEncoder().encode(encodedMessage);
