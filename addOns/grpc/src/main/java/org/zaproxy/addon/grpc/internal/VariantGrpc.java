@@ -20,6 +20,7 @@
 package org.zaproxy.addon.grpc.internal;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -50,7 +51,7 @@ public class VariantGrpc implements Variant {
                 protoBufMessageDecoder.decode(payload);
                 parseContent(protoBufMessageDecoder.getDecodedToList(), "");
                 requestDecodedBody = protoBufMessageDecoder.getDecodedOutput();
-            } catch (Exception e) {
+            } catch (InvalidProtobufFormatException e) {
                 LOGGER.error("Parsing message body failed: {}", e.getMessage());
             }
         }
@@ -183,7 +184,7 @@ public class VariantGrpc implements Variant {
             byte[] payload = DecoderUtils.extractPayload(body);
             protoBufMessageDecoder.decode(payload);
             msg.getResponseBody().setBody(protoBufMessageDecoder.getDecodedOutput());
-        } catch (Exception e) {
+        } catch (UnsupportedEncodingException | IllegalArgumentException e) {
             LOGGER.warn("Error decoding the Response Body: {}", e.getMessage());
         }
     }
