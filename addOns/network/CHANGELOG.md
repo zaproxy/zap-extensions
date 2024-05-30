@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Guard against user without authentication state.
+- Fix exception after regenerating the root CA cert during ZAP startup (Issue 8499).
 
 ## [0.16.0] - 2024-05-07
 ### Changed

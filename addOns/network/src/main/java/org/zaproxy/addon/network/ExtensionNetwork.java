@@ -1119,7 +1119,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
      * @param serverConfigs the server configurations to filter.
      */
     void removeStartedLocalServers(Set<LocalServerConfig> serverConfigs) {
-        if (mainProxyServer.isStarted()) {
+        if (mainProxyServer != null && mainProxyServer.isStarted()) {
             serverConfigs.remove(mainProxyServer.getConfig());
         }
         localServers.values().stream()
