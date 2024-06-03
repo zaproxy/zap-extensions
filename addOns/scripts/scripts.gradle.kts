@@ -41,6 +41,11 @@ zapAddOn {
             register("org.zaproxy.zap.extension.scripts.scanrules.ScriptsPassiveScanner")
         }
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.zap.extension.scripts.ScriptApi")
+        messages.set(file("src/main/resources/org/zaproxy/zap/extension/scripts/resources/Messages.properties"))
+    }
 }
 
 spotless {

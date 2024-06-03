@@ -3738,6 +3738,17 @@
     "scriptSrc": "consent\\.cookiebot\\.com",
     "website": "https://www.cookiebot.com"
   },
+  "Cool Tag Cloud": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "A simple tag cloud system for WordPress.",
+    "dom": "link#cool-tag-cloud-css[href*='/wp-content/plugins/cool-tag-cloud/'], .cool-tag-cloud, .widget_cool_tag_cloud, .cool-tag-cloud-open, .cool-tag-cloud-close, .cool-tag-cloud-inner",
+    "oss": true,
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/cool-tag-cloud"
+  },
   "Cool Timeline": {
     "cats": [
       5,

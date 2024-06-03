@@ -3486,6 +3486,19 @@
     "implies": "Java",
     "website": "https://www.publiccms.com"
   },
+  "Publii": {
+    "cats": [
+      1
+    ],
+    "description": "Agnostic server Static Site CMS built for Windows, MacOS and Linux.",
+    "dom": "meta[content*='Publii Open-Source CMS for Static Site']",
+    "icon": "Publii.png",
+    "js": {
+      "publiiThemeMenuConfig": ""
+    },
+    "oss": true,
+    "website": "https://getpublii.com"
+  },
   "Pulse Secure": {
     "cats": [
       46

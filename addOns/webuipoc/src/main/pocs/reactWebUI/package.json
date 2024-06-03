@@ -14,15 +14,17 @@
     "axios": "^1.6.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-scripts": "^5.0.1",
-    "web-vitals": "^2.1.4"
+    "react-scripts": "^5.0.1"
+
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "PUBLIC_URL=/reactWebUI/ BUILD_PATH=./dist react-scripts build",
     "test": "react-scripts test",
+
     "eject": "react-scripts eject",
     "lint": "eslint"
+
   },
   "eslintConfig": {
     "extends": [
@@ -43,12 +45,12 @@
     ]
   },
   "devDependencies": {
-    "nth-check": ">=2.0.1",
     "@eslint/js": "^9.2.0",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.2",
     "globals": "^15.2.0",
+
     "tailwindcss": "^3.4.3"
   }
 }

@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.jobs.JobUtils;
@@ -198,8 +199,9 @@ class AuthenticationDataUnitTest {
         assertThat(params.get("field2"), is(equalTo("value2")));
     }
 
-    @Test
-    void shouldInitContextWithHttpAuth() {
+    @ParameterizedTest
+    @CsvSource({"realm,realm", ",''", "'',''"})
+    void shouldInitContextWithHttpAuth(String realm, String expectedRealm) {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         Context context = new Context(null, -1);
@@ -207,7 +209,7 @@ class AuthenticationDataUnitTest {
         AuthenticationData data = new AuthenticationData();
         data.setMethod("http");
         data.getParameters().put(AuthenticationData.PARAM_HOSTNAME, "https://www.example.com");
-        data.getParameters().put(AuthenticationData.PARAM_REALM, "realm");
+        data.getParameters().put(AuthenticationData.PARAM_REALM, realm);
         data.getParameters().put(AuthenticationData.PARAM_PORT, 123);
 
         AutomationProgress progress = new AutomationProgress();
@@ -226,7 +228,7 @@ class AuthenticationDataUnitTest {
                 is(equalTo("https://www.example.com")));
         assertThat(
                 JobUtils.getPrivateField(method, AuthenticationData.PARAM_REALM),
-                is(equalTo("realm")));
+                is(equalTo(expectedRealm)));
         assertThat(
                 JobUtils.getPrivateField(method, AuthenticationData.PARAM_PORT), is(equalTo(123)));
     }

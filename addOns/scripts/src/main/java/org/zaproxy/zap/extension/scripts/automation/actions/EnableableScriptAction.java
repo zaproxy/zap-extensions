@@ -77,7 +77,7 @@ public class EnableableScriptAction extends ScriptAction {
         }
 
         // Note dont warn/error if script not currently in ZAP - it might be added by another job
-        if (!StringUtils.isEmpty(params.getFile())) {
+        if (!StringUtils.isEmpty(params.getSource())) {
             issue =
                     Constant.messages.getString(
                             "scripts.automation.warn.fileNotNeeded", params.getName());

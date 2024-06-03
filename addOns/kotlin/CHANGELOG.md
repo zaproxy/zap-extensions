@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Script template: encode-decode-template.kts, for the Encoder (encode/decode/hash) add-on (Issue 5996).
+- Document the engine name in the help page.
 
 ## [1.1.0] - 2021-10-07
 ### Changed

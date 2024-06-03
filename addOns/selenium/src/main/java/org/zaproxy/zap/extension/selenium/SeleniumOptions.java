@@ -223,7 +223,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
                 saveAndSetSystemProperty(optionKey, systemProperty, bundledPath);
                 return bundledPath;
             }
-        } else if (Browser.isBundledWebDriverPath(path)) {
+        } else {
             Path driver = Paths.get(path);
             if (!Files.exists(driver) || !Browser.ensureExecutable(driver)) {
                 saveAndSetSystemProperty(optionKey, systemProperty, "");

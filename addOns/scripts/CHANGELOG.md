@@ -4,7 +4,15 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Provide the `script` API on newer ZAP versions.
 
+## [45.4.0] - 2024-05-16
+### Added
+- Support for Automation Framework loaddir action, which loads all of the scripts under the specified directory.
+
+### Changed
+- File parameter to `source`, `file` will still work.
 
 ## [45.3.0] - 2024-05-07
 ### Added
@@ -319,6 +327,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.4.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.4.0
 [45.3.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.3.0
 [45.2.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.2.0
 [45.1.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.1.0

@@ -35,6 +35,7 @@ import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.extension.scripts.automation.actions.AddScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.actions.DisableScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.actions.EnableScriptAction;
+import org.zaproxy.zap.extension.scripts.automation.actions.LoadDirScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.actions.RemoveScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.actions.RunScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.actions.ScriptAction;
@@ -50,13 +51,16 @@ public class ScriptJob extends AutomationJob {
                 private static final long serialVersionUID = 1L;
 
                 {
-                    put(AddScriptAction.NAME.toLowerCase(), AddScriptAction::new);
-                    put(RemoveScriptAction.NAME.toLowerCase(), RemoveScriptAction::new);
-                    put(RunScriptAction.NAME.toLowerCase(), RunScriptAction::new);
+                    put(AddScriptAction.NAME.toLowerCase(Locale.ROOT), AddScriptAction::new);
+                    put(RemoveScriptAction.NAME.toLowerCase(Locale.ROOT), RemoveScriptAction::new);
+                    put(RunScriptAction.NAME.toLowerCase(Locale.ROOT), RunScriptAction::new);
                     put(EnableScriptAction.NAME.toLowerCase(Locale.ROOT), EnableScriptAction::new);
                     put(
                             DisableScriptAction.NAME.toLowerCase(Locale.ROOT),
                             DisableScriptAction::new);
+                    put(
+                            LoadDirScriptAction.NAME.toLowerCase(Locale.ROOT),
+                            LoadDirScriptAction::new);
                 }
             };
 
@@ -138,6 +142,11 @@ public class ScriptJob extends AutomationJob {
     }
 
     @Override
+    public ScriptJobParameters getParameters() {
+        return parameters;
+    }
+
+    @Override
     public Map<String, String> getCustomConfigParameters() {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_ACTION, "");
@@ -175,7 +184,7 @@ public class ScriptJob extends AutomationJob {
             return null;
         }
 
-        String action = parameters.getAction().toLowerCase();
+        String action = parameters.getAction().toLowerCase(Locale.ROOT);
         Function<ScriptJobParameters, ScriptAction> scriptActionFactory = ACTIONS.get(action);
         if (scriptActionFactory != null) {
             return scriptActionFactory.apply(parameters);

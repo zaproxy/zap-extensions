@@ -41,6 +41,9 @@ public class HttpStateCredentialsProvider implements CredentialsProvider {
 
     @Override
     public Credentials getCredentials(AuthScope authScope, HttpContext context) {
+        if (state == null) {
+            return null;
+        }
         return convertCredentials(authScope, state.getCredentials(convertAuthScope(authScope)));
     }
 

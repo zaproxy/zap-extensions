@@ -106,7 +106,7 @@ public class RunScriptAction extends ScriptAction {
             }
         }
         // Note dont warn/error if script not currently in ZAP - it might be added by another job
-        if (!StringUtils.isEmpty(params.getFile())) {
+        if (!StringUtils.isEmpty(params.getSource())) {
             issue =
                     Constant.messages.getString(
                             "scripts.automation.warn.fileNotNeeded", params.getName());
@@ -158,7 +158,7 @@ public class RunScriptAction extends ScriptAction {
         try {
             se = extScript.getEngineWrapper(this.parameters.getEngine());
         } catch (Exception e) {
-            String filename = params.getFile();
+            String filename = params.getSource();
             if (filename != null && filename.contains(".")) {
                 try {
                     se =

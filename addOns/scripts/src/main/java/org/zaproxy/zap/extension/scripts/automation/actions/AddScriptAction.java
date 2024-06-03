@@ -64,7 +64,7 @@ public class AddScriptAction extends ScriptAction {
         List<String> list = new ArrayList<>();
         String issue;
         String scriptType = parameters.getType();
-        String filename = params.getFile();
+        String filename = params.getSource();
         String inline = params.getInline();
 
         if (scriptType == null) {
@@ -171,7 +171,7 @@ public class AddScriptAction extends ScriptAction {
         try {
             se = extScript.getEngineWrapper(this.parameters.getEngine());
         } catch (Exception e) {
-            String filename = params.getFile();
+            String filename = params.getSource();
             if (filename != null && filename.contains(".")) {
                 try {
                     se =
@@ -190,8 +190,8 @@ public class AddScriptAction extends ScriptAction {
     private ScriptWrapper getScriptWrapper(AutomationPlan plan) {
         ScriptWrapper sw = new ScriptWrapper();
         sw.setName(this.parameters.getName());
-        if (this.parameters.getFile() != null) {
-            File f = JobUtils.getFile(this.parameters.getFile(), plan);
+        if (this.parameters.getSource() != null) {
+            File f = JobUtils.getFile(this.parameters.getSource(), plan);
             sw.setFile(f);
             if (StringUtils.isEmpty(sw.getName())) {
                 sw.setName(f.getName());

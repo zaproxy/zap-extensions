@@ -26,7 +26,7 @@ public class ScriptJobParameters extends AutomationData {
     private String type;
     private String engine;
     private String name;
-    private String file;
+    private String source;
     private String target;
     private String inline;
 
@@ -41,14 +41,14 @@ public class ScriptJobParameters extends AutomationData {
             String type,
             String engine,
             String name,
-            String file,
+            String source,
             String target,
             String inline) {
         this.action = action;
         this.type = type;
         this.engine = engine;
         this.name = name;
-        this.file = file;
+        this.source = source;
         this.target = target;
         this.inline = inline;
     }
@@ -85,12 +85,17 @@ public class ScriptJobParameters extends AutomationData {
         this.name = name;
     }
 
-    public String getFile() {
-        return file;
+    public String getSource() {
+        return source;
     }
 
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    // For backwards compatibility
     public void setFile(String file) {
-        this.file = file;
+        this.source = file;
     }
 
     public String getTarget() {

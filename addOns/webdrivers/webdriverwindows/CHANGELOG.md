@@ -6,23 +6,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [89] - 2024-05-31
+### Changed
+- Update ChromeDriver to 125.0.6422.141.
+
+
+
+## [88] - 2024-05-25
+### Changed
+- Update ChromeDriver to 125.0.6422.78.
+
+
+
+## [87] - 2024-05-22
+### Changed
+- Update ChromeDriver to 125.0.6422.76.
+
+
+
+## [86] - 2024-05-16
+### Changed
+- Update ChromeDriver to 125.0.6422.60.
+
 ## [85] - 2024-05-14
 ### Changed
 - Update ChromeDriver to 124.0.6367.207.
-
-
 
 ## [84] - 2024-05-10
 ### Changed
 - Update ChromeDriver to 124.0.6367.201.
 
-
-
 ## [83] - 2024-05-08
 ### Changed
 - Update ChromeDriver to 124.0.6367.155.
-
-
 
 ## [82] - 2024-05-07
 ### Changed
@@ -377,6 +393,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27 IE 3.0.0
 
+[89]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v89
+[88]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v88
+[87]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v87
+[86]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v86
 [85]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v85
 [84]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v84
 [83]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v83

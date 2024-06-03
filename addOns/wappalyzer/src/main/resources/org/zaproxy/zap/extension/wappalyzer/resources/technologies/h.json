@@ -1696,6 +1696,26 @@
     "scriptSrc": "\\.hund\\.io/",
     "website": "https://hund.io"
   },
+  "HurryTimer": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "HurryTimer is a cutting-edge WordPress plugin that enables users to create customizable, scheduled countdown timers to further engage visitors and increase conversions.",
+    "dom": "link[href*='/wp-content/uploads/hurrytimer/'], #hurrytimer, #hurrytimer-css",
+    "icon": "HurryTimer.png",
+    "js": {
+      "hurrytimer_ajax_object": ""
+    },
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "hurrytimer(?:\\/assets)?(?:\\/js)?(?:\\/cookie)?(?:\\/jquery)?(?:\\.countdown)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/hurrytimer"
+  },
   "Hushly": {
     "cats": [
       32

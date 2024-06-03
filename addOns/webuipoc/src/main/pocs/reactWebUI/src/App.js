@@ -2,7 +2,9 @@
 import './App.css';
 import React, { useState } from 'react';
 import axios from 'axios';
+
 import Sidebar from './Components/Sidebar/Sidebar';
+
 
 const App = () => {
     const [childNode,SetChildNode] = useState(null);
@@ -23,6 +25,7 @@ const App = () => {
     };
  return (
 
+
         <div className="flex">   
         <Sidebar />
         
@@ -36,12 +39,15 @@ const App = () => {
                       <p className='font-mono '>Click to fetch</p>
                       {childNode && childNode.map((node) => (
                      <p className='' key={childNode}>{node.name}</p>
+
                       ))}
                     </div>
                 </div>
             </div>
         </div>
+
         </div>
+
     );
 }
 

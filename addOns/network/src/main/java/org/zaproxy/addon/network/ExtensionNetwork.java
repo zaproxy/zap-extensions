@@ -26,9 +26,6 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.net.Authenticator;
 import java.net.BindException;
 import java.net.InetAddress;
@@ -84,8 +81,6 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.network.HttpBody;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
@@ -157,8 +152,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private static final int ARG_HOST_IDX = 3;
     private static final int ARG_PORT_IDX = 4;
 
-    private Method setContentEncodingsHandlerMethod;
-
     private CloseableHttpSenderImpl<?> httpSenderNetwork;
 
     @SuppressWarnings("deprecation")
@@ -218,29 +211,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         // Force initialisation.
         TlsUtils.getSupportedTlsProtocols();
 
-        try {
-            Class<?> handlerClass =
-                    Class.forName("org.parosproxy.paros.network.HttpMessage$HttpEncodingsHandler");
-            ContentEncodingsHandler handler = new ContentEncodingsHandler();
-            InvocationHandler invocationHandler =
-                    (o, method, args) -> {
-                        if ("handle".equals(method.getName())) {
-                            handler.handle((HttpHeader) args[0], (HttpBody) args[1]);
-                        }
-                        return null;
-                    };
-
-            setContentEncodingsHandlerMethod =
-                    HttpMessage.class.getMethod("setContentEncodingsHandler", handlerClass);
-            setContentEncodingsHandlerMethod.invoke(
-                    null,
-                    Proxy.newProxyInstance(
-                            getClass().getClassLoader(),
-                            new Class<?>[] {handlerClass},
-                            invocationHandler));
-        } catch (Exception e) {
-            LOGGER.debug("An error occurred while setting content encodings handler:", e);
-        }
+        HttpMessage.setContentEncodingsHandler(new ContentEncodingsHandler());
 
         connectionOptions = new ConnectionOptions();
         legacyConnectionOptions =
@@ -311,7 +282,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     /**
      * Sets the specified HTTP proxy.
      *
-     * @param httpProxy the HTTP proxy.
+     * @param proxy the HTTP proxy.
      * @throws NullPointerException if the given {@code httpProxy} is {@code null}.
      * @since 0.15.0
      */
@@ -1148,7 +1119,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
      * @param serverConfigs the server configurations to filter.
      */
     void removeStartedLocalServers(Set<LocalServerConfig> serverConfigs) {
-        if (mainProxyServer.isStarted()) {
+        if (mainProxyServer != null && mainProxyServer.isStarted()) {
             serverConfigs.remove(mainProxyServer.getConfig());
         }
         localServers.values().stream()
@@ -1444,13 +1415,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     @Override
     @SuppressWarnings({"deprecation", "removal"})
     public void unload() {
-        if (setContentEncodingsHandlerMethod != null) {
-            try {
-                setContentEncodingsHandlerMethod.invoke(null, (Object) null);
-            } catch (Exception e) {
-                LOGGER.error("An error occurred while unloading the content encodings handler:", e);
-            }
-        }
+        HttpMessage.setContentEncodingsHandler(null);
 
         Control.getSingleton().getExtensionLoader().removeProxyServer(legacyProxyListenerHandler);
         legacyProxyListenerHandler = null;
