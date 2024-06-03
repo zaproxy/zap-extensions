@@ -1748,6 +1748,18 @@
     ],
     "website": "https://retype.com"
   },
+  "RevContent": {
+    "cats": [
+      36, 5
+    ],
+    "description": "RevContent is a monetization and recommendation engine that connects advertisers to highly engaged audiences on the web's leading publisher sites.",
+    "icon": "revcontent.png",
+    "dom": "link[href*='.revcontent.com']",
+    "js": {
+      "revcontent": ""
+    },
+    "website": "https://www.revcontent.com"
+  },
   "RevJet": {
     "cats": [
       36

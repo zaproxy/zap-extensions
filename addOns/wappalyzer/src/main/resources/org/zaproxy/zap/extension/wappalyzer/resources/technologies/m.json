@@ -523,6 +523,25 @@
     "scriptSrc": "/wp-content/plugins/mailchimp-for-wp/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.mc4wp.com"
   },
+  "MailOptin": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "WordPress plugin to create email signup forms that convert visitors into subscribers combined with email automation and newsletter features.",
+    "icon": "MailOptin.png",
+    "js": {
+      "mailoptin_globals": ""
+    },
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "mailoptin(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://mailoptin.io/"
+  },
   "Mailcheck": {
     "cats": [
       59
@@ -1280,6 +1299,26 @@
     "oss": true,
     "website": "https://mavo.io"
   },
+  "Max Mega Menu": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Max Mega Menu is a popular WordPress plugin that enhances the menu functionality on WordPress websites.",
+    "dom": "link[href*='/wp-content/uploads/maxmegamenu/'], link[href*='/wp-content/plugins/megamenu-pro/'], link#megamenu-css, .mega-menu, .max-mega-menu, .mega-menu-megamenu, .mega-menu-primary, .mega-menu-item",
+    "icon": "Max Mega Menu.png",
+    "js": {
+      "megamenu": ""
+    },
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "(?:max)?megamenu(?:-pro)?(?:\\/assets)?(?:\\/public)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://www.megamenu.com/"
+  },
   "MaxCDN": {
     "cats": [
       31
@@ -1516,6 +1555,17 @@
     "saas": true,
     "website": "https://www.meilisearch.com"
   },
+  "Meks Simple Flickr Widget": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Meks Simple Flickr Widget is a WordPress plugin created by Meks. This plugin is designed to help WordPress website owners easily integrate Flickr photo streams into their websites.",
+    "dom": "link[href*='/wp-content/plugins/meks-simple-flickr-widget/'], link#meks-flickr-widget-css",
+    "oss": true,
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/meks-simple-flickr-widget"
+  },
   "Melis Platform": {
     "cats": [
       1,
@@ -1656,6 +1706,18 @@
     "scriptSrc": "/mermaid(?:\\.min)?\\.js",
     "website": "https://mermaidjs.github.io/"
   },
+  "Mesmerize Companion": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "The Mesmerize Companion is a WordPress plugin that enhances the Mesmerize theme by adding drag-and-drop page builder functionality.",
+    "dom": "link[href*='/wp-content/plugins/mesmerize-companion/'], link#companion-bundle-css",
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "mesmerize-companion\\/theme-data\\/mesmerize\\/assets\\/js\\/companion(?:\\.bundle)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/mesmerize-companion"
+  },
   "MetaSlider": {
     "cats": [
       87
@@ -1757,6 +1819,19 @@
       "recurring"
     ],
     "website": "https://github.com/olton/Metro-UI-CSS"
+  },
+  "Metronet Profile Picture": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Set a custom profile image for a user using the standard WordPress media upload tool.",
+    "icon": "Metronet Profile Picture.png",
+    "dom": "link[href*='/wp-content/plugins/metronet-profile-picture/']",
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "metronet-profile-picture(?:\\/js)?(?:\\/mpp-frontend)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/metronet-profile-picture/"
   },
   "Mews": {
     "cats": [
@@ -2178,6 +2253,19 @@
       "//minero\\.cc/lib/minero(?:-miner|-hidden)?\\.min\\.js"
     ],
     "website": "https://minero.cc/"
+  },
+  "MiniOrange Login": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Social Login with Discord, Facebook, Google, Twitter, LinkedIn and other apps.",
+    "dom": "link[href*='/wp-content/plugins/miniorange-login-openid/'], #js-cookie-script-js, #mo-social-login-script-js",
+    "icon": "MiniOrange Login.png",
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "miniorange-login-openid\\/includes\\/js(?:\\/mo_openid_jquery)?(?:\\/mo-openid-social_login)?(?:\\/social_login)?(?:\\/jquery)?(?:\\.cookie)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/miniorange-login-openid"
   },
   "MiniServ": {
     "cats": [
@@ -2907,6 +2995,18 @@
     ],
     "scriptSrc": "/mt-includes/js/website(?:assets)?\\.(?:min)?\\.js",
     "website": "https://motocms.com"
+  },
+  "Mountain": {
+    "cats": [
+      36
+    ],
+    "description": "MNTN Performance TV is a CTV advertising platform with targeting, measurement, and optimization for amplifying marketers' performance goals.",
+    "icon": "Mountain.png",
+    "scriptSrc": [
+      "dx\\.mountain\\.com",
+      "px\\.mountain\\.com"
+    ],
+    "website": "https://mountain.com/"
   },
   "Mouse Flow": {
     "cats": [

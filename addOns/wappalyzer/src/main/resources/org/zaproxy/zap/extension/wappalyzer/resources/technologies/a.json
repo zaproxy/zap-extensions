@@ -2668,7 +2668,7 @@
     "dom": {
       "a[href*='amazon.com']": {
         "attributes": {
-          "href": "^https?://amazon.com.+&tag="
+          "href": "^https?://(?:www\\.)?amazon.+(?:&|\\?)tag="
         }
       },
       "a[href*='amzn.to']": {
