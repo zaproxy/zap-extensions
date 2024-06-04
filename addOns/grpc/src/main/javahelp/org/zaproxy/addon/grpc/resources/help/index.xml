@@ -5,5 +5,5 @@
 
 <index version="2.0">
     <indexitem text="grpc" target="addon.grpc" />
-    <indexitem text="grpc variant" target="addon.variant" />
+    <indexitem text="grpc variant" target="addon.grpc.variant" />
 </index>

@@ -169,6 +169,7 @@ public class VariantGrpc implements Variant {
         return newContent.toString();
     }
 
+    /** Calls {@link #setParameter(HttpMessage, NameValuePair, String, String)}. */
     @Override
     public String setEscapedParameter(
             HttpMessage msg, NameValuePair originalPair, String param, String value) {
