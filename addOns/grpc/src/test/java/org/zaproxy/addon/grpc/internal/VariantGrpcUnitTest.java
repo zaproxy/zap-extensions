@@ -152,7 +152,8 @@ class VariantGrpcUnitTest {
         assertEquals(expectedParamList, variantGrpc.getParamList());
     }
 
-    HttpMessage createHttpMessage(String encodedRequestBody) throws HttpMalformedHeaderException {
+    private static HttpMessage createHttpMessage(String encodedRequestBody)
+            throws HttpMalformedHeaderException {
         HttpRequestHeader httpRequestHeader = new HttpRequestHeader();
         httpRequestHeader.setMessage("POST /abc/xyz HTTP/1.1");
         httpRequestHeader.setHeader(HttpHeader.CONTENT_TYPE, "application/grpc-web-text");

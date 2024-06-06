@@ -44,7 +44,7 @@ public class VariantGrpc implements Variant {
 
     @Override
     public void setMessage(HttpMessage msg) {
-        if (isValidContentType(msg)) {
+        if (isValidGrpcMessage(msg)) {
             try {
                 byte[] body = Base64.getDecoder().decode(msg.getRequestBody().getBytes());
                 byte[] payload = DecoderUtils.extractPayload(body);
@@ -92,8 +92,9 @@ public class VariantGrpc implements Variant {
         }
     }
 
-    private boolean isValidContentType(HttpMessage msg) {
-        return msg.getRequestHeader().hasContentType("application/grpc");
+    private boolean isValidGrpcMessage(HttpMessage msg) {
+        return msg.getRequestHeader().hasContentType("application/grpc")
+                && !msg.getRequestBody().toString().isEmpty();
     }
 
     @Override
