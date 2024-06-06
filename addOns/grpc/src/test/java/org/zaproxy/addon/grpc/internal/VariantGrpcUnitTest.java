@@ -45,14 +45,8 @@ class VariantGrpcUnitTest {
                 "AAAAAEEKEEhlbGxvLCBQcm90b2J1ZiESJwoESm9obhIGTWlsbGVyGhcKBEpvaG4QAhoNCgtIZWxsbyBXb3JsZBjqrcDlJA";
         String expectedOutput =
                 "1:2::\"Hello, Protobuf!\"\n2:2N::{\n1:2::\"John\"\n2:2::\"Miller\"\n3:2N::{\n1:2::\"John\"\n2:0::2\n3:2N::{\n1:2::\"../../../../admin/\"\n}\n}\n}\n3:0::9876543210\n";
-        String expectedRequestBody =
-                "AAAAAEgKEEhlbGxvLCBQcm90b2J1ZiESLgoESm9obhIGTWlsbGVyGh4KBEpvaG4QAhoUChIuLi8uLi8uLi8uLi9hZG1pbi8Y6q3A5SQ=";
 
-        HttpRequestHeader httpRequestHeader = new HttpRequestHeader();
-        httpRequestHeader.setMessage("POST /abc/xyz HTTP/1.1");
-        httpRequestHeader.setHeader(HttpHeader.CONTENT_TYPE, "application/grpc-web-text");
-        HttpMessage httpMessage = new HttpMessage(httpRequestHeader);
-        httpMessage.setRequestBody(encodedRequestBody);
+        HttpMessage httpMessage = createHttpMessage(encodedRequestBody);
         variantGrpc.setMessage(httpMessage);
         String param = "2:2N.3:2N.3:2N.1:2";
         String payload = "../../../../admin/";
@@ -61,7 +55,9 @@ class VariantGrpcUnitTest {
         String newMessageWithPayload =
                 variantGrpc.setParameter(httpMessage, originalPair, param, payload);
 
-        assertEquals(expectedRequestBody, httpMessage.getRequestBody().toString());
+        assertEquals(
+                "AAAAAEgKEEhlbGxvLCBQcm90b2J1ZiESLgoESm9obhIGTWlsbGVyGh4KBEpvaG4QAhoUChIuLi8uLi8uLi8uLi9hZG1pbi8Y6q3A5SQ=",
+                httpMessage.getRequestBody().toString());
         assertEquals(expectedOutput, newMessageWithPayload);
     }
 
@@ -73,14 +69,7 @@ class VariantGrpcUnitTest {
         String expectedOutput =
                 "1:2::\"John\r\rSmith:\t67 Marcus' Rd\"\n2:2N::{\n1:2::\"John\"\n2:2::\"Miller\"\n3:2N::{\n1:2::\"John\"\n2:0::2\n3:2N::{\n1:2::\"Hello World\"\n}\n}\n}\n3:0::9876543210\n";
 
-        String expectedRequestBody =
-                "AAAAAEsKGkpvaG4NDVNtaXRoOgk2NyBNYXJjdXMnIFJkEicKBEpvaG4SBk1pbGxlchoXCgRKb2huEAIaDQoLSGVsbG8gV29ybGQY6q3A5SQ=";
-
-        HttpRequestHeader httpRequestHeader = new HttpRequestHeader();
-        httpRequestHeader.setMessage("POST /abc/xyz HTTP/1.1");
-        httpRequestHeader.setHeader(HttpHeader.CONTENT_TYPE, "application/grpc-web-text");
-        HttpMessage httpMessage = new HttpMessage(httpRequestHeader);
-        httpMessage.setRequestBody(encodedRequestBody);
+        HttpMessage httpMessage = createHttpMessage(encodedRequestBody);
 
         variantGrpc.setMessage(httpMessage);
         String param = "1:2";
@@ -90,7 +79,9 @@ class VariantGrpcUnitTest {
         String newMessageWithPayload =
                 variantGrpc.setParameter(httpMessage, originalPair, param, payload);
 
-        assertEquals(expectedRequestBody, httpMessage.getRequestBody().toString());
+        assertEquals(
+                "AAAAAEsKGkpvaG4NDVNtaXRoOgk2NyBNYXJjdXMnIFJkEicKBEpvaG4SBk1pbGxlchoXCgRKb2huEAIaDQoLSGVsbG8gV29ybGQY6q3A5SQ=",
+                httpMessage.getRequestBody().toString());
         assertEquals(expectedOutput, newMessageWithPayload);
     }
 
@@ -102,13 +93,7 @@ class VariantGrpcUnitTest {
         String expectedOutput =
                 "1:2::\"ls ../../../../../admin/\"\n2:2N::{\n1:2::\"John\"\n2:2::\"Miller\"\n3:2N::{\n1:2::\"John\"\n2:0::2\n3:2N::{\n1:2::\"Hello World\"\n}\n}\n}\n3:0::9876543210\n";
 
-        String expectedRequestBody =
-                "AAAAAEkKGGxzIC4uLy4uLy4uLy4uLy4uL2FkbWluLxInCgRKb2huEgZNaWxsZXIaFwoESm9obhACGg0KC0hlbGxvIFdvcmxkGOqtwOUk";
-        HttpRequestHeader httpRequestHeader = new HttpRequestHeader();
-        httpRequestHeader.setMessage("POST /abc/xyz HTTP/1.1");
-        httpRequestHeader.setHeader(HttpHeader.CONTENT_TYPE, "application/grpc-web-text");
-        HttpMessage httpMessage = new HttpMessage(httpRequestHeader);
-        httpMessage.setRequestBody(encodedRequestBody);
+        HttpMessage httpMessage = createHttpMessage(encodedRequestBody);
 
         variantGrpc.setMessage(httpMessage);
         String param = "1:2";
@@ -117,22 +102,18 @@ class VariantGrpcUnitTest {
                 new NameValuePair(VariantGrpc.TYPE_GRPC_WEB_TEXT, param, "Hello World", 0);
         String newMessageWithPayload =
                 variantGrpc.setParameter(httpMessage, originalPair, param, payload);
-        assertEquals(expectedRequestBody, httpMessage.getRequestBody().toString());
+        assertEquals(
+                "AAAAAEkKGGxzIC4uLy4uLy4uLy4uLy4uL2FkbWluLxInCgRKb2huEgZNaWxsZXIaFwoESm9obhACGg0KC0hlbGxvIFdvcmxkGOqtwOUk",
+                httpMessage.getRequestBody().toString());
         assertEquals(expectedOutput, newMessageWithPayload);
     }
 
     @Test
-    void shouldSetMessage() throws HttpMalformedHeaderException {
+    void shouldExtractParametersFromGrpcMessage() throws HttpMalformedHeaderException {
         String encodedRequestBody =
                 "AAAAADEKC2pvaG4gTWlsbGVyEB4aIDEyMzQgTWFpbiBTdC4gQW55dG93biwgVVNBIDEyMzQ1";
-        String expectedOutput =
-                "1:2::\"john Miller\"\n2:0::30\n3:2::\"1234 Main St. Anytown, USA 12345\"\n";
 
-        HttpRequestHeader httpRequestHeader = new HttpRequestHeader();
-        httpRequestHeader.setMessage("POST /abc/xyz HTTP/1.1");
-        httpRequestHeader.setHeader(HttpHeader.CONTENT_TYPE, "application/grpc-web-text");
-        HttpMessage httpMessage = new HttpMessage(httpRequestHeader);
-        httpMessage.setRequestBody(encodedRequestBody);
+        HttpMessage httpMessage = createHttpMessage(encodedRequestBody);
 
         variantGrpc.setMessage(httpMessage);
         List<NameValuePair> expectedParamList = new ArrayList<>();
@@ -147,5 +128,36 @@ class VariantGrpcUnitTest {
                         2));
 
         assertEquals(expectedParamList, variantGrpc.getParamList());
+    }
+
+    @Test
+    void shouldExtractParametersFromEmptyGrpcMessage() throws HttpMalformedHeaderException {
+        String encodedRequestBody = "";
+
+        HttpMessage httpMessage = createHttpMessage(encodedRequestBody);
+
+        variantGrpc.setMessage(httpMessage);
+        List<NameValuePair> expectedParamList = new ArrayList<>();
+
+        assertEquals(expectedParamList, variantGrpc.getParamList());
+    }
+
+    @Test
+    void shouldExtractParametersFromCorruptedGrpcMessage() throws HttpMalformedHeaderException {
+        String encodedRequestBody = "AAAAADEKC2pvaG4gTWpbiBTdC4gQW55dG93biwgVVNBIDEyMzQ1";
+
+        HttpMessage httpMessage = createHttpMessage(encodedRequestBody);
+
+        List<NameValuePair> expectedParamList = new ArrayList<>();
+        assertEquals(expectedParamList, variantGrpc.getParamList());
+    }
+
+    HttpMessage createHttpMessage(String encodedRequestBody) throws HttpMalformedHeaderException {
+        HttpRequestHeader httpRequestHeader = new HttpRequestHeader();
+        httpRequestHeader.setMessage("POST /abc/xyz HTTP/1.1");
+        httpRequestHeader.setHeader(HttpHeader.CONTENT_TYPE, "application/grpc-web-text");
+        HttpMessage httpMessage = new HttpMessage(httpRequestHeader);
+        httpMessage.setRequestBody(encodedRequestBody);
+        return httpMessage;
     }
 }

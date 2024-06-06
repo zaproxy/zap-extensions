@@ -51,7 +51,7 @@ public class VariantGrpc implements Variant {
                 protoBufMessageDecoder.decode(payload);
                 parseContent(protoBufMessageDecoder.getDecodedToList(), "");
                 requestDecodedBody = protoBufMessageDecoder.getDecodedOutput();
-            } catch (InvalidProtobufFormatException e) {
+            } catch (InvalidProtobufFormatException | IllegalArgumentException e) {
                 LOGGER.error("Parsing message body failed: {}", e.getMessage());
             }
         }
