@@ -23,6 +23,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.grpc.internal.HttpPanelGrpcView;
+import org.zaproxy.addon.grpc.internal.VariantGrpc;
 import org.zaproxy.zap.extension.httppanel.component.split.request.RequestSplitComponent;
 import org.zaproxy.zap.extension.httppanel.component.split.response.ResponseSplitComponent;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
@@ -48,6 +49,7 @@ public class ExtensionGrpc extends ExtensionAdaptor {
             panelManager.addResponseViewFactory(
                     ResponseSplitComponent.NAME, new ResponseGrpcViewFactory());
         }
+        extensionHook.addVariant(VariantGrpc.class);
     }
 
     @Override
