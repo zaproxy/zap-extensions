@@ -6,7 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Threshold LOW is added for:
-  - Directory browsing detects in PathTraversal scan rule
   - Expression based detects in SQLi scan rule
 
 ## [63] - 2024-02-12
