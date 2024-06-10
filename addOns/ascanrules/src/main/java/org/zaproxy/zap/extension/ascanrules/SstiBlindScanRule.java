@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
@@ -32,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.timing.TimingUtils;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
@@ -46,6 +49,12 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin implements CommonA
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.sstiblind.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION,
+                    CommonAlertTag.WSTG_V42_INPV_18_SSTI);
 
     private static final String SECONDS_PLACEHOLDER = "X_SECONDS_X";
 
@@ -133,7 +142,8 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin implements CommonA
 
     @Override
     public int getCweId() {
-        return 74; // CWE - 74 : Failure to Sanitize Data into a Different Plane ('Injection')
+        return 1336; // CWE-1336: Improper Neutralization of Special Elements Used in a Template
+        // Engine
     }
 
     @Override
@@ -250,11 +260,10 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin implements CommonA
                         attack.get());
 
                 // raise the alert
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_HIGH)
-                        .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                        .setParam(paramName)
-                        .setAttack(attack.get())
+                createAlert(
+                                getBaseMsg().getRequestHeader().getURI().toString(),
+                                paramName,
+                                attack.get())
                         .setMessage(message.get())
                         .raise();
                 return true;
@@ -367,5 +376,25 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin implements CommonA
                 }
             }
         }
+    }
+
+    private AlertBuilder createAlert(String url, String param, String attack) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setUri(url)
+                .setParam(param)
+                .setAttack(attack);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert("http://example.com/profile/?name=foo", "name", "#{%x(sleep 2)}")
+                        .build());
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }
