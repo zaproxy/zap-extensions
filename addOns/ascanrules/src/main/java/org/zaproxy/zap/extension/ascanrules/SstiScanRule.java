@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -33,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.SourceSinkUtils;
 import org.zaproxy.zap.extension.ascanrules.ssti.DjangoTemplateFormat;
 import org.zaproxy.zap.extension.ascanrules.ssti.GoTemplateFormat;
@@ -51,6 +53,12 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.ssti.";
+
+    private static final Map<String, String> ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2021_A03_INJECTION,
+                    CommonAlertTag.OWASP_2017_A01_INJECTION,
+                    CommonAlertTag.WSTG_V42_INPV_18_SSTI);
 
     static final String DELIMITER = "zj";
 
@@ -124,7 +132,8 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
 
     @Override
     public int getCweId() {
-        return 94; // WE-94: Improper Control of Generation of Code ('Code Injection').
+        return 1336; // CWE-1336: Improper Neutralization of Special Elements Used in a Template
+        // Engine
     }
 
     @Override
@@ -135,6 +144,10 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
     @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
+    }
+
+    private static String getOtherInfo(String url, String output) {
+        return Constant.messages.getString(MESSAGE_PREFIX + "alert.otherinfo", url, output);
     }
 
     /**
@@ -218,7 +231,7 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
         }
     }
 
-    private InputPoint createInputPointWithAllSinks(
+    private static InputPoint createInputPointWithAllSinks(
             HttpMessage originalMsg,
             String originalValue,
             HttpMessage referenceMsg,
@@ -386,18 +399,13 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
 
                             if (output.contains(renderResult) && output.matches(regex)) {
 
-                                String attack =
-                                        Constant.messages.getString(
-                                                MESSAGE_PREFIX + "alert.otherinfo",
-                                                sink.getLocation(),
-                                                output);
+                                String attack = getOtherInfo(sink.getLocation(), output);
 
-                                this.newAlert()
-                                        .setConfidence(Alert.CONFIDENCE_HIGH)
-                                        .setUri(newMsg.getRequestHeader().getURI().toString())
-                                        .setParam(paramName)
-                                        .setAttack(renderTest)
-                                        .setOtherInfo(attack)
+                                createAlert(
+                                                newMsg.getRequestHeader().getURI().toString(),
+                                                paramName,
+                                                renderTest,
+                                                attack)
                                         .setMessage(newMsg)
                                         .raise();
                                 found = true;
@@ -414,5 +422,48 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
                 }
             }
         }
+    }
+
+    private AlertBuilder createAlert(String url, String param, String attack, String otherInfo) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setUri(url)
+                .setParam(param)
+                .setAttack(attack)
+                .setOtherInfo(otherInfo);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        String output =
+                "<!DOCTYPE html>\n"
+                        + "<html>\n"
+                        + "    <head>\n"
+                        + "        <title>Profile</title>\n"
+                        + "    </head>\n"
+                        + "    <body>\n"
+                        + "        <form action=\"/\" method=\"post\">\n"
+                        + "            First name:<br>\n"
+                        + "            <input type=\"text\" name=\"name\" value=\"\">\n"
+                        + "            <input type=\"submit\" value=\"Submit\">\n"
+                        + "        </form>\n"
+                        + "        <h2>Hello zj3790300zj</h2>\n"
+                        + "    </body>\n"
+                        + "</html>Content-Type: text/html\n"
+                        + "Date: Mon, 10 Jun 2024 12:33:36 GMT\n"
+                        + "Connection: keep-alive\n"
+                        + "Content-Length: 328\n";
+        String otherInfo = getOtherInfo("http://example.com/profile/?name=test", output);
+
+        return List.of(
+                createAlert(
+                                "http://example.com/profile/?name=zj%23set%28%24x%3D2614*1450%29%24%7Bx%7Dz",
+                                "name", "zj#set($x=2614*1450)${x}zj", otherInfo)
+                        .build());
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }
