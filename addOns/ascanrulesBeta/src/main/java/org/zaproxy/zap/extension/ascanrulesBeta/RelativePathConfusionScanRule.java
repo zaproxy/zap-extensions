@@ -327,7 +327,9 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
                             // attribute)
                             if (tag.toUpperCase().equals("STYLE")) {
                                 // for the style tag, look at the entire body, not an attribute..
-                                String styleBody = tagInstance.data();
+                                // remove all " and ' for proper matching url('somefile.png')
+                                String styleBody =
+                                        tagInstance.data().replaceAll("'", "").replaceAll("\"", "");
                                 LOGGER.debug("Got <style> data: {}", styleBody);
                                 Matcher matcher = STYLE_URL_LOAD.matcher(styleBody);
                                 if (matcher.find()) {
