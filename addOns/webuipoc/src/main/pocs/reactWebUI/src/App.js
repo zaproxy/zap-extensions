@@ -2,12 +2,11 @@
 import './App.css';
 import React, { useState } from 'react';
 import axios from 'axios';
-
 import Sidebar from './Components/Sidebar/Sidebar';
 
 
 const App = () => {
-    const [childNode,SetChildNode] = useState(null);
+    const [childNode,setChildNode] = useState(null);
     const WebClickZAP = async () => {
 
         try {
@@ -18,7 +17,7 @@ const App = () => {
             }
 
             const response = await axios.get('/JSON/core/view/childNodes/');
-            SetChildNode(response.data.childNodes);
+            setChildNode(response.data.childNodes);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
