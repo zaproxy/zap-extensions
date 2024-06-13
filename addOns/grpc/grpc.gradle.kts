@@ -6,6 +6,18 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/grpc-support/")
+        extensions {
+            register("org.zaproxy.zap.extension.grpc.internal.ExtensionGrpcWebSocket") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.grpc.internal"))
+                }
+                dependencies {
+                    addOns {
+                        register("websocket")
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -18,6 +30,7 @@ crowdin {
 }
 
 dependencies {
+    zapAddOn("websocket")
     testImplementation(project(":testutils"))
     implementation("io.grpc:grpc-protobuf:1.61.1")
 }
