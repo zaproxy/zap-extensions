@@ -361,17 +361,6 @@ public class QuickStartPanel extends AbstractPanel {
 
         JXPanel innerPanel = new QuickStartBackgroundPanel();
 
-        CloseButton closeButton = new CloseButton();
-        JPanel closePanel = new QuickStartBackgroundPanel();
-        closePanel.add(new JLabel(""), LayoutHelper.getGBC(0, 0, 1, 1.0D)); // Spacer
-        closePanel.add(closeButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
-        closeButton.setVerticalAlignment(SwingConstants.TOP);
-        closeButton.addActionListener(
-                e -> {
-                    newsPanel.setVisible(false);
-                    extension.getQuickStartParam().setClearedNewsItem(newsItem.getId());
-                });
-
         JButton newsLearnMoreButton =
                 new JButton(Constant.messages.getString("quickstart.button.news"));
         newsLearnMoreButton.addActionListener(
@@ -389,7 +378,20 @@ public class QuickStartPanel extends AbstractPanel {
                 LayoutHelper.getGBC(0, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
         innerPanel.add(
                 newsLearnMoreButton, LayoutHelper.getGBC(1, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
-        innerPanel.add(closeButton, LayoutHelper.getGBC(2, 0, 1, 0.0D));
+
+        if (!newsItem.isFixed()) {
+            CloseButton closeButton = new CloseButton();
+            JPanel closePanel = new QuickStartBackgroundPanel();
+            closePanel.add(new JLabel(""), LayoutHelper.getGBC(0, 0, 1, 1.0D)); // Spacer
+            closePanel.add(closeButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
+            closeButton.setVerticalAlignment(SwingConstants.TOP);
+            closeButton.addActionListener(
+                    e -> {
+                        newsPanel.setVisible(false);
+                        extension.getQuickStartParam().setClearedNewsItem(newsItem.getId());
+                    });
+            innerPanel.add(closeButton, LayoutHelper.getGBC(2, 0, 1, 0.0D));
+        }
 
         newsPanel.add(
                 new JLabel(""),
