@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.15.0.
 - Maintenance changes.
+- Fixed regex for Relative Path Confusion, which detected absolute url as relative
 
 ## [53] - 2024-03-28
 ### Changed
@@ -21,7 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Relative Path Confusion
     - Integer Overflow Error
 
-### Removed 
+### Removed
 - Removed HTTP only reference for scan rule: Integer Overflow Error (Issue 8262)
 
 ## [51] - 2024-02-16
@@ -31,11 +32,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Httpoxy - Proxy Header Misuse
     - Anti-CSRF Tokens Check
     - HTTP Parameter Pollution
-    - Cross-Domain Misconfiguration 
+    - Cross-Domain Misconfiguration
 - Alerts from the HTTP Parameter Pollution scan rule are now raised with Low confidence.
 - Updated reference for scan rules (Issue 8262):
     - Session Fixation
-    - Cross-Domain Misconfiguration 
+    - Cross-Domain Misconfiguration
 - Add website alert links to the help page (Issue 8189).
 
 ## [50] - 2024-01-26
@@ -371,7 +372,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Correct HTTP message usage in Insecure HTTP Method scanner.
 - Fix missing resource messages with Cross-Domain Misconfiguration scanner.
 - Remove Source Code Disclosure WEB-INF Scanner (promoted to release Issue 4448).
-- Report source code disclosure alerts at Medium instead of High 
+- Report source code disclosure alerts at Medium instead of High
 - Bundle Diff Utils library instead of relying on core.
 
 ## 24 - 2018-07-31
