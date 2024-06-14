@@ -41,7 +41,7 @@ for (dir in pocsSrcDir.listFiles()!!) {
                 }
             },
         )
- 	if (normalizedPocName == "ReactWebUI") {
+        if (normalizedPocName == "ReactWebUI") {
             val lintTask =
                 tasks.register<NpmTask>("lintPoc$normalizedPocName") {
                     group = pocBuildTasksGroup
@@ -53,7 +53,7 @@ for (dir in pocsSrcDir.listFiles()!!) {
                 dependsOn(lintTask)
             }
         }
-    	} else {
+    } else {
         pocBuildTasks.add(
             tasks.register("assemblePoc$normalizedPocName") {
                 group = pocBuildTasksGroup
