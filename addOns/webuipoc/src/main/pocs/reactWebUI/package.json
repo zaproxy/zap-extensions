@@ -16,7 +16,8 @@
     "start": "react-scripts start",
     "build": "PUBLIC_URL=/reactWebUI/ BUILD_PATH=./dist react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint"
   },
   "eslintConfig": {
     "extends": [
