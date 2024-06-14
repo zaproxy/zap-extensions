@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.15.0.
 - Maintenance changes.
+
+### Fixed
 - Fixed regex for Relative Path Confusion, which detected absolute url as relative
 
 ## [53] - 2024-03-28

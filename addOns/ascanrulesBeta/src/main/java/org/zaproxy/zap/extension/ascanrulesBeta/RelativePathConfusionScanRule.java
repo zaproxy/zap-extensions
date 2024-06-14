@@ -329,7 +329,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
                                 // for the style tag, look at the entire body, not an attribute..
                                 // remove all " and ' for proper matching url('somefile.png')
                                 String styleBody =
-                                        tagInstance.data().replaceAll("'", "").replaceAll("\"", "");
+                                        tagInstance.data().replaceAll("['\"]", "");
                                 LOGGER.debug("Got <style> data: {}", styleBody);
                                 Matcher matcher = STYLE_URL_LOAD.matcher(styleBody);
                                 if (matcher.find()) {
