@@ -16,7 +16,8 @@
     "start": "react-scripts start",
     "build": "PUBLIC_URL=/reactWebUI/ BUILD_PATH=./dist react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint"
   },
   "eslintConfig": {
     "extends": [
@@ -37,6 +38,9 @@
     ]
   },
   "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.2",
+    "globals": "^15.4.0",
     "tailwindcss": "^3.4.3"
   }
 }
