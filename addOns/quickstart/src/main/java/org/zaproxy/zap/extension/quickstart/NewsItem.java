@@ -26,12 +26,14 @@ public class NewsItem {
     private final String id;
     private final String text;
     private final URI uri;
+    private final boolean fixed;
 
-    public NewsItem(String id, String text, URI uri) {
+    public NewsItem(String id, String text, URI uri, boolean fixed) {
         super();
         this.id = id;
         this.text = text;
         this.uri = uri;
+        this.fixed = fixed;
     }
 
     public String getId() {
@@ -44,5 +46,9 @@ public class NewsItem {
 
     public URI getUri() {
         return uri;
+    }
+
+    public boolean isFixed() {
+        return fixed;
     }
 }

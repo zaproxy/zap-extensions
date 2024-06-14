@@ -1815,6 +1815,20 @@
     "oss": true,
     "website": "https://frappeframework.com"
   },
+  "Fraud Blocker": {
+    "cats": [
+      16
+    ],
+    "description": "Fraudblocker is an ad fraud and click-fraud detection and protection service software.",
+    "icon": "fraudblocker.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "monitor\\.fraudblocker\\.com/",
+    "website": "https://fraudblocker.com"
+  },
   "FraudLabs Pro": {
     "cats": [
       16
