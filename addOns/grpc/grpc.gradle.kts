@@ -7,9 +7,9 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/grpc-support/")
         extensions {
-            register("org.zaproxy.zap.extension.grpc.internal.ExtensionGrpcWebSocket") {
+            register("org.zaproxy.addon.grpc.internal.websocket.ExtensionGrpcWebSocket") {
                 classnames {
-                    allowed.set(listOf("org.zaproxy.zap.extension.grpc.internal"))
+                    allowed.set(listOf("org.zaproxy.addon.grpc.internal.websocket"))
                 }
                 dependencies {
                     addOns {
