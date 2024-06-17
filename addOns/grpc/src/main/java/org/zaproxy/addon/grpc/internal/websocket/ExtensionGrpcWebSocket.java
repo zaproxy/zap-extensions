@@ -42,6 +42,7 @@ public class ExtensionGrpcWebSocket extends ExtensionAdaptor {
         super(NAME);
     }
 
+    @Override
     public List<Class<? extends Extension>> getDependencies() {
         return DEPENDENCIES;
     }
