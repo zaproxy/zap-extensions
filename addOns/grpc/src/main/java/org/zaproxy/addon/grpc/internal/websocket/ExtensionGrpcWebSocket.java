@@ -35,17 +35,19 @@ import org.zaproxy.zap.view.HttpPanelManager;
 public class ExtensionGrpcWebSocket extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionGrpcWebSocket";
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionGrpc.class, ExtensionWebSocket.class);
 
     public ExtensionGrpcWebSocket() {
         super(NAME);
     }
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES =
-            List.of(ExtensionGrpc.class, ExtensionWebSocket.class);
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
+    }
 
     @Override
     public void hook(ExtensionHook extensionHook) {
-        super.hook(extensionHook);
         if (hasView()) {
             HttpPanelManager manager = HttpPanelManager.getInstance();
             manager.addRequestViewFactory(WebSocketComponent.NAME, new WebSocketGrpcViewFactory());
@@ -72,7 +74,7 @@ public class ExtensionGrpcWebSocket extends ExtensionAdaptor {
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("grpc.desc");
+        return Constant.messages.getString("grpc.websocket.desc");
     }
 
     private static final class WebSocketGrpcViewFactory

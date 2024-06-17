@@ -6,4 +6,5 @@
 <index version="2.0">
     <indexitem text="grpc" target="addon.grpc" />
     <indexitem text="grpc variant" target="addon.grpc.variant" />
+    <indexitem text="grpc websocket" target="addon.grpc.websocket" />
 </index>

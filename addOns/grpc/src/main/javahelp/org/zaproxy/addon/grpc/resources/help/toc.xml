@@ -8,6 +8,7 @@
         <tocitem text="Add Ons" tocid="addons">
             <tocitem text="gRPC Support" image="addon.grpc.icon" target="addon.grpc">
                 <tocitem text="Variant" target="addon.grpc.variant"/>
+                <tocitem text="gRPC WebSocket" target="addon.grpc.websocket"/>
             </tocitem>
         </tocitem>
     </tocitem>
