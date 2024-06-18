@@ -84,10 +84,10 @@ class RelativePathConfusionScanRuleUnitTest
         // Given
         String path = "/index.html";
         String body =
-               "<html><head><style>"
-                         + "body {background: url(http://google.com/abc.png);}"
-                         + "div {background: url('http://google.com/abc.png');}"
-                         + "</style></head><html>";
+                "<html><head><style>"
+                        + "body {background: url(http://google.com/abc.png);}"
+                        + "div {background: url('http://google.com/abc.png');}"
+                        + "</style></head><html>";
         this.nano.addHandler(createHandler(path, Response.Status.OK, body, ""));
         HttpMessage msg = this.getHttpMessage(path);
         rule.init(msg, this.parent);

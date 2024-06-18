@@ -327,8 +327,9 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
                             // attribute)
                             if (tag.toUpperCase().equals("STYLE")) {
                                 // for the style tag, look at the entire body, not an attribute..
-                                LOGGER.debug("Got <style> data: {}", tagInstance.data());
-                                Matcher matcher = matchStyles(tagInstance.data());
+                                String styleBody = tagInstance.data();
+                                LOGGER.debug("Got <style> data: {}", styleBody);
+                                Matcher matcher = matchStyles(styleBody);
                                 if (matcher.find()) {
                                     relativeReferenceFound = true;
                                     relativeReferenceEvidence = matcher.group();
