@@ -8,14 +8,19 @@ description = "Common configuration of the WebDriver add-ons."
 val geckodriverVersion = "0.34.0"
 val chromeDriverVersion = "126.0.6478.61"
 
-fun configureDownloadTask(outputDir: File, targetOs: DownloadWebDriver.OS, task: DownloadWebDriver) {
+fun configureDownloadTask(
+    outputDir: File,
+    targetOs: DownloadWebDriver.OS,
+    task: DownloadWebDriver,
+) {
     val geckodriver = task.browser.get() == DownloadWebDriver.Browser.FIREFOX
     var path = "webdriver/"
-    path += when (targetOs) {
-        DownloadWebDriver.OS.LINUX -> "linux"
-        DownloadWebDriver.OS.MAC -> "macos"
-        DownloadWebDriver.OS.WIN -> "windows"
-    }
+    path +=
+        when (targetOs) {
+            DownloadWebDriver.OS.LINUX -> "linux"
+            DownloadWebDriver.OS.MAC -> "macos"
+            DownloadWebDriver.OS.WIN -> "windows"
+        }
     path += "/"
     path += getArchPath(task)
     path += "/"
@@ -64,12 +69,13 @@ subprojects {
         val webdriversDir = layout.buildDirectory.dir("webdrivers")
         val targetOs = project.extra["targetOs"] as DownloadWebDriver.OS
 
-        val downloadTasks = tasks.withType<DownloadWebDriver>().also {
-            it.configureEach {
-                configureDownloadTask(webdriversDir.get().asFile, targetOs, this)
-                webdriverClasspath.from(wdm)
+        val downloadTasks =
+            tasks.withType<DownloadWebDriver>().also {
+                it.configureEach {
+                    configureDownloadTask(webdriversDir.get().asFile, targetOs, this)
+                    webdriverClasspath.from(wdm)
+                }
             }
-        }
 
         sourceSets["main"].output.dir(mapOf("builtBy" to downloadTasks), webdriversDir)
 
@@ -90,8 +96,7 @@ fun Project.zapAddOn(configure: AddOnPluginExtension.() -> Unit): Unit =
 fun AddOnPluginExtension.manifest(configure: ManifestExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("manifest", configure)
 
-fun Project.crowdin(configure: CrowdinExtension.() -> Unit): Unit =
-    (this as ExtensionAware).extensions.configure("crowdin", configure)
+fun Project.crowdin(configure: CrowdinExtension.() -> Unit): Unit = (this as ExtensionAware).extensions.configure("crowdin", configure)
 
 val Project.crowdin: CrowdinExtension get() =
     (this as ExtensionAware).extensions.getByName("crowdin") as CrowdinExtension
