@@ -327,11 +327,8 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
                             // attribute)
                             if (tag.toUpperCase().equals("STYLE")) {
                                 // for the style tag, look at the entire body, not an attribute..
-                                // remove all " and ' for proper matching url('somefile.png')
-                                String styleBody =
-                                        tagInstance.data().replaceAll("['\"]", "");
-                                LOGGER.debug("Got <style> data: {}", styleBody);
-                                Matcher matcher = STYLE_URL_LOAD.matcher(styleBody);
+                                LOGGER.debug("Got <style> data: {}", tagInstance.data());
+                                Matcher matcher = matchStyles(tagInstance.data());
                                 if (matcher.find()) {
                                     relativeReferenceFound = true;
                                     relativeReferenceEvidence = matcher.group();
@@ -379,7 +376,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
                                 } else {
                                     // for the style attribute (on various tags), look for a pattern
                                     // like "background: url(image.png)"
-                                    Matcher matcher = STYLE_URL_LOAD.matcher(attributeUpper);
+                                    Matcher matcher = matchStyles(attributeUpper);
                                     if (matcher.find()) {
                                         relativeReferenceFound = true;
                                         relativeReferenceEvidence =
@@ -645,6 +642,12 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
                 .setAttack(attack)
                 .setOtherInfo(otherInfo)
                 .setEvidence(evidence);
+    }
+
+    private Matcher matchStyles(String body) {
+        // remove all " and ' for proper matching url('somefile.png')
+        String styleBody = body.replaceAll("['\"]", "");
+        return STYLE_URL_LOAD.matcher(styleBody);
     }
 
     @Override
