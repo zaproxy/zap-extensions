@@ -54,6 +54,9 @@ allprojects {
     }
 
     tasks.withType<JavaCompile>().configureEach {
+        if (JavaVersion.current().getMajorVersion() >= "21") {
+            options.compilerArgs = options.compilerArgs + "-Xlint:-this-escape"
+        }
         options.errorprone {
             disableAllChecks.set(true)
             error(
