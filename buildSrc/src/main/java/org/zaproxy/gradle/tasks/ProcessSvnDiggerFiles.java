@@ -45,6 +45,7 @@ public class ProcessSvnDiggerFiles extends DefaultTask {
     private final ConfigurableFileTree sourceFiles;
     private final DirectoryProperty outputDir;
 
+    @SuppressWarnings("this-escape")
     public ProcessSvnDiggerFiles() {
         this.sourceFiles = getProject().fileTree(getProject().file("src/main/" + SVNDIGGER_DIR));
         this.sourceFiles.exclude(LICENCE_FILE_NAME, README_FILE_NAME);
