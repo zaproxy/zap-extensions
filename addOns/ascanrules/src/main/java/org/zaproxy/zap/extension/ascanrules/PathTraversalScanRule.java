@@ -367,23 +367,27 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
             }
 
             // Check 3: Detect if this page is a directory browsing component
-            for (int h = 0; h < nixDirCount; h++) {
+            if (inScope(Tech.Linux) || inScope(Tech.MacOS)) {
+                for (int h = 0; h < nixDirCount; h++) {
 
-                // Check if a there was a finding or the scan has been stopped
-                // if yes dispose resources and exit
-                if (sendAndCheckPayload(param, NIX_LOCAL_DIR_TARGETS[h], DIR_PATTERN, 3)
-                        || isStop()) {
-                    // Dispose all resources
-                    // Exit the scan rule
-                    return;
+                    // Check if a there was a finding or the scan has been stopped
+                    // if yes dispose resources and exit
+                    if (sendAndCheckPayload(param, NIX_LOCAL_DIR_TARGETS[h], DIR_PATTERN, 3)
+                            || isStop()) {
+                        // Dispose all resources
+                        // Exit the scan rule
+                        return;
+                    }
                 }
             }
-            for (int h = 0; h < winDirCount; h++) {
-                if (sendAndCheckPayload(param, WIN_LOCAL_DIR_TARGETS[h], DIR_PATTERN, 3)
-                        || isStop()) {
-                    // Dispose all resources
-                    // Exit the scan rule
-                    return;
+            if (inScope(Tech.Windows)) {
+                for (int h = 0; h < winDirCount; h++) {
+                    if (sendAndCheckPayload(param, WIN_LOCAL_DIR_TARGETS[h], DIR_PATTERN, 3)
+                            || isStop()) {
+                        // Dispose all resources
+                        // Exit the scan rule
+                        return;
+                    }
                 }
             }
             // Check 4: Start detection for internal well known files
