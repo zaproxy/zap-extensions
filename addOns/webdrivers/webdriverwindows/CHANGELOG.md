@@ -5,37 +5,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- Update ChromeDriver to 126.0.6478.62.
+- Update ChromeDriver to 126.0.6478.63.
 
 ## [91] - 2024-06-14
 ### Changed
 - Update ChromeDriver to 126.0.6478.61.
 
-
-
 ## [90] - 2024-06-12
 ### Changed
 - Update ChromeDriver to 126.0.6478.55.
-
-
 
 ## [89] - 2024-05-31
 ### Changed
 - Update ChromeDriver to 125.0.6422.141.
 
-
-
 ## [88] - 2024-05-25
 ### Changed
 - Update ChromeDriver to 125.0.6422.78.
 
-
-
 ## [87] - 2024-05-22
 ### Changed
 - Update ChromeDriver to 125.0.6422.76.
-
-
 
 ## [86] - 2024-05-16
 ### Changed
