@@ -130,6 +130,12 @@ subprojects {
         }
     }
 
+    tasks.withType<JavaCompile>().configureEach {
+        if (JavaVersion.current().getMajorVersion() >= "21") {
+            options.compilerArgs = options.compilerArgs + "-Xlint:-this-escape"
+        }
+    }
+
     tasks.named<JacocoReport>("jacocoTestReport") {
         reports {
             xml.required.set(true)
