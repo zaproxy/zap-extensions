@@ -1,6 +1,9 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-description = "This Value Generator Add-on allows a user to define field names and values to be used when submitting values to an app. Fields can be added, modified, enabled/disabled, and deleted."
+description = (
+    "This Value Generator Add-on allows a user to define field names and values to be used when submitting values to an app. " +
+        "Fields can be added, modified, enabled/disabled, and deleted."
+)
 
 zapAddOn {
     addOnName.set("Value Generator")

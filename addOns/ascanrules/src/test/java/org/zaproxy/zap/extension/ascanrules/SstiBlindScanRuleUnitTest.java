@@ -22,15 +22,19 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class SstiBlindScanRuleUnitTest extends ActiveScannerTest<SstiBlindScanRule> {
@@ -126,5 +130,46 @@ class SstiBlindScanRuleUnitTest extends ActiveScannerTest<SstiBlindScanRule> {
         this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(1336)));
+        assertThat(wasc, is(equalTo(20)));
+        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_INPV_18_SSTI.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A01_INJECTION.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_INPV_18_SSTI.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_INPV_18_SSTI.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = this.rule.getExampleAlerts();
+        Alert example = alerts.get(0);
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        assertThat(example.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(example.getParam(), is(equalTo("name")));
+        assertThat(example.getAttack(), is(equalTo("#{%x(sleep 2)}")));
     }
 }

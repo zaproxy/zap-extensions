@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [15.26.0] - 2024-06-21
+### Changed
+- Update Selenium to version 4.22.0.
+
 ## [15.25.0] - 2024-05-31
 ### Changed
 - Ensure the specified WebDriver is executable always.
@@ -244,6 +248,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.26.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.26.0
 [15.25.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.25.0
 [15.24.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.24.0
 [15.23.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.23.0

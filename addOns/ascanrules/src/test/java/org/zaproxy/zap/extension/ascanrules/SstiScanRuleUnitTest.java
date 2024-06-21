@@ -24,11 +24,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +46,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -232,7 +236,48 @@ class SstiScanRuleUnitTest extends ActiveScannerTest<SstiScanRule> {
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
     }
 
-    private String templateRenderMock(String startTag, String endTag, String input)
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(1336)));
+        assertThat(wasc, is(equalTo(20)));
+        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_INPV_18_SSTI.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A01_INJECTION.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_INPV_18_SSTI.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_INPV_18_SSTI.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        Alert example = alerts.get(0);
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        assertThat(example.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(example.getParam(), is(equalTo("name")));
+        assertThat(example.getAttack(), is(equalTo("zj#set($x=2614*1450)${x}zj")));
+    }
+
+    private static String templateRenderMock(String startTag, String endTag, String input)
             throws IllegalArgumentException {
         if (!input.contains(startTag)) {
             return input;
@@ -252,7 +297,8 @@ class SstiScanRuleUnitTest extends ActiveScannerTest<SstiScanRule> {
         return prefix + expressionResult + suffix;
     }
 
-    private String getSimpleArithmeticResult(String expression) throws IllegalArgumentException {
+    private static String getSimpleArithmeticResult(String expression)
+            throws IllegalArgumentException {
         if (expression.contains("+")) {
             String[] numbers = expression.split(Pattern.quote("+"), 2);
             if (numbers.length == 1 && expression.endsWith("+")) {

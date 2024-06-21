@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- The following rules now includes example alert functionality for documentation generation purposes (Issue 6119), as well as now including Alert Tags (OWASP Top 10, WSTG, and updated CWE):
+    - Server Side Template Injection
+    - Server Side Template Injection (Blind)
+
 ### Fixed
 - False positives in the Path Traversal rule.
 
