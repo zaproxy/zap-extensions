@@ -199,7 +199,6 @@ public class UserControlledCharsetScanRule extends PluginPassiveScanner
                 .setParam(param.getName())
                 .setOtherInfo(getExtraInfoMessage(tag, attr, param, charset))
                 .setSolution(getSolutionMessage())
-                .setReference(getReferenceMessage())
                 .setCweId(20) // CWE-20: Improper Input Validation
                 .setWascId(20); // WASC-20: Improper Input Handling
     }
@@ -224,10 +223,6 @@ public class UserControlledCharsetScanRule extends PluginPassiveScanner
 
     private String getSolutionMessage() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReferenceMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     private static String getExtraInfoMessage(
