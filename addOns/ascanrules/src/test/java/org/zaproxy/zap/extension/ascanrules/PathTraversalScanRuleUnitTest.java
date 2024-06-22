@@ -185,6 +185,36 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
     }
 
     @Test
+    void shouldAlertIfAttackResponseListsLinuxDirectoriesInPlainText() throws Exception {
+        // Given
+        nano.addHandler(new ListLinuxDirsOnAttackPlainText("/", "p", "/"));
+        rule.init(getHttpMessage("/?p=v"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(1)));
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("etc")));
+        assertThat(alertsRaised.get(0).getParam(), is(equalTo("p")));
+        assertThat(alertsRaised.get(0).getAttack(), is(equalTo("/")));
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
+    }
+
+    @Test
+    void shouldNotAlertIfAttackResponseListsHasFalsePositivePattern() throws Exception {
+        // Given
+        nano.addHandler(new ListFalsePositiveDirsOnAttack("/", "p", "/"));
+        rule.init(getHttpMessage("/?p=v"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(1)));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
     void shouldNotAlertIfAttackResponseListsBogusLinuxDirectories() throws Exception {
         // Given
         nano.addHandler(new ListBogusLinuxDirsOnAttack("/", "p", "/"));
@@ -372,9 +402,45 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         private static final String DIRS_LISTING =
                 "<td><a href=\"/bin/\">bin</a></td>"
                         + "<td><a href=\"/etc/\">etc</a></td>"
-                        + "<td><a href=\"/boot/\">boot</a></td>";
+                        + "<td><a href=\"/boot/\">boot</a></td>"
+                        + "<td><a href=\"/proc/\">proc</a></td>"
+                        + "<td><a href=\"/tmp/\">tmp</a></td>"
+                        + "<td><a href=\"/home/\">home</a></td>";
 
         public ListLinuxDirsOnAttack(String path, String param, String attack) {
+            super(path, param, attack);
+        }
+
+        @Override
+        protected String getDirs() {
+            return DIRS_LISTING;
+        }
+    }
+
+    private static class ListLinuxDirsOnAttackPlainText extends ListDirsOnAttack {
+
+        private static final String DIRS_LISTING = "etc root tmp bin boot dev home mnt opt proc";
+
+        public ListLinuxDirsOnAttackPlainText(String path, String param, String attack) {
+            super(path, param, attack);
+        }
+
+        @Override
+        protected String getDirs() {
+            return DIRS_LISTING;
+        }
+    }
+
+    private static class ListFalsePositiveDirsOnAttack extends ListDirsOnAttack {
+
+        private static final String DIRS_LISTING =
+                "<script src=\"/static/appbuilder/js/bootstrap.min.js\"></script>"
+                        + "<div class=\"modal fade\" id=\"modal-confirm\" tabindex=\"-1\" role=\"dialog\">"
+                        // etc
+                        + "<div id=\"app\" data-bootstrap=\"{&#34;common&#34;: home proc tmp{&#34;conf&#34;:"
+                        + "{&#34;SUPERSET_WEBSERVER_TIMEOUT&#34;, etc. are evaluated on the server using the server&#39;\";</div>";
+
+        public ListFalsePositiveDirsOnAttack(String path, String param, String attack) {
             super(path, param, attack);
         }
 
