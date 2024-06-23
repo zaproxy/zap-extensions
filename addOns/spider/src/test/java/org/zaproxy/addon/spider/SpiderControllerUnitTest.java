@@ -53,6 +53,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.spider.filters.FetchFilter.FetchStatus;
 import org.zaproxy.addon.spider.parser.SpiderResourceFound;
 import org.zaproxy.zap.testutils.TestUtils;
 
@@ -103,6 +104,22 @@ class SpiderControllerUnitTest extends TestUtils {
         // Then
         HttpMessage msg = messageWrittenToSession();
         assertThat(msg.getRequestHeader().getVersion(), is(equalTo(httpVersion)));
+
+        verify(spider, times(1))
+                .notifyListenersFoundURI(
+                        "http://127.0.0.1", HttpRequestHeader.GET, FetchStatus.SEED);
+    }
+
+    @Test
+    void shouldNotNotifyFileSeedAsFoundUri() throws Exception {
+        String testURI = "http://127.0.0.1/test.xml";
+        // Given
+        URI seed = new URI(testURI, true);
+        // When
+        spiderController.addSeedFromFileSeed(seed, HttpRequestHeader.GET, "HTTP/2");
+        // Then
+        verify(spider, times(0))
+                .notifyListenersFoundURI(testURI, HttpRequestHeader.GET, FetchStatus.SEED);
     }
 
     @Test

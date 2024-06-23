@@ -164,13 +164,14 @@ public class SpiderController implements SpiderParserListener {
     }
 
     /**
-     * Adds a new seed, if it wasn't already processed.
+     * Add a seed to the visited resources, if it wasn't already processed. And create and submit
+     * the new task
      *
      * @param uri the uri
      * @param method the http method used for fetching the resource
      * @param httpVersion the HTTP version for fetching the resource.
      */
-    protected void addSeed(URI uri, String method, String httpVersion) {
+    private void addVisitedResourcesAndNewSpiderTask(URI uri, String method, String httpVersion) {
         SpiderResourceFound resourceFound =
                 SpiderResourceFound.builder()
                         .setUri(uri.toString())
@@ -195,8 +196,31 @@ public class SpiderController implements SpiderParserListener {
         // Create and submit the new task
         SpiderTask task = new SpiderTask(spider, resourceFound, uri);
         spider.submitTask(task);
+    }
+
+    /**
+     * Adds a new seed, if it wasn't already processed.
+     *
+     * @param uri the uri
+     * @param method the http method used for fetching the resource
+     * @param httpVersion the HTTP version for fetching the resource.
+     */
+    protected void addSeed(URI uri, String method, String httpVersion) {
+        addVisitedResourcesAndNewSpiderTask(uri, method, httpVersion);
+
         // Add the uri to the found list
         spider.notifyListenersFoundURI(uri.toString(), method, FetchStatus.SEED);
+    }
+
+    /**
+     * Adds a new seed from a file seed which is not a 'found' URL, if it wasn't already processed.
+     *
+     * @param uri the uri
+     * @param method the http method used for fetching the resource
+     * @param httpVersion the HTTP version for fetching the resource.
+     */
+    protected void addSeedFromFileSeed(URI uri, String method, String httpVersion) {
+        addVisitedResourcesAndNewSpiderTask(uri, method, httpVersion);
     }
 
     /**
