@@ -28,10 +28,10 @@ jobs:
         with:
           languages: ${{ matrix.language }}
       - if: matrix.language != 'java'
-        uses: github/codeql-action/autobuild@v2
+        uses: github/codeql-action/autobuild@v3
 
       - if: matrix.language == 'java'
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
         with:
           cache-read-only: true
           gradle-home-cache-includes: |
