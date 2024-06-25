@@ -369,7 +369,7 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
                         equalTo(
                                 "The scan rule was able to retrieve the content of a file or "
                                         + "command by sending [a;cat /etc/passwd ] to the operating "
-                                        + "system running this application")));
+                                        + "system running this application.")));
     }
 
     private static class PayloadCollectorHandler extends NanoServerHandler {
