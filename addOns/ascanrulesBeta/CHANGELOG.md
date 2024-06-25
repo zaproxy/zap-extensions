@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Fixed regex for Relative Path Confusion, which detected absolute url as relative
+- Alert text for various rules has been updated to more consistently use periods and spaces in a uniform manner.
 
 ## [53] - 2024-03-28
 ### Changed
