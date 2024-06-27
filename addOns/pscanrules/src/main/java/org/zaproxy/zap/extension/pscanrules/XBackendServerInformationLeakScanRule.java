@@ -69,7 +69,6 @@ public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
                 .setSolution(getSolution())
-                .setReference(getReference())
                 .setEvidence(evidence)
                 .setCweId(200)
                 .setWascId(13);
@@ -91,10 +90,6 @@ public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner
 
     private String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     @Override
