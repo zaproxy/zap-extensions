@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [38] - 2024-06-27
 ### Added
 - Polyfill.io script detection
 
@@ -324,6 +324,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[38]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v35
