@@ -48,12 +48,8 @@ class XContentTypeOptionScanRuleUnitTest extends PassiveScannerTest<XContentType
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(693)));
-        assertThat(wasc, is(equalTo(15)));
         assertThat(tags.size(), is(equalTo(2)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
@@ -80,6 +76,8 @@ class XContentTypeOptionScanRuleUnitTest extends PassiveScannerTest<XContentType
         assertTrue(StringUtils.isNotBlank(alert.getSolution()));
         assertTrue(StringUtils.isNotBlank(alert.getOtherInfo()));
         assertTrue(StringUtils.isNotBlank(alert.getReference()));
+        assertThat(alert.getCweId(), is(equalTo(693)));
+        assertThat(alert.getWascId(), is(equalTo(15)));
     }
 
     @Test

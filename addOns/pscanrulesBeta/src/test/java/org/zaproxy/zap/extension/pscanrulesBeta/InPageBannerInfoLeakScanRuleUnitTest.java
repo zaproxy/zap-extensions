@@ -40,7 +40,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 class InPageBannerInfoLeakScanRuleUnitTest
         extends PassiveScannerTest<InPageBannerInfoLeakScanRule> {
 
-    private HttpMessage createMessage(String banner) throws URIException {
+    private static HttpMessage createMessage(String banner) throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));
 

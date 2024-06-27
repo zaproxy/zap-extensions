@@ -104,15 +104,15 @@ public class ServletParameterPollutionScanRule extends PluginPassiveScanner
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    public String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    public String getReference() {
+    private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 

@@ -157,23 +157,19 @@ public class UserControlledOpenRedirectScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    /*
-     * Rule-associated messages
-     */
-
-    private String getDescriptionMessage() {
+    private static String getDescriptionMessage() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolutionMessage() {
+    private static String getSolutionMessage() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReferenceMessage() {
+    private static String getReferenceMessage() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private String getExtraInfoMessage(
+    private static String getExtraInfoMessage(
             HttpMessage msg, String paramName, String paramValue, String responseLocation) {
         StringBuilder extraInfoSB = new StringBuilder();
         if ("GET".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {

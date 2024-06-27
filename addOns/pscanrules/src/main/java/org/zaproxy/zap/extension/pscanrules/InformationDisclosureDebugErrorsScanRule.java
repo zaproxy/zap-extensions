@@ -99,7 +99,7 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
         return null;
     }
 
-    private List<String> loadFile(Path path) {
+    private static List<String> loadFile(Path path) {
         List<String> strings = new ArrayList<>();
         BufferedReader reader = null;
         File f = path.toFile();
@@ -133,7 +133,7 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
         this.errors = loadFile(path);
     }
 
-    public int getRisk() {
+    private static int getRisk() {
         return Alert.RISK_LOW;
     }
 
@@ -142,11 +142,11 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    public String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
@@ -155,11 +155,11 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
+    static int getCweId() {
         return 200; // CWE Id 200 - Information Exposure
     }
 
-    public int getWascId() {
+    static int getWascId() {
         return 13; // WASC Id - Info leakage
     }
 

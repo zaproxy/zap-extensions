@@ -69,7 +69,7 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner
      * @param msg Response Http message
      * @return boolean status of existence
      */
-    private boolean isXPoweredByHeaderExist(HttpMessage msg) {
+    private static boolean isXPoweredByHeaderExist(HttpMessage msg) {
         return !msg.getResponseHeader().getHeaderValues(HEADER_NAME).isEmpty();
     }
 
@@ -79,7 +79,7 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner
      * @param msg Response Http message
      * @return list of the matched headers
      */
-    private List<String> getXPoweredByHeaders(HttpMessage msg) {
+    private static List<String> getXPoweredByHeaders(HttpMessage msg) {
         List<String> matchedHeaders = new ArrayList<>();
         String headers = msg.getResponseHeader().toString();
         String[] headerElements = headers.split("\\r\\n");
@@ -123,7 +123,7 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner
         return PLUGIN_ID;
     }
 
-    public int getRisk() {
+    private static int getRisk() {
         return Alert.RISK_LOW;
     }
 
@@ -132,15 +132,15 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    public String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    public String getReference() {
+    private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
@@ -149,11 +149,11 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
+    private static int getCweId() {
         return 200; // CWE Id 200 - Information Exposure
     }
 
-    public int getWascId() {
+    private static int getWascId() {
         return 13; // WASC Id - Info leakage
     }
 

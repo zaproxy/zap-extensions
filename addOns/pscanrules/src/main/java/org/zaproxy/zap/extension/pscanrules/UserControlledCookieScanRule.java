@@ -99,7 +99,7 @@ public class UserControlledCookieScanRule extends PluginPassiveScanner
 
     // Cookies are commonly URL encoded, maybe other encodings.
     // TODO: apply other decodings?  htmlDecode, etc.
-    private String decodeCookie(String cookie, String charset) {
+    private static String decodeCookie(String cookie, String charset) {
         if (charset != null) {
             try {
                 return URLDecoder.decode(cookie, charset);
@@ -178,23 +178,19 @@ public class UserControlledCookieScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    /*
-     * Rule-associated messages
-     */
-
-    private String getDescriptionMessage() {
+    private static String getDescriptionMessage() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolutionMessage() {
+    private static String getSolutionMessage() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReferenceMessage() {
+    private static String getReferenceMessage() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private String getExtraInfoMessage(HttpMessage msg, HtmlParameter param, String cookie) {
+    private static String getExtraInfoMessage(HttpMessage msg, HtmlParameter param, String cookie) {
         String introMessage = "";
         if ("GET".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {
             introMessage = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.get");

@@ -136,7 +136,6 @@ public class CrossDomainScanRule extends AbstractHostPlugin implements CommonAct
         }
 
         try {
-            // get the network details for the attack
             URI originalURI = this.getBaseMsg().getRequestHeader().getURI();
 
             scanAdobeCrossdomainPolicyFile(originalURI);
@@ -200,8 +199,7 @@ public class CrossDomainScanRule extends AbstractHostPlugin implements CommonAct
             XPathExpression exprRequestHeadersFromDomain =
                     xpath.compile(
                             "/cross-domain-policy/allow-http-request-headers-from/@domain"); // gets
-            // the
-            // domain attributes
+            // the domain attributes
             NodeList exprRequestHeadersFromDomainNodes =
                     (NodeList)
                             exprRequestHeadersFromDomain.evaluate(

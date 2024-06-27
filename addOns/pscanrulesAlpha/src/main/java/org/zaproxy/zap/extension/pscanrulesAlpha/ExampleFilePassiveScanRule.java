@@ -114,7 +114,7 @@ public class ExampleFilePassiveScanRule extends PluginPassiveScanner {
         return null;
     }
 
-    private List<String> loadFile(String file) {
+    private static List<String> loadFile(String file) {
         /*
          * ZAP will have already extracted the file from the add-on and put it underneath the 'ZAP home' directory
          */
@@ -162,19 +162,19 @@ public class ExampleFilePassiveScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getOtherInfo() {
+    private static String getOtherInfo() {
         return Constant.messages.getString(MESSAGE_PREFIX + "other");
     }
 
-    private String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
+    private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 }

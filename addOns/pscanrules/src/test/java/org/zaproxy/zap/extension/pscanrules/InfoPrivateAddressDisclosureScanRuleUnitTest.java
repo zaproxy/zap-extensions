@@ -408,11 +408,11 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
         assertThat(alert.getUri(), equalTo(requestUri));
     }
 
-    private HttpMessage createHttpMessage(String body) throws HttpMalformedHeaderException {
+    private static HttpMessage createHttpMessage(String body) throws HttpMalformedHeaderException {
         return createHttpMessage(URI, body);
     }
 
-    private HttpMessage createHttpMessage(String requestUri, String body)
+    private static HttpMessage createHttpMessage(String requestUri, String body)
             throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         requestUri = requestUri.startsWith("http") ? requestUri : "http://" + requestUri;

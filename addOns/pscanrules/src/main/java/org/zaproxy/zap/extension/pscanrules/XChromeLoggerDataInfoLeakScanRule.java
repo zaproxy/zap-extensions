@@ -51,9 +51,7 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         long start = System.currentTimeMillis();
 
-        // Get the header(s)
         List<String> xcldHeader = msg.getResponseHeader().getHeaderValues("X-ChromeLogger-Data");
-        // Add any header(s) using the alternate name
         List<String> xcpdHeader = msg.getResponseHeader().getHeaderValues("X-ChromePhp-Data");
 
         List<String> loggerHeaders = new ArrayList<>(2);
@@ -83,19 +81,19 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
+    private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private String getOtherInfo(String headerValue) {
+    private static String getOtherInfo(String headerValue) {
         try {
             byte[] decodedByteArray = Base64.getDecoder().decode(headerValue);
             return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.msg")

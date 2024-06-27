@@ -46,8 +46,8 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
 /**
- * a scanner that looks for Java classes disclosed via the WEB-INF folder and that decompiles them
- * to give the Java source code. The scanner also looks for easy pickings in the form of properties
+ * a scan rule that looks for Java classes disclosed via the WEB-INF folder and that decompiles them
+ * to give the Java source code. The rule also looks for easy pickings in the form of properties
  * files loaded by the Java class.
  *
  * @author 70pointer
@@ -270,14 +270,8 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin
         return msg;
     }
 
-    /**
-     * gets a candidate URI for a given class path.
-     *
-     * @param classname
-     * @return
-     * @throws URIException
-     */
-    private URI getClassURI(URI hostURI, String classname) throws URIException {
+    /** gets a candidate URI for a given class path. */
+    private static URI getClassURI(URI hostURI, String classname) throws URIException {
         return new URI(
                 hostURI.getScheme()
                         + "://"
@@ -288,7 +282,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin
                 false);
     }
 
-    private URI getPropsFileURI(URI hostURI, String propsfilename) throws URIException {
+    private static URI getPropsFileURI(URI hostURI, String propsfilename) throws URIException {
         return new URI(
                 hostURI.getScheme()
                         + "://"

@@ -96,13 +96,6 @@ public class Base64Disclosure extends PluginPassiveScanner implements CommonPass
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    /**
-     * scans the HTTP response for base64 signatures
-     *
-     * @param msg
-     * @param id
-     * @param source unused
-     */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 

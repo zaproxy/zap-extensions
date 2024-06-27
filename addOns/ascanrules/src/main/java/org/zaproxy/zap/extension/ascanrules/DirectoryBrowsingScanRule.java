@@ -95,7 +95,7 @@ public class DirectoryBrowsingScanRule extends AbstractAppPlugin
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private void checkIfDirectory(HttpMessage msg) throws URIException {
+    private static void checkIfDirectory(HttpMessage msg) throws URIException {
 
         URI uri = msg.getRequestHeader().getURI();
         uri.setQuery(null);

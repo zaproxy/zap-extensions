@@ -198,31 +198,25 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner
         } // end of headers null check
     } // end of method
 
-    /**
-     * gets the plugin id
-     *
-     * @return
-     */
     @Override
     public int getPluginId() {
         return 10105;
     }
 
-    /** gets the plugin name */
     @Override
     public String getName() {
         return Constant.messages.getString("pscanrules.insecureauthentication.name");
     }
 
-    public String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString("pscanrules.insecureauthentication.desc");
     }
 
-    public String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString("pscanrules.insecureauthentication.soln");
     }
 
-    public String getReference() {
+    private static String getReference() {
         return Constant.messages.getString("pscanrules.insecureauthentication.refs");
     }
 
@@ -231,11 +225,11 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
+    private static int getCweId() {
         return 326; // CWE Id - Inadequate Encryption Strength
     }
 
-    public int getWascId() {
+    private static int getWascId() {
         return 4; // WASC Id - Insufficient Transport Layer Protection
     }
 

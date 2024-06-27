@@ -72,7 +72,6 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin
      */
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_34");
 
-    /** the logger object */
     private static final Logger LOGGER =
             LogManager.getLogger(SourceCodeDisclosureSvnScanRule.class);
 
@@ -96,13 +95,11 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
-    /** returns the plugin id */
     @Override
     public int getId() {
         return 42;
     }
 
-    /** returns the name of the plugin */
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
@@ -171,13 +168,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin
         }
     }
 
-    /**
-     * returns whether the message response content matches the specified extension
-     *
-     * @param data
-     * @param fileExtension
-     * @return
-     */
+    /** returns whether the message response content matches the specified extension */
     private String findEvidenceForExtension(byte[] data, String fileExtension) {
         if (fileExtension != null) {
             Matcher matcher;
@@ -497,7 +488,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin
                                 rsSVNWCFormat = pragmaStatement.executeQuery("pragma USER_VERSION");
 
                                 // get the precise internal version of SVN in use
-                                // this will inform how the scanner should proceed in an efficient
+                                // this will inform how the rule should proceed in an efficient
                                 // manner.
                                 int svnFormat = 0;
                                 while (rsSVNWCFormat.next()) {

@@ -56,22 +56,12 @@ public class GitIndexEntryCache {
         }
     }
 
-    /**
-     * is a Git index cached for the given Git index URI?
-     *
-     * @param uri
-     * @return
-     */
+    /** is a Git index cached for the given Git index URI? */
     public synchronized boolean isIndexCached(URI gitIndexUri) {
         return gitIndexMap.containsKey(gitIndexUri);
     }
 
-    /**
-     * is a Git index entry cached for the given Git index URI, and Git Index entry URI?
-     *
-     * @param uri
-     * @return
-     */
+    /** is a Git index entry cached for the given Git index URI, and Git Index entry URI? */
     public synchronized boolean isIndexEntryCached(URI gitIndexUri, URI gitIndexEntryUri) {
         if (!gitIndexMap.containsKey(gitIndexUri)) {
             return false;
@@ -79,12 +69,7 @@ public class GitIndexEntryCache {
         return gitIndexMap.get(gitIndexUri).containsKey(gitIndexEntryUri);
     }
 
-    /**
-     * puts the Git Index and Git Index Entry in a map
-     *
-     * @param gitIndexUri
-     * @param gitIndexEntryUri
-     */
+    /** puts the Git Index and Git Index Entry in a map */
     @SuppressWarnings("unchecked")
     public synchronized void putIndexEntry(URI gitIndexUri, URI gitIndexEntryUri, String gitSHA1) {
         Map<URI, String> indexEntryMap;
@@ -99,13 +84,7 @@ public class GitIndexEntryCache {
         gitIndexMap.put(gitIndexUri, indexEntryMap);
     }
 
-    /**
-     * gets the SHA1 for a Git Index and Git Index Entry
-     *
-     * @param gitIndexUri
-     * @param gitIndexEntryUri
-     * @return
-     */
+    /** gets the SHA1 for a Git Index and Git Index Entry */
     public synchronized String getIndexEntry(URI gitIndexUri, URI gitIndexEntryUri) {
         if (gitIndexMap.containsKey(gitIndexUri)) {
             return gitIndexMap.get(gitIndexUri).get(gitIndexEntryUri);

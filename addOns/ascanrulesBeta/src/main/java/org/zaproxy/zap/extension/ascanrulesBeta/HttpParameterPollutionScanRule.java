@@ -83,10 +83,6 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin
         return Constant.messages.getString("ascanbeta.HTTPParamPoll.extrainfo");
     }
 
-    /**
-     * Main method of the class. It is executed for each page. Determined whether the page in
-     * vulnerable to HPP or not.
-     */
     @Override
     public void scan() {
 
@@ -242,7 +238,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin
      * @param url found in the body of the targeted page
      * @return a hashmap of the query string
      */
-    private Map<String, List<String>> getUrlParameters(String url) {
+    private static Map<String, List<String>> getUrlParameters(String url) {
         Map<String, List<String>> params = new HashMap<>();
 
         if (url != null) {

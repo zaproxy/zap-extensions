@@ -101,7 +101,7 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin
     public void scan(HttpMessage msg, String param, String value) {
 
         if (this.isStop()) { // Check if the user stopped things
-            LOGGER.debug("Scanner {} Stopping.", this.getName());
+            LOGGER.debug("Scan rule {} Stopping.", this.getName());
             return; // Stop!
         }
         if (isPage500(getBaseMsg())) // Check to see if the page closed initially
@@ -169,7 +169,7 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin
         return 7;
     }
 
-    private String randomCharacterString(int length) {
+    private static String randomCharacterString(int length) {
         StringBuilder sb1 = new StringBuilder(length + 1);
         int counter = 0;
         int character = 0;

@@ -185,7 +185,7 @@ public class ViewstateScanRule extends PluginPassiveScanner implements CommonPas
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
@@ -202,7 +202,7 @@ public class ViewstateScanRule extends PluginPassiveScanner implements CommonPas
         return 14; // WASC-14 - Server Misconfiguration
     }
 
-    private Map<String, StartTag> getHiddenFields(Source source) {
+    private static Map<String, StartTag> getHiddenFields(Source source) {
         List<StartTag> result = source.getAllStartTags("input");
 
         // Searching for name only tags only makes sense for Asp.Net 1.1 websites

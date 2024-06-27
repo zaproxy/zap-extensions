@@ -147,13 +147,6 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
         return VULN.getReferencesAsString();
     }
 
-    /**
-     * Scan for External Redirect vulnerabilities
-     *
-     * @param msg a request only copy of the original message (the response isn't copied)
-     * @param param the parameter name that need to be exploited
-     * @param value the original parameter value
-     */
     @Override
     public void scan(HttpMessage msg, String param, String value) {
 
@@ -342,7 +335,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
      * @param msg the current message where reflected redirection should be check into
      * @return get back the redirection type if exists
      */
-    private int isRedirected(String payload, HttpMessage msg) {
+    private static int isRedirected(String payload, HttpMessage msg) {
 
         // (1) Check if redirection by "Location" header
         // http://en.wikipedia.org/wiki/HTTP_location
@@ -471,7 +464,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
      * @param type the redirection type
      * @return a string representing the reason of this redirection
      */
-    private String getRedirectionReason(int type) {
+    private static String getRedirectionReason(int type) {
         switch (type) {
             case REDIRECT_LOCATION_HEADER:
                 return Constant.messages.getString(MESSAGE_PREFIX + "reason.location.header");
@@ -493,11 +486,6 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
         }
     }
 
-    /**
-     * Give back the risk associated to this vulnerability (high)
-     *
-     * @return the risk according to the Alert enum
-     */
     @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
@@ -508,24 +496,14 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
         return ALERT_TAGS;
     }
 
-    /**
-     * http://cwe.mitre.org/data/definitions/601.html
-     *
-     * @return the official CWE id
-     */
     @Override
     public int getCweId() {
-        return 601;
+        return 601; // http://cwe.mitre.org/data/definitions/601.html
     }
 
-    /**
-     * http://projects.webappsec.org/w/page/13246981/URL%20Redirector%20Abuse
-     *
-     * @return the official WASC id
-     */
     @Override
     public int getWascId() {
-        return 38;
+        return 38; // http://projects.webappsec.org/w/page/13246981/URL%20Redirector%20Abuse
     }
 
     @Override

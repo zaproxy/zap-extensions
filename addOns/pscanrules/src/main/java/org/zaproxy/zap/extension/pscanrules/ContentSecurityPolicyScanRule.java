@@ -376,7 +376,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         return false;
     }
 
-    private String getCspNoticesString(List<PolicyError> notices) {
+    private static String getCspNoticesString(List<PolicyError> notices) {
         if (notices.isEmpty()) {
             return "";
         }
@@ -431,7 +431,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
      * @param header The header field(s) to be found
      * @return list of the matched headers
      */
-    private List<String> getHeaderField(HttpMessage msg, String header) {
+    private static List<String> getHeaderField(HttpMessage msg, String header) {
         List<String> matchedHeaders = new ArrayList<>();
         String headers = msg.getResponseHeader().toString();
         String[] headerElements = headers.split("\\r\\n");
@@ -446,7 +446,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         return matchedHeaders;
     }
 
-    private List<String> getAllowedWildcardSources(String policyText) {
+    private static List<String> getAllowedWildcardSources(String policyText) {
 
         List<String> allowedSources = new ArrayList<>();
         Policy pol = Policy.parseSerializedCSP(policyText, PolicyErrorConsumer.ignored);

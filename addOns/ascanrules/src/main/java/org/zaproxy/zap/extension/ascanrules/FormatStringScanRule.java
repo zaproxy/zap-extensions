@@ -105,19 +105,15 @@ public class FormatStringScanRule extends AbstractAppParamPlugin
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private String getError(char c) {
+    private static String getError(char c) {
         return Constant.messages.getString(MESSAGE_PREFIX + "error" + c);
     }
 
-    /*
-     * This method is called by the active scanner for each GET and POST parameter for every page
-     * @see org.parosproxy.paros.core.scanner.AbstractAppParamPlugin#scan(org.parosproxy.paros.network.HttpMessage, java.lang.String, java.lang.String)
-     */
     @Override
     public void scan(HttpMessage msg, String param, String value) {
 
         if (this.isStop()) { // Check if the user stopped things
-            LOGGER.debug("Scanner {} Stopping.", getName());
+            LOGGER.debug("Scan rule {} Stopping.", getName());
             return; // Stop!
         }
 
@@ -223,7 +219,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin
             // errors.  It is only
             //  used if the GNU and generic C compiler check fails to find a vulnerability.
             if (this.isStop()) { // Check if the user stopped things
-                LOGGER.debug("Scanner {} Stopping.", getName());
+                LOGGER.debug("Scan rule {} Stopping.", getName());
                 return; // Stop!
             }
             StringBuilder sb2 = new StringBuilder();
@@ -276,13 +272,11 @@ public class FormatStringScanRule extends AbstractAppParamPlugin
 
     @Override
     public int getCweId() {
-        // The CWE id
         return 134;
     }
 
     @Override
     public int getWascId() {
-        // The WASC ID
         return 6;
     }
 

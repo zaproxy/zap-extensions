@@ -62,7 +62,7 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
         return rule;
     }
 
-    private HttpMessage createBasicMessage() throws HttpMalformedHeaderException {
+    private static HttpMessage createBasicMessage() throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");
 

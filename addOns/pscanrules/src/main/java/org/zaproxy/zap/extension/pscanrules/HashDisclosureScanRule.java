@@ -173,12 +173,6 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    /**
-     * scans the HTTP request for Hash signatures
-     *
-     * @param msg
-     * @param id
-     */
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
 
@@ -192,13 +186,6 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
         checkForHashes(requestparts);
     }
 
-    /**
-     * scans the HTTP response for Hash signatures
-     *
-     * @param msg
-     * @param id
-     * @param source unused
-     */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (ResourceIdentificationUtils.isJavaScript(msg)
@@ -275,15 +262,15 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
         return 10097;
     }
 
-    private String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
+    private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 

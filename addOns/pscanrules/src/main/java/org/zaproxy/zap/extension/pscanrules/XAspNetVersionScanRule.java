@@ -81,7 +81,7 @@ public class XAspNetVersionScanRule extends PluginPassiveScanner
         return 10061;
     }
 
-    public int getRisk() {
+    private static int getRisk() {
         return Alert.RISK_LOW;
     }
 
@@ -95,11 +95,11 @@ public class XAspNetVersionScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
+    private static int getCweId() {
         return 933; // CWE-933: OWASP Top Ten 2013 Category A5 - Security Misconfiguration
     }
 
-    public int getWascId() {
+    private static int getWascId() {
         return 14; //  WASC-14: Server Misconfiguration
     }
 

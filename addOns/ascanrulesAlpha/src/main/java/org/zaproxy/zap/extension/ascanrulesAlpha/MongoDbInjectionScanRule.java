@@ -83,7 +83,6 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
                 Pattern.CASE_INSENSITIVE),
         Pattern.compile("MongoResultException", Pattern.CASE_INSENSITIVE)
     };
-    // Variables
     private boolean isJsonPayload;
     private boolean doAllDataScan;
     private boolean doCrashScan;

@@ -138,7 +138,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
         // TODO: add other specific UNION based error messages for Union here: PostgreSQL, Sybase,
         // DB2, Informix, etc
 
-        // DONE: we have implemented a MySQL specific scanner. See SQLInjectionMySQL
+        // DONE: we have implemented a MySQL specific rule. See SQLInjectionMySQL
         MySQL(
                 "MySQL",
                 Tech.MySQL,
@@ -259,7 +259,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
         // vulnerabilities
         Interbase("Interbase", Tech.Db, "\\Qinterbase.interclient\\E"),
 
-        // DONE: we have implemented a Hypersonic specific scanner. See SQLInjectionHypersonic
+        // DONE: we have implemented a Hypersonic specific rule. See SQLInjectionHypersonic
         HypersonicSQL(
                 "Hypersonic SQL",
                 Tech.HypersonicSQL,
@@ -540,9 +540,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    /* initialise
-     * Note that this method gets called each time the scanner is called.
-     */
     @Override
     public void init() {
         LOGGER.debug("Initialising");
@@ -680,7 +677,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
 
                 // work through the attack using each of the following strings as a prefix: the
                 // empty string, and the original value
-                // Note: this doubles the amount of work done by the scanner, but is necessary in
+                // Note: this doubles the amount of work done by the rule, but is necessary in
                 // some cases
                 String[] prefixStrings;
                 if (origParamValue != null) {
@@ -903,7 +900,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 } catch (Exception e) {
                     LOGGER.debug("The parameter value [{}] is NOT of type Integer", origParamValue);
                     // TODO: implement a similar check for string types?  This probably needs to be
-                    // RDBMS specific (ie, it should not live in this scanner)
+                    // RDBMS specific (ie, it should not live in this rule)
                 }
             }
 
@@ -1995,12 +1992,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
         return result;
     }
 
-    /**
-     * decode method that is aware of %, and will decode it as simply %, if it occurs
-     *
-     * @param msg
-     * @return
-     */
+    /** decode method that is aware of %, and will decode it as simply %, if it occurs */
     public static String getURLDecode(String msg) {
         String result = "";
         try {

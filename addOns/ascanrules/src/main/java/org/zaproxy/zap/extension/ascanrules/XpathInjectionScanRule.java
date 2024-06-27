@@ -93,7 +93,6 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin
     // Get WASC Vulnerability description
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_39");
 
-    // Logger instance
     private static final Logger LOGGER = LogManager.getLogger(XpathInjectionScanRule.class);
 
     @Override

@@ -253,7 +253,7 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
      * @param inject the string to inject
      * @return a base64 encoded string with the inject value injected at byte 40.
      */
-    private String getViewstateWithText(String inject) {
+    private static String getViewstateWithText(String inject) {
         String base =
                 "/wEPDwUJODczNjQ5OTk0D2QWAgIDD2QWAgIFDw8WAh4EVGV4dAUWSSBMb3ZlIERvdG5ldEN1cnJ5LmNvbWRkZMHbBY9JqBTvB5/6kXnY15AUSAwa";
         byte[] decoded;

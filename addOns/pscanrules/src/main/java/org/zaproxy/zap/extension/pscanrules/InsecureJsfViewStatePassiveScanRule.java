@@ -137,7 +137,6 @@ public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner
             return true;
         }
 
-        // /////////////////////////////
         // Base64 decode the ViewState and decompress ViewState from gzip format (the default),
         // or handle it as uncompressed (which is possible).
         //
@@ -185,7 +184,7 @@ public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner
         return output.toByteArray();
     }
 
-    private boolean isRawViewStateSecure(String viewState) {
+    private static boolean isRawViewStateSecure(String viewState) {
         if (viewState == null || viewState.equals("")) {
             return true;
         }
@@ -217,7 +216,7 @@ public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner
 
     // jsf server side implementation in com.sun.faces.renderkit.ServerSideStateHelper
     // two id's separated by :
-    private boolean isViewStateStoredOnServer(String val) {
+    private static boolean isViewStateStoredOnServer(String val) {
         return val != null && val.contains(":");
     }
 

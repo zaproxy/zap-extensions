@@ -99,7 +99,7 @@ public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner
         }
     }
 
-    private String getSsnOtherInfo() {
+    private static String getSsnOtherInfo() {
         return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.ssn");
     }
 
@@ -190,17 +190,17 @@ public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner
         return PLUGIN_ID;
     }
 
-    private boolean isEmailAddress(String emailAddress) {
+    private static boolean isEmailAddress(String emailAddress) {
         Matcher matcher = emailAddressPattern.matcher(emailAddress);
         return matcher.find();
     }
 
-    private boolean isCreditCard(String creditCard) {
+    private static boolean isCreditCard(String creditCard) {
         Matcher matcher = creditCardPattern.matcher(creditCard);
         return matcher.find();
     }
 
-    private boolean isUsSSN(String usSSN) {
+    private static boolean isUsSSN(String usSSN) {
         Matcher matcher = usSSNPattern.matcher(usSSN);
         return matcher.find();
     }

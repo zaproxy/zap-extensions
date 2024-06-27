@@ -51,7 +51,6 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin
     /** the timeout, which is controlled by the Attack Strength */
     private int timeoutMs = 0;
 
-    /** the logger object */
     private static final Logger LOGGER = LogManager.getLogger(HeartBleedActiveScanRule.class);
 
     /** Prefix for internationalized messages used by this rule */
@@ -868,7 +867,6 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin
         0x40,
         0x00 // payload length to be sent back by the server.  0x40 0x00 = 16384 in decimal
         // Note: No actual payload sent!
-        // Note: No actual padding sent!
     };
 
     @Override

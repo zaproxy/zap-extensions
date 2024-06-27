@@ -42,12 +42,8 @@ class XAspNetVersionScanRuleUnitTest extends PassiveScannerTest<XAspNetVersionSc
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(933)));
-        assertThat(wasc, is(equalTo(14)));
         assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
@@ -119,6 +115,8 @@ class XAspNetVersionScanRuleUnitTest extends PassiveScannerTest<XAspNetVersionSc
         assertThat(
                 alert.getDescription(),
                 equalTo(Constant.messages.getString(MESSAGE_PREFIX + "desc")));
+        assertThat(alert.getCweId(), is(equalTo(933)));
+        assertThat(alert.getWascId(), is(equalTo(14)));
     }
 
     @Test
@@ -127,7 +125,7 @@ class XAspNetVersionScanRuleUnitTest extends PassiveScannerTest<XAspNetVersionSc
         super.shouldHaveValidReferences();
     }
 
-    private HttpMessage createMessage(String header) throws HttpMalformedHeaderException {
+    private static HttpMessage createMessage(String header) throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
 

@@ -643,13 +643,6 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    /**
-     * scans the HTTP response for Source Code signatures
-     *
-     * @param msg
-     * @param id
-     * @param source unused
-     */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (ResourceIdentificationUtils.isCss(msg)
@@ -715,15 +708,15 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    private String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
+    private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 }

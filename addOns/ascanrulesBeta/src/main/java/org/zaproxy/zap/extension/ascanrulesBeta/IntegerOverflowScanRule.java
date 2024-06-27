@@ -18,7 +18,7 @@
 /*
  * Integer Overflow an active scan rule
  * Copyright (C) 2015 Institute for Defense Analyses
- * @author Mark Rader based upon the example active scanner by psiinon
+ * @author Mark Rader based upon the example active scan rule by psiinon
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
@@ -85,14 +85,10 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private String getError(char c) {
+    private static String getError(char c) {
         return Constant.messages.getString(MESSAGE_PREFIX + "error" + c);
     }
 
-    /*
-     * This method is called by the active scanner for each GET and POST parameter for every page
-     * @see org.parosproxy.paros.core.scanner.AbstractAppParamPlugin#scan(org.parosproxy.paros.network.HttpMessage, java.lang.String, java.lang.String)
-     */
     @Override
     public void scan(HttpMessage msg, String param, String value) {
 
@@ -145,7 +141,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
         return ALERT_TAGS;
     }
 
-    private String randomIntegerString(int length) {
+    private static String randomIntegerString(int length) {
 
         int numbercounter = 0;
         int character = 0;
@@ -169,7 +165,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
         return sb1.toString();
     }
 
-    private String singleString(int length, char c) // Single Character String
+    private static String singleString(int length, char c) // Single Character String
             {
 
         int numbercounter = 0;
@@ -241,7 +237,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
                 .setUri(url)
                 .setParam(param)
                 .setAttack(attack)
-                .setOtherInfo(this.getError(type))
+                .setOtherInfo(IntegerOverflowScanRule.getError(type))
                 .setEvidence(evidence);
     }
 }

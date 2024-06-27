@@ -204,19 +204,19 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner
         return 10096;
     }
 
-    public int getRisk() {
+    private static int getRisk() {
         return Alert.RISK_LOW;
     }
 
-    public String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    public String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    public String getReference() {
+    private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
@@ -230,11 +230,11 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
+    private static int getCweId() {
         return 200; // CWE Id 200 - Information Exposure
     }
 
-    public int getWascId() {
+    private static int getWascId() {
         return 13; // WASC Id - Info leakage
     }
 

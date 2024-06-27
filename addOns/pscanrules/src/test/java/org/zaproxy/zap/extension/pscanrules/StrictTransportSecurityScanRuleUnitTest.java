@@ -42,7 +42,7 @@ class StrictTransportSecurityScanRuleUnitTest
     private static final String HEADER_VALUE = "max-age=31536000"; // 1 year
     private static final String SHORT_VALUE = "max-age=86400";
 
-    private HttpMessage createMessage() throws URIException {
+    private static HttpMessage createMessage() throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("https://example.com", false));
 

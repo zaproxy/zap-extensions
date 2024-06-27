@@ -55,7 +55,6 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 public class RelativePathConfusionScanRule extends AbstractAppPlugin
         implements CommonActiveScanRuleInfo {
 
-    /** the logger object */
     private static final Logger LOGGER = LogManager.getLogger(RelativePathConfusionScanRule.class);
 
     /** Prefix for internationalized messages used by this rule */
@@ -205,7 +204,6 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
     @Override
     public void scan() {
 
-        // get the base message. What else did you think this line of code might do??
         HttpMessage originalMsg = getBaseMsg();
 
         LOGGER.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
@@ -645,7 +643,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
                 .setEvidence(evidence);
     }
 
-    private Matcher matchStyles(String body) {
+    private static Matcher matchStyles(String body) {
         // remove all " and ' for proper matching url('somefile.png')
         String styleBody = body.replaceAll("['\"]", "");
         return STYLE_URL_LOAD.matcher(styleBody);

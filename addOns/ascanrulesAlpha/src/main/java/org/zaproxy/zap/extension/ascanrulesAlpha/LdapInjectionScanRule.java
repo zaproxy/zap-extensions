@@ -50,7 +50,6 @@ import org.zaproxy.zap.model.TechSet;
 public class LdapInjectionScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 
-    /** for logging. */
     private static final Logger LOGGER = LogManager.getLogger(LdapInjectionScanRule.class);
 
     private static final String I18N_PREFIX = "ascanalpha.";
@@ -196,7 +195,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
     public void scan(HttpMessage msg, NameValuePair originalParam) {
         /*
          * Scan everything _except_ URL path parameters.
-         * URL Path parameters are problematic for the matching based scanners, because changing the URL path
+         * URL Path parameters are problematic for the matching based rules, because changing the URL path
          * "parameter" generates output that is wildly different from the unmodified URL path "parameter"
          */
         if (originalParam.getType() != NameValuePair.TYPE_URL_PATH) {
@@ -647,25 +646,16 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
         return false; // did not throw an alert
     }
 
-    /**
-     * @return
-     */
     @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
     }
 
-    /**
-     * @return
-     */
     @Override
     public int getCweId() {
         return 90;
     }
 
-    /**
-     * @return
-     */
     @Override
     public int getWascId() {
         return 29;

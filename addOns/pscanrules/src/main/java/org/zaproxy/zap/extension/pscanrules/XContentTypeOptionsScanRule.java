@@ -106,23 +106,23 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner
         return PLUGIN_ID;
     }
 
-    public int getRisk() {
+    private static int getRisk() {
         return Alert.RISK_LOW;
     }
 
-    public String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    public String getOtherInfo() {
+    private static String getOtherInfo() {
         return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo");
     }
 
-    public String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    public String getReference() {
+    private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
@@ -131,11 +131,11 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
+    private static int getCweId() {
         return 693; // CWE-693: Protection Mechanism Failure
     }
 
-    public int getWascId() {
+    private static int getWascId() {
         return 15; // WASC-15: Application Misconfiguration
     }
 

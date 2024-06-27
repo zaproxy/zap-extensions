@@ -59,12 +59,8 @@ class InsecureAuthenticationScanRuleUnitTest
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(326)));
-        assertThat(wasc, is(equalTo(4)));
         assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
@@ -106,8 +102,12 @@ class InsecureAuthenticationScanRuleUnitTest
         assertThat(alerts.size(), is(equalTo(2)));
         Alert capturedAlert = alerts.get(0);
         assertThat(capturedAlert.getAlertRef(), is(equalTo("10105-1")));
+        assertThat(capturedAlert.getCweId(), is(equalTo(287)));
+        assertThat(capturedAlert.getWascId(), is(equalTo(1)));
         Alert weakAlert = alerts.get(1);
         assertThat(weakAlert.getAlertRef(), is(equalTo("10105-2")));
+        assertThat(weakAlert.getCweId(), is(equalTo(326)));
+        assertThat(weakAlert.getWascId(), is(equalTo(4)));
     }
 
     @Test

@@ -76,11 +76,11 @@ public class Spring4ShellScanRule extends AbstractAppPlugin implements CommonAct
         return Constant.messages.getString("ascanrules.spring4shell.desc");
     }
 
-    private boolean is400Response(HttpMessage msg) {
+    private static boolean is400Response(HttpMessage msg) {
         return !msg.getResponseHeader().isEmpty() && msg.getResponseHeader().getStatusCode() == 400;
     }
 
-    private void setGetPayload(HttpMessage msg, String payload) throws URIException {
+    private static void setGetPayload(HttpMessage msg, String payload) throws URIException {
         msg.getRequestHeader().setMethod("GET");
         URI uri = msg.getRequestHeader().getURI();
         String query = uri.getEscapedQuery();
@@ -92,7 +92,7 @@ public class Spring4ShellScanRule extends AbstractAppPlugin implements CommonAct
         uri.setEscapedQuery(query);
     }
 
-    private void setPostPayload(HttpMessage msg, String payload) {
+    private static void setPostPayload(HttpMessage msg, String payload) {
         msg.getRequestHeader().setMethod("POST");
         String body = msg.getRequestBody().toString();
         if (body.isEmpty()
