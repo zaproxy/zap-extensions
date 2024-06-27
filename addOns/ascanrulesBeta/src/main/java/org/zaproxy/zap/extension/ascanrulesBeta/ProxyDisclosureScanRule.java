@@ -135,7 +135,6 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
-    /** for logging. */
     private static final Logger LOGGER = LogManager.getLogger(ProxyDisclosureScanRule.class);
 
     @Override
@@ -151,8 +150,6 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
     @Override
     public String getDescription() {
         return null;
-        // needs a parameter!
-        // return Constant.messages.getString(MESSAGE_PREFIX+"desc");
     }
 
     @Override
@@ -765,7 +762,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
         }
     }
 
-    private String getPath(URI uri) {
+    private static String getPath(URI uri) {
         String path = uri.getEscapedPath();
         if (path != null) {
             return path;
@@ -773,7 +770,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
         return "/";
     }
 
-    private String getAttack() {
+    private static String getAttack() {
         return Constant.messages.getString(MESSAGE_PREFIX + "attack");
     }
 

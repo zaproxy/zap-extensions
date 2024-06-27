@@ -44,7 +44,6 @@ import org.parosproxy.paros.network.HttpStatusCode;
  */
 public class GitMetadata {
 
-    /** the logger object */
     private static final Logger LOGGER = LogManager.getLogger(GitMetadata.class);
 
     /**
@@ -81,11 +80,7 @@ public class GitMetadata {
 
     private int tempbytesread;
 
-    /**
-     * gets the Git URIs that were successfully queried to get the Source Code Disclosure
-     *
-     * @return
-     */
+    /** gets the Git URIs that were successfully queried to get the Source Code Disclosure */
     public String getGitURIs() {
         return urisUsed;
     }

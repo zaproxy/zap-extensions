@@ -43,7 +43,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner
         implements CommonPassiveScanRuleInfo {
 
-    /** the logger. it logs stuff. */
     private static final Logger LOGGER =
             LogManager.getLogger(CrossDomainMisconfigurationScanRule.class);
 
@@ -55,23 +54,11 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner
                     CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
                     CommonAlertTag.OWASP_2017_A05_BROKEN_AC);
 
-    /**
-     * gets the name of the scanner
-     *
-     * @return
-     */
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    /**
-     * scans the HTTP response for cross-domain mis-configurations
-     *
-     * @param msg
-     * @param id
-     * @param source unused
-     */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
@@ -179,22 +166,12 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner
         return 14; // WASC-14: Server Misconfiguration
     }
 
-    /**
-     * get the id of the scanner
-     *
-     * @return
-     */
     @Override
     public int getPluginId() {
         return 10098;
     }
 
-    /**
-     * get the description of the alert
-     *
-     * @return
-     */
-    private String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 

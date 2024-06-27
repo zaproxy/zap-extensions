@@ -194,7 +194,6 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin
                     CommonAlertTag.OWASP_2017_A01_INJECTION,
                     CommonAlertTag.WSTG_V42_INPV_05_SQLI);
 
-    /** for logging. */
     private static final Logger LOGGER = LogManager.getLogger(SqlInjectionHypersonicScanRule.class);
 
     /** The number of seconds used in time-based attacks (i.e. sleep commands). */

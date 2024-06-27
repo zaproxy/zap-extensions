@@ -40,7 +40,7 @@ class ContentTypeMissingScanRuleUnitTest extends PassiveScannerTest<ContentTypeM
         return new ContentTypeMissingScanRule();
     }
 
-    private HttpMessage createMessage() throws HttpMalformedHeaderException {
+    private static HttpMessage createMessage() throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
 
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");

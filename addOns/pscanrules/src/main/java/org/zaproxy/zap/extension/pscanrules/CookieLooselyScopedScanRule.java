@@ -86,7 +86,7 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
      * Determines whether the specified cookie is loosely scoped by
      * checking it's Domain attribute value against the host
      */
-    private boolean isLooselyScopedCookie(HttpCookie cookie, String host) {
+    private static boolean isLooselyScopedCookie(HttpCookie cookie, String host) {
         // preconditions
         assert cookie != null;
         assert host != null;
@@ -138,7 +138,8 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
         return true;
     }
 
-    private boolean isCookieAndHostHaveTheSameDomain(String[] cookieDomains, String[] hostDomains) {
+    private static boolean isCookieAndHostHaveTheSameDomain(
+            String[] cookieDomains, String[] hostDomains) {
         if (cookieDomains == null
                 || hostDomains == null
                 || cookieDomains[0].equalsIgnoreCase("null")

@@ -169,7 +169,7 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
                 || AttackStrength.HIGH.equals(this.getAttackStrength())) {
             reliableScan(msg, paramName, value, false);
         }
-        // When the scanner can do more requests it tries less common cases.
+        // When the rule can do more requests it tries less common cases.
         else {
             reliableScan(msg, paramName, value, true);
         }
@@ -185,7 +185,7 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
      */
     private void efficientScan(HttpMessage msg, String paramName, String value) {
 
-        // The efficient scanner detects the existence of vulnerabilities by causing
+        // The efficient scan detects the existence of vulnerabilities by causing
         // and detecting errors. To detect errors we start by looking to how the
         // responses change when we send different inputs. Later, with this information
         // we can detect which changes caused by our inputs are not normal and which

@@ -85,10 +85,6 @@ public class HeartBleedScanRule extends PluginPassiveScanner implements CommonPa
     /**
      * scans the HTTP response for signatures that might indicate the Heartbleed OpenSSL
      * vulnerability
-     *
-     * @param msg
-     * @param id
-     * @param source unused
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
@@ -131,19 +127,19 @@ public class HeartBleedScanRule extends PluginPassiveScanner implements CommonPa
         return 10034;
     }
 
-    private String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
+    private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private String getExtraInfo(String opensslVersion) {
+    private static String getExtraInfo(String opensslVersion) {
         return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", opensslVersion);
     }
 

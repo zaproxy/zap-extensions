@@ -26,6 +26,5 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
  */
 public class NotV1GitPackIndexFileException extends Exception {
 
-    /** */
     private static final long serialVersionUID = 664525398598253409L;
 }

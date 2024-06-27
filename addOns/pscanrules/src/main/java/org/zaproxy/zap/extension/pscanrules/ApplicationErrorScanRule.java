@@ -100,21 +100,11 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner
         return matcher;
     }
 
-    /**
-     * Get this plugin id
-     *
-     * @return the ZAP id
-     */
     @Override
     public int getPluginId() {
         return 90022;
     }
 
-    /**
-     * Get the plugin name
-     *
-     * @return the plugin name
-     */
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
@@ -198,7 +188,6 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner
         }
     }
 
-    // Internal service method for alert management
     private void raiseAlert(HttpMessage msg, int id, String evidence, int risk) {
         buildAlert(msg, id, evidence, risk).raise();
     }

@@ -103,7 +103,6 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
     private static final Pattern xmlHeaderPattern =
             Pattern.compile(xmlHeaderRegex, Pattern.CASE_INSENSITIVE);
 
-    // Logger instance
     private static final Logger LOGGER = LogManager.getLogger(XxeScanRule.class);
 
     @Override

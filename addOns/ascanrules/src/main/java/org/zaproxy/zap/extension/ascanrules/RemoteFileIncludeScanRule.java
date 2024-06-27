@@ -37,7 +37,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
-/** a scanner that looks for Remote File Include vulnerabilities */
+/** a scan rule that looks for Remote File Include vulnerabilities */
 public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin
         implements CommonActiveScanRuleInfo {
 

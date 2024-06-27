@@ -130,7 +130,6 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin
     private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
     private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
 
-    /** for logging. */
     private static final Logger LOGGER = LogManager.getLogger(SqlInjectionMsSqlScanRule.class);
 
     private static final Map<String, String> ALERT_TAGS =

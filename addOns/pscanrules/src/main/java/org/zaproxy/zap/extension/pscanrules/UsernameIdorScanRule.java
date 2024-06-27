@@ -144,7 +144,7 @@ public class UsernameIdorScanRule extends PluginPassiveScanner
         return PLUGIN_ID;
     }
 
-    public int getRisk() {
+    private static int getRisk() {
         return Alert.RISK_INFO;
     }
 
@@ -153,19 +153,19 @@ public class UsernameIdorScanRule extends PluginPassiveScanner
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription(String username) {
+    private static String getDescription(String username) {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc", username);
     }
 
-    public String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    public String getReference() {
+    private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private String getOtherinfo(String hashType, String hashValue) {
+    private static String getOtherinfo(String hashType, String hashValue) {
         return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", hashType, hashValue);
     }
 
@@ -174,11 +174,11 @@ public class UsernameIdorScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
+    private static int getCweId() {
         return 284; // CWE-284: Improper Access Control
     }
 
-    public int getWascId() {
+    private static int getWascId() {
         return 2; // WASC-02: Insufficient Authorization
     }
 

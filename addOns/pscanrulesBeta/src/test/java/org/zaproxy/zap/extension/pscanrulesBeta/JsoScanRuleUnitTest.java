@@ -323,14 +323,5 @@ class JsoScanRuleUnitTest extends PassiveScannerTest<JsoScanRule> {
 
     private static class AnObject implements Serializable {
         private static final long serialVersionUID = 1L;
-        private static String value;
-
-        public static String getValue() {
-            return value;
-        }
-
-        public static void setValue(String value) {
-            AnObject.value = value;
-        }
     }
 }

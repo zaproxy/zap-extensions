@@ -100,7 +100,7 @@ public class BigRedirectsScanRule extends PluginPassiveScanner
      * @param redirectURILength the length of the URI in the redirect response Location header
      * @return predictedResponseSize
      */
-    private int getPredictedResponseSize(int redirectURILength) {
+    private static int getPredictedResponseSize(int redirectURILength) {
         int predictedResponseSize = redirectURILength + 300;
         LOGGER.debug("Original Response Location Header URI Length: {}", redirectURILength);
         LOGGER.debug("Predicted Response Size: {}", predictedResponseSize);
@@ -155,7 +155,7 @@ public class BigRedirectsScanRule extends PluginPassiveScanner
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 

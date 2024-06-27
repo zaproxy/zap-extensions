@@ -232,7 +232,7 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner
 
     // TODO: these methods have been extracted from CharsetMismatchScanner
     // I think we should create helper methods for them
-    private boolean isResponseHTML(HttpMessage message, Source source) {
+    private static boolean isResponseHTML(HttpMessage message, Source source) {
         String contentType = message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
         if (contentType == null) {
             return false;
@@ -273,23 +273,19 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    /*
-     * Rule-associated messages
-     */
-
-    private String getDescriptionMessage() {
+    private static String getDescriptionMessage() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolutionMessage() {
+    private static String getSolutionMessage() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReferenceMessage() {
+    private static String getReferenceMessage() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private String getExtraInfoMessage(
+    private static String getExtraInfoMessage(
             String url, String tag, String attr, HtmlParameter param, String userControlledValue) {
         return Constant.messages.getString(
                 MESSAGE_PREFIX + "extrainfo",

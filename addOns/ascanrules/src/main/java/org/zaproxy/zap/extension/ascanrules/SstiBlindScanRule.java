@@ -294,7 +294,7 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin implements CommonA
     private void sendPayloadsToMakeCallBack(String paramName, String[] commandExecPayloads) {
 
         int allowedNumberCommands = 0;
-        // whe should only run this scanner when the level is High, util then
+        // whe should only run this rule when the level is High, util then
         // just time based attacks should be used because of the limitations
         // in requests numbers
         if (this.getAttackStrength() == Plugin.AttackStrength.HIGH) {

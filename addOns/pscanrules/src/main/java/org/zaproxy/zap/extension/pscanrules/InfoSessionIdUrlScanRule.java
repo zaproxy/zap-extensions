@@ -85,21 +85,11 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
      * http://www.portent.com/blog/random/session-id-parameters-list.htm
      */
 
-    /**
-     * Get this plugin id
-     *
-     * @return the ZAP id
-     */
     @Override
     public int getPluginId() {
         return 00003;
     }
 
-    /**
-     * Get the plugin name
-     *
-     * @return the plugin name
-     */
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
@@ -247,18 +237,15 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
         Pattern.compile("[=\\(]\\s*[\"']" + EXT_LINK, Pattern.CASE_INSENSITIVE)
     };
 
-    // The name of this sub-alert
-    private String getRefererAlert() {
+    private static String getRefererAlert() {
         return Constant.messages.getString(MESSAGE_PREFIX + "referrer.alert");
     }
 
-    // The description of this sub-alert
-    private String getRefererDescription() {
+    private static String getRefererDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "referrer.desc");
     }
 
-    // The solution of this sub-alert
-    private String getRefererSolution() {
+    private static String getRefererSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "referrer.soln");
     }
 

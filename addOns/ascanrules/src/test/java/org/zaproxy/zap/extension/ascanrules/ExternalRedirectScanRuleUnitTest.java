@@ -80,11 +80,11 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         CONCAT_PATH
     };
 
-    private NanoServerHandler createHttpRedirectHandler(String path, String header) {
+    private static NanoServerHandler createHttpRedirectHandler(String path, String header) {
         return createHttpRedirectHandler(path, header, PayloadHandling.NEITHER);
     }
 
-    private NanoServerHandler createHttpRedirectHandler(
+    private static NanoServerHandler createHttpRedirectHandler(
             String path, String header, PayloadHandling payloadHandling) {
         return new NanoServerHandler(path) {
             @Override

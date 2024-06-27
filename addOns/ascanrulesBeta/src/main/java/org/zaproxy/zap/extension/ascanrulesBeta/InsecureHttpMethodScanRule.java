@@ -81,7 +81,6 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
     /** details of the vulnerability which we are attempting to find 45 = "Fingerprinting" */
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_45");
 
-    /** the logger object */
     private static final Logger LOGGER = LogManager.getLogger(InsecureHttpMethodScanRule.class);
 
     /**

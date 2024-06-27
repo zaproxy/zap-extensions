@@ -69,9 +69,8 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
     @Override
     public boolean targets(
             TechSet technologies) { // This method allows the programmer or user to restrict when a
-        // scanner is run based on the technologies selected.  For example, to restrict the scanner
-        // to run just when
-        // C language is selected
+        // scan rule is run based on the technologies selected. For example, to restrict the rule
+        // to run just when C language is selected
         return technologies.includes(Tech.C);
     }
 
@@ -80,7 +79,7 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getOtherInfo() {
+    private static String getOtherInfo() {
         return Constant.messages.getString(MESSAGE_PREFIX + "other");
     }
 
@@ -194,7 +193,7 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
         return null;
     }
 
-    private List<String> loadFile(String file) {
+    private static List<String> loadFile(String file) {
         /*
          * ZAP will have already extracted the file from the add-on and put it underneath the 'ZAP home' directory
          */

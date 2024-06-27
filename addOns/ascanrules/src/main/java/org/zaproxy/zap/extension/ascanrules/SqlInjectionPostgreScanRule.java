@@ -191,7 +191,6 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin
                     CommonAlertTag.OWASP_2017_A01_INJECTION,
                     CommonAlertTag.WSTG_V42_INPV_05_SQLI);
 
-    /** for logging. */
     private static final Logger LOGGER = LogManager.getLogger(SqlInjectionPostgreScanRule.class);
 
     @Override

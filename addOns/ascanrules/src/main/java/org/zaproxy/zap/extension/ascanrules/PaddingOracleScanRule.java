@@ -267,7 +267,7 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin
      * @param value the value that need to be checked
      * @return true if it seems to be encrypted
      */
-    private boolean isEncrypted(byte[] value) {
+    private static boolean isEncrypted(byte[] value) {
 
         // Make sure we have a reasonable sized string
         // (encrypted strings tend to be long, and short strings tend to break our numbers)

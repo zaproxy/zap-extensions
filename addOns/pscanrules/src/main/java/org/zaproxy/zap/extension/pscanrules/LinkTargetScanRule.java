@@ -27,8 +27,6 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
@@ -59,8 +57,6 @@ public class LinkTargetScanRule extends PluginPassiveScanner implements CommonPa
     private final TrustedDomains trustedDomains = new TrustedDomains();
 
     private Model model = null;
-
-    private static final Logger LOGGER = LogManager.getLogger(LinkTargetScanRule.class);
 
     @Override
     public int getPluginId() {
@@ -177,15 +173,15 @@ public class LinkTargetScanRule extends PluginPassiveScanner implements CommonPa
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
+    private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 

@@ -61,12 +61,7 @@ public class MessageCache {
         }
     }
 
-    /**
-     * is a message cached for the given URI?
-     *
-     * @param uri
-     * @return
-     */
+    /** is a message cached for the given URI? */
     public synchronized boolean isMessageCached(URI uri) {
         return messagecache.containsKey(uri);
     }

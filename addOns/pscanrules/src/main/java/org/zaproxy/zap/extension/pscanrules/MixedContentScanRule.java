@@ -143,15 +143,15 @@ public class MixedContentScanRule extends PluginPassiveScanner
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    public String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    public String getReference() {
+    private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
@@ -160,11 +160,11 @@ public class MixedContentScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
+    private static int getCweId() {
         return 311; // CWE Id 311 - Missing Encryption of Sensitive Data
     }
 
-    public int getWascId() {
+    private static int getWascId() {
         return 4; // WASC Id 4 - Insufficient Transport Layer Protection
     }
 

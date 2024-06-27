@@ -109,7 +109,6 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
     /** details of the vulnerability which we are attempting to find 33 = "Path Traversal" */
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_33");
 
-    /** the logger object */
     private static final Logger LOGGER =
             LogManager.getLogger(SourceCodeDisclosureFileInclusionScanRule.class);
 
@@ -140,13 +139,11 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
-    /** returns the plugin id */
     @Override
     public int getId() {
         return 43;
     }
 
-    /** returns the name of the plugin */
     @Override
     public String getName() {
         return Constant.messages.getString("ascanbeta.sourcecodedisclosure.lfibased.name");
@@ -434,14 +431,8 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
         }
     }
 
-    /**
-     * returns whether the message response content matches the specified extension
-     *
-     * @param data
-     * @param fileExtension
-     * @return
-     */
-    private boolean dataMatchesExtension(byte[] data, String fileExtension) {
+    /** returns whether the message response content matches the specified extension */
+    private static boolean dataMatchesExtension(byte[] data, String fileExtension) {
         if (fileExtension != null) {
             if (fileExtension.equals("JSP")) {
                 if (PATTERN_JSP.matcher(new String(data)).find()) return true;
@@ -488,14 +479,8 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
         return ALERT_TAGS;
     }
 
-    /**
-     * calculate the percentage length between the 2 strings.
-     *
-     * @param a
-     * @param b
-     * @return
-     */
-    private int calcLengthMatchPercentage(int a, int b) {
+    /** calculate the percentage length between the 2 strings. */
+    private static int calcLengthMatchPercentage(int a, int b) {
         if (a == 0 && b == 0) return 100;
         if (a == 0 || b == 0) return 0;
 

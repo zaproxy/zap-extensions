@@ -54,7 +54,6 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin
      */
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_20");
 
-    /** the logger object */
     private static final Logger LOGGER =
             LogManager.getLogger(RemoteCodeExecutionCve20121823ScanRule.class);
 

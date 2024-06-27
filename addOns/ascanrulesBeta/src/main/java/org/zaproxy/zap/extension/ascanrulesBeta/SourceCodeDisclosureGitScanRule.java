@@ -53,7 +53,6 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin
      */
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_34");
 
-    /** the logger object */
     private static final Logger LOGGER =
             LogManager.getLogger(SourceCodeDisclosureGitScanRule.class);
 
@@ -107,7 +106,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin
         return VULN.getReferencesAsString();
     }
 
-    private String getEvidence(String filename, String gitURIs) {
+    private static String getEvidence(String filename, String gitURIs) {
         return Constant.messages.getString(
                 "ascanbeta.sourcecodedisclosure.gitbased.evidence", filename, gitURIs);
     }
@@ -151,14 +150,8 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin
         }
     }
 
-    /**
-     * returns whether the message response content matches the specified extension
-     *
-     * @param data
-     * @param fileExtension
-     * @return
-     */
-    private boolean dataMatchesExtension(byte[] data, String fileExtension) {
+    /** returns whether the message response content matches the specified extension */
+    private static boolean dataMatchesExtension(byte[] data, String fileExtension) {
         if (fileExtension != null) {
             if (fileExtension.equals("JSP")) {
                 if (PATTERN_JSP.matcher(new String(data)).find()) return true;

@@ -72,7 +72,6 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
                     CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
                     CommonAlertTag.WSTG_V42_SESS_03_SESS_FIXATION);
 
-    /** for logging. */
     private static final Logger LOGGER = LogManager.getLogger(SessionFixationScanRule.class);
 
     @Override
@@ -1313,11 +1312,11 @@ public class SessionFixationScanRule extends AbstractAppPlugin implements Common
     /**
      * finds and returns the cookie matching the specified cookie name from the message response.
      *
-     * @param message
-     * @param cookieName
+     * @param message the message to check
+     * @param cookieName the cookie to look for
      * @return the HtmlParameter representing the cookie, or null if no matching cookie was found
      */
-    private HtmlParameter getResponseCookie(HttpMessage message, String cookieName) {
+    private static HtmlParameter getResponseCookie(HttpMessage message, String cookieName) {
         TreeSet<HtmlParameter> cookieBackParams = message.getResponseHeader().getCookieParams();
         if (cookieBackParams.isEmpty()) {
             // no cookies

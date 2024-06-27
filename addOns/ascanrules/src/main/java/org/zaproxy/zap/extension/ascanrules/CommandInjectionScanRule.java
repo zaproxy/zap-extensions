@@ -282,7 +282,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         NIX_BLIND_OS_PAYLOADS.add("|" + insertedCMD + "#");
     }
 
-    // Logger instance
     private static final Logger LOGGER = LogManager.getLogger(CommandInjectionScanRule.class);
 
     // Get WASC Vulnerability description
@@ -366,7 +365,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         return Alert.RISK_HIGH;
     }
 
-    private String getOtherInfo(TestType testType, String testValue) {
+    private static String getOtherInfo(TestType testType, String testValue) {
         return Constant.messages.getString(
                 MESSAGE_PREFIX + "otherinfo." + testType.getNameKey(), testValue);
     }
