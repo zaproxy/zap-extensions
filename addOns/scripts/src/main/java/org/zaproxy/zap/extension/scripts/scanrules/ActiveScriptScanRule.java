@@ -193,7 +193,10 @@ public class ActiveScriptScanRule extends ActiveScriptHelper {
 
     @Override
     public String getReference() {
-        return String.join("\n", metadata.getReferences());
+        if (metadata.getReferences() != null && !metadata.getReferences().isEmpty()) {
+            return String.join("\n", metadata.getReferences());
+        }
+        return "";
     }
 
     @Override

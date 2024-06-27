@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.scripts.scanrules;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -28,11 +31,15 @@ import net.htmlparser.jericho.Source;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.scanrules.Confidence;
+import org.zaproxy.addon.commonlib.scanrules.Risk;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata;
+import org.zaproxy.zap.extension.pscan.PassiveScanData;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -82,6 +89,22 @@ public class PassiveScriptScanRuleUnitTest extends TestUtils {
         scanRule.copy().scanHttpResponseReceive(message, id, source);
         // Then
         verify(scriptInterface, times(1)).scan(scanRule, message, source);
+    }
+
+    @Test
+    void shouldHandleNullReferences() throws Exception {
+        // Given
+        ScriptWrapper script = mock(ScriptWrapper.class);
+        var metadata = new ScanRuleMetadata(12345, "Test Scan Rule");
+        metadata.setRisk(Risk.HIGH);
+        metadata.setConfidence(Confidence.HIGH);
+        metadata.setReferences(null);
+        var scanRule = new PassiveScriptScanRule(script, metadata);
+        scanRule.setHelper(mock(PassiveScanData.class));
+        // When
+        Alert alert = scanRule.newAlert().build();
+        // Then
+        assertThat(alert.getReference(), is(equalTo("")));
     }
 
     private <T> ScriptWrapper createScriptWrapper(T scriptInterface, Class<T> scriptClass)
