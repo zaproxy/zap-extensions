@@ -47,6 +47,34 @@ public class PolyfillCdnScriptScanRule extends PluginPassiveScanner
 
     private static Pattern POLYFILL_IO =
             Pattern.compile("http[s]?://.*polyfill\\.io/.*", Pattern.CASE_INSENSITIVE);
+    private static Pattern BOOTCSS_COM =
+            Pattern.compile("http[s]?://.*bootcss\\.com/.*", Pattern.CASE_INSENSITIVE);
+    private static Pattern BOOTCDN_NET =
+            Pattern.compile("http[s]?://.*bootcdn\\.net/.*", Pattern.CASE_INSENSITIVE);
+    private static Pattern STATICFILE_NET =
+            Pattern.compile("http[s]?://.*staticfile\\.net/.*", Pattern.CASE_INSENSITIVE);
+    private static Pattern STATICFILE_ORG =
+            Pattern.compile("http[s]?://.*staticfile\\.org/.*", Pattern.CASE_INSENSITIVE);
+    private static Pattern UNIONADJS_COM =
+            Pattern.compile("http[s]?://.*unionadjs\\.com/.*", Pattern.CASE_INSENSITIVE);
+    private static Pattern XHSBPZA_COM =
+            Pattern.compile("http[s]?://.*xhsbpza\\.com/.*", Pattern.CASE_INSENSITIVE);
+    private static Pattern UNION_MACOMS_LA =
+            Pattern.compile("http[s]?://.*union\\.macoms\\.la/.*", Pattern.CASE_INSENSITIVE);
+    private static Pattern NEWCRBPC_COM =
+            Pattern.compile("http[s]?://.*newcrbpc\\.com/.*", Pattern.CASE_INSENSITIVE);
+
+    private static Pattern[] ALL_DOMAINS = {
+        POLYFILL_IO,
+        BOOTCSS_COM,
+        BOOTCDN_NET,
+        STATICFILE_NET,
+        STATICFILE_ORG,
+        UNIONADJS_COM,
+        XHSBPZA_COM,
+        UNION_MACOMS_LA,
+        NEWCRBPC_COM
+    };
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
@@ -56,9 +84,14 @@ public class PolyfillCdnScriptScanRule extends PluginPassiveScanner
             if (sourceElements != null) {
                 for (Element sourceElement : sourceElements) {
                     String src = sourceElement.getAttributeValue("src");
-                    if (src != null && POLYFILL_IO.matcher(src).matches()) {
-                        this.createHighConfidenceAlert(src, sourceElement.toString()).raise();
-                        alertRaised = true;
+                    if (src != null) {
+                        for (Pattern pattern : ALL_DOMAINS) {
+                            if (pattern.matcher(src).matches()) {
+                                this.createHighConfidenceAlert(src, sourceElement.toString())
+                                        .raise();
+                                alertRaised = true;
+                            }
+                        }
                     }
                 }
                 if (alertRaised) {
@@ -68,10 +101,13 @@ public class PolyfillCdnScriptScanRule extends PluginPassiveScanner
                 // Check the script contents, in case they are loading scripts via JS
                 for (Element sourceElement : sourceElements) {
                     String contents = sourceElement.getContent().toString();
-                    Matcher matcher = POLYFILL_IO.matcher(contents);
-                    if (matcher.find()) {
-                        this.createLowConfidenceAlert(null, matcher.group(0)).raise();
-                        break;
+
+                    for (Pattern pattern : ALL_DOMAINS) {
+                        Matcher matcher = pattern.matcher(contents);
+                        if (matcher.find()) {
+                            this.createLowConfidenceAlert(null, matcher.group(0)).raise();
+                            break;
+                        }
                     }
                 }
             }
