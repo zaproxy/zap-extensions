@@ -186,6 +186,22 @@ public class ExtensionRequester extends ExtensionAdaptor {
         return requesterPanel;
     }
 
+    /**
+     * Displays the given {@code message} in the "Manual Editor" dialogue and sets it visible.
+     *
+     * <p>Currently supports only HTTP messages.
+     *
+     * @param message the message to display.
+     * @since 7.7.0
+     */
+    public void displayMessage(Message message) {
+        if (!hasView() || !(message instanceof HttpMessage)) {
+            return;
+        }
+
+        sendDialog.displayMessage(message);
+    }
+
     public void newRequesterPane(HttpMessage msg) {
         getRequesterPanel().newRequester(msg);
         if (getOptionsParam().isAutoFocus()) {

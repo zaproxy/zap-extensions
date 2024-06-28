@@ -50,17 +50,7 @@ public class SendHttpMessageEditorDialog extends AbstractHttpMessageEditorDialog
                         "requester.send.toolsmenuitem",
                         View.getSingleton().getMenuShortcutKeyStroke(KeyEvent.VK_M, 0, false));
         menuItem.setIcon(ExtensionRequester.getManualIcon());
-        menuItem.addActionListener(
-                e -> {
-                    Message message = extensionRequester.getSelectedMsg();
-                    if (message instanceof HttpMessage
-                            && !((HttpMessage) message).getRequestHeader().isEmpty()) {
-                        getPanel().setMessage(message);
-                    } else {
-                        getPanel().setDefaultMessage();
-                    }
-                    setVisible(true);
-                });
+        menuItem.addActionListener(e -> displayMessage(extensionRequester.getSelectedMsg()));
         extensionHook.getHookMenu().addToolsMenuItem(menuItem);
 
         PopupMenuResendMessage popupMenuResendMessage =
@@ -72,5 +62,16 @@ public class SendHttpMessageEditorDialog extends AbstractHttpMessageEditorDialog
                             setVisible(true);
                         });
         extensionHook.getHookMenu().addPopupMenuItem(popupMenuResendMessage);
+    }
+
+    @Override
+    public void displayMessage(Message message) {
+        if (message instanceof HttpMessage
+                && !((HttpMessage) message).getRequestHeader().isEmpty()) {
+            getPanel().setMessage(message);
+        } else {
+            getPanel().setDefaultMessage();
+        }
+        setVisible(true);
     }
 }
