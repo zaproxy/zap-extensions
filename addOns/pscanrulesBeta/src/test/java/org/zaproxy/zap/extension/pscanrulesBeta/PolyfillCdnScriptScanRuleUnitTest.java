@@ -26,6 +26,8 @@ import static org.hamcrest.Matchers.is;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -112,8 +114,28 @@ class PolyfillCdnScriptScanRuleUnitTest extends PassiveScannerTest<PolyfillCdnSc
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
-    @Test
-    void polyfillScriptInHeader() throws HttpMalformedHeaderException {
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "https://polyfill.io",
+                "https://bootcdn.net",
+                "https://bootcss.com",
+                "https://staticfile.net",
+                "https://staticfile.org",
+                "https://unionadjs.com",
+                "https://xhsbpza.com",
+                "https://union.macoms.la",
+                "https://newcrbpc.com",
+                "http://io.bootCdn.net",
+                "http://xxx.bOoTcSs.com",
+                "hTTP://staticfile.net",
+                "Http://StaticFile.org",
+                "http://unionAdjs.com",
+                "http://xhsbpza.com",
+                "http://aaa.union.macoms.LA",
+                "HTTP://aa.bb.cc.newcrbpc.com"
+            })
+    void polyfillScriptInHeader(String domain) throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -121,7 +143,9 @@ class PolyfillCdnScriptScanRuleUnitTest extends PassiveScannerTest<PolyfillCdnSc
                 "<html>"
                         + "<head>"
                         + "<script src=\"https://www.example.com/script1\"/>"
-                        + "<script src=\"https://www.polyfill.io/script2\"/>"
+                        + "<script src=\""
+                        + domain
+                        + "/script2\"/>"
                         + "</head>"
                         + "</html>");
         msg.setResponseHeader(
@@ -134,42 +158,34 @@ class PolyfillCdnScriptScanRuleUnitTest extends PassiveScannerTest<PolyfillCdnSc
         scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getParam(), equalTo("https://www.polyfill.io/script2"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo(domain + "/script2"));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo("<script src=\"https://www.polyfill.io/script2\"/>"));
+                equalTo("<script src=\"" + domain + "/script2\"/>"));
     }
 
-    @Test
-    void polyfillScriptInHeaderMixedCase() throws HttpMalformedHeaderException {
-
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        msg.setResponseBody(
-                "<html>"
-                        + "<head>"
-                        + "<script src=\"https://www.example.com/script1\"/>"
-                        + "<script src=\"https://CdN.PolYfIll.io/script2\"/>"
-                        + "</head>"
-                        + "</html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-        scanHttpResponseReceive(msg);
-
-        assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getParam(), equalTo("https://CdN.PolYfIll.io/script2"));
-        assertThat(
-                alertsRaised.get(0).getEvidence(),
-                equalTo("<script src=\"https://CdN.PolYfIll.io/script2\"/>"));
-    }
-
-    @Test
-    void polyfillScriptInBody() throws HttpMalformedHeaderException {
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "https://polyfill.io",
+                "https://bootcdn.net",
+                "https://bootcss.com",
+                "https://staticfile.net",
+                "https://staticfile.org",
+                "https://unionadjs.com",
+                "https://xhsbpza.com",
+                "https://union.macoms.la",
+                "https://newcrbpc.com",
+                "http://io.bootCdn.net",
+                "http://xxx.bOoTcSs.com",
+                "hTTP://staticfile.net",
+                "Http://StaticFile.org",
+                "http://unionAdjs.com",
+                "http://xhsbpza.com",
+                "http://aaa.union.macoms.LA",
+                "HTTP://aa.bb.cc.newcrbpc.com"
+            })
+    void polyfillScriptInBody(String domain) throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -179,7 +195,9 @@ class PolyfillCdnScriptScanRuleUnitTest extends PassiveScannerTest<PolyfillCdnSc
                         + "<script src=\"https://www.example.com/script1\"/>"
                         + "</head>"
                         + "<body>"
-                        + "<script src=\"https://www.polyfill.io/script2\"/>"
+                        + "<script src=\""
+                        + domain
+                        + "/script2\"/>"
                         + "</body>"
                         + "</html>");
         msg.setResponseHeader(
@@ -192,45 +210,34 @@ class PolyfillCdnScriptScanRuleUnitTest extends PassiveScannerTest<PolyfillCdnSc
         scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getParam(), equalTo("https://www.polyfill.io/script2"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo(domain + "/script2"));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
-                equalTo("<script src=\"https://www.polyfill.io/script2\"/>"));
+                equalTo("<script src=\"" + domain + "/script2\"/>"));
     }
 
-    @Test
-    void polyfillHttpScriptInBody() throws HttpMalformedHeaderException {
-
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        msg.setResponseBody(
-                "<html>"
-                        + "<head>"
-                        + "<script src=\"https://www.example.com/script1\"/>"
-                        + "</head>"
-                        + "<body>"
-                        + "<script src=\"http://www.polyfill.io/script2\"/>"
-                        + "</body>"
-                        + "</html>");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
-        scanHttpResponseReceive(msg);
-
-        assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getParam(), equalTo("http://www.polyfill.io/script2"));
-        assertThat(
-                alertsRaised.get(0).getEvidence(),
-                equalTo("<script src=\"http://www.polyfill.io/script2\"/>"));
-        assertThat(alertsRaised.get(0).getConfidence(), equalTo(3));
-    }
-
-    @Test
-    void polyfillScriptInScriptBody() throws HttpMalformedHeaderException {
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "https://polyfill.io",
+                "https://bootcdn.net",
+                "https://bootcss.com",
+                "https://staticfile.net",
+                "https://staticfile.org",
+                "https://unionadjs.com",
+                "https://xhsbpza.com",
+                "https://union.macoms.la",
+                "https://newcrbpc.com",
+                "http://bootCdn.net",
+                "http://bOoTcSs.com",
+                "hTTP://staticfile.net",
+                "Http://StaticFile.org",
+                "http://unionAdjs.com",
+                "http://xhsbpza.com",
+                "http://union.macoms.LA",
+                "HTTP://newcrbpc.com"
+            })
+    void polyfillScriptInScriptBody(String domain) throws HttpMalformedHeaderException {
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -241,7 +248,9 @@ class PolyfillCdnScriptScanRuleUnitTest extends PassiveScannerTest<PolyfillCdnSc
                         + "</head>"
                         + "<body>"
                         + "<script>"
-                        + " // https://cdn.polyfill.io/v3/polyfill.min.js"
+                        + " // "
+                        + domain
+                        + "/v3/polyfill.min.js"
                         + "</script>"
                         + "</body>"
                         + "</html>");
@@ -255,9 +264,7 @@ class PolyfillCdnScriptScanRuleUnitTest extends PassiveScannerTest<PolyfillCdnSc
         scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(
-                alertsRaised.get(0).getEvidence(),
-                equalTo("https://cdn.polyfill.io/v3/polyfill.min.js"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(domain + "/v3/polyfill.min.js"));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(1));
     }
 }

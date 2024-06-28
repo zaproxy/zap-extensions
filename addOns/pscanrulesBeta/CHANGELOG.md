@@ -4,11 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
+- More 'polyfill' related domains.
 
 ## [38] - 2024-06-27
 ### Added
-- Polyfill.io script detection
+- Polyfill.io script detection.
 
 ### Changed
 - Update minimum ZAP version to 2.15.0.
