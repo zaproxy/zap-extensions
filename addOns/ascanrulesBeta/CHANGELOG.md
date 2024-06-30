@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- Potential false positives in the Source Code Disclosure - File Inclusion scan rule when responses are empty or the original message resulted in an error to start with (Issue 8517).
 
 ## [54] - 2024-07-22
 ### Changed
@@ -12,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 
 ### Fixed
-- Fixed regex for Relative Path Confusion, which detected absolute url as relative
+- Fixed regex for Relative Path Confusion, which detected absolute URL as relative.
 - Alert text for various rules has been updated to more consistently use periods and spaces in a uniform manner.
 
 ## [53] - 2024-03-28

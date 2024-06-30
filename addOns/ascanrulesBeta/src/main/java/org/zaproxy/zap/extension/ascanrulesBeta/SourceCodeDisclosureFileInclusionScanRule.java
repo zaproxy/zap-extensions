@@ -206,6 +206,9 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
      */
     @Override
     public void scan(HttpMessage originalmsg, String paramname, String paramvalue) {
+        if (isClientError(getBaseMsg()) || isServerError(getBaseMsg())) {
+            return;
+        }
         try {
             URI uri = originalmsg.getRequestHeader().getURI();
             String path = uri.getPath();
@@ -222,7 +225,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                     paramname,
                     paramvalue);
             // the response of the original message is not populated! so populate it.
-            sendAndReceive(originalmsg, false); // do nto follow redirects
+            sendAndReceive(originalmsg, false); // do not follow redirects
 
             // first send a query for a random parameter value
             // then try a query for the file paths and names that we are using to try to get out the
@@ -235,10 +238,10 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                     DiceMatcher.getMatchPercentage(
                             originalmsg.getResponseBody().toString(),
                             randomfileattackmsg.getResponseBody().toString());
-            if (originalversusrandommatchpercentage > this.thresholdPercentage) {
-                // the output for the "random" file does not sufficiently differ. bale out.
+            if (isEmptyOrTooSimilar(randomfileattackmsg, originalversusrandommatchpercentage)) {
                 LOGGER.debug(
-                        "The output for a non-existent filename [{}] does not sufficiently differ from that of the original parameter [{}], at {}%, compared to a threshold of {}%",
+                        "The output for a non-existent filename [{}] does not sufficiently differ from that of the original parameter [{}], "
+                                + " (or the response was empty) at {}%, compared to a threshold of {}%",
                         NON_EXISTANT_FILENAME,
                         paramvalue,
                         originalversusrandommatchpercentage,
@@ -298,11 +301,11 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                             DiceMatcher.getMatchPercentage(
                                     randomfileattackmsg.getResponseBody().toString(),
                                     sourceattackmsg.getResponseBody().toString());
-                    if (randomversussourcefilenamematchpercentage > this.thresholdPercentage) {
-                        // the output for the "source" file does not sufficiently differ from the
-                        // random file name. bale out.
+                    if (isEmptyOrTooSimilar(
+                            sourceattackmsg, randomversussourcefilenamematchpercentage)) {
                         LOGGER.debug(
-                                "The output for the source code filename [{}] does not sufficiently differ from that of the random parameter, at {}%, compared to a threshold of {}%",
+                                "The output for the source code filename [{}] does not sufficiently "
+                                        + "differ from that of the random parameter (or was empty), at {}%, compared to a threshold of {}%",
                                 prefixedUrlfilename,
                                 randomversussourcefilenamematchpercentage,
                                 this.thresholdPercentage);
@@ -432,6 +435,10 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
             LOGGER.error(
                     "Error scanning parameters for Source Code Disclosure: {}", e.getMessage(), e);
         }
+    }
+
+    private boolean isEmptyOrTooSimilar(HttpMessage msg, int matchPercentage) {
+        return msg.getResponseBody().length() == 0 || matchPercentage > this.thresholdPercentage;
     }
 
     /**
