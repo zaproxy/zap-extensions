@@ -30,6 +30,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.core.scanner.Variant;
+import org.parosproxy.paros.network.HttpBody;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 
 public class VariantGrpc implements Variant {
@@ -44,7 +46,7 @@ public class VariantGrpc implements Variant {
 
     @Override
     public void setMessage(HttpMessage msg) {
-        if (isValidGrpcMessage(msg)) {
+        if (isValidGrpcMessage(msg.getRequestHeader(), msg.getRequestBody())) {
             try {
                 byte[] body = Base64.getDecoder().decode(msg.getRequestBody().getBytes());
                 byte[] payload = DecoderUtils.extractPayload(body);
@@ -92,9 +94,8 @@ public class VariantGrpc implements Variant {
         }
     }
 
-    private boolean isValidGrpcMessage(HttpMessage msg) {
-        return msg.getRequestHeader().hasContentType("application/grpc")
-                && !msg.getRequestBody().toString().isEmpty();
+    private static boolean isValidGrpcMessage(HttpHeader header, HttpBody body) {
+        return header.hasContentType("application/grpc") && !body.toString().isEmpty();
     }
 
     @Override
@@ -179,6 +180,10 @@ public class VariantGrpc implements Variant {
 
     @Override
     public void decodeResponseBody(HttpMessage msg) {
+        if (!isValidGrpcMessage(msg.getResponseHeader(), msg.getResponseBody())) {
+            return;
+        }
+
         try {
             byte[] body =
                     DecoderUtils.splitMessageBodyAndStatusCode(msg.getResponseBody().getBytes());

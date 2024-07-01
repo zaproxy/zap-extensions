@@ -20,4 +20,6 @@ crowdin {
 dependencies {
     testImplementation(project(":testutils"))
     implementation("io.grpc:grpc-protobuf:1.61.1")
+
+    testImplementation(libs.log4j.core)
 }

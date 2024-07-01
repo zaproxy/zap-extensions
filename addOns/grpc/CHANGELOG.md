@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- Do not try to decode non-gRPC responses when active scanning, which would lead to unnecessary warnings.
 
 ## [0.1.0] - 2024-06-11
 
