@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -74,6 +75,8 @@ import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
+
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineListener {
 
@@ -344,13 +347,20 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 throw new InvalidDefinitionException();
             }
 
-            String openApiString = FileUtils.readFileToString(file, "UTF-8");
+            String openApiString;
+            try {
+                openApiString = Json.mapper().writeValueAsString(openApi);
+            } catch (JsonMappingException e) {
+                if(e.getOriginalMessage().contains("TextBuffer overrun")) {
+                    LOGGER.warn("OpenAPI definition too large, trying to read it directly from file");
+                    openApiString = FileUtils.readFileToString(file,  StandardCharsets.UTF_8);
+                }
+                else throw e;
+            }
 
             List<String> errors =
                     importOpenApiDefinition(
-                            !openApiString.contains("openapi") || openApiString.contains(".yaml#")
-                                    ? Json.pretty(openApi)
-                                    : openApiString,
+                            openApiString,
                             targetUrl,
                             null,
                             initViaUi,
