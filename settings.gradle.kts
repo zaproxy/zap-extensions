@@ -81,6 +81,7 @@ var addOns =
         "plugnhack",
         "portscan",
         "postman",
+        "pscan",
         "pscanrules",
         "pscanrulesAlpha",
         "pscanrulesBeta",
