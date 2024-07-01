@@ -44,6 +44,11 @@ public class DecoderUtils {
     public static final int LENGTH_DELIMITED_WIRE_TYPE = 2;
     public static final int BIT32_WIRE_TYPE = 5;
 
+    public static enum DecodingMethod {
+        BASE64_ENCODED,
+        DIRECT
+    }
+
     static boolean isGraphic(byte ch) {
         // Check if the character is printable
         // Printable characters have unicode values greater than 32 (excluding control

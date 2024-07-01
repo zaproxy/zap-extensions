@@ -25,6 +25,7 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.grpc.ExtensionGrpc;
+import org.zaproxy.addon.grpc.internal.DecoderUtils;
 import org.zaproxy.addon.grpc.internal.HttpPanelGrpcView;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
@@ -89,7 +90,8 @@ public class ExtensionGrpcWebSocket extends ExtensionAdaptor {
 
         @Override
         public HttpPanelView getNewView() {
-            return new HttpPanelGrpcView(new ByteWebSocketPanelViewModel());
+            return new HttpPanelGrpcView(
+                    new ByteWebSocketPanelViewModel(), DecoderUtils.DecodingMethod.DIRECT);
         }
 
         @Override
