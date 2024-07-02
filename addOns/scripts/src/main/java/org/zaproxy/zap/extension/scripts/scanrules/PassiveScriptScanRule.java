@@ -79,15 +79,19 @@ public class PassiveScriptScanRule extends PassiveScriptHelper {
 
     @Override
     public AlertBuilder newAlert() {
-        return super.newAlert()
-                .setRisk(metadata.getRisk().getValue())
-                .setConfidence(metadata.getConfidence().getValue())
-                .setDescription(metadata.getDescription())
-                .setSolution(metadata.getSolution())
-                .setCweId(metadata.getCweId())
-                .setWascId(metadata.getWascId())
-                .setReference(String.join("\n", metadata.getReferences()))
-                .setOtherInfo(metadata.getOtherInfo());
+        var alertBuilder =
+                super.newAlert()
+                        .setRisk(metadata.getRisk().getValue())
+                        .setConfidence(metadata.getConfidence().getValue())
+                        .setDescription(metadata.getDescription())
+                        .setSolution(metadata.getSolution())
+                        .setCweId(metadata.getCweId())
+                        .setWascId(metadata.getWascId())
+                        .setOtherInfo(metadata.getOtherInfo());
+        if (metadata.getReferences() != null && !metadata.getReferences().isEmpty()) {
+            alertBuilder.setReference(String.join("\n", metadata.getReferences()));
+        }
+        return alertBuilder;
     }
 
     @Override

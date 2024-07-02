@@ -72,6 +72,28 @@ Redirects are ignored except at the Low threshold.
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a><br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10063/">10063</a>
 
+<h2 id="id-10115">Script Served From Malicious Domain (polyfill)</h2>
+This checks for scripts being served from one of the 'polyfill' domains, which are known to have been compromised.<br>
+It will raise an alert with a High confidence if a script is loaded from one of the malicious domains, 
+and a Low confidence if it just finds an apparent reference to one of the malicious domains in the script contents.
+<p>
+The known malicious 'polyfill' domains are:
+<ul>
+<li>polyfill.io</li>
+<li>bootcdn.net</li>
+<li>bootcss.com</li>
+<li>staticfile.net</li>
+<li>staticfile.org</li>
+<li>unionadjs.com</li>
+<li>xhsbpza.com</li>
+<li>union.macoms.la</li>
+<li>newcrbpc.com</li>
+</ul>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/PolyfillCdnScriptScanRule.java">PolyfillCdnScriptScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10115/">10115</a>.
+
 <h2 id="id-90004">Site Isolation Scan Rule</h2>
 Spectre is a side-channel attack allowing an attacker to read data
 from memory. One of the counter-measures is to prevent sensitive data

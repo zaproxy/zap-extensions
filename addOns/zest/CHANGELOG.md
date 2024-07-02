@@ -4,8 +4,16 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [46] - 2024-06-28
 ### Added
 - Document the engine name in the help page.
+
+### Changed
+- Use script engines from ZAP when executing scripts.
+- Update Zest library to 0.22.0:
+  - Update Selenium to version 4.22.0.
 
 ## [45] - 2024-05-07
 ### Changed
@@ -330,6 +338,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[46]: https://github.com/zaproxy/zap-extensions/releases/zest-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/zest-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/zest-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/zest-v43

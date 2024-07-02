@@ -196,15 +196,15 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                 }
                 if (localeNode != null) {
                     String itemText = getFirstChildNodeString(localeNode, "item");
+                    String fixedStr = getFirstChildNodeString(localeNode, "fixed");
 
                     if (itemText != null && itemText.length() > 0) {
                         announceNews(
                                 new NewsItem(
                                         id,
                                         itemText,
-                                        new URI(
-                                                getFirstChildNodeString(localeNode, "link"),
-                                                true)));
+                                        new URI(getFirstChildNodeString(localeNode, "link"), true),
+                                        Boolean.parseBoolean(fixedStr)));
                     }
                 }
             }

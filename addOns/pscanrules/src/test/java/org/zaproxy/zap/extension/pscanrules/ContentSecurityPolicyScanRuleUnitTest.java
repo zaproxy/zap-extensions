@@ -160,7 +160,7 @@ class ContentSecurityPolicyScanRuleUnitTest
                 alertsRaised.get(1).getOtherInfo(),
                 equalTo(
                         "The following directives either allow wildcard sources (or ancestors), are not "
-                                + "defined, or are overly broadly defined: \nscript-src, style-src, img-src, "
+                                + "defined, or are overly broadly defined:\nscript-src, style-src, img-src, "
                                 + "connect-src, frame-src, frame-ancestors, font-src, media-src, object-src, "
                                 + "manifest-src, worker-src, form-action\n\nThe directive(s): "
                                 + "frame-ancestors, form-action are among the directives that do not fallback "
@@ -231,7 +231,7 @@ class ContentSecurityPolicyScanRuleUnitTest
                 alertsRaised.get(0).getOtherInfo(),
                 equalTo(
                         "The following directives either allow wildcard sources (or ancestors), are not "
-                                + "defined, or are overly broadly defined: \nframe-ancestors"
+                                + "defined, or are overly broadly defined:\nframe-ancestors"
                                 + "\n\nThe directive(s): frame-ancestors are among the directives that do not "
                                 + "fallback to default-src, missing/excluding them is the same as allowing anything."));
         assertThat(
@@ -258,7 +258,7 @@ class ContentSecurityPolicyScanRuleUnitTest
                 alertsRaised.get(0).getOtherInfo(),
                 equalTo(
                         "The following directives either allow wildcard sources (or ancestors), are not "
-                                + "defined, or are overly broadly defined: \nconnect-src"));
+                                + "defined, or are overly broadly defined:\nconnect-src"));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo(
@@ -447,7 +447,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(
                 alert.getOtherInfo(),
                 equalTo(
-                        "The following directives either allow wildcard sources (or ancestors), are not defined, or are overly broadly defined: \n"
+                        "The following directives either allow wildcard sources (or ancestors), are not defined, or are overly broadly defined:\n"
                                 + "form-action\n\nThe directive(s): form-action are among the directives that do not fallback to default-src, missing/excluding them is the same as allowing anything."));
         assertThat(alert.getEvidence(), equalTo(policy));
         assertThat(alert.getRisk(), equalTo(Alert.RISK_MEDIUM));

@@ -19,10 +19,28 @@
  */
 package org.zaproxy.addon.grpc.internal;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.StringLayout;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Property;
+import org.apache.logging.log4j.core.filter.BurstFilter;
+import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.NameValuePair;
@@ -32,11 +50,33 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
 class VariantGrpcUnitTest {
+
+    private static final String LOG_MSG_ERROR_DECODING_RESPONSE =
+            "Error decoding the Response Body";
+    private static final String APPENDER_NAME = "ZAP-TestAppender";
+    private static Level originalLevel;
+    private static List<String> logMessages;
+
     private VariantGrpc variantGrpc;
 
     @BeforeEach
     void setUp() {
         variantGrpc = new VariantGrpc();
+        logMessages = new ArrayList<>();
+    }
+
+    @BeforeAll
+    static void initAppender() {
+        LoggerConfig rootLogger = LoggerContext.getContext().getConfiguration().getRootLogger();
+        rootLogger.addAppender(new TestAppender(VariantGrpcUnitTest::handleLog), null, null);
+        originalLevel = rootLogger.getLevel();
+        Configurator.setRootLevel(Level.ALL);
+    }
+
+    @AfterAll
+    static void removeAppender() {
+        LoggerContext.getContext().getConfiguration().getRootLogger().removeAppender(APPENDER_NAME);
+        Configurator.setRootLevel(originalLevel);
     }
 
     @Test
@@ -152,13 +192,70 @@ class VariantGrpcUnitTest {
         assertEquals(expectedParamList, variantGrpc.getParamList());
     }
 
+    @Test
+    void shouldNotWarnWhenDecodingResponseOfNonGrpcMessage() {
+        // Given
+        HttpMessage httpMessage = new HttpMessage();
+        // When
+        variantGrpc.decodeResponseBody(httpMessage);
+        // Then
+        assertThat(logMessages, not(hasItem(startsWith(LOG_MSG_ERROR_DECODING_RESPONSE))));
+    }
+
+    @Test
+    void shouldWarnWhenFailedToDecodeMalformedResponseGrpcMessage() {
+        // Given
+        HttpMessage httpMessage = new HttpMessage();
+        setGrpcHeader(httpMessage.getResponseHeader());
+        httpMessage.getResponseBody().setBody("something not gRPC");
+        // When
+        variantGrpc.decodeResponseBody(httpMessage);
+        // Then
+        assertThat(logMessages, hasItem(startsWith(LOG_MSG_ERROR_DECODING_RESPONSE)));
+    }
+
+    private static void handleLog(String message) {
+        logMessages.add(message);
+    }
+
     private static HttpMessage createHttpMessage(String encodedRequestBody)
             throws HttpMalformedHeaderException {
         HttpRequestHeader httpRequestHeader = new HttpRequestHeader();
         httpRequestHeader.setMessage("POST /abc/xyz HTTP/1.1");
-        httpRequestHeader.setHeader(HttpHeader.CONTENT_TYPE, "application/grpc-web-text");
+        setGrpcHeader(httpRequestHeader);
         HttpMessage httpMessage = new HttpMessage(httpRequestHeader);
         httpMessage.setRequestBody(encodedRequestBody);
         return httpMessage;
+    }
+
+    private static void setGrpcHeader(HttpHeader header) {
+        header.setHeader(HttpHeader.CONTENT_TYPE, "application/grpc-web-text");
+    }
+
+    static class TestAppender extends AbstractAppender {
+
+        private static final Property[] NO_PROPERTIES = {};
+
+        private final Consumer<String> logConsumer;
+
+        TestAppender(Consumer<String> logConsumer) {
+            super(
+                    APPENDER_NAME,
+                    BurstFilter.newBuilder().setMaxBurst(100).setLevel(Level.WARN).build(),
+                    PatternLayout.newBuilder()
+                            .withDisableAnsi(true)
+                            .withCharset(StandardCharsets.UTF_8)
+                            .withPattern("%m%n")
+                            .build(),
+                    true,
+                    NO_PROPERTIES);
+            this.logConsumer = logConsumer;
+            start();
+        }
+
+        @Override
+        public void append(LogEvent event) {
+            logConsumer.accept(((StringLayout) getLayout()).toSerializable(event));
+        }
     }
 }

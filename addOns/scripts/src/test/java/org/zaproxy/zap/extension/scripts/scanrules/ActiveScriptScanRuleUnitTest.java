@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.scripts.scanrules;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -30,6 +33,7 @@ import org.apache.commons.configuration.BaseConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.HostProcess;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.core.scanner.ScannerParam;
@@ -38,6 +42,8 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.scanrules.Confidence;
+import org.zaproxy.addon.commonlib.scanrules.Risk;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadataProvider;
 import org.zaproxy.zap.extension.ascan.VariantFactory;
@@ -143,6 +149,21 @@ public class ActiveScriptScanRuleUnitTest extends TestUtils {
         scanRuleCopy.scan();
         // Then
         verify(scriptActiveInterface, times(1)).scanNode(scanRule, message);
+    }
+
+    @Test
+    void shouldHandleNullReferences() throws Exception {
+        // Given
+        ScriptWrapper script = mock(ScriptWrapper.class);
+        var metadata = new ScanRuleMetadata(12345, "Test Scan Rule");
+        metadata.setRisk(Risk.HIGH);
+        metadata.setConfidence(Confidence.HIGH);
+        metadata.setReferences(null);
+        var scanRule = new ActiveScriptScanRule(script, metadata);
+        // When
+        Alert alert = scanRule.newAlert().build();
+        // Then
+        assertThat(alert.getReference(), is(equalTo("")));
     }
 
     private <T> ScriptWrapper createScriptWrapper(T scriptInterface, Class<T> scriptClass)

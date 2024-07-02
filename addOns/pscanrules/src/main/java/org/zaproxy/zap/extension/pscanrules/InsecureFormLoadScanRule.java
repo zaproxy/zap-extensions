@@ -99,7 +99,6 @@ public class InsecureFormLoadScanRule extends PluginPassiveScanner
                 .setDescription(getDescriptionMessage())
                 .setOtherInfo(getExtraInfoMessage(url, formElement))
                 .setSolution(getSolutionMessage())
-                .setReference(getReferenceMessage())
                 .setEvidence(evidence)
                 .setCweId(319) // CWE-319: Cleartext Transmission of Sensitive Information
                 .setWascId(15); // WASC-15: Application Misconfiguration
@@ -116,10 +115,6 @@ public class InsecureFormLoadScanRule extends PluginPassiveScanner
 
     private String getSolutionMessage() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReferenceMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     private static String getExtraInfoMessage(String url, String formElement) {

@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.15.0.
 
+### Fixed
+- Alert text for various rules has been updated to more consistently use periods and spaces in a uniform manner.
+
 ## [42] - 2024-01-16
 ### Changed
 - Update minimum ZAP version to 2.14.0.

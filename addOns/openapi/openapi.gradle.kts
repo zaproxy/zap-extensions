@@ -7,7 +7,10 @@ zapAddOn {
     addOnStatus.set(AddOnStatus.BETA)
 
     manifest {
-        author.set("ZAP Dev Team plus Joanna Bona, Nathalie Bouchahine, Artur Grzesica, Mohammad Kamar, Markus Kiss, Michal Materniak, Marcin Spiewak, and SDA SE Open Industry Solutions")
+        author.set(
+            "ZAP Dev Team plus Joanna Bona, Nathalie Bouchahine, Artur Grzesica, Mohammad Kamar, " +
+                "Markus Kiss, Michal Materniak, Marcin Spiewak, and SDA SE Open Industry Solutions",
+        )
         url.set("https://www.zaproxy.org/docs/desktop/addons/openapi-support/")
         extensions {
             register("org.zaproxy.zap.extension.openapi.automation.ExtensionOpenApiAutomation") {

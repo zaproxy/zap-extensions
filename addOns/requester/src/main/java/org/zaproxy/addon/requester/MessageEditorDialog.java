@@ -82,6 +82,16 @@ public abstract class MessageEditorDialog extends AbstractFrame {
     }
 
     /**
+     * Displays the given {@code message} in the dialogue and sets it visible.
+     *
+     * @param message the message to display.
+     */
+    public void displayMessage(Message message) {
+        panel.setMessage(message);
+        setVisible(true);
+    }
+
+    /**
      * Unloads the dialogue from ZAP.
      *
      * <p>Unloads the panel, hides and disposes the dialogue.

@@ -4,8 +4,23 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Typo in Polyfill.io script detection alert description.
+
+## [39] - 2024-06-28
+### Added
+- More 'polyfill' related domains.
+
+## [38] - 2024-06-27
+### Added
+- Polyfill.io script detection.
+
 ### Changed
 - Update minimum ZAP version to 2.15.0.
+- Maintenance changes.
+
+### Fixed
+- Alert text for various rules has been updated to more consistently use periods and spaces in a uniform manner.
 
 ## [37] - 2024-02-12
 
@@ -317,6 +332,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[39]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v39
+[38]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v35

@@ -25,7 +25,7 @@ for (dir in pocsSrcDir.listFiles()!!) {
             tasks.register<NpmTask>("installPoc${normalizedPocName}Dependencies") {
                 group = pocBuildTasksGroup
                 workingDir = dir
-                args.set(arrayListOf("install"))
+                args.set(arrayListOf("ci"))
             }
         pocBuildTasks.add(
             tasks.register<NpmTask>("assemblePoc$normalizedPocName") {
@@ -41,6 +41,18 @@ for (dir in pocsSrcDir.listFiles()!!) {
                 }
             },
         )
+        if (normalizedPocName == "ReactWebUI") {
+            val lintTask =
+                tasks.register<NpmTask>("lintPoc$normalizedPocName") {
+                    group = pocBuildTasksGroup
+                    dependsOn(installTask)
+                    workingDir = dir
+                    args.set(arrayListOf("run", "lint"))
+                }
+            tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {
+                dependsOn(lintTask)
+            }
+        }
     } else {
         pocBuildTasks.add(
             tasks.register("assemblePoc$normalizedPocName") {

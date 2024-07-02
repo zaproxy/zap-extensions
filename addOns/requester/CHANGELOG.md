@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [7.7.0] - 2024-06-28
+### Added
+- Allow to display a message in the editor dialogue.
+
 ## [7.6.0] - 2024-05-07
 ### Changed
 - Update minimum ZAP version to 2.15.0.
@@ -106,6 +110,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+[7.7.0]: https://github.com/zaproxy/zap-extensions/releases/requester-v7.7.0
 [7.6.0]: https://github.com/zaproxy/zap-extensions/releases/requester-v7.6.0
 [7.5.0]: https://github.com/zaproxy/zap-extensions/releases/requester-v7.5.0
 [7.4.0]: https://github.com/zaproxy/zap-extensions/releases/requester-v7.4.0

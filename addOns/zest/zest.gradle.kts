@@ -45,7 +45,7 @@ dependencies {
     zapAddOn("scripts")
     zapAddOn("selenium")
 
-    implementation("org.zaproxy:zest:0.21.0") {
+    implementation("org.zaproxy:zest:0.22.0") {
         // Provided by commonlib add-on.
         exclude(group = "com.fasterxml.jackson")
         // Provided by Selenium add-on.
