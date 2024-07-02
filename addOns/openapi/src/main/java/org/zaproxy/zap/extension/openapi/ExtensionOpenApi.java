@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
@@ -27,6 +28,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
@@ -343,15 +346,22 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 throw new InvalidDefinitionException();
             }
 
+            String openApiString;
+            try {
+                openApiString = Json.mapper().writeValueAsString(openApi);
+            } catch (JsonMappingException e) {
+                if (e.getOriginalMessage().contains("TextBuffer overrun")) {
+                    LOGGER.warn(
+                            "Fully resolved definition is too large, trying to use original definition only.");
+                    openApiString = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+                } else {
+                    throw e;
+                }
+            }
+
             List<String> errors =
                     importOpenApiDefinition(
-                            Json.pretty(openApi),
-                            targetUrl,
-                            null,
-                            initViaUi,
-                            requestor,
-                            contextId,
-                            false);
+                            openApiString, targetUrl, null, initViaUi, requestor, contextId, false);
             results.setErrors(errors);
         } catch (IOException e) {
             if (initViaUi) {

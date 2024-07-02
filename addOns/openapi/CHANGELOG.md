@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- Workaround issue loading fully resolved definitions that are too large by trying to use the original definition only (Issue 8193).
 
 ## [41] - 2024-05-10
 ### Changed
