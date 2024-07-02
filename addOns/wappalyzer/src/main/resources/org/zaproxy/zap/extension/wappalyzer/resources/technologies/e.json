@@ -51,7 +51,9 @@
     "cpe": "cpe:2.3:a:lockon:ec-cube:*:*:*:*:*:*:*:*",
     "description": "EC-CUBE is an open source package used to build ecommerce sites.",
     "icon": "EC-CUBE.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "oss": true,
     "scriptSrc": [
       "eccube\\.js",
@@ -97,7 +99,9 @@
     "cats": [
       19
     ],
-    "html": "<title>ELOG Logbook Selection</title>",
+    "html": [
+      "<title>ELOG Logbook Selection</title>"
+    ],
     "icon": "ELOG.png",
     "website": "https://midas.psi.ch/elog"
   },
@@ -109,7 +113,9 @@
       "Server": "ELOG HTTP ?([\\d.-]+)?\\;version:\\1"
     },
     "icon": "ELOG.png",
-    "implies": "ELOG",
+    "implies": [
+      "ELOG"
+    ],
     "website": "https://midas.psi.ch/elog"
   },
   "EPrints": {
@@ -117,7 +123,9 @@
       19
     ],
     "icon": "EPrints.png",
-    "implies": "Perl",
+    "implies": [
+      "Perl"
+    ],
     "js": {
       "EPJS_menu_template": "",
       "EPrints": ""
@@ -134,7 +142,9 @@
     "cpe": "cpe:2.3:a:frappe:erpnext:*:*:*:*:*:*:*:*",
     "description": "ERPNext is a free and open-source integrated Enterprise Resource Planning (ERP) software developed by Frappe Technologies.",
     "icon": "ERPNext.png",
-    "implies": "Frappe",
+    "implies": [
+      "Frappe"
+    ],
     "js": {
       "erpnext.shopping_cart": "",
       "erpnext.subscribe_to_newsletter": ""
@@ -170,7 +180,9 @@
       "ewww_webp_supported": ""
     },
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/ewww-image-optimizer/",
     "website": "https://github.com/nosilver4u/ewww-image-optimizer"
   },
@@ -223,7 +235,9 @@
     ],
     "description": "Easy Hide PayPal hides PayPal button from product page, cart and checkout but keep PayPal as payment option in checkout.",
     "icon": "Easy Hide PayPal.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "low",
       "recurring"
@@ -247,7 +261,9 @@
     "pricing": [
       "payg"
     ],
-    "requires": "Next.js",
+    "requires": [
+      "Next.js"
+    ],
     "saas": true,
     "website": "https://www.easy-orders.net",
     "xhr": "api\\.easy-orders\\.net/"
@@ -267,7 +283,9 @@
     ],
     "description": "Easy Redirects is a Shopify app built by Eastside, and part of the best Shopify Apps collection.",
     "icon": "Easy Redirects.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "freemium",
       "low",
@@ -291,7 +309,9 @@
       "mid",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "website": "https://easydigitaldownloads.com"
   },
@@ -305,7 +325,9 @@
       "x-powered-by": "^EasyEngine (.*)$\\;version:\\1"
     },
     "icon": "EasyEngine.png",
-    "implies": "Docker",
+    "implies": [
+      "Docker"
+    ],
     "website": "https://easyengine.io"
   },
   "EasyGift": {
@@ -322,7 +344,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "website": "https://apps.shopify.com/gifter-cart-auto-include"
   },
@@ -528,7 +552,9 @@
     "cpe": "cpe:2.3:a:ektron:ektron_content_management_system:*:*:*:*:*:*:*:*",
     "description": "Ektron CMS is developed on the Microsoft .NET framework and is 100% ASP.NET. In 2015 Ektron merged with EPiServer.",
     "icon": "Optimizely.svg",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "js": {
       "Ektron": ""
     },
@@ -633,7 +659,9 @@
     ],
     "description": "The Elcom Platform is a web content management and intranet portal software written in Microsoft ASP.NET and SQL Server by Elcom Technology.",
     "icon": "elcom.png",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "meta": {
       "generator": "^elcomCMS"
     },
@@ -641,7 +669,9 @@
       "poa"
     ],
     "saas": true,
-    "text": "Web CMS by Elcom",
+    "text": [
+      "Web CMS by Elcom"
+    ],
     "website": "https://www.elcom.com.au/"
   },
   "Eleanor CMS": {
@@ -650,7 +680,9 @@
     ],
     "cpe": "cpe:2.3:a:eleanor-cms:eleanor_cms:*:*:*:*:*:*:*:*",
     "icon": "Eleanor CMS.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "Eleanor"
     },
@@ -685,7 +717,9 @@
     },
     "icon": "ElementUI.svg",
     "oss": true,
-    "requires": "Vue.js",
+    "requires": [
+      "Vue.js"
+    ],
     "website": "https://element.eleme.io/"
   },
   "Elementor": {
@@ -708,7 +742,9 @@
       "onetime",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scriptSrc": "/wp-content/plugins/elementor(?:-pro)?/.+frontend-modules\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://elementor.com"
@@ -722,7 +758,9 @@
     "dom": "link[href*='/wp-content/plugins/addon-elements-for-elementor-page-builder/']",
     "icon": "Elementor Addon Elements.png",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "addon-elements-for-elementor-page-builder(?:\\/assets)?(?:\\/js)?(?:\\/lib)?(?:\\/animated-main)?(?:\\/build)?(?:\\/eae)?(?:\\/iconHelper)?(?:\\/index)?(?:\\/magnific)?(?:\\/particles)?(?:\\/vegas){0,2}(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/addon-elements-for-elementor-page-builder"
   },
@@ -752,7 +790,9 @@
     "description": "Elementor Header & Footer Builder is a simple yet powerful WordPress plugin that allows you to create a layout with Elementor and set it as.",
     "dom": "link[href*='/wp-content/plugins/header-footer-elementor/']",
     "icon": "Elementor Header & Footer Builder.svg",
-    "implies": "Elementor",
+    "implies": [
+      "Elementor"
+    ],
     "pricing": [
       "freemium"
     ],
@@ -777,7 +817,9 @@
       "mid",
       "recurring"
     ],
-    "requires": "Elementor",
+    "requires": [
+      "Elementor"
+    ],
     "website": "https://wpmet.com/plugin/elementskit"
   },
   "Elevar": {
@@ -845,7 +887,9 @@
     ],
     "description": "Elixir is a dynamic, functional language designed for building scalable and maintainable applications.",
     "icon": "Elixir.svg",
-    "implies": "Erlang",
+    "implies": [
+      "Erlang"
+    ],
     "oss": true,
     "website": "https://elixir-lang.org"
   },
@@ -855,13 +899,17 @@
     ],
     "description": "ElkArte is an open-source PHP-based forum software with MySQL integration, offering features such as user authentication, topic categorisation, post formatting, private messaging, moderation tools, and customisable themes and extensions.",
     "icon": "ElkArte.png",
-    "implies": "MySQL",
+    "implies": [
+      "MySQL"
+    ],
     "js": {
       "elk_forum_action": "",
       "elk_iso_case_folding": ""
     },
     "oss": true,
-    "requires": "PHP",
+    "requires": [
+      "PHP"
+    ],
     "website": "https://www.elkarte.net"
   },
   "Elliptic": {
@@ -909,9 +957,13 @@
       66
     ],
     "description": "Elm-UI is a library for creating user interfaces in Elm programming language. It provides a set of functions and abstractions for building responsive and reusable UI components, such as buttons, forms, and layouts, in a declarative and type-safe way.",
-    "html": "<style>[\\s\\S]*\\.explain > \\.s[\\s\\S]*\\.explain > \\.ctr > \\.s",
+    "html": [
+      "<style>[\\s\\S]*\\.explain > \\.s[\\s\\S]*\\.explain > \\.ctr > \\.s"
+    ],
     "icon": "elm.svg",
-    "implies": "Elm",
+    "implies": [
+      "Elm"
+    ],
     "website": "https://github.com/mdgriffith/elm-ui"
   },
   "Eloomi": {
@@ -959,7 +1011,9 @@
     "dom": "link#eeb-css-frontend-css, link[href*='/wp-content/plugins/email-encoder-bundle/']",
     "icon": "Email Encoder for Wordpress.png",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "email-encoder-bundle(?:\\/core)?(?:\\/includes)?(?:\\/assets)?(?:\\/js)?(?:\\/custom)?(?:\\/encoder-form)?\\.js",
     "website": "https://wordpress.org/plugins/email-encoder-bundle"
   },
@@ -1021,7 +1075,9 @@
     "description": "Embed a PDF from the Media Library or elsewhere via oEmbed.",
     "dom": "#embed-pdf-viewer-css, link[href*='/wp-content/plugins/embed-pdf-viewer/']",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/embed-pdf-viewer"
   },
   "Embed Any Document": {
@@ -1032,7 +1088,9 @@
     "description": "Embed PDF, DOC, PPT and XLS documents easily on your WordPress website.",
     "dom": "#awsm-ead-public-css, link[href*='/wp-content/plugins/embed-any-document/']",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "embed-any-document(?:\\/js)?(?:\\/embed-public)?(?:\\/pdfobject)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/embed-any-document"
   },
@@ -1046,7 +1104,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/youtube-embed-plus(?:-pro)?/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.embedplus.com"
   },
@@ -1059,7 +1119,9 @@
     "dom": "#embedpress-css, #embedpress-elementor-css-css, #embedpress_blocks-cgb-style-css-css, link[href*='/wp-content/plugins/embedpress/']",
     "icon": "EmbedPress.png",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "embedpress(?:\\/assets)?(?:\\/js)?(?:\\/ads)?(?:\\/pdfobject)?(?:\\/front)?(?:\\/documents-viewer-script)?(?:\\/vimeo-player)?(?:\\/initplyr)?(?:\\/plyr)?(?:\\.polyfilled)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/embedpress"
   },
@@ -1194,7 +1256,9 @@
     },
     "icon": "endurance-cache.png",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://github.com/bluehost/endurance-page-cache"
   },
   "EngagementHQ": {
@@ -1226,7 +1290,9 @@
       "X-Server-Powered-By": "^Engintron$"
     },
     "icon": "engintron.png",
-    "requires": "Nginx",
+    "requires": [
+      "Nginx"
+    ],
     "website": "https://github.com/engintron/engintron"
   },
   "Enigma": {
@@ -1238,7 +1304,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/enigma/",
     "website": "https://wordpress.org/themes/enigma"
   },
@@ -1267,7 +1335,9 @@
     ],
     "description": "Enlistly tracks referral orders in realtime. Orders that are partially refunded, refunded, or cancelled update on the fly.",
     "icon": "Enlistly.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "freemium",
       "low",
@@ -1333,7 +1403,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/envo-shop/.+customscript\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://envothemes.com/free-envo-shop"
   },
@@ -1349,7 +1421,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/envo-storefront/.+customscript\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://envothemes.com/free-envo-storefront"
   },
@@ -1365,7 +1439,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/envo-ecommerce/.+customscript\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://envothemes.com/free-envo-ecommerce/"
   },
@@ -1417,8 +1493,12 @@
     "cats": [
       25
     ],
-    "html": "<link[^>]+?href=\"[^\"]+epoch(?:\\.min)?\\.css",
-    "implies": "D3",
+    "html": [
+      "<link[^>]+?href=\"[^\"]+epoch(?:\\.min)?\\.css"
+    ],
+    "implies": [
+      "D3"
+    ],
     "scriptSrc": "epoch(?:\\.min)?\\.js",
     "website": "https://fastly.github.io/epoch"
   },
@@ -1448,7 +1528,9 @@
     ],
     "description": "EraofEcom Cartroids makes it easy for you to create highly targeted upsells, cross-sells and bundle offers.",
     "icon": "EraofEcom.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "cartroids.appBase": "cartroids\\.eraofecom\\.org"
     },
@@ -1464,7 +1546,9 @@
     ],
     "description": "EraofEcom MTL is a Shopify pop up app that enables you to catch your website visitors.",
     "icon": "EraofEcom.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "poa"
     ],
@@ -1479,7 +1563,9 @@
     "description": "EraofEcom WinAds is an all-in-one Facebook pixel app for Shopify.",
     "dom": "link[href*='winads.eraofecom.org']",
     "icon": "EraofEcom.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "win_ads.baseURL": "winads\\.eraofecom\\.org"
     },
@@ -1566,7 +1652,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/uploads/essential-addons-elementor/",
     "website": "https://essential-addons.com/elementor/"
   },
@@ -1575,7 +1663,9 @@
       12,
       59
     ],
-    "html": "<[^>]+ class ?= ?\"(?:e-control|[^\"]+ e-control)(?: )[^\"]* e-lib\\b",
+    "html": [
+      "<[^>]+ class ?= ?\"(?:e-control|[^\"]+ e-control)(?: )[^\"]* e-lib\\b"
+    ],
     "icon": "syncfusion.svg",
     "website": "https://www.syncfusion.com/javascript-ui-controls"
   },
@@ -1612,7 +1702,9 @@
       "Server": "^Etherpad"
     },
     "icon": "etherpad.png",
-    "implies": "Node.js",
+    "implies": [
+      "Node.js"
+    ],
     "js": {
       "padeditbar": "",
       "padimpexp": ""
@@ -1744,9 +1836,13 @@
       72
     ],
     "description": "Eveve is a restaurant table booking widget.",
-    "html": "<iframe[^>]*[\\w]+\\.eveve\\.com",
+    "html": [
+      "<iframe[^>]*[\\w]+\\.eveve\\.com"
+    ],
     "icon": "Eveve.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "pricing": [
       "mid",
       "recurring"
@@ -1788,7 +1884,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/google-analytics-dashboard-for-wp/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.exactmetrics.com"
   },
@@ -1799,7 +1897,9 @@
     ],
     "description": "Exemptify allows you to conduct proper EU B2B transactions by validating EU VAT IDs.",
     "icon": "Exemptify.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "ExemptifyTriggerUpdate": "",
       "m4u_ex_vat_postfix_txt": ""
@@ -1923,7 +2023,9 @@
       "X-Powered-By": "^Express(?:$|,)"
     },
     "icon": "Express.svg",
-    "implies": "Node.js",
+    "implies": [
+      "Node.js"
+    ],
     "website": "https://expressjs.com"
   },
   "ExpressionEngine": {
@@ -1938,7 +2040,9 @@
     "cpe": "cpe:2.3:a:ellislab:expressionengine:*:*:*:*:*:*:*:*",
     "description": "ExpressionEngine is a free and open-source CMS.",
     "icon": "ExpressionEngine.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "oss": true,
     "website": "https://expressionengine.com/"
   },
@@ -1956,6 +2060,19 @@
     "scriptSrc": "ext-base\\.js",
     "website": "https://www.sencha.com"
   },
+  "Extendify": {
+    "cats": [
+      87
+    ],
+    "description": "Extendify is a popular platform used by WordPress site owners to create high-performing and highly-aesthetic websites with ease.",
+    "dom": "link[href*='/plugins/extendify/'], #extendify-utility-styles-css",
+    "icon": "Extendify.png",
+    "oss": true,
+    "requires": [
+      "WordPress"
+    ],
+    "website": "https://extendify.com"
+  },
   "ExtendThemes Calliope": {
     "cats": [
       80
@@ -1963,7 +2080,9 @@
     "description": "ExtendThemes Calliope is an flexible, multipurpose WordPress child theme of Colibri WP.",
     "dom": "link[href*='/wp-content/themes/calliope/']",
     "icon": "ExtendThemes.svg",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/calliope/",
     "website": "https://wordpress.org/themes/calliope"
   },
@@ -1973,7 +2092,9 @@
     ],
     "description": "ExtendThemes EmpowerWP is an flexible, multipurpose WordPress theme.",
     "dom": "link[href*='/wp-content/themes/empowerwp']",
-    "excludes": "ExtendThemes Mesmerize",
+    "excludes": [
+      "ExtendThemes Mesmerize"
+    ],
     "icon": "ExtendThemes.svg",
     "pricing": [
       "freemium",
@@ -1981,7 +2102,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/empowerwp(?:-pro)?/",
     "website": "https://extendthemes.com/empowerwp"
   },
@@ -1991,7 +2114,9 @@
     ],
     "description": "ExtendThemes Highlight is an flexible, multipurpose WordPress theme.",
     "dom": "link[href*='/wp-content/themes/highlight/'], link[href*='/wp-content/themes/highlight-pro/']",
-    "excludes": "ExtendThemes Mesmerize",
+    "excludes": [
+      "ExtendThemes Mesmerize"
+    ],
     "icon": "ExtendThemes.svg",
     "pricing": [
       "freemium",
@@ -1999,7 +2124,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/highlight(?:-pro)?/",
     "website": "https://extendthemes.com/highlight"
   },
@@ -2021,7 +2148,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/materialis(?:-pro)?/",
     "website": "https://extendthemes.com/materialis"
   },
@@ -2044,7 +2173,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/mesmerize(?:-pro)?/",
     "website": "https://extendthemes.com/mesmerize"
   },
@@ -2126,6 +2257,7 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:e107:e107:*:*:*:*:*:*:*:*",
     "cookies": {
       "e107_tz": ""
     },
@@ -2133,7 +2265,9 @@
       "X-Powered-By": "e107"
     },
     "icon": "e107.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "scriptSrc": "[^a-z\\d]e107\\.js",
     "website": "https://e107.org"
   },
@@ -2258,7 +2392,9 @@
     ],
     "description": "eShopCRM is an ecommerce CRM for Shopify.",
     "icon": "eShopCRM.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "poa"
     ],
@@ -2292,7 +2428,9 @@
       "X-Drectory-Script": "^eSyndiCat"
     },
     "icon": "eSyndiCat.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "esyndicat": ""
     },
@@ -2306,7 +2444,9 @@
       41
     ],
     "description": "eWAY is a global omnichannel payment provider. The company processes secure credit card payments for merchants. eWay works through eCommerce.",
-    "html": "<img [^>]*src=\"[^/]*//[^/]*eway\\.com",
+    "html": [
+      "<img [^>]*src=\"[^/]*//[^/]*eway\\.com"
+    ],
     "icon": "eway.png",
     "scriptSrc": "secure\\.ewaypayments\\.com",
     "website": "https://www.eway.com.au/"
@@ -2324,7 +2464,9 @@
       "X-Powered-By": "^eZ Publish"
     },
     "icon": "eZ.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "eZ Publish"
     },
@@ -2388,7 +2530,9 @@
       "X-Powered-By": "^enduro\\.js"
     },
     "icon": "enduro.js.svg",
-    "implies": "Node.js",
+    "implies": [
+      "Node.js"
+    ],
     "website": "https://endurojs.com"
   },
   "etika": {
@@ -2422,7 +2566,9 @@
     ],
     "cpe": "cpe:2.3:a:experiencedcms:experiencedcms:*:*:*:*:*:*:*:*",
     "icon": "experiencedCMS_Logo.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "^experiencedCMS$"
     },

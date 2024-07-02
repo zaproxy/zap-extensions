@@ -68,7 +68,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "sdk\\.qikify\\.com/",
     "website": "https://qikify.com"
@@ -228,7 +230,9 @@
     },
     "icon": "Quasar.svg",
     "oss": true,
-    "requires": "Vue.js",
+    "requires": [
+      "Vue.js"
+    ],
     "website": "https://quasar.dev"
   },
   "Qubit": {
@@ -253,10 +257,15 @@
     "cats": [
       15
     ],
+    "cpe": "cpe:2.3:a:question2answer:question2answer:*:*:*:*:*:*:*:*",
     "description": "Question2Answer (Q2A) is a popular open-source Q&A platform for PHP/MySQL.",
-    "html": "<!-- Powered by Question2Answer",
+    "html": [
+      "<!-- Powered by Question2Answer"
+    ],
     "icon": "question2answer.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "scriptSrc": "\\./qa-content/qa-page\\.js\\?([0-9.]+)\\;version:\\1",
     "website": "https://www.question2answer.org"
   },
@@ -282,7 +291,9 @@
       1
     ],
     "cpe": "cpe:2.3:a:opensolution:quick.cms:*:*:*:*:*:*:*:*",
-    "html": "<a href=\"[^>]+opensolution\\.org/\">CMS by",
+    "html": [
+      "<a href=\"[^>]+opensolution\\.org/\">CMS by"
+    ],
     "icon": "Quick.CMS.png",
     "meta": {
       "generator": "Quick\\.CMS(?: v([\\d.]+))?\\;version:\\1"
@@ -293,7 +304,9 @@
     "cats": [
       6
     ],
-    "html": "<a href=\"[^>]+opensolution\\.org/\">(?:Shopping cart by|Sklep internetowy)",
+    "html": [
+      "<a href=\"[^>]+opensolution\\.org/\">(?:Shopping cart by|Sklep internetowy)"
+    ],
     "icon": "Quick.Cart.png",
     "meta": {
       "generator": "Quick\\.Cart(?: v([\\d.]+))?\\;version:\\1"

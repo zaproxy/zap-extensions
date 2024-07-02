@@ -3,9 +3,13 @@
     "cats": [
       18
     ],
-    "html": "<!-- ZK [.\\d\\s]+-->",
+    "html": [
+      "<!-- ZK [.\\d\\s]+-->"
+    ],
     "icon": "ZK.png",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "scriptSrc": "zkau/",
     "website": "https://zkoss.org"
   },
@@ -29,9 +33,13 @@
       19
     ],
     "cpe": "cpe:2.3:a:zabbix:zabbix:*:*:*:*:*:*:*:*",
-    "html": "<body[^>]+zbxCallPostScripts",
+    "html": [
+      "<body[^>]+zbxCallPostScripts"
+    ],
     "icon": "Zabbix.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "zbxCallPostScripts": ""
     },
@@ -67,12 +75,16 @@
     ],
     "description": "Zakeke Interactive Product Designer lets customers personalise any product and visualise how they’ll look before checking out.",
     "icon": "Zakeke.png",
-    "implies": "Zakeke",
+    "implies": [
+      "Zakeke"
+    ],
     "pricing": [
       "recurring",
       "low"
     ],
-    "requires": "WooCommerce",
+    "requires": [
+      "WooCommerce"
+    ],
     "saas": true,
     "scriptSrc": "/wp-content/plugins/zakeke-interactive-product-designer/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.zakeke.com"
@@ -84,12 +96,16 @@
     ],
     "description": "Zakeke Visual Customizer is a cloud-connected visual ecommerce tool that allows brands and retailers to offer live, personalised, 2D, 3D, and augmented reality (AR) functionality for their products.",
     "icon": "Zakeke.png",
-    "implies": "Zakeke",
+    "implies": [
+      "Zakeke"
+    ],
     "pricing": [
       "recurring",
       "low"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "\\.zakeke\\.com/Scripts/integration/shopify/",
     "website": "https://www.zakeke.com"
@@ -111,7 +127,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/zakra/",
     "website": "https://zakratheme.com"
   },
@@ -119,7 +137,9 @@
     "cats": [
       36
     ],
-    "html": "<img [^>]*src=\"[^\"]+ad\\.zanox\\.com",
+    "html": [
+      "<img [^>]*src=\"[^\"]+ad\\.zanox\\.com"
+    ],
     "icon": "Zanox.png",
     "js": {
       "zanox": ""
@@ -154,7 +174,9 @@
     "pricing": [
       "poa"
     ],
-    "requires": "Cart Functionality",
+    "requires": [
+      "Cart Functionality"
+    ],
     "website": "https://www.zeald.com"
   },
   "Zeleris": {
@@ -164,7 +186,7 @@
     "description": "Zeleris provides door to door shipment delivery to Ireland, UK and the EU.",
     "requiresCategory": 6,
     "text": [
-      "\\Zeleris\\b"
+      "\\bZeleris\\b"
     ],
     "website": "https://www.zeleris.com"
   },
@@ -243,7 +265,9 @@
     ],
     "description": "Zendesk Sunshine Conversations lets you share a single, continuous conversation with every team in your business. With a unified API and native connectors to popular business applications like Zendesk and Slack, everyone in your organization can get access to a single view of the customer conversation.",
     "icon": "Zendesk.svg",
-    "implies": "Zendesk",
+    "implies": [
+      "Zendesk"
+    ],
     "pricing": [
       "low",
       "recurring"
@@ -366,7 +390,9 @@
     },
     "cpe": "cpe:2.3:a:zimbra:zimbra:*:*:*:*:*:*:*:*",
     "icon": "Zimbra.png",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "website": "https://www.zimbra.com/"
   },
   "ZingChart": {
@@ -392,7 +418,9 @@
     ],
     "description": "Zimbra is a is a collaborative software suite that includes an email server and a web client.",
     "icon": "Zinnia.png",
-    "implies": "Django",
+    "implies": [
+      "Django"
+    ],
     "meta": {
       "generator": "Zinnia"
     },
@@ -457,7 +485,9 @@
     ],
     "description": "Zipify Pages the first landing page builder uniquely designed for ecommerce.",
     "icon": "Zipify Pages.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "ZipifyPages": ""
     },
@@ -518,7 +548,9 @@
       6
     ],
     "description": "Zoey is a cloud-based ecommerce platform for B2B and wholesale businesses.",
-    "excludes": "Magento",
+    "excludes": [
+      "Magento"
+    ],
     "icon": "Zoey.svg",
     "implies": [
       "PHP",
@@ -561,7 +593,9 @@
       ]
     },
     "icon": "Zoho.svg",
-    "implies": "Zoho",
+    "implies": [
+      "Zoho"
+    ],
     "website": "https://www.zoho.com/mail/"
   },
   "Zoho PageSense": {
@@ -571,7 +605,9 @@
     ],
     "description": "Zoho PageSense is a conversion optimisation platform which combines the power of web analytics, A/B testing, and personalisation.",
     "icon": "Zoho.svg",
-    "implies": "Zoho",
+    "implies": [
+      "Zoho"
+    ],
     "js": {
       "$pagesense": "",
       "pagesense": ""
@@ -610,7 +646,9 @@
       12
     ],
     "icon": "Angular.svg",
-    "implies": "Angular",
+    "implies": [
+      "Angular"
+    ],
     "js": {
       "Zone.root": ""
     },
@@ -671,6 +709,7 @@
     "cats": [
       22
     ],
+    "cpe": "cpe:2.3:a:zope:zope:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "^Zope/"
     },
@@ -703,7 +742,9 @@
         "text": "^Zozo"
       }
     },
-    "excludes": "OpenCart",
+    "excludes": [
+      "OpenCart"
+    ],
     "icon": "Zozo.png",
     "implies": [
       "PHP",

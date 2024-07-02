@@ -5,7 +5,9 @@
     ],
     "description": "YMQ Product Options Variant Option help add an unlimited number of product options to your items so you're not restricted by Shopify's limit of 3 options and 100 variants.",
     "icon": "YMQ Product Options Variant Option.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "ymq_option.v": "\\?v=([\\d\\.]+)\\;version:\\1"
     },
@@ -52,7 +54,9 @@
       4
     ],
     "description": "UIDoc is a Node.js application used at build time to generate API documentation.",
-    "html": "(?:<html[^>]* yuilibrary\\.com/rdf/[\\d.]+/yui\\.rdf|<body[^>]+class=\"yui3-skin-sam)",
+    "html": [
+      "(?:<html[^>]* yuilibrary\\.com/rdf/[\\d.]+/yui\\.rdf|<body[^>]+class=\"yui3-skin-sam)"
+    ],
     "icon": "Yahoo.svg",
     "website": "https://developer.yahoo.com/yui/yuidoc"
   },
@@ -60,7 +64,10 @@
     "cats": [
       2
     ],
-    "html": "Powered by <a href=\"[^>]+yabbforum",
+    "cpe": "cpe:2.3:a:yabb:yabb:*:*:*:*:*:*:*:*",
+    "html": [
+      "Powered by <a href=\"[^>]+yabbforum"
+    ],
     "icon": "YaBB.png",
     "website": "https://www.yabbforum.com"
   },
@@ -89,7 +96,9 @@
     "headers": {
       "X-XRDS-Location": "/ystore/"
     },
-    "html": "<link[^>]+store\\.yahoo\\.net",
+    "html": [
+      "<link[^>]+store\\.yahoo\\.net"
+    ],
     "icon": "Yahoo.svg",
     "js": {
       "YStore": ""
@@ -100,7 +109,9 @@
     "cats": [
       42
     ],
-    "html": "<!-- (?:End )?Yahoo! Tag Manager -->",
+    "html": [
+      "<!-- (?:End )?Yahoo! Tag Manager -->"
+    ],
     "icon": "Yahoo.svg",
     "scriptSrc": "b\\.yjtag\\.jp/iframe",
     "website": "https://tagmanager.yahoo.co.jp/"
@@ -149,7 +160,9 @@
     ],
     "description": "Yampi Virtual store is an ecommerce platform from Brazil.",
     "icon": "Yampi.svg",
-    "implies": "Yampi Checkout",
+    "implies": [
+      "Yampi Checkout"
+    ],
     "js": {
       "Yampi.api_domain": "",
       "Yampi.cart_token": ""
@@ -198,7 +211,9 @@
     "description": "Yandex.Cloud CDN helps you streamline static content delivery for your web service.",
     "dom": "[href*='storage.yandexcloud.net'], [src*='storage.yandexcloud.net']",
     "icon": "Yandex.Cloud.svg",
-    "implies": "Yandex.Cloud",
+    "implies": [
+      "Yandex.Cloud"
+    ],
     "website": "https://cloud.yandex.com/en/services/cdn"
   },
   "Yandex.Direct": {
@@ -206,7 +221,9 @@
       36
     ],
     "description": "Yandex Direct is the platform designed for sponsored ad management.",
-    "html": "<yatag class=\"ya-partner__ads\">",
+    "html": [
+      "<yatag class=\"ya-partner__ads\">"
+    ],
     "icon": "Yandex.Direct.png",
     "js": {
       "yandex_ad_format": "",
@@ -271,6 +288,7 @@
     "cats": [
       22
     ],
+    "cpe": "cpe:2.3:a:yaws:yaws:*:*:*:*:*:*:*:*",
     "description": "Yaws (Yet Another Web Server) is an open-source web server designed to deliver dynamic content efficiently. It was developed by Claes (klacke) Wikström and is written in Erlang, a functional programming language.",
     "headers": {
       "Server": "Yaws(?: ([\\d.]+))?\\;version:\\1"
@@ -425,7 +443,9 @@
       "<!\\[CDATA\\[YII-BLOCK-(?:HEAD|BODY-BEGIN|BODY-END)\\]"
     ],
     "icon": "Yii.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "scriptSrc": [
       "/assets/[a-zA-Z0-9]{8}\\/yii\\.js$",
       "/yii\\.(?:validation|activeForm)\\.js"
@@ -439,7 +459,9 @@
     "description": "Yoast Duplicate Post is a WordPress plugin which allows users to clone posts of any type, or copy them to new drafts for further editing.",
     "dom": "link[href*='/wp-content/plugins/duplicate-post/']",
     "icon": "Yoast SEO.png",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/duplicate-post"
   },
   "Yoast SEO": {
@@ -460,7 +482,9 @@
       "<!-- This site is optimized with the Yoast SEO Premium plugin v(?:[^\\s]+) \\(Yoast SEO v([^\\s]+)\\) -\\;version:\\1"
     ],
     "icon": "Yoast SEO.png",
-    "implies": "WordPress",
+    "implies": [
+      "WordPress"
+    ],
     "oss": true,
     "website": "https://yoast.com/wordpress/plugins/seo/"
   },
@@ -469,7 +493,9 @@
       54
     ],
     "description": "Yoast SEO Premium is a search engine optimisation plugin for WordPress and other platforms.",
-    "html": "<!-- This site is optimized with the Yoast SEO Premium plugin v([^\\s]+) \\;version:\\1",
+    "html": [
+      "<!-- This site is optimized with the Yoast SEO Premium plugin v([^\\s]+) \\;version:\\1"
+    ],
     "icon": "Yoast SEO.png",
     "oss": true,
     "pricing": [
@@ -493,9 +519,13 @@
         }
       }
     },
-    "html": "<!-- This site is optimized with Yoast SEO for Shopify -->",
+    "html": [
+      "<!-- This site is optimized with Yoast SEO for Shopify -->"
+    ],
     "icon": "yoast-seo-shopify.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "low",
       "recurring"
@@ -678,7 +708,9 @@
     ],
     "description": "YouPay is an alternative method of payment that allows you to give someone else the ability to pay for your shopping cart with no fees or interest.",
     "icon": "YouPay.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "YouPay.buttonWindow": "",
       "youpayReady": "",
@@ -709,7 +741,9 @@
       14
     ],
     "description": "YouTube is a video sharing service where users can create their own profile, upload videos, watch, like and comment on other videos.",
-    "html": "<(?:param|embed|iframe)[^>]+youtube(?:-nocookie)?\\.com/(?:v|embed)",
+    "html": [
+      "<(?:param|embed|iframe)[^>]+youtube(?:-nocookie)?\\.com/(?:v|embed)"
+    ],
     "icon": "YouTube.png",
     "scriptSrc": "\\.youtube\\.com/",
     "website": "https://www.youtube.com"
@@ -721,7 +755,9 @@
     "cpe": "cpe:2.3:o:yunohost:yunohost:*:*:*:*:*:*:*:*",
     "description": "YunoHost is a server operating system that is free and open-source, allowing users to host their own web applications, email services, and other online tools. It is based on Debian GNU/Linux.",
     "icon": "YunoHost.svg",
-    "implies": "Debian",
+    "implies": [
+      "Debian"
+    ],
     "oss": true,
     "scriptSrc": "/ynh_portal\\.js",
     "website": "https://yunohost.org"

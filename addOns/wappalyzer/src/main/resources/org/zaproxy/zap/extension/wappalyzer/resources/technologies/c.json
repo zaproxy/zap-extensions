@@ -13,7 +13,9 @@
     ],
     "description": "D3 based reusable chart library",
     "icon": "C3.js.png",
-    "requires": "D3",
+    "requires": [
+      "D3"
+    ],
     "scriptSrc": "c3(?:\\.min)?(?:-[a-zA-Z0-9]{8})?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://c3js.org/"
   },
@@ -75,7 +77,9 @@
     "pricing": [
       "payg"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "app\\.cjdropshipping\\.com/",
     "website": "https://apps.shopify.com/cucheng"
@@ -105,7 +109,9 @@
     },
     "cpe": "cpe:2.3:a:cmsmadesimple:cms_made_simple:*:*:*:*:*:*:*:*",
     "icon": "CMS Made Simple.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "CMS Made Simple"
     },
@@ -116,7 +122,9 @@
       1
     ],
     "cpe": "cpe:2.3:a:cmsimple:cmsimple:*:*:*:*:*:*:*:*",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "CMSimple( [\\d.]+)?\\;version:\\1"
     },
@@ -152,7 +160,9 @@
       "X-Powered-By": "^Dragonfly CMS"
     },
     "icon": "CPG Dragonfly.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "CPG Dragonfly"
     },
@@ -194,7 +204,9 @@
     "description": "CS Cart is a turnkey ecommerce shopping cart software solution.",
     "dom": "a[href*='.cs-cart.com'][target='_blank']",
     "icon": "CS Cart.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "fn_buy_together_apply_discount": "",
       "fn_calculate_total_shipping": "",
@@ -219,7 +231,9 @@
       "recurring",
       "low"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/olsen-light/.+scripts(?:\\.min)?\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.cssigniter.com/themes/olsen-light"
   },
@@ -272,7 +286,9 @@
     ],
     "description": "Cachet is the free and open-source status page for your API, service or company.",
     "icon": "Cachet.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "Cachet.Notifier": ""
     },
@@ -348,7 +364,9 @@
     "cpe": "cpe:2.3:a:cakephp:cakephp:*:*:*:*:*:*:*:*",
     "description": "CakePHP is an open-source web framework. It follows the model–view–controller (MVC) approach and is written in PHP.",
     "icon": "CakePHP.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "application-name": "CakePHP"
     },
@@ -376,7 +394,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/caldera-forms/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://calderaforms.com"
   },
@@ -495,7 +515,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/fairy(?:-premium)?/.+custom\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.candidthemes.com/themes/fairy"
   },
@@ -639,7 +661,9 @@
     ],
     "description": "CareCart is a smart app to recover big value carts on all sizes of shopify stores.",
     "icon": "CareCart.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "low",
       "recurring"
@@ -655,7 +679,9 @@
     ],
     "description": "CareCart Sales Pop Up is a stock countdown timer, recent sales notifications, live sales pop up widget.",
     "icon": "CareCart.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "freemium"
     ],
@@ -669,7 +695,9 @@
     ],
     "description": "Cargo is a professional site building platform for designers and artists.",
     "icon": "Cargo.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "Cargo.Config": "",
       "__cargo_js_ver__": ""
@@ -691,7 +719,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Apache HTTP Server",
+    "requires": [
+      "Apache HTTP Server"
+    ],
     "saas": true,
     "scripts": "\\(\\!section\\s\\|\\|\\ssection\\.tagName\\s\\!\\=\\s\\'SECTION\\'\\)",
     "website": "https://carrd.co"
@@ -702,7 +732,9 @@
     ],
     "description": "Carro connects participating Shopify stores together to enable cross-store selling or the ability for like-minded partners to directly sell each other products without the need for inventory, managing returns, or minimum order quantities.",
     "icon": "Carro.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "freemium",
       "low",
@@ -790,7 +822,9 @@
     ],
     "description": "Cart.js is a very small open-source Javascript library that makes the addition of powerful Ajax cart functionality to your Shopify theme a breeze.",
     "icon": "Cart.js.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "oss": true,
     "scriptSrc": "(?:shopify-cartjs/([\\d\\.]+)|assets)/rivets-cart\\.min\\.js\\;version:\\1",
     "website": "https://cartjs.org"
@@ -850,7 +884,9 @@
       "X-Powered-By": "Catberry"
     },
     "icon": "Catberry.js.png",
-    "implies": "Node.js",
+    "implies": [
+      "Node.js"
+    ],
     "js": {
       "catberry": "",
       "catberry.version": "^(.+)$\\;version:\\1"
@@ -879,7 +915,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/catch-box(?:-pro)?/",
     "website": "https://catchthemes.com/themes/catch-box"
   },
@@ -894,7 +932,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/fotografie(?:-pro)?/",
     "website": "https://catchthemes.com/themes/fotografie"
   },
@@ -996,7 +1036,9 @@
     ],
     "description": "Centra is the headless ecommerce platform.",
     "dom": "img[src*='.centracdn.net/']",
-    "excludes": "Magento",
+    "excludes": [
+      "Magento"
+    ],
     "headers": {
       "Content-Security-Policy": "\\.centra(?:cdn)?\\.(?:com|net)"
     },
@@ -1034,7 +1076,9 @@
     "description": "Chakra UI is a simple, modular and accessible component library that gives you the building blocks you need to build your React applications.",
     "dom": "html[style*='chakra-ui-color-mode'], body.chakra-ui-dark, body.chakra-ui-light, div.chakra-portal",
     "icon": "Chakra UI.svg",
-    "implies": "React",
+    "implies": [
+      "React"
+    ],
     "oss": true,
     "scriptSrc": "\\.chakra-ui\\.",
     "website": "https://chakra-ui.com"
@@ -1084,7 +1128,9 @@
       "X-Powered-By": "Chamilo ([\\d.]+)\\;version:\\1"
     },
     "icon": "Chamilo.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "Chamilo ([\\d.]+)\\;version:\\1"
     },
@@ -1318,7 +1364,9 @@
       "recurring",
       "mid"
     ],
-    "requires": "Nuxt.js",
+    "requires": [
+      "Nuxt.js"
+    ],
     "saas": true,
     "website": "https://www.checklyhq.com",
     "xhr": "api\\.checklyhq\\.com/"
@@ -1381,7 +1429,9 @@
     ],
     "description": "Chevereto is an image hosting software that allows you to create a full-featured image hosting website on your own server.",
     "icon": "Chevereto.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "CHEVERETO.version": "([\\d\\.]+)\\;version:\\1"
     },
@@ -1405,7 +1455,9 @@
     },
     "description": "Chicago Boss is a web framework for Erlang.",
     "icon": "Chicago Boss.svg",
-    "implies": "Erlang",
+    "implies": [
+      "Erlang"
+    ],
     "oss": true,
     "website": "https://github.com/ChicagoBoss/ChicagoBoss"
   },
@@ -1447,7 +1499,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "website": "https://chimpmatic.com"
   },
@@ -1677,8 +1731,12 @@
     ],
     "description": "CiviCRM is a web-based suite of internationalised open-source software for constituency relationship management.",
     "icon": "CiviCRM.png",
-    "implies": "CiviCRM",
-    "requires": "WordPress",
+    "implies": [
+      "CiviCRM"
+    ],
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "wp-content/plugins/(?:[\\w\\-]+)?civicrm(?:[\\w\\-]+)?/",
     "website": "https://wordpress.org/plugins/search/civicrm/"
   },
@@ -1760,7 +1818,9 @@
     "description": "Clarity is an open-source design system that brings together UX guidelines, an HTML/CSS framework, and Angular components.",
     "dom": "link[href*='clr-ui'], clr-main-container",
     "icon": "clarity.svg",
-    "implies": "Angular",
+    "implies": [
+      "Angular"
+    ],
     "js": {
       "ClarityIcons": ""
     },
@@ -1986,7 +2046,9 @@
       10
     ],
     "icon": "ClickHeat.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "clickHeatServer": ""
     },
@@ -1997,7 +2059,9 @@
     "cats": [
       47
     ],
-    "css": "\\.ClickOnceInfoText",
+    "css": [
+      "\\.ClickOnceInfoText"
+    ],
     "description": "ClickOnce is a Microsoft .NET deployment technology that enables the creation of self-updating Windows-based applications that can be installed and run with minimal user interaction.",
     "dom": {
       "a[href='https://go.microsoft.com/fwlink/?LinkId=154571']": {
@@ -2116,7 +2180,9 @@
       "x-clockwork-version": "^([\\d\\.]+)$\\;version:\\1"
     },
     "icon": "default.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "oss": true,
     "website": "https://github.com/underground-works/clockwork-app"
   },
@@ -2188,6 +2254,7 @@
     "cats": [
       31
     ],
+    "cpe": "cpe:2.3:a:cloudflare:cloudflare:*:*:*:*:*:*:*:*",
     "cookies": {
       "__cfduid": ""
     },
@@ -2220,7 +2287,9 @@
     },
     "description": "Cloudflare bot management solution identifies and mitigates automated traffic to protect websites from bad bots.",
     "icon": "CloudFlare.svg",
-    "implies": "Cloudflare",
+    "implies": [
+      "Cloudflare"
+    ],
     "saas": true,
     "website": "https://www.cloudflare.com/en-gb/products/bot-management/"
   },
@@ -2489,7 +2558,9 @@
     ],
     "cpe": "cpe:2.3:a:web-feet:coaster_cms:*:*:*:*:*:*:*:*",
     "icon": "coaster-cms.png",
-    "implies": "Laravel",
+    "implies": [
+      "Laravel"
+    ],
     "meta": {
       "generator": "^Coaster CMS v([\\d.]+)$\\;version:\\1"
     },
@@ -2548,9 +2619,13 @@
       "exp_tracker": ""
     },
     "cpe": "cpe:2.3:a:codeigniter:codeigniter:*:*:*:*:*:*:*:*",
-    "html": "<input[^>]+name=\"ci_csrf_token\"\\;version:2+",
+    "html": [
+      "<input[^>]+name=\"ci_csrf_token\"\\;version:2+"
+    ],
     "icon": "CodeIgniter.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://codeigniter.com"
   },
   "CodeMirror": {
@@ -2598,7 +2673,9 @@
     ],
     "description": "Coin Currency Converter is an automatic currency conversion app for Shopify.",
     "icon": "Coin Currency Converter.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "low",
       "recurring"
@@ -2699,7 +2776,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/colibri-page-builder.+\\.js(?:.+ver=([\\d\\.\\-\\w]+))?\\;version:\\1",
     "website": "https://colibriwp.com"
   },
@@ -2743,7 +2822,9 @@
       }
     },
     "icon": "ThemeGrill.png",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "themes/colormag.*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
     "website": "https://themegrill.com/themes/colormag/"
   },
@@ -2771,7 +2852,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/activello/",
     "website": "https://colorlib.com/wp/themes/activello"
   },
@@ -2785,7 +2868,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/illdy/",
     "website": "https://colorlib.com/wp/themes/illdy"
   },
@@ -2802,7 +2887,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/shapely/",
     "website": "https://colorlib.com/wp/themes/shapely"
   },
@@ -2816,7 +2903,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/sparkling/",
     "website": "https://colorlib.com/wp/themes/sparkling"
   },
@@ -2833,7 +2922,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/travelify/",
     "website": "https://colorlib.com/wp/themes/travelify"
   },
@@ -2963,7 +3054,9 @@
       "COMMERCE-SERVER-SOFTWARE": ""
     },
     "icon": "Commerce Server.png",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "website": "https://commerceserver.net"
   },
   "Commerce.js": {
@@ -3044,7 +3137,9 @@
     "pricing": [
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scriptSrc": "wp-content/plugins/complianz-gdpr-premium",
     "website": "https://complianz.io"
@@ -3058,7 +3153,9 @@
     },
     "cpe": "cpe:2.3:a:concrete5:concrete5:*:*:*:*:*:*:*:*",
     "icon": "Concrete CMS.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "CCM_IMAGE_PATH": "",
       "Concrete": ""
@@ -3078,9 +3175,13 @@
     "description": "Adds conditional logic to Contact Form 7.",
     "dom": "link[href*='/wp-content/plugins/cf7-conditional-fields/']",
     "icon": "Conditional Fields for Contact Form 7.png",
-    "implies": "Contact Form 7",
+    "implies": [
+      "Contact Form 7"
+    ],
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "cf7-conditional-fields(?:\\/js)?(?:\\/scripts)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/cf7-conditional-fields"
   },
@@ -3231,7 +3332,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/contact-form-7/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://contactform7.com"
   },
@@ -3256,7 +3359,9 @@
     "description": "Contao is an open source CMS that allows you to create websites and scalable web applications.",
     "dom": "link[href*='/typolight.css'], link[href*='/contao.css']",
     "icon": "Contao.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "^Contao Open Source CMS$"
     },
@@ -3269,7 +3374,9 @@
     ],
     "cpe": "cpe:2.3:a:contenido:contendio:*:*:*:*:*:*:*:*",
     "icon": "Contenido.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "Contenido ([\\d.]+)\\;version:\\1"
     },
@@ -3295,7 +3402,9 @@
       11
     ],
     "icon": "ContentBox.png",
-    "implies": "Adobe ColdFusion",
+    "implies": [
+      "Adobe ColdFusion"
+    ],
     "meta": {
       "generator": "ContentBox powered by ColdBox"
     },
@@ -3315,6 +3424,25 @@
     "saas": true,
     "website": "https://contentstudio.io"
   },
+  "ContentViews": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "ContentViews is a lightweight and user-friendly WordPress Plugin, crafted specifically for efficient content management and display. This plugin offers seamless integration with Widgets and enables users to showcase their posts, pages, or custom post types in a highly responsive grid, list, or timeline layout.",
+    "dom": "link[href*='/wp-content/plugins/content-views-query-and-display-post-page/'], link[href*='/wp-content/plugins/pt-content-views-pro/']",
+    "icon": "ContentViews.svg",
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": "content-views(?:-pro)?(?:-query-and-display-post-page)?(?:\\/public)?(?:\\/assets)?(?:\\/js)?(?:\\/cv(?:pro)?)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/content-views-query-and-display-post-page/"
+  },
   "Contentful": {
     "cats": [
       1
@@ -3323,7 +3451,9 @@
     "headers": {
       "x-contentful-request-id": ""
     },
-    "html": "<[^>]+(?:assets|downloads|images|videos)\\.(?:ct?fassets\\.net|contentful\\.com)",
+    "html": [
+      "<[^>]+(?:assets|downloads|images|videos)\\.(?:ct?fassets\\.net|contentful\\.com)"
+    ],
     "icon": "Contentful.svg",
     "pricing": [
       "mid",
@@ -3395,7 +3525,9 @@
     "dom": "link[href*='/wp-content/plugins/contextual-related-posts/']",
     "icon": "Contextual Related Posts.png",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/contextual-related-posts/"
   },
   "Contlo": {
@@ -3455,11 +3587,15 @@
     ],
     "description": "Conversio App is an optimisation and analytics app for Shopify stores.",
     "icon": "Conversio.svg",
-    "implies": "Conversio",
+    "implies": [
+      "Conversio"
+    ],
     "pricing": [
       "poa"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "\\.conversio\\.com/.+\\.myshopify\\.com",
     "website": "https://apps.shopify.com/conversio"
@@ -3624,13 +3760,17 @@
     ],
     "description": "Cookie Information plugin helps your website stay compliant with GDPR using a free cookie pop-up, consent log, and more.",
     "icon": "Cookie Information.svg",
-    "implies": "Cookie Information",
+    "implies": [
+      "Cookie Information"
+    ],
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/wp-gdpr-compliance/",
     "website": "https://wordpress.org/plugins/wp-gdpr-compliance"
   },
@@ -3660,7 +3800,9 @@
     "website": "https://cookie-script.com"
   },
   "Cookie Seal": {
-    "cats": [67],
+    "cats": [
+      67
+    ],
     "description": "Cookie Seal is a tool or system that helps you manage and configure the use of cookies on your website in accordance with data protection laws, ensuring compliance with relevant regulations.",
     "icon": "Cookie Seal.svg",
     "js": {
@@ -3746,7 +3888,9 @@
     "description": "A simple tag cloud system for WordPress.",
     "dom": "link#cool-tag-cloud-css[href*='/wp-content/plugins/cool-tag-cloud/'], .cool-tag-cloud, .widget_cool_tag_cloud, .cool-tag-cloud-open, .cool-tag-cloud-close, .cool-tag-cloud-inner",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/cool-tag-cloud"
   },
   "Cool Timeline": {
@@ -3757,7 +3901,9 @@
     "description": "Creates vertical and horizontal history timeline blocks.",
     "dom": "link[href*='/plugins/cool-timeline/'], script[src*='/cool-timeline/'], .cooltimeline-body",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/cool-timeline"
   },
   "Cooladata": {
@@ -3782,9 +3928,13 @@
     ],
     "cpe": "cpe:2.3:a:coppermine-gallery:coppermine_photo_gallery:*:*:*:*:*:*:*:*",
     "description": "Coppermine is an open-source image gallery application.",
-    "html": "<!--Coppermine Photo Gallery ([\\d.]+)\\;version:\\1",
+    "html": [
+      "<!--Coppermine Photo Gallery ([\\d.]+)\\;version:\\1"
+    ],
     "icon": "Coppermine.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://coppermine-gallery.net"
   },
   "CopyPoison": {
@@ -3853,7 +4003,9 @@
     "description": "Enhanced content management for WordPress.",
     "dom": "#cornerstone-generated-css",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "cornerstone(?:\\/assets)?(?:\\/js)?(?:\\/site)?(?:\\/cs-classic)?\\.?((?:\\d+\\.)+\\d+)?\\.js\\;version:\\1",
     "website": "https://wordpress.org/plugins/cornerstone"
   },
@@ -3910,7 +4062,9 @@
     ],
     "cpe": "cpe:2.3:a:cotonti:cotonti_siena:*:*:*:*:*:*:*:*",
     "icon": "Cotonti.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "Cotonti"
     },
@@ -3935,7 +4089,9 @@
     "description": "Add and display responsive Countdown timer on your website.",
     "dom": "link[href*='/wp-content/plugins/countdown-timer-ultimate/']",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/countdown-timer-ultimate"
   },
   "Countly": {
@@ -4013,7 +4169,9 @@
       "Server": "^Cowboy$"
     },
     "icon": "Cowboy.png",
-    "implies": "Erlang",
+    "implies": [
+      "Erlang"
+    ],
     "oss": true,
     "website": "https://github.com/ninenines/cowboy"
   },
@@ -4023,7 +4181,9 @@
     ],
     "description": "Cozy AntiTheft helps you to protect your store content, images and texts from being stolen with a few simple clicks.",
     "icon": "Cozy AntiTheft.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "cozyEcoAdnsUa": ""
     },
@@ -4057,7 +4217,9 @@
       "X-Powered-By": "\\bCraft CMS\\b"
     },
     "icon": "Craft CMS.svg",
-    "implies": "Yii",
+    "implies": [
+      "Yii"
+    ],
     "oss": true,
     "pricing": [
       "low",
@@ -4075,7 +4237,9 @@
       "X-Powered-By": "\\bCraft Commerce\\b"
     },
     "icon": "Craft CMS.svg",
-    "implies": "Craft CMS",
+    "implies": [
+      "Craft CMS"
+    ],
     "website": "https://craftcommerce.com"
   },
   "Craftum": {
@@ -4129,7 +4293,9 @@
       "CrayonTagEditorSettings": ""
     },
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "crayon-syntax-highlighter(?:\\/js)?(?:\\/min)?(?:\\/crayon)?(?:\\.te)?(?:\\.min)?\\.js(?:\\?v(?:er)?=_((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/crayon-syntax-highlighter/"
   },
@@ -4182,7 +4348,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/creative-mail-by-constant-contact/",
     "website": "https://www.creativemail.com"
   },
@@ -4269,7 +4437,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Elementor",
+    "requires": [
+      "Elementor"
+    ],
     "website": "https://crocoblock.com/plugins/jetelements"
   },
   "Cross Pixel": {
@@ -4347,7 +4517,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/bravada(?:-plus)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.cryoutcreations.eu/wordpress-themes/bravada"
   },
@@ -4363,7 +4535,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/fluida(?:-plus)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.cryoutcreations.eu/wordpress-themes/fluida"
   },
@@ -4384,7 +4558,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/mantra(?:-plus)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.cryoutcreations.eu/wordpress-themes/mantra"
   },
@@ -4402,7 +4578,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/parabola/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.cryoutcreations.eu/wordpress-themes/parabola"
   },
@@ -4450,7 +4628,9 @@
     "description": "CubeCart is a free ecommerce platform that businesses can use to build, manage, and market their online stores.",
     "dom": "a[href*='.cubecart.com'][target='_blank']",
     "icon": "CubeCart.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "cubecart"
     },
@@ -4489,7 +4669,9 @@
     "description": "Custom Fonts plugin helps you easily embed custom fonts files (woff2, woff, ttf, svg, eot, otf) easily in your WordPress website.",
     "icon": "Custom Fonts.png",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/custom-fonts/",
     "website": "https://github.com/brainstormforce/custom-fonts"
   },
@@ -4500,7 +4682,9 @@
     ],
     "description": "Custom Twitter Feeds for Wordpress.",
     "dom": "link[href*='/wp-content/plugins/custom-twitter-feeds/']",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "custom-twitter-feeds(?:\\/js)?(?:\\/ctf-scripts)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/custom-twitter-feeds"
   },
@@ -4542,12 +4726,16 @@
     "description": "Cwicly is an advanced professional design and block toolkit that integrates directly with the WordPress editor.",
     "dom": "link[href*='/wp-content/uploads/cwicly/']",
     "icon": "Cwicly.png",
-    "implies": "Gutenberg",
+    "implies": [
+      "Gutenberg"
+    ],
     "pricing": [
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/cwicly/",
     "website": "https://cwicly.com"
   },
@@ -4584,7 +4772,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/responsive(?:pro)?/",
     "website": "https://cyberchimps.com/responsive"
   },
@@ -4628,7 +4818,9 @@
     "headers": {
       "Server": "cpsrvd/([\\d.]+)\\;version:\\1"
     },
-    "html": "<!-- cPanel",
+    "html": [
+      "<!-- cPanel"
+    ],
     "icon": "cPanel.png",
     "website": "https://www.cpanel.net"
   },
@@ -4668,7 +4860,9 @@
     "description": "cdnjs is a free distributed JS library delivery service.",
     "dom": "link[href*='cdnjs.cloudflare.com/']",
     "icon": "cdnjs.svg",
-    "implies": "Cloudflare",
+    "implies": [
+      "Cloudflare"
+    ],
     "oss": true,
     "scriptSrc": "cdnjs\\.cloudflare\\.com",
     "website": "https://cdnjs.com"
@@ -4734,7 +4928,9 @@
     "description": "commercetools is a headless commerce platform.",
     "dom": "link[href*='.commercetools.com/'], body[data-commerce-tools-host*='.commercetools.com']",
     "icon": "commercetools.svg",
-    "implies": "GraphQL",
+    "implies": [
+      "GraphQL"
+    ],
     "js": {
       "COMMERCE_TOOLS_HOST_ATT": "",
       "COMMERCE_TOOLS_PROJECT_KEY_ATT": "",

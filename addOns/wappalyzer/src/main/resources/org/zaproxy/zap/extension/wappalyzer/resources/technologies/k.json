@@ -5,7 +5,9 @@
     ],
     "description": "K-Sup is an open-source CMS/portal solution dedicated to higher education and research created by Kosmos Education.",
     "icon": "Kosmos.svg",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "meta": {
       "generator": "^K-Sup \\(([\\d.R]+)\\)$\\;version:\\1"
     },
@@ -16,9 +18,13 @@
     "cats": [
       19
     ],
-    "html": "<!--(?: JoomlaWorks \"K2\"| Start K2)",
+    "html": [
+      "<!--(?: JoomlaWorks \"K2\"| Start K2)"
+    ],
     "icon": "K2.png",
-    "implies": "Joomla",
+    "implies": [
+      "Joomla"
+    ],
     "js": {
       "K2RatingURL": ""
     },
@@ -76,7 +82,9 @@
       "x-powered-by": "^KPHP/([\\d\\.]+)$\\;version:\\1"
     },
     "icon": "default.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "oss": true,
     "website": "https://vkcom.github.io/kphp"
   },
@@ -129,13 +137,17 @@
     "description": "Kadence WP Blocks is a plugin for WordPress that provides a collection of custom blocks for the Gutenberg editor, allowing users to create custom layouts and designs for their website without needing to know how to code.",
     "dom": "link[href*='/wp-content/plugins/kadence-blocks/']",
     "icon": "Kadence WP.svg",
-    "implies": "Gutenberg",
+    "implies": [
+      "Gutenberg"
+    ],
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/kadence-blocks/dist/.+/kb-form-block\\.min\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
     "website": "https://www.kadencewp.com/kadence-blocks/"
   },
@@ -156,7 +168,9 @@
       "mid",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/kadence/.+navigation\\.min\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
     "website": "https://www.kadencewp.com/kadence-theme"
   },
@@ -172,7 +186,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/virtue/.+main-min\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
     "website": "https://www.kadencewp.com/product/virtue-free-theme"
   },
@@ -187,7 +203,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/vogue(?:-child)?/",
     "website": "https://kairaweb.com/wordpress-theme/vogue"
   },
@@ -329,7 +347,9 @@
     ],
     "description": "Karma is a test runner for JavaScript that runs on Node.js.",
     "icon": "Karma.svg",
-    "implies": "Node.js",
+    "implies": [
+      "Node.js"
+    ],
     "js": {
       "karma.vars.version": "(.+)\\;version:\\1"
     },
@@ -451,9 +471,13 @@
       66
     ],
     "description": "Kendo UI is a HTML5 user interface framework for building interactive and high-performance websites and applications.",
-    "html": "<link[^>]*\\s+href=[^>]*styles/kendo\\.common(?:\\.min)?\\.css[^>]*/>",
+    "html": [
+      "<link[^>]*\\s+href=[^>]*styles/kendo\\.common(?:\\.min)?\\.css[^>]*/>"
+    ],
     "icon": "Kendo UI.png",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "kendo": "",
       "kendo.version": "^(.+)$\\;version:\\1"
@@ -522,7 +546,9 @@
       "Server": "^Kestrel"
     },
     "icon": "kestrel.svg",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "website": "https://docs.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel"
   },
   "Ketch": {
@@ -571,6 +597,7 @@
     "cats": [
       16
     ],
+    "cpe": "cpe:2.3:a:keybase:keybase:*:*:*:*:*:*:*:*",
     "description": "Keybase is for keeping everyone's chats and files safe, from families to communities to companies. MacOS, Windows, Linux, iPhone, and Android.",
     "dns": {
       "TXT": [
@@ -596,7 +623,9 @@
       "kbn-name": "kibana",
       "kbn-version": "^([\\d.]+)$\\;version:\\1"
     },
-    "html": "<title>Kibana</title>",
+    "html": [
+      "<title>Kibana</title>"
+    ],
     "icon": "kibana.svg",
     "implies": [
       "Node.js",
@@ -649,7 +678,7 @@
     "cookies": {
       "_kicksite_session": ""
     },
-    "dom":"iframe[src*='.kicksite.net/']",
+    "dom": "iframe[src*='.kicksite.net/']",
     "pricing": [
       "mid",
       "recurring"
@@ -712,7 +741,9 @@
       "x-kinsta-cache": ""
     },
     "icon": "kinsta.svg",
-    "implies": "WordPress",
+    "implies": [
+      "WordPress"
+    ],
     "website": "https://kinsta.com"
   },
   "Kirki Customizer Framework": {
@@ -726,7 +757,9 @@
       "freemium",
       "poa"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/kirki/",
     "website": "https://kirki.org"
   },
@@ -947,7 +980,9 @@
       "X-Powered-By": "^koa$"
     },
     "icon": "Koa.png",
-    "implies": "Node.js",
+    "implies": [
+      "Node.js"
+    ],
     "website": "https://koajs.com"
   },
   "Koala": {
@@ -975,9 +1010,13 @@
       1,
       18
     ],
-    "html": "<!--[^>]+This website is powered by Koala Web Framework CMS",
+    "html": [
+      "<!--[^>]+This website is powered by Koala Web Framework CMS"
+    ],
     "icon": "Koala Framework.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "^Koala Web Framework CMS"
     },
@@ -988,7 +1027,9 @@
       6
     ],
     "icon": "Kobimaster.png",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "js": {
       "kmGetSession": "",
       "kmPageInfo": ""
@@ -1006,7 +1047,9 @@
       "<a href=\"/cgi-bin/koha/"
     ],
     "icon": "koha.png",
-    "implies": "Perl",
+    "implies": [
+      "Perl"
+    ],
     "js": {
       "KOHA": ""
     },
@@ -1027,7 +1070,9 @@
       "X-Powered-By": "Kohana Framework ([\\d.]+)\\;version:\\1"
     },
     "icon": "Kohana.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://kohanaframework.org"
   },
   "Koken": {
@@ -1057,7 +1102,9 @@
       1
     ],
     "icon": "Komodo CMS.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "^Komodo CMS"
     },
@@ -1119,7 +1166,9 @@
     "cats": [
       1
     ],
-    "html": "<!--[^K>-]+Koobi ([a-z\\d.]+)\\;version:\\1",
+    "html": [
+      "<!--[^K>-]+Koobi ([a-z\\d.]+)\\;version:\\1"
+    ],
     "icon": "Koobi.png",
     "meta": {
       "generator": "Koobi"
@@ -1134,7 +1183,9 @@
       "X-KoobooCMS-Version": "^(.+)$\\;version:\\1"
     },
     "icon": "Kooboo CMS.png",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "scriptSrc": "/Kooboo",
     "website": "https://kooboo.com"
   },
@@ -1209,7 +1260,9 @@
       "x-engine": "^Ktor$"
     },
     "icon": "Ktor.svg",
-    "implies": "Kotlin",
+    "implies": [
+      "Kotlin"
+    ],
     "oss": true,
     "website": "https://ktor.io"
   },

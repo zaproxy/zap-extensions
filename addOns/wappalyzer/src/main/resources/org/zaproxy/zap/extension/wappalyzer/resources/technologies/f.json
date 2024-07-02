@@ -41,7 +41,9 @@
       29
     ],
     "description": "FAST ESP is a service-oriented architecture development platform which is geared towards production searchable indexes. It provided a flexible framework for creating ETL applications for efficient indexing of searchable content.",
-    "html": "<form[^>]+id=\"fastsearch\"",
+    "html": [
+      "<form[^>]+id=\"fastsearch\""
+    ],
     "icon": "FAST ESP.png",
     "website": "https://microsoft.com/enterprisesearch"
   },
@@ -50,7 +52,9 @@
       29
     ],
     "description": "FAST Search for SharePoint is the search engine for Microsoft's SharePoint collaboration platform. Its purpose is helping SharePoint users locate and retrieve stored enterprise content.",
-    "html": "<input[^>]+ name=\"ParametricSearch",
+    "html": [
+      "<input[^>]+ name=\"ParametricSearch"
+    ],
     "icon": "FAST Search for SharePoint.png",
     "implies": [
       "Microsoft SharePoint",
@@ -176,7 +180,9 @@
       29
     ],
     "description": "Fact Finder is a platform which, combines search, navigation, and merchandising solutions to streamline online search and power sales.",
-    "html": "<!-- Factfinder",
+    "html": [
+      "<!-- Factfinder"
+    ],
     "icon": "Fact Finder.png",
     "scriptSrc": "Suggest\\.ff",
     "url": "(?:/ViewParametricSearch|ffsuggest\\.[a-z]htm)",
@@ -195,7 +201,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/nisarg(?:pro)?/",
     "website": "https://www.falgunithemes.com/downloads/nisarg"
   },
@@ -213,7 +221,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://www.famethemes.com/themes/onepress"
   },
   "FameThemes Screenr": {
@@ -226,7 +236,9 @@
       "Screenr.autoplay": "",
       "Screenr_Plus": ""
     },
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://www.famethemes.com/themes/screenr"
   },
   "FancyBox": {
@@ -235,7 +247,9 @@
     ],
     "description": "FancyBox is a tool for displaying images, html content and multi-media in a Mac-style 'lightbox' that floats overtop of web page.",
     "icon": "FancyBox.svg",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "$.fancybox.version": "^(.+)$\\;version:\\1",
       "Fancybox.version": "^(.+)$\\;version:\\1",
@@ -266,9 +280,13 @@
     "cats": [
       1
     ],
-    "html": "<!-- Powered by FaraPy.",
+    "html": [
+      "<!-- Powered by FaraPy."
+    ],
     "icon": "FaraPy.png",
-    "implies": "Python",
+    "implies": [
+      "Python"
+    ],
     "website": "https://faral.tech"
   },
   "FareHarbor": {
@@ -277,7 +295,9 @@
       72
     ],
     "description": "FareHarbor is an booking and schedule management solution intended for tour and activity companies.",
-    "html": "<iframe[^>]+fareharbor",
+    "html": [
+      "<iframe[^>]+fareharbor"
+    ],
     "icon": "FareHarbor.svg",
     "pricing": [
       "poa"
@@ -292,7 +312,9 @@
     ],
     "description": "Fast Bundle gives you the ability to create product bundle offers with discounts.",
     "icon": "Fast Bundle.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "FastBundleConf.bundleBox": "",
       "FastBundleConf.cartInfo.app_version": "v([\\d\\.]+)\\;version:\\1"
@@ -363,6 +385,7 @@
     "cats": [
       31
     ],
+    "cpe": "cpe:2.3:a:fastly:fastly:*:*:*:*:*:*:*:*",
     "description": "Fastly is a cloud computing services provider. Fastly's cloud platform provides a content delivery network, Internet security services, load balancing, and video & streaming services.",
     "headers": {
       "Fastly-Debug-Digest": "",
@@ -412,7 +435,9 @@
       "X-Powered-By": "^Fat-Free Framework$"
     },
     "icon": "Fat-Free Framework.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://fatfreeframework.com"
   },
   "FatherShops": {
@@ -420,7 +445,9 @@
       6
     ],
     "description": "FatherShops is an ecommerce platform.",
-    "excludes": "OpenCart",
+    "excludes": [
+      "OpenCart"
+    ],
     "icon": "FatherShops.png",
     "pricing": [
       "poa"
@@ -722,7 +749,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "//alireviews\\.fireapps\\.io/",
     "website": "https://apps.shopify.com/ali-reviews"
@@ -774,7 +803,9 @@
     "description": "Firepush is an omnichannel marketing app that helps Shopify stores to drive sales with automated web push, email and SMS campaigns.",
     "dom": "link[href*='cdn.firepush.net']",
     "icon": "Firepush.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "low",
       "freemium",
@@ -852,7 +883,10 @@
     "website": "https://www.fitanalytics.com"
   },
   "FitVids.JS": {
-    "cats": [5, 14],
+    "cats": [
+      5,
+      14
+    ],
     "description": "jQuery plugin for fluid width video embeds",
     "icon": "FitVids.JS.png",
     "scriptSrc": [
@@ -886,7 +920,9 @@
     ],
     "cpe": "cpe:2.3:a:flarum:flarum:*:*:*:*:*:*:*:*",
     "description": "Flarum is a discussion platform.",
-    "html": "<div id=\"flarum-loading\"",
+    "html": [
+      "<div id=\"flarum-loading\""
+    ],
     "icon": "flarum.png",
     "implies": [
       "PHP",
@@ -909,7 +945,9 @@
       "Server": "Werkzeug/?([\\d\\.]+)?\\;version:\\1"
     },
     "icon": "Flask.svg",
-    "implies": "Python",
+    "implies": [
+      "Python"
+    ],
     "oss": true,
     "website": "https://github.com/pallets/flask/"
   },
@@ -917,9 +955,13 @@
     "cats": [
       66
     ],
-    "html": "<link[^>]* href=[^>]+flat-ui(?:\\.min)?\\.css",
+    "html": [
+      "<link[^>]* href=[^>]+flat-ui(?:\\.min)?\\.css"
+    ],
     "icon": "Flat UI.png",
-    "implies": "Bootstrap",
+    "implies": [
+      "Bootstrap"
+    ],
     "website": "https://designmodo.github.io/Flat-UI/"
   },
   "Flazio": {
@@ -969,7 +1011,9 @@
       "X-Flex-Lang": "",
       "X-Powered-By": "FlexCMP.+\\[v\\. ([\\d.]+)\\;version:\\1"
     },
-    "html": "<!--[^>]+FlexCMP[^>v]+v\\. ([\\d.]+)\\;version:\\1",
+    "html": [
+      "<!--[^>]+FlexCMP[^>v]+v\\. ([\\d.]+)\\;version:\\1"
+    ],
     "icon": "FlexCMP.png",
     "meta": {
       "generator": "^FlexCMP"
@@ -982,7 +1026,9 @@
     ],
     "description": "FlexSlider is a free jQuery slider plugin.",
     "icon": "FlexSlider.png",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "scriptSrc": [
       "jquery\\.flexslider(?:\\.min)?\\.js$"
     ],
@@ -1036,7 +1082,9 @@
     ],
     "description": "Flits is a customer account pages that get all your shopper data in one place.",
     "icon": "Flits.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "flitsObjects.accountPage": ""
     },
@@ -1110,7 +1158,9 @@
     ],
     "description": "Flowbite is an open-source library of UI components based on the utility-first Tailwind CSS framework featuring dark mode support, a Figma design system, and more.",
     "icon": "Flowbite.svg",
-    "implies": "Tailwind CSS",
+    "implies": [
+      "Tailwind CSS"
+    ],
     "oss": true,
     "scriptSrc": "/flowbite(?:@([\\d\\.]+)/|\\.bundle\\.js)\\;version:\\1",
     "website": "https://github.com/themesberg/flowbite"
@@ -1139,7 +1189,9 @@
     ],
     "description": "Flutter is an open source framework by Google for building beautiful, natively compiled, multi-platform applications from a single codebase.",
     "icon": "Flutter.svg",
-    "implies": "Dart",
+    "implies": [
+      "Dart"
+    ],
     "js": {
       "_flutter.loader": "",
       "_flutter_web_set_location_strategy": "",
@@ -1156,9 +1208,13 @@
       2
     ],
     "cpe": "cpe:2.3:a:fluxbb:fluxbb:*:*:*:*:*:*:*:*",
-    "html": "<p id=\"poweredby\">[^<]+<a href=\"https?://fluxbb\\.org/\">",
+    "html": [
+      "<p id=\"poweredby\">[^<]+<a href=\"https?://fluxbb\\.org/\">"
+    ],
     "icon": "FluxBB.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://fluxbb.org"
   },
   "Fly.io": {
@@ -1188,7 +1244,9 @@
     "description": "Flying Analytics is a performance optimisation plugin for WordPress websites designed to reduce page load times and improve the user experience.",
     "dom": "link[href*='/wp-content/plugins/flying-analytics/']",
     "icon": "default.svg",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/flying-analytics/",
     "website": "https://wordpress.org/plugins/flying-analytics/"
   },
@@ -1201,7 +1259,9 @@
     "js": {
       "flyingImages": ""
     },
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/nazy-load/"
   },
   "Flying Pages": {
@@ -1215,7 +1275,9 @@
     "js": {
       "flyingPages": ""
     },
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/flying-pages/.+\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/flying-pages/"
   },
@@ -1231,7 +1293,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/flying-press/",
     "website": "https://flying-press.com"
   },
@@ -1242,9 +1306,13 @@
     "cookies": {
       "flyspray_project": ""
     },
-    "html": "(?:<a[^>]+>Powered by Flyspray|<map id=\"projectsearchform)",
+    "html": [
+      "(?:<a[^>]+>Powered by Flyspray|<map id=\"projectsearchform)"
+    ],
     "icon": "Flyspray.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://flyspray.org"
   },
   "Flywheel": {
@@ -1260,7 +1328,9 @@
       "x-fw-type": ""
     },
     "icon": "flywheel.svg",
-    "implies": "WordPress",
+    "implies": [
+      "WordPress"
+    ],
     "website": "https://getflywheel.com"
   },
   "Fomo": {
@@ -1348,7 +1418,9 @@
       "freemium",
       "payg"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "fontify\\.nitroapps\\.co/",
     "website": "https://apps.shopify.com/fontify-change-customize-font-for-your-store"
@@ -1375,7 +1447,9 @@
       "recurring",
       "low"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://fooplugins.com/foogallery-wordpress-gallery-plugin"
   },
   "Food-Ordering.co.uk": {
@@ -1412,7 +1486,9 @@
     "description": "FoodBooking is a virtual food court based on a curated list of restaurants that use the GloriaFood ordering system.",
     "dom": "a[href*='.foodbooking.com/ordering/restaurant/'][target='_blank']",
     "icon": "FoodBooking.png",
-    "implies": "GloriaFood",
+    "implies": [
+      "GloriaFood"
+    ],
     "pricing": [
       "low",
       "recurring",
@@ -1480,7 +1556,9 @@
     "cpe": "cpe:2.3:a:fork-cms:fork_cms:*:*:*:*:*:*:*:*",
     "description": "Fork CMS is an open-source content management system.",
     "icon": "ForkCMS.png",
-    "implies": "Symfony",
+    "implies": [
+      "Symfony"
+    ],
     "meta": {
       "generator": "^Fork CMS$"
     },
@@ -1548,7 +1626,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://formidableforms.com"
   },
   "Formitable": {
@@ -1591,7 +1671,9 @@
       "Aws.customer": ""
     },
     "icon": "ForoshGostar.svg",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "meta": {
       "generator": "^Forosh\\s?Gostar.*|Arsina Webshop.*$"
     },
@@ -1647,7 +1729,9 @@
     "cats": [
       6
     ],
-    "html": "(?:<link [^>]*href=\"[^\\/]*\\/\\/www\\.fortune3\\.com\\/[^\"]*siterate\\/rate\\.css|Powered by <a [^>]*href=\"[^\"]+fortune3\\.com)",
+    "html": [
+      "(?:<link [^>]*href=\"[^\\/]*\\/\\/www\\.fortune3\\.com\\/[^\"]*siterate\\/rate\\.css|Powered by <a [^>]*href=\"[^\"]+fortune3\\.com)"
+    ],
     "icon": "Fortune3.png",
     "scriptSrc": "cartjs\\.php\\?(?:.*&)?s=[^&]*myfortune3cart\\.com",
     "website": "https://fortune3.com"
@@ -1670,7 +1754,9 @@
       "<div class=\"foswiki(?:Copyright|Page|Main)\">"
     ],
     "icon": "foswiki.png",
-    "implies": "Perl",
+    "implies": [
+      "Perl"
+    ],
     "js": {
       "foswiki": ""
     },
@@ -1751,7 +1837,9 @@
     ],
     "description": "Framer is primarily a design and prototyping tool. It allows you to design interactive prototypes of websites and applications using production components and real data.",
     "icon": "Framer Sites.svg",
-    "implies": "React",
+    "implies": [
+      "React"
+    ],
     "js": {
       "Framer": "",
       "Framer.Animatable": "",
@@ -1780,7 +1868,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "website": "https://getframes.io"
   },
@@ -1883,9 +1973,13 @@
       24
     ],
     "description": "FreeTextBox is a free open-source HTML Editor.",
-    "html": "<!-- \\* FreeTextBox v\\d \\((\\d+\\.\\d+\\.\\d+)\\;version:\\1",
+    "html": [
+      "<!-- \\* FreeTextBox v\\d \\((\\d+\\.\\d+\\.\\d+)\\;version:\\1"
+    ],
     "icon": "FreeTextBox.png",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "js": {
       "FTB_API": "",
       "FTB_AddEvent": ""
@@ -1923,7 +2017,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "\\.codeblackbelt\\.com/js/modules/frequently-bought-together/",
     "website": "https://www.codeblackbelt.com"
@@ -2233,7 +2329,9 @@
     ],
     "description": "FullCalendar is a full-sized drag and drop JavaScript event calendar.",
     "icon": "FullCalendar.png",
-    "implies": "TypeScript",
+    "implies": [
+      "TypeScript"
+    ],
     "js": {
       "FullCalendar.version": "^([\\d\\.\\-\\w]+)$\\;version:\\1"
     },
@@ -2446,7 +2544,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/futurio/.+customscript\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
     "website": "https://futuriowp.com"
   },
@@ -2456,7 +2556,9 @@
     ],
     "description": "Fynd Platform is a subscription based software as a service where brands can mange their catalog, send marketing sms/emailers and sell their products.",
     "icon": "Fynd Platform.png",
-    "implies": "Vue.js",
+    "implies": [
+      "Vue.js"
+    ],
     "js": {
       "__fyndAction": ""
     },
@@ -2486,7 +2588,9 @@
     ],
     "description": "fullPage.js a jQuery and vanilla JavaScript plugin for fullscreen scrolling websites.",
     "icon": "fullPage.js.png",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "fullpage_api.version": "([\\d\\.]+)\\;version:\\1"
     },

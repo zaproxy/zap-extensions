@@ -3,7 +3,9 @@
     "cats": [
       6
     ],
-    "html": "<a href=\"http://www\\.tsoft\\.com\\.tr\" target=\"_blank\" title=\"T-Soft E-ticaret Sistemleri\">",
+    "html": [
+      "<a href=\"http://www\\.tsoft\\.com\\.tr\" target=\"_blank\" title=\"T-Soft E-ticaret Sistemleri\">"
+    ],
     "icon": "Tsoft.png",
     "website": "https://www.tsoft.com.tr/"
   },
@@ -140,7 +142,9 @@
     },
     "description": "Tessitura is an enterprise application to manage activities in ticketing, fundraising, customer relationship management, and marketing.",
     "icon": "tessitura.svg",
-    "implies": "Tessitura",
+    "implies": [
+      "Tessitura"
+    ],
     "website": "https://www.tessituranetwork.com"
   },
   "TNS Payments": {
@@ -212,9 +216,13 @@
       "TWIKISID": ""
     },
     "description": "TWiki is an open-source wiki and application platform.",
-    "html": "<img [^>]*(?:title|alt)=\"This site is powered by the TWiki collaboration platform",
+    "html": [
+      "<img [^>]*(?:title|alt)=\"This site is powered by the TWiki collaboration platform"
+    ],
     "icon": "TWiki.png",
-    "implies": "Perl",
+    "implies": [
+      "Perl"
+    ],
     "scriptSrc": "(?:TWikiJavascripts|twikilib(?:\\.min)?\\.js)",
     "website": "https://twiki.org"
   },
@@ -226,7 +234,9 @@
     "description": "TYPO3 is a free and open-source Web content management system written in PHP.",
     "dom": "link[href*='typo3conf'], link[href*='typo3temp'], img[src*='typo3conf'], img[src*='typo3temp']",
     "icon": "TYPO3.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "TYPO3\\s+(?:CMS\\s+)?(?:[\\d.]+)?(?:\\s+CMS)?"
     },
@@ -251,7 +261,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "cdn\\.tabarn\\.app/",
     "website": "https://tabarnapp.com"
@@ -316,7 +328,9 @@
     "dom": "link[href*='/wp-content/plugins/tablepress/']",
     "icon": "TablePress.png",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://tablepress.org"
   },
   "Tablesorter": {
@@ -381,7 +395,9 @@
     ],
     "description": "Tada offers interactive website popups that allow Shopify merchants to collect more emails and increase sales by engaging website visitors through gamification.",
     "icon": "Tada.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "freemium",
       "payg",
@@ -495,7 +511,9 @@
     "cats": [
       66
     ],
-    "css": "--tw-(?:rotate|translate|space-x|text-opacity|border-opacity)",
+    "css": [
+      "--tw-(?:rotate|translate|space-x|text-opacity|border-opacity)"
+    ],
     "description": "Tailwind is a utility-first CSS framework.",
     "dom": {
       "link[rel='stylesheet'][href*='tailwind']": {
@@ -601,7 +619,9 @@
     "cats": [
       5
     ],
-    "html": "<link [^>]*href=\"http://tamago\\.temonalab\\.com",
+    "html": [
+      "<link [^>]*href=\"http://tamago\\.temonalab\\.com"
+    ],
     "icon": "Tamago.png",
     "website": "https://tamago.temonalab.com"
   },
@@ -665,7 +685,9 @@
       "mid",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "cdn\\.tapcart\\.com/",
     "website": "https://tapcart.com"
@@ -825,7 +847,9 @@
       44
     ],
     "description": "TeamCity is a build management and continuous integration server from JetBrains.",
-    "html": "<span class=\"versionTag\"><span class=\"vWord\">Version</span> ([\\d\\.]+)\\;version:\\1",
+    "html": [
+      "<span class=\"versionTag\"><span class=\"vWord\">Version</span> ([\\d\\.]+)\\;version:\\1"
+    ],
     "icon": "TeamCity.svg",
     "implies": [
       "Apache Tomcat",
@@ -879,7 +903,9 @@
       "Sass",
       "PHP"
     ],
-    "requires": "Cart Functionality",
+    "requires": [
+      "Cart Functionality"
+    ],
     "saas": true,
     "scripts": "\\.tebexLogin",
     "website": "https://www.tebex.io"
@@ -972,7 +998,9 @@
     "pricing": [
       "payg"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "scriptSrc": "live\\.tern-returns\\.eastsideapps\\.io/",
     "website": "https://www.tern.eco"
   },
@@ -989,7 +1017,9 @@
     "cats": [
       53
     ],
-    "html": "<!--[^>]+Tessitura Version: (\\d*\\.\\d*\\.\\d*)?\\;version:\\1",
+    "html": [
+      "<!--[^>]+Tessitura Version: (\\d*\\.\\d*\\.\\d*)?\\;version:\\1"
+    ],
     "icon": "tessitura.svg",
     "implies": [
       "Microsoft ASP.NET",
@@ -1083,7 +1113,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/the-events-calendar(?:-pro)?/",
     "website": "https://theeventscalendar.com"
   },
@@ -1115,14 +1147,18 @@
       87
     ],
     "description": "The SEO Framework is the only WordPress plugin that can intelligently generate critical SEO meta tags by reading your WordPress environment.",
-    "html": "<!--[^>]+The SEO Framework by Sybre Waaijer",
+    "html": [
+      "<!--[^>]+The SEO Framework by Sybre Waaijer"
+    ],
     "icon": "The SEO Framework.svg",
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "website": "https://theseoframework.com"
   },
@@ -1142,7 +1178,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/make(?:-child)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://thethemefoundry.com/wordpress-themes/make"
   },
@@ -1211,7 +1249,9 @@
       1,
       6
     ],
-    "html": "<(?:link|style|script)[^>]+/assets/frontOffice/",
+    "html": [
+      "<(?:link|style|script)[^>]+/assets/frontOffice/"
+    ],
     "icon": "Thelia.png",
     "implies": [
       "PHP",
@@ -1232,7 +1272,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/edge(?:-plus)?/",
     "website": "https://themefreesia.com/themes/edge"
   },
@@ -1246,7 +1288,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/photograph(?:-plus)?/",
     "website": "https://themefreesia.com/themes/Photograph"
   },
@@ -1263,7 +1307,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/shoppingcart(?:-plus)?/",
     "website": "https://themefreesia.com/themes/shoppingcart"
   },
@@ -1278,7 +1324,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/attitude(?:-pro)?/",
     "website": "https://www.themehorse.com/themes/attitude"
   },
@@ -1293,7 +1341,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/newscard(?:-pro)?/",
     "website": "https://www.themehorse.com/themes/newscard"
   },
@@ -1311,7 +1361,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/agama(?:-pro)?/.+functions\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://theme-vision.com/agama"
   },
@@ -1328,7 +1380,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/evolve(?:-plus)?/",
     "website": "https://theme4press.com/evolve-multipurpose-wordpress-theme"
   },
@@ -1345,7 +1399,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/accelerate(?:-pro)?/",
     "website": "https://themegrill.com/themes/accelerate"
   },
@@ -1362,7 +1418,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/cenote(?:-pro)?/",
     "website": "https://themegrill.com/themes/cenote"
   },
@@ -1379,7 +1437,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/colormag(?:-pro)?/",
     "website": "https://themegrill.com/themes/colormag"
   },
@@ -1396,7 +1456,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/flash(?:-pro)?/",
     "website": "https://themegrill.com/themes/flash"
   },
@@ -1416,7 +1478,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/radiate(?:-pro)?/",
     "website": "https://themegrill.com/themes/radiate"
   },
@@ -1436,7 +1500,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/spacious(?:-pro)?/",
     "website": "https://themegrill.com/themes/spacious"
   },
@@ -1446,7 +1512,9 @@
     ],
     "description": "ThemeGrill eStore is one of the most popular WooCommerce integrated WordPress themes.",
     "icon": "ThemeGrill.png",
-    "implies": "Cart Functionality",
+    "implies": [
+      "Cart Functionality"
+    ],
     "meta": {
       "generator": "eStore v\\.([\\d\\.]+)\\;version:\\1"
     },
@@ -1456,7 +1524,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/e(?:s|S)tore(?:-pro)?/",
     "website": "https://themegrill.com/themes/estore"
   },
@@ -1467,7 +1537,9 @@
     "description": "ThemeIsle Menu Icons plugin gives you the ability to add icons to your menu items, similar to the look of the latest dashboard menu.",
     "dom": "link[href*='/wp-content/plugins/menu-icons/']",
     "icon": "ThemeIsle.png",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/menu-icons"
   },
   "ThemeZee Donovan": {
@@ -1486,7 +1558,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/donovan/",
     "website": "https://themezee.com/themes/donovan"
   },
@@ -1505,7 +1579,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/poseidon/",
     "website": "https://themezee.com/themes/poseidon"
   },
@@ -1524,7 +1600,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/wellington/",
     "website": "https://themezee.com/themes/wellington"
   },
@@ -1534,13 +1612,17 @@
     ],
     "description": "Themeansar Newsberg is a fast, clean, modern-looking, responsive news magazine WordPress theme.",
     "dom": "link#newsberg-style-css",
-    "excludes": "Themeansar Newsup",
+    "excludes": [
+      "Themeansar Newsup"
+    ],
     "icon": "Themeansar.png",
     "pricing": [
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://themeansar.com/free-themes/newsberg"
   },
   "Themeansar Newsup": {
@@ -1553,7 +1635,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/newsup(?:-pro)?/",
     "website": "https://themeansar.com/free-themes/newsup"
   },
@@ -1570,7 +1654,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://themebeez.com/themes/cream-magazine"
   },
   "Themebeez Orchid Store": {
@@ -1586,7 +1672,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/orchid-store(?:-child)?/.+bundle\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://themebeez.com/themes/orchid-store"
   },
@@ -1600,7 +1688,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/graphy(?:-pro)?/",
     "website": "https://themegraphy.com/wordpress-themes/graphy"
   },
@@ -1614,7 +1704,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/bulk(?:-pro)?/.+customscript\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://themes4wp.com/theme/bulk"
   },
@@ -1628,7 +1720,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/bam(?:-pro)?/",
     "website": "https://themezhut.com/themes/bam"
   },
@@ -1642,7 +1736,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/hitmag(?:-pro)?/",
     "website": "https://themezhut.com/themes/hitmag"
   },
@@ -1657,7 +1753,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/iconic-one(?:-[\\w]+)?/",
     "website": "https://themonic.com/iconic-one"
   },
@@ -1688,7 +1786,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/learnpress-course-review"
   },
   "ThimPress Course Wishlist": {
@@ -1735,7 +1835,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/learnpress/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/learnpress"
   },
@@ -1765,7 +1867,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/consulting(?:-pro)?/",
     "website": "https://www.thinkupthemes.com/themes/consulting"
   },
@@ -1780,7 +1884,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/minamaze(?:-pro)?/",
     "website": "https://www.thinkupthemes.com/themes/minamaze"
   },
@@ -1797,7 +1903,9 @@
       "X-Powered-By": "ThinkPHP"
     },
     "icon": "ThinkPHP.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "oss": true,
     "website": "https://www.thinkphp.cn"
   },
@@ -1881,7 +1989,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scriptSrc": "/wp-content/plugins/thrive-apprentice/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://thrivethemes.com/apprentice/"
@@ -1898,7 +2008,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scriptSrc": "/wp-content/plugins/thrive-visual-editor/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://thrivethemes.com/architect/"
@@ -1914,7 +2026,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scriptSrc": "/wp-content/plugins/thrive-comments/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://thrivethemes.com/comments/"
@@ -1930,7 +2044,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scriptSrc": "/wp-content/plugins/thrive-leads/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://thrivethemes.com/leads/"
@@ -1946,7 +2062,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scriptSrc": "/wp-content/plugins/thrive-quiz-builder/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://thrivethemes.com/quizbuilder"
@@ -1962,7 +2080,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scriptSrc": "/wp-content/plugins/thrive-ultimatum/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://thrivethemes.com/ultimatum/"
@@ -1998,7 +2118,9 @@
     "cats": [
       6
     ],
-    "html": "<link[^>]*tictail\\.com",
+    "html": [
+      "<link[^>]*tictail\\.com"
+    ],
     "icon": "tictail.png",
     "website": "https://tictail.com"
   },
@@ -2010,7 +2132,9 @@
       8
     ],
     "description": "TiddlyWiki is an open-source notebook for capturing, organising and sharing complex information.",
-    "html": "<[^>]*type=[^>]text\\/vnd\\.tiddlywiki",
+    "html": [
+      "<[^>]*type=[^>]text\\/vnd\\.tiddlywiki"
+    ],
     "icon": "TiddlyWiki.png",
     "js": {
       "tiddler": ""
@@ -2126,7 +2250,9 @@
       1
     ],
     "description": "Tilda is a web design tool.",
-    "html": "<link[^>]* href=[^>]+tilda(?:cdn|\\.ws|-blocks)",
+    "html": [
+      "<link[^>]* href=[^>]+tilda(?:cdn|\\.ws|-blocks)"
+    ],
     "icon": "Tilda.svg",
     "pricing": [
       "low",
@@ -2342,6 +2468,7 @@
     "cats": [
       6
     ],
+    "cpe": "cpe:2.3:a:tomatocart:tomatocart:*:*:*:*:*:*:*:*",
     "icon": "TomatoCart.png",
     "js": {
       "AjaxShoppingCart": ""
@@ -2443,7 +2570,9 @@
       "Powered by <a href=\"[^\"]*\"><strong>Trac(?:[ /]([\\d.]+))?\\;version:\\1"
     ],
     "icon": "Trac.png",
-    "implies": "Python",
+    "implies": [
+      "Python"
+    ],
     "website": "https://trac.edgewall.org"
   },
   "Track123": {
@@ -2454,14 +2583,16 @@
     "description": "Track123 is a product under Lingxing, founded in September 2021, with a focus on providing all-in-one tracking and management services for cross-border sellers.",
     "icon": "Track123.svg",
     "js": {
-      "api_base":"https://www.track123.com",
+      "api_base": "https://www.track123.com",
       "track123": ""
     },
     "pricing": [
       "freemium",
       "payg"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "track123\\.com\\/common\\/checkout-script-loader\\.js",
     "website": "https://www.track123.com"
@@ -2486,7 +2617,9 @@
     ],
     "description": "Trackify X is a pixel engine that helps merchants backup their pixel data and manage multiple pixels.",
     "icon": "Trackify X.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "low",
       "recurring"
@@ -2578,7 +2711,9 @@
     ],
     "description": "Transcy is a Shopify translation app. Transcy allows you to translate your whole store content into target languages to reach different nation shoppers.",
     "icon": "Transcy.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "_transcy": "",
       "transcy_apiURI": "",
@@ -2623,7 +2758,9 @@
     ],
     "description": "Translate WordPress is a website translator plugin which can translate any website to any language automatically. Translate WordPress plugin is now a part of GTranslate family.",
     "icon": "GTranslate.svg",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/google-language-translator/.+scripts\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://gtranslate.io"
   },
@@ -3049,7 +3186,9 @@
     "headers": {
       "X-Tumblr-User": ""
     },
-    "html": "<iframe src=\"[^>]+tumblr\\.com",
+    "html": [
+      "<iframe src=\"[^>]+tumblr\\.com"
+    ],
     "icon": "Tumblr.png",
     "url": "^https?://(?:www\\.)?[^/]+\\.tumblr\\.com/",
     "website": "https://www.tumblr.com"
@@ -3102,7 +3241,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/themes/twentyeleven"
   },
   "Twenty Fifteen": {
@@ -3115,7 +3256,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/twentyfifteen/",
     "website": "https://wordpress.org/themes/twentyfifteen"
   },
@@ -3129,7 +3272,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/twentyfourteen/",
     "website": "https://wordpress.org/themes/twentyfourteen"
   },
@@ -3143,7 +3288,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/twentynineteen/",
     "website": "https://wordpress.org/themes/twentynineteen"
   },
@@ -3160,7 +3307,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/twentyseventeen/",
     "website": "https://wordpress.org/themes/twentyseventeen"
   },
@@ -3174,7 +3323,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/twentysixteen/",
     "website": "https://wordpress.org/themes/twentysixteen"
   },
@@ -3188,7 +3339,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/twentyten/",
     "website": "https://wordpress.org/themes/twentyten"
   },
@@ -3202,7 +3355,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/twentythirteen/",
     "website": "https://wordpress.org/themes/twentythirteen"
   },
@@ -3216,7 +3371,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/twentytwelve/",
     "website": "https://wordpress.org/themes/twentytwelve"
   },
@@ -3233,7 +3390,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/twentytwenty/",
     "website": "https://wordpress.org/themes/twentytwenty"
   },
@@ -3251,7 +3410,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/twentytwentyone/",
     "website": "https://wordpress.org/themes/twentytwentyone"
   },
@@ -3272,7 +3433,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/themes/twentytwentythree"
   },
   "Twenty Twenty-Two": {
@@ -3293,7 +3456,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/themes/twentytwentytwo"
   },
   "TwicPics": {
@@ -3336,6 +3501,7 @@
     "cats": [
       76
     ],
+    "cpe": "cpe:2.3:a:twiki:twiki:-:*:*:*:*:*:*:*",
     "description": "Twik provides a automated, no-configuration business intelligence & personalization automation engine.",
     "icon": "Twik.svg",
     "js": {
@@ -3392,7 +3558,9 @@
       "X-Powered-By": "TwistPHP"
     },
     "icon": "TwistPHP.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://twistphp.com"
   },
   "TwistedWeb": {
@@ -3474,7 +3642,9 @@
       12
     ],
     "icon": "Twitter Flight.png",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "flight": ""
     },
@@ -3485,7 +3655,9 @@
       59
     ],
     "icon": "Twitter typeahead.js.png",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "typeahead": ""
     },
@@ -3498,7 +3670,9 @@
     ],
     "description": "TypeDoc is an API documentation generator for TypeScript projects.",
     "icon": "TypeDoc.png",
-    "implies": "TypeScript",
+    "implies": [
+      "TypeScript"
+    ],
     "oss": true,
     "website": "https://typedoc.org"
   },
@@ -3529,7 +3703,9 @@
     ],
     "description": "Typecho is a PHP Blogging Platform.",
     "icon": "typecho.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "TypechoComment": ""
     },
@@ -3572,7 +3748,9 @@
       17
     ],
     "description": "Typekit is an online service which offers a subscription library of fonts.",
-    "html": "<link [^>]*href=\"[^\"]+use\\.typekit\\.(?:net|com)",
+    "html": [
+      "<link [^>]*href=\"[^\"]+use\\.typekit\\.(?:net|com)"
+    ],
     "icon": "Typekit.png",
     "js": {
       "Typekit.config.js": "^(.+)$\\;version:\\1"
@@ -3609,7 +3787,9 @@
     ],
     "description": "Tyslo EasySell replaces default Shopify checkout process by embedding (or popup) a simple order form on the product or cart page.",
     "icon": "Tyslo EasySell.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "openTysloForm": "",
       "tysloApplyDiscount": "",
@@ -3692,7 +3872,9 @@
       "X-Powered-By": "^total\\.js"
     },
     "icon": "total.js.png",
-    "implies": "Node.js",
+    "implies": [
+      "Node.js"
+    ],
     "website": "https://totaljs.com"
   }
 }

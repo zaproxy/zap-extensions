@@ -8,9 +8,13 @@
     "headers": {
       "X-Powered-By": "W3 Total Cache(?:/([\\d.]+))?\\;version:\\1"
     },
-    "html": "<!--[^>]+W3 Total Cache",
+    "html": [
+      "<!--[^>]+W3 Total Cache"
+    ],
     "icon": "W3 Total Cache.png",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://www.w3-edge.com/wordpress-plugins/w3-total-cache"
   },
   "W3.CSS": {
@@ -39,7 +43,9 @@
     "headers": {
       "WebDevSrc": ""
     },
-    "html": "<!-- [a-zA-Z0-9_]+ [\\d/]+ [\\d:]+ WebDev \\d\\d ([\\d.]+) -->\\;version:\\1",
+    "html": [
+      "<!-- [a-zA-Z0-9_]+ [\\d/]+ [\\d:]+ WebDev \\d\\d ([\\d.]+) -->\\;version:\\1"
+    ],
     "icon": "webdev.png",
     "meta": {
       "generator": "^WEBDEV$"
@@ -88,7 +94,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/education-hub(?:-pro)?/",
     "website": "https://wenthemes.com/item/wordpress-themes/education-hub"
   },
@@ -105,7 +113,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wenthemes.com/item/wordpress-themes/signify-dark"
   },
   "WHMCS": {
@@ -133,7 +143,9 @@
     "pricing": [
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/wp-automatic/",
     "website": "https://wpautomatic.com"
   },
@@ -150,7 +162,9 @@
       "wpe-backend": ""
     },
     "icon": "wpengine.svg",
-    "implies": "WordPress",
+    "implies": [
+      "WordPress"
+    ],
     "website": "https://wpengine.com"
   },
   "WP Fastest Cache": {
@@ -168,7 +182,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/cache/wpfc-minified/",
     "website": "https://www.wpfastestcache.com"
   },
@@ -178,7 +194,9 @@
     ],
     "description": "WP Featherlight is a WordPress lightbox plugin for adding a minimal, high-performance, responsive jQuery lightbox to your WordPress website.",
     "icon": "WP_Featherlight.png",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wpFeatherlight\\.pkgd\\.min\\.js",
     "website": "https://wordpress.org/plugins/wp-featherlight"
   },
@@ -196,7 +214,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/wp-google-map-plugin/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.wpmapspro.com"
   },
@@ -216,7 +236,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scriptSrc": "/wp-content/plugins/wp-job-openings/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://wpjobopenings.com"
@@ -229,7 +251,9 @@
     "description": "WP Live Visitor Counter is a WordPress plugin that displays the number of online visitors on a website in real-time.",
     "dom": "link[href*='/wp-content/plugins/wp-visitors-widget/']",
     "icon": "default.svg",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/wp-visitors-widget/"
   },
   "WP Maintenance Mode": {
@@ -242,7 +266,9 @@
       "wpmm_vars": ""
     },
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/wp-maintenance-mode/.+wpmm\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://github.com/andrianvaleanu/WP-Maintenance-Mode"
   },
@@ -257,7 +283,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/astra-portfolio/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://wpportfolio.net"
   },
@@ -271,7 +299,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/basic/",
     "website": "https://wp-puzzle.com/basic"
   },
@@ -286,7 +316,9 @@
       "X-Powered-By": "WP Rocket(?:/([\\d.]+))?\\;version:\\1",
       "X-Rocket-Nginx-Bypass": ""
     },
-    "html": "<!--[^>]+WP Rocket",
+    "html": [
+      "<!--[^>]+WP Rocket"
+    ],
     "icon": "WP Rocket.png",
     "js": {
       "RocketLazyLoadScripts": "",
@@ -297,7 +329,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scriptSrc": "/wp-content/plugins/wp-rocket/",
     "website": "https://wp-rocket.me"
@@ -308,14 +342,18 @@
       92
     ],
     "description": "WP-Optimize is an all-in-one WordPress plugin that cleans your database, compresses your large images and caches your site.",
-    "html": "<!--[^>]+Cached by WP-Optimize",
+    "html": [
+      "<!--[^>]+Cached by WP-Optimize"
+    ],
     "icon": "WP-Optimize.png",
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://getwpo.com"
   },
   "WP-PageNavi": {
@@ -326,7 +364,9 @@
     "dom": "link[href*='/wp-content/plugins/wp-pagenavi/']",
     "icon": "WP-PageNavi.svg",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://github.com/lesterchan/wp-pagenavi"
   },
   "WP-Royal Ashe": {
@@ -344,7 +384,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/ashe(?:-pro-premium)?/",
     "website": "https://wp-royal.com/themes/item-ashe-free"
   },
@@ -359,7 +401,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/bard(?:-pro-premium)?/",
     "website": "https://wp-royal.com/themes/item-bard-free"
   },
@@ -370,7 +414,9 @@
     ],
     "description": "WP-Statistics is a WordPress plugin which allows you to know your website statistics.",
     "dom": "link[href*='/wp-content/plugins/wp-statistics/']",
-    "html": "<!-- Analytics by WP-Statistics v([\\d\\.]+)\\;version:\\1",
+    "html": [
+      "<!-- Analytics by WP-Statistics v([\\d\\.]+)\\;version:\\1"
+    ],
     "icon": "WP-Statistics.svg",
     "js": {
       "WP_Statistics_http": "",
@@ -380,7 +426,9 @@
     "pricing": [
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wp-statistics.com"
   },
   "WPCacheOn": {
@@ -403,6 +451,7 @@
       87,
       110
     ],
+    "cpe": "cpe:2.3:a:wpforms:wpforms:*:*:*:*:pro:wordpress:*:*",
     "description": "WPForms is a drag and drop WordPress form builder.",
     "icon": "WPForms.svg",
     "js": {
@@ -414,7 +463,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/wpforms(?:-lite)?/.+(?:frontend\\.min|wpforms)\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://wpforms.com"
   },
@@ -423,6 +474,7 @@
       87,
       89
     ],
+    "cpe": "cpe:2.3:a:wpml:wpml:*:*:*:*:*:wordpress:*:*",
     "cookies": {
       "wp-wpml_current_language": ""
     },
@@ -436,7 +488,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/sitepress-multilingual-cms/",
     "website": "https://wpml.org/"
   },
@@ -451,7 +505,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/wp-smushit(?:-pro)?/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://wpmudev.com/project/wp-smush-pro"
   },
@@ -464,7 +520,9 @@
     "js": {
       "wpspagevisit": ""
     },
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/wps-visitor-counter/"
   },
   "Wagtail": {
@@ -603,7 +661,9 @@
       "Server": "^Warp/(\\d+(?:\\.\\d+)+)?$\\;version:\\1"
     },
     "icon": "Warp.png",
-    "implies": "Haskell",
+    "implies": [
+      "Haskell"
+    ],
     "website": "https://www.stackage.org/package/warp"
   },
   "Wask": {
@@ -631,7 +691,9 @@
     "js": {
       "Waveform": ""
     },
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://music.flatfull.com/waveme/about/"
   },
   "Waveme": {
@@ -648,7 +710,9 @@
     "pricing": [
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://music.flatfull.com/waveme/about/"
   },
   "WayForPay": {
@@ -705,7 +769,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/weaver-xtreme/.+weaverxjslib-end\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://weavertheme.com"
   },
@@ -735,7 +801,9 @@
     "description": "Web Stories is a format for visual storytelling for the open web.",
     "dom": "amp-story",
     "icon": "Web-Stories.svg",
-    "implies": "AMP",
+    "implies": [
+      "AMP"
+    ],
     "oss": true,
     "website": "https://amp.dev/about/stories/"
   },
@@ -746,13 +814,17 @@
     ],
     "description": "Web Stories for WordPress is a visual editor for creating Web Stories.",
     "icon": "Web-Stories.svg",
-    "implies": "Web Stories",
+    "implies": [
+      "Web Stories"
+    ],
     "meta": {
       "amp-story-generator-name": "^Web Stories for WordPress$",
       "amp-story-generator-version": "^(.+)$\\;version:\\1"
     },
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wp.stories.google"
   },
   "Web Wiz Forums": {
@@ -760,7 +832,9 @@
       2
     ],
     "description": "Web Wiz Forums is a web-based forum software that enables developers to create and manage online discussion boards or forums for engaging user interactions and community building.",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "meta": {
       "generator": "^Web\\sWiz\\sForums(?:\\s([\\d\\.]+))?$\\;version:\\1"
     },
@@ -788,6 +862,7 @@
     "cats": [
       27
     ],
+    "cpe": "cpe:2.3:a:webassembly:webassembly:*:*:*:*:*:*:*:*",
     "description": "WebAssembly (abbreviated Wasm) is a binary instruction format for a stack-based virtual machine. Wasm is designed as a portable compilation target for programming languages, enabling deployment on the web for client and server applications.",
     "headers": {
       "Content-Type": "application/wasm"
@@ -830,7 +905,9 @@
       "mtnc_front_options": ""
     },
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/maintenance"
   },
   "WebFactory Under Construction": {
@@ -841,7 +918,9 @@
     "dom": "link[href*='/wp-content/plugins/under-construction-page/']",
     "icon": "WebFactory.png",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/under-construction-page"
   },
   "WebGUI": {
@@ -852,7 +931,9 @@
       "wgSession": ""
     },
     "icon": "WebGUI.png",
-    "implies": "Perl",
+    "implies": [
+      "Perl"
+    ],
     "meta": {
       "generator": "^WebGUI ([\\d.]+)\\;version:\\1"
     },
@@ -946,7 +1027,9 @@
       "recurring",
       "low"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "website": "https://www.webtoffee.com/product/woocommerce-stripe-payment-gateway/"
   },
@@ -963,7 +1046,8 @@
     "pricing": [
       "freemium",
       "low",
-      "recurring"],
+      "recurring"
+    ],
     "saas": true,
     "website": "https://webwavecms.com"
   },
@@ -1062,7 +1146,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Webflow",
+    "requires": [
+      "Webflow"
+    ],
     "saas": true,
     "website": "https://webflow.com/ecommerce"
   },
@@ -1151,16 +1237,21 @@
       "Server": "^WebLogic\\sServer\\s([\\d\\.]+)?\\;version:\\1"
     },
     "icon": "Oracle.svg",
-    "implies": "JavaServer Pages",
+    "implies": [
+      "JavaServer Pages"
+    ],
     "website": "https://www.oracle.com/java/weblogic"
   },
   "Webmin": {
     "cats": [
       19
     ],
+    "cpe": "cpe:2.3:a:webmin:webmin:*:*:*:*:*:*:*:*",
     "description": "Webmin is a free, open-source application for Linux server administration.",
     "icon": "Webmin.png",
-    "implies": "Perl",
+    "implies": [
+      "Perl"
+    ],
     "oss": true,
     "website": "https://www.webmin.com"
   },
@@ -1221,7 +1312,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/busiprof(?:-pro)?/",
     "website": "https://webriti.com/busiprof-premium-wordpress-theme-1"
   },
@@ -1306,7 +1399,9 @@
     "cats": [
       10
     ],
-    "html": "<img[^>]+id=\"DCSIMG\"[^>]+webtrends",
+    "html": [
+      "<img[^>]+id=\"DCSIMG\"[^>]+webtrends"
+    ],
     "icon": "Webtrends.png",
     "js": {
       "WTOptimize": "",
@@ -1397,7 +1492,9 @@
       "<!-- Welcart version : v([\\d.]+)\\;version:\\1"
     ],
     "icon": "Welcart.svg",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "uscesL10n",
     "website": "https://www.welcart.com"
   },
@@ -1408,7 +1505,9 @@
     "description": "Pearl Theme for Magento 2 by WeltPixel. Pearl Theme is following the Magento architecture, layouts and best practice in order to assure highest compatibility with 3rd party extensions.",
     "dom": "body.theme-pearl",
     "icon": "WeltPixel.svg",
-    "implies": "Magento\\;version:2",
+    "implies": [
+      "Magento\\;version:2"
+    ],
     "js": {
       "Pearl": ""
     },
@@ -1475,7 +1574,9 @@
     "cats": [
       5
     ],
-    "html": "<iframe src=\"[^>]+whooshkaa\\.com",
+    "html": [
+      "<iframe src=\"[^>]+whooshkaa\\.com"
+    ],
     "icon": "Whooshkaa.svg",
     "website": "https://www.whooshkaa.com"
   },
@@ -1485,7 +1586,9 @@
     ],
     "description": "WideBundle is a Shopify application that allows a merchant to set up bundles on his store.",
     "icon": "WideBundle.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "low",
       "recurring"
@@ -1549,7 +1652,9 @@
     ],
     "description": "Wiki.js is a wiki engine running on Node.js and written in JavaScript.",
     "icon": "Wiki.js.png",
-    "implies": "Node.js",
+    "implies": [
+      "Node.js"
+    ],
     "js": {
       "WIKI.$_apolloInitData": "",
       "WIKI.$apolloProvider": ""
@@ -1571,8 +1676,11 @@
     "cats": [
       8
     ],
+    "cpe": "cpe:2.3:a:wikkawiki:wikkawiki:*:*:*:*:*:*:*:*",
     "description": "WikkaWiki is an open-source wiki application written in PHP.",
-    "html": "Powered by <a href=\"[^>]+WikkaWiki",
+    "html": [
+      "Powered by <a href=\"[^>]+WikkaWiki"
+    ],
     "icon": "WikkaWiki.png",
     "meta": {
       "generator": "WikkaWiki"
@@ -1640,6 +1748,7 @@
       26,
       12
     ],
+    "cpe": "cpe:2.3:a:wink:wink:*:*:*:*:*:android:*:*",
     "description": "Wink Toolkit is a JavaScript toolkit used to build mobile web apps.",
     "icon": "Wink.png",
     "js": {
@@ -1709,7 +1818,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "website": "https://appmate.io"
   },
@@ -1764,7 +1875,9 @@
       "X-Wix-Server-Artifact-Id": ""
     },
     "icon": "Wix.svg",
-    "implies": "React",
+    "implies": [
+      "React"
+    ],
     "js": {
       "wixBiSession": "",
       "wixPerformanceMeasurements": ""
@@ -1805,7 +1918,9 @@
       }
     },
     "icon": "Wix.svg",
-    "implies": "Wix",
+    "implies": [
+      "Wix"
+    ],
     "pricing": [
       "low",
       "recurring"
@@ -1851,9 +1966,13 @@
     "cats": [
       1
     ],
-    "html": "(?:<a href=\"[^>]+wolfcms\\.org[^>]+>Wolf CMS(?:</a>)? inside|Thank you for using <a[^>]+>Wolf CMS)",
+    "html": [
+      "(?:<a href=\"[^>]+wolfcms\\.org[^>]+>Wolf CMS(?:</a>)? inside|Thank you for using <a[^>]+>Wolf CMS)"
+    ],
     "icon": "Wolf CMS.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://www.wolfcms.org"
   },
   "Woltlab Community Framework": {
@@ -1861,7 +1980,9 @@
       1
     ],
     "icon": "Woltlab Community Framework.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "scriptSrc": "WCF\\..*\\.js",
     "website": "https://www.woltlab.com"
   },
@@ -1870,6 +1991,7 @@
       6,
       87
     ],
+    "cpe": "cpe:2.3:a:woocommerce:woocommerce:*:*:*:*:*:wordpress:*:*",
     "description": "WooCommerce is an open-source ecommerce plugin for WordPress.",
     "dom": ".woocommerce, .woocommerce-no-js, link[rel*='woocommerce']",
     "icon": "WooCommerce.svg",
@@ -1880,7 +2002,9 @@
       "generator": "WooCommerce ([\\d.]+)\\;version:\\1"
     },
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": [
       "woocommerce",
       "/woocommerce(?:\\.min)?\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1"
@@ -1928,12 +2052,16 @@
     "description": "WooCommerce PayPal Checkout Payment Gateway is a WordPress plugin which allows you to securely sell your products and subscriptions online using in-context checkout.",
     "dom": "link[href*='/wp-content/plugins/woocommerce-gateway-paypal-express-checkout/']",
     "icon": "WooCommerce PayPal.png",
-    "implies": "PayPal",
+    "implies": [
+      "PayPal"
+    ],
     "oss": true,
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/woocommerce-gateway-paypal-express-checkout/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://github.com/woocommerce/woocommerce-gateway-paypal-express-checkout"
   },
@@ -1944,9 +2072,13 @@
     "description": "WooCommerce PayPal Payments is a latest WordPress plugin with most complete payment processing solution. Accept PayPal exclusives, credit/debit cards and local payment methods.",
     "dom": "link[href*='/wp-content/plugins/woocommerce-paypal-payments/']",
     "icon": "WooCommerce PayPal.png",
-    "implies": "PayPal",
+    "implies": [
+      "PayPal"
+    ],
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/woocommerce-paypal-payments/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://github.com/woocommerce/woocommerce-paypal-payments"
   },
@@ -1957,11 +2089,15 @@
     "description": "WooCommerce Stripe Payment Gateway plugin extends WooCommerce allowing you to take payments directly on your store via Stripe’s API.",
     "dom": "link[href*='/wp-content/plugins/woocommerce-gateway-stripe/']",
     "icon": "WooCommerce Stripe Payment Gateway.png",
-    "implies": "Stripe",
+    "implies": [
+      "Stripe"
+    ],
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/woocommerce-gateway-stripe/",
     "website": "https://woocommerce.com/products/stripe"
   },
@@ -1972,12 +2108,16 @@
     "description": "WooCommerce Subscriptions primarily allows you to create and sell subscription products from your WooCommerce shop.",
     "dom": "link[href*='/wp-content/plugins/woocommerce-subscriptions/']",
     "icon": "WooCommerce.svg",
-    "implies": "WooCommerce",
+    "implies": [
+      "WooCommerce"
+    ],
     "pricing": [
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://woocommerce.com/products/woocommerce-subscriptions"
   },
   "Woopra": {
@@ -1994,7 +2134,9 @@
     ],
     "description": "Woostify is fast, lightweight, responsive and flexible WooCommerce theme built with SEO, speed, and usability in mind.",
     "icon": "Woostify.png",
-    "implies": "WooCommerce",
+    "implies": [
+      "WooCommerce"
+    ],
     "js": {
       "woostifyConditionScrolling": "",
       "woostify_woocommerce_general": ""
@@ -2004,7 +2146,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/woostify/",
     "website": "https://woostify.com"
   },
@@ -2090,7 +2234,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/default/",
     "website": "https://wordpress.org/themes/default"
   },
@@ -2117,7 +2263,9 @@
     },
     "icon": "WordPress.svg",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/documentation/article/create-a-network/"
   },
   "WordPress Super Cache": {
@@ -2129,9 +2277,13 @@
     "headers": {
       "WP-Super-Cache": ""
     },
-    "html": "<!--[^>]+WP-Super-Cache",
+    "html": [
+      "<!--[^>]+WP-Super-Cache"
+    ],
     "icon": "wp_super_cache.png",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://z9.io/wp-super-cache/"
   },
   "WordPress VIP": {
@@ -2167,6 +2319,7 @@
       87,
       16
     ],
+    "cpe": "cpe:2.3:a:wordfence:wordfence:*:*:*:*:*:wordpress:*:*",
     "description": "Wordfence is a security plugin for sites that use WordPress. Wordfence includes an endpoint firewall and malware scanner.",
     "icon": "Wordfence.svg",
     "js": {
@@ -2177,7 +2330,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/wordfence/.+admin\\.ajaxWatcher\\.\\d+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.wordfence.com"
   },
@@ -2193,7 +2348,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/wordfence/.+login\\.\\d+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.wordfence.com"
   },
@@ -2294,7 +2451,7 @@
       18,
       25
     ],
-    "description":"Reveal CSS animation as you scroll down a page.",
+    "description": "Reveal CSS animation as you scroll down a page.",
     "pricing": [
       "low",
       "onetime"
@@ -2401,7 +2558,9 @@
     ],
     "description": "WysiBB very simple and functional open-source WYSIWYG BBCode editor based on jQuery.",
     "icon": "WysiBB.svg",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "oss": true,
     "scriptSrc": "/jquery\\.wysibb\\.min\\.js",
     "website": "https://wysibb.com"
@@ -2435,7 +2594,9 @@
     ],
     "description": "The wap.store provides a range of services for ecommerce businesses, including a platform, a marketplace hub, and a digital agency.",
     "icon": "wap.store.svg",
-    "implies": "MySQL",
+    "implies": [
+      "MySQL"
+    ],
     "js": {
       "WapStore.categoria": ""
     },
@@ -2489,7 +2650,9 @@
     ],
     "description": "WPBakery is a drag and drop visual page builder plugin for WordPress.",
     "icon": "wpBakery.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "WPBakery"
     },
@@ -2497,7 +2660,9 @@
       "low",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wpbakery.com"
   },
   "wpCache": {
@@ -2509,14 +2674,20 @@
     "headers": {
       "X-Powered-By": "wpCache(?:/([\\d.]+))?\\;version:\\1"
     },
-    "html": "<!--[^>]+wpCache",
+    "html": [
+      "<!--[^>]+wpCache"
+    ],
     "icon": "wpCache.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "wpCache",
       "keywords": "wpCache"
     },
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "url": "^https?://[^/]+\\.wpcache\\.co",
     "website": "https://wpcache.co"
   }
