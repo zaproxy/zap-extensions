@@ -25,7 +25,9 @@
     "description": "HCL Commerce is a software platform framework for ecommerce, including marketing, sales, customer and order processing functionality.",
     "dom": "link[href*='/wcsstore/'], link[href*='webapp/wcs/'], a[href*='/wcsstore/'], a[href*='webapp/wcs/'], script[src*='/wcsstore/'], script[src*='webapp/wcs/']",
     "icon": "HCL Commerce.svg",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "pricing": [
       "poa"
     ],
@@ -45,7 +47,9 @@
       "Itx-Generated-Timestamp": ""
     },
     "icon": "hcl-dx.png",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "js": {
       "ibmCfg.themeConfig.modulesWebAppBaseURI": "/wps/themeModules"
     },
@@ -66,7 +70,9 @@
       "Server": "^Lotus-Domino$"
     },
     "icon": "HCL Domino.svg",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "pricing": [
       "payg",
       "recurring"
@@ -82,7 +88,9 @@
       "X-Powered-By": "HHVM/?([\\d.]+)?\\;version:\\1"
     },
     "icon": "HHVM.png",
-    "implies": "PHP\\;confidence:75",
+    "implies": [
+      "PHP\\;confidence:75"
+    ],
     "website": "https://hhvm.com"
   },
   "HP Compact Server": {
@@ -133,7 +141,9 @@
       19
     ],
     "description": "HTTP/2 (originally named HTTP/2.0) is a major revision of the HTTP network protocol used by the World Wide Web.",
-    "excludes": "SPDY",
+    "excludes": [
+      "SPDY"
+    ],
     "headers": {
       "Alt-Svc": "h2",
       "X-Firefox-Spdy": "h2"
@@ -146,7 +156,9 @@
       19
     ],
     "description": "HTTP/3 is the third major version of the Hypertext Transfer Protocol used to exchange information on the World Wide Web.",
-    "excludes": "HTTP/2",
+    "excludes": [
+      "HTTP/2"
+    ],
     "headers": {
       "Alt-Svc": "h3",
       "X-Firefox-Http3": "h3"
@@ -163,7 +175,9 @@
     "dom": "link[href*='/wp-content/plugins/ht-mega-for-elementor/']",
     "icon": "HT Mega.png",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "ht-mega-for-elementor(?:\\/admin)?\\/assets\\/js(?:\\/admin)?(?:\\/(?:htb)?bootstrap)?(?:\\/jquery)?(?:\\/popper)?(?:\\/slick)?(?:\\/waypoints)?(?:\\.counterup)?(?:\\/htmega-widgets-active)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/ht-mega-for-elementor/"
   },
@@ -172,7 +186,9 @@
       4
     ],
     "description": "Haddock is a tool for automatically generating documentation from annotated Haskell source code.",
-    "html": "<p>Produced by <a href=\"http://www\\.haskell\\.org/haddock/\">Haddock</a> version ([0-9.]+)</p>\\;version:\\1",
+    "html": [
+      "<p>Produced by <a href=\"http://www\\.haskell\\.org/haddock/\">Haddock</a> version ([0-9.]+)</p>\\;version:\\1"
+    ],
     "scriptSrc": "haddock-util\\.js",
     "website": "https://www.haskell.org/haddock/"
   },
@@ -182,7 +198,9 @@
       11
     ],
     "icon": "Halo.png",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "meta": {
       "generator": "Halo ([\\d.]+)?\\;version:\\1"
     },
@@ -194,7 +212,9 @@
     ],
     "description": "Hamechio is a web application framework.",
     "icon": "Hamechio.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "hamech\\.io/"
     },
@@ -352,7 +372,9 @@
     "description": "Harbor is an open-source registry that secures artifacts with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted.",
     "dom": "harbor-app",
     "icon": "Harbor.svg",
-    "implies": "Go",
+    "implies": [
+      "Go"
+    ],
     "oss": true,
     "website": "https://goharbor.io"
   },
@@ -367,7 +389,9 @@
       "onetime",
       "low"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/(?:t|T)otal(?:-plus)?/",
     "website": "https://hashthemes.com/wordpress-theme/total"
   },
@@ -425,7 +449,9 @@
     "cats": [
       59
     ],
-    "html": "<[^>]*data-headjs-load",
+    "html": [
+      "<[^>]*data-headjs-load"
+    ],
     "icon": "HeadJS.png",
     "js": {
       "head.browser.name": ""
@@ -541,7 +567,9 @@
     "headers": {
       "X-Powered-By": "Adrikikicp Development"
     },
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "helium.js": ""
     },
@@ -564,7 +592,9 @@
     "description": "Helix Ultimate a free template framework for Joomla.",
     "dom": "header#sp-header, body.helix-ultimate",
     "icon": "HelixUltimate.svg",
-    "implies": "Joomla",
+    "implies": [
+      "Joomla"
+    ],
     "oss": true,
     "website": "https://www.joomshaper.com/joomla-templates/helixultimate"
   },
@@ -574,7 +604,9 @@
     ],
     "description": "Helixo UFE is a lightweight Shopify upsell sales funnel app.",
     "icon": "Helixo.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "ufe.funnelData": "",
       "ufeStore.cartTotal": ""
@@ -627,12 +659,16 @@
       }
     },
     "icon": "Hello Elementor.png",
-    "implies": "Elementor",
+    "implies": [
+      "Elementor"
+    ],
     "pricing": [
       "low",
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://elementor.com/hello-theme/"
   },
   "Help Scout": {
@@ -752,7 +788,9 @@
       }
     },
     "icon": "ThemeIsle.png",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "themes/hestia.*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
     "website": "https://themeisle.com/themes/hestia/"
   },
@@ -802,12 +840,15 @@
     "cats": [
       57
     ],
+    "cpe": "cpe:2.3:a:hexo:hexo:*:*:*:*:*:node.js:*:*",
     "description": "Hexo is a blog framework powered by Node.js.",
     "html": [
       "Powered by <a href=\"https?://hexo\\.io/?\"[^>]*>Hexo</"
     ],
     "icon": "Hexo.png",
-    "implies": "Node.js",
+    "implies": [
+      "Node.js"
+    ],
     "meta": {
       "generator": "Hexo(?: v?([\\d.]+))?\\;version:\\1"
     },
@@ -819,7 +860,9 @@
     ],
     "description": "Free Shipping Bar is a Shopify app built by Hextom. Free Shipping Bar help promote free shipping with progressive messages to motivate customers to buy more.",
     "icon": "Hextom.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "freemium",
       "low",
@@ -835,7 +878,9 @@
     ],
     "description": "Ultimate Sales Boost by Hextom is an app designed to help you drive more sales by creating a sense of urgency, scarcity and trust.",
     "icon": "Hextom.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "hextom_usb": "",
       "ht_usb.isLoaded": ""
@@ -898,7 +943,9 @@
       6
     ],
     "description": "HighStore is an ecommerce platform from Iran.",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "meta": {
       "generator": "^HighStore\\.IR$",
       "hs:version": "^([\\d\\.]+)$\\;version:\\1\\;confidence:50"
@@ -914,7 +961,9 @@
       25
     ],
     "description": "Highcharts is a charting library written in pure JavaScript, for adding interactive charts to a website or web application. Highcharts meets accessibility standards and works with Python, Angular, React, iOS, Android, and more.",
-    "html": "<svg[^>]*><desc>Created with Highcharts ([\\d.]*)\\;version:\\1",
+    "html": [
+      "<svg[^>]*><desc>Created with Highcharts ([\\d.]*)\\;version:\\1"
+    ],
     "icon": "Highcharts.svg",
     "js": {
       "Highcharts": "",
@@ -939,7 +988,9 @@
     "cats": [
       25
     ],
-    "html": "<svg[^>]*><desc>Created with Highstock ([\\d.]*)\\;version:\\1",
+    "html": [
+      "<svg[^>]*><desc>Created with Highstock ([\\d.]*)\\;version:\\1"
+    ],
     "icon": "Highcharts.svg",
     "scriptSrc": "highstock[.-]?([\\d\\.]*\\d).*\\.js\\;version:\\1",
     "website": "https://highcharts.com/products/highstock"
@@ -959,7 +1010,9 @@
       6
     ],
     "icon": "hinza_advanced_cms.svg",
-    "implies": "Laravel",
+    "implies": [
+      "Laravel"
+    ],
     "meta": {
       "generator": "hinzacms"
     },
@@ -1191,6 +1244,7 @@
     "cats": [
       88
     ],
+    "cpe": "cpe:2.3:a:hostinger:hostinger:*:*:*:*:*:*:*:*",
     "description": "Hostinger is an employee-owned Web hosting provider and internet domain registrar.",
     "dns": {
       "SOA": "\\.(?:dns-parking|hostinger)\\.com"
@@ -1226,7 +1280,9 @@
     ],
     "description": "Hostinger Website Builder is a web-based platform that allows users to create and design websites without needing to write code or have extensive technical knowledge.",
     "icon": "Hostinger.svg",
-    "implies": "Vue.js",
+    "implies": [
+      "Vue.js"
+    ],
     "meta": {
       "generator": "Hostinger Website Builder"
     },
@@ -1291,7 +1347,9 @@
       "hotaru_mobile": ""
     },
     "icon": "Hotaru CMS.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "Hotaru CMS"
     },
@@ -1384,7 +1442,9 @@
         "hubspot-domain-verification"
       ]
     },
-    "html": "<!-- Start of Async HubSpot",
+    "html": [
+      "<!-- Start of Async HubSpot"
+    ],
     "icon": "HubSpot.svg",
     "js": {
       "_hsq": "",
@@ -1416,7 +1476,9 @@
       "x-powered-by": "HubSpot"
     },
     "icon": "HubSpot.svg",
-    "implies": "HubSpot",
+    "implies": [
+      "HubSpot"
+    ],
     "meta": {
       "generator": "HubSpot"
     },
@@ -1465,7 +1527,9 @@
     "js": {
       "leadin_wordpress.leadinPluginVersion": "^([\\d.]+)$\\;version:\\1"
     },
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/leadin/"
   },
   "Hubalz": {
@@ -1562,7 +1626,9 @@
     ],
     "description": "HulkApps Age Verification allow your customers to certify their age before they land in your store.",
     "icon": "HulkApps.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "low",
       "recurring"
@@ -1579,7 +1645,9 @@
     ],
     "description": "HulkApps Form Builder is an application that creates customizable, job-specific forms for unit needs.",
     "icon": "HulkApps.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "freemium",
       "low",
@@ -1596,7 +1664,9 @@
     ],
     "description": "HulkApps GDPR/CCPA Compliance Manager is a consent management solution.",
     "icon": "HulkApps.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "hulkSetCookie": ""
     },
@@ -1615,7 +1685,9 @@
     ],
     "description": "HulkApps Infinite Product Options is a unlimited custom options for products. Display variant options as buttons, color and image swatches, and more.",
     "icon": "HulkApps.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "hulkapps.po_url": "productoption\\.hulkapps\\.com"
     },
@@ -1635,7 +1707,9 @@
     "description": "HulkApps Product Reviews is a customer product reviews app for building social proof for store.",
     "dom": "link[href*='reviews.hulkapps.com/']",
     "icon": "HulkApps.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "hulkappsProductReview": "",
       "hulkappsReviews": ""
@@ -1712,7 +1786,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "hurrytimer(?:\\/assets)?(?:\\/js)?(?:\\/cookie)?(?:\\/jquery)?(?:\\.countdown)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/hurrytimer"
   },
@@ -1774,7 +1850,9 @@
       "Server": "hypercorn"
     },
     "icon": "hypercorn.png",
-    "implies": "Python",
+    "implies": [
+      "Python"
+    ],
     "oss": true,
     "website": "https://pgjones.gitlab.io/hypercorn/"
   },
@@ -1814,7 +1892,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "cdn\\.gethypervisual\\.com/",
     "website": "https://gethypervisual.com"
@@ -1832,7 +1912,9 @@
       }
     },
     "icon": "Hypestyle CSS.png",
-    "implies": "Sass",
+    "implies": [
+      "Sass"
+    ],
     "oss": true,
     "website": "https://www.hypestylecss.xyz"
   },
@@ -1875,7 +1957,9 @@
     ],
     "description": "h5ai is a modern HTTP web server index for Apache httpd, lighttpd, and nginx.",
     "icon": "default.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "oss": true,
     "scriptSrc": "/_h5ai/(?:public|client)/js/scripts\\.js",
     "website": "https://github.com/lrsjng/h5ai"
@@ -1884,7 +1968,9 @@
     "cats": [
       16
     ],
-    "css": "#cf-hcaptcha-container",
+    "css": [
+      "#cf-hcaptcha-container"
+    ],
     "description": "hCaptcha is an anti-bot solution that protects user privacy and rewards websites.",
     "dom": "link[href*='hcaptcha.com']",
     "headers": {

@@ -60,7 +60,9 @@
     },
     "icon": "DHL.svg",
     "requiresCategory": 6,
-    "text": "\\bDHL\\b",
+    "text": [
+      "\\bDHL\\b"
+    ],
     "website": "https://www.dhl.com"
   },
   "DHTMLX": {
@@ -86,7 +88,9 @@
     "description": "DM Polopoly is a web content management solution focused on enhancing the user experience built by Atex.",
     "dom": "img[data-src*='/polopoly_fs/'], link[href*='/polopoly_fs/'], img[src*='/polopoly_fs/']",
     "icon": "DM Polopoly.png",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "website": "https://www.atex.com/products/dm-polopoly"
   },
   "DNN": {
@@ -107,7 +111,9 @@
       "<!-- DNN Platform"
     ],
     "icon": "DNN.svg",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "js": {
       "DotNetNuke": "",
       "dnn.apiversion": "^([\\d\\.]+)$\\;version:\\1"
@@ -186,7 +192,9 @@
       "high",
       "recurring"
     ],
-    "requires": "DNN",
+    "requires": [
+      "DNN"
+    ],
     "saas": true,
     "scriptSrc": "\\.dx1app\\.com/",
     "website": "https://www.dx1app.com"
@@ -261,7 +269,9 @@
       "X-Powered-By": "Perl Dancer ([\\d.]+)\\;version:\\1"
     },
     "icon": "Dancer.png",
-    "implies": "Perl",
+    "implies": [
+      "Perl"
+    ],
     "pricing": [
       "poa"
     ],
@@ -418,7 +428,9 @@
     "cpe": "cpe:2.3:a:datatables:datatables.net:*:*:*:*:*:*:*:*",
     "description": "DataTables is a plug-in for the jQuery Javascript library adding advanced features like pagination, instant search, themes, and more to any HTML table.",
     "icon": "DataTables.png",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "$.fn.dataTable.version": "^(.+)$\\;version:\\1",
       "jQuery.fn.dataTable.version": "^(.+)$\\;version:\\1"
@@ -547,7 +559,9 @@
     ],
     "cpe": "cpe:2.3:a:dedecms:dedecms:*:*:*:*:*:*:*:*",
     "icon": "DedeCMS.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "DedeContainer": ""
     },
@@ -625,6 +639,7 @@
     "cats": [
       22
     ],
+    "cpe": "cpe:2.3:a:deno:deno:*:*:*:*:*:*:*:*",
     "description": "A modern runtime for JavaScript and TypeScript.",
     "icon": "deno.svg",
     "oss": true,
@@ -803,7 +818,9 @@
     ],
     "description": "Digismoothie Candy Rack is an upsell app for Shopify which allow merchants to offer custom services or bundle products.",
     "icon": "Digismoothie.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "CANDYRACK_DOCUMENT_LISTENER": "",
       "candyrackEnableDebug": ""
@@ -906,7 +923,9 @@
     ],
     "description": "dimple.js is a powerful and flexible open-source charting API for d3 letting you quickly and easily create and combine bar, line, area and scatter charts.",
     "oss": true,
-    "requires": "D3",
+    "requires": [
+      "D3"
+    ],
     "scriptSrc": "dimple(?:\\/lib\\/[\\w\\.]+)?(?:\\/theme\\/js\\/[\\w\\.-]+)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "http://dimplejs.org/"
   },
@@ -919,7 +938,9 @@
     "headers": {
       "Server": "DirectAdmin Daemon v([\\d.]+)\\;version:\\1"
     },
-    "html": "<a[^>]+>DirectAdmin</a> Web Control Panel",
+    "html": [
+      "<a[^>]+>DirectAdmin</a> Web Control Panel"
+    ],
     "icon": "DirectAdmin.png",
     "implies": [
       "PHP",
@@ -956,7 +977,9 @@
     ],
     "description": "Discourse is an open-source internet forum and mailing list management software application.",
     "icon": "Discourse.png",
-    "implies": "Ruby on Rails",
+    "implies": [
+      "Ruby on Rails"
+    ],
     "js": {
       "Discourse": ""
     },
@@ -971,7 +994,9 @@
     ],
     "description": "Discuz! X is an internet forum software written in PHP and supports MySQL and PostgreSQL databases.",
     "icon": "Discuz X.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "DISCUZCODE": "",
       "discuzVersion": "^(.+)$\\;version:\\1",
@@ -1069,7 +1094,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scriptSrc": "Divi/js/custom\\.(?:min|unified)\\.js\\?ver=([\\d.]+)\\;version:\\1",
     "website": "https://www.elegantthemes.com/gallery/divi"
@@ -1108,9 +1135,13 @@
     },
     "cpe": "cpe:2.3:a:djangoproject:django:*:*:*:*:*:*:*:*",
     "description": "Django is a Python-based free and open-source web application framework.",
-    "html": "(?:powered by <a[^>]+>Django ?([\\d.]+)?<\\/a>|<input[^>]*name=[\"']csrfmiddlewaretoken[\"'][^>]*>)\\;version:\\1",
+    "html": [
+      "(?:powered by <a[^>]+>Django ?([\\d.]+)?<\\/a>|<input[^>]*name=[\"']csrfmiddlewaretoken[\"'][^>]*>)\\;version:\\1"
+    ],
     "icon": "Django.png",
-    "implies": "Python",
+    "implies": [
+      "Python"
+    ],
     "js": {
       "__admin_media_prefix__": "",
       "django": ""
@@ -1153,7 +1184,9 @@
     ],
     "cpe": "cpe:2.3:a:docker:engine:*:*:*:*:*:*:*:*",
     "description": "Docker is a tool designed to make it easier to create, deploy, and run applications by using containers.",
-    "html": "<!-- This comment is expected by the docker HEALTHCHECK  -->",
+    "html": [
+      "<!-- This comment is expected by the docker HEALTHCHECK  -->"
+    ],
     "icon": "Docker.svg",
     "website": "https://www.docker.com/"
   },
@@ -1245,7 +1278,9 @@
     "headers": {
       "X-Powered-By": "Dokeos"
     },
-    "html": "(?:Portal <a[^>]+>Dokeos|@import \"[^\"]+dokeos_blue)",
+    "html": [
+      "(?:Portal <a[^>]+>Dokeos|@import \"[^\"]+dokeos_blue)"
+    ],
     "icon": "Dokeos.png",
     "implies": [
       "PHP",
@@ -1267,7 +1302,9 @@
     "cpe": "cpe:2.3:a:dokuwiki:dokuwiki:*:*:*:*:*:*:*:*",
     "description": "DokuWiki is a free open-source wiki software.",
     "icon": "DokuWiki.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "DOKU_TPL": "\\;confidence:50",
       "doku_edit_text_content": "\\;confidence:50"
@@ -1387,8 +1424,12 @@
     ],
     "description": "The Doppler Forms plugin allows you to create fully customised subscription forms that you can add to your website or blog.",
     "icon": "Doppler.svg",
-    "implies": "Doppler",
-    "requires": "WordPress",
+    "implies": [
+      "Doppler"
+    ],
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/doppler-form/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/doppler-form/"
   },
@@ -1398,7 +1439,9 @@
     ],
     "description": "The Doppler for WooCommerce plugin adds submit your WooCommerce customers and buyers to a Doppler List.",
     "icon": "Doppler.svg",
-    "implies": "Doppler",
+    "implies": [
+      "Doppler"
+    ],
     "requires": [
       "WordPress",
       "WooCommerce"
@@ -1415,7 +1458,9 @@
       "X-Dotclear-Static-Cache": ""
     },
     "icon": "Dotclear.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://dotclear.org"
   },
   "Dotdigital": {
@@ -1443,7 +1488,9 @@
     ],
     "description": "Dotdigital Chat is a smart, customisable widget that makes it easy for shoppers to communicate in real-time with members of your team.",
     "icon": "Dotdigital.svg",
-    "implies": "Dotdigital",
+    "implies": [
+      "Dotdigital"
+    ],
     "js": {
       "_ddgChatConfig.urlBase": "\\.dotdigital\\.com"
     },
@@ -1471,7 +1518,9 @@
     ],
     "description": "Doteasy Website Builder is a tool provided by Doteasy, a web hosting company that enables users to create and personalise their own websites without necessitating any technical knowledge or expertise in website design.",
     "icon": "Doteasy.svg",
-    "implies": "Doteasy",
+    "implies": [
+      "Doteasy"
+    ],
     "js": {
       "fsData.fs": "\\.dotezcdn\\.com"
     },
@@ -1588,7 +1637,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://www.download-monitor.com"
   },
   "Doxygen": {
@@ -1597,7 +1648,9 @@
     ],
     "cpe": "cpe:2.3:a:doxygen:doxygen:*:*:*:*:*:*:*:*",
     "description": "Doxygen is a documentation generator, a tool for writing software reference documentation.",
-    "html": "(?:<!-- Generated by Doxygen ([\\d.]+)|<link[^>]+doxygen\\.css)\\;version:\\1",
+    "html": [
+      "(?:<!-- Generated by Doxygen ([\\d.]+)|<link[^>]+doxygen\\.css)\\;version:\\1"
+    ],
     "icon": "Doxygen.png",
     "meta": {
       "generator": "Doxygen ([\\d.]+)\\;version:\\1"
@@ -1618,14 +1671,18 @@
       87
     ],
     "description": "Header Footer Code Manager by Draftpress is a easy interface to add snippets to the header or footer or above or below the content of your page.",
-    "html": "<!--[^>]*HFCM\\sby\\s99\\sRobots",
+    "html": [
+      "<!--[^>]*HFCM\\sby\\s99\\sRobots"
+    ],
     "icon": "Draftpress.png",
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://draftpress.com/products/header-footer-code-manager-pro/"
   },
   "Dragon": {
@@ -1637,7 +1694,9 @@
       "X-Powered-By": "Dragon Native ([\\d.]+)\\;version:\\1"
     },
     "icon": "Dragon.png",
-    "implies": "Apache HTTP Server",
+    "implies": [
+      "Apache HTTP Server"
+    ],
     "url": "^.*(?:\\.dgn)$",
     "website": "https://dragon-lang.org"
   },
@@ -1775,7 +1834,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "website": "https://apps.shopify.com/drop-a-hint-v2"
   },
@@ -1798,6 +1859,7 @@
     "cats": [
       95
     ],
+    "cpe": "cpe:2.3:a:dropbox:dropbox:*:*:*:*:*:*:*:*",
     "dns": {
       "TXT": "dropbox-domain-verification"
     },
@@ -1879,9 +1941,13 @@
       "X-Drupal-Cache": "",
       "X-Generator": "^Drupal(?:\\s([\\d.]+))?\\;version:\\1"
     },
-    "html": "<(?:link|style)[^>]+\"/sites/(?:default|all)/(?:themes|modules)/",
+    "html": [
+      "<(?:link|style)[^>]+\"/sites/(?:default|all)/(?:themes|modules)/"
+    ],
     "icon": "Drupal.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "Drupal": ""
     },
@@ -1900,9 +1966,13 @@
     "cpe": "cpe:2.3:a:commerceguys:commerce:*:*:*:*:*:*:*:*",
     "description": "Drupal Commerce is open-source ecommerce software that augments the content management system Drupal.",
     "dom": "aside#cart-offcanvas, form.commerce-order-item-add-to-cart-form,form.commerce-add-to-cart",
-    "html": "<[^>]+(?:id=\"block[_-]commerce[_-]cart[_-]cart|class=\"commerce[_-]product[_-]field)",
+    "html": [
+      "<[^>]+(?:id=\"block[_-]commerce[_-]cart[_-]cart|class=\"commerce[_-]product[_-]field)"
+    ],
     "icon": "Drupal Commerce.png",
-    "implies": "Drupal",
+    "implies": [
+      "Drupal"
+    ],
     "oss": true,
     "scriptSrc": [
       "/modules/(?:contrib/)?commerce/js/conditions\\.js\\;confidence:50",
@@ -1934,7 +2004,9 @@
     },
     "icon": "Drupal.svg",
     "oss": true,
-    "requires": "Drupal",
+    "requires": [
+      "Drupal"
+    ],
     "scriptSrc": [
       "/sites/(?!(?:default|all)/).*/(?:files|themes|modules)/"
     ],
@@ -2018,6 +2090,19 @@
     "scriptSrc": "\\.beracode\\.com/",
     "website": "https://duopana.com"
   },
+  "Dynamic Conditions": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Dynamic Conditions of Widgets is a cutting-edge WordPress plugin that extends the functionality of your website using conditional logic.",
+    "oss": true,
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": "dynamic-conditions-public\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/dynamicconditions"
+  },
   "Dynamic Yield": {
     "cats": [
       74,
@@ -2061,7 +2146,9 @@
     },
     "description": "Dynamicweb is a all-in-one platform for content management, ecommerce, digital marketing​, product information management (PIM) and integration.",
     "icon": "Dynamicweb.svg",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "meta": {
       "generator": "Dynamicweb ([\\d.]+)\\;version:\\1"
     },
@@ -2092,7 +2179,9 @@
     ],
     "description": "Dynatrace RUM is a AI powered, full stack, automated real user monutoring platform built by Dynatrace.",
     "icon": "Dynatrace.svg",
-    "implies": "Dynatrace",
+    "implies": [
+      "Dynatrace"
+    ],
     "pricing": [
       "recurring",
       "low"
@@ -2105,10 +2194,14 @@
     "cats": [
       103
     ],
-    "css": "\\.dyte-client-selfVideo",
+    "css": [
+      "\\.dyte-client-selfVideo"
+    ],
     "description": "Dyte is a developer-friendly, real-time audio and video communication software development kit (SDK).",
     "icon": "Dyte.svg",
-    "implies": "WebRTC",
+    "implies": [
+      "WebRTC"
+    ],
     "js": {
       "triggerDyteRecording": ""
     },
@@ -2132,7 +2225,9 @@
       }
     },
     "icon": "daisyUI.png",
-    "implies": "Tailwind CSS",
+    "implies": [
+      "Tailwind CSS"
+    ],
     "oss": true,
     "website": "https://daisyui.com"
   },

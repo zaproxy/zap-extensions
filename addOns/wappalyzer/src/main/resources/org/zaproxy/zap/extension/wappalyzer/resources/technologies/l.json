@@ -5,7 +5,9 @@
     ],
     "cpe": "cpe:2.3:a:lepton-cms:lepton:*:*:*:*:*:*:*:*",
     "icon": "LEPTON.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "LEPTON"
     },
@@ -105,7 +107,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/landingpress-wp/.+script\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://landingpress.net"
   },
@@ -116,7 +120,9 @@
     ],
     "description": "LangShop is an app for translating Shopify stores.",
     "icon": "LangShop.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "LangShop": "",
       "LangShopConfig": "",
@@ -141,7 +147,9 @@
     "cpe": "cpe:2.3:a:laravel:laravel:*:*:*:*:*:*:*:*",
     "description": "Laravel is a free, open-source PHP web framework.",
     "icon": "Laravel.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "Laravel": ""
     },
@@ -154,7 +162,9 @@
     ],
     "description": "Laravel Echo is a JavaScript library that makes it painless to subscribe to channels and listen for events broadcast by Laravel.",
     "icon": "Laravel Echo.svg",
-    "implies": "Laravel",
+    "implies": [
+      "Laravel"
+    ],
     "js": {
       "Echo.connector": "",
       "echo.connector": ""
@@ -269,7 +279,9 @@
     ],
     "description": "LayoutHub is an easy page builder that helps merchants quickly set up an online store with any kind of page type by using our library of pre-designed layouts and blocks.",
     "icon": "LayoutHub.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "freemium",
       "low",
@@ -342,7 +354,9 @@
       "payg",
       "poa"
     ],
-    "requires": "LiveChat",
+    "requires": [
+      "LiveChat"
+    ],
     "scriptSrc": "(?://|\\.)chatsystem\\.io/",
     "website": "https://www.leadchat.com"
   },
@@ -426,7 +440,9 @@
     ],
     "description": "Leaflet is the price testing platform for Shopify.",
     "icon": "Leaflet platform.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "payg"
     ],
@@ -465,7 +481,9 @@
         }
       }
     },
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "pricing": [
       "low",
       "onetime",
@@ -595,9 +613,13 @@
       18
     ],
     "description": "Leptos is a full-stack, isomorphic Rust web framework leveraging fine-grained reactivity to build declarative user interfaces.",
-    "html": "<!--hk=_.*",
+    "html": [
+      "<!--hk=_.*"
+    ],
     "icon": "Leptos.svg",
-    "implies": "Rust",
+    "implies": [
+      "Rust"
+    ],
     "js": {
       "__LEPTOS_PENDING_RESOURCES": "",
       "__LEPTOS_RESOLVED_RESOURCES": "",
@@ -611,7 +633,9 @@
     "cats": [
       19
     ],
-    "html": "<link[^>]+ rel=\"stylesheet/less\"",
+    "html": [
+      "<link[^>]+ rel=\"stylesheet/less\""
+    ],
     "icon": "Less.png",
     "website": "https://lesscss.org"
   },
@@ -673,7 +697,9 @@
     "pricing": [
       "poa"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "website": "https://level5advertising.com/websites/"
   },
@@ -747,7 +773,9 @@
       "Liferay-Portal": "[a-z\\s]+([\\d.]+)\\;version:\\1"
     },
     "icon": "Liferay.svg",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "js": {
       "Liferay": ""
     },
@@ -766,7 +794,9 @@
       "X-Lift-Version": "(.+)\\;version:\\1"
     },
     "icon": "Lift.png",
-    "implies": "Scala",
+    "implies": [
+      "Scala"
+    ],
     "website": "https://liftweb.net"
   },
   "LightMon Engine": {
@@ -776,9 +806,13 @@
     "cookies": {
       "lm_online": ""
     },
-    "html": "<!-- Lightmon Engine Copyright Lightmon",
+    "html": [
+      "<!-- Lightmon Engine Copyright Lightmon"
+    ],
     "icon": "LightMon Engine.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "LightMon Engine"
     },
@@ -821,7 +855,9 @@
       "mid",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/lightning(?:-pro)?/.+lightning\\.min\\.js(?:.+ver=([\\d\\.]+))?\\;version:\\1",
     "website": "https://lightning.vektor-inc.co.jp/en/"
   },
@@ -829,7 +865,9 @@
     "cats": [
       6
     ],
-    "html": "<!-- \\[START\\] 'blocks/head\\.rain' -->",
+    "html": [
+      "<!-- \\[START\\] 'blocks/head\\.rain' -->"
+    ],
     "icon": "Lightspeed.svg",
     "pricing": [
       "low"
@@ -900,7 +938,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://www.limitloginattempts.com"
   },
   "Linen": {
@@ -957,7 +997,9 @@
     "headers": {
       "Content-Security-Policy": "px\\.ads\\.linkedin\\.com"
     },
-    "html": "<img [^>]*src=\"[^/]*//[^/]*px\\.ads\\.linkedin\\.com",
+    "html": [
+      "<img [^>]*src=\"[^/]*//[^/]*px\\.ads\\.linkedin\\.com"
+    ],
     "icon": "Linkedin.svg",
     "website": "https://business.linkedin.com/marketing-solutions/ads"
   },
@@ -1105,7 +1147,9 @@
       "x-turbo-charged-by": "LiteSpeed"
     },
     "icon": "litespeed-cache.png",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/litespeed-cache/"
   },
   "Lithium": {
@@ -1115,9 +1159,13 @@
     "cookies": {
       "LithiumVisitor": ""
     },
-    "html": " <a [^>]+Powered by Lithium",
+    "html": [
+      " <a [^>]+Powered by Lithium"
+    ],
     "icon": "Lithium.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "LITHIUM": ""
     },
@@ -1129,7 +1177,9 @@
     ],
     "description": "Littledata provides a seamless connection between your Shopify site, marketing channels, and Google Analytics.",
     "icon": "Littledata.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "LittledataLayer": "",
       "LittledataLayer.version": "v([\\d\\.]+)\\;version:\\1"
@@ -1175,13 +1225,17 @@
     ],
     "description": "LiveCanvas is a Bootstrap 5 WordPress page builder.",
     "icon": "LiveCanvas.svg",
-    "implies": "Bootstrap",
+    "implies": [
+      "Bootstrap"
+    ],
     "pricing": [
       "low",
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/livecanvas/",
     "website": "https://livecanvas.com"
   },
@@ -1312,7 +1366,9 @@
       "X-Powered-By": "LiveStreet CMS"
     },
     "icon": "LiveStreet CMS.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "LIVESTREET_SECURITY_KEY": ""
     },
@@ -1322,6 +1378,7 @@
     "cats": [
       52
     ],
+    "cpe": "cpe:2.3:a:livezilla:livezilla:*:*:*:*:*:*:*:*",
     "description": "LiveZilla is a web-based live support platform.",
     "dom": "#lz_overlay_chat",
     "icon": "LiveZilla.png",
@@ -1342,7 +1399,9 @@
       15
     ],
     "description": "Livefyre is a platform that integrates with the social web to boost social interaction.",
-    "html": "<[^>]+(?:id|class)=\"livefyre",
+    "html": [
+      "<[^>]+(?:id|class)=\"livefyre"
+    ],
     "icon": "Livefyre.png",
     "js": {
       "FyreLoader": "",
@@ -1373,7 +1432,9 @@
     ],
     "description": "Livescale is a video platform that enables teams to transform content and ecommerce into a live shopping experience that reaches engages and monetizes audiences with LiveShopping.",
     "icon": "Livescale.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "mid",
       "recurring"
@@ -1388,9 +1449,13 @@
       19
     ],
     "description": "Livewire is a full-stack Laravel framework for building dynamic interfaces.",
-    "html": "<[^>]{1,512}\\bwire:",
+    "html": [
+      "<[^>]{1,512}\\bwire:"
+    ],
     "icon": "Livewire.svg",
-    "implies": "Laravel",
+    "implies": [
+      "Laravel"
+    ],
     "js": {
       "livewire": ""
     },
@@ -1407,7 +1472,9 @@
       "Server": "^LlamaLink"
     },
     "icon": "LlamaLink.png",
-    "implies": "Nginx",
+    "implies": [
+      "Nginx"
+    ],
     "pricing": [
       "payg",
       "recurring"
@@ -1434,7 +1501,9 @@
     ],
     "description": "Loadify is a shopify app which helps merchants deploy performance techniques like loading screen, transitions & lazy Load.",
     "icon": "Loadify.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "scriptSrc": "\\.loadifyapp\\.ninety9\\.dev",
     "website": "https://apps.shopify.com/loadify"
   },
@@ -1442,7 +1511,9 @@
     "cats": [
       25
     ],
-    "html": "<iframe[^>]+\\blocalfocus\\b",
+    "html": [
+      "<iframe[^>]+\\blocalfocus\\b"
+    ],
     "icon": "LocalFocus.png",
     "implies": [
       "Angular",
@@ -1481,7 +1552,9 @@
     ],
     "description": "Locksmith is a shopify app for adding access control capability on shopify stores.",
     "icon": "Locksmith.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "Locksmith": ""
     },
@@ -1499,7 +1572,9 @@
     ],
     "description": "Locomotive Scroll is an opinionated JavaScript library that provides smooth scrolling animations and advanced scroll interactions for web applications.",
     "icon": "Locomotive Scroll.png",
-    "implies": "Lenis",
+    "implies": [
+      "Lenis"
+    ],
     "js": {
       "LocomotiveScroll": ""
     },
@@ -1511,7 +1586,9 @@
     "cats": [
       1
     ],
-    "html": "<link[^>]*/sites/[a-z\\d]{24}/theme/stylesheets",
+    "html": [
+      "<link[^>]*/sites/[a-z\\d]{24}/theme/stylesheets"
+    ],
     "icon": "LocomotiveCMS.png",
     "implies": [
       "Ruby on Rails",
@@ -1525,7 +1602,9 @@
     ],
     "cpe": "cpe:2.3:a:lodash:lodash:*:*:*:*:*:*:*:*",
     "description": "Lodash is a JavaScript library which provides utility functions for common programming tasks using the functional programming paradigm.",
-    "excludes": "Underscore.js",
+    "excludes": [
+      "Underscore.js"
+    ],
     "icon": "Lodash.svg",
     "js": {
       "_.VERSION": "^(.+)$\\;confidence:0\\;version:\\1",
@@ -1900,7 +1979,9 @@
     ],
     "description": "Luana is a web framework that uses web browser APIs and features to make a cross-platform web app look like a Native one and bring the same experience.",
     "icon": "Luana.png",
-    "implies": "PWA",
+    "implies": [
+      "PWA"
+    ],
     "js": {
       "luanaframework": ""
     },
@@ -1917,7 +1998,9 @@
     "cpe": "cpe:2.3:a:apache:lucene:*:*:*:*:*:*:*:*",
     "description": "Lucene is a free and open-source search engine software library.",
     "icon": "Lucene.png",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "website": "https://lucene.apache.org/core/"
   },
   "Lucky Orange": {
@@ -1956,7 +2039,9 @@
     ],
     "description": "Lume is a static site generator based on Deno.",
     "icon": "Lume.svg",
-    "implies": "Deno",
+    "implies": [
+      "Deno"
+    ],
     "meta": {
       "generator": "^Lume\\sv([\\d\\.]+)$\\;version:\\1"
     },
@@ -2012,7 +2097,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/kale(?:-pro)?/",
     "website": "https://www.lyrathemes.com/kale"
   },
@@ -2074,13 +2161,16 @@
       "Server": "libwww-perl-daemon(?:/([\\d\\.]+))?\\;version:\\1"
     },
     "icon": "libwww-perl-daemon.png",
-    "implies": "Perl",
+    "implies": [
+      "Perl"
+    ],
     "website": "https://metacpan.org/pod/HTTP::Daemon"
   },
   "lighttpd": {
     "cats": [
       22
     ],
+    "cpe": "cpe:2.3:a:lighttpd:lighttpd:*:*:*:*:*:*:*:*",
     "description": "Lighttpd is an open-source web server optimised for speed-critical environment.",
     "headers": {
       "Server": "(?:L|l)ight(?:y)?(?:tpd)?(?:/([\\d\\.]+))?\\;version:\\1"
@@ -2119,7 +2209,9 @@
     ],
     "description": "The lite-youtube-embed technique renders the YouTube video inside the IFRAME tag only when the play button in clicked thus improving the core web vitals score of your website.",
     "dom": "lite-youtube",
-    "implies": "YouTube",
+    "implies": [
+      "YouTube"
+    ],
     "oss": true,
     "website": "https://github.com/paulirish/lite-youtube-embed"
   }

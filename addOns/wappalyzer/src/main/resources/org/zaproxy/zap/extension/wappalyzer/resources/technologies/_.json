@@ -15,7 +15,9 @@
       "X-Powered-CMS": "Bitrix Site Manager"
     },
     "icon": "1C-Bitrix.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "pricing": [
       "onetime",
       "mid",

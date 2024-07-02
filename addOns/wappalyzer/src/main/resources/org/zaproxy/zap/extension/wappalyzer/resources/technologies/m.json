@@ -38,7 +38,9 @@
     "headers": {
       "X-Powered-By": "MATORI.NET"
     },
-    "implies": "OpenResty",
+    "implies": [
+      "OpenResty"
+    ],
     "website": "https://matori.net"
   },
   "MDBootstrap": {
@@ -47,7 +49,9 @@
     ],
     "description": "MDBootstrap (Material Design for Bootstrap) is a complete UI package that can be integrated with other frameworks such as Angular, React, Vue, etc. It is used to design a fully responsive and mobile-friendly layout using various components, plugins, animation.",
     "icon": "MDBootstrap.png",
-    "implies": "Bootstrap",
+    "implies": [
+      "Bootstrap"
+    ],
     "js": {
       "mdb.ScrollSpy": ""
     },
@@ -68,8 +72,12 @@
       }
     },
     "icon": "MDBootstrap.png",
-    "implies": "MDBootstrap",
-    "requires": "WordPress",
+    "implies": [
+      "MDBootstrap"
+    ],
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://mdbgo.com/docs/projects/wordpress/"
   },
   "MDS Brand": {
@@ -123,11 +131,15 @@
     ],
     "description": "MGPanel has it all, a content management system that gives programmers the freedom to create professional web pages from scratch, also providing their clients with a self-managing platform.",
     "icon": "MGPanel.png",
-    "implies": "MySQL",
+    "implies": [
+      "MySQL"
+    ],
     "pricing": [
       "poa"
     ],
-    "requires": "PHP",
+    "requires": [
+      "PHP"
+    ],
     "saas": true,
     "scriptSrc": "\\.mgpanel\\.org/",
     "website": "https://mgpanel.org"
@@ -165,7 +177,9 @@
       "<input[^>]+id=\"ajaxSearch_input\\;confidence:20"
     ],
     "icon": "MODX.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "MODX": "",
       "MODX_MEDIA_PATH": ""
@@ -192,7 +206,7 @@
     "scriptSrc": "morphext(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://morphext.fyianlai.com/"
   },
-    "Morris.js": {
+  "Morris.js": {
     "cats": [
       59
     ],
@@ -206,7 +220,10 @@
     "website": "https://morrisjs.github.io/morris.js/"
   },
   "Moxie": {
-    "cats": [5, 68],
+    "cats": [
+      5,
+      68
+    ],
     "description": "Pollyfills for XHR2 and File API",
     "website": "https://github.com/moxiecode/moxie",
     "oss": true,
@@ -221,7 +238,9 @@
     "description": "MRW is a Spanish courier company specialised in express national and international shipping services.",
     "icon": "MRW.png",
     "requiresCategory": 6,
-    "text": "\\bMRW\\b",
+    "text": [
+      "\\bMRW\\b"
+    ],
     "website": "https://www.mrw.es"
   },
   "MSHOP": {
@@ -261,11 +280,15 @@
     "cats": [
       66
     ],
-    "css": "\\.MuiPaper-root",
+    "css": [
+      "\\.MuiPaper-root"
+    ],
     "description": "MUI(formerly Material UI) is a simple and customisable component library to build faster, beautiful, and more accessible React applications.",
     "dom": "style[data-meta='MuiPaper'], div.MuiBox-root, div.MuiPaper-root, style[data-meta='MuiButton']",
     "icon": "MUI.svg",
-    "implies": "React",
+    "implies": [
+      "React"
+    ],
     "oss": true,
     "pricing": [
       "freemium",
@@ -280,7 +303,9 @@
     ],
     "description": "Macaron is a high productive and modular web framework in Go.",
     "icon": "Macaron.png",
-    "implies": "Go",
+    "implies": [
+      "Go"
+    ],
     "website": "https://go-macaron.com"
   },
   "MachoThemes NewsMag": {
@@ -294,7 +319,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/Newsmag(?:-child)?/",
     "website": "https://www.machothemes.com/item/newsmag-lite"
   },
@@ -351,7 +378,9 @@
     "dom": "link[href*='MageWorx_SearchSuiteAutocomplete']",
     "icon": "MageWorx.svg",
     "oss": true,
-    "requires": "Magento",
+    "requires": [
+      "Magento"
+    ],
     "scriptSrc": "MageWorx_SearchSuiteAutocomplete",
     "website": "https://github.com/mageworx/search-suite-autocomplete"
   },
@@ -494,11 +523,15 @@
     ],
     "description": "MailChimp for WooCommerce gives you the ability to automatically sync customer purchase data to your MailChimp account.",
     "icon": "mailchimp.svg",
-    "implies": "MailChimp",
+    "implies": [
+      "MailChimp"
+    ],
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/mailchimp-for-woocommerce/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://mailchimp.com/integrations/woocommerce"
   },
@@ -510,7 +543,9 @@
     "description": "MailChimp for WordPress is an email marketing plugin that enables you to build subscriber lists.",
     "dom": "link[href*='/wp-content/plugins/mailchimp-for-wp/']",
     "icon": "MailChimp for WordPress.png",
-    "implies": "MailChimp",
+    "implies": [
+      "MailChimp"
+    ],
     "js": {
       "mc4wp": ""
     },
@@ -519,7 +554,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/mailchimp-for-wp/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.mc4wp.com"
   },
@@ -538,7 +575,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "mailoptin(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://mailoptin.io/"
   },
@@ -595,8 +634,12 @@
     ],
     "description": "The official MailerLite signup forms plugin makes it easy to grow your newsletter subscriber list from your WordPress blog or website. The plugin automatically integrates your WordPress form with your MailerLite email marketing account.",
     "icon": "MailerLite.svg",
-    "implies": "MailerLite",
-    "requires": "WordPress",
+    "implies": [
+      "MailerLite"
+    ],
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/woo-mailerlite/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://ru.wordpress.org/plugins/official-mailerlite-sign-up-forms/"
   },
@@ -733,7 +776,9 @@
     "cats": [
       1
     ],
-    "excludes": "Joomla",
+    "excludes": [
+      "Joomla"
+    ],
     "icon": "Mambo.png",
     "meta": {
       "generator": "Mambo"
@@ -760,9 +805,13 @@
     "description": "Mantine is an open-source UI framework and component library for React.",
     "dom": "style[data-emotion='mantine-global'], style[data-emotion='mantine']",
     "icon": "Mantine.svg",
-    "implies": "TypeScript",
+    "implies": [
+      "TypeScript"
+    ],
     "oss": true,
-    "requires": "React",
+    "requires": [
+      "React"
+    ],
     "website": "https://mantine.dev"
   },
   "MantisBT": {
@@ -773,9 +822,13 @@
     "description": "MantisBT is an open-source, web-based issue tracking system written in PHP with a MySQL database backend, designed to facilitate bug tracking and project management for software development teams.",
     "dom": "link[rel='stylesheet'][href*='/css/ace-mantis.css']",
     "icon": "MantisBT.png",
-    "implies": "MySQL",
+    "implies": [
+      "MySQL"
+    ],
     "oss": true,
-    "requires": "PHP",
+    "requires": [
+      "PHP"
+    ],
     "website": "https://www.mantisbt.org"
   },
   "ManyChat": {
@@ -833,7 +886,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://mappresspro.com"
   },
   "Mapbox GL JS": {
@@ -857,7 +912,9 @@
     "description": "Mapbox.js is a JavaScript library provided by Mapbox for working with interactive maps and geospatial data.",
     "dom": "link[href*='api.mapbox.com/']",
     "icon": "Mapbox.svg",
-    "implies": "Leaflet",
+    "implies": [
+      "Leaflet"
+    ],
     "oss": true,
     "scriptSrc": "api\\.mapbox\\.com/mapbox\\.js/v([\\d\\.]+)/\\;version:\\1",
     "scripts": "api\\.mapbox\\.com/mapbox\\.js/v([\\d\\.]+)/\\;version:\\1",
@@ -1076,7 +1133,9 @@
     "description": "Marko is HTML re-imagined as a language for building dynamic and reactive user interfaces.",
     "dom": "#data-marko-key, html[data-framework='marko']",
     "icon": "Marko.svg",
-    "implies": "Node.js",
+    "implies": [
+      "Node.js"
+    ],
     "js": {
       "markoComponent": "",
       "markoSections": "",
@@ -1111,8 +1170,12 @@
       }
     },
     "icon": "master_slider.png",
-    "implies": "Master Slider",
-    "requires": "WordPress",
+    "implies": [
+      "Master Slider"
+    ],
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/master-slider"
   },
   "Mastercard": {
@@ -1171,7 +1234,9 @@
       66
     ],
     "description": "Material Design Lite is a library of components for web developers.",
-    "html": "<link[^>]* href=\"[^\"]*material(?:\\.[\\w]+-[\\w]+)?(?:\\.min)?\\.css",
+    "html": [
+      "<link[^>]* href=\"[^\"]*material(?:\\.[\\w]+-[\\w]+)?(?:\\.min)?\\.css"
+    ],
     "icon": "Material Design Lite.png",
     "js": {
       "MaterialIconToggle": ""
@@ -1257,7 +1322,9 @@
       2
     ],
     "cpe": "cpe:2.3:a:jenkins:mattermost:*:*:*:*:*:*:*:*",
-    "html": "<noscript> To use Mattermost, please enable JavaScript\\. </noscript>",
+    "html": [
+      "<noscript> To use Mattermost, please enable JavaScript\\. </noscript>"
+    ],
     "icon": "mattermost.png",
     "implies": [
       "Go",
@@ -1315,7 +1382,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "(?:max)?megamenu(?:-pro)?(?:\\/assets)?(?:\\/public)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://www.megamenu.com/"
   },
@@ -1356,7 +1425,9 @@
       1
     ],
     "icon": "MaxSite CMS.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "MaxSite CMS"
     },
@@ -1457,7 +1528,9 @@
       "<a[^>]+/Special:WhatLinksHere/"
     ],
     "icon": "MediaWiki.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "mw.util.toggleToc": "",
       "wgTitle": "",
@@ -1492,7 +1565,9 @@
       "X-Powered-By": "^Medium$"
     },
     "icon": "Medium.svg",
-    "implies": "Node.js",
+    "implies": [
+      "Node.js"
+    ],
     "scriptSrc": "medium\\.com",
     "url": "^https?://(?:www\\.)?medium\\.com",
     "website": "https://medium.com"
@@ -1501,7 +1576,9 @@
     "cats": [
       5
     ],
-    "html": "(?:<iframe id=\"meebo-iframe\"|Meebo\\('domReady'\\))",
+    "html": [
+      "(?:<iframe id=\"meebo-iframe\"|Meebo\\('domReady'\\))"
+    ],
     "icon": "Meebo.png",
     "website": "https://www.meebo.com"
   },
@@ -1563,7 +1640,9 @@
     "description": "Meks Simple Flickr Widget is a WordPress plugin created by Meks. This plugin is designed to help WordPress website owners easily integrate Flickr photo streams into their websites.",
     "dom": "link[href*='/wp-content/plugins/meks-simple-flickr-widget/'], link#meks-flickr-widget-css",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/meks-simple-flickr-widget"
   },
   "Melis Platform": {
@@ -1699,7 +1778,9 @@
     "cats": [
       25
     ],
-    "html": "<div [^>]*class=[\"']mermaid[\"']>\\;confidence:90",
+    "html": [
+      "<div [^>]*class=[\"']mermaid[\"']>\\;confidence:90"
+    ],
     "js": {
       "mermaid": ""
     },
@@ -1714,7 +1795,9 @@
     "description": "The Mesmerize Companion is a WordPress plugin that enhances the Mesmerize theme by adding drag-and-drop page builder functionality.",
     "dom": "link[href*='/wp-content/plugins/mesmerize-companion/'], link#companion-bundle-css",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "mesmerize-companion\\/theme-data\\/mesmerize\\/assets\\/js\\/companion(?:\\.bundle)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/mesmerize-companion"
   },
@@ -1730,7 +1813,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/ml-slider(?:-pro)?/",
     "website": "https://www.metaslider.com"
   },
@@ -1739,7 +1824,9 @@
       12,
       18
     ],
-    "html": "<link[^>]+__meteor-css__",
+    "html": [
+      "<link[^>]+__meteor-css__"
+    ],
     "icon": "Meteor.png",
     "implies": [
       "MongoDB",
@@ -1755,7 +1842,9 @@
     "cats": [
       1
     ],
-    "html": "<!-- Methode uuid: \"[a-f\\d]+\" ?-->",
+    "html": [
+      "<!-- Methode uuid: \"[a-f\\d]+\" ?-->"
+    ],
     "icon": "Methode.png",
     "meta": {
       "eomportal-id": "\\d+",
@@ -1829,7 +1918,9 @@
     "icon": "Metronet Profile Picture.png",
     "dom": "link[href*='/wp-content/plugins/metronet-profile-picture/']",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "metronet-profile-picture(?:\\/js)?(?:\\/mpp-frontend)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/metronet-profile-picture/"
   },
@@ -1880,7 +1971,9 @@
       "X-Powered-By": "^ASP\\.NET",
       "set-cookie": "\\.AspNetCore"
     },
-    "html": "<input[^>]+name=\"__VIEWSTATE",
+    "html": [
+      "<input[^>]+name=\"__VIEWSTATE"
+    ],
     "icon": "Microsoft ASP.NET.svg",
     "url": "\\.aspx?(?:$|\\?)",
     "website": "https://www.asp.net"
@@ -1955,7 +2048,9 @@
     ],
     "description": "Microsoft Azure Maps is a cloud-based mapping and geospatial platform provided by Microsoft.",
     "icon": "Microsoft.svg",
-    "implies": "Azure",
+    "implies": [
+      "Azure"
+    ],
     "meta": {
       "enabled-features": "GEOJSON_AZURE_MAPS"
     },
@@ -2005,7 +2100,9 @@
     ],
     "cpe": "cpe:2.3:a:microsoft:excel:*:*:*:*:*:*:*:*",
     "description": "Microsoft Excel is an electronic spreadsheet program used for storing, organizing, and manipulating data.",
-    "html": "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:excel\"|<!--\\s*(?:START|END) OF OUTPUT FROM EXCEL PUBLISH AS WEB PAGE WIZARD\\s*-->|<div [^>]*x:publishsource=\"?Excel\"?)",
+    "html": [
+      "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:excel\"|<!--\\s*(?:START|END) OF OUTPUT FROM EXCEL PUBLISH AS WEB PAGE WIZARD\\s*-->|<div [^>]*x:publishsource=\"?Excel\"?)"
+    ],
     "icon": "Microsoft Excel.svg",
     "meta": {
       "ProgId": "^Excel\\.",
@@ -2032,7 +2129,9 @@
     ],
     "cpe": "cpe:2.3:a:microsoft:powerpoint:*:*:*:*:*:*:*:*",
     "description": "Microsoft PowerPoint is a tool to create presentations using simple drag and drop tools.",
-    "html": "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:powerpoint\"|<link rel=\"?Presentation-XML\"? href=\"?[^\"]+\\.xml\"?>|<o:PresentationFormat>[^<]+</o:PresentationFormat>[^!]+<o:Slides>\\d+</o:Slides>(?:[^!]+<o:Version>([\\d.]+)</o:Version>)?)\\;version:\\1",
+    "html": [
+      "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:powerpoint\"|<link rel=\"?Presentation-XML\"? href=\"?[^\"]+\\.xml\"?>|<o:PresentationFormat>[^<]+</o:PresentationFormat>[^!]+<o:Slides>\\d+</o:Slides>(?:[^!]+<o:Version>([\\d.]+)</o:Version>)?)\\;version:\\1"
+    ],
     "icon": "Microsoft PowerPoint.svg",
     "meta": {
       "ProgId": "^PowerPoint\\.",
@@ -2046,7 +2145,9 @@
     ],
     "cpe": "cpe:2.3:a:microsoft:publisher:*:*:*:*:*:*:*:*",
     "description": "Microsoft Publisher is an application that allows you to create professional documents such as newsletters, postcards, flyers, invitations, brochures.",
-    "html": "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:publisher\"|<!--[if pub]><xml>)",
+    "html": [
+      "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:publisher\"|<!--[if pub]><xml>)"
+    ],
     "icon": "Microsoft Publisher.svg",
     "meta": {
       "ProgId": "^Publisher\\.",
@@ -2102,7 +2203,9 @@
     ],
     "cpe": "cpe:2.3:a:microsoft:word:*:*:*:*:*:*:*:*",
     "description": "MS Word is a word-processing program used primarily for creating documents.",
-    "html": "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:word\"|<w:WordDocument>|<div [^>]*class=\"?WordSection1[\" >]|<style[^>]*>[^>]*@page WordSection1)",
+    "html": [
+      "(?:<html [^>]*xmlns:w=\"urn:schemas-microsoft-com:office:word\"|<w:WordDocument>|<div [^>]*class=\"?WordSection1[\" >]|<style[^>]*>[^>]*@page WordSection1)"
+    ],
     "icon": "Microsoft Word.svg",
     "meta": {
       "ProgId": "^Word\\.",
@@ -2170,7 +2273,9 @@
     ],
     "description": "Milestone CMS is a SEO-first CMS that offers built-in advanced schema markups and Core Web Vitals conformance for improved search performance.",
     "icon": "Milestone.svg",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "meta": {
       "generator": "^Milestone\\sCMS\\s([\\d\\.]+)$\\;version:\\1"
     },
@@ -2196,7 +2301,9 @@
     ],
     "description": "MinMaxify is an app that allows Shopify store owners to set minimum and maximum values for customer orders built by Intillium.",
     "icon": "MinMaxify.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "minMaxify.checkLimits": "",
       "minMaxify.shop": ""
@@ -2263,7 +2370,9 @@
     "dom": "link[href*='/wp-content/plugins/miniorange-login-openid/'], #js-cookie-script-js, #mo-social-login-script-js",
     "icon": "MiniOrange Login.png",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "miniorange-login-openid\\/includes\\/js(?:\\/mo_openid_jquery)?(?:\\/mo-openid-social_login)?(?:\\/social_login)?(?:\\/jquery)?(?:\\.cookie)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/miniorange-login-openid"
   },
@@ -2274,7 +2383,9 @@
     "headers": {
       "Server": "MiniServ/([\\d\\.]+)\\;version:\\1"
     },
-    "implies": "Webmin",
+    "implies": [
+      "Webmin"
+    ],
     "oss": true,
     "website": "https://github.com/webmin/webmin/blob/master/miniserv.pl"
   },
@@ -2329,7 +2440,9 @@
       2
     ],
     "description": "Misskey is a distributed microblogging platform.",
-    "html": "<!-- Thank you for using Misskey! @syuilo -->",
+    "html": [
+      "<!-- Thank you for using Misskey! @syuilo -->"
+    ],
     "icon": "Misskey.svg",
     "meta": {
       "application-name": "Misskey"
@@ -2449,7 +2562,9 @@
     ],
     "description": "MkDocs is a static site generator, used for building project documentation.",
     "icon": "mkdocs.png",
-    "implies": "Python",
+    "implies": [
+      "Python"
+    ],
     "meta": {
       "generator": "^mkdocs-([\\d.]+)\\;version:\\1"
     },
@@ -2608,9 +2723,13 @@
       1,
       6
     ],
-    "html": "<link[^>]+href=[\"'][^\"]+mg-(?:core|plugins|templates)/",
+    "html": [
+      "<link[^>]+href=[\"'][^\"]+mg-(?:core|plugins|templates)/"
+    ],
     "icon": "Moguta.CMS.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "scriptSrc": "mg-(?:core|plugins|templates)/",
     "website": "https://moguta.ru"
   },
@@ -2624,7 +2743,9 @@
     "cpe": "cpe:2.3:a:moinmo:moinmoin:*:*:*:*:*:*:*:*",
     "description": "MoinMoin is a wiki engine implemented in Python.",
     "icon": "MoinMoin.png",
-    "implies": "Python",
+    "implies": [
+      "Python"
+    ],
     "js": {
       "show_switch2gui": ""
     },
@@ -2640,7 +2761,9 @@
       "x-powered-by": "mojolicious"
     },
     "icon": "Mojolicious.png",
-    "implies": "Perl",
+    "implies": [
+      "Perl"
+    ],
     "website": "https://mojolicio.us"
   },
   "Mokka": {
@@ -2672,7 +2795,9 @@
       16
     ],
     "cpe": "cpe:2.3:a:acquia:mollom:*:*:*:*:*:*:*:*",
-    "html": "<img[^>]+\\.mollom\\.com",
+    "html": [
+      "<img[^>]+\\.mollom\\.com"
+    ],
     "icon": "Mollom.png",
     "scriptSrc": "mollom(?:\\.min)?\\.js",
     "website": "https://mollom.com"
@@ -2682,7 +2807,9 @@
       59
     ],
     "icon": "Moment.js.svg",
-    "implies": "Moment.js",
+    "implies": [
+      "Moment.js"
+    ],
     "scriptSrc": "moment-timezone(?:-data)?(?:\\.min)?\\.js",
     "website": "https://momentjs.com/timezone/"
   },
@@ -2704,7 +2831,9 @@
     "cats": [
       24
     ],
-    "css": "\\.monaco-editor",
+    "css": [
+      "\\.monaco-editor"
+    ],
     "description": "Monaco Editor is the code editor that powers VS Code. Monaco Editor is a tool in the text editor category of a tech stack.",
     "icon": "Microsoft.svg",
     "js": {
@@ -2722,7 +2851,9 @@
     "description": "Mondial Relay is a parcel shipping and delivery service in Europe.",
     "icon": "Mondial Relay.svg",
     "requiresCategory": 6,
-    "text": "\\bMondial Relay\\b",
+    "text": [
+      "\\bMondial Relay\\b"
+    ],
     "website": "https://www.mondialrelay.com"
   },
   "Mondo Media": {
@@ -2766,7 +2897,9 @@
     "js": {
       "wc_moneris_hosted_tokenization_params": ""
     },
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/woocommerce-gateway-moneris/",
     "website": "https://wordpress.org/plugins/wc-moneris-payment-gateway"
   },
@@ -2807,7 +2940,9 @@
       "Server": "Mongrel"
     },
     "icon": "Mongrel.png",
-    "implies": "Ruby",
+    "implies": [
+      "Ruby"
+    ],
     "website": "https://mongrel2.org"
   },
   "Monkey HTTP Server": {
@@ -2836,7 +2971,9 @@
       1
     ],
     "icon": "Mono.net.png",
-    "implies": "Matomo Analytics",
+    "implies": [
+      "Matomo Analytics"
+    ],
     "js": {
       "_monoTracker": ""
     },
@@ -2866,6 +3003,7 @@
       87,
       10
     ],
+    "cpe": "cpe:2.3:a:monsterinsights:monsterinsights:*:*:*:*:*:wordpress:*:*",
     "description": "MonsterInsights is the most popular Google Analytics plugin for WordPress.",
     "icon": "MonsterInsights.png",
     "js": {
@@ -2877,7 +3015,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/google-analytics-for-wordpress/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.monsterinsights.com"
   },
@@ -2885,6 +3025,7 @@
     "cats": [
       12
     ],
+    "cpe": "cpe:2.3:a:mootools:mootools:*:*:*:*:*:*:*:*",
     "icon": "MooTools.png",
     "js": {
       "MooTools": "",
@@ -2903,9 +3044,13 @@
     },
     "cpe": "cpe:2.3:a:moodle:moodle:*:*:*:*:*:*:*:*",
     "description": "Moodle is a free and open-source Learning Management System (LMS) written in PHP and distributed under the GNU General Public License.",
-    "html": "<img[^>]+moodlelogo",
+    "html": [
+      "<img[^>]+moodlelogo"
+    ],
     "icon": "Moodle.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "M.core": "",
       "Y.Moodle": ""
@@ -2937,7 +3082,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "website": "https://www.mooveagency.com/wordpress/gdpr-cookie-compliance-plugin"
   },
@@ -2986,7 +3133,10 @@
     "cats": [
       1
     ],
-    "html": "<link [^>]*href=\"[^>]*\\/mt-content\\/[^>]*\\.css",
+    "cpe": "cpe:2.3:a:motocms:motocms:*:*:*:*:*:*:*:*",
+    "html": [
+      "<link [^>]*href=\"[^>]*\\/mt-content\\/[^>]*\\.css"
+    ],
     "icon": "MotoCMS.svg",
     "implies": [
       "PHP",
@@ -3064,7 +3214,9 @@
     ],
     "description": "Mulberry is a developer of personalised product protection solutions used to help brands unlock additional revenue.",
     "icon": "Mulberry.svg",
-    "implies": "Cart Functionality",
+    "implies": [
+      "Cart Functionality"
+    ],
     "js": {
       "mulberry.cta": "",
       "mulberryShop": ""
@@ -3084,7 +3236,9 @@
     "cpe": "cpe:2.3:a:blueriver:muracms:*:*:*:*:*:*:*:*",
     "description": "Mura CMS is the cloud-based, API driven, content management platform.",
     "icon": "Mura CMS.svg",
-    "implies": "Adobe ColdFusion",
+    "implies": [
+      "Adobe ColdFusion"
+    ],
     "meta": {
       "generator": "Mura\\sCMS\\s([\\d\\.]+)\\;version:\\1"
     },
@@ -3125,7 +3279,9 @@
     "description": "My Flying Box is an international parcel shipping company.",
     "icon": "My Flying Box.svg",
     "requiresCategory": 6,
-    "text": "\\bMy Flying Box\\b",
+    "text": [
+      "\\bMy Flying Box\\b"
+    ],
     "website": "https://www.myflyingbox.com/"
   },
   "My Food Link": {
@@ -3155,7 +3311,9 @@
     "cpe": "cpe:2.3:a:mybb:mybb:*:*:*:*:*:*:*:*",
     "description": "MyBB is a free and open-source forum software written in PHP.",
     "icon": "MyBB.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "MyBB": "",
       "MyBBEditor": ""
@@ -3257,7 +3415,9 @@
       51
     ],
     "description": "MyWebsite is website builder designed for easy editing and fast results.",
-    "excludes": "Jimdo",
+    "excludes": [
+      "Jimdo"
+    ],
     "icon": "MyWebsite.svg",
     "js": {
       "SystemID": "^.*1AND1.*$\\;version:8"
@@ -3278,7 +3438,9 @@
     ],
     "description": "MyWebsite Creator is website builder designed for easy editing and fast results.",
     "icon": "MyWebsite.svg",
-    "implies": "Duda",
+    "implies": [
+      "Duda"
+    ],
     "pricing": [
       "low",
       "recurring"
@@ -3357,7 +3519,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/news-portal(?:-pro)?/.+np-custom-scripts\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://mysterythemes.com/wp-themes/news-portal"
   },
@@ -3367,13 +3531,17 @@
     ],
     "description": "News Portal Lite is child theme of News Portal ultimate magazine WordPress theme by MysteryThemes.",
     "dom": "link[href*='/wp-content/themes/news-portal-lite/']",
-    "excludes": "MysteryThemes News Portal",
+    "excludes": [
+      "MysteryThemes News Portal"
+    ],
     "icon": "MysteryThemes.png",
     "pricing": [
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://mysterythemes.com/wp-themes/news-portal-lite"
   },
   "MysteryThemes News Portal Mag": {
@@ -3382,12 +3550,16 @@
     ],
     "description": "News Portal Mag is child theme of News Portal ultimate magazine WordPress theme by MysteryThemes.",
     "dom": "link[href*='/wp-content/themes/news-portal-mag/']",
-    "excludes": "MysteryThemes News Portal",
+    "excludes": [
+      "MysteryThemes News Portal"
+    ],
     "icon": "MysteryThemes.png",
     "pricing": [
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://mysterythemes.com/wp-themes/news-portal-mag"
   },
   "mParticle": {
@@ -3435,7 +3607,9 @@
       59
     ],
     "description": "metisMenu is a collapsible jQuery menu plugin.",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "MetisMenu": "",
       "metisMenu": ""
@@ -3515,7 +3689,9 @@
       "Server": "mod_auth_pam(?:/([\\d\\.]+))?\\;version:\\1"
     },
     "icon": "Apache.svg",
-    "implies": "Apache HTTP Server",
+    "implies": [
+      "Apache HTTP Server"
+    ],
     "website": "https://pam.sourceforge.net/mod_auth_pam"
   },
   "mod_dav": {
@@ -3527,7 +3703,9 @@
       "Server": "\\b(?:mod_)?DAV\\b(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "Apache.svg",
-    "implies": "Apache HTTP Server",
+    "implies": [
+      "Apache HTTP Server"
+    ],
     "website": "https://webdav.org/mod_dav"
   },
   "mod_fastcgi": {
@@ -3539,7 +3717,9 @@
       "Server": "mod_fastcgi(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "Apache.svg",
-    "implies": "Apache HTTP Server",
+    "implies": [
+      "Apache HTTP Server"
+    ],
     "website": "https://www.fastcgi.com/mod_fastcgi/docs/mod_fastcgi.html"
   },
   "mod_jk": {
@@ -3631,7 +3811,9 @@
       "Server": "mod_ssl(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "mod_ssl.png",
-    "implies": "Apache HTTP Server",
+    "implies": [
+      "Apache HTTP Server"
+    ],
     "website": "https://modssl.org"
   },
   "mod_wsgi": {

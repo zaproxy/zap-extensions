@@ -41,7 +41,9 @@
       }
     },
     "icon": "GLPI.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "glpiUnsavedFormChanges": ""
     },
@@ -79,7 +81,9 @@
       "<div[^>]+govuk-box-highlight\\;confidence:25"
     ],
     "icon": "govuk.png",
-    "implies": "GOV.UK Toolkit",
+    "implies": [
+      "GOV.UK Toolkit"
+    ],
     "website": "https://github.com/alphagov/govuk_elements/"
   },
   "GOV.UK Frontend": {
@@ -143,7 +147,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/gpt3-ai-content-generator/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://gptaipower.com"
   },
@@ -175,7 +181,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://gtranslate.io"
   },
   "GTranslate app": {
@@ -191,7 +199,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "scriptSrc": "gtranslate\\.io/shopify/",
     "website": "https://apps.shopify.com/multilingual-shop-by-gtranslate"
   },
@@ -199,7 +209,9 @@
     "cats": [
       1
     ],
-    "html": "<!--\\s+Powered by GX",
+    "html": [
+      "<!--\\s+Powered by GX"
+    ],
     "icon": "GX WebManager.png",
     "meta": {
       "generator": "GX WebManager(?: ([\\d.]+))?\\;version:\\1"
@@ -227,9 +239,13 @@
       6
     ],
     "description": "Gambio is an all-in-one shopping cart solution for small to medium sized businesses.",
-    "html": "(?:<link[^>]* href=\"templates/gambio/|<a[^>]content\\.php\\?coID=\\d|<!-- gambio eof -->|<!--[\\s=]+Shopsoftware by Gambio GmbH \\(c\\))",
+    "html": [
+      "(?:<link[^>]* href=\"templates/gambio/|<a[^>]content\\.php\\?coID=\\d|<!-- gambio eof -->|<!--[\\s=]+Shopsoftware by Gambio GmbH \\(c\\))"
+    ],
     "icon": "Gambio.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "gambio": ""
     },
@@ -325,7 +341,9 @@
     ],
     "description": "GemPages is a powerful Shopify landing page buidler that empowers SMEs, agency, and freelancers to build their brands and sell online.",
     "icon": "GemPages.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "GEMSTORE": "",
       "GEMVENDOR": ""
@@ -342,7 +360,9 @@
     "cats": [
       10
     ],
-    "html": "<a [^>]*onclick=\"gemius_hit",
+    "html": [
+      "<a [^>]*onclick=\"gemius_hit"
+    ],
     "icon": "Gemius.png",
     "js": {
       "gemius_hit": "",
@@ -387,7 +407,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://generateblocks.com"
   },
   "GeneratePress": {
@@ -420,7 +442,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "themes\\/generatepress(?:(?:%20)?_?child)?(?:\\/assets)?(?:\\/inc)?(?:\\/js)?(?:\\/accordion){0,2}(?:\\/lity)?(?:\\/menu)?(?:\\/owl)?(?:\\/slick){0,2}(?:\\/vs(?:loadmore)?(?:postviews)?)?(?:\\/back-to-top)?(?:\\/keen-slider)?(?:\\/tab-img)?(?:-init)?(?:\\.carousel)?(?:\\/jquery)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://generatepress.com"
   },
@@ -430,12 +454,16 @@
     ],
     "description": "GP Premium is a premium add-on plugin for the GeneratePress WordPress theme.",
     "icon": "generatepress.png",
-    "implies": "GeneratePress",
+    "implies": [
+      "GeneratePress"
+    ],
     "pricing": [
       "onetime",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "scriptSrc": "wp-content\\/plugins\\/gp-premium(?:\\/menu-plus)?(?:\\/sections)?\\/functions\\/js(?:\\/offside)?(?:\\/parallax)?(?:\\/sticky)?(?:\\.min)?(?:-((?:\\d+\\.)+\\d+))?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
     "website": "https://docs.generatepress.com/article/installing-gp-premium/"
@@ -450,7 +478,9 @@
       "genesisBlocksShare": "",
       "genesis_responsive_menu": ""
     },
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/genesis/lib/js/",
     "website": "https://www.studiopress.com/themes/genesis"
   },
@@ -620,7 +650,9 @@
     ],
     "cpe": "cpe:2.3:a:get-simple:getsimple_cms:*:*:*:*:*:*:*:*",
     "icon": "GetSimple CMS.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "GetSimple"
     },
@@ -708,7 +740,9 @@
       "X-Ghost-Cache-Status": ""
     },
     "icon": "Ghost.svg",
-    "implies": "Node.js",
+    "implies": [
+      "Node.js"
+    ],
     "meta": {
       "generator": "Ghost(?:\\s([\\d.]+))?\\;version:\\1"
     },
@@ -755,7 +789,9 @@
       "recurring",
       "payg"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "assets/js/giftship\\.([\\d\\.]+)\\.js\\;version:\\1",
     "website": "https://gist-apps.com/giftship"
@@ -830,7 +866,9 @@
       47
     ],
     "icon": "GitLab CI.png",
-    "implies": "Ruby on Rails",
+    "implies": [
+      "Ruby on Rails"
+    ],
     "meta": {
       "description": "GitLab CI/CD is a tool built into GitLab for software development through continuous methodologies."
     },
@@ -849,7 +887,9 @@
       "<div class=\"ui left\">\\n\\s+© Gitea Version: ([\\d.]+)\\;version:\\1"
     ],
     "icon": "gitea.svg",
-    "implies": "Go",
+    "implies": [
+      "Go"
+    ],
     "meta": {
       "keywords": "^go,git,self-hosted,gitea$"
     },
@@ -859,7 +899,9 @@
     "cats": [
       47
     ],
-    "html": "Powered by <a href=\"https://gerrit\\.googlesource\\.com/gitiles/\">Gitiles<",
+    "html": [
+      "Powered by <a href=\"https://gerrit\\.googlesource\\.com/gitiles/\">Gitiles<"
+    ],
     "implies": [
       "Java",
       "git"
@@ -912,7 +954,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/give/.+give\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://givewp.com"
   },
@@ -954,7 +998,9 @@
       "Server": "GlassFish(?: Server)?(?: Open Source Edition)?(?: ?/?([\\d.]+))?\\;version:\\1"
     },
     "icon": "GlassFish.png",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "website": "https://glassfish.java.net"
   },
   "Glassbox": {
@@ -1071,7 +1117,9 @@
     ],
     "description": "Also Bought is a conversion Shopify app by Globo.",
     "icon": "Globo apps.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "freemium",
       "low",
@@ -1087,7 +1135,9 @@
     ],
     "description": "Globo Color Swatch app gives you an easy-to-use tool to display product variants on both collection page, homepage and product page creatively as a means to enhance customers' experience and stimulate them to purchase.",
     "icon": "Globo apps.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "freemium"
     ],
@@ -1102,7 +1152,9 @@
     ],
     "description": "Form Builder is a Shopify form builder app for contact form built by Globo.",
     "icon": "Globo apps.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "freemium",
       "low",
@@ -1118,7 +1170,9 @@
     ],
     "description": "Globo Pre-Order is a Shopify app for building pre-order functionality on Shopify stores.",
     "icon": "Globo apps.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "GloboPreorderParams": ""
     },
@@ -1166,7 +1220,9 @@
       17
     ],
     "description": "Glyphicons are icon fonts which you can use in your web projects.",
-    "html": "(?:<link[^>]* href=[^>]+glyphicons(?:\\.min)?\\.css|<img[^>]* src=[^>]+glyphicons)",
+    "html": [
+      "(?:<link[^>]* href=[^>]+glyphicons(?:\\.min)?\\.css|<img[^>]* src=[^>]+glyphicons)"
+    ],
     "icon": "Glyphicons.png",
     "website": "https://glyphicons.com"
   },
@@ -1326,7 +1382,9 @@
     "dom": "link[href*='/wp-content/plugins/coblocks/']",
     "icon": "GoDaddy.svg",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/coblocks/",
     "website": "https://github.com/godaddy-wordpress/coblocks"
   },
@@ -1345,9 +1403,13 @@
     ],
     "description": "GoDaddy Escapade is a GoDaddy Primer child theme with a unique sidebar navigation.",
     "dom": "link[href*='/wp-content/themes/escapade/']",
-    "excludes": "GoDaddy Primer",
+    "excludes": [
+      "GoDaddy Primer"
+    ],
     "icon": "GoDaddy.svg",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://github.com/godaddy-wordpress/primer-child-escapade"
   },
   "GoDaddy Go": {
@@ -1361,7 +1423,9 @@
       "goFrontend.openMenuOnHover": ""
     },
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/go/.+frontend\\.min\\.js(?:.+ver=([\\d\\.]+))?\\;version:\\1",
     "website": "https://github.com/godaddy-wordpress/go"
   },
@@ -1371,9 +1435,13 @@
     ],
     "description": "GoDaddy Lyrical is a GoDaddy Primer child theme with a focus on photography and beautiful fonts.",
     "dom": "link[href*='/wp-content/themes/lyrical/']",
-    "excludes": "GoDaddy Primer",
+    "excludes": [
+      "GoDaddy Primer"
+    ],
     "icon": "GoDaddy.svg",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://github.com/godaddy-wordpress/primer-child-lyrical"
   },
   "GoDaddy Online Store": {
@@ -1394,7 +1462,9 @@
     "description": "GoDaddy Primer is a powerful theme that brings clarity to your content in a fresh design. This is the parent for all themes in the GoDaddy Primer theme family.",
     "dom": "link[href*='/wp-content/themes/primer/']",
     "icon": "GoDaddy.svg",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/primer/.+navigation\\.min\\.js(?:.+ver=([\\d\\.]+))?\\;version:\\1",
     "website": "https://github.com/godaddy-wordpress/primer"
   },
@@ -1404,9 +1474,13 @@
     ],
     "description": "GoDaddy Uptown Style is a GoDaddy Primer child theme with elegance and class.",
     "dom": "link[href*='/wp-content/themes/uptown-style/']",
-    "excludes": "GoDaddy Primer",
+    "excludes": [
+      "GoDaddy Primer"
+    ],
     "icon": "GoDaddy.svg",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://github.com/godaddy-wordpress/primer-child-uptownstyle"
   },
   "GoDaddy Website Builder": {
@@ -1604,7 +1678,9 @@
     ],
     "description": "Google Ads Conversion Tracking is a free tool that shows you what happens after a customer interacts with your ads.",
     "icon": "Google.svg",
-    "implies": "Google Ads",
+    "implies": [
+      "Google Ads"
+    ],
     "js": {
       "google_trackConversion": ""
     },
@@ -1713,7 +1789,9 @@
       "Via": "^1\\.1 google$"
     },
     "icon": "google-cloud-cdn.svg",
-    "implies": "Google Cloud",
+    "implies": [
+      "Google Cloud"
+    ],
     "website": "https://cloud.google.com/cdn"
   },
   "Google Cloud Storage": {
@@ -1725,7 +1803,9 @@
       "x-goog-storage-class": "^\\w+$"
     },
     "icon": "google-cloud-storage.svg",
-    "implies": "Google Cloud",
+    "implies": [
+      "Google Cloud"
+    ],
     "website": "https://cloud.google.com/storage"
   },
   "Google Cloud Trace": {
@@ -1737,7 +1817,9 @@
       "x-cloud-trace-context": ""
     },
     "icon": "google-cloud-trace.svg",
-    "implies": "Google Cloud",
+    "implies": [
+      "Google Cloud"
+    ],
     "website": "https://cloud.google.com/trace"
   },
   "Google Code Prettify": {
@@ -1928,9 +2010,13 @@
     "description": "Google Tag Manager for WordPress plugin places the GTM container code snippets onto your wordpress website so that you do not need to add this manually.",
     "dom": "link[href*='/wp-content/plugins/duracelltomi-google-tag-manager/']",
     "icon": "Google Tag Manager for WordPress.png",
-    "implies": "Google Tag Manager",
+    "implies": [
+      "Google Tag Manager"
+    ],
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/duracelltomi-google-tag-manager/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://gtm4wp.com"
   },
@@ -1964,7 +2050,9 @@
     "cpe": "cpe:2.3:a:google:web_toolkit:*:*:*:*:*:*:*:*",
     "description": "Google Web Toolkit (GWT) is an open-source Java software development framework that makes writing AJAX applications.",
     "icon": "Google Web Toolkit.png",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "js": {
       "__gwt_": "",
       "__gwt_activeModules": "",
@@ -2032,7 +2120,9 @@
     ],
     "description": "Govalo is a software startup company that builds a Shopify app.",
     "icon": "Govalo.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "Govalo.meta": ""
     },
@@ -2065,6 +2155,7 @@
     "cats": [
       10
     ],
+    "cpe": "cpe:2.3:a:grafana:grafana:*:*:*:*:*:*:*:*",
     "description": "Grafana is a multi-platform open source analytics and interactive visualisation web application.",
     "icon": "Grafana.svg",
     "implies": [
@@ -2087,7 +2178,9 @@
       "graffitibot": ""
     },
     "icon": "Graffiti CMS.png",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "meta": {
       "generator": "Graffiti CMS ([^\"]+)\\;version:\\1"
     },
@@ -2101,9 +2194,13 @@
     "cookies": {
       "Grand.customer": ""
     },
-    "html": "(?:<!--GrandNode |<a[^>]+grandnode - Powered by |Powered by: <a[^>]+nopcommerce)",
+    "html": [
+      "(?:<!--GrandNode |<a[^>]+grandnode - Powered by |Powered by: <a[^>]+nopcommerce)"
+    ],
     "icon": "GrandNode.svg",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "meta": {
       "generator": "grandnode"
     },
@@ -2167,6 +2264,7 @@
     "cats": [
       27
     ],
+    "cpe": "cpe:2.3:a:graphql:graphql:*:*:*:*:*:*:*:*",
     "description": "GraphQL is a query language for APIs and a runtime for fulfilling those queries with your existing data.",
     "icon": "GraphQL.svg",
     "meta": {
@@ -2190,7 +2288,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/graphene(?:-plus)?/.+graphene\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.graphene-theme.com/graphene-theme"
   },
@@ -2217,7 +2317,9 @@
       1
     ],
     "icon": "Grav.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "GravCMS(?:\\s([\\d.]+))?\\;version:\\1"
     },
@@ -2228,7 +2330,9 @@
       19
     ],
     "description": "Gravatar is a service for providing globally unique avatars.",
-    "html": "<[^>]+gravatar\\.com/avatar/",
+    "html": [
+      "<[^>]+gravatar\\.com/avatar/"
+    ],
     "icon": "Gravatar.png",
     "js": {
       "Gravatar": ""
@@ -2266,7 +2370,9 @@
       "<link [^>]*href=(?:\"|')[^>]*wp-content/plugins/gravityforms/css/"
     ],
     "icon": "gravityforms.svg",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/gravityforms/js/[^/]+\\.js\\?ver=([\\d.]+)$\\;version:\\1",
     "website": "https://gravityforms.com"
   },
@@ -2288,9 +2394,13 @@
     "cats": [
       1
     ],
-    "html": "<img[^>]+/dsresource\\?objectid=",
+    "html": [
+      "<img[^>]+/dsresource\\?objectid="
+    ],
     "icon": "Green Valley CMS.png",
-    "implies": "Apache Tomcat",
+    "implies": [
+      "Apache Tomcat"
+    ],
     "meta": {
       "DC.identifier": "/content\\.jsp\\?objectid="
     },
@@ -2339,7 +2449,9 @@
     ],
     "description": "Gridsome is a free and open-source Vue-powered static site generator for building static websites.",
     "icon": "Gridsome.svg",
-    "implies": "Vue.js",
+    "implies": [
+      "Vue.js"
+    ],
     "meta": {
       "generator": "^Gridsome v([\\d.]+)$\\;version:\\1"
     },
@@ -2395,7 +2507,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "\\.socialshopwave\\.com/",
     "website": "https://growave.io"
@@ -2529,7 +2643,9 @@
     },
     "icon": "Gutenberg.png",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/gutenberg/",
     "website": "https://github.com/WordPress/gutenberg"
   },
@@ -2565,7 +2681,9 @@
       47
     ],
     "cpe": "cpe:2.3:a:gitlist:gitlist:*:*:*:*:*:*:*:*",
-    "html": "<p>Powered by <a[^>]+>GitList ([\\d.]+)\\;version:\\1",
+    "html": [
+      "<p>Powered by <a[^>]+>GitList ([\\d.]+)\\;version:\\1"
+    ],
     "implies": [
       "PHP",
       "git"
@@ -2576,7 +2694,9 @@
     "cats": [
       47
     ],
-    "html": "<!-- git web interface version ([\\d.]+)?\\;version:\\1",
+    "html": [
+      "<!-- git web interface version ([\\d.]+)?\\;version:\\1"
+    ],
     "icon": "git.svg",
     "implies": [
       "Perl",
@@ -2593,7 +2713,9 @@
       1
     ],
     "icon": "govCMS.svg",
-    "implies": "Drupal",
+    "implies": [
+      "Drupal"
+    ],
     "meta": {
       "generator": "Drupal ([\\d]+) \\(http:\\/\\/drupal\\.org\\) \\+ govCMS\\;version:\\1"
     },
@@ -2603,11 +2725,14 @@
     "cats": [
       22
     ],
+    "cpe": "cpe:2.3:a:gunicorn:gunicorn:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "gunicorn(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "gunicorn.png",
-    "implies": "Python",
+    "implies": [
+      "Python"
+    ],
     "website": "https://gunicorn.org"
   }
 }

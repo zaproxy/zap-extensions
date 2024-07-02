@@ -70,9 +70,13 @@
     "cats": [
       6
     ],
-    "html": "<a[^>]+>Powered By VP-ASP Shopping Cart</a>",
+    "html": [
+      "<a[^>]+>Powered By VP-ASP Shopping Cart</a>"
+    ],
     "icon": "VP-ASP.png",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "scriptSrc": "vs350\\.js",
     "website": "https://www.vpasp.com"
   },
@@ -149,7 +153,9 @@
     ],
     "description": "Vaadin is an open-source framework for building user interfaces and single-page applications using Java and TypeScript.",
     "icon": "Vaadin.svg",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "js": {
       "vaadin": ""
     },
@@ -202,9 +208,13 @@
     "headers": {
       "X-Powered-By": "Vanilla"
     },
-    "html": "<body id=\"(?:DiscussionsPage|vanilla)",
+    "html": [
+      "<body id=\"(?:DiscussionsPage|vanilla)"
+    ],
     "icon": "Vanilla.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://vanillaforums.org"
   },
   "Vant": {
@@ -220,12 +230,16 @@
       }
     },
     "icon": "Vant.png",
-    "implies": "TypeScript",
+    "implies": [
+      "TypeScript"
+    ],
     "js": {
       "vant.version": "([\\d\\.]+)\\;version:\\1"
     },
     "oss": true,
-    "requires": "Vue.js",
+    "requires": [
+      "Vue.js"
+    ],
     "website": "https://github.com/youzan/vant"
   },
   "Varbase": {
@@ -235,7 +249,9 @@
     "cpe": "cpe:2.3:a:vardot:varbase:*:*:*:*:*:*:*:*",
     "dom": "meta[content='Varbase'],div[class*='varbase_'],div[class*='_varbase'],div[class*='varbase-'],div[class*='block-varbase'],div[class*='blockvarbase']",
     "icon": "varbase.png",
-    "implies": "Drupal",
+    "implies": [
+      "Drupal"
+    ],
     "js": {
       "drupalSettings.ajaxPageState.libraries": ".+varbase_.+"
     },
@@ -359,7 +375,9 @@
     "cats": [
       36
     ],
-    "html": "<img [^>]*src=\"[^\"]+tracking\\.veoxa\\.com",
+    "html": [
+      "<img [^>]*src=\"[^\"]+tracking\\.veoxa\\.com"
+    ],
     "icon": "Veoxa.png",
     "js": {
       "VuVeoxaContent": ""
@@ -601,7 +619,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "website": "https://apps.shopify.com/videogreet-gift-messages"
   },
   "VideoJS": {
@@ -633,7 +653,9 @@
     "cookies": {
       "_gphw_mode": ""
     },
-    "html": "<link[^>]* href=[^>]+(?:\\.vigbo\\.com|\\.gophotoweb\\.com)",
+    "html": [
+      "<link[^>]* href=[^>]+(?:\\.vigbo\\.com|\\.gophotoweb\\.com)"
+    ],
     "icon": "vigbo.png",
     "scriptSrc": "(?:\\.vigbo\\.com|\\.gophotoweb\\.com)",
     "website": "https://vigbo.com"
@@ -660,7 +682,9 @@
     "cats": [
       1
     ],
-    "html": "<[^>]+=\"vgn-?ext",
+    "html": [
+      "<[^>]+=\"vgn-?ext"
+    ],
     "icon": "Vignette.png",
     "website": "https://www.vignette.com"
   },
@@ -684,7 +708,9 @@
     ],
     "description": "Vimeo OTT allows brands and creators to launch their own white-label video subscription channels, where subscribers can access video content for free, as a rental, or for purchase.",
     "icon": "Vimeo.svg",
-    "implies": "Vimeo",
+    "implies": [
+      "Vimeo"
+    ],
     "js": {
       "VHX.config": "",
       "_vhx": ""
@@ -806,9 +832,14 @@
     "cats": [
       6
     ],
-    "html": "<div id=\"vmMainPage",
+    "cpe": "cpe:2.3:a:virtuemart:virtuemart:*:*:*:*:*:joomla\\!:*:*",
+    "html": [
+      "<div id=\"vmMainPage"
+    ],
     "icon": "VirtueMart.png",
-    "implies": "Joomla",
+    "implies": [
+      "Joomla"
+    ],
     "website": "https://virtuemart.net"
   },
   "Virtuoso": {
@@ -889,7 +920,9 @@
       "mid",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "website": "https://visely.io"
   },
@@ -925,7 +958,9 @@
     "pricing": [
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://visualportfolio.co"
   },
   "Visual Quiz Builder": {
@@ -938,7 +973,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "//whai-cdn\\.nyc\\d\\.cdn\\.digitaloceanspaces\\.com/",
     "website": "https://apps.shopify.com/product-recommendation-quiz"
@@ -977,7 +1014,9 @@
     },
     "icon": "Visx.svg",
     "oss": true,
-    "requires": "React",
+    "requires": [
+      "React"
+    ],
     "website": "https://airbnb.io/visx/"
   },
   "Vitals": {
@@ -997,7 +1036,9 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "//appsolve\\.io/",
     "website": "https://vitals.co"
@@ -1146,7 +1187,9 @@
       1,
       6
     ],
-    "html": "<script [^>]*src=\"[^\"]*voog\\.com/tracker\\.js",
+    "html": [
+      "<script [^>]*src=\"[^\"]*voog\\.com/tracker\\.js"
+    ],
     "icon": "Voog.png",
     "scriptSrc": "voog\\.com/tracker\\.js",
     "website": "https://www.voog.com/"
@@ -1210,7 +1253,9 @@
     ],
     "description": "Vue Storefront is a frontend platform for headless ecommerce.",
     "icon": "vue-storefront.svg",
-    "implies": "Vue.js",
+    "implies": [
+      "Vue.js"
+    ],
     "meta": {
       "generator": "^Vue Storefront ([0-9.]+)?$\\;version:\\1"
     },
@@ -1240,10 +1285,14 @@
     "cats": [
       12
     ],
-    "css": "\\.vue-notification-group",
+    "css": [
+      "\\.vue-notification-group"
+    ],
     "description": "Vue.js is an open-source model–view–viewmodel JavaScript framework for building user interfaces and single-page applications.",
     "dom": ".vue-app",
-    "html": "<[^>]+\\sdata-v(?:ue)?-",
+    "html": [
+      "<[^>]+\\sdata-v(?:ue)?-"
+    ],
     "icon": "vue.svg",
     "js": {
       "Vue": "",
@@ -1280,7 +1329,9 @@
     ],
     "description": "VuePress is a static site generator with a Vue-powered theming system, and a default theme for writing technical documentation.",
     "icon": "VuePress.svg",
-    "implies": "Vue.js",
+    "implies": [
+      "Vue.js"
+    ],
     "js": {
       "__VUEPRESS__.version": "([\\d\\.]+)\\;version:\\1"
     },
@@ -1294,11 +1345,15 @@
     "cats": [
       66
     ],
-    "css": "\\.v-application \\.d-block",
+    "css": [
+      "\\.v-application \\.d-block"
+    ],
     "description": "Vuetify is a reusable semantic component framework for Vue.js that aims to provide clean, semantic and reusable components.",
     "dom": "style#vuetify-theme-stylesheet",
     "icon": "Vuetify.svg",
-    "implies": "Vue.js",
+    "implies": [
+      "Vue.js"
+    ],
     "oss": true,
     "website": "https://vuetifyjs.com"
   },
@@ -1308,7 +1363,9 @@
     ],
     "description": "Vuex is a state management pattern + library for Vue.js applications.",
     "icon": "vue.svg",
-    "implies": "Vue.js",
+    "implies": [
+      "Vue.js"
+    ],
     "js": {
       "Vuex.version": "(.*)\\;version:\\1"
     },
@@ -1362,9 +1419,13 @@
     },
     "cpe": "cpe:2.3:a:vbulletin:vbulletin:*:*:*:*:*:*:*:*",
     "description": "vBulletin is tool that is used to create and manage online forums or discussion boards. It is written in PHP and uses a MySQL database server.",
-    "html": "<div id=\"copyright\">Powered by vBulletin",
+    "html": [
+      "<div id=\"copyright\">Powered by vBulletin"
+    ],
     "icon": "vBulletin.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "vBulletin": ""
     },
@@ -1400,9 +1461,13 @@
     "cats": [
       6
     ],
-    "excludes": "PrestaShop",
+    "excludes": [
+      "PrestaShop"
+    ],
     "icon": "vibecommerce.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "designer": "vibecommerce",
       "generator": "vibecommerce"
@@ -1417,7 +1482,9 @@
     "dom": "div[class*='vxe-table']",
     "icon": "vxe-table.png",
     "oss": true,
-    "requires": "Vue.js",
+    "requires": [
+      "Vue.js"
+    ],
     "website": "https://vxetable.cn"
   }
 }

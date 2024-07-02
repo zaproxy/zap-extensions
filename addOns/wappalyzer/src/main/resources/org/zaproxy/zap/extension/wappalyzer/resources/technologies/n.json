@@ -50,9 +50,13 @@
       25
     ],
     "description": "NVD3 is a JavaScript visualisation library that is a free open-source tool.",
-    "html": "<link[^>]* href=[^>]+nv\\.d3(?:\\.min)?\\.css",
+    "html": [
+      "<link[^>]* href=[^>]+nv\\.d3(?:\\.min)?\\.css"
+    ],
     "icon": "NVD3.png",
-    "implies": "D3",
+    "implies": [
+      "D3"
+    ],
     "js": {
       "nv.addGraph": "",
       "nv.version": "^(.+)$\\;confidence:0\\;version:\\1"
@@ -71,7 +75,9 @@
       }
     },
     "icon": "Nacelle.svg",
-    "implies": "GraphQL",
+    "implies": [
+      "GraphQL"
+    ],
     "js": {
       "__NEXT_DATA__.props.pageProps.page.nacelleEntryId": "",
       "nacelleEventData": ""
@@ -318,7 +324,9 @@
     ],
     "description": "Neat A/B Testing is a Shopify app built by NeatShift.",
     "icon": "Neat.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "mid",
       "recurring"
@@ -351,12 +359,16 @@
     "cats": [
       1
     ],
-    "excludes": "TYPO3 CMS",
+    "excludes": [
+      "TYPO3 CMS"
+    ],
     "headers": {
       "X-Flow-Powered": "Neos/?(.+)?$\\;version:\\1"
     },
     "icon": "Neos.svg",
-    "implies": "Neos Flow",
+    "implies": [
+      "Neos Flow"
+    ],
     "url": "/neos/",
     "website": "https://neos.io"
   },
@@ -364,12 +376,16 @@
     "cats": [
       18
     ],
-    "excludes": "TYPO3 CMS",
+    "excludes": [
+      "TYPO3 CMS"
+    ],
     "headers": {
       "X-Flow-Powered": "Flow/?(.+)?$\\;version:\\1"
     },
     "icon": "Neos.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://flow.neos.io"
   },
   "Nepso": {
@@ -467,7 +483,9 @@
     "description": "Netlify Forms is a serverless form handling solution for static websites.",
     "dom": "form[data-netlify]",
     "icon": "Netlify.svg",
-    "implies": "Netlify",
+    "implies": [
+      "Netlify"
+    ],
     "website": "https://www.netlify.com/products/forms"
   },
   "Neto": {
@@ -498,7 +516,9 @@
       "<input[^>]+id=\"frm-"
     ],
     "icon": "Nette Framework.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "Nette": "",
       "Nette.version": "^(.+)$\\;version:\\1"
@@ -535,7 +555,9 @@
       }
     },
     "icon": "ThemeIsle.png",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "themes/neve\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
     "website": "https://themeisle.com/themes/neve/"
   },
@@ -595,7 +617,9 @@
       "host-header": "Newspack"
     },
     "icon": "NewspackLogo.png",
-    "implies": "Newspack",
+    "implies": [
+      "Newspack"
+    ],
     "pricing": [
       "mid",
       "recurring"
@@ -678,7 +702,9 @@
     "description": "NextAuth.js is a complete open-source authentication solution for Next.js applications.",
     "icon": "Next-Auth.png",
     "oss": true,
-    "requires": "Next.js",
+    "requires": [
+      "Next.js"
+    ],
     "website": "https://next-auth.js.org"
   },
   "NextGEN Gallery": {
@@ -695,7 +721,9 @@
     "js": {
       "nextgen_lightbox_settings.static_path": "/wp-content/plugins/nextgen-gallery/"
     },
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/nextgen-gallery/js/",
     "website": "https://www.imagely.com/wordpress-gallery-plugin"
   },
@@ -703,7 +731,9 @@
     "cats": [
       66
     ],
-    "css": "--nextui-(?:colors-accents1|colors-text|space-0|fonts-sans|fonts-mono)",
+    "css": [
+      "--nextui-(?:colors-accents1|colors-text|space-0|fonts-sans|fonts-mono)"
+    ],
     "description": "NextUI allows you to make beautiful, modern, and fast websites/applications regardless of your design experience, created with React.js and Stitches, based on React Aria and inspired by Vuesax.",
     "icon": "NextUI.svg",
     "implies": [
@@ -725,7 +755,9 @@
     "cpe": "cpe:2.3:a:nextcloud:nextcloud:*:*:*:*:*:*:*:*",
     "description": "Nextcloud is a suite of client-server software for creating and using file hosting services.",
     "icon": "Nextcloud.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "oc_config.version": "^([\\.\\d]+)$\\;version:\\1\\;confidence:0"
     },
@@ -761,7 +793,9 @@
       "__nextra_pageContext__": ""
     },
     "oss": true,
-    "requires": "Next.js",
+    "requires": [
+      "Next.js"
+    ],
     "website": "https://nextra.site/"
   },
   "Nextsale": {
@@ -835,7 +869,9 @@
       "x-powered-by": "Niagahoster"
     },
     "icon": "Niagahoster.svg",
-    "implies": "Niagahoster",
+    "implies": [
+      "Niagahoster"
+    ],
     "pricing": [
       "low",
       "recurring"
@@ -895,7 +931,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/ninja-forms/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://ninjaforms.com"
   },
@@ -958,7 +996,9 @@
       "X-Powered-By": "^NodeBB$"
     },
     "icon": "NodeBB.svg",
-    "implies": "Node.js",
+    "implies": [
+      "Node.js"
+    ],
     "pricing": [
       "mid",
       "recurring"
@@ -1021,7 +1061,9 @@
     ],
     "description": "Norton Shopping Guarantee offering a third-party shopping guarantee to customers provides added protection and validation that you are safe to buy from.",
     "icon": "Norton Shopping Guarantee.svg",
-    "implies": "Cart Functionality",
+    "implies": [
+      "Cart Functionality"
+    ],
     "js": {
       "DO_NORTON_SHOPPING": ""
     },
@@ -1077,6 +1119,7 @@
     "cats": [
       51
     ],
+    "cpe": "cpe:2.3:a:notion:notion:*:*:*:*:*:*:*:*",
     "description": "Notion is a collaboration platform with modified Markdown support that integrates kanban boards, tasks, wikis, and database.",
     "dom": "html.notion-html",
     "icon": "Notion.svg",
@@ -1204,10 +1247,14 @@
     "cookies": {
       "Nop.customer": ""
     },
-    "description": "nopCommerce is an open-source ecommerce solution based on Microsoft's ASP​.NET Core framework and MS SQL Server 2012 (or higher) backend database.",
-    "html": "(?:<!--Powered by nopCommerce|Powered by: <a[^>]+nopcommerce)",
+    "description": "nopCommerce is an open-source ecommerce solution based on Microsoft's ASP.NET Core framework and MS SQL Server 2012 (or higher) backend database.",
+    "html": [
+      "(?:<!--Powered by nopCommerce|Powered by: <a[^>]+nopcommerce)"
+    ],
     "icon": "nopCommerce.png",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "meta": {
       "generator": "^nopCommerce$"
     },
@@ -1221,7 +1268,9 @@
     "description": "nopStation is a one stop ecommerce solution with custom integrations and custom built plugins based on custom tailored requirements on top of nopCommerce.",
     "dom": "a[href*='.nop-station.com/']",
     "icon": "nopStation.png",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "requires": [
       "nopCommerce"
     ],

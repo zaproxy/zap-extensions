@@ -21,7 +21,9 @@
       66
     ],
     "description": "UIKit is the framework used for developing iOS applications.",
-    "html": "<[^>]+class=\"[^\"]*(?:uk-container|uk-section)",
+    "html": [
+      "<[^>]+class=\"[^\"]*(?:uk-container|uk-section)"
+    ],
     "icon": "UIKit.svg",
     "scriptSrc": "uikit.*\\.js",
     "website": "https://getuikit.com"
@@ -62,13 +64,16 @@
       "X-Generated-By": "UMI\\.CMS"
     },
     "icon": "UMI.CMS.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://www.umi-cms.ru"
   },
   "UNIX": {
     "cats": [
       28
     ],
+    "cpe": "cpe:2.3:o:unix:unix:*:*:*:*:*:*:*:*",
     "description": "Unix is a family of multitasking, multiuser computer operating systems.",
     "headers": {
       "Server": "Unix"
@@ -119,7 +124,9 @@
       6
     ],
     "icon": "Ubercart.png",
-    "implies": "Drupal",
+    "implies": [
+      "Drupal"
+    ],
     "scriptSrc": "uc_cart/uc_cart_block\\.js",
     "website": "https://www.ubercart.org"
   },
@@ -183,7 +190,9 @@
       }
     },
     "icon": "Ultimate Addons for Elementor.svg",
-    "implies": "Elementor",
+    "implies": [
+      "Elementor"
+    ],
     "js": {
       "uael_particles_script.particles_url": "/wp-content/plugins/ultimate-elementor/"
     },
@@ -192,7 +201,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://ultimateelementor.com"
   },
   "Ultimate Bulletin Board": {
@@ -200,7 +211,9 @@
       2
     ],
     "description": "Ultimate Bulletin Board is an internet forum software designed for online communities, offering features such as user registration, thread organisation, moderation tools, search functionality, and customisable design options to facilitate discussions and community engagement.",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "^UBB\\.threads\\s([\\d\\.]+)$\\;version:\\1"
     },
@@ -222,7 +235,9 @@
     "pricing": [
       "low"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://www.createit.com/gdpr"
   },
   "UltimatelySocial": {
@@ -235,7 +250,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/ultimate-social-media-icons/",
     "website": "https://www.ultimatelysocial.com"
   },
@@ -243,7 +260,9 @@
     "cats": [
       6
     ],
-    "html": "<form [^>]*action=\"[^\"]*\\/cgi-bin\\/UCEditor\\?(?:[^\"]*&)?merchantId=[^\"]",
+    "html": [
+      "<form [^>]*action=\"[^\"]*\\/cgi-bin\\/UCEditor\\?(?:[^\"]*&)?merchantId=[^\"]"
+    ],
     "icon": "UltraCart.png",
     "js": {
       "ucCatalog": ""
@@ -269,6 +288,7 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:umbraco:umbraco:*:*:*:*:*:*:*:*",
     "cookies": {
       "merchello": "\\;version:7"
     },
@@ -281,7 +301,9 @@
       "X-Umbraco-Version": "^(.+)$\\;version:\\1"
     },
     "icon": "Umbraco.svg",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "js": {
       "ITEM_INFO_SERVICE": "",
       "UC_IMAGE_SERVICE": "",
@@ -310,7 +332,9 @@
     ],
     "description": "UmiJs is a scalable, enterprise-class frontend application framework that supports both configuration and conventional routing while maintaining functional completeness, such as dynamic routing, nested routing, and permission routing.",
     "icon": "UmiJs.png",
-    "implies": "Node.js",
+    "implies": [
+      "Node.js"
+    ],
     "js": {
       "g_umi.version": "([\\d\\.]+)\\;version:\\1"
     },
@@ -393,7 +417,9 @@
       59
     ],
     "description": "Underscore.js is a JavaScript library which provides utility functions for common programming tasks. It is comparable to features provided by Prototype.js and the Ruby language, but opts for a functional programming design instead of extending object prototypes.",
-    "excludes": "Lodash",
+    "excludes": [
+      "Lodash"
+    ],
     "icon": "Underscore.js.png",
     "js": {
       "_.VERSION": "^(.+)$\\;confidence:0\\;version:\\1",
@@ -415,7 +441,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "wp-content/themes/understrap(?:[masterchild-]+)?(?:[masterchild-]+)?/",
     "website": "https://understrap.com"
   },
@@ -428,7 +456,9 @@
     "js": {
       "unifiConstant.VERSION": "^([\\d+\\.]+)$\\;version:\\1"
     },
-    "requires": "AngularJS",
+    "requires": [
+      "AngularJS"
+    ],
     "website": "https://www.ui.com/"
   },
   "Uniconsent": {
@@ -461,7 +491,9 @@
     "cats": [
       66
     ],
-    "css": "--un-(?:rotate|translate|space-x|text-opacity|border-opacity)",
+    "css": [
+      "--un-(?:rotate|translate|space-x|text-opacity|border-opacity)"
+    ],
     "description": "UnoCSS is instant on-demand Atomic CSS engine.",
     "dom": {
       "style[data-unocss]": {
@@ -530,7 +562,9 @@
     "pricing": [
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/Zephyr/.+us\\.theme\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://zephyr.us-themes.com"
   },
@@ -643,7 +677,9 @@
       }
     },
     "icon": "upvoty.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "upvoty": ""
     },
@@ -901,7 +937,9 @@
       "Server": "uvicorn"
     },
     "icon": "uvicorn.png",
-    "implies": "Python",
+    "implies": [
+      "Python"
+    ],
     "oss": true,
     "website": "https://www.uvicorn.org/"
   },
@@ -934,9 +972,13 @@
     "headers": {
       "X-Content-Encoded-By": "uKnowva ([\\d.]+)\\;version:\\1"
     },
-    "html": "<a[^>]+>Powered by uKnowva</a>",
+    "html": [
+      "<a[^>]+>Powered by uKnowva</a>"
+    ],
     "icon": "uKnowva.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "uKnowva (?: ([\\d.]+))?\\;version:\\1"
     },
@@ -965,7 +1007,9 @@
     ],
     "description": "uMarketingSuite is a set of diverse features that together form a full marketing suite for the Umbraco platform.",
     "icon": "uMarketingSuite.svg",
-    "implies": "Umbraco",
+    "implies": [
+      "Umbraco"
+    ],
     "js": {
       "uMarketingSuite": ""
     },
@@ -992,7 +1036,9 @@
     ],
     "description": "uPortal is an open source enterprise portal framework built by and for higher education institutions.",
     "icon": "uPortal.png",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "js": {
       "uportal": ""
     },
@@ -1015,7 +1061,9 @@
     "cats": [
       10
     ],
-    "html": "<div[^>]+/id=\"ue_widget\"",
+    "html": [
+      "<div[^>]+/id=\"ue_widget\""
+    ],
     "icon": "user.com.svg",
     "js": {
       "UserEngage": ""

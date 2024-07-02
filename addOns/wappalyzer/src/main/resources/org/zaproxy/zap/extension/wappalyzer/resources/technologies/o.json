@@ -35,9 +35,13 @@
       59
     ],
     "description": "OWL Carousel is an enabled jQuery plugin that lets you create responsive carousel sliders.",
-    "html": "<link [^>]*href=\"[^\"]+owl\\.carousel(?:\\.min)?\\.css",
+    "html": [
+      "<link [^>]*href=\"[^\"]+owl\\.carousel(?:\\.min)?\\.css"
+    ],
     "icon": "OWL Carousel.png",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "scriptSrc": "owl\\.carousel.*\\.js",
     "website": "https://owlcarousel2.github.io/OwlCarousel2/"
   },
@@ -50,7 +54,9 @@
     },
     "description": "OXID eShop is a free, open source ecommerce solution built using object oriented programming and PHP.",
     "icon": "OXID eShop.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "oxCookieNote": "",
       "oxInputValidator": "",
@@ -66,10 +72,16 @@
       6
     ],
     "description": "OXID eShop Community Edition is a free, open source ecommerce solution built using object oriented programming and PHP.",
-    "excludes": "OXID eShop",
-    "html": "<!--[^-]*OXID eShop Community Edition, Version (\\d+)\\;version:\\1",
+    "excludes": [
+      "OXID eShop"
+    ],
+    "html": [
+      "<!--[^-]*OXID eShop Community Edition, Version (\\d+)\\;version:\\1"
+    ],
     "icon": "OXID eShop.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://www.oxid-esales.com"
   },
   "OXID eShop Enterprise Edition": {
@@ -78,10 +90,16 @@
       62
     ],
     "description": "OXID eShop Enterprise Edition is a B2B or B2C ecommerce solution built using object oriented programming and PHP.",
-    "excludes": "OXID eShop",
-    "html": "<!--[^-]*OXID eShop Enterprise Edition, Version (\\d+)\\;version:\\1",
+    "excludes": [
+      "OXID eShop"
+    ],
+    "html": [
+      "<!--[^-]*OXID eShop Enterprise Edition, Version (\\d+)\\;version:\\1"
+    ],
     "icon": "OXID eShop.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://www.oxid-esales.com"
   },
   "OXID eShop Professional Edition": {
@@ -89,10 +107,16 @@
       6
     ],
     "description": "OXID eShop Professional Edition is an e-ommerce platform for both small start-up companies and experience online retailers with a wide range of functions, software maintenance and support.",
-    "excludes": "OXID eShop",
-    "html": "<!--[^-]*OXID eShop Professional Edition, Version (\\d+)\\;version:\\1",
+    "excludes": [
+      "OXID eShop"
+    ],
+    "html": [
+      "<!--[^-]*OXID eShop Professional Edition, Version (\\d+)\\;version:\\1"
+    ],
     "icon": "OXID eShop.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "pricing": [
       "high",
       "onetime"
@@ -113,7 +137,9 @@
       "recurring",
       "freemium"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "cdn\\.shopify\\.com/extensions/.+/([\\.\\d]{3,})/assets/upsell\\.min\\.js\\;version:\\1",
     "website": "https://obsidianapps.co"
@@ -153,7 +179,9 @@
       "mid",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "deploy\\.hiconversion\\.com",
     "website": "https://www.obviyo.com"
@@ -201,7 +229,9 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "themes/oceanwp\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
     "website": "https://oceanwp.org"
   },
@@ -267,7 +297,9 @@
     },
     "description": "October is a free, open-source, self-hosted CMS platform based on the Laravel PHP Framework.",
     "icon": "October CMS.png",
-    "implies": "Laravel",
+    "implies": [
+      "Laravel"
+    ],
     "js": {
       "ocJSON": ""
     },
@@ -282,9 +314,13 @@
       57
     ],
     "description": "Octopress is a static blogging framework.",
-    "html": "Powered by <a href=\"http://octopress\\.org\">",
+    "html": [
+      "Powered by <a href=\"http://octopress\\.org\">"
+    ],
     "icon": "octopress.png",
-    "implies": "Jekyll",
+    "implies": [
+      "Jekyll"
+    ],
     "meta": {
       "generator": "Octopress"
     },
@@ -312,7 +348,9 @@
     ],
     "cpe": "cpe:2.3:a:odoo:odoo:*:*:*:*:*:*:*:*",
     "description": "Odoo is business management software which includes CRM, ecommerce, billing, accounting, manufacturing, warehouse, project management, and inventory management.",
-    "html": "<link[^>]* href=[^>]+/web/css/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25",
+    "html": [
+      "<link[^>]* href=[^>]+/web/css/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25"
+    ],
     "icon": "Odoo.svg",
     "implies": [
       "Python",
@@ -360,7 +398,9 @@
       }
     },
     "icon": "Okendo.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "okeReviewsWidgetOnInit": "",
       "okeWidgetControlInit": "",
@@ -543,13 +583,17 @@
     ],
     "description": "Omnisend Email Marketing & SMS is an omnichannel marketing automation channel that allows Shopify store owners to manage their SMS, web push notifications, WhatsApp, Facebook messenger, pop-ups, segmentation, and dynamic Facebook and Google ad integrations.",
     "icon": "Omnisend.svg",
-    "implies": "Omnisend",
+    "implies": [
+      "Omnisend"
+    ],
     "pricing": [
       "low",
       "freemium",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
     "scriptSrc": "omnis(?:nippet1|rc)\\.com/inShop/Embed/shopify\\.js",
     "website": "https://apps.shopify.com/omnisend"
@@ -592,9 +636,13 @@
     ],
     "description": "OnShop is an ecommerce platform for online merchants.",
     "dom": "link[href*='cdn.onshop.asia/']",
-    "excludes": "OpenCart",
+    "excludes": [
+      "OpenCart"
+    ],
     "icon": "Onshop.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "Onshop Ecommerce"
     },
@@ -691,7 +739,9 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/one-page-express(?:-pro)?/",
     "website": "https://onepageexpress.com"
   },
@@ -709,7 +759,9 @@
       "freemium",
       "low"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/social-?locker(?:-next-premium)?/bizpanda/assets/",
     "website": "https://wordpress.org/plugins/social-locker"
   },
@@ -883,7 +935,9 @@
     "cpe": "cpe:2.3:a:public_knowledge_project:open_journal_systems:*:*:*:*:*:*:*:*",
     "description": "Open Journal Systems (OJS) is an open-source software application for managing and publishing scholarly journals.",
     "icon": "Open Journal Systems.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "generator": "Open Journal Systems(?: ([\\d.]+))?\\;version:\\1"
     },
@@ -894,7 +948,9 @@
       10
     ],
     "cpe": "cpe:2.3:a:openwebanalytics:open_web_analytics:*:*:*:*:*:*:*:*",
-    "html": "<!-- (?:Start|End) Open Web Analytics Tracker -->",
+    "html": [
+      "<!-- (?:Start|End) Open Web Analytics Tracker -->"
+    ],
     "icon": "Open Web Analytics.png",
     "js": {
       "OWA.config.baseUrl": "",
@@ -919,7 +975,9 @@
       6
     ],
     "icon": "Open eShop.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "author": "open-eshop\\.com",
       "copyright": "Open eShop ?([0-9.]+)?\\;version:\\1"
@@ -935,7 +993,9 @@
     "description": "Open-Xchange is a web-based communication, collaboration and office productivity software suite.",
     "dom": "#io-ox-core, form > input[value='open-xchange-appsuite']",
     "icon": "openxchange.svg",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "js": {
       "ox.version": ""
     },
@@ -950,7 +1010,9 @@
       22
     ],
     "cpe": "cpe:2.3:a:openbsd:openbsd:*:*:*:*:*:*:*:*",
-    "excludes": "Apache HTTP Server",
+    "excludes": [
+      "Apache HTTP Server"
+    ],
     "headers": {
       "Server": "^OpenBSD httpd"
     },
@@ -962,9 +1024,12 @@
     "cats": [
       59
     ],
+    "cpe": "cpe:2.3:a:opencv:opencv:*:*:*:*:*:*:*:*",
     "description": "OpenCV (Open Source Computer Vision Library) is an open source computer vision and machine learning software library.",
     "icon": "OpenCV.svg",
-    "implies": "WebAssembly",
+    "implies": [
+      "WebAssembly"
+    ],
     "js": {
       "opencvIsReady": ""
     },
@@ -1008,9 +1073,13 @@
     "headers": {
       "Server": "OpenCms"
     },
-    "html": "<link href=\"/opencms/",
+    "html": [
+      "<link href=\"/opencms/"
+    ],
     "icon": "OpenCms.png",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "oss": true,
     "scriptSrc": "opencms",
     "website": "https://www.opencms.org"
@@ -1021,7 +1090,9 @@
     ],
     "description": "OpenElement is a free website building application with a WYSIWYG interface.",
     "icon": "OpenElement.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "OE.GETools": "",
       "OEConfWEMenu": ""
@@ -1041,7 +1112,9 @@
       "Server": "GSE"
     },
     "icon": "Google.svg",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "website": "https://code.google.com/p/opengse"
   },
   "OpenGrok": {
@@ -1052,7 +1125,9 @@
       "OpenGrok": ""
     },
     "icon": "OpenGrok.png",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "meta": {
       "generator": "OpenGrok(?: v?([\\d.]+))?\\;version:\\1"
     },
@@ -1125,6 +1200,7 @@
     "cats": [
       35
     ],
+    "cpe": "cpe:2.3:a:openstreetmap:openstreetmap:*:*:*:*:*:wordpress:*:*",
     "description": "OpenStreetMap is a free, editable map of the whole world that is being built by volunteers largely from scratch and released with an open-content license.",
     "dom": "iframe[src*='openstreetmap.org'],iframe[data-lazy-src*='openstreetmap.org']",
     "icon": "OpenStreetMap.svg",
@@ -1140,7 +1216,9 @@
       "Server": "OpenSwoole(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "OpenSwoole.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "oss": true,
     "website": "https://openswoole.com"
   },
@@ -1163,9 +1241,13 @@
     "cats": [
       1
     ],
-    "html": "<!--[^>]+published by Open Text Web Solutions",
+    "html": [
+      "<!--[^>]+published by Open Text Web Solutions"
+    ],
     "icon": "OpenText Web Solutions.png",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "website": "https://websolutions.opentext.com"
   },
   "OpenUI5": {
@@ -1234,7 +1316,9 @@
     "description": "Opigno LMS is an open-source Learning Management System (LMS) based on Drupal, designed for creating and delivering online courses and educational content.",
     "icon": "Opigno LMS.svg",
     "oss": true,
-    "requires": "Drupal",
+    "requires": [
+      "Drupal"
+    ],
     "scripts": "opigno_(?:commerce|wtp_app|scorm|learning_path)",
     "website": "https://www.opigno.org"
   },
@@ -1343,7 +1427,9 @@
       "content-security-policy": "\\.episerver\\.net"
     },
     "icon": "Optimizely.svg",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "js": {
       "epi.EPiServer": ""
     },
@@ -1395,12 +1481,16 @@
     ],
     "description": "OptinMonster is a lead-generation plugin for WordPress.",
     "icon": "OptinMonster.png",
-    "implies": "OptinMonster",
+    "implies": [
+      "OptinMonster"
+    ],
     "pricing": [
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/plugins/optinmonster/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://optinmonster.com"
   },
@@ -1483,7 +1573,9 @@
       "x-oracle-dms-ecid": ""
     },
     "icon": "Oracle.svg",
-    "implies": "Oracle WebLogic Server",
+    "implies": [
+      "Oracle WebLogic Server"
+    ],
     "website": "https://oracle.com"
   },
   "Oracle HTTP Server": {
@@ -1566,7 +1658,9 @@
     "cpe": "cpe:2.3:a:bea:weblogic_server:*:*:*:*:*:*:*:*",
     "description": "Oracle WebLogic Server is a Java-based application server that provides a platform for developing, deploying, and running enterprise-level Java applications.",
     "icon": "Oracle.svg",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "pricing": [
       "poa"
     ],
@@ -1610,7 +1704,9 @@
     "description": "OrbitFox is a multi-featured WordPress plugin that works with the Elementor, Beaver Builder and Gutenberg site-building utilities by Themeisle.",
     "dom": "link[href*='/wp-content/plugins/themeisle-companion/']",
     "icon": "OrbitFox.svg",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://themeisle.com/plugins/orbit-fox-companion"
   },
   "Orchard Core": {
@@ -1624,7 +1720,9 @@
       "x-powered-by": "OrchardCore"
     },
     "icon": "Orchard Core.png",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "meta": {
       "generator": "Orchard"
     },
@@ -1642,7 +1740,9 @@
       "x-powered-by": "Orckestra"
     },
     "icon": "Orckestra.svg",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "meta": {
       "generator": "^C1 CMS Foundation - Free Open Source from Orckestra and https://github.com/Orckestra/C1-CMS-Foundation$"
     },
@@ -1661,7 +1761,9 @@
     ],
     "description": "Order Deadline is an estimated delivery, countdown timer, shipping date Shopify app.",
     "icon": "Order Deadline.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "orderDeadlineAppByEESL": ""
     },
@@ -1696,7 +1798,9 @@
     ],
     "description": "OrderLogic app allows you to define minimum and maximum product quantities for all products in your Shopify store.",
     "icon": "OrderLogic app.png",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "OrderLogic.ALERTS_KEY": "",
       "OrderLogic.DEFAULT_MONEY_FORMAT": "",
@@ -1748,7 +1852,9 @@
     ],
     "description": "Ordersify Product Alerts is a Shopify app which detects automatically product stock and send email alerts to contact immediately after your products are restocked.",
     "icon": "Ordersify.svg",
-    "implies": "Shopify",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "ORDERSIFY_BIS.stockRemainingSetting": ""
     },
@@ -1844,7 +1950,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": "/wp-content/themes/panoramic/.+custom\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.outtheboxthemes.com/wordpress-themes/panoramic"
   },
@@ -1877,9 +1985,13 @@
     "headers": {
       "X-OWA-Version": "([\\d\\.]+)?\\;version:\\1"
     },
-    "html": "<link[^>]+/owa/auth/([\\d\\.]+)/themes/resources\\;version:\\1",
+    "html": [
+      "<link[^>]+/owa/auth/([\\d\\.]+)/themes/resources\\;version:\\1"
+    ],
     "icon": "Outlook.svg",
-    "implies": "Microsoft ASP.NET",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
     "js": {
       "IsOwaPremiumBrowser": ""
     },
@@ -1923,7 +2035,9 @@
       "<link [^>]*href=(?:\"|')[^>]*wp-content/plugins/oxygen/"
     ],
     "icon": "Oxygen.png",
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "scriptSrc": [
       "wp-content/plugins/oxygen"
     ],
@@ -1934,9 +2048,13 @@
       6
     ],
     "description": "ocStore is an online store based on Opencart and open-source.",
-    "html": "<!--[^>]+ocStore(?:\\s([\\d\\.a-z]+))?\\;version:\\1",
+    "html": [
+      "<!--[^>]+ocStore(?:\\s([\\d\\.a-z]+))?\\;version:\\1"
+    ],
     "icon": "ocStore.png",
-    "implies": "OpenCart",
+    "implies": [
+      "OpenCart"
+    ],
     "oss": true,
     "website": "https://ocstore.com"
   },
@@ -1965,7 +2083,7 @@
     "cookies": {
       "osCsid": ""
     },
-    "description": "OsCommerce is an open-source ecommerce and online store-management software program​.",
+    "description": "OsCommerce is an open-source ecommerce and online store-management software program.",
     "html": [
       "<br />Powered by <a href=\"https?://www\\.oscommerce\\.com",
       "<(?:input|a)[^>]+name=\"osCsid\"",
@@ -1997,12 +2115,17 @@
     "cats": [
       13
     ],
+    "cpe": "cpe:2.3:a:otrs:otrs:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Powered-By": "OTRS ([\\d.]+)\\;version:\\1"
     },
-    "html": "<!--\\s+OTRS: Copyright",
+    "html": [
+      "<!--\\s+OTRS: Copyright"
+    ],
     "icon": "otrs.png",
-    "implies": "Perl",
+    "implies": [
+      "Perl"
+    ],
     "scriptSrc": "^/otrs-web/js/",
     "website": "https://www.otrs.com"
   },
@@ -2010,9 +2133,14 @@
     "cats": [
       19
     ],
-    "html": "<a href=\"https://owncloud\\.com\" target=\"_blank\">ownCloud Inc\\.</a><br/>Your Cloud, Your Data, Your Way!",
+    "cpe": "cpe:2.3:a:owncloud:owncloud:*:*:*:*:*:*:*:*",
+    "html": [
+      "<a href=\"https://owncloud\\.com\" target=\"_blank\">ownCloud Inc\\.</a><br/>Your Cloud, Your Data, Your Way!"
+    ],
     "icon": "ownCloud.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "meta": {
       "apple-itunes-app": "app-id=543672169"
     },
