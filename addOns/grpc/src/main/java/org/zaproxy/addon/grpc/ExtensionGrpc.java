@@ -22,6 +22,7 @@ package org.zaproxy.addon.grpc;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.addon.grpc.internal.DecoderUtils;
 import org.zaproxy.addon.grpc.internal.HttpPanelGrpcView;
 import org.zaproxy.addon.grpc.internal.VariantGrpc;
 import org.zaproxy.zap.extension.httppanel.component.split.request.RequestSplitComponent;
@@ -98,7 +99,9 @@ public class ExtensionGrpc extends ExtensionAdaptor {
 
         @Override
         public HttpPanelView getNewView() {
-            return new HttpPanelGrpcView(new ResponseBodyByteHttpPanelViewModel());
+            return new HttpPanelGrpcView(
+                    new ResponseBodyByteHttpPanelViewModel(),
+                    DecoderUtils.DecodingMethod.BASE64_ENCODED);
         }
 
         @Override
@@ -118,7 +121,9 @@ public class ExtensionGrpc extends ExtensionAdaptor {
 
         @Override
         public HttpPanelView getNewView() {
-            return new HttpPanelGrpcView(new RequestBodyByteHttpPanelViewModel());
+            return new HttpPanelGrpcView(
+                    new RequestBodyByteHttpPanelViewModel(),
+                    DecoderUtils.DecodingMethod.BASE64_ENCODED);
         }
 
         @Override

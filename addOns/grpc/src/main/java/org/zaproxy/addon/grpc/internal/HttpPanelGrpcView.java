@@ -50,7 +50,10 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
     private ProtoBufMessageEncoder protoBufMessageEncoder;
     private AbstractByteHttpPanelViewModel model;
 
-    public HttpPanelGrpcView(AbstractByteHttpPanelViewModel model) {
+    private final DecoderUtils.DecodingMethod decodingMethod;
+
+    public HttpPanelGrpcView(
+            AbstractByteHttpPanelViewModel model, DecoderUtils.DecodingMethod decodingMethod) {
         httpPanelGrpcArea = new HttpPanelGrpcArea();
         RTextScrollPane scrollPane = new RTextScrollPane(httpPanelGrpcArea);
         scrollPane.setLineNumbersEnabled(false);
@@ -60,6 +63,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         model.addHttpPanelViewModelListener(this);
         protoBufMessageDecoder = new ProtoBufMessageDecoder();
         protoBufMessageEncoder = new ProtoBufMessageEncoder();
+        this.decodingMethod = decodingMethod;
     }
 
     @Override
@@ -126,7 +130,11 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         try {
             protoBufMessageEncoder.encode(EncoderUtils.parseIntoList(text));
             byte[] encodedMessage = protoBufMessageEncoder.getOutputEncodedMessage();
-            this.model.setData(Base64.getEncoder().encode(encodedMessage));
+            if (decodingMethod == DecoderUtils.DecodingMethod.BASE64_ENCODED) {
+                this.model.setData(Base64.getEncoder().encode(encodedMessage));
+            } else {
+                this.model.setData(encodedMessage);
+            }
         } catch (Exception e) {
             showInvalidMessageFormatError(e.getMessage());
         }
@@ -147,8 +155,13 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         httpPanelGrpcArea.setBorder(null);
         try {
             body = DecoderUtils.splitMessageBodyAndStatusCode(body);
-            body = Base64.getDecoder().decode(body);
-            byte[] payload = DecoderUtils.extractPayload(body);
+            byte[] payload;
+            if (decodingMethod == DecoderUtils.DecodingMethod.BASE64_ENCODED) {
+                body = Base64.getDecoder().decode(body);
+                payload = DecoderUtils.extractPayload(body);
+            } else {
+                payload = body;
+            }
             if (payload.length == 0) {
                 httpPanelGrpcArea.setText("");
             } else {
