@@ -1,46 +1,61 @@
 import './App.css';
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from './Components/Sidebar/Sidebar';
+import HeaderBase from './Components/Header/HeaderBase';
+import SideTree from './Components/SiteTree/SideTree';
+import RequestBar from './Components/Request-Response/Req-Resp-Bar';
+import { sendChildNode } from './Utilities/requests'
+import SearchBar from './Components/SearchBar/SearchBar';
 
 const App = () => {
-    const [childNode,setChildNode] = useState(null);
-    const WebClickZAP = async () => {
+    const [childNode, setChildNode] = useState(null);
 
-        try {
-            if (process.env.NODE_ENV === "development") {
-             axios.defaults.baseURL = "http://localhost:1337"; //Specify ZAP API URL here in development environment
-            } else {
-                axios.defaults.baseURL = ""
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const childNodes = await sendChildNode('');
+                setChildNode(childNodes);
+            } catch (error) {
+                console.error('Error fetching data:', error);
             }
+        };
 
-            const response = await axios.get('/JSON/core/view/childNodes/');
-            setChildNode(response.data.childNodes);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
+        fetchData();
+    }, []);
  return (
 
-        <div className="flex">   
-        <Sidebar />
+        <div className="flex mt-16 ">   
         
+        <HeaderBase />
+        <Sidebar />
+        <SideTree />
+        
+   
+       
+      
             <div className="w-full bg-gray-600 text-white ">
-                <div className='h-screen w-[400px] ml-2 bg-gray-800  '>
-                <div className="flex flex-row text-center justify-center ">
-                   <div className=" w-1/3 p-4 font-serif text-center ">Website</div>
-                </div>            
-                <div className="flex flex-row  justify-center text-center">
-                    <div className=" p-4" onClick={WebClickZAP}>
-                      <p className='font-mono '>Click to fetch</p>
-                      {childNode && childNode.map((node) => (
-                     <p className='' key={childNode}>{node.name}</p>
+            <SearchBar />
+                <div className='h-[400px]  mr-2 ml-2 bg-gray-800 rounded-lg '>
+                    <div className="flex flex-row text-center justify-center ">
+                   <div className=" w-1/3 p-4 font-serif text-center ">ID | Method | Host | Path | URI</div>
+                 </div>            
+                 <div className="flex flex-row  justify-center text-center">
+                    <div className=" p-4" >
+                      <p className='font-mono '></p>
+                       {childNode && childNode.map((node) => (
+                     <p className='' key={childNode}>{node.hrefId}</p>
                       ))}
                     </div>
+                    
                 </div>
+                
             </div>
+            
+            <RequestBar />
+            
         </div>
-
+        
         </div>
 
     );

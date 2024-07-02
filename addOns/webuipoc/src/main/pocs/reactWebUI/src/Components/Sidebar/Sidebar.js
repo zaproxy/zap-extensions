@@ -3,7 +3,7 @@ import { SidebarData } from './SidebarData';
 
 function Sidebar() {
   return (
-    <div className='Sidebar h-screen w-40 bg-gray-800 '>
+    <div className='Sidebar w-10 bg-gray-800 '>
       <ul className='SidebarList h-auto p-0 w-full '>
         {SidebarData.map((val, key) => {
           return (
