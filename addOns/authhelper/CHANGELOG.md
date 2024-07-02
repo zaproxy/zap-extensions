@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Ignore non-displayed fields when selecting the user name and password.
 
+### Added
+- Added support for Client Script Authentication when used in conjunction with the Ajax Spider add-on.
+
 ## [0.17.0] - 2025-01-09
 ### Changed
 - Update minimum ZAP version to 2.16.0.
