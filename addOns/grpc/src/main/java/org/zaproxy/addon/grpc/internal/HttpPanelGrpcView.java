@@ -50,7 +50,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
     private ProtoBufMessageEncoder protoBufMessageEncoder;
     private AbstractByteHttpPanelViewModel model;
 
-    private DecoderUtils.DecodingMethod decodingMethod;
+    private final DecoderUtils.DecodingMethod decodingMethod;
 
     public HttpPanelGrpcView(
             AbstractByteHttpPanelViewModel model, DecoderUtils.DecodingMethod decodingMethod) {

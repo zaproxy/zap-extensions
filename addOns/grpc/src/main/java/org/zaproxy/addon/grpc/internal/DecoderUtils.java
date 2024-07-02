@@ -44,7 +44,7 @@ public class DecoderUtils {
     public static final int LENGTH_DELIMITED_WIRE_TYPE = 2;
     public static final int BIT32_WIRE_TYPE = 5;
 
-    public static enum DecodingMethod {
+    public enum DecodingMethod {
         BASE64_ENCODED,
         DIRECT
     }
