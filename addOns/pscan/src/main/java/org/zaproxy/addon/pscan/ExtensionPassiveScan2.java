@@ -25,6 +25,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.addon.pscan.internal.AddOnScanRulesLoader;
 
 public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
@@ -33,8 +34,26 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class);
 
+    private final boolean loadScanRules;
+    private AddOnScanRulesLoader scanRulesLoader;
+
     public ExtensionPassiveScan2() {
         super(NAME);
+
+        loadScanRules =
+                !hasField(
+                        org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class,
+                        "addOnScanRules");
+    }
+
+    private static boolean hasField(Class<?> clazz, String name) {
+        try {
+            clazz.getDeclaredField(name);
+            return true;
+        } catch (NoSuchFieldException e) {
+            // Nothing to do.
+        }
+        return false;
     }
 
     @Override
@@ -53,10 +72,28 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
     }
 
     @Override
+    public void init() {
+        if (loadScanRules) {
+            scanRulesLoader = new AddOnScanRulesLoader(getExtPscan());
+        }
+    }
+
+    @Override
+    public void postInit() {
+        if (loadScanRules) {
+            scanRulesLoader.load();
+        }
+    }
+
+    @Override
     public void hook(ExtensionHook extensionHook) {
         if (org.zaproxy.zap.extension.pscan.PassiveScanAPI.class.getAnnotation(Deprecated.class)
                 != null) {
             extensionHook.addApiImplementor(new PassiveScanApi(getExtPscan()));
+        }
+
+        if (loadScanRules) {
+            extensionHook.addAddOnInstallationStatusListener(scanRulesLoader);
         }
     }
 
@@ -69,5 +106,12 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    @Override
+    public void unload() {
+        if (loadScanRules) {
+            scanRulesLoader.unload();
+        }
     }
 }

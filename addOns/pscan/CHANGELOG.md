@@ -7,4 +7,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Provide the `pscan` API on newer ZAP versions (Issue 7959).
+- Dynamically un/load add-on passive scan rules (Issue 7959).
 
