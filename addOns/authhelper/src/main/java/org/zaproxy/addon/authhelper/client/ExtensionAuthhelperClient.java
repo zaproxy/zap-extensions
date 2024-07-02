@@ -20,12 +20,17 @@
 package org.zaproxy.addon.authhelper.client;
 
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.addon.authhelper.AuthUtils;
+import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 
 public class ExtensionAuthhelperClient extends ExtensionAdaptor {
 
@@ -33,8 +38,12 @@ public class ExtensionAuthhelperClient extends ExtensionAdaptor {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(ExtensionClientIntegration.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionAuthhelperClient.class);
 
     private BrowserBasedAuthHandler authHandler;
+
+    protected static final ClientScriptBasedAuthenticationMethodType CLIENT_SCRIPT_BASED_AUTH_TYPE =
+            new ClientScriptBasedAuthenticationMethodType();
 
     public ExtensionAuthhelperClient() {
         super(NAME);
@@ -43,6 +52,11 @@ public class ExtensionAuthhelperClient extends ExtensionAdaptor {
     @Override
     public boolean supportsDb(String type) {
         return true;
+    }
+
+    @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
     }
 
     @Override
@@ -59,18 +73,27 @@ public class ExtensionAuthhelperClient extends ExtensionAdaptor {
     }
 
     @Override
-    public boolean canUnload() {
-        return true;
+    public void optionsLoaded() {
+        ExtensionAuthentication extAuth = AuthUtils.getExtension(ExtensionAuthentication.class);
+        if (extAuth != null) {
+            extAuth.getAuthenticationMethodTypes().add(CLIENT_SCRIPT_BASED_AUTH_TYPE);
+            LOGGER.debug("Loaded client script based auth type.");
+        }
     }
 
     @Override
     public void unload() {
         getClientExtension().removeAuthenticationHandler(authHandler);
+        ExtensionAuthentication extAuth = AuthUtils.getExtension(ExtensionAuthentication.class);
+
+        if (extAuth != null) {
+            extAuth.getAuthenticationMethodTypes().remove(CLIENT_SCRIPT_BASED_AUTH_TYPE);
+        }
     }
 
     @Override
-    public List<Class<? extends Extension>> getDependencies() {
-        return DEPENDENCIES;
+    public boolean canUnload() {
+        return true;
     }
 
     @Override

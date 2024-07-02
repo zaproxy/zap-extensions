@@ -17,7 +17,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("spiderAjax") {
-                            version.set(">=23.15.0")
+                            version.set(">=23.22.0")
                         }
                     }
                 }
@@ -29,7 +29,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("client") {
-                            version.set(">=0.10.0")
+                            version.set(">=0.11.0")
                         }
                     }
                 }
@@ -48,6 +48,9 @@ zapAddOn {
                 }
                 register("selenium") {
                     version.set("15.*")
+                }
+                register("zest") {
+                    version.set(">=48.1.0")
                 }
             }
         }
@@ -69,6 +72,7 @@ dependencies {
     zapAddOn("selenium")
     zapAddOn("spiderAjax")
     zapAddOn("client")
+    zapAddOn("zest")
 
     testImplementation(project(":testutils"))
 }
