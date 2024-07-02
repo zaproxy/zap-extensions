@@ -354,8 +354,9 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 if(e.getOriginalMessage().contains("TextBuffer overrun")) {
                     LOGGER.warn("Fully resolved definition is too large, trying to use original definition only.");
                     openApiString = FileUtils.readFileToString(file,  StandardCharsets.UTF_8);
+                } else {
+                    throw e;
                 }
-                else throw e;
             }
 
             List<String> errors =
