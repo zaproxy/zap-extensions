@@ -352,7 +352,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 openApiString = Json.mapper().writeValueAsString(openApi);
             } catch (JsonMappingException e) {
                 if(e.getOriginalMessage().contains("TextBuffer overrun")) {
-                    LOGGER.warn("OpenAPI definition too large, trying to read it directly from file");
+                    LOGGER.warn("Fully resolved definition is too large, trying to use original definition only.");
                     openApiString = FileUtils.readFileToString(file,  StandardCharsets.UTF_8);
                 }
                 else throw e;
