@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - gRPC WebSocket Support Added
-- 
+ 
 ### Fixed
 - Do not try to decode non-gRPC responses when active scanning, which would lead to unnecessary warnings.
 
