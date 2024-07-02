@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Include the Jackson Datatype: JSR310 library for other add-ons to use.
 
+## [1.26.0] - 2024-05-10
+### Added
+- Include the Jackson Datatype: JSR310 library for other add-ons to use.
+
 ## [1.25.0] - 2024-05-07
 ### Added
 - Support for code and help links for script scan rules.
