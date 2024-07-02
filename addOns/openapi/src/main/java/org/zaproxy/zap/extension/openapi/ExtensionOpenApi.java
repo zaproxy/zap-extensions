@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
@@ -75,8 +76,6 @@ import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
-
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineListener {
 
@@ -351,9 +350,10 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             try {
                 openApiString = Json.mapper().writeValueAsString(openApi);
             } catch (JsonMappingException e) {
-                if(e.getOriginalMessage().contains("TextBuffer overrun")) {
-                    LOGGER.warn("Fully resolved definition is too large, trying to use original definition only.");
-                    openApiString = FileUtils.readFileToString(file,  StandardCharsets.UTF_8);
+                if (e.getOriginalMessage().contains("TextBuffer overrun")) {
+                    LOGGER.warn(
+                            "Fully resolved definition is too large, trying to use original definition only.");
+                    openApiString = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                 } else {
                     throw e;
                 }
@@ -361,13 +361,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
             List<String> errors =
                     importOpenApiDefinition(
-                            openApiString,
-                            targetUrl,
-                            null,
-                            initViaUi,
-                            requestor,
-                            contextId,
-                            false);
+                            openApiString, targetUrl, null, initViaUi, requestor, contextId, false);
             results.setErrors(errors);
         } catch (IOException e) {
             if (initViaUi) {
