@@ -7,4 +7,5 @@
     <mapID target="addon.grpc.icon" url="../common/images/grpc.png"/>
     <mapID target="addon.grpc" url="contents/grpc.html"/>
     <mapID target="addon.grpc.variant" url="contents/variant.html" />
+    <mapID target="addon.grpc.websocket" url="contents/websocket.html" />
 </map>
