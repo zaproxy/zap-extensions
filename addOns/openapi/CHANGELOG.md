@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [42] - 2024-07-04
 
 ### Changed
 - Workaround issue loading fully resolved definitions that are too large by trying to use the original definition only (Issue 8193).
@@ -316,6 +316,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[42]: https://github.com/zaproxy/zap-extensions/releases/openapi-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/openapi-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/openapi-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/openapi-v39
