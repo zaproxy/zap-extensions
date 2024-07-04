@@ -3,7 +3,10 @@
 <toc version="2.0">
     <tocitem text="ZAP User Guide" tocid="toplevelitem">
         <tocitem text="Add Ons" tocid="addons">
-            <tocitem text="gRPC Support" image="addon.grpc.icon" target="addon.grpc"/>
+            <tocitem text="gRPC Support" image="addon.grpc.icon" target="addon.grpc">
+                <tocitem text="Variant" target="addon.grpc.variant"/>
+                <tocitem text="WebSocket" target="addon.grpc.websocket"/>
+            </tocitem>
         </tocitem>
     </tocitem>
 </toc>
