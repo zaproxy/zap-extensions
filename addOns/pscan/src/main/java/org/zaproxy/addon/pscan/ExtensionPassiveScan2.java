@@ -26,7 +26,12 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.pscan.internal.AddOnScanRulesLoader;
+import org.zaproxy.addon.pscan.internal.DefaultStatsListener;
 import org.zaproxy.addon.pscan.internal.StatsPassiveScanner;
+import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.Stats;
+import org.zaproxy.zap.utils.StatsListener;
+import org.zaproxy.zap.view.ScanStatus;
 
 public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
@@ -37,6 +42,10 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
     private final boolean loadScanRules;
     private AddOnScanRulesLoader scanRulesLoader;
+
+    private boolean addScanStatus;
+    private ScanStatus scanStatus;
+    private StatsListener statsListener;
 
     public ExtensionPassiveScan2() {
         super(NAME);
@@ -77,6 +86,12 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
         if (loadScanRules) {
             scanRulesLoader = new AddOnScanRulesLoader(getExtPscan());
         }
+
+        addScanStatus =
+                hasView()
+                        && !hasField(
+                                org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class,
+                                "scanStatus");
     }
 
     @Override
@@ -97,6 +112,29 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
         if (loadScanRules) {
             extensionHook.addAddOnInstallationStatusListener(scanRulesLoader);
         }
+
+        if (addScanStatus) {
+            scanStatus =
+                    new ScanStatus(
+                            DisplayUtils.getScaledIcon(getClass().getResource("icons/pscan.png")),
+                            Constant.messages.getString("pscan.footer.label"));
+            statsListener =
+                    new DefaultStatsListener() {
+
+                        @Override
+                        public void highwaterMarkSet(String key, long value) {
+                            if ("stats.pscan.recordsToScan".equals(key)) {
+                                scanStatus.setScanCount((int) value);
+                            }
+                        }
+                    };
+            Stats.addListener(statsListener);
+
+            getView()
+                    .getMainFrame()
+                    .getMainFooterPanel()
+                    .addFooterToolbarRightLabel(scanStatus.getCountLabel());
+        }
     }
 
     private static org.zaproxy.zap.extension.pscan.ExtensionPassiveScan getExtPscan() {
@@ -116,5 +154,14 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
             scanRulesLoader.unload();
         }
         StatsPassiveScanner.unload(getExtPscan());
+
+        if (addScanStatus) {
+            getView()
+                    .getMainFrame()
+                    .getMainFooterPanel()
+                    .removeFooterToolbarRightLabel(scanStatus.getCountLabel());
+
+            Stats.removeListener(statsListener);
+        }
     }
 }
