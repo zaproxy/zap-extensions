@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zaproxy.addon.kotlin.TestUtils.getScriptContents;
 
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Paths;
@@ -45,7 +46,7 @@ class ClassLoaderTests {
                                         .getFile())
                         .getParent()
                         .toString();
-        return new URLClassLoader(new URL[] {new URL("file://" + testClasspath + "/")});
+        return new URLClassLoader(new URL[] {new URI("file://" + testClasspath + "/").toURL()});
     }
 
     @Test
