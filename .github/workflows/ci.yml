@@ -12,10 +12,14 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
+        os: [ubuntu-latest]
         java: [11, 17, 19]
+        include:
+          - os: windows-latest
+            java: 11
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +34,7 @@ jobs:
             caches
             notifications
             wdm
-      - run: ./gradlew -Dorg.gradle.jvmargs=-Xmx2g assemble
+      - run: ./gradlew "-Dorg.gradle.jvmargs=-Xmx2g" assemble
         env:
           WDM_CACHEPATH: "~/.gradle/wdm"
       - run: ./gradlew check
