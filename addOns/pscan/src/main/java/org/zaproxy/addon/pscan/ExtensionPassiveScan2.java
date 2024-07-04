@@ -26,6 +26,7 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.pscan.internal.AddOnScanRulesLoader;
+import org.zaproxy.addon.pscan.internal.StatsPassiveScanner;
 
 public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
@@ -83,6 +84,7 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
         if (loadScanRules) {
             scanRulesLoader.load();
         }
+        StatsPassiveScanner.load(getExtPscan());
     }
 
     @Override
@@ -113,5 +115,6 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
         if (loadScanRules) {
             scanRulesLoader.unload();
         }
+        StatsPassiveScanner.unload(getExtPscan());
     }
 }
