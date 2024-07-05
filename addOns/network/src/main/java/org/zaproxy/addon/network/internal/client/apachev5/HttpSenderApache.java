@@ -74,6 +74,7 @@ import org.apache.hc.core5.http.config.CharCodingConfig;
 import org.apache.hc.core5.http.config.Lookup;
 import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.hc.core5.http.io.HttpClientConnection;
+import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.apache.hc.core5.http.message.BasicHttpRequest;
@@ -253,6 +254,9 @@ public class HttpSenderApache
                         .setSocketTimeout(timeout)
                         .build();
         connectionManager.setDefaultConnectionConfig(connConfig);
+
+        connectionManager.setDefaultSocketConfig(
+                SocketConfig.custom().setSoTimeout(timeout).build());
 
         connectionManager.setDefaultTlsConfig(
                 TlsConfig.custom()
