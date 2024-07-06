@@ -25,7 +25,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -678,7 +677,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
     private static URI createUri(String source) {
         try {
-            new URL(source).toURI();
+            new java.net.URI(source).toURL();
             URI uri = new URI(source, true);
             String scheme = uri.getScheme();
             if (HttpHeader.HTTP.equalsIgnoreCase(scheme)

@@ -20,6 +20,7 @@
 package org.zaproxy.addon.automation.gui;
 
 import java.awt.Component;
+import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -120,8 +121,7 @@ public class UrlPresenceTestDialog extends StandardFieldsDialog {
 
         URL uri = null;
         try {
-            uri = new URL(url);
-            uri.toURI();
+            uri = new URI(url).toURL();
         } catch (Exception e) {
             return Constant.messages.getString(ERROR_URL_INVALID, url, e.getMessage());
         }
