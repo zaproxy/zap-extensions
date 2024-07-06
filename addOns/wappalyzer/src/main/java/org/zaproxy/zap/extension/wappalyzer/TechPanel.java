@@ -44,6 +44,8 @@ import org.jdesktop.swingx.renderer.StringValues;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.utils.TableExportButton;
 import org.zaproxy.zap.view.ZapToggleButton;
@@ -69,6 +71,7 @@ public class TechPanel extends AbstractPanel {
 
     private TableExportButton<JXTable> exportButton = null;
     private ZapToggleButton enableButton = null;
+    private ZapToggleButton modeButton = null;
 
     private static final Icon TRANSPARENT_ICON =
             new Icon() {
@@ -108,6 +111,7 @@ public class TechPanel extends AbstractPanel {
         this.setMnemonic(Constant.messages.getChar("wappalyzer.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
         this.getEnableToggleButton().setSelected(extension.isWappalyzerEnabled());
+        this.getModeToggleButton().setSelected(Mode.getBooleanForMode(extension.getMode()));
     }
 
     /**
@@ -161,6 +165,7 @@ public class TechPanel extends AbstractPanel {
             panelToolbar.add(getSiteSelect());
             panelToolbar.add(getExportButton());
             panelToolbar.add(getEnableToggleButton());
+            panelToolbar.add(getModeToggleButton());
 
             panelToolbar.add(Box.createHorizontalGlue());
         }
@@ -331,14 +336,14 @@ public class TechPanel extends AbstractPanel {
                             Constant.messages.getString("wappalyzer.toolbar.toggle.state.enabled"),
                             true);
             enableButton.setIcon(
-                    new ImageIcon(
+                    DisplayUtils.getScaledIcon(
                             TechPanel.class.getResource(
                                     ExtensionWappalyzer.RESOURCE + "/off.png")));
             enableButton.setToolTipText(
                     Constant.messages.getString(
                             "wappalyzer.toolbar.toggle.state.disabled.tooltip"));
             enableButton.setSelectedIcon(
-                    new ImageIcon(
+                    DisplayUtils.getScaledIcon(
                             TechPanel.class.getResource(ExtensionWappalyzer.RESOURCE + "/on.png")));
             enableButton.setSelectedToolTipText(
                     Constant.messages.getString("wappalyzer.toolbar.toggle.state.enabled.tooltip"));
@@ -358,5 +363,34 @@ public class TechPanel extends AbstractPanel {
                     });
         }
         return enableButton;
+    }
+
+    ZapToggleButton getModeToggleButton() {
+        if (modeButton == null) {
+            modeButton = new ZapToggleButton(Mode.QUICK.getName(), true);
+            modeButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            TechPanel.class.getResource(
+                                    ExtensionWappalyzer.RESOURCE + "/off.png")));
+            modeButton.setToolTipText(
+                    Constant.messages.getString("wappalyzer.toolbar.toggle.mode.quick.tooltip"));
+            modeButton.setSelectedIcon(
+                    DisplayUtils.getScaledIcon(
+                            TechPanel.class.getResource(ExtensionWappalyzer.RESOURCE + "/on.png")));
+            modeButton.setSelectedToolTipText(
+                    Constant.messages.getString(
+                            "wappalyzer.toolbar.toggle.mode.exhaustive.tooltip"));
+            modeButton.addItemListener(
+                    event -> {
+                        if (event.getStateChange() == ItemEvent.SELECTED) {
+                            modeButton.setText(Mode.EXHAUSTIVE.getName());
+                            extension.setMode(Mode.EXHAUSTIVE);
+                        } else {
+                            modeButton.setText(Mode.QUICK.getName());
+                            extension.setMode(Mode.QUICK);
+                        }
+                    });
+        }
+        return modeButton;
     }
 }

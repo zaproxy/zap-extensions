@@ -41,6 +41,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
 
 public class WappalyzerPassiveScanner implements PassiveScanner {
 
@@ -48,6 +49,29 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     private WappalyzerApplicationHolder applicationHolder;
     private Set<String> visitedSiteIdentifiers = Collections.synchronizedSet(new HashSet<>());
     private volatile boolean enabled = true;
+    private volatile Mode mode = Mode.QUICK;
+
+    /** Functional interface for looped processing of HttpMessages in different ways. */
+    @FunctionalInterface
+    private interface CustomProcessor {
+        ApplicationMatch process(
+                ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source);
+    }
+
+    private List<CustomProcessor> messageHeaderProcessors =
+            List.of(
+                    WappalyzerPassiveScanner.this::checkUrlMatches,
+                    WappalyzerPassiveScanner.this::checkHeadersMatches,
+                    WappalyzerPassiveScanner.this::checkCookieMatches);
+
+    private List<CustomProcessor> messageBodyProcessors =
+            List.of(
+                    WappalyzerPassiveScanner.this::checkBodyMatches,
+                    WappalyzerPassiveScanner.this::checkSimpleDomMatches,
+                    WappalyzerPassiveScanner.this::checkDomElementMatches,
+                    WappalyzerPassiveScanner.this::checkMetaElementsMatches,
+                    WappalyzerPassiveScanner.this::checkScriptElementsMatches,
+                    WappalyzerPassiveScanner.this::checkCssElementsMatches);
 
     public WappalyzerPassiveScanner(WappalyzerApplicationHolder applicationHolder) {
         super();
@@ -109,18 +133,24 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
 
     private ApplicationMatch checkAppMatches(
             ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
-        appMatch = checkUrlMatches(appMatch, currentApp, msg);
-        appMatch = checkHeadersMatches(appMatch, currentApp, msg);
-        appMatch = checkCookieMatches(appMatch, currentApp, msg);
+
+        for (CustomProcessor cmp : messageHeaderProcessors) {
+            appMatch = cmp.process(appMatch, currentApp, msg, source);
+            if (!Mode.EXHAUSTIVE.equals(mode) && appMatch != null) {
+                return appMatch;
+            }
+        }
+
         if (!msg.getResponseHeader().isText()) {
             return appMatch; // Don't check body if not text'ish
         }
-        appMatch = checkBodyMatches(appMatch, currentApp, msg);
-        appMatch = checkMetaElementsMatches(appMatch, currentApp, source);
-        appMatch = checkScriptElementsMatches(appMatch, currentApp, source);
-        appMatch = checkCssElementsMatches(appMatch, currentApp, msg, source);
-        appMatch = checkSimpleDomMatches(appMatch, currentApp, msg);
-        appMatch = checkDomElementMatches(appMatch, currentApp, msg);
+
+        for (CustomProcessor cmp : messageBodyProcessors) {
+            appMatch = cmp.process(appMatch, currentApp, msg, source);
+            if (!Mode.EXHAUSTIVE.equals(mode) && appMatch != null) {
+                return appMatch;
+            }
+        }
         return appMatch;
     }
 
@@ -146,7 +176,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     }
 
     private ApplicationMatch checkScriptElementsMatches(
-            ApplicationMatch appMatch, Application currentApp, Source source) {
+            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
         for (Element scriptElement : source.getAllElements(HTMLElementName.SCRIPT)) {
             for (AppPattern appPattern : currentApp.getScript()) {
                 String src = scriptElement.getAttributeValue("src");
@@ -159,7 +189,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     }
 
     private ApplicationMatch checkMetaElementsMatches(
-            ApplicationMatch appMatch, Application currentApp, Source source) {
+            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
         List<Element> metaElements = source.getAllElements(HTMLElementName.META);
         for (Element metaElement : metaElements) {
             for (Map<String, AppPattern> sp : currentApp.getMetas()) {
@@ -177,7 +207,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     }
 
     private ApplicationMatch checkDomElementMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage message) {
+            ApplicationMatch appMatch, Application currentApp, HttpMessage message, Source source) {
         if (!message.getResponseHeader().isHtml()) {
             return appMatch;
         }
@@ -218,7 +248,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     }
 
     private ApplicationMatch checkSimpleDomMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage msg) {
+            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
         String body = msg.getResponseBody().toString();
         for (String selector : currentApp.getSimpleDom()) {
             appMatch = addIfDomMatches(appMatch, currentApp, selector, body);
@@ -227,7 +257,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     }
 
     private ApplicationMatch checkBodyMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage msg) {
+            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
         String body = msg.getResponseBody().toString();
         for (AppPattern p : currentApp.getHtml()) {
             appMatch = addIfMatches(appMatch, currentApp, p, body);
@@ -236,7 +266,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     }
 
     private ApplicationMatch checkHeadersMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage msg) {
+            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
         for (Map<String, AppPattern> sp : currentApp.getHeaders()) {
             for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
                 String header = msg.getResponseHeader().getHeader(entry.getKey());
@@ -250,7 +280,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     }
 
     private ApplicationMatch checkCookieMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage msg) {
+            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
         for (Map<String, AppPattern> sp : currentApp.getCookies()) {
             for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
                 for (HtmlParameter cookie : msg.getCookieParams()) {
@@ -265,7 +295,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     }
 
     private ApplicationMatch checkUrlMatches(
-            ApplicationMatch appMatch, Application currentApp, HttpMessage msg) {
+            ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
         String url = msg.getRequestHeader().getURI().toString();
         for (AppPattern p : currentApp.getUrl()) {
             appMatch = addIfMatches(appMatch, currentApp, p, url);
@@ -319,6 +349,10 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    void setMode(Mode mode) {
+        this.mode = mode;
     }
 
     @Override
