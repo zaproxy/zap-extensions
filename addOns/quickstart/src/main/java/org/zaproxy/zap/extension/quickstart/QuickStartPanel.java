@@ -150,7 +150,7 @@ public class QuickStartPanel extends AbstractPanel {
                     DisplayUtils.getScaledIcon(
                             new ImageIcon(
                                     QuickStartPanel.class.getResource(
-                                            ExtensionQuickStart.RESOURCES + "/co-osf.png")));
+                                            ExtensionQuickStart.RESOURCES + "/co-logo.png")));
         }
         return osfIcon;
     }
