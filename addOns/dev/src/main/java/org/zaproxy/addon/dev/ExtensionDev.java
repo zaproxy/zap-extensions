@@ -23,7 +23,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.addon.dev.error.LoggedErrorsHandler;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionDev extends ExtensionAdaptor {
 
@@ -33,17 +35,23 @@ public class ExtensionDev extends ExtensionAdaptor {
 
     protected static final String DIRECTORY_NAME = "dev-add-on";
 
+    private final LoggedErrorsHandler loggedErrorsHandler;
+
     private TestProxyServer tutorialServer;
 
     private DevParam devParam;
 
     public ExtensionDev() {
         super(NAME);
+
+        loggedErrorsHandler = new LoggedErrorsHandler();
     }
 
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
+
+        loggedErrorsHandler.hook(extensionHook);
 
         extensionHook.addOptionsParamSet(this.getDevParam());
 
@@ -55,6 +63,15 @@ public class ExtensionDev extends ExtensionAdaptor {
                                     .getExtensionLoader()
                                     .getExtension(ExtensionNetwork.class));
             extensionHook.addApiImplementor(new DevApi());
+        }
+
+        if (hasView()
+                && org.zaproxy.zap.extension.log4j.ExtensionLog4j.class.getAnnotation(
+                                Deprecated.class)
+                        != null) {
+            ZapMenuItem menuGarbageCollect = new ZapMenuItem("dev.tools.menu.gc");
+            menuGarbageCollect.addActionListener(e -> Runtime.getRuntime().gc());
+            extensionHook.getHookMenu().addToolsMenuItem(menuGarbageCollect);
         }
     }
 
@@ -77,6 +94,8 @@ public class ExtensionDev extends ExtensionAdaptor {
         if (tutorialServer != null) {
             tutorialServer.stop();
         }
+
+        loggedErrorsHandler.unload();
     }
 
     @Override
