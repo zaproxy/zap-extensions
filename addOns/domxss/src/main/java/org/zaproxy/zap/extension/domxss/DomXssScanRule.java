@@ -665,7 +665,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     }
 
     public boolean scan(String attackVector, String currUrl) {
-        HttpMessage msg = getNewMsg();
+        HttpMessage msg = getBaseMsg();
 
         DomAlertInfo result = scanHelper(attackVector, currUrl);
         if (result != null) {
