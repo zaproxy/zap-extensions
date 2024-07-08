@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - News display tweak.
 - Updated messages from "wappalyzer" to "Technology Detection".
+- Changed the Crash Override logo.
 
 ## [47] - 2024-05-07
 ### Changed
