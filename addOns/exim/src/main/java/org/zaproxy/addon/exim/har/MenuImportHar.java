@@ -19,9 +19,10 @@
  */
 package org.zaproxy.addon.exim.har;
 
-import edu.umass.cs.benchlab.har.tools.HarFileReader;
+import de.sstoehr.harreader.HarReader;
+import de.sstoehr.harreader.HarReaderException;
+import de.sstoehr.harreader.model.HarLog;
 import java.io.File;
-import java.io.IOException;
 import javax.swing.JFileChooser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +33,7 @@ import org.zaproxy.addon.commonlib.ui.ProgressPane;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.addon.commonlib.ui.ReadableFileChooser;
 import org.zaproxy.addon.exim.ExtensionExim;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class MenuImportHar extends ZapMenuItem {
@@ -62,30 +64,28 @@ public class MenuImportHar extends ZapMenuItem {
                                         this.setName(THREAD_PREFIX + threadId++);
                                         File file = chooser.getSelectedFile();
                                         int tasks = 0;
-                                        boolean indeterminate;
+                                        HarLog log = null;
                                         try {
-                                            tasks =
-                                                    new HarFileReader()
-                                                            .readHarFile(file)
-                                                            .getEntries()
-                                                            .getEntries()
-                                                            .size();
-                                            indeterminate = false;
-                                        } catch (IOException e) {
-                                            indeterminate = true;
+                                            log = new HarReader().readFromFile(file).getLog();
+                                            tasks = log.getEntries().size();
+                                        } catch (HarReaderException e) {
                                             LOGGER.warn(
-                                                    "Couldn't count entries in: {}",
-                                                    file.getAbsoluteFile());
+                                                    "Failed to read HAR file: {}\n{}",
+                                                    file.getAbsolutePath(),
+                                                    e.getMessage());
+                                            Stats.incCounter(
+                                                    ExtensionExim.STATS_PREFIX
+                                                            + HarImporter.STATS_HAR_FILE_ERROR);
+                                            return;
                                         }
                                         ProgressPane currentImportPane =
-                                                new ProgressPane(
-                                                        file.getAbsolutePath(), indeterminate);
+                                                new ProgressPane(file.getAbsolutePath(), false);
                                         currentImportPane.setTotalTasks(tasks);
                                         ExtensionExim.getProgressPanel()
                                                 .addProgressPane(currentImportPane);
                                         HarImporter harImporter =
                                                 new HarImporter(
-                                                        file,
+                                                        log,
                                                         new ProgressPaneListener(
                                                                 currentImportPane));
                                         if (!harImporter.isSuccess()) {
