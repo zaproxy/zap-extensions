@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Provide the Passive Rules script type (Issue 7959).
 - Provide the Stats Passive Scan Rule (Issue 7959).
 - Provide the scan status label (Issue 7959).
 - Provide the `pscan` API on newer ZAP versions (Issue 7959).

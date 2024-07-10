@@ -20,6 +20,7 @@
 package org.zaproxy.addon.pscan;
 
 import java.util.List;
+import javax.swing.ImageIcon;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -28,6 +29,8 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.pscan.internal.AddOnScanRulesLoader;
 import org.zaproxy.addon.pscan.internal.DefaultStatsListener;
 import org.zaproxy.addon.pscan.internal.StatsPassiveScanner;
+import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.StatsListener;
@@ -36,6 +39,8 @@ import org.zaproxy.zap.view.ScanStatus;
 public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionPassiveScan2";
+
+    public static final String SCRIPT_TYPE_PASSIVE = "passive";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class);
@@ -47,6 +52,9 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
     private ScanStatus scanStatus;
     private StatsListener statsListener;
 
+    private final boolean addScriptType;
+    private ScriptType scriptType;
+
     public ExtensionPassiveScan2() {
         super(NAME);
 
@@ -54,6 +62,20 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
                 !hasField(
                         org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class,
                         "addOnScanRules");
+
+        addScriptType =
+                isFieldDeprecated(
+                        org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class,
+                        "SCRIPT_TYPE_PASSIVE");
+    }
+
+    private static boolean isFieldDeprecated(Class<?> clazz, String name) {
+        try {
+            return clazz.getField(name).getAnnotation(Deprecated.class) != null;
+        } catch (NoSuchFieldException e) {
+            // Nothing to do.
+        }
+        return true;
     }
 
     private static boolean hasField(Class<?> clazz, String name) {
@@ -135,12 +157,34 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
                     .getMainFooterPanel()
                     .addFooterToolbarRightLabel(scanStatus.getCountLabel());
         }
+
+        if (addScriptType) {
+            ExtensionScript extScript = getExtension(ExtensionScript.class);
+            if (extScript != null) {
+                scriptType =
+                        new ScriptType(
+                                SCRIPT_TYPE_PASSIVE,
+                                "pscan.scripts.type.passive",
+                                createScriptIcon(),
+                                true);
+                extScript.registerScriptType(scriptType);
+            }
+        }
+    }
+
+    private ImageIcon createScriptIcon() {
+        if (!hasView()) {
+            return null;
+        }
+        return DisplayUtils.getScaledIcon(getClass().getResource("icons/script-pscan.png"));
     }
 
     private static org.zaproxy.zap.extension.pscan.ExtensionPassiveScan getExtPscan() {
-        return Control.getSingleton()
-                .getExtensionLoader()
-                .getExtension(org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class);
+        return getExtension(org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class);
+    }
+
+    private static <T extends Extension> T getExtension(Class<T> clazz) {
+        return Control.getSingleton().getExtensionLoader().getExtension(clazz);
     }
 
     @Override
@@ -162,6 +206,10 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
                     .removeFooterToolbarRightLabel(scanStatus.getCountLabel());
 
             Stats.removeListener(statsListener);
+        }
+
+        if (scriptType != null) {
+            getExtension(ExtensionScript.class).removeScriptType(scriptType);
         }
     }
 }
