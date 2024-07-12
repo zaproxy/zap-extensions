@@ -1,6 +1,6 @@
-### ZAP Web UI (React)
+# Getting Started with Create React App
 
-This project contains Web UI code for ZAP built in React
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ### Development
 To build locally, you should have Node configured and `NODE_ENV` variable set to `development` (it should be set by default).
