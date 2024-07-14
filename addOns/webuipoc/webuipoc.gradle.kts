@@ -25,7 +25,7 @@ for (dir in pocsSrcDir.listFiles()!!) {
             tasks.register<NpmTask>("installPoc${normalizedPocName}Dependencies") {
                 group = pocBuildTasksGroup
                 workingDir = dir
-                args.set(arrayListOf("install"))
+                args.set(arrayListOf("ci"))
             }
         pocBuildTasks.add(
             tasks.register<NpmTask>("assemblePoc$normalizedPocName") {
