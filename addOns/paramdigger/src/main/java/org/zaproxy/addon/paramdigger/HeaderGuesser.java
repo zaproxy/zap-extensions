@@ -74,7 +74,7 @@ public class HeaderGuesser implements Runnable {
     private static final String POISON_DEFINITION = "paramdigger.results.poison.definition";
     private static final String POISON_DEFINITION_FIRST =
             "paramdigger.results.poison.definition.first";
-    private static List<Integer> ERROR_CODES = List.of(400, 413, 418, 429, 503);
+    private static final List<Integer> ERROR_CODES = List.of(400, 413, 418, 429, 503);
 
     private static final int PORT = 31337;
     private static final String[] PORTS = {":" + PORT, ":@" + PORT, " " + PORT};
