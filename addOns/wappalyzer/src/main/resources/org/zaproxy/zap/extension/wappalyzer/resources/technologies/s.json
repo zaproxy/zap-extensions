@@ -13,7 +13,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.salesmanago\\.com/",
+    "scriptSrc": [
+      "\\.salesmanago\\.com/"
+    ],
     "website": "https://www.salesmanago.com"
   },
   "SAP": {
@@ -65,7 +67,9 @@
       69
     ],
     "icon": "SAP.svg",
-    "scriptSrc": "\\.gigya\\.com/JS/gigya\\.js",
+    "scriptSrc": [
+      "\\.gigya\\.com/JS/gigya\\.js"
+    ],
     "website": "https://www.sap.com/uk/acquired-brands/what-is-gigya.html"
   },
   "SAP Upscale Commerce": {
@@ -108,7 +112,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "www\\.semrush\\.com",
+    "scriptSrc": [
+      "www\\.semrush\\.com"
+    ],
     "website": "https://www.semrush.com"
   },
   "SEOmatic": {
@@ -135,7 +141,9 @@
     ],
     "description": "SEUR is a Spanish shipments and express transport company.",
     "icon": "DPD.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bSEUR\\b"
     ],
@@ -183,7 +191,9 @@
     "meta": {
       "SIM.medium": ""
     },
-    "scriptSrc": "/sim(?:site|core)/js",
+    "scriptSrc": [
+      "/sim(?:site|core)/js"
+    ],
     "website": "https://simgroep.nl/internet/portfolio-contentbeheer_41623/"
   },
   "SNO Flex": {
@@ -295,8 +305,12 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "embed\\.sendtonews\\.com/",
-    "scripts": "embed\\.sendtonews\\.com/",
+    "scriptSrc": [
+      "embed\\.sendtonews\\.com/"
+    ],
+    "scripts": [
+      "embed\\.sendtonews\\.com/"
+    ],
     "website": "https://www.stnvideo.com"
   },
   "STUDIO": {
@@ -347,7 +361,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/svg-support/",
+    "scriptSrc": [
+      "/wp-content/plugins/svg-support/"
+    ],
     "website": "https://github.com/wp-plugins/svg-support"
   },
   "SWC": {
@@ -369,7 +385,9 @@
       "SWFObject": ""
     },
     "oss": true,
-    "scriptSrc": "swfobject.*\\.js",
+    "scriptSrc": [
+      "swfobject.*\\.js"
+    ],
     "website": "https://github.com/swfobject/swfobject"
   },
   "SaaSquatch": {
@@ -389,7 +407,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "(?:\\.cloudfront\\.net/assets/javascripts/(?:v2/)?|/sas)squatch\\.min\\.js",
+    "scriptSrc": [
+      "(?:\\.cloudfront\\.net/assets/javascripts/(?:v2/)?|/sas)squatch\\.min\\.js"
+    ],
     "website": "https://www.saasquatch.com"
   },
   "Saba.Host": {
@@ -488,7 +508,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "ak\\.sail-horizon\\.com",
+    "scriptSrc": [
+      "ak\\.sail-horizon\\.com"
+    ],
     "website": "https://www.sailthru.com"
   },
   "Sakai": {
@@ -584,7 +606,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.salesfire\\.co\\.uk/",
+    "scriptSrc": [
+      "cdn\\.salesfire\\.co\\.uk/"
+    ],
     "website": "https://www.salesfire.co.uk"
   },
   "SalesReps.io": {
@@ -598,7 +622,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "api\\.salesreps\\.io/",
+    "scriptSrc": [
+      "api\\.salesreps\\.io/"
+    ],
     "website": "https://salesreps.io"
   },
   "Salesfloor": {
@@ -617,7 +643,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.salesfloor\\.net/",
+    "scriptSrc": [
+      "\\.salesfloor\\.net/"
+    ],
     "website": "https://salesfloor.net"
   },
   "Salesforce": {
@@ -667,7 +695,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.krxd\\.net/",
+    "scriptSrc": [
+      "\\.krxd\\.net/"
+    ],
     "website": "https://www.salesforce.com/products/marketing-cloud/data-management"
   },
   "Salesforce Commerce Cloud": {
@@ -693,7 +723,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "/demandware\\.static/",
+    "scriptSrc": [
+      "/demandware\\.static/"
+    ],
     "website": "https://demandware.com"
   },
   "Salesforce Desk": {
@@ -708,7 +740,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "^/s/sfsites/auraFW/",
+    "scriptSrc": [
+      "^/s/sfsites/auraFW/"
+    ],
     "website": "https://www.salesforce.com/solutions/small-business-solutions/help-desk-software/"
   },
   "Salesforce Interaction Studio": {
@@ -726,7 +760,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.evgnet\\.com",
+    "scriptSrc": [
+      "cdn\\.evgnet\\.com"
+    ],
     "website": "https://www.salesforce.com/products/marketing-cloud/customer-interaction"
   },
   "Salesforce Marketing Cloud Account Engagement": {
@@ -794,7 +830,9 @@
       "low"
     ],
     "saas": true,
-    "scriptSrc": "service\\.force\\.com",
+    "scriptSrc": [
+      "service\\.force\\.com"
+    ],
     "website": "https://www.salesforce.com/au/products/service-cloud/"
   },
   "Salesloft": {
@@ -937,7 +975,9 @@
     ],
     "saas": true,
     "website": "https://www.sanity.io",
-    "xhr": "api(?:cdn)?\\.sanity\\.io"
+    "xhr": [
+      "api(?:cdn)?\\.sanity\\.io"
+    ]
   },
   "Sapper": {
     "cats": [
@@ -1009,7 +1049,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "sassy-social-share(?:-public)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "sassy-social-share(?:-public)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/sassy-social-share"
   },
   "Satori": {
@@ -1026,7 +1068,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "satori\\.segs\\.jp/",
+    "scriptSrc": [
+      "satori\\.segs\\.jp/"
+    ],
     "website": "https://satori.marketing"
   },
   "Satori Studio Bento": {
@@ -1041,7 +1085,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/bento/",
+    "scriptSrc": [
+      "/wp-content/themes/bento/"
+    ],
     "website": "https://satoristudio.net/bento-free-wordpress-theme"
   },
   "Sazito": {
@@ -1073,7 +1119,9 @@
     "description": "Scalapay is a payment method for e-commerce merchants in Europe that allows customers to buy now and pay later (BNPL).",
     "icon": "Scalapay.svg",
     "saas": true,
-    "scriptSrc": "cdn\\.scalapay\\.com",
+    "scriptSrc": [
+      "cdn\\.scalapay\\.com"
+    ],
     "website": "https://www.scalapay.com/"
   },
   "Scalefast": {
@@ -1086,7 +1134,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn-prod\\.scalefast\\.com/(?:.+\\.js\\?version=([\\d\\.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "cdn-prod\\.scalefast\\.com/(?:.+\\.js\\?version=([\\d\\.]+))?\\;version:\\1"
+    ],
     "website": "https://www.scalefast.com"
   },
   "ScandiPWA": {
@@ -1111,7 +1161,9 @@
     ],
     "description": "Schedule Engine is a customer support solution built for contractors.",
     "icon": "Schedule Engine.svg",
-    "scriptSrc": "webchat.scheduleengine.net",
+    "scriptSrc": [
+      "webchat.scheduleengine.net"
+    ],
     "website": "https://www.scheduleengine.com/"
   },
   "Scientific Linux": {
@@ -1140,7 +1192,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/writee(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/writee(?:-pro)?/"
+    ],
     "website": "https://www.scissorthemes.com/themes/writee-free"
   },
   "Scoop.it": {
@@ -1170,7 +1224,9 @@
     "js": {
       "Process.UserData": ""
     },
-    "scriptSrc": "cdn.cxc.scorpion.direct",
+    "scriptSrc": [
+      "cdn.cxc.scorpion.direct"
+    ],
     "website": "https://www.scorpion.co/"
   },
   "Screenfull.js": {
@@ -1179,7 +1235,9 @@
     ],
     "description": "Simple wrapper for cross-browser usage of the JavaScript Fullscreen API.",
     "oss": true,
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?screenfull(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/)?screenfull(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2"
+    ],
     "website": "https://sindresorhus.com/screenfull/"
   },
   "Scrivito": {
@@ -1253,7 +1311,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "live\\.sequracdn\\.com/",
+    "scriptSrc": [
+      "live\\.sequracdn\\.com/"
+    ],
     "website": "https://www.sequra.es"
   },
   "Seal Subscriptions": {
@@ -1276,7 +1336,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.sealsubscriptions\\.com/",
+    "scriptSrc": [
+      "\\.sealsubscriptions\\.com/"
+    ],
     "website": "https://www.sealsubscriptions.com"
   },
   "SeamlessCMS": {
@@ -1322,7 +1384,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "searchanise(?:-.+\\.kxcdn)?\\.com/",
+    "scriptSrc": [
+      "searchanise(?:-.+\\.kxcdn)?\\.com/"
+    ],
     "website": "https://start.searchanise.com"
   },
   "SearchiQ": {
@@ -1359,7 +1423,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.searchspring\\.net",
+    "scriptSrc": [
+      "cdn\\.searchspring\\.net"
+    ],
     "website": "https://searchspring.com"
   },
   "Secomapp": {
@@ -1380,7 +1446,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.secomapp\\.com/",
+    "scriptSrc": [
+      "cdn\\.secomapp\\.com/"
+    ],
     "website": "https://www.secomapp.com"
   },
   "Sectigo": {
@@ -1435,7 +1503,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/coming-soon/",
+    "scriptSrc": [
+      "/wp-content/plugins/coming-soon/"
+    ],
     "website": "https://www.seedprod.com/features/coming-soon-page-templates-for-wordpress"
   },
   "Seers": {
@@ -1463,7 +1533,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "pge\\.segmanta\\.com/widget_embed_js(?:/widgetEmbed-v([\\d.]+)\\.min\\.js)?\\;version:\\1",
+    "scriptSrc": [
+      "pge\\.segmanta\\.com/widget_embed_js(?:/widgetEmbed-v([\\d.]+)\\.min\\.js)?\\;version:\\1"
+    ],
     "website": "https://segmanta.com"
   },
   "Segment": {
@@ -1504,7 +1576,9 @@
       "consentManager.version": "([\\d.]+)\\;version:\\1"
     },
     "saas": true,
-    "scriptSrc": "@segment/consent-manager@([\\d.]+)\\;version:\\1",
+    "scriptSrc": [
+      "@segment/consent-manager@([\\d.]+)\\;version:\\1"
+    ],
     "website": "https://segment.com/blog/how-to-build-consent-management-into-your-site-in-less-than-a-week"
   },
   "SegmentStream": {
@@ -1521,7 +1595,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.segmentstream\\.com",
+    "scriptSrc": [
+      "cdn\\.segmentstream\\.com"
+    ],
     "website": "https://segmentstream.com"
   },
   "Seko OmniReturns": {
@@ -1540,7 +1616,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "//cdn\\.omniparcelreturns\\.com/",
+    "scriptSrc": [
+      "//cdn\\.omniparcelreturns\\.com/"
+    ],
     "website": "https://www.sekologistics.com/us/global-cross-border-returns"
   },
   "Select2": {
@@ -1555,7 +1633,9 @@
     "js": {
       "jQuery.fn.select2": ""
     },
-    "scriptSrc": "select2(?:\\.min|\\.full)?\\.js",
+    "scriptSrc": [
+      "select2(?:\\.min|\\.full)?\\.js"
+    ],
     "website": "https://select2.org/"
   },
   "Selectize": {
@@ -1638,7 +1718,9 @@
       "Microsoft ASP.NET"
     ],
     "saas": true,
-    "scriptSrc": "\\.sellerscommerce\\.com/",
+    "scriptSrc": [
+      "\\.sellerscommerce\\.com/"
+    ],
     "website": "https://www.sellerscommerce.com"
   },
   "Selless": {
@@ -1672,7 +1754,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "sellfy\\.com/js/",
+    "scriptSrc": [
+      "sellfy\\.com/js/"
+    ],
     "website": "https://sellfy.com"
   },
   "Sellingo": {
@@ -1710,7 +1794,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.sellix\\.io/static/js/embed\\.js",
+    "scriptSrc": [
+      "cdn\\.sellix\\.io/static/js/embed\\.js"
+    ],
     "website": "https://sellix.io/"
   },
   "Sellsy": {
@@ -1727,7 +1813,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.sellsy\\.com/",
+    "scriptSrc": [
+      "\\.sellsy\\.com/"
+    ],
     "website": "https://go.sellsy.com"
   },
   "Selly": {
@@ -1742,7 +1830,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "embed\\.selly\\.(?:gg|io)",
+    "scriptSrc": [
+      "embed\\.selly\\.(?:gg|io)"
+    ],
     "website": "https://selly.io/"
   },
   "Semantic UI": {
@@ -1754,7 +1844,9 @@
       "<link[^>]+semantic(?:\\.min)\\.css\""
     ],
     "icon": "Semantic-ui.png",
-    "scriptSrc": "/semantic(?:-([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "/semantic(?:-([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://semantic-ui.com/"
   },
   "Sematext Experience": {
@@ -1768,7 +1860,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.sematext\\.com/experience\\.js",
+    "scriptSrc": [
+      "\\.sematext\\.com/experience\\.js"
+    ],
     "website": "https://sematext.com/experience"
   },
   "Semplice": {
@@ -1787,7 +1881,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/semplice(?:\\d+)?(?:-child)?(?:-theme)?/",
+    "scriptSrc": [
+      "/wp-content/themes/semplice(?:\\d+)?(?:-child)?(?:-theme)?/"
+    ],
     "website": "https://www.semplice.com"
   },
   "Sencha Touch": {
@@ -1797,7 +1893,9 @@
     ],
     "description": "Sencha Touch is a user interface (UI) JavaScript library, or web framework, specifically built for the Mobile Web.",
     "icon": "Sencha Touch.png",
-    "scriptSrc": "sencha-touch.*\\.js",
+    "scriptSrc": [
+      "sencha-touch.*\\.js"
+    ],
     "website": "https://www.sencha.com/products/touch"
   },
   "SendPulse": {
@@ -1814,7 +1912,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.sendpulse\\.com/",
+    "scriptSrc": [
+      "\\.sendpulse\\.com/"
+    ],
     "website": "https://sendpulse.com"
   },
   "Sendgrid": {
@@ -1852,7 +1952,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "sib(?:automation|forms)\\.com/",
+    "scriptSrc": [
+      "sib(?:automation|forms)\\.com/"
+    ],
     "website": "https://www.sendinblue.com"
   },
   "Sensors Data": {
@@ -1868,7 +1970,9 @@
       "sa.lib_version": "([\\d.]+)\\;version:\\1",
       "sensorsdata_app_js_bridge_call_js": ""
     },
-    "scriptSrc": "sensorsdata",
+    "scriptSrc": [
+      "sensorsdata"
+    ],
     "website": "https://www.sensorsdata.cn"
   },
   "Sentry": {
@@ -1936,7 +2040,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.smg\\.com/",
+    "scriptSrc": [
+      "\\.smg\\.com/"
+    ],
     "website": "https://www.smg.com"
   },
   "Service Provider Pro": {
@@ -2026,7 +2132,9 @@
     "js": {
       "SevenroomsWidget": ""
     },
-    "scriptSrc": "sevenrooms\\.\\w+/widget/embed\\.js",
+    "scriptSrc": [
+      "sevenrooms\\.\\w+/widget/embed\\.js"
+    ],
     "website": "https://sevenrooms.com"
   },
   "Sezzle": {
@@ -2045,7 +2153,9 @@
       "sezzle_cid": ""
     },
     "saas": true,
-    "scriptSrc": "widget\\.sezzle\\.(?:in|com)",
+    "scriptSrc": [
+      "widget\\.sezzle\\.(?:in|com)"
+    ],
     "website": "https://sezzle.com/"
   },
   "Shaka Player": {
@@ -2071,7 +2181,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.shanon-services\\.com",
+    "scriptSrc": [
+      "\\.shanon-services\\.com"
+    ],
     "website": "https://www.shanon.co.jp"
   },
   "Shapecss": {
@@ -2105,7 +2217,9 @@
     "pricing": [
       "freemium"
     ],
-    "scriptSrc": "\\.sharethis\\.com/",
+    "scriptSrc": [
+      "\\.sharethis\\.com/"
+    ],
     "website": "https://sharethis.com"
   },
   "Shareaholic": {
@@ -2134,7 +2248,9 @@
     "pricing": [
       "poa"
     ],
-    "scriptSrc": "\\.sharethrough\\.com/",
+    "scriptSrc": [
+      "\\.sharethrough\\.com/"
+    ],
     "website": "https://www.sharethrough.com"
   },
   "Sharetribe": {
@@ -2149,7 +2265,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.sharetribe\\.com/",
+    "scriptSrc": [
+      "\\.sharetribe\\.com/"
+    ],
     "website": "https://www.sharetribe.com"
   },
   "SharpSpring": {
@@ -2166,7 +2284,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.marketingautomation\\.services.+(?:ver=)([\\d.]+)\\;version:\\1",
+    "scriptSrc": [
+      "\\.marketingautomation\\.services.+(?:ver=)([\\d.]+)\\;version:\\1"
+    ],
     "website": "https://sharpspring.com"
   },
   "SharpSpring Ads": {
@@ -2182,7 +2302,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.perfectaudience\\.com",
+    "scriptSrc": [
+      "\\.perfectaudience\\.com"
+    ],
     "website": "https://sharpspring.com/ads"
   },
   "SheerID": {
@@ -2201,7 +2323,9 @@
       "sheerid": ""
     },
     "saas": true,
-    "scripts": "\"sheerIdEndpoint\":",
+    "scripts": [
+      "\"sheerIdEndpoint\":"
+    ],
     "website": "https://www.sheerid.com/"
   },
   "Shelf": {
@@ -2245,7 +2369,9 @@
     "pricing": [
       "poa"
     ],
-    "scriptSrc": "shepherd(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "shepherd(?:\\.min)?\\.js"
+    ],
     "website": "https://shepherdjs.dev/"
   },
   "Shift4Shop": {
@@ -2268,7 +2394,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "(?:twlh(?:track)?\\.asp|3d_upsell\\.js)",
+    "scriptSrc": [
+      "(?:twlh(?:track)?\\.asp|3d_upsell\\.js)"
+    ],
     "website": "https://www.shift4shop.com"
   },
   "Shiny": {
@@ -2292,7 +2420,9 @@
     "js": {
       "SSsdk": ""
     },
-    "scriptSrc": "^https?://codice(?:business|ssl|pro|isp)?\\.shinystat\\.com/cgi-bin/getcod\\.cgi",
+    "scriptSrc": [
+      "^https?://codice(?:business|ssl|pro|isp)?\\.shinystat\\.com/cgi-bin/getcod\\.cgi"
+    ],
     "website": "https://shinystat.com"
   },
   "ShipStation": {
@@ -2307,7 +2437,9 @@
       "recurring"
     ],
     "saas": true,
-    "url": "track\\.shipstation\\.com",
+    "url": [
+      "track\\.shipstation\\.com"
+    ],
     "website": "https://www.shipstation.com"
   },
   "ShipTection": {
@@ -2324,7 +2456,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "app\\.shiptection\\.com/",
+    "scriptSrc": [
+      "app\\.shiptection\\.com/"
+    ],
     "website": "https://wamapps.io/pages/shiptection-protection"
   },
   "ShippyPro": {
@@ -2390,7 +2524,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "\\.getshogun\\.com/.+\\.myshopify\\.com",
+    "scriptSrc": [
+      "\\.getshogun\\.com/.+\\.myshopify\\.com"
+    ],
     "website": "https://apps.shopify.com/shogun"
   },
   "Shogun Page Builder": {
@@ -2513,7 +2649,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.amazonaws\\.com/shopwired-theme-assets/",
+    "scriptSrc": [
+      "\\.amazonaws\\.com/shopwired-theme-assets/"
+    ],
     "website": "https://www.shopwired.co.uk"
   },
   "Shopaholic": {
@@ -2553,7 +2691,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.myshopapps\\.com/",
+    "scriptSrc": [
+      "cdn\\.myshopapps\\.com/"
+    ],
     "website": "https://www.shopapps.in"
   },
   "Shopatron": {
@@ -2571,7 +2711,9 @@
     "meta": {
       "keywords": "Shopatron"
     },
-    "scriptSrc": "mediacdn\\.shopatron\\.com",
+    "scriptSrc": [
+      "mediacdn\\.shopatron\\.com"
+    ],
     "website": "https://ecommerce.shopatron.com"
   },
   "Shopcada": {
@@ -2686,10 +2828,16 @@
       "sdks\\.shopifycdn\\.com",
       "cdn\\.shopify\\.com"
     ],
-    "scripts": "shopifyTag",
-    "url": "^https?//.+\\.myshopify\\.com",
+    "scripts": [
+      "shopifyTag"
+    ],
+    "url": [
+      "^https?//.+\\.myshopify\\.com"
+    ],
     "website": "https://shopify.com",
-    "xhr": "\\.myshopify\\.com"
+    "xhr": [
+      "\\.myshopify\\.com"
+    ]
   },
   "Shopify Buy Button": {
     "cats": [
@@ -2748,7 +2896,9 @@
     "implies": [
       "Shopify"
     ],
-    "scriptSrc": "geolocation-recommendations\\.shopifycloud\\.com/",
+    "scriptSrc": [
+      "geolocation-recommendations\\.shopifycloud\\.com/"
+    ],
     "website": "https://apps.shopify.com/geolocation"
   },
   "Shopify Product Reviews": {
@@ -2837,7 +2987,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.shoplo\\.\\w+/",
+    "scriptSrc": [
+      "cdn\\.shoplo\\.\\w+/"
+    ],
     "website": "https://www.shoplo.com"
   },
   "Shopmatic": {
@@ -2928,7 +3080,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.shoppinggives\\.com/",
+    "scriptSrc": [
+      "cdn\\.shoppinggives\\.com/"
+    ],
     "website": "https://shoppinggives.com"
   },
   "Shoppub": {
@@ -2965,7 +3119,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.shoppy\\.gg",
+    "scriptSrc": [
+      "\\.shoppy\\.gg"
+    ],
     "website": "https://shoppy.gg"
   },
   "Shoprenter": {
@@ -2982,7 +3138,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.cdn\\.shoprenter\\.hu/",
+    "scriptSrc": [
+      "\\.cdn\\.shoprenter\\.hu/"
+    ],
     "website": "https://www.shoprenter.hu"
   },
   "Shoprunner": {
@@ -3003,7 +3161,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "/shoprunner/shoprunner_init\\.js",
+    "scriptSrc": [
+      "/shoprunner/shoprunner_init\\.js"
+    ],
     "website": "https://www.shoprunner.com"
   },
   "Shoptet": {
@@ -3105,7 +3265,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/shortcodes-ultimate/.+index\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/shortcodes-ultimate/.+index\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://getshortcodes.com"
   },
   "Shortly": {
@@ -3117,7 +3279,9 @@
     "implies": [
       "Shopify"
     ],
-    "scriptSrc": "//shortly\\.shop/",
+    "scriptSrc": [
+      "//shortly\\.shop/"
+    ],
     "website": "https://apps.shopify.com/shortly"
   },
   "ShoutOut": {
@@ -3131,8 +3295,12 @@
       "low",
       "recurring"
     ],
-    "requiresCategory": 6,
-    "scriptSrc": "\\.shoutout\\.global/",
+    "requiresCategory": [
+      6
+    ],
+    "scriptSrc": [
+      "\\.shoutout\\.global/"
+    ],
     "website": "https://www.shoutout.global"
   },
   "Showdown": {
@@ -3145,7 +3313,9 @@
       "showdown": ""
     },
     "oss": true,
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/(?:dist\\/)?)?showdown(?:\\.min)?(?:-?((?:\\d+\\.)+\\d+))?\\.js\\;version:\\1\\2",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/(?:dist\\/)?)?showdown(?:\\.min)?(?:-?((?:\\d+\\.)+\\d+))?\\.js\\;version:\\1\\2"
+    ],
     "website": "https://showdownjs.com/"
   },
   "Showit": {
@@ -3161,7 +3331,9 @@
       "low",
       "recurring"
     ],
-    "scriptSrc": "lib\\.showit\\.co/engine/([\\d\\.]+)/\\;version:\\1",
+    "scriptSrc": [
+      "lib\\.showit\\.co/engine/([\\d\\.]+)/\\;version:\\1"
+    ],
     "website": "https://showit.co"
   },
   "Shuttle": {
@@ -3183,7 +3355,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "shuttle(?:-assets-new|-storage)\\.s3\\.amazonaws\\.com",
+    "scriptSrc": [
+      "shuttle(?:-assets-new|-storage)\\.s3\\.amazonaws\\.com"
+    ],
     "website": "https://www.devisto.com"
   },
   "Sift": {
@@ -3202,7 +3376,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.sift(?:science)?\\.com/s\\.js",
+    "scriptSrc": [
+      "cdn\\.sift(?:science)?\\.com/s\\.js"
+    ],
     "website": "https://sift.com/"
   },
   "Signal": {
@@ -3226,7 +3402,9 @@
       59
     ],
     "description": "Realtime web communication framework from Microsoft for ASP.NET.",
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/jquery\\.)?signal[rR](?:-((?:\\d+\\.)+\\d+))?(?:\\.min)?\\.js\\;version:\\1\\2",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/jquery\\.)?signal[rR](?:-((?:\\d+\\.)+\\d+))?(?:\\.min)?\\.js\\;version:\\1\\2"
+    ],
     "website": "https://dotnet.microsoft.com/es-es/apps/aspnet/signalr"
   },
   "Signifyd": {
@@ -3244,7 +3422,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.signifyd\\.com",
+    "scriptSrc": [
+      "\\.signifyd\\.com"
+    ],
     "website": "https://www.signifyd.com"
   },
   "Silverstripe": {
@@ -3383,7 +3563,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.simplero\\.com/",
+    "scriptSrc": [
+      "\\.simplero\\.com/"
+    ],
     "website": "https://simplero.com"
   },
   "Simplero Websites": {
@@ -3411,7 +3593,9 @@
     ],
     "description": "Simpli.fi is a programmatic advertising and agency management software.",
     "icon": "Simplifi.png",
-    "scriptSrc": "\\.simpli\\.fi",
+    "scriptSrc": [
+      "\\.simpli\\.fi"
+    ],
     "website": "https://simpli.fi/"
   },
   "Simplio Upsells": {
@@ -3428,7 +3612,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "//upsell\\.simplio\\.app/",
+    "scriptSrc": [
+      "//upsell\\.simplio\\.app/"
+    ],
     "website": "https://apps.shopify.com/simple-promotions-and-upsells"
   },
   "Simplo7": {
@@ -3442,7 +3628,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.simplo7\\.\\w+/",
+    "scriptSrc": [
+      "cdn\\.simplo7\\.\\w+/"
+    ],
     "website": "https://www.simplo7.com.br"
   },
   "Simplébo": {
@@ -3487,7 +3675,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/sinatra/.+sinatra\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/sinatra/.+sinatra\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://try.sinatrawp.com"
   },
   "Sirclo": {
@@ -3505,8 +3695,12 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "template\\.sirclocdn\\.com/",
-    "url": "^https?//.+\\.sirclo\\.me",
+    "scriptSrc": [
+      "template\\.sirclocdn\\.com/"
+    ],
+    "url": [
+      "^https?//.+\\.sirclo\\.me"
+    ],
     "website": "https://sirclo.com/"
   },
   "Sirdata": {
@@ -3546,7 +3740,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.app\\.sirge\\.com/",
+    "scriptSrc": [
+      "cdn\\.app\\.sirge\\.com/"
+    ],
     "website": "https://www.sirge.com"
   },
   "Sirvoy": {
@@ -3585,7 +3781,9 @@
       10
     ],
     "icon": "Site Meter.png",
-    "scriptSrc": "sitemeter\\.com/js/counter\\.js\\?site=",
+    "scriptSrc": [
+      "sitemeter\\.com/js/counter\\.js\\?site="
+    ],
     "website": "https://www.sitemeter.com"
   },
   "Site Search 360": {
@@ -3621,7 +3819,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.site24x7rum\\.com",
+    "scriptSrc": [
+      "\\.site24x7rum\\.com"
+    ],
     "website": "https://www.site24x7.com"
   },
   "SiteEdit": {
@@ -3670,7 +3870,9 @@
     "description": "Sitejabber is the leading destination for customer ratings and reviews of businesses. Consumers find ratings and read reviews to ensure they buy from the best companies.",
     "icon": "SiteJabber.svg",
     "saas": true,
-    "scriptSrc": "biz\\.sitejabber\\.com",
+    "scriptSrc": [
+      "biz\\.sitejabber\\.com"
+    ],
     "website": "https://www.sitejabber.com/"
   },
   "SiteManager": {
@@ -3692,7 +3894,9 @@
       "PHP"
     ],
     "saas": true,
-    "scriptSrc": "s\\d+\\.sitemn\\.gr/",
+    "scriptSrc": [
+      "s\\d+\\.sitemn\\.gr/"
+    ],
     "website": "https://www.sitemanager.io"
   },
   "SiteMinder": {
@@ -3707,7 +3911,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "widget\\.siteminder\\.com",
+    "scriptSrc": [
+      "widget\\.siteminder\\.com"
+    ],
     "website": "https://www.siteminder.com"
   },
   "SiteOrigin Page Builder": {
@@ -3724,7 +3930,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/siteorigin-panels/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/siteorigin-panels/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://siteorigin.com/page-builder"
   },
   "SiteOrigin Vantage": {
@@ -3740,7 +3948,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/vantage/",
+    "scriptSrc": [
+      "/wp-content/themes/vantage/"
+    ],
     "website": "https://siteorigin.com/theme/vantage"
   },
   "SiteOrigin Widgets Bundle": {
@@ -3756,7 +3966,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/so-widgets-bundle/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/so-widgets-bundle/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://siteorigin.com/widgets-bundle"
   },
   "SitePad": {
@@ -3791,7 +4003,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "/__ssobj/core\\.js",
+    "scriptSrc": [
+      "/__ssobj/core\\.js"
+    ],
     "website": "https://www.sitespect.com"
   },
   "SiteVibes": {
@@ -3808,7 +4022,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "app\\.sitevibes\\.com/",
+    "scriptSrc": [
+      "app\\.sitevibes\\.com/"
+    ],
     "website": "https://sitevibes.com"
   },
   "SiteW": {
@@ -3876,7 +4092,9 @@
       "high"
     ],
     "saas": true,
-    "scriptSrc": "/sitecore-engage-v\\.([\\d\\.]+)\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "/sitecore-engage-v\\.([\\d\\.]+)\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://www.sitecore.com/products/engagement-cloud"
   },
   "Sitecore Experience Edge": {
@@ -3895,7 +4113,9 @@
       "recurring",
       "high"
     ],
-    "requiresCategory": 12,
+    "requiresCategory": [
+      12
+    ],
     "saas": false,
     "website": "https://doc.sitecore.com/xp/en/developers/101/developer-tools/experience-edge-for-xm-apis.html"
   },
@@ -3927,7 +4147,9 @@
       "low"
     ],
     "saas": true,
-    "scriptSrc": "siteglide\\.js",
+    "scriptSrc": [
+      "siteglide\\.js"
+    ],
     "website": "https://www.siteglide.com"
   },
   "Siteimprove": {
@@ -3944,7 +4166,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "(?:\\.|//)siteimprove(?:analytics)?\\.com/js/siteanalyze",
+    "scriptSrc": [
+      "(?:\\.|//)siteimprove(?:analytics)?\\.com/js/siteanalyze"
+    ],
     "website": "https://www.siteimprove.com"
   },
   "Sitepark IES": {
@@ -4039,7 +4263,9 @@
       "(?:<a [^>]*href=\"[^/]*//[^/]*serving-sys\\.com/|<img [^>]*src=\"[^/]*//[^/]*serving-sys\\.com/)"
     ],
     "icon": "Sizmek.png",
-    "scriptSrc": "serving-sys\\.com/",
+    "scriptSrc": [
+      "serving-sys\\.com/"
+    ],
     "website": "https://sizmek.com"
   },
   "Skai": {
@@ -4051,7 +4277,9 @@
     "js": {
       "Ktag_Constants": ""
     },
-    "scripts": "\\.xg4ken\\.com",
+    "scripts": [
+      "\\.xg4ken\\.com"
+    ],
     "website": "https://skai.io"
   },
   "Skedify": {
@@ -4063,7 +4291,9 @@
     "js": {
       "Skedify.Plugin.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "plugin\\.skedify\\.io",
+    "scriptSrc": [
+      "plugin\\.skedify\\.io"
+    ],
     "website": "https://calendly.com/"
   },
   "Skilldo": {
@@ -4118,9 +4348,13 @@
     "pricing": [
       "payg"
     ],
-    "scriptSrc": "\\.skimresources\\.com",
+    "scriptSrc": [
+      "\\.skimresources\\.com"
+    ],
     "website": "https://skimlinks.com",
-    "xhr": "\\.skimresources\\.com"
+    "xhr": [
+      "\\.skimresources\\.com"
+    ]
   },
   "Skio": {
     "cats": [
@@ -4136,7 +4370,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.skio\\.com/",
+    "scriptSrc": [
+      "cdn\\.skio\\.com/"
+    ],
     "website": "https://skio.com"
   },
   "Skolengo": {
@@ -4205,7 +4441,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "sv-wc-payment-gateway-payment-form\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "sv-wc-payment-gateway-payment-form\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
+    ],
     "website": "https://www.skyverge.com"
   },
   "Skyflow": {
@@ -4236,7 +4474,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "slate-technolutions-net\\.cdn\\.technolutions\\.net/",
+    "scriptSrc": [
+      "slate-technolutions-net\\.cdn\\.technolutions\\.net/"
+    ],
     "website": "https://technolutions.com"
   },
   "Sleeknote": {
@@ -4273,7 +4513,9 @@
       "Vue.js"
     ],
     "saas": true,
-    "scriptSrc": "\\.sleekplan\\.com/",
+    "scriptSrc": [
+      "\\.sleekplan\\.com/"
+    ],
     "website": "https://sleekplan.com"
   },
   "Slice": {
@@ -4300,7 +4542,9 @@
     "implies": [
       "jQuery"
     ],
-    "scriptSrc": "(?:/([\\d.]+))?/slick(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:/([\\d.]+))?/slick(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://kenwheeler.github.io/slick"
   },
   "SlickStack": {
@@ -4362,7 +4606,9 @@
       "onetime"
     ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/revslider/",
+    "scriptSrc": [
+      "/wp-content/plugins/revslider/"
+    ],
     "website": "https://www.sliderrevolution.com"
   },
   "Slimbox": {
@@ -4376,7 +4622,9 @@
     "implies": [
       "MooTools"
     ],
-    "scriptSrc": "slimbox\\.js",
+    "scriptSrc": [
+      "slimbox\\.js"
+    ],
     "website": "https://www.digitalia.be/software/slimbox"
   },
   "Slimbox 2": {
@@ -4390,7 +4638,9 @@
     "implies": [
       "jQuery"
     ],
-    "scriptSrc": "slimbox2\\.js",
+    "scriptSrc": [
+      "slimbox2\\.js"
+    ],
     "website": "https://www.digitalia.be/software/slimbox2"
   },
   "Smart Ad Server": {
@@ -4407,7 +4657,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.sascdn\\.com/",
+    "scriptSrc": [
+      "\\.sascdn\\.com/"
+    ],
     "website": "https://smartadserver.com"
   },
   "Smart Slider 3": {
@@ -4423,7 +4675,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/smart-slider-3(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/plugins/smart-slider-3(?:-pro)?/"
+    ],
     "website": "https://smartslider3.com"
   },
   "SmartRecruiters": {
@@ -4438,7 +4692,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.smartrecruiters\\.com/",
+    "scriptSrc": [
+      "\\.smartrecruiters\\.com/"
+    ],
     "website": "https://www.smartrecruiters.com"
   },
   "SmartSite": {
@@ -4486,7 +4742,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.?smct\\.(?:io|co)/",
+    "scriptSrc": [
+      "\\.?smct\\.(?:io|co)/"
+    ],
     "website": "https://smarterclick.com"
   },
   "Smartling": {
@@ -4502,7 +4760,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.smartling\\.com/",
+    "scriptSrc": [
+      "\\.smartling\\.com/"
+    ],
     "website": "https://www.smartling.com"
   },
   "Smartlook": {
@@ -4521,7 +4781,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.smartlook\\.com/",
+    "scriptSrc": [
+      "\\.smartlook\\.com/"
+    ],
     "website": "https://www.smartlook.com"
   },
   "Smartstore": {
@@ -4568,7 +4830,9 @@
       6
     ],
     "icon": "Smartstore.biz.png",
-    "scriptSrc": "smjslib\\.js",
+    "scriptSrc": [
+      "smjslib\\.js"
+    ],
     "website": "https://smartstore.com"
   },
   "Smartsupp": {
@@ -4586,7 +4850,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.smartsuppchat\\.com",
+    "scriptSrc": [
+      "\\.smartsuppchat\\.com"
+    ],
     "website": "https://www.smartsupp.com"
   },
   "Smash Balloon Instagram Feed": {
@@ -4604,7 +4870,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/instagram-feed/",
+    "scriptSrc": [
+      "/wp-content/plugins/instagram-feed/"
+    ],
     "website": "https://smashballoon.com/instagram-feed"
   },
   "Smile": {
@@ -4622,7 +4890,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.(?:smile|sweettooth)\\.io/",
+    "scriptSrc": [
+      "\\.(?:smile|sweettooth)\\.io/"
+    ],
     "website": "https://smile.io"
   },
   "Smile App": {
@@ -4643,7 +4913,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "js\\.smile\\.io/.+smile-shopify\\.js",
+    "scriptSrc": [
+      "js\\.smile\\.io/.+smile-shopify\\.js"
+    ],
     "website": "https://apps.shopify.com/smile-io"
   },
   "SmtpJS": {
@@ -4653,7 +4925,9 @@
     "description": "SmtpJS is a free library you can use for sending emails from JavaScript.",
     "icon": "default.svg",
     "oss": true,
-    "scriptSrc": "/smtpjs\\.com/(?:v([\\d\\.]+)/)?smtp\\.js\\;version:\\1",
+    "scriptSrc": [
+      "/smtpjs\\.com/(?:v([\\d\\.]+)/)?smtp\\.js\\;version:\\1"
+    ],
     "website": "https://smtpjs.com"
   },
   "SmugMug": {
@@ -4686,7 +4960,9 @@
     ],
     "description": "Minimalistic animation library in javascript Snabbt.js.",
     "oss": true,
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?snabbt(?:[\\.-]min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/)?snabbt(?:[\\.-]min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2"
+    ],
     "website": "https://daniel-lundin.github.io/snabbt.js/"
   },
   "Snap": {
@@ -4714,7 +4990,9 @@
       "snaptr.pixelIdList": ""
     },
     "saas": true,
-    "scriptSrc": "intg\\.snapchat\\.com/",
+    "scriptSrc": [
+      "intg\\.snapchat\\.com/"
+    ],
     "website": "https://businesshelp.snapchat.com/s/article/snap-pixel-about"
   },
   "Snap.svg": {
@@ -4725,7 +5003,9 @@
     "js": {
       "Snap.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "snap\\.svg(?:-min)?\\.js",
+    "scriptSrc": [
+      "snap\\.svg(?:-min)?\\.js"
+    ],
     "website": "https://snapsvg.io"
   },
   "SnapEngage": {
@@ -4761,7 +5041,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "snapwidget\\.com/",
+    "scriptSrc": [
+      "snapwidget\\.com/"
+    ],
     "website": "https://snapwidget.com"
   },
   "Snipcart": {
@@ -4787,7 +5069,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "https://cdn\\.snipcart\\.com/themes/v([\\w.]+)/default/snipcart\\.js\\;version:\\1",
+    "scriptSrc": [
+      "https://cdn\\.snipcart\\.com/themes/v([\\w.]+)/default/snipcart\\.js\\;version:\\1"
+    ],
     "website": "https://snipcart.com"
   },
   "SniperFast": {
@@ -4806,9 +5090,13 @@
       "low",
       "recurring"
     ],
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "saas": true,
-    "scriptSrc": "\\.sniperfast\\.com",
+    "scriptSrc": [
+      "\\.sniperfast\\.com"
+    ],
     "website": "https://www.sniperfast.com"
   },
   "Sniply": {
@@ -4825,7 +5113,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "gosniply\\.com/",
+    "scriptSrc": [
+      "gosniply\\.com/"
+    ],
     "website": "https://sniply.io"
   },
   "Snoobi": {
@@ -4836,7 +5126,9 @@
     "js": {
       "snoobi": ""
     },
-    "scriptSrc": "snoobi\\.com/snoop\\.php",
+    "scriptSrc": [
+      "snoobi\\.com/snoop\\.php"
+    ],
     "website": "https://www.snoobi.com"
   },
   "Snowplow Analytics": {
@@ -4893,7 +5185,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "social9\\.com/.+\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "social9\\.com/.+\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
+    ],
     "website": "https://social9.com"
   },
   "SocialJuice": {
@@ -4922,7 +5216,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "socialladder\\.rkiapps\\.com/",
+    "scriptSrc": [
+      "socialladder\\.rkiapps\\.com/"
+    ],
     "website": "https://socialladderapp.com"
   },
   "Social Pinpoint": {
@@ -4953,7 +5249,9 @@
       "WordPress"
     ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/ag-core/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/ag-core/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://www.societe-des-avis-garantis.fr"
   },
   "SockJS": {
@@ -4964,7 +5262,9 @@
     "description": "SockJS is a browser JavaScript library that provides a WebSocket-like object.",
     "icon": "SockJS.png",
     "oss": true,
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?sockjs(?:-((?:\\d+\\.)+\\d+))?(?:\\.min)?\\.js\\;version:\\1\\2",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/)?sockjs(?:-((?:\\d+\\.)+\\d+))?(?:\\.min)?\\.js\\;version:\\1\\2"
+    ],
     "website": "https://sockjs.org"
   },
   "Socket.io": {
@@ -4979,7 +5279,9 @@
       "io.Socket": "",
       "io.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "socket\\.io.*\\.js",
+    "scriptSrc": [
+      "socket\\.io.*\\.js"
+    ],
     "website": "https://socket.io"
   },
   "SoftTr": {
@@ -5023,7 +5325,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.soisy\\.it/",
+    "scriptSrc": [
+      "cdn\\.soisy\\.it/"
+    ],
     "website": "https://www.soisy.it"
   },
   "SolidJS": {
@@ -5129,7 +5433,9 @@
       "_adcopy-puzzle-image-image": "",
       "adcopy-puzzle-image-image": ""
     },
-    "scriptSrc": "^https?://api\\.solvemedia\\.com/",
+    "scriptSrc": [
+      "^https?://api\\.solvemedia\\.com/"
+    ],
     "website": "https://solvemedia.com"
   },
   "Solvemate": {
@@ -5165,7 +5471,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.solvvy\\.com/",
+    "scriptSrc": [
+      "cdn\\.solvvy\\.com/"
+    ],
     "website": "https://solvvy.com/"
   },
   "SonarQubes": {
@@ -5188,7 +5496,9 @@
     "meta": {
       "application-name": "^SonarQubes$"
     },
-    "scriptSrc": "^/js/bundles/sonar\\.js?v=([\\d.]+)$\\;version:\\1",
+    "scriptSrc": [
+      "^/js/bundles/sonar\\.js?v=([\\d.]+)$\\;version:\\1"
+    ],
     "website": "https://www.sonarqube.org/"
   },
   "Sonobi": {
@@ -5199,7 +5509,9 @@
     "icon": "Sonobi.png",
     "saas": true,
     "website": "https://sonobi.com",
-    "xhr": "apex\\.go\\.sonobi\\.com"
+    "xhr": [
+      "apex\\.go\\.sonobi\\.com"
+    ]
   },
   "Sortable": {
     "cats": [
@@ -5214,7 +5526,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.deployads\\.com/",
+    "scriptSrc": [
+      "\\.deployads\\.com/"
+    ],
     "website": "https://sortable.com"
   },
   "Sorted Return": {
@@ -5231,7 +5545,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "return\\.clicksit\\.com/",
+    "scriptSrc": [
+      "return\\.clicksit\\.com/"
+    ],
     "website": "https://sorted.com/give-your-customers-a-5-returns-experience/"
   },
   "SoteShop": {
@@ -5292,7 +5608,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.sndcdn\\.com/",
+    "scriptSrc": [
+      "\\.sndcdn\\.com/"
+    ],
     "website": "https://developers.soundcloud.com/docs/api/html5-widget"
   },
   "SoundManager": {
@@ -5324,7 +5642,9 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "SOURCEPOINT_MMS_DOMAIN",
+    "scripts": [
+      "SOURCEPOINT_MMS_DOMAIN"
+    ],
     "website": "https://sourcepoint.com"
   },
   "Sovrn": {
@@ -5338,9 +5658,13 @@
       "sovrn_render": ""
     },
     "saas": true,
-    "scriptSrc": "\\.(?:linksmart|lijit)\\.com/",
+    "scriptSrc": [
+      "\\.(?:linksmart|lijit)\\.com/"
+    ],
     "website": "https://www.sovrn.com",
-    "xhr": "\\.lijit\\.com"
+    "xhr": [
+      "\\.lijit\\.com"
+    ]
   },
   "Sovrn//Commerce": {
     "cats": [
@@ -5357,7 +5681,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "(?:^[^/]*//[^/]*viglink\\.com/api/|vglnk\\.js)",
+    "scriptSrc": [
+      "(?:^[^/]*//[^/]*viglink\\.com/api/|vglnk\\.js)"
+    ],
     "website": "https://www.sovrn.com/publishers/commerce/"
   },
   "Spark CMS": {
@@ -5371,7 +5697,9 @@
     "dom": "link[href*='sparkcms.com.au']",
     "icon": "Spark.png",
     "oss": false,
-    "scriptSrc": "/spark-scripts/",
+    "scriptSrc": [
+      "/spark-scripts/"
+    ],
     "website": "https://www.councilconnect.com.au/our-websites/about-spark-cms.aspx"
   },
   "SparkPost": {
@@ -5415,7 +5743,9 @@
       "onetime",
       "low"
     ],
-    "scripts": "media\\-library\\-pro\\-core",
+    "scripts": [
+      "media\\-library\\-pro\\-core"
+    ],
     "website": "https://medialibrary.pro"
   },
   "Spatie Support Bubble": {
@@ -5450,7 +5780,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/ultimate-addons-for-gutenberg/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/ultimate-addons-for-gutenberg/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://wpspectra.com"
   },
   "Speed Kit": {
@@ -5484,7 +5816,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.speedcurve\\.com",
+    "scriptSrc": [
+      "\\.speedcurve\\.com"
+    ],
     "website": "https://www.speedcurve.com"
   },
   "SpeedSize": {
@@ -5501,7 +5835,9 @@
       "/speedsize(?:-sw)?\\.js\\;confidence:90",
       "\\.speedsize\\.com/"
     ],
-    "scripts": "data-speedsize-(?:srcset|src|params)?",
+    "scripts": [
+      "data-speedsize-(?:srcset|src|params)?"
+    ],
     "website": "https://speedsize.com"
   },
   "Speedimize": {
@@ -5515,7 +5851,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.shopify\\.com/.+/assets/speedimize\\.js",
+    "scriptSrc": [
+      "cdn\\.shopify\\.com/.+/assets/speedimize\\.js"
+    ],
     "website": "https://speedimize.io"
   },
   "Spektrix": {
@@ -5528,7 +5866,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "spektrix(?:\\.com)?(?:_nb)?\\/(?:stable)?(?:libraries)?\\/(?:before-after)?(?:script)?(?:spektrix)?-?(?:web)?(?:component)?s?-?(?:basket-summary)?(?:donate)?(?:gift-vouchers)?(?:loader)?(?:login-status)?(?:memberships)?(?:merchandise)?(?:-es2015)?\\.js(?:\\?ver?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "spektrix(?:\\.com)?(?:_nb)?\\/(?:stable)?(?:libraries)?\\/(?:before-after)?(?:script)?(?:spektrix)?-?(?:web)?(?:component)?s?-?(?:basket-summary)?(?:donate)?(?:gift-vouchers)?(?:loader)?(?:login-status)?(?:memberships)?(?:merchandise)?(?:-es2015)?\\.js(?:\\?ver?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://www.spektrix.com"
   },
   "Sphinx": {
@@ -5558,7 +5898,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/spicepress(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/spicepress(?:-pro)?/"
+    ],
     "website": "https://spicethemes.com/spicepress-wordpress-theme"
   },
   "spin.js": {
@@ -5588,7 +5930,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "client\\.spinasale\\.com/",
+    "scriptSrc": [
+      "client\\.spinasale\\.com/"
+    ],
     "website": "https://spinasale.com"
   },
   "Spinnakr": {
@@ -5657,7 +6001,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.split\\.io/(?:sdk/split-([\\d\\.]+)\\.min\\.js)?\\;version:\\1",
+    "scriptSrc": [
+      "\\.split\\.io/(?:sdk/split-([\\d\\.]+)\\.min\\.js)?\\;version:\\1"
+    ],
     "website": "https://www.split.io"
   },
   "SplitIt": {
@@ -5675,7 +6021,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.production\\.splitit\\.com/",
+    "scriptSrc": [
+      "\\.production\\.splitit\\.com/"
+    ],
     "website": "https://www.splitit.com"
   },
   "Splitbee": {
@@ -5686,7 +6034,9 @@
     "js": {
       "splitbee": ""
     },
-    "scriptSrc": "^https://cdn\\.splitbee\\.io/sb\\.js",
+    "scriptSrc": [
+      "^https://cdn\\.splitbee\\.io/sb\\.js"
+    ],
     "website": "https://splitbee.io"
   },
   "SplittyPay": {
@@ -5715,7 +6065,9 @@
     "pricing": [
       "payg"
     ],
-    "scriptSrc": "browser\\.plumbr\\.io/pa(?:-early)?\\.js",
+    "scriptSrc": [
+      "browser\\.plumbr\\.io/pa(?:-early)?\\.js"
+    ],
     "website": "https://www.splunk.com/en_us/observability/real-user-monitoring.html"
   },
   "Splunkd": {
@@ -5748,7 +6100,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "static\\.spotapps\\.co/",
+    "scriptSrc": [
+      "static\\.spotapps\\.co/"
+    ],
     "website": "https://www.spothopperapp.com"
   },
   "SpotX": {
@@ -5768,9 +6122,13 @@
       "SpotX.VERSION": "([\\d.]+)\\;version:\\1"
     },
     "saas": true,
-    "scriptSrc": "js\\.spotx\\.tv",
+    "scriptSrc": [
+      "js\\.spotx\\.tv"
+    ],
     "website": "https://www.spotx.tv",
-    "xhr": "\\.spotx(?:change|cdn)\\.com"
+    "xhr": [
+      "\\.spotx(?:change|cdn)\\.com"
+    ]
   },
   "Spotify Web API": {
     "cats": [
@@ -5812,7 +6170,9 @@
       "spotiiConfig": ""
     },
     "saas": true,
-    "scriptSrc": "widget\\.spotii\\.me",
+    "scriptSrc": [
+      "widget\\.spotii\\.me"
+    ],
     "website": "https://www.spotii.com/"
   },
   "Spree": {
@@ -5844,7 +6204,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.userleap\\.com/",
+    "scriptSrc": [
+      "cdn\\.userleap\\.com/"
+    ],
     "website": "https://sprig.com"
   },
   "Sprig plugin": {
@@ -5885,7 +6247,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "\\.creator-spring\\.com/",
+    "scriptSrc": [
+      "\\.creator-spring\\.com/"
+    ],
     "website": "https://www.spri.ng"
   },
   "SprintHub": {
@@ -5903,7 +6267,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.sprinthub\\.io/",
+    "scriptSrc": [
+      "\\.sprinthub\\.io/"
+    ],
     "website": "https://lp.sprinthub.com"
   },
   "SpriteSpin": {
@@ -5956,7 +6322,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn-spurit\\.com/shopify-apps/",
+    "scriptSrc": [
+      "cdn-spurit\\.com/shopify-apps/"
+    ],
     "website": "https://spur-i-t.com"
   },
   "SpurIT Abandoned Cart Reminder": {
@@ -5977,7 +6345,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn-spurit\\.com/shopify-apps/abandoned-cart-reminder/",
+    "scriptSrc": [
+      "cdn-spurit\\.com/shopify-apps/abandoned-cart-reminder/"
+    ],
     "website": "https://spur-i-t.com/shopify-apps/abandoned-cart-reminder/"
   },
   "SpurIT Loyalty App": {
@@ -5999,7 +6369,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn-spurit\\.com/shopify-apps/loyaltypoints/",
+    "scriptSrc": [
+      "cdn-spurit\\.com/shopify-apps/loyaltypoints/"
+    ],
     "website": "https://spur-i-t.com/shopify-apps/loyalty-points-manager"
   },
   "SpurIT Partial Payments App": {
@@ -6017,7 +6389,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn-spurit\\.com/shopify-apps/split-payments/",
+    "scriptSrc": [
+      "cdn-spurit\\.com/shopify-apps/split-payments/"
+    ],
     "website": "https://spur-i-t.com/shopify-apps/split-partial-payments/"
   },
   "SpurIT Recurring Payments App": {
@@ -6038,7 +6412,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn-spurit\\.com/shopify-apps/recurring-invoices/",
+    "scriptSrc": [
+      "cdn-spurit\\.com/shopify-apps/recurring-invoices/"
+    ],
     "website": "https://spur-i-t.com/shopify-apps/recurring-order-subscription"
   },
   "Sqreen": {
@@ -6068,7 +6444,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "//asset\\.easydmp\\.net/",
+    "scriptSrc": [
+      "//asset\\.easydmp\\.net/"
+    ],
     "website": "https://www.squadata.net"
   },
   "Squadded": {
@@ -6083,7 +6461,9 @@
     "pricing": [
       "poa"
     ],
-    "scriptSrc": "static\\.squadded\\.co",
+    "scriptSrc": [
+      "static\\.squadded\\.co"
+    ],
     "website": "https://www.squadded.co"
   },
   "Square": {
@@ -6101,9 +6481,13 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "js\\.squareup\\.com",
+    "scriptSrc": [
+      "js\\.squareup\\.com"
+    ],
     "website": "https://squareup.com/",
-    "xhr": "\\.squareup\\.com"
+    "xhr": [
+      "\\.squareup\\.com"
+    ]
   },
   "Square Online": {
     "cats": [
@@ -6170,7 +6554,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "assets\\.squarespace\\.\\w+/universal/scripts-compressed/commerce-\\w+-min\\.[\\w+\\-]+\\.js",
+    "scriptSrc": [
+      "assets\\.squarespace\\.\\w+/universal/scripts-compressed/commerce-\\w+-min\\.[\\w+\\-]+\\.js"
+    ],
     "website": "https://www.squarespace.com/ecommerce-website"
   },
   "Squeezely": {
@@ -6188,7 +6574,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "//squeezely\\.tech/",
+    "scriptSrc": [
+      "//squeezely\\.tech/"
+    ],
     "website": "https://www.squeezely.tech"
   },
   "SquirrelMail": {
@@ -6207,7 +6595,9 @@
     "js": {
       "squirrelmail_loginpage_onload": ""
     },
-    "url": "/src/webmail\\.php(?:$|\\?)",
+    "url": [
+      "/src/webmail\\.php(?:$|\\?)"
+    ],
     "website": "https://squirrelmail.org"
   },
   "Squiz Matrix": {
@@ -6253,7 +6643,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "api\\.stackanalytix\\.com",
+    "scriptSrc": [
+      "api\\.stackanalytix\\.com"
+    ],
     "website": "https://www.stackanalytix.com"
   },
   "StackCommerce": {
@@ -6373,7 +6765,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.stackify\\.com/",
+    "scriptSrc": [
+      "\\.stackify\\.com/"
+    ],
     "website": "https://stackify.com"
   },
   "Stage Try": {
@@ -6391,7 +6785,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.stagetry\\.io/",
+    "scriptSrc": [
+      "\\.stagetry\\.io/"
+    ],
     "website": "https://stagetry.com"
   },
   "Stamped": {
@@ -6408,7 +6804,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.stamped\\.io/",
+    "scriptSrc": [
+      "\\.stamped\\.io/"
+    ],
     "website": "https://stamped.io/"
   },
   "Starhost": {
@@ -6478,7 +6876,9 @@
       "sc_project": "\\;confidence:50",
       "sc_security": "\\;confidence:50"
     },
-    "scriptSrc": "statcounter\\.com/counter/counter",
+    "scriptSrc": [
+      "statcounter\\.com/counter/counter"
+    ],
     "website": "https://www.statcounter.com"
   },
   "Statically": {
@@ -6492,7 +6892,9 @@
     },
     "icon": "Statically.svg",
     "oss": true,
-    "scriptSrc": "cdn\\.statically\\.io/",
+    "scriptSrc": [
+      "cdn\\.statically\\.io/"
+    ],
     "website": "https://statically.io"
   },
   "Statping": {
@@ -6530,7 +6932,9 @@
     },
     "saas": true,
     "website": "https://statsig.com/",
-    "xhr": "\\.statsigapi\\.net"
+    "xhr": [
+      "\\.statsigapi\\.net"
+    ]
   },
   "Status.io": {
     "cats": [
@@ -6543,7 +6947,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "static\\.status\\.io/",
+    "scriptSrc": [
+      "static\\.status\\.io/"
+    ],
     "website": "https://status.io"
   },
   "StatusCast": {
@@ -6574,7 +6980,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "//statuspal\\.io/",
+    "scriptSrc": [
+      "//statuspal\\.io/"
+    ],
     "website": "https://statuspal.io"
   },
   "Staytus": {
@@ -6599,7 +7007,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.steelhousemedia\\.com/(?:spx\\?dxver=([\\d.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "\\.steelhousemedia\\.com/(?:spx\\?dxver=([\\d.]+))?\\;version:\\1"
+    ],
     "website": "https://steelhouse.com"
   },
   "Stellar.js": {
@@ -6607,7 +7017,9 @@
       59
     ],
     "description": "Stellar.js is a JavaScript library and jQuery plugin specifically designed to deliver parallax scrolling effects for web pages.",
-    "scriptSrc": "stellar(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "stellar(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "oss": true,
     "website": "https://markdalgleish.com/projects/stellar.js/"
   },
@@ -6646,7 +7058,9 @@
       "Ruby on Rails",
       "Stimulus"
     ],
-    "scripts": "\\.stimulate",
+    "scripts": [
+      "\\.stimulate"
+    ],
     "website": "https://docs.stimulusreflex.com"
   },
   "Stitches": {
@@ -6756,7 +7170,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.storifyme\\.com/",
+    "scriptSrc": [
+      "cdn\\.storifyme\\.com/"
+    ],
     "website": "https://www.storifyme.com"
   },
   "StoryStream": {
@@ -6770,7 +7186,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "apps\\.storystream\\.ai/",
+    "scriptSrc": [
+      "apps\\.storystream\\.ai/"
+    ],
     "website": "https://storystream.ai"
   },
   "Storyblok": {
@@ -6817,7 +7235,9 @@
       "Bootstrap",
       "Google Code Prettify"
     ],
-    "scriptSrc": "strapdown\\.js",
+    "scriptSrc": [
+      "strapdown\\.js"
+    ],
     "website": "https://strapdownjs.com"
   },
   "Strapi": {
@@ -6861,7 +7281,9 @@
       "low",
       "recurring"
     ],
-    "scriptSrc": "strato-editor\\.com/",
+    "scriptSrc": [
+      "strato-editor\\.com/"
+    ],
     "website": "https://www.strato.de/homepage-baukasten"
   },
   "Strattic": {
@@ -6920,7 +7342,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "js\\.stripe\\.com",
+    "scriptSrc": [
+      "js\\.stripe\\.com"
+    ],
     "website": "https://stripe.com"
   },
   "StrutFit": {
@@ -6973,7 +7397,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.sub2tech\\.com/",
+    "scriptSrc": [
+      "cdn\\.sub2tech\\.com/"
+    ],
     "website": "https://www.sub2tech.com"
   },
   "Subbly": {
@@ -6993,7 +7419,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "static\\.subbly\\.me/assets/",
+    "scriptSrc": [
+      "static\\.subbly\\.me/assets/"
+    ],
     "website": "https://www.subbly.co"
   },
   "Sublime": {
@@ -7009,7 +7437,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.ayads\\.co/",
+    "scriptSrc": [
+      "\\.ayads\\.co/"
+    ],
     "website": "https://www.sublime.xyz"
   },
   "SublimeVideo": {
@@ -7021,7 +7451,9 @@
     "js": {
       "sublimevideo": ""
     },
-    "scriptSrc": "cdn\\.sublimevideo\\.net/js/[a-z\\d]+\\.js",
+    "scriptSrc": [
+      "cdn\\.sublimevideo\\.net/js/[a-z\\d]+\\.js"
+    ],
     "website": "https://sublimevideo.net"
   },
   "Subrion": {
@@ -7075,7 +7507,9 @@
     "description": "SugarJS is a JavaScript library that simplifies working with native JavaScript objects, enhancing productivity and code readability.",
     "icon": "SugarJS.svg",
     "oss": true,
-    "scriptSrc": "sugar\\/?((?:\\d+\\.)+\\d+)?(?:\\/sugar(?:-full)?)?(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "sugar\\/?((?:\\d+\\.)+\\d+)?(?:\\/sugar(?:-full)?)?(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://sugarjs.com/"
   },
   "Suiteshare": {
@@ -7085,7 +7519,9 @@
     "description": "Suiteshare powers conversational shopping experiences.",
     "icon": "Suiteshare.png",
     "saas": true,
-    "scriptSrc": "static\\.suiteshare\\.com",
+    "scriptSrc": [
+      "static\\.suiteshare\\.com"
+    ],
     "website": "https://suiteshare.com/"
   },
   "Sulu": {
@@ -7162,7 +7598,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.sumo(?:me)?\\.com/",
+    "scriptSrc": [
+      "\\.sumo(?:me)?\\.com/"
+    ],
     "website": "https://sumo.com"
   },
   "SunOS": {
@@ -7251,7 +7689,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "plugins/super-socializer/.+?ver=([\\d.]+)\\;version:\\1",
+    "scriptSrc": [
+      "plugins/super-socializer/.+?ver=([\\d.]+)\\;version:\\1"
+    ],
     "website": "https://super-socializer-wordpress.heateor.com"
   },
   "SuperLemon app": {
@@ -7272,7 +7712,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "/files/superlemon_.+\\.js",
+    "scriptSrc": [
+      "/files/superlemon_.+\\.js"
+    ],
     "website": "https://apps.shopify.com/whatsapp-chat-button"
   },
   "SuperPWA": {
@@ -7299,7 +7741,9 @@
       25
     ],
     "icon": "Supersized.png",
-    "scriptSrc": "supersized(?:\\.([\\d.]*[\\d]))?.*\\.js\\;version:\\1",
+    "scriptSrc": [
+      "supersized(?:\\.([\\d.]*[\\d]))?.*\\.js\\;version:\\1"
+    ],
     "website": "https://buildinternet.com/project/supersized"
   },
   "Superspeed": {
@@ -7311,7 +7755,9 @@
     "implies": [
       "Shopify"
     ],
-    "scriptSrc": "superspeed\\.gadget-edge\\.com",
+    "scriptSrc": [
+      "superspeed\\.gadget-edge\\.com"
+    ],
     "website": "https://apps.shopify.com/superspeed-free-speed-boost"
   },
   "Support Hero": {
@@ -7341,8 +7787,12 @@
     "dom": "link[href*='surge.sh']",
     "icon": "Surge.svg",
     "oss": true,
-    "scriptSrc": "surge\\.sh(?:\\/[-\\w]{0,40})?\\.js",
-    "url": "surge\\.sh",
+    "scriptSrc": [
+      "surge\\.sh(?:\\/[-\\w]{0,40})?\\.js"
+    ],
+    "url": [
+      "surge\\.sh"
+    ],
     "website": "https://surge.sh"
   },
   "Survicate": {
@@ -7364,7 +7814,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.survicate\\.com/",
+    "scriptSrc": [
+      "\\.survicate\\.com/"
+    ],
     "website": "https://survicate.com"
   },
   "Svbtle": {
@@ -7375,7 +7827,9 @@
     "meta": {
       "generator": "^Svbtle\\.com$"
     },
-    "url": "^https?://[^/]+\\.svbtle\\.com",
+    "url": [
+      "^https?://[^/]+\\.svbtle\\.com"
+    ],
     "website": "https://www.svbtle.com"
   },
   "Svelte": {
@@ -7427,7 +7881,9 @@
       "SwaggerUIStandalonePreset": ""
     },
     "oss": true,
-    "scriptSrc": "(?:/([\\d.]+))?/swagger-ui-bundle\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:/([\\d.]+))?/swagger-ui-bundle\\.js\\;version:\\1"
+    ],
     "website": "https://swagger.io/tools/swagger-ui"
   },
   "Swagify": {
@@ -7447,7 +7903,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "api\\.swagifyapp\\.com/",
+    "scriptSrc": [
+      "api\\.swagifyapp\\.com/"
+    ],
     "website": "https://swagifyapp.com"
   },
   "SweetAlert": {
@@ -7464,7 +7922,9 @@
     },
     "icon": "SweetAlert.png",
     "oss": true,
-    "scriptSrc": "sweet(?:-)?alert(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "sweet(?:-)?alert(?:\\.min)?\\.js"
+    ],
     "website": "https://sweetalert.js.org"
   },
   "SweetAlert2": {
@@ -7522,7 +7982,9 @@
     "dom": "link[href*='/swiffy-slider.min.css']",
     "icon": "Swiffy Slider.svg",
     "oss": true,
-    "scriptSrc": "/npm/swiffy-slider@([\\d\\.]+)/\\;version:\\1",
+    "scriptSrc": [
+      "/npm/swiffy-slider@([\\d\\.]+)/\\;version:\\1"
+    ],
     "website": "https://swiffyslider.com"
   },
   "Swiftype": {
@@ -7534,7 +7996,9 @@
     "js": {
       "Swiftype": ""
     },
-    "scriptSrc": "swiftype\\.com/embed\\.js$",
+    "scriptSrc": [
+      "swiftype\\.com/embed\\.js$"
+    ],
     "website": "https://swiftype.com"
   },
   "Swiper": {
@@ -7555,7 +8019,9 @@
       "Swiper": ""
     },
     "oss": true,
-    "scriptSrc": "swiper(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "swiper(?:\\.min)?\\.js"
+    ],
     "website": "https://swiperjs.com"
   },
   "Swup": {
@@ -7569,7 +8035,9 @@
       "Swup": ""
     },
     "oss": true,
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/(?:dist\\/)?)?swup(?:-preload)?(?:-plugin)?(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/(?:dist\\/)?)?swup(?:-preload)?(?:-plugin)?(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://swup.js.org"
   },
   "Swym Wishlist Plus": {
@@ -7679,7 +8147,9 @@
       "recurring",
       "poa"
     ],
-    "scriptSrc": "syncfusion(?:\\.com)?(?:\\/ej\\d)?(?:-[base|input|buttons|lists|calendars]+)?(?:\\/dist)?(?:\\/global)?(?:\\/ej\\d)?(?:-[base|input|buttons|lists|calendars]+)?(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "syncfusion(?:\\.com)?(?:\\/ej\\d)?(?:-[base|input|buttons|lists|calendars]+)?(?:\\/dist)?(?:\\/global)?(?:\\/ej\\d)?(?:-[base|input|buttons|lists|calendars]+)?(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://www.syncfusion.com/"
   },
   "Syndeca": {
@@ -7696,7 +8166,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.syndeca\\.com/",
+    "scriptSrc": [
+      "\\.syndeca\\.com/"
+    ],
     "website": "https://www.syndeca.com"
   },
   "Synerise": {
@@ -7704,7 +8176,9 @@
       10
     ],
     "icon": "Synerise.svg",
-    "scriptSrc": "snrcdn\\.net/sdk/(3\\.0)/synerise-javascript-sdk\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "snrcdn\\.net/sdk/(3\\.0)/synerise-javascript-sdk\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://synerise.com/"
   },
   "Synology DiskStation": {
@@ -7720,7 +8194,9 @@
       "application-name": "Synology DiskStation",
       "description": "^DiskStation provides a full-featured network attached storage"
     },
-    "scriptSrc": "webapi/entry\\.cgi\\?api=SYNO\\.(?:Core|Filestation)\\.Desktop\\.",
+    "scriptSrc": [
+      "webapi/entry\\.cgi\\?api=SYNO\\.(?:Core|Filestation)\\.Desktop\\."
+    ],
     "website": "https://synology.com"
   },
   "SyntaxHighlighter": {
@@ -7749,7 +8225,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "//systeme\\.io/",
+    "scriptSrc": [
+      "//systeme\\.io/"
+    ],
     "website": "https://systeme.io"
   },
   "Syte": {
@@ -7769,7 +8247,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.syteapi\\.com/",
+    "scriptSrc": [
+      "cdn\\.syteapi\\.com/"
+    ],
     "website": "https://www.syte.ai"
   },
   "sIFR": {
@@ -7778,7 +8258,9 @@
     ],
     "description": "sIFR is a JavaScript and Adobe Flash dynamic web fonts implementation.",
     "icon": "sIFR.png",
-    "scriptSrc": "sifr\\.js",
+    "scriptSrc": [
+      "sifr\\.js"
+    ],
     "website": "https://www.mikeindustries.com/blog/sifr"
   },
   "sNews": {
@@ -7800,7 +8282,9 @@
     "js": {
       "Scriptaculous.Version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "/(?:scriptaculous|protoaculous)(?:\\.js|/)",
+    "scriptSrc": [
+      "/(?:scriptaculous|protoaculous)(?:\\.js|/)"
+    ],
     "website": "https://script.aculo.us"
   },
   "scrollreveal": {
@@ -7815,7 +8299,9 @@
     "pricing": [
       "onetime"
     ],
-    "scriptSrc": "scrollreveal(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "scrollreveal(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://scrollrevealjs.org"
   },
   "shadcn/ui": {
@@ -7841,7 +8327,9 @@
     "js": {
       "Shine": ""
     },
-    "scriptSrc": "shine(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "shine(?:\\.min)?\\.js"
+    ],
     "website": "https://bigspaceship.github.io/shine.js/"
   },
   "sidr": {
@@ -7850,7 +8338,9 @@
     ],
     "description": "Sidr is a jQuery plugin for creating side menus.",
     "oss": true,
-    "scriptSrc": "sidr(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "sidr(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://www.albertovarela.net/sidr/"
   },
   "siimple": {
@@ -7879,7 +8369,9 @@
       "slideout": ""
     },
     "oss": true,
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?slideout(?:-init)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/)?slideout(?:-init)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2"
+    ],
     "website": "https://slideout.js.org/"
   },
   "snigel AdConsent": {
@@ -7897,7 +8389,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "(?:staging-)?cdn\\.snigelweb\\.com/(?:snhb|adconsent)/",
+    "scriptSrc": [
+      "(?:staging-)?cdn\\.snigelweb\\.com/(?:snhb|adconsent)/"
+    ],
     "website": "https://www.snigel.com/adconsent/"
   },
   "snigel AdEngine": {

@@ -35,7 +35,9 @@
     "js": {
       "RDStation": ""
     },
-    "scriptSrc": "d335luupugsy2\\.cloudfront\\.net/js/loader-scripts/.*-loader\\.js",
+    "scriptSrc": [
+      "d335luupugsy2\\.cloudfront\\.net/js/loader-scripts/.*-loader\\.js"
+    ],
     "website": "https://rdstation.com.br"
   },
   "RDoc": {
@@ -72,7 +74,9 @@
       "redaxo": "\\;confidence:50"
     },
     "oss": true,
-    "url": "^https?://(?:www\\.)?[\\d\\w\\-]+\\.[\\w]+/redaxo/\\;confidence:50",
+    "url": [
+      "^https?://(?:www\\.)?[\\d\\w\\-]+\\.[\\w]+/redaxo/\\;confidence:50"
+    ],
     "website": "https://redaxo.org"
   },
   "REG.RU": {
@@ -105,7 +109,9 @@
       "New Relic"
     ],
     "saas": true,
-    "scriptSrc": "/Scripts/plugins/rnd-mobilemenu/",
+    "scriptSrc": [
+      "/Scripts/plugins/rnd-mobilemenu/"
+    ],
     "website": "https://www.rnd.com.tr/en/"
   },
   "RSS": {
@@ -134,7 +140,9 @@
     ],
     "saas": true,
     "website": "https://www.rtbhouse.com",
-    "xhr": "\\.creativecdn\\.com"
+    "xhr": [
+      "\\.creativecdn\\.com"
+    ]
   },
   "RX Web Server": {
     "cats": [
@@ -203,7 +211,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.rainpos\\.com/",
+    "scriptSrc": [
+      "\\.rainpos\\.com/"
+    ],
     "website": "https://www.rainpos.com"
   },
   "RainLoop": {
@@ -228,7 +238,9 @@
     "meta": {
       "rlAppVersion": "^([0-9.]+)$\\;version:\\1"
     },
-    "scriptSrc": "^rainloop/v/([0-9.]+)/\\;version:\\1",
+    "scriptSrc": [
+      "^rainloop/v/([0-9.]+)/\\;version:\\1"
+    ],
     "website": "https://www.rainloop.net/"
   },
   "RaiseDonors": {
@@ -290,7 +302,9 @@
       36
     ],
     "icon": "Rakuten Advertising.svg",
-    "scriptSrc": "tag\\.rmp\\.rakuten\\.com",
+    "scriptSrc": [
+      "tag\\.rmp\\.rakuten\\.com"
+    ],
     "website": "https://rakutenadvertising.com/"
   },
   "Rakuten Digital Commerce": {
@@ -308,7 +322,9 @@
       59
     ],
     "icon": "Ramda.png",
-    "scriptSrc": "ramda.*\\.js",
+    "scriptSrc": [
+      "ramda.*\\.js"
+    ],
     "website": "https://ramdajs.com"
   },
   "RankMath SEO": {
@@ -327,7 +343,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/seo-by-rank-math(?:-pro)?/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/seo-by-rank-math(?:-pro)?/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://rankmath.com"
   },
   "Raphael": {
@@ -339,7 +357,9 @@
     "js": {
       "Raphael.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "raphael(?:-([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "raphael(?:-([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://dmitrybaranovskiy.github.io/raphael/"
   },
   "RapidSec": {
@@ -376,7 +396,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.rapidspike\\.com/",
+    "scriptSrc": [
+      "\\.rapidspike\\.com/"
+    ],
     "website": "https://www.rapidspike.com"
   },
   "Raptor": {
@@ -423,7 +445,9 @@
       "mid"
     ],
     "saas": true,
-    "scriptSrc": "code\\.rateparity\\.com/",
+    "scriptSrc": [
+      "code\\.rateparity\\.com/"
+    ],
     "website": "https://www.rateparity.com"
   },
   "Rawabit": {
@@ -455,7 +479,9 @@
     "js": {
       "Raychat": ""
     },
-    "scriptSrc": "app\\.raychat\\.io/scripts/js",
+    "scriptSrc": [
+      "app\\.raychat\\.io/scripts/js"
+    ],
     "website": "https://raychat.io"
   },
   "Raygun": {
@@ -475,7 +501,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.raygun\\.io",
+    "scriptSrc": [
+      "\\.raygun\\.io"
+    ],
     "website": "https://raygun.com"
   },
   "Rayo": {
@@ -507,7 +535,9 @@
     "pricing": [
       "payg"
     ],
-    "scriptSrc": "checkout\\.razorpay\\.com",
+    "scriptSrc": [
+      "checkout\\.razorpay\\.com"
+    ],
     "website": "https://razorpay.com/"
   },
   "Re:amaze": {
@@ -524,7 +554,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.reamaze\\.com/",
+    "scriptSrc": [
+      "\\.reamaze\\.com/"
+    ],
     "website": "https://www.reamaze.com"
   },
   "ReCaptcha v2 for Contact Form 7": {
@@ -542,7 +574,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/wpcf7-recaptcha/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/wpcf7-recaptcha/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/wpcf7-recaptcha/"
   },
   "ReConvert": {
@@ -561,7 +595,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.stilyoapps\\.com/reconvert/assets/js/store_reconvert_node\\.js",
+    "scriptSrc": [
+      "\\.stilyoapps\\.com/reconvert/assets/js/store_reconvert_node\\.js"
+    ],
     "website": "https://www.reconvert.io"
   },
   "ReDoc": {
@@ -579,7 +615,9 @@
     "js": {
       "Redoc.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "/redoc\\.(?:min\\.)?js",
+    "scriptSrc": [
+      "/redoc\\.(?:min\\.)?js"
+    ],
     "website": "https://github.com/Rebilly/ReDoc"
   },
   "React": {
@@ -691,7 +729,9 @@
       "recurring"
     ],
     "saas": true,
-    "url": "^https?//.+\\.reactiveonline\\.io",
+    "url": [
+      "^https?//.+\\.reactiveonline\\.io"
+    ],
     "website": "https://reactiveonline.io"
   },
   "ReadAloud": {
@@ -702,7 +742,9 @@
     "dom": "div#ra-player, div[data-skin*='assets\\.sitespeaker\\.link/embed/skins']",
     "icon": "default.svg",
     "website": "https://www.readaloudwidget.com",
-    "xhr": "assets\\.sitespeaker\\.link"
+    "xhr": [
+      "assets\\.sitespeaker\\.link"
+    ]
   },
   "ReadMe": {
     "cats": [
@@ -720,7 +762,9 @@
       "mid",
       "recurring"
     ],
-    "scriptSrc": "/cdn\\.readme\\.io/js/",
+    "scriptSrc": [
+      "/cdn\\.readme\\.io/js/"
+    ],
     "website": "https://readme.com"
   },
   "ReadSpeaker": {
@@ -739,7 +783,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.readspeaker\\.com/",
+    "scriptSrc": [
+      "\\.readspeaker\\.com/"
+    ],
     "website": "https://www.readspeaker.com"
   },
   "Readymag": {
@@ -804,7 +850,9 @@
       "payg",
       "low"
     ],
-    "scriptSrc": "rebuyengine\\.com",
+    "scriptSrc": [
+      "rebuyengine\\.com"
+    ],
     "website": "https://rebuyengine.com/"
   },
   "Recapture": {
@@ -817,7 +865,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.recapture\\.io/.+\\?v=\\d+(?:&ver=([\\d\\.]+)?)?\\;version:\\1",
+    "scriptSrc": [
+      "cdn\\.recapture\\.io/.+\\?v=\\d+(?:&ver=([\\d\\.]+)?)?\\;version:\\1"
+    ],
     "website": "https://recapture.io"
   },
   "Recart": {
@@ -830,7 +880,9 @@
       "__recart": "",
       "recart": ""
     },
-    "scriptSrc": "api\\.recart\\.com",
+    "scriptSrc": [
+      "api\\.recart\\.com"
+    ],
     "website": "https://recart.com/"
   },
   "Recent Posts Widget With Thumbnails": {
@@ -903,7 +955,9 @@
     ],
     "description": "Recite Me is a web accessibility overlay that claims to allow website visitors to customize a site in a way that works for them.",
     "icon": "Recite Me.png",
-    "scriptSrc": "api\\.reciteme\\.com/asset/js",
+    "scriptSrc": [
+      "api\\.reciteme\\.com/asset/js"
+    ],
     "website": "https://reciteme.com/"
   },
   "Recomify": {
@@ -920,7 +974,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "app\\.recomify\\.com/",
+    "scriptSrc": [
+      "app\\.recomify\\.com/"
+    ],
     "website": "https://www.recomify.com"
   },
   "RecoverMyCart": {
@@ -939,7 +995,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.recovermycart\\.com",
+    "scriptSrc": [
+      "cdn\\.recovermycart\\.com"
+    ],
     "website": "https://app.recovermycart.com/"
   },
   "Recruitee": {
@@ -980,7 +1038,9 @@
     "requires": [
       "Shopify"
     ],
-    "scripts": "\"(?:vendor|title)?\"\\:\"Recurate\"",
+    "scripts": [
+      "\"(?:vendor|title)?\"\\:\"Recurate\""
+    ],
     "website": "https://www.recurate.com"
   },
   "Recurly": {
@@ -995,7 +1055,9 @@
     "js": {
       "recurly.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "js\\.recurly\\.com",
+    "scriptSrc": [
+      "js\\.recurly\\.com"
+    ],
     "website": "https://recurly.com"
   },
   "Red Hat": {
@@ -1026,7 +1088,9 @@
     ],
     "description": "Red je Pakketje is a Dutch company specialised in same-day-delivery.",
     "icon": "Red je Pakketje.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bRed je Pakketje\\b"
     ],
@@ -1086,7 +1150,9 @@
     "js": {
       "reddit": ""
     },
-    "url": "^https?://(?:www\\.)?reddit\\.com",
+    "url": [
+      "^https?://(?:www\\.)?reddit\\.com"
+    ],
     "website": "https://code.reddit.com"
   },
   "Reddit Ads": {
@@ -1095,7 +1161,9 @@
     ],
     "description": "Reddit Ads is an online advertising offering from Reddit.",
     "icon": "Reddit.svg",
-    "scriptSrc": "www\\.redditstatic\\.com",
+    "scriptSrc": [
+      "www\\.redditstatic\\.com"
+    ],
     "website": "https://advertising.reddithelp.com/"
   },
   "Redis": {
@@ -1148,7 +1216,9 @@
     ],
     "description": "This company promotes the collection and recycling of textiles by rewarding each donation of clothing made on its website with 'Re' points, allowing you to benefit from advantages and discounts at more than 70 partner brands.",
     "icon": "Redonner.svg",
-    "scriptSrc": "\\.redonner\\.fr/",
+    "scriptSrc": [
+      "\\.redonner\\.fr/"
+    ],
     "website": "https://www.redonner.fr"
   },
   "Redux": {
@@ -1228,7 +1298,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.reevoo\\.com/",
+    "scriptSrc": [
+      "\\.reevoo\\.com/"
+    ],
     "website": "https://www.reevoo.com"
   },
   "ReferralCandy": {
@@ -1244,7 +1316,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.referralcandy\\.com/",
+    "scriptSrc": [
+      "\\.referralcandy\\.com/"
+    ],
     "website": "https://www.referralcandy.com"
   },
   "Refersion": {
@@ -1271,7 +1345,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.refersion\\.com",
+    "scriptSrc": [
+      "\\.refersion\\.com"
+    ],
     "website": "https://refersion.com"
   },
   "Reflektion": {
@@ -1288,7 +1364,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.cloudfront\\.net/js/reflektion\\.js",
+    "scriptSrc": [
+      "\\.cloudfront\\.net/js/reflektion\\.js"
+    ],
     "website": "https://reflektion.com"
   },
   "Refundid": {
@@ -1304,7 +1382,9 @@
     "pricing": [
       "poa"
     ],
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "saas": true,
     "website": "https://refundid.com"
   },
@@ -1320,7 +1400,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.regiondo\\.net",
+    "scriptSrc": [
+      "cdn\\.regiondo\\.net"
+    ],
     "website": "https://www.regiondo.com"
   },
   "Reinvigorate": {
@@ -1339,7 +1421,9 @@
     ],
     "description": "Relais Colis is a French parcel delivery network.",
     "icon": "Relais Colis.png",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bRelais Colis\\b"
     ],
@@ -1399,7 +1483,9 @@
     ],
     "description": "Remixd is a platform that enables podcast creators to efficiently produce and share their podcasts with a worldwide audience. The platform provides various tools and features to support podcast creation, hosting, and distribution, such as podcast hosting, analytics, monetisation, and social media integration.",
     "icon": "remixd.svg",
-    "scriptSrc": "tags\\.remixd\\.com/player",
+    "scriptSrc": [
+      "tags\\.remixd\\.com/player"
+    ],
     "website": "https://www.remixd.com"
   },
   "Render": {
@@ -1488,7 +1574,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "\\.reputon\\.com/",
+    "scriptSrc": [
+      "\\.reputon\\.com/"
+    ],
     "website": "https://reputon.com"
   },
   "RequireJS": {
@@ -1500,7 +1588,9 @@
     "js": {
       "requirejs.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "require.*\\.js",
+    "scriptSrc": [
+      "require.*\\.js"
+    ],
     "website": "https://requirejs.org"
   },
   "ResDiary": {
@@ -1521,7 +1611,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.resdiary\\.\\w+/",
+    "scriptSrc": [
+      "\\.resdiary\\.\\w+/"
+    ],
     "website": "https://www.resdiary.com"
   },
   "Resengo": {
@@ -1540,7 +1632,9 @@
     "js": {
       "wpJsonpResengoReservationWidget": ""
     },
-    "scriptSrc": "www\\.resengo\\.\\w+",
+    "scriptSrc": [
+      "www\\.resengo\\.\\w+"
+    ],
     "website": "https://wwc.resengo.com"
   },
   "Reserve In-Store": {
@@ -1582,7 +1676,9 @@
       "low"
     ],
     "saas": true,
-    "scriptSrc": "static\\.reservio\\.com",
+    "scriptSrc": [
+      "static\\.reservio\\.com"
+    ],
     "website": "https://www.reservio.com"
   },
   "Resin": {
@@ -1615,7 +1711,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "static\\.resmio\\.\\w+/static/",
+    "scriptSrc": [
+      "static\\.resmio\\.\\w+/static/"
+    ],
     "website": "https://www.resmio.com"
   },
   "Resova": {
@@ -1661,7 +1759,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/responsive-lightbox/.+front\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/responsive-lightbox/.+front\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://dfactory.eu/products/responsive-lightbox-gallery-extensions/"
   },
   "Responsive Nav": {
@@ -1671,7 +1771,9 @@
     "description": "Responsive navigation plugin without library dependencies and with fast touch screen support.",
     "icon": "Responsive Nav.png",
     "oss": true,
-    "scriptSrc": "responsive-nav(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "responsive-nav(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "http://responsive-nav.com/"
   },
   "ResponsiveVoice": {
@@ -1705,7 +1807,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "widgets\\.resy\\.\\w+",
+    "scriptSrc": [
+      "widgets\\.resy\\.\\w+"
+    ],
     "website": "https://resy.com"
   },
   "Retail Rocket": {
@@ -1729,7 +1833,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.retailrocket\\.net",
+    "scriptSrc": [
+      "cdn\\.retailrocket\\.net"
+    ],
     "website": "https://retailrocket.net"
   },
   "Retool": {
@@ -1746,8 +1852,12 @@
       "freemium",
       "recurring"
     ],
-    "scriptSrc": "retool(?:-edge)?(?:\\.com)?(?:\\/embed)?\\/?(?:runtime)?~?(?:app)?(?:custom-components)?(?:\\.\\w{0,20})?\\.js",
-    "url": "^https://retool\\.[\\d\\w\\-]+\\.(?:com|io)/",
+    "scriptSrc": [
+      "retool(?:-edge)?(?:\\.com)?(?:\\/embed)?\\/?(?:runtime)?~?(?:app)?(?:custom-components)?(?:\\.\\w{0,20})?\\.js"
+    ],
+    "url": [
+      "^https://retool\\.[\\d\\w\\-]+\\.(?:com|io)/"
+    ],
     "website": "https://retool.com"
   },
   "Return Prime": {
@@ -1765,7 +1875,9 @@
     "requires": [
       "Shopify"
     ],
-    "scriptSrc": "//return-prime-proxy-prod\\.s3[^ ]*\\.amazonaws\\.com/",
+    "scriptSrc": [
+      "//return-prime-proxy-prod\\.s3[^ ]*\\.amazonaws\\.com/"
+    ],
     "website": "https://www.returnprime.com/"
   },
   "ReturnGO": {
@@ -1783,7 +1895,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.returngo\\.ai/",
+    "scriptSrc": [
+      "\\.returngo\\.ai/"
+    ],
     "website": "https://returngo.ai"
   },
   "Returnly": {
@@ -1868,7 +1982,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "assets\\.revlifter\\.io",
+    "scriptSrc": [
+      "assets\\.revlifter\\.io"
+    ],
     "website": "https://www.revlifter.com"
   },
   "Reveal.js": {
@@ -1882,7 +1998,9 @@
     "js": {
       "Reveal.VERSION": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "(?:^|/)reveal(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "(?:^|/)reveal(?:\\.min)?\\.js"
+    ],
     "website": "https://lab.hakim.se/reveal-js"
   },
   "Revel": {
@@ -1905,7 +2023,9 @@
     ],
     "description": "RevenueHunt is an affiliate marketing and advertising company specializing in paid surveys and cost per lead campaigns.",
     "icon": "RevenueHunt.png",
-    "scriptSrc": "admin\\.revenuehunt\\.com/",
+    "scriptSrc": [
+      "admin\\.revenuehunt\\.com/"
+    ],
     "website": "https://revenuehunt.com"
   },
   "Revieve": {
@@ -1937,7 +2057,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "\\.reviewsolicitors\\.co\\.uk/",
+    "scriptSrc": [
+      "\\.reviewsolicitors\\.co\\.uk/"
+    ],
     "website": "https://www.reviewsolicitors.co.uk"
   },
   "Reviews.io": {
@@ -1964,7 +2086,9 @@
     ],
     "description": "RevolverMaps is a collection of real-time visitor statistics widgets for website or blog. Interactive visitor mappings to a globe rendered by the Revolver Engine.",
     "icon": "RevolverMaps.svg",
-    "scriptSrc": "\\.revolvermaps\\.com",
+    "scriptSrc": [
+      "\\.revolvermaps\\.com"
+    ],
     "website": "https://www.revolvermaps.com"
   },
   "Revv": {
@@ -2004,7 +2128,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "api\\.revy\\.io/",
+    "scriptSrc": [
+      "api\\.revy\\.io/"
+    ],
     "website": "https://revy.io"
   },
   "Rewardful": {
@@ -2016,7 +2142,9 @@
     "js": {
       "Rewardful": ""
     },
-    "scriptSrc": "r\\.wdfl\\.co",
+    "scriptSrc": [
+      "r\\.wdfl\\.co"
+    ],
     "website": "https://www.getrewardful.com/"
   },
   "Rezdy": {
@@ -2031,7 +2159,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "rezdy\\.\\w+/pluginJs",
+    "scriptSrc": [
+      "rezdy\\.\\w+/pluginJs"
+    ],
     "website": "https://www.rezdy.com"
   },
   "Rezgo": {
@@ -2076,7 +2206,9 @@
       "WordPress"
     ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/widget-google-reviews/",
+    "scriptSrc": [
+      "/wp-content/plugins/widget-google-reviews/"
+    ],
     "website": "https://richplugins.com/business-reviews-bundle-wordpress-plugin"
   },
   "RichRelevance": {
@@ -2093,7 +2225,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.richrelevance\\.com/",
+    "scriptSrc": [
+      "\\.richrelevance\\.com/"
+    ],
     "website": "https://richrelevance.com"
   },
   "Richpanel": {
@@ -2113,7 +2247,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.richpanel\\.com/",
+    "scriptSrc": [
+      "\\.richpanel\\.com/"
+    ],
     "website": "https://www.richpanel.com"
   },
   "Rickshaw": {
@@ -2126,7 +2262,9 @@
     "js": {
       "Rickshaw": ""
     },
-    "scriptSrc": "rickshaw(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "rickshaw(?:\\.min)?\\.js"
+    ],
     "website": "https://code.shutterstock.com/rickshaw/"
   },
   "RightJS": {
@@ -2149,7 +2287,9 @@
     "js": {
       "riot": ""
     },
-    "scriptSrc": "riot(?:\\+compiler)?(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "riot(?:\\+compiler)?(?:\\.min)?\\.js"
+    ],
     "website": "https://riot.js.org/"
   },
   "Ripple": {
@@ -2188,7 +2328,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "strn\\.rise-ai\\.com/",
+    "scriptSrc": [
+      "strn\\.rise-ai\\.com/"
+    ],
     "website": "https://rise.ai"
   },
   "Riskified": {
@@ -2322,7 +2464,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "wxyz\\.rb\\.js",
+    "scriptSrc": [
+      "wxyz\\.rb\\.js"
+    ],
     "website": "https://www.rockerbox.com"
   },
   "Rocket.Chat": {
@@ -2361,7 +2505,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.rocketfy\\.mx/",
+    "scriptSrc": [
+      "\\.rocketfy\\.mx/"
+    ],
     "website": "https://rocketfy.mx"
   },
   "Roistat": {
@@ -2395,7 +2541,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.rokt\\.com/",
+    "scriptSrc": [
+      "\\.rokt\\.com/"
+    ],
     "website": "https://www.rokt.com"
   },
   "Rollbar": {
@@ -2467,7 +2615,9 @@
     "js": {
       "Routeapp": ""
     },
-    "scriptSrc": "//cdn.routeapp.io/",
+    "scriptSrc": [
+      "//cdn.routeapp.io/"
+    ],
     "website": "https://route.com/"
   },
   "Royal Mail": {
@@ -2476,7 +2626,9 @@
     ],
     "description": "Royal Mail is a British multinational postal service and courier company.",
     "icon": "Royal Mail.png",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bRoyal Mail\\b"
     ],
@@ -2517,9 +2669,13 @@
     },
     "icon": "Rubicon Project.svg",
     "saas": true,
-    "scriptSrc": "https?://[^/]*\\.rubiconproject\\.com",
+    "scriptSrc": [
+      "https?://[^/]*\\.rubiconproject\\.com"
+    ],
     "website": "https://rubiconproject.com/",
-    "xhr": "\\.rubiconproject\\.com"
+    "xhr": [
+      "\\.rubiconproject\\.com"
+    ]
   },
   "Ruby": {
     "cats": [
@@ -2547,7 +2703,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "chatwidget\\.ruby\\.com",
+    "scriptSrc": [
+      "chatwidget\\.ruby\\.com"
+    ],
     "website": "https://www.ruby.com"
   },
   "Ruby on Rails": {
@@ -2575,7 +2733,9 @@
     "meta": {
       "csrf-param": "^authenticity_token$\\;confidence:50"
     },
-    "scriptSrc": "/assets/application-[a-z\\d]{32}/\\.js\\;confidence:50",
+    "scriptSrc": [
+      "/assets/application-[a-z\\d]{32}/\\.js\\;confidence:50"
+    ],
     "website": "https://rubyonrails.org"
   },
   "Rudderstack": {
@@ -2626,7 +2786,9 @@
       "Rx.Symbol": ""
     },
     "oss": true,
-    "scriptSrc": "rx(?:\\.\\w+)?(?:\\.compat|\\.global)?(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "rx(?:\\.\\w+)?(?:\\.compat|\\.global)?(?:\\.min)?\\.js"
+    ],
     "website": "https://reactivex.io"
   },
   "Ryviu": {
@@ -2644,7 +2806,9 @@
       "low"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.ryviu\\.com",
+    "scriptSrc": [
+      "cdn\\.ryviu\\.com"
+    ],
     "website": "https://www.ryviu.com/"
   },
   "reCAPTCHA": {
@@ -2669,7 +2833,9 @@
       "recaptcha_ajax\\.js",
       "/recaptcha/(?:api|enterprise)\\.js"
     ],
-    "scripts": "/recaptcha/api\\.js",
+    "scripts": [
+      "/recaptcha/api\\.js"
+    ],
     "website": "https://www.google.com/recaptcha/"
   }
 }

@@ -24,7 +24,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "bitrix(?:\\.info/|/js/main/core)",
+    "scriptSrc": [
+      "bitrix(?:\\.info/|/js/main/core)"
+    ],
     "website": "https://www.1c-bitrix.ru"
   },
   "2B Advice": {
@@ -37,7 +39,9 @@
       "BBCookieControler": ""
     },
     "saas": true,
-    "scriptSrc": "2badvice-cdn\\.azureedge\\.net",
+    "scriptSrc": [
+      "2badvice-cdn\\.azureedge\\.net"
+    ],
     "website": "https://www.2b-advice.com/en/data-privacy-software/cookie-consent-plugin/"
   },
   "30namaPlayer": {
@@ -65,7 +69,9 @@
       "\\.tynt\\.com/"
     ],
     "website": "https://www.33across.com",
-    "xhr": "\\.33across\\.com"
+    "xhr": [
+      "\\.33across\\.com"
+    ]
   },
   "34SP.com": {
     "cats": [
@@ -100,7 +106,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "4tellcdn\\.azureedge\\.net",
+    "scriptSrc": [
+      "4tellcdn\\.azureedge\\.net"
+    ],
     "website": "https://4-tell.com"
   },
   "42stores": {
@@ -150,7 +158,9 @@
       "recurring",
       "low"
     ],
-    "scriptSrc": "\\.5centscdn\\.com/",
+    "scriptSrc": [
+      "\\.5centscdn\\.com/"
+    ],
     "website": "https://www.5centscdn.net"
   },
   "6sense": {
@@ -169,7 +179,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.6sc\\.co/",
+    "scriptSrc": [
+      "\\.6sc\\.co/"
+    ],
     "website": "https://6sense.com"
   },
   "8base": {
@@ -186,7 +198,9 @@
     ],
     "saas": true,
     "website": "https://8base.com",
-    "xhr": "api\\.8base\\.com"
+    "xhr": [
+      "api\\.8base\\.com"
+    ]
   },
   "<model-viewer>": {
     "cats": [
@@ -196,7 +210,9 @@
     "dom": "model-viewer",
     "icon": "model-viewer.svg",
     "oss": true,
-    "scriptSrc": "/model-viewer/dist/model-viewer\\.min\\.js",
+    "scriptSrc": [
+      "/model-viewer/dist/model-viewer\\.min\\.js"
+    ],
     "website": "https://modelviewer.dev"
   },
   "@sulu/web": {
@@ -219,7 +235,9 @@
       "_hyperscript": ""
     },
     "oss": true,
-    "scriptSrc": "//unpkg\\.com/hyperscript\\.org@([\\d\\.]+)\\;version:\\1",
+    "scriptSrc": [
+      "//unpkg\\.com/hyperscript\\.org@([\\d\\.]+)\\;version:\\1"
+    ],
     "website": "https://hyperscript.org"
   }
 }

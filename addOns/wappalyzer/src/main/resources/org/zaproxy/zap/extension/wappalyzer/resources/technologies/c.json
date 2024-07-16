@@ -16,7 +16,9 @@
     "requires": [
       "D3"
     ],
-    "scriptSrc": "c3(?:\\.min)?(?:-[a-zA-Z0-9]{8})?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "c3(?:\\.min)?(?:-[a-zA-Z0-9]{8})?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://c3js.org/"
   },
   "CCV Shop": {
@@ -24,7 +26,9 @@
       6
     ],
     "icon": "ccvshop.png",
-    "scriptSrc": "/website/JavaScript/Vertoshop\\.js",
+    "scriptSrc": [
+      "/website/JavaScript/Vertoshop\\.js"
+    ],
     "website": "https://ccvshop.be"
   },
   "CDN77": {
@@ -65,7 +69,9 @@
     ],
     "description": "Civic provides cookie control for user consent and the use of cookies.",
     "icon": "civic.png",
-    "scriptSrc": "cc\\.cdn\\.civiccomputing\\.com",
+    "scriptSrc": [
+      "cc\\.cdn\\.civiccomputing\\.com"
+    ],
     "website": "https://www.civicuk.com/cookie-control"
   },
   "CJDropshipping app": {
@@ -81,7 +87,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "app\\.cjdropshipping\\.com/",
+    "scriptSrc": [
+      "app\\.cjdropshipping\\.com/"
+    ],
     "website": "https://apps.shopify.com/cucheng"
   },
   "CKEditor": {
@@ -138,7 +146,9 @@
     "js": {
       "cnzz_protocol": ""
     },
-    "scriptSrc": "//[^./]+\\.cnzz\\.com/(?:z_stat.php|core)\\?",
+    "scriptSrc": [
+      "//[^./]+\\.cnzz\\.com/(?:z_stat.php|core)\\?"
+    ],
     "website": "https://web.umeng.com/"
   },
   "CPABuild": {
@@ -216,7 +226,9 @@
       "mid",
       "onetime"
     ],
-    "scriptSrc": "var/cache/misc/assets/js/tygh/scripts-(?:[\\d\\w]+)\\.js",
+    "scriptSrc": [
+      "var/cache/misc/assets/js/tygh/scripts-(?:[\\d\\w]+)\\.js"
+    ],
     "website": "https://www.cs-cart.com"
   },
   "CSSIgniter Olsen Light": {
@@ -234,7 +246,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/olsen-light/.+scripts(?:\\.min)?\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/olsen-light/.+scripts(?:\\.min)?\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://www.cssigniter.com/themes/olsen-light"
   },
   "CTT": {
@@ -243,7 +257,9 @@
     ],
     "description": "CTT operates as the national postal service of Portugal.",
     "icon": "CTT.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bTourline Express\\b",
       "\\bCTT\\b"
@@ -264,7 +280,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.caast\\.tv/",
+    "scriptSrc": [
+      "cdn\\.caast\\.tv/"
+    ],
     "website": "https://en.caast.tv"
   },
   "CacheFly": {
@@ -397,7 +415,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/caldera-forms/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/caldera-forms/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://calderaforms.com"
   },
   "CalendarHero": {
@@ -432,7 +452,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "assets\\.calendly\\.com/",
+    "scriptSrc": [
+      "assets\\.calendly\\.com/"
+    ],
     "website": "https://calendly.com/"
   },
   "CallRail": {
@@ -486,7 +508,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.callbell\\.eu/",
+    "scriptSrc": [
+      "\\.callbell\\.eu/"
+    ],
     "website": "https://www.callbell.eu"
   },
   "Campaign Monitor": {
@@ -502,7 +526,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.createsend1\\.com/",
+    "scriptSrc": [
+      "\\.createsend1\\.com/"
+    ],
     "website": "https://www.campaignmonitor.com"
   },
   "Candid Themes Fairy": {
@@ -518,7 +544,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/fairy(?:-premium)?/.+custom\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/fairy(?:-premium)?/.+custom\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://www.candidthemes.com/themes/fairy"
   },
   "Canny": {
@@ -616,7 +644,9 @@
     "js": {
       "Captchme": ""
     },
-    "scriptSrc": "^https?://api\\.captchme\\.net/",
+    "scriptSrc": [
+      "^https?://api\\.captchme\\.net/"
+    ],
     "website": "https://captchme.com"
   },
   "Captivate.fm": {
@@ -651,7 +681,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.carbonads\\.com/",
+    "scriptSrc": [
+      "\\.carbonads\\.com/"
+    ],
     "website": "https://carbonads.net"
   },
   "CareCart": {
@@ -669,7 +701,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "app\\.carecart\\.io/api/abandoned-cart/",
+    "scriptSrc": [
+      "app\\.carecart\\.io/api/abandoned-cart/"
+    ],
     "website": "https://carecart.io/abandoned-cart-recovery-app"
   },
   "CareCart Sales Pop Up": {
@@ -686,7 +720,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "sales-pop\\.carecart\\.io/",
+    "scriptSrc": [
+      "sales-pop\\.carecart\\.io/"
+    ],
     "website": "https://carecart.io/sales-pop-up-app"
   },
   "Cargo": {
@@ -705,7 +741,9 @@
     "meta": {
       "cargo_title": ""
     },
-    "scriptSrc": "(?<!elo\\.io)/cargo\\.",
+    "scriptSrc": [
+      "(?<!elo\\.io)/cargo\\."
+    ],
     "website": "https://cargo.site"
   },
   "Carrd": {
@@ -723,7 +761,9 @@
       "Apache HTTP Server"
     ],
     "saas": true,
-    "scripts": "\\(\\!section\\s\\|\\|\\ssection\\.tagName\\s\\!\\=\\s\\'SECTION\\'\\)",
+    "scripts": [
+      "\\(\\!section\\s\\|\\|\\ssection\\.tagName\\s\\!\\=\\s\\'SECTION\\'\\)"
+    ],
     "website": "https://carrd.co"
   },
   "Carro": {
@@ -795,7 +835,9 @@
     "scriptSrc": [
       "googlecommerce\\.com/trustedstores/api/js"
     ],
-    "url": "/(?:cart|order|basket|trolley|bag|shoppingbag|checkout)",
+    "url": [
+      "/(?:cart|order|basket|trolley|bag|shoppingbag|checkout)"
+    ],
     "website": "https://www.wappalyzer.com/technologies/ecommerce/cart-functionality"
   },
   "Cart.com": {
@@ -813,7 +855,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.americommerce\\.com/",
+    "scriptSrc": [
+      "\\.americommerce\\.com/"
+    ],
     "website": "https://www.americommerce.com"
   },
   "Cart.js": {
@@ -826,7 +870,9 @@
       "Shopify"
     ],
     "oss": true,
-    "scriptSrc": "(?:shopify-cartjs/([\\d\\.]+)|assets)/rivets-cart\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:shopify-cartjs/([\\d\\.]+)|assets)/rivets-cart\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://cartjs.org"
   },
   "CartKit": {
@@ -840,7 +886,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.cartkitcdn\\.com/",
+    "scriptSrc": [
+      "\\.cartkitcdn\\.com/"
+    ],
     "website": "https://www.cartkit.com"
   },
   "CartStack": {
@@ -857,7 +905,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "api\\.cartstack\\.\\w+",
+    "scriptSrc": [
+      "api\\.cartstack\\.\\w+"
+    ],
     "website": "https://www.cartstack.com"
   },
   "Carts Guru": {
@@ -872,7 +922,9 @@
       "mid"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.cartsguru\\.io/",
+    "scriptSrc": [
+      "cdn\\.cartsguru\\.io/"
+    ],
     "website": "https://www.carts.guru"
   },
   "Catberry.js": {
@@ -918,7 +970,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/catch-box(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/catch-box(?:-pro)?/"
+    ],
     "website": "https://catchthemes.com/themes/catch-box"
   },
   "Catch Themes Fotografie": {
@@ -935,7 +989,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/fotografie(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/fotografie(?:-pro)?/"
+    ],
     "website": "https://catchthemes.com/themes/fotografie"
   },
   "Cecil": {
@@ -955,7 +1011,9 @@
     ],
     "description": "Celeritas offers transportation logistics services for package deliveries.",
     "icon": "Celeritas.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bCeleritas\\b"
     ],
@@ -1051,7 +1109,9 @@
       "poa"
     ],
     "saas": true,
-    "scripts": "centraCheckoutScript",
+    "scripts": [
+      "centraCheckoutScript"
+    ],
     "website": "https://centra.com"
   },
   "Chabokan": {
@@ -1080,7 +1140,9 @@
       "React"
     ],
     "oss": true,
-    "scriptSrc": "\\.chakra-ui\\.",
+    "scriptSrc": [
+      "\\.chakra-ui\\."
+    ],
     "website": "https://chakra-ui.com"
   },
   "Chameleon": {
@@ -1098,7 +1160,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.trychameleon\\.com/",
+    "scriptSrc": [
+      "\\.trychameleon\\.com/"
+    ],
     "website": "https://www.trychameleon.com"
   },
   "Chameleon system": {
@@ -1166,7 +1230,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.channeladvisor\\.com/",
+    "scriptSrc": [
+      "\\.channeladvisor\\.com/"
+    ],
     "website": "https://www.channeladvisor.com"
   },
   "ChannelApe": {
@@ -1179,10 +1245,14 @@
       "mid",
       "recurring"
     ],
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "saas": true,
     "website": "https://www.channelape.com",
-    "xhr": "\\.channelape\\.com"
+    "xhr": [
+      "\\.channelape\\.com"
+    ]
   },
   "Chaport": {
     "cats": [
@@ -1200,7 +1270,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.chaport\\.com",
+    "scriptSrc": [
+      "\\.chaport\\.com"
+    ],
     "website": "https://www.chaport.com"
   },
   "ChargeAfter": {
@@ -1214,7 +1286,9 @@
       "ChargeAfter": ""
     },
     "saas": true,
-    "scriptSrc": "cdn\\.chargeafter\\.com",
+    "scriptSrc": [
+      "cdn\\.chargeafter\\.com"
+    ],
     "website": "https://chargeafter.com/"
   },
   "Chargebee": {
@@ -1232,7 +1306,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "js\\.chargebee\\.com/v([\\d.]+)\\;version:\\1",
+    "scriptSrc": [
+      "js\\.chargebee\\.com/v([\\d.]+)\\;version:\\1"
+    ],
     "website": "https://www.chargebee.com"
   },
   "Chart.js": {
@@ -1263,7 +1339,9 @@
       "_sf_async_config": "",
       "_sf_endpt": ""
     },
-    "scriptSrc": "chartbeat\\.js",
+    "scriptSrc": [
+      "chartbeat\\.js"
+    ],
     "website": "https://chartbeat.com"
   },
   "ChatStack": {
@@ -1293,7 +1371,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "st\\.chatango\\.com",
+    "scriptSrc": [
+      "st\\.chatango\\.com"
+    ],
     "website": "https://chatango.com"
   },
   "Chatra": {
@@ -1312,9 +1392,13 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "call\\.chatra\\.io/chatra\\.js",
+    "scriptSrc": [
+      "call\\.chatra\\.io/chatra\\.js"
+    ],
     "website": "https://chatra.com",
-    "xhr": "chat\\.chatra\\.io/"
+    "xhr": [
+      "chat\\.chatra\\.io/"
+    ]
   },
   "Chatwoot": {
     "cats": [
@@ -1347,7 +1431,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.checkfront\\.com/",
+    "scriptSrc": [
+      "\\.checkfront\\.com/"
+    ],
     "website": "https://www.checkfront.com"
   },
   "Checkly": {
@@ -1369,7 +1455,9 @@
     ],
     "saas": true,
     "website": "https://www.checklyhq.com",
-    "xhr": "api\\.checklyhq\\.com/"
+    "xhr": [
+      "api\\.checklyhq\\.com/"
+    ]
   },
   "Checkout.com": {
     "cats": [
@@ -1381,7 +1469,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.checkout\\.com/js/.+js(?:\\?ver=)?([\\d\\.]+)?\\;version:\\1",
+    "scriptSrc": [
+      "cdn\\.checkout\\.com/js/.+js(?:\\?ver=)?([\\d\\.]+)?\\;version:\\1"
+    ],
     "website": "https://www.checkout.com"
   },
   "Chekkit": {
@@ -1443,7 +1533,9 @@
       "onetime"
     ],
     "saas": true,
-    "scriptSrc": "/chevereto\\.js",
+    "scriptSrc": [
+      "/chevereto\\.js"
+    ],
     "website": "https://chevereto.com"
   },
   "Chicago Boss": {
@@ -1475,7 +1567,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "js\\.chilipiper\\.com/marketing\\.js",
+    "scriptSrc": [
+      "js\\.chilipiper\\.com/marketing\\.js"
+    ],
     "website": "https://www.chilipiper.com/"
   },
   "Chimpmatic": {
@@ -1528,7 +1622,9 @@
       "ch_client": "",
       "ch_color_site_link": ""
     },
-    "scriptSrc": "scripts\\.chitika\\.net/",
+    "scriptSrc": [
+      "scripts\\.chitika\\.net/"
+    ],
     "website": "https://chitika.com"
   },
   "Choices": {
@@ -1565,7 +1661,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "chord\\.us/embeddable/client-([\\d\\.]+)\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "chord\\.us/embeddable/client-([\\d\\.]+)\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://m.chord.us"
   },
   "Chorus": {
@@ -1595,7 +1693,9 @@
       18
     ],
     "description": "Chosen is a jQuery plugin that makes long, unwieldy select boxes much more user-friendly.",
-    "scriptSrc": "chosen(?:\\.jquery)?(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "chosen(?:\\.jquery)?(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://harvesthq.github.io/chosen/"
   },
   "Chronofresh": {
@@ -1604,7 +1704,9 @@
     ],
     "description": "Chronofresh is an express transport service for food products.",
     "icon": "Chronopost.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bChronofresh\\b"
     ],
@@ -1616,7 +1718,9 @@
     ],
     "description": "Chronopost provides a domestic and international express shipping and delivery service.",
     "icon": "Chronopost.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bChronopost\\b"
     ],
@@ -1670,7 +1774,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "/static/vendor/dlb-admin-ui/",
+    "scriptSrc": [
+      "/static/vendor/dlb-admin-ui/"
+    ],
     "website": "https://www.delib.net/citizen_space"
   },
   "CitrusPay": {
@@ -1683,7 +1789,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "checkout-static\\.citruspay\\.com/",
+    "scriptSrc": [
+      "checkout-static\\.citruspay\\.com/"
+    ],
     "website": "https://consumers.citruspay.com/"
   },
   "City Hive": {
@@ -1709,7 +1817,9 @@
     ],
     "description": "CityMail is a private postal organisation operating in Sweden.",
     "icon": "CityMail.png",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bCitymail\\b"
     ],
@@ -1737,7 +1847,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "wp-content/plugins/(?:[\\w\\-]+)?civicrm(?:[\\w\\-]+)?/",
+    "scriptSrc": [
+      "wp-content/plugins/(?:[\\w\\-]+)?civicrm(?:[\\w\\-]+)?/"
+    ],
     "website": "https://wordpress.org/plugins/search/civicrm/"
   },
   "CivicTheme": {
@@ -1790,7 +1902,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "//cdn\\.clarip\\.com/",
+    "scriptSrc": [
+      "//cdn\\.clarip\\.com/"
+    ],
     "website": "https://www.clarip.com"
   },
   "Claris FileMaker": {
@@ -1808,7 +1922,9 @@
       "Application Request Routing",
       "Java"
     ],
-    "url": "\\.[\\w]+/fmi/webd/",
+    "url": [
+      "\\.[\\w]+/fmi/webd/"
+    ],
     "website": "https://www.claris.com/filemaker"
   },
   "Clarity": {
@@ -1825,7 +1941,9 @@
       "ClarityIcons": ""
     },
     "oss": true,
-    "scriptSrc": "clr-angular(?:\\.umd)?(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "clr-angular(?:\\.umd)?(?:\\.min)?\\.js"
+    ],
     "website": "https://clarity.design"
   },
   "Classeh": {
@@ -1855,7 +1973,9 @@
     ],
     "description": "Javascript utility for conditionally joining classNames together.",
     "oss": true,
-    "scriptSrc": "classnames\\.?\\w{0,20}(?:\\.chunk)?\\.js",
+    "scriptSrc": [
+      "classnames\\.?\\w{0,20}(?:\\.chunk)?\\.js"
+    ],
     "website": "https://jedwatson.github.io/classnames/"
   },
   "Classy": {
@@ -1867,7 +1987,9 @@
     "js": {
       "Classy.clientId": ""
     },
-    "scripts": "classy\\.org",
+    "scripts": [
+      "classy\\.org"
+    ],
     "website": "https://www.classy.org/"
   },
   "ClearSale": {
@@ -1901,7 +2023,9 @@
     ],
     "description": "JavaScript library for formatting input text content when you are typing.",
     "oss": true,
-    "scriptSrc": "cleave(?:\\.min)?(?:\\.\\w{0,32})?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "cleave(?:\\.min)?(?:\\.\\w{0,32})?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://nosir.github.io/cleave.js/"
   },
   "Clerk": {
@@ -1984,7 +2108,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.clickandpledge\\.com/",
+    "scriptSrc": [
+      "\\.clickandpledge\\.com/"
+    ],
     "website": "https://clickandpledge.com"
   },
   "ClickCease": {
@@ -1998,7 +2124,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.clickcease\\.com/monitor/",
+    "scriptSrc": [
+      "\\.clickcease\\.com/monitor/"
+    ],
     "website": "https://www.clickcease.com"
   },
   "ClickDimensions": {
@@ -2015,7 +2143,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "analytics\\.clickdimensions\\.com/",
+    "scriptSrc": [
+      "analytics\\.clickdimensions\\.com/"
+    ],
     "website": "https://clickdimensions.com"
   },
   "ClickFunnels": {
@@ -2052,7 +2182,9 @@
     "js": {
       "clickHeatServer": ""
     },
-    "scriptSrc": "clickheat.*\\.js",
+    "scriptSrc": [
+      "clickheat.*\\.js"
+    ],
     "website": "https://www.labsmedia.com/clickheat/index.html"
   },
   "ClickOnce": {
@@ -2088,7 +2220,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.clicktale\\.net",
+    "scriptSrc": [
+      "\\.clicktale\\.net"
+    ],
     "website": "https://www.clicktale.com"
   },
   "Clickbank": {
@@ -2100,7 +2234,9 @@
     "js": {
       "cbtb": ""
     },
-    "scriptSrc": "r\\.wdfl\\.co",
+    "scriptSrc": [
+      "r\\.wdfl\\.co"
+    ],
     "website": "https://www.clickbank.com/"
   },
   "Clicky": {
@@ -2118,7 +2254,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "static\\.getclicky\\.com",
+    "scriptSrc": [
+      "static\\.getclicky\\.com"
+    ],
     "website": "https://getclicky.com"
   },
   "ClientJS": {
@@ -2160,7 +2298,9 @@
     ],
     "description": "Clinch delivers hyper-personalized creative experiences and consumer intelligence across all channels.",
     "icon": "Clinch.png",
-    "scriptSrc": "cdn\\.clinch\\.co",
+    "scriptSrc": [
+      "cdn\\.clinch\\.co"
+    ],
     "website": "https://clinch.co/"
   },
   "Clipboard.js": {
@@ -2168,7 +2308,9 @@
       59
     ],
     "icon": "Clipboard.js.svg",
-    "scriptSrc": "clipboard(?:-([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "clipboard(?:-([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://clipboardjs.com/"
   },
   "Clockwork": {
@@ -2208,7 +2350,9 @@
     "meta": {
       "author": "^CloudCart LLC$"
     },
-    "scriptSrc": "/cloudcart-(?:assets|storage)/",
+    "scriptSrc": [
+      "/cloudcart-(?:assets|storage)/"
+    ],
     "website": "https://cloudcart.com"
   },
   "CloudSuite": {
@@ -2236,7 +2380,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.cloudbeds\\.com/",
+    "scriptSrc": [
+      "\\.cloudbeds\\.com/"
+    ],
     "website": "https://www.cloudbeds.com"
   },
   "Cloudera": {
@@ -2303,7 +2449,9 @@
     "js": {
       "__cfBeaconCustomTag": ""
     },
-    "scriptSrc": "static\\.cloudflareinsights\\.com/beacon(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "static\\.cloudflareinsights\\.com/beacon(?:\\.min)?\\.js"
+    ],
     "website": "https://www.cloudflare.com"
   },
   "Cloudflare Rocket Loader": {
@@ -2363,7 +2511,9 @@
     ],
     "saas": true,
     "website": "https://workers.cloudflare.com",
-    "xhr": "\\.workers\\.dev"
+    "xhr": [
+      "\\.workers\\.dev"
+    ]
   },
   "Cloudflare Zaraz": {
     "cats": [
@@ -2491,7 +2641,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "apps\\.cloverly\\.com/",
+    "scriptSrc": [
+      "apps\\.cloverly\\.com/"
+    ],
     "website": "https://www.cloverly.com"
   },
   "Cluep": {
@@ -2500,7 +2652,9 @@
     ],
     "description": "Cluep's artificially intelligent mobile ad platform targets people based on what they are sharing, how they are feeling and where they go in the physical world.",
     "icon": "Cluep.png",
-    "scriptSrc": "cas\\.cluep\\.com",
+    "scriptSrc": [
+      "cas\\.cluep\\.com"
+    ],
     "website": "https://cluep.com/"
   },
   "ClustrMaps Widget": {
@@ -2510,7 +2664,9 @@
     "description": "ClustrMaps widget is a visitor tracker, designed for general web and blog use.",
     "dom": "img[src*='clustrmaps.com']",
     "icon": "ClustrMaps.svg",
-    "scriptSrc": "clustrmaps\\.com",
+    "scriptSrc": [
+      "clustrmaps\\.com"
+    ],
     "website": "https://clustrmaps.com/"
   },
   "Clutch": {
@@ -2520,7 +2676,9 @@
     ],
     "description": "Clutch review widgets are stand-alone applications that you can embed on your website to show your dynamic ratings and reviews.",
     "icon": "clutch.svg",
-    "scriptSrc": "//widget\\.clutch\\.co/",
+    "scriptSrc": [
+      "//widget\\.clutch\\.co/"
+    ],
     "website": "https://clutch.co/content/add-review-widget-your-website"
   },
   "CoConstruct": {
@@ -2549,7 +2707,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.corover\\.mobi/",
+    "scriptSrc": [
+      "\\.corover\\.mobi/"
+    ],
     "website": "https://corover.ai"
   },
   "Coaster CMS": {
@@ -2664,7 +2824,9 @@
     "description": "CoffeeScript is a language that compiles into JavaScript.",
     "icon": "Coffee Script.png",
     "oss": true,
-    "scriptSrc": "coffee-?script(?:-lint)?(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "coffee-?script(?:-lint)?(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://coffeescript.org/"
   },
   "Coin Currency Converter": {
@@ -2681,7 +2843,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "/apps/coin/coin\\.js.+\\.myshopify\\.com",
+    "scriptSrc": [
+      "/apps/coin/coin\\.js.+\\.myshopify\\.com"
+    ],
     "website": "https://apps.shopify.com/coin"
   },
   "CoinHive": {
@@ -2697,7 +2861,9 @@
       "\\/(?:coinhive|(authedmine))(?:\\.min)?\\.js\\;version:\\1?opt-in:",
       "coinhive\\.com/lib"
     ],
-    "url": "https?://cnhv\\.co/",
+    "url": [
+      "https?://cnhv\\.co/"
+    ],
     "website": "https://coinhive.com"
   },
   "CoinHive Captcha": {
@@ -2708,7 +2874,9 @@
     "description": "Coinhive Captcha provides captcha service that is simple to integrate, where your users’ devices need to solve a number of hashes, adjustable by you, in order to login or post a comment to your site.",
     "dom": "div.coinhive-captcha",
     "icon": "CoinHive.svg",
-    "scriptSrc": "https?://authedmine\\.com/(?:lib/captcha|captcha)",
+    "scriptSrc": [
+      "https?://authedmine\\.com/(?:lib/captcha|captcha)"
+    ],
     "website": "https://coinhive.com"
   },
   "Coinbase Commerce": {
@@ -2726,7 +2894,9 @@
     ],
     "description": "CoinHave is a cryptocurrency mining service.",
     "icon": "coinhave.png",
-    "scriptSrc": "https?://coin-have\\.com/c/[0-9a-zA-Z]{4}\\.js",
+    "scriptSrc": [
+      "https?://coin-have\\.com/c/[0-9a-zA-Z]{4}\\.js"
+    ],
     "website": "https://coin-have.com/"
   },
   "Coinimp": {
@@ -2738,7 +2908,9 @@
     "js": {
       "Client.Anonymous": "\\;confidence:50"
     },
-    "scriptSrc": "https?://www\\.hashing\\.win/scripts/min\\.js",
+    "scriptSrc": [
+      "https?://www\\.hashing\\.win/scripts/min\\.js"
+    ],
     "website": "https://www.coinimp.com"
   },
   "Colbass": {
@@ -2779,7 +2951,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/colibri-page-builder.+\\.js(?:.+ver=([\\d\\.\\-\\w]+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/colibri-page-builder.+\\.js(?:.+ver=([\\d\\.\\-\\w]+))?\\;version:\\1"
+    ],
     "website": "https://colibriwp.com"
   },
   "Colis Privé": {
@@ -2788,7 +2962,9 @@
     ],
     "description": "Colis Privé is a private parcel delivery service provider specialised in last-mile delivery.",
     "icon": "Colis Prive.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bColis Priv[eé]\\b"
     ],
@@ -2800,7 +2976,9 @@
     ],
     "description": "Colissimo is a 'drop off' parcel delivery service.",
     "icon": "DPD.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bColissimo\\b"
     ],
@@ -2825,7 +3003,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "themes/colormag.*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "themes/colormag.*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1"
+    ],
     "website": "https://themegrill.com/themes/colormag/"
   },
   "ColorMeShop": {
@@ -2855,7 +3035,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/activello/",
+    "scriptSrc": [
+      "/wp-content/themes/activello/"
+    ],
     "website": "https://colorlib.com/wp/themes/activello"
   },
   "Colorlib Illdy": {
@@ -2871,7 +3053,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/illdy/",
+    "scriptSrc": [
+      "/wp-content/themes/illdy/"
+    ],
     "website": "https://colorlib.com/wp/themes/illdy"
   },
   "Colorlib Shapely": {
@@ -2890,7 +3074,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/shapely/",
+    "scriptSrc": [
+      "/wp-content/themes/shapely/"
+    ],
     "website": "https://colorlib.com/wp/themes/shapely"
   },
   "Colorlib Sparkling": {
@@ -2906,7 +3092,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/sparkling/",
+    "scriptSrc": [
+      "/wp-content/themes/sparkling/"
+    ],
     "website": "https://colorlib.com/wp/themes/sparkling"
   },
   "Colorlib Travelify": {
@@ -2925,7 +3113,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/travelify/",
+    "scriptSrc": [
+      "/wp-content/themes/travelify/"
+    ],
     "website": "https://colorlib.com/wp/themes/travelify"
   },
   "Combahton FlowShield": {
@@ -3029,7 +3219,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.tagcommander\\.com",
+    "scriptSrc": [
+      "\\.tagcommander\\.com"
+    ],
     "website": "https://www.commandersact.com/en/solutions/tagcommander/"
   },
   "Commanders Act TrustCommander": {
@@ -3042,7 +3234,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.trustcommander\\.net/privacy/.+_v([\\d]+)_([\\d]+)\\.js\\;version:\\1.\\2",
+    "scriptSrc": [
+      "\\.trustcommander\\.net/privacy/.+_v([\\d]+)_([\\d]+)\\.js\\;version:\\1.\\2"
+    ],
     "website": "https://www.commandersact.com/en/solutions/trustcommander/"
   },
   "Commerce Server": {
@@ -3076,7 +3270,9 @@
       "cdn\\.chec\\.io/v(\\d+)/commerce\\.js\\;version:\\1",
       "chec/commerce\\.js"
     ],
-    "url": "\\.spaces.chec\\.io",
+    "url": [
+      "\\.spaces.chec\\.io"
+    ],
     "website": "https://www.commercejs.com"
   },
   "Commerce7": {
@@ -3091,9 +3287,13 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.commerce7\\.com",
+    "scriptSrc": [
+      "cdn\\.commerce7\\.com"
+    ],
     "website": "https://commerce7.com",
-    "xhr": "api\\.commerce7\\.com"
+    "xhr": [
+      "api\\.commerce7\\.com"
+    ]
   },
   "Commercelayer": {
     "cats": [
@@ -3107,7 +3307,9 @@
     ],
     "saas": true,
     "website": "https://commercelayer.io",
-    "xhr": "\\.commercelayer\\.io"
+    "xhr": [
+      "\\.commercelayer\\.io"
+    ]
   },
   "Community Funded": {
     "cats": [
@@ -3120,7 +3322,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "//give\\.communityfunded\\.com/",
+    "scriptSrc": [
+      "//give\\.communityfunded\\.com/"
+    ],
     "website": "https://www.communityfunded.com"
   },
   "Complianz": {
@@ -3141,7 +3345,9 @@
       "WordPress"
     ],
     "saas": true,
-    "scriptSrc": "wp-content/plugins/complianz-gdpr-premium",
+    "scriptSrc": [
+      "wp-content/plugins/complianz-gdpr-premium"
+    ],
     "website": "https://complianz.io"
   },
   "Concrete CMS": {
@@ -3164,7 +3370,9 @@
       "generator": "^concrete5(?: - ([\\d.]+)$)?\\;version:\\1"
     },
     "oss": true,
-    "scriptSrc": "/concrete/js/",
+    "scriptSrc": [
+      "/concrete/js/"
+    ],
     "website": "https://www.concretecms.com/"
   },
   "Conditional Fields for Contact Form 7": {
@@ -3182,7 +3390,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "cf7-conditional-fields(?:\\/js)?(?:\\/scripts)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "cf7-conditional-fields(?:\\/js)?(?:\\/scripts)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/cf7-conditional-fields"
   },
   "Conekta": {
@@ -3210,9 +3420,13 @@
     "pricing": [
       "poa"
     ],
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "saas": true,
-    "scriptSrc": "\\.conferwith\\.io/",
+    "scriptSrc": [
+      "\\.conferwith\\.io/"
+    ],
     "website": "https://conferwith.io"
   },
   "Confiant": {
@@ -3261,7 +3475,9 @@
       "mid"
     ],
     "saas": true,
-    "scriptSrc": "app\\.conjured\\.co/",
+    "scriptSrc": [
+      "app\\.conjured\\.co/"
+    ],
     "website": "https://conjured.co"
   },
   "Connectif": {
@@ -3280,7 +3496,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.connectif\\.cloud/",
+    "scriptSrc": [
+      "cdn\\.connectif\\.cloud/"
+    ],
     "website": "https://connectif.ai"
   },
   "Constant Contact": {
@@ -3300,7 +3518,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.ctctcdn\\.com/",
+    "scriptSrc": [
+      "\\.ctctcdn\\.com/"
+    ],
     "website": "https://www.constantcontact.com"
   },
   "Contabo": {
@@ -3335,7 +3555,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/contact-form-7/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/contact-form-7/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://contactform7.com"
   },
   "Container Media Group": {
@@ -3348,7 +3570,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.containermedia\\.net/",
+    "scriptSrc": [
+      "\\.containermedia\\.net/"
+    ],
     "website": "https://containermedia.net"
   },
   "Contao": {
@@ -3440,7 +3664,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "content-views(?:-pro)?(?:-query-and-display-post-page)?(?:\\/public)?(?:\\/assets)?(?:\\/js)?(?:\\/cv(?:pro)?)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "content-views(?:-pro)?(?:-query-and-display-post-page)?(?:\\/public)?(?:\\/assets)?(?:\\/js)?(?:\\/cv(?:pro)?)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/content-views-query-and-display-post-page/"
   },
   "Contentful": {
@@ -3462,7 +3688,9 @@
     ],
     "saas": true,
     "website": "https://www.contentful.com",
-    "xhr": "(?:cdn|graphql)\\.contentful\\.com"
+    "xhr": [
+      "(?:cdn|graphql)\\.contentful\\.com"
+    ]
   },
   "Contently": {
     "cats": [
@@ -3493,7 +3721,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.contentsquare\\.net/",
+    "scriptSrc": [
+      "\\.contentsquare\\.net/"
+    ],
     "website": "https://contentsquare.com"
   },
   "Contentstack": {
@@ -3546,7 +3776,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.contlo\\.com/",
+    "scriptSrc": [
+      "\\.contlo\\.com/"
+    ],
     "website": "https://www.contlo.com"
   },
   "Conversant Consent Tool": {
@@ -3562,7 +3794,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.conversant\\.mgr\\.consensu\\.org/",
+    "scriptSrc": [
+      "cdn\\.conversant\\.mgr\\.consensu\\.org/"
+    ],
     "website": "https://www.conversantmedia.eu/consent-tool"
   },
   "Conversio": {
@@ -3578,7 +3812,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.conversio\\.com/",
+    "scriptSrc": [
+      "\\.conversio\\.com/"
+    ],
     "website": "https://conversio.com"
   },
   "Conversio App": {
@@ -3597,7 +3833,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "\\.conversio\\.com/.+\\.myshopify\\.com",
+    "scriptSrc": [
+      "\\.conversio\\.com/.+\\.myshopify\\.com"
+    ],
     "website": "https://apps.shopify.com/conversio"
   },
   "Convert": {
@@ -3616,7 +3854,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.convertexperiments\\.com/js",
+    "scriptSrc": [
+      "\\.convertexperiments\\.com/js"
+    ],
     "website": "https://www.convert.com"
   },
   "ConvertFlow": {
@@ -3635,7 +3875,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "(?:app|js)\\.convertflow\\.co",
+    "scriptSrc": [
+      "(?:app|js)\\.convertflow\\.co"
+    ],
     "website": "https://www.convertflow.com"
   },
   "ConvertKit": {
@@ -3652,7 +3894,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.convertkit\\.com",
+    "scriptSrc": [
+      "\\.convertkit\\.com"
+    ],
     "website": "https://convertkit.com"
   },
   "Convertcart": {
@@ -3662,7 +3906,9 @@
     "description": "ConvertCart helps online businesses deliver outstanding experiences to customers throughout their journey.",
     "icon": "Convertcart.svg",
     "saas": true,
-    "scriptSrc": "cdn\\.convertcart\\.com",
+    "scriptSrc": [
+      "cdn\\.convertcart\\.com"
+    ],
     "website": "https://www.convertcart.com/"
   },
   "Convertr": {
@@ -3706,7 +3952,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.convertri\\.com/",
+    "scriptSrc": [
+      "cdn\\.convertri\\.com/"
+    ],
     "website": "https://www.convertri.com"
   },
   "ConveyThis": {
@@ -3720,7 +3968,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.conveythis\\.com",
+    "scriptSrc": [
+      "cdn\\.conveythis\\.com"
+    ],
     "website": "https://www.conveythis.com/"
   },
   "Conviva": {
@@ -3771,7 +4021,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/wp-gdpr-compliance/",
+    "scriptSrc": [
+      "/wp-content/plugins/wp-gdpr-compliance/"
+    ],
     "website": "https://wordpress.org/plugins/wp-gdpr-compliance"
   },
   "Cookie Notice": {
@@ -3781,7 +4033,9 @@
     ],
     "description": "Cookie Notice provides a simple, customizable website banner that can be used to help your website comply with certain cookie consent requirements under the EU GDPR cookie law and CCPA regulations and includes seamless integration with Cookie Compliance to help your site comply with the latest updates to existing consent laws.",
     "icon": "Cookie Notice.png",
-    "scriptSrc": "/wp-content/plugins/cookie-notice/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/cookie-notice/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/cookie-notice"
   },
   "Cookie Script": {
@@ -3796,7 +4050,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.cookie-script\\.com/",
+    "scriptSrc": [
+      "\\.cookie-script\\.com/"
+    ],
     "website": "https://cookie-script.com"
   },
   "Cookie Seal": {
@@ -3814,7 +4070,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cookie-seal\\.js",
+    "scriptSrc": [
+      "cookie-seal\\.js"
+    ],
     "website": "https://cookieseal.com"
   },
   "CookieFirst": {
@@ -3832,7 +4090,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "consent\\.cookiefirst\\.com/",
+    "scriptSrc": [
+      "consent\\.cookiefirst\\.com/"
+    ],
     "website": "https://cookiefirst.com"
   },
   "CookieHub": {
@@ -3877,7 +4137,9 @@
     "js": {
       "Cookiebot.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "consent\\.cookiebot\\.com",
+    "scriptSrc": [
+      "consent\\.cookiebot\\.com"
+    ],
     "website": "https://www.cookiebot.com"
   },
   "Cool Tag Cloud": {
@@ -3919,7 +4181,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.cooladata\\.com/",
+    "scriptSrc": [
+      "cdn\\.cooladata\\.com/"
+    ],
     "website": "https://www.cooladata.com"
   },
   "Coppermine": {
@@ -3943,7 +4207,9 @@
     ],
     "description": "Copypoison is a plagarism protection tool that protects content by replacing text with symbols that are visually similar.",
     "icon": "Copypoison.png",
-    "scriptSrc": "copypoison\\.com/cp\\.js",
+    "scriptSrc": [
+      "copypoison\\.com/cp\\.js"
+    ],
     "website": "https://copypoison.com/"
   },
   "CoreMedia Content Cloud": {
@@ -3977,7 +4243,9 @@
       "recurring"
     ],
     "saas": true,
-    "scripts": "webpackJsonp@coreui/coreui",
+    "scripts": [
+      "webpackJsonp@coreui/coreui"
+    ],
     "website": "https://coreui.io"
   },
   "Corebine": {
@@ -4006,7 +4274,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "cornerstone(?:\\/assets)?(?:\\/js)?(?:\\/site)?(?:\\/cs-classic)?\\.?((?:\\d+\\.)+\\d+)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "cornerstone(?:\\/assets)?(?:\\/js)?(?:\\/site)?(?:\\/cs-classic)?\\.?((?:\\d+\\.)+\\d+)?\\.js\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/cornerstone"
   },
   "Correos": {
@@ -4015,7 +4285,9 @@
     ],
     "description": "Correos is a state-owned company responsible for providing postal service in Spain.",
     "icon": "Correos.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bCorreos\\b"
     ],
@@ -4034,7 +4306,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.mycorreosecommerce\\.com/",
+    "scriptSrc": [
+      "\\.mycorreosecommerce\\.com/"
+    ],
     "website": "https://www.correosecommerce.com"
   },
   "Cosmic": {
@@ -4053,7 +4327,9 @@
     ],
     "cpe": "cpe:2.3:a:cosmoshop:cosmoshop:*:*:*:*:*:*:*:*",
     "icon": "Cosmoshop.png",
-    "scriptSrc": "cosmoshop_functions\\.js",
+    "scriptSrc": [
+      "cosmoshop_functions\\.js"
+    ],
     "website": "https://cosmoshop.de"
   },
   "Cotonti": {
@@ -4110,7 +4386,9 @@
     ],
     "description": "Coureon is a digital logistics carrier for international shipping.",
     "icon": "Coureon.png",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bCoureon\\b"
     ],
@@ -4142,7 +4420,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.covermanager\\.com/",
+    "scriptSrc": [
+      "\\.covermanager\\.com/"
+    ],
     "website": "https://www.covermanager.com"
   },
   "Covet.pics": {
@@ -4157,7 +4437,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.covet\\.pics/",
+    "scriptSrc": [
+      "\\.covet\\.pics/"
+    ],
     "website": "https://covet.pics"
   },
   "Cowboy": {
@@ -4191,7 +4473,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "cdncozyantitheft\\.addons\\.business/",
+    "scriptSrc": [
+      "cdncozyantitheft\\.addons\\.business/"
+    ],
     "website": "https://apps.shopify.com/cozy-antitheft-for-images-and-more"
   },
   "CppCMS": {
@@ -4296,7 +4580,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "crayon-syntax-highlighter(?:\\/js)?(?:\\/min)?(?:\\/crayon)?(?:\\.te)?(?:\\.min)?\\.js(?:\\?v(?:er)?=_((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "crayon-syntax-highlighter(?:\\/js)?(?:\\/min)?(?:\\/crayon)?(?:\\.te)?(?:\\.min)?\\.js(?:\\?v(?:er)?=_((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/crayon-syntax-highlighter/"
   },
   "Crazy Egg": {
@@ -4307,7 +4593,9 @@
     "js": {
       "CE2": ""
     },
-    "scriptSrc": "script\\.crazyegg\\.com/pages/scripts/\\d+/\\d+\\.js",
+    "scriptSrc": [
+      "script\\.crazyegg\\.com/pages/scripts/\\d+/\\d+\\.js"
+    ],
     "website": "https://crazyegg.com"
   },
   "CreateJS": {
@@ -4317,7 +4605,9 @@
     "description": "CreateJS is a suite of modular libraries and tools which work together or independently to enable interactive content on open web technologies via HTML5.",
     "icon": "CreateJS.svg",
     "saas": true,
-    "scriptSrc": "code\\.createjs\\.com/",
+    "scriptSrc": [
+      "code\\.createjs\\.com/"
+    ],
     "website": "https://code.createjs.com"
   },
   "Creatium": {
@@ -4351,7 +4641,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/creative-mail-by-constant-contact/",
+    "scriptSrc": [
+      "/wp-content/plugins/creative-mail-by-constant-contact/"
+    ],
     "website": "https://www.creativemail.com"
   },
   "Crikle": {
@@ -4387,7 +4679,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "client\\.crisp\\.chat/",
+    "scriptSrc": [
+      "client\\.crisp\\.chat/"
+    ],
     "website": "https://crisp.chat/"
   },
   "Criteo": {
@@ -4421,7 +4715,9 @@
     "js": {
       "crobox": ""
     },
-    "scriptSrc": "cdn\\.crobox\\.com",
+    "scriptSrc": [
+      "cdn\\.crobox\\.com"
+    ],
     "website": "https://crobox.com/"
   },
   "Crocoblock JetElements": {
@@ -4451,7 +4747,9 @@
     "js": {
       "cp_C4w1ldN2d9PmVrkN": ""
     },
-    "scriptSrc": "tag\\.crsspxl\\.com",
+    "scriptSrc": [
+      "tag\\.crsspxl\\.com"
+    ],
     "website": "https://crosspixel.net"
   },
   "Cross Sell": {
@@ -4501,8 +4799,12 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "js/crownpeak\\.",
-    "scripts": "crownpeak\\.net",
+    "scriptSrc": [
+      "js/crownpeak\\."
+    ],
+    "scripts": [
+      "crownpeak\\.net"
+    ],
     "website": "https://www.crownpeak.com"
   },
   "Cryout Creations Bravada": {
@@ -4520,7 +4822,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/bravada(?:-plus)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/bravada(?:-plus)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://www.cryoutcreations.eu/wordpress-themes/bravada"
   },
   "Cryout Creations Fluida": {
@@ -4538,7 +4842,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/fluida(?:-plus)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/fluida(?:-plus)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://www.cryoutcreations.eu/wordpress-themes/fluida"
   },
   "Cryout Creations Mantra": {
@@ -4561,7 +4867,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/mantra(?:-plus)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/mantra(?:-plus)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://www.cryoutcreations.eu/wordpress-themes/mantra"
   },
   "Cryout Creations Parabola": {
@@ -4581,7 +4889,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/parabola/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/parabola/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://www.cryoutcreations.eu/wordpress-themes/parabola"
   },
   "Crypto-Loot": {
@@ -4643,7 +4953,9 @@
     ],
     "description": "Cubyn is B2B logistics company headquartered in France.",
     "icon": "Cubyn.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bCubyn\\b"
     ],
@@ -4658,7 +4970,9 @@
     "js": {
       "Cufon": ""
     },
-    "scriptSrc": "cufon-yui\\.js",
+    "scriptSrc": [
+      "cufon-yui\\.js"
+    ],
     "website": "https://cufon.shoqolate.com"
   },
   "Custom Fonts": {
@@ -4672,7 +4986,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/custom-fonts/",
+    "scriptSrc": [
+      "/wp-content/plugins/custom-fonts/"
+    ],
     "website": "https://github.com/brainstormforce/custom-fonts"
   },
   "Custom Twitter Feeds": {
@@ -4685,7 +5001,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "custom-twitter-feeds(?:\\/js)?(?:\\/ctf-scripts)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "custom-twitter-feeds(?:\\/js)?(?:\\/ctf-scripts)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/custom-twitter-feeds"
   },
   "Customer.io": {
@@ -4699,7 +5017,9 @@
       "mid"
     ],
     "saas": true,
-    "scriptSrc": "assets\\.customer\\.io",
+    "scriptSrc": [
+      "assets\\.customer\\.io"
+    ],
     "website": "https://customer.io/"
   },
   "Customily": {
@@ -4716,7 +5036,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "(?:cdn|app)\\.customily\\.com/",
+    "scriptSrc": [
+      "(?:cdn|app)\\.customily\\.com/"
+    ],
     "website": "https://www.customily.com"
   },
   "Cwicly": {
@@ -4736,7 +5058,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/cwicly/",
+    "scriptSrc": [
+      "/wp-content/plugins/cwicly/"
+    ],
     "website": "https://cwicly.com"
   },
   "Cxense": {
@@ -4757,7 +5081,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.cxense\\.com/",
+    "scriptSrc": [
+      "\\.cxense\\.com/"
+    ],
     "website": "https://www.cxense.com"
   },
   "CyberChimps Responsive": {
@@ -4775,7 +5101,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/responsive(?:pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/responsive(?:pro)?/"
+    ],
     "website": "https://cyberchimps.com/responsive"
   },
   "Cybersource": {
@@ -4784,7 +5112,9 @@
     ],
     "description": "Cybersource is an ecommerce credit card payment system solution.",
     "icon": "cybersource.png",
-    "scriptSrc": "cybersource\\..+\\.js",
+    "scriptSrc": [
+      "cybersource\\..+\\.js"
+    ],
     "website": "https://www.cybersource.com/"
   },
   "Czater": {
@@ -4802,7 +5132,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.czater\\.pl",
+    "scriptSrc": [
+      "\\.czater\\.pl"
+    ],
     "website": "https://www.czater.pl"
   },
   "cPanel": {
@@ -4848,9 +5180,13 @@
     "pricing": [
       "payg"
     ],
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "saas": true,
-    "scriptSrc": "\\.cashewpayments\\.com/",
+    "scriptSrc": [
+      "\\.cashewpayments\\.com/"
+    ],
     "website": "https://www.cashewpayments.com"
   },
   "cdnjs": {
@@ -4864,7 +5200,9 @@
       "Cloudflare"
     ],
     "oss": true,
-    "scriptSrc": "cdnjs\\.cloudflare\\.com",
+    "scriptSrc": [
+      "cdnjs\\.cloudflare\\.com"
+    ],
     "website": "https://cdnjs.com"
   },
   "cgit": {
@@ -4889,7 +5227,9 @@
     ],
     "description": "chroma.js is a small-ish zero-dependency JavaScript library for all kinds of color conversions and color scales.",
     "oss": true,
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?chroma(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/)?chroma(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2"
+    ],
     "website": "https://www.vis4.net/chromajs/"
   },
   "clickio": {
@@ -4898,7 +5238,9 @@
     ],
     "description": "Clickio Consent Tool collects and communicates consent both to IAB Framework vendors and to Google Ads products.",
     "icon": "clickio.png",
-    "scriptSrc": "clickio\\.mgr\\.consensu\\.org/t/consent_[0-9]+\\.js",
+    "scriptSrc": [
+      "clickio\\.mgr\\.consensu\\.org/t/consent_[0-9]+\\.js"
+    ],
     "website": "https://www.gdpr.clickio.com/"
   },
   "comScore": {
@@ -4918,7 +5260,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.scorecardresearch\\.com/beacon\\.js|COMSCORE\\.beacon",
+    "scriptSrc": [
+      "\\.scorecardresearch\\.com/beacon\\.js|COMSCORE\\.beacon"
+    ],
     "website": "https://comscore.com"
   },
   "commercetools": {
@@ -4942,7 +5286,9 @@
     ],
     "saas": true,
     "website": "https://commercetools.com",
-    "xhr": "\\.commercetools\\.com/"
+    "xhr": [
+      "\\.commercetools\\.com/"
+    ]
   },
   "core-js": {
     "cats": [
@@ -4971,7 +5317,9 @@
       "CryptoJS.algo": ""
     },
     "oss": true,
-    "scriptSrc": "(?:/([\\d\\.-]+))?/crypto-js(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:/([\\d\\.-]+))?/crypto-js(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://github.com/brix/crypto-js"
   }
 }

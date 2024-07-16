@@ -9,7 +9,9 @@
     "js": {
       "d3.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "/d3(?:\\.v\\d+)?(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "/d3(?:\\.v\\d+)?(?:\\.min)?\\.js"
+    ],
     "website": "https://d3js.org"
   },
   "DDoS-Guard": {
@@ -59,7 +61,9 @@
       }
     },
     "icon": "DHL.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bDHL\\b"
     ],
@@ -78,7 +82,9 @@
     "pricing": [
       "onetime"
     ],
-    "scriptSrc": "/dhtmlxcommon\\.js",
+    "scriptSrc": [
+      "/dhtmlxcommon\\.js"
+    ],
     "website": "https://dhtmlx.com"
   },
   "DM Polopoly": {
@@ -134,7 +140,9 @@
     ],
     "description": "DPD is an international parcel delivery service for sorter compatible parcels.",
     "icon": "DPD.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bDPD\\b"
     ],
@@ -151,7 +159,9 @@
       "DPlayer.version": "([\\d\\.]+)\\;version:\\1"
     },
     "oss": true,
-    "scriptSrc": "/dplayer\\.js",
+    "scriptSrc": [
+      "/dplayer\\.js"
+    ],
     "website": "https://dplayer.js.org"
   },
   "DTScout": {
@@ -164,7 +174,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.dtscout\\.com/",
+    "scriptSrc": [
+      "\\.dtscout\\.com/"
+    ],
     "website": "https://www.dtscout.com"
   },
   "DX": {
@@ -173,7 +185,9 @@
     ],
     "description": "DX (also known as DX Freight) is a British mail, courier and logistics company.",
     "icon": "DX.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bDX\\b"
     ],
@@ -196,7 +210,9 @@
       "DNN"
     ],
     "saas": true,
-    "scriptSrc": "\\.dx1app\\.com/",
+    "scriptSrc": [
+      "\\.dx1app\\.com/"
+    ],
     "website": "https://www.dx1app.com"
   },
   "Dachser": {
@@ -205,7 +221,9 @@
     ],
     "description": "Dachser is a German freight company.",
     "icon": "Dachser.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bDachser\\b"
     ],
@@ -225,7 +243,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "assets\\.dailydeals\\.ai/",
+    "scriptSrc": [
+      "assets\\.dailydeals\\.ai/"
+    ],
     "website": "https://dailydeals.ai"
   },
   "DailyKarma": {
@@ -244,7 +264,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "assets\\.dailykarma\\.io/",
+    "scriptSrc": [
+      "assets\\.dailykarma\\.io/"
+    ],
     "website": "https://www.dailykarma.com"
   },
   "Dailymotion": {
@@ -321,7 +343,9 @@
       "Darkmode": ""
     },
     "oss": true,
-    "scriptSrc": "darkmode-js@([\\d\\.]+)/lib/darkmode-js\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "darkmode-js@([\\d\\.]+)/lib/darkmode-js\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://github.com/sandoche/Darkmode.js"
   },
   "Dart": {
@@ -336,7 +360,9 @@
       "___dart_dispatch_record_ZxYxX_0_": ""
     },
     "oss": true,
-    "scriptSrc": "/(?:\\.)?(?:dart)(?:\\.js)?/",
+    "scriptSrc": [
+      "/(?:\\.)?(?:dart)(?:\\.js)?/"
+    ],
     "website": "https://dart.dev"
   },
   "Darwin": {
@@ -371,7 +397,9 @@
       "high",
       "recurring"
     ],
-    "scriptSrc": "^https://ct\\.datadome\\.co/[a-z]\\.js$",
+    "scriptSrc": [
+      "^https://ct\\.datadome\\.co/[a-z]\\.js$"
+    ],
     "website": "https://datadome.co"
   },
   "DataLife Engine": {
@@ -436,7 +464,9 @@
       "jQuery.fn.dataTable.version": "^(.+)$\\;version:\\1"
     },
     "oss": true,
-    "scriptSrc": "dataTables.*\\.js",
+    "scriptSrc": [
+      "dataTables.*\\.js"
+    ],
     "website": "https://datatables.net"
   },
   "Datadog": {
@@ -457,7 +487,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "www\\.datadoghq-browser-agent\\.com",
+    "scriptSrc": [
+      "www\\.datadoghq-browser-agent\\.com"
+    ],
     "website": "https://www.datadoghq.com"
   },
   "Datatrics": {
@@ -518,9 +550,13 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.dealerspike\\.com",
+    "scriptSrc": [
+      "cdn\\.dealerspike\\.com"
+    ],
     "website": "https://www.dealerspike.com",
-    "xhr": "\\.dealerspike\\.com"
+    "xhr": [
+      "\\.dealerspike\\.com"
+    ]
   },
   "Debian": {
     "cats": [
@@ -550,7 +586,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.decibelinsight\\.net",
+    "scriptSrc": [
+      "cdn\\.decibelinsight\\.net"
+    ],
     "website": "https://decibel.com"
   },
   "DedeCMS": {
@@ -565,7 +603,9 @@
     "js": {
       "DedeContainer": ""
     },
-    "scriptSrc": "dedeajax",
+    "scriptSrc": [
+      "dedeajax"
+    ],
     "website": "https://dedecms.com"
   },
   "Delacon": {
@@ -591,7 +631,9 @@
     ],
     "description": "Delivengo is an international shipping service powered by La Poste.",
     "icon": "La Poste.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bDelivengo\\b"
     ],
@@ -613,7 +655,9 @@
       "payg",
       "recurring"
     ],
-    "scriptSrc": "fast-tags\\.deliverr\\.com",
+    "scriptSrc": [
+      "fast-tags\\.deliverr\\.com"
+    ],
     "website": "https://deliverr.com"
   },
   "Demandbase": {
@@ -632,7 +676,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "tag.demandbase.com",
+    "scriptSrc": [
+      "tag.demandbase.com"
+    ],
     "website": "https://www.demandbase.com"
   },
   "Deno": {
@@ -720,7 +766,9 @@
       "Server": "^Deta$"
     },
     "icon": "deta.svg",
-    "url": "^https?://[^/]+\\.deta\\.(?:app|dev)",
+    "url": [
+      "^https?://[^/]+\\.deta\\.(?:app|dev)"
+    ],
     "website": "https://deta.sh"
   },
   "Detectify": {
@@ -742,7 +790,9 @@
     ],
     "description": "Deutsche Post is a German multinational package delivery and supply chain management company in Germany.",
     "icon": "Deutsche Post.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bDeutsche Post\\b"
     ],
@@ -755,7 +805,9 @@
     "description": "A Minimalistic Wrapper for IndexedDB.",
     "icon": "Dexie.js.png",
     "oss": true,
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?dexie(?:\\.bitrix)?(?:\\.bundle)?(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/)?dexie(?:\\.bitrix)?(?:\\.bundle)?(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://dexie.org"
   },
   "DiamondCDN": {
@@ -782,7 +834,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.dianomi\\.com/",
+    "scriptSrc": [
+      "\\.dianomi\\.com/"
+    ],
     "website": "https://www.dianomi.com"
   },
   "Didomi": {
@@ -791,7 +845,9 @@
     ],
     "description": "Didomi is a consent management platform helping brands and businesses collect, store and leverage their customer consents.",
     "icon": "didomi.png",
-    "scriptSrc": "sdk\\.privacy-center\\.org/.*/loader\\.js",
+    "scriptSrc": [
+      "sdk\\.privacy-center\\.org/.*/loader\\.js"
+    ],
     "website": "https://www.didomi.io/en/consent-preference-management"
   },
   "Digest": {
@@ -900,7 +956,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.digitalriver\\.com/",
+    "scriptSrc": [
+      "\\.digitalriver\\.com/"
+    ],
     "website": "https://www.digitalriver.com"
   },
   "Digizuite": {
@@ -926,7 +984,9 @@
     "requires": [
       "D3"
     ],
-    "scriptSrc": "dimple(?:\\/lib\\/[\\w\\.]+)?(?:\\/theme\\/js\\/[\\w\\.-]+)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "dimple(?:\\/lib\\/[\\w\\.]+)?(?:\\/theme\\/js\\/[\\w\\.-]+)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "http://dimplejs.org/"
   },
   "DirectAdmin": {
@@ -1024,7 +1084,9 @@
       "low",
       "recurring"
     ],
-    "scriptSrc": "disqus_url",
+    "scriptSrc": [
+      "disqus_url"
+    ],
     "website": "https://disqus.com"
   },
   "Distributor": {
@@ -1040,7 +1102,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/distributor",
+    "scriptSrc": [
+      "/wp-content/plugins/distributor"
+    ],
     "website": "https://distributorplugin.com"
   },
   "District M": {
@@ -1052,7 +1116,9 @@
     "icon": "District M.svg",
     "saas": true,
     "website": "https://districtm.net",
-    "xhr": "\\.districtm\\.io"
+    "xhr": [
+      "\\.districtm\\.io"
+    ]
   },
   "Dito": {
     "cats": [
@@ -1067,7 +1133,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "storage\\.googleapis\\.com/dito/sdk\\.js",
+    "scriptSrc": [
+      "storage\\.googleapis\\.com/dito/sdk\\.js"
+    ],
     "website": "https://www.dito.com.br"
   },
   "Divi": {
@@ -1098,7 +1166,9 @@
       "WordPress"
     ],
     "saas": true,
-    "scriptSrc": "Divi/js/custom\\.(?:min|unified)\\.js\\?ver=([\\d.]+)\\;version:\\1",
+    "scriptSrc": [
+      "Divi/js/custom\\.(?:min|unified)\\.js\\?ver=([\\d.]+)\\;version:\\1"
+    ],
     "website": "https://www.elegantthemes.com/gallery/divi"
   },
   "DivideBuy": {
@@ -1123,7 +1193,9 @@
     "description": "Divio is a Buy now pay later solution. Divido provided whitelabel platform connects lenders, retailers and channel partners at the point of sale",
     "icon": "Divido.png",
     "saas": true,
-    "scriptSrc": "cdn\\.divido\\.com",
+    "scriptSrc": [
+      "cdn\\.divido\\.com"
+    ],
     "website": "https://www.divido.com/"
   },
   "Django": {
@@ -1161,7 +1233,9 @@
       "PostgreSQL"
     ],
     "oss": true,
-    "scriptSrc": "/djangocms_",
+    "scriptSrc": [
+      "/djangocms_"
+    ],
     "website": "https://www.django-cms.org"
   },
   "DocFX": {
@@ -1220,7 +1294,9 @@
     ],
     "saas": true,
     "website": "https://www.docusign.com",
-    "xhr": "docusign\\.net"
+    "xhr": [
+      "docusign\\.net"
+    ]
   },
   "Docusaurus": {
     "cats": [
@@ -1255,7 +1331,9 @@
       "dojo": "",
       "dojo.version.major": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "((?:\\d+\\.)+\\d+)/dojo/dojo(?:\\.xd)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "((?:\\d+\\.)+\\d+)/dojo/dojo(?:\\.xd)?\\.js\\;version:\\1"
+    ],
     "website": "https://dojotoolkit.org"
   },
   "Dokan": {
@@ -1344,7 +1422,9 @@
       "WooCommerce"
     ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/iwd-checkout-connector/",
+    "scriptSrc": [
+      "/wp-content/plugins/iwd-checkout-connector/"
+    ],
     "website": "https://www.dominate.co/woocommerce"
   },
   "DonorPerfect": {
@@ -1365,7 +1445,9 @@
       "mid"
     ],
     "saas": true,
-    "scriptSrc": "\\.donorperfect\\.net/",
+    "scriptSrc": [
+      "\\.donorperfect\\.net/"
+    ],
     "website": "https://www.donorperfect.com"
   },
   "Donorbox": {
@@ -1401,7 +1483,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.doofinder\\.com/",
+    "scriptSrc": [
+      "cdn\\.doofinder\\.com/"
+    ],
     "website": "https://www.doofinder.com"
   },
   "Doppler": {
@@ -1415,7 +1499,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "//(?:hub|cdn)\\.fromdoppler\\.com/",
+    "scriptSrc": [
+      "//(?:hub|cdn)\\.fromdoppler\\.com/"
+    ],
     "website": "https://www.fromdoppler.com"
   },
   "Doppler Forms": {
@@ -1430,7 +1516,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/doppler-form/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/doppler-form/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/doppler-form/"
   },
   "Doppler for WooCommerce": {
@@ -1446,7 +1534,9 @@
       "WordPress",
       "WooCommerce"
     ],
-    "scriptSrc": "/wp-content/plugins/doppler-for-woocommerce/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/doppler-for-woocommerce/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/doppler-for-woocommerce/"
   },
   "Dotclear": {
@@ -1479,7 +1569,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "js/_dmptv([\\d.]+)\\.js\\;version:\\1",
+    "scriptSrc": [
+      "js/_dmptv([\\d.]+)\\.js\\;version:\\1"
+    ],
     "website": "https://dotdigital.com"
   },
   "Dotdigital Chat": {
@@ -1569,7 +1661,9 @@
       36
     ],
     "icon": "DoubleClick.svg",
-    "scriptSrc": "2mdn\\.net",
+    "scriptSrc": [
+      "2mdn\\.net"
+    ],
     "website": "https://www.doubleclickbygoogle.com/solutions/digital-marketing/campaign-manager/"
   },
   "DoubleClick Floodlight": {
@@ -1577,7 +1671,9 @@
       36
     ],
     "icon": "DoubleClick.svg",
-    "scriptSrc": "https?://fls\\.doubleclick\\.net",
+    "scriptSrc": [
+      "https?://fls\\.doubleclick\\.net"
+    ],
     "website": "https://support.google.com/ds/answer/6029713?hl=en"
   },
   "DoubleClick for Publishers (DFP)": {
@@ -1590,7 +1686,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "googletagservices\\.com/tag/js/gpt(?:_mobile)?\\.js",
+    "scriptSrc": [
+      "googletagservices\\.com/tag/js/gpt(?:_mobile)?\\.js"
+    ],
     "website": "https://www.google.com/dfp"
   },
   "DoubleVerify": {
@@ -1616,7 +1714,9 @@
     "js": {
       "Dovetale": ""
     },
-    "scriptSrc": "dttrk\\.com",
+    "scriptSrc": [
+      "dttrk\\.com"
+    ],
     "website": "https://dovetale.com/"
   },
   "Download Monitor": {
@@ -1663,7 +1763,9 @@
     ],
     "description": "Draft.js is a JavaScript rich text editor framework, built for React.",
     "icon": "draftjs.png",
-    "scriptSrc": "draft-js(@|/)([\\d.]+)\\;version:\\2",
+    "scriptSrc": [
+      "draft-js(@|/)([\\d.]+)\\;version:\\2"
+    ],
     "website": "https://draftjs.org/"
   },
   "Draftpress HFCM": {
@@ -1697,7 +1799,9 @@
     "implies": [
       "Apache HTTP Server"
     ],
-    "url": "^.*(?:\\.dgn)$",
+    "url": [
+      "^.*(?:\\.dgn)$"
+    ],
     "website": "https://dragon-lang.org"
   },
   "Drapr": {
@@ -1710,8 +1814,12 @@
       "drapr_data": "",
       "drapr_deferLoading": ""
     },
-    "requiresCategory": 6,
-    "scriptSrc": "draprpubsubtest\\.firebaseapp\\.com/",
+    "requiresCategory": [
+      6
+    ],
+    "scriptSrc": [
+      "draprpubsubtest\\.firebaseapp\\.com/"
+    ],
     "website": "https://www.drapr.com"
   },
   "DreamApply": {
@@ -1730,7 +1838,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "app\\.cdn\\.dreamapply\\.com/",
+    "scriptSrc": [
+      "app\\.cdn\\.dreamapply\\.com/"
+    ],
     "website": "https://dreamapply.com"
   },
   "DreamHost": {
@@ -1785,7 +1895,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.bizible\\.com/",
+    "scriptSrc": [
+      "\\.bizible\\.com/"
+    ],
     "website": "https://dreamdata.io"
   },
   "Drift": {
@@ -1816,7 +1928,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.getdrip\\.com/",
+    "scriptSrc": [
+      "\\.getdrip\\.com/"
+    ],
     "website": "https://www.drip.com"
   },
   "Drop A Hint": {
@@ -1852,7 +1966,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.dropinblog\\.com/",
+    "scriptSrc": [
+      "\\.dropinblog\\.com/"
+    ],
     "website": "https://dropinblog.com"
   },
   "Dropbox": {
@@ -1894,7 +2010,9 @@
     },
     "description": "Droxit is an automated web accessibility solution.",
     "icon": "Droxit.png",
-    "scriptSrc": "/droxit-a11y/js/activator\\.js",
+    "scriptSrc": [
+      "/droxit-a11y/js/activator\\.js"
+    ],
     "website": "https://www.droxit.com"
   },
   "Droz Bot": {
@@ -1907,7 +2025,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "chat-app\\.meudroz\\.com/",
+    "scriptSrc": [
+      "chat-app\\.meudroz\\.com/"
+    ],
     "website": "https://meudroz.com/droz-bot/"
   },
   "Drubbit": {
@@ -1955,8 +2075,12 @@
       "generator": "^Drupal(?:\\s([\\d.]+))?\\;version:\\1"
     },
     "oss": true,
-    "scriptSrc": "drupal\\.js",
-    "scripts": "drupal_internal__nid",
+    "scriptSrc": [
+      "drupal\\.js"
+    ],
+    "scripts": [
+      "drupal_internal__nid"
+    ],
     "website": "https://www.drupal.org/"
   },
   "Drupal Commerce": {
@@ -2028,7 +2152,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "dd-cdn\\.multiscreensite\\.com/",
+    "scriptSrc": [
+      "dd-cdn\\.multiscreensite\\.com/"
+    ],
     "website": "https://www.duda.co"
   },
   "Duel": {
@@ -2055,7 +2181,9 @@
       "onetime"
     ],
     "saas": true,
-    "scriptSrc": "\\.duel\\.me/",
+    "scriptSrc": [
+      "\\.duel\\.me/"
+    ],
     "website": "https://www.duel.tech"
   },
   "Dukaan": {
@@ -2071,7 +2199,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "apps\\.mydukaan\\.io/",
+    "scriptSrc": [
+      "apps\\.mydukaan\\.io/"
+    ],
     "website": "https://mydukaan.io"
   },
   "Duopana": {
@@ -2087,7 +2217,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.beracode\\.com/",
+    "scriptSrc": [
+      "\\.beracode\\.com/"
+    ],
     "website": "https://duopana.com"
   },
   "Dynamic Conditions": {
@@ -2100,7 +2232,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "dynamic-conditions-public\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "dynamic-conditions-public\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/dynamicconditions"
   },
   "Dynamic Yield": {
@@ -2123,7 +2257,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn(?:-eu)?\\.dynamicyield\\.\\w+/",
+    "scriptSrc": [
+      "cdn(?:-eu)?\\.dynamicyield\\.\\w+/"
+    ],
     "website": "https://www.dynamicyield.com"
   },
   "Dynamics.js": {
@@ -2133,7 +2269,9 @@
     "description": "Javascript library to create physics-related animations",
     "icon": "Dynamics.js.png",
     "oss": true,
-    "scriptSrc": "dynamics(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "dynamics(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://dynamicsjs.com"
   },
   "Dynamicweb": {
@@ -2187,7 +2325,9 @@
       "low"
     ],
     "saas": true,
-    "scriptSrc": "/ruxitagentjs_(?:.+)_(?:.+)\\.js",
+    "scriptSrc": [
+      "/ruxitagentjs_(?:.+)_(?:.+)\\.js"
+    ],
     "website": "https://www.dynatrace.com/platform/real-user-monitoring"
   },
   "Dyte": {
@@ -2210,7 +2350,9 @@
     ],
     "saas": true,
     "website": "https://dyte.io",
-    "xhr": "cdn\\.dyte\\.in/"
+    "xhr": [
+      "cdn\\.dyte\\.in/"
+    ]
   },
   "daisyUI": {
     "cats": [
@@ -2245,9 +2387,13 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.db-ip\\.com",
+    "scriptSrc": [
+      "cdn\\.db-ip\\.com"
+    ],
     "website": "https://db-ip.com/",
-    "xhr": "api\\.db-ip\\.com"
+    "xhr": [
+      "api\\.db-ip\\.com"
+    ]
   },
   "dc.js": {
     "cats": [
@@ -2259,7 +2405,9 @@
     "js": {
       "dcAPIKey": ""
     },
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/(?:dc\\/)?)?dc(?:\\.leaflet)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/(?:dc\\/)?)?dc(?:\\.leaflet)?\\.js\\;version:\\1"
+    ],
     "website": "https://dc-js.github.io/dc.js/"
   },
   "decimal.js": {
@@ -2285,7 +2433,9 @@
     "js": {
       "deepMiner": ""
     },
-    "scriptSrc": "deepMiner\\.js",
+    "scriptSrc": [
+      "deepMiner\\.js"
+    ],
     "website": "https://github.com/deepwn/deepMiner"
   }
 }

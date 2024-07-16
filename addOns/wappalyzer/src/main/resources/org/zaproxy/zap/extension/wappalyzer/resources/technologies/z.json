@@ -10,7 +10,9 @@
     "implies": [
       "Java"
     ],
-    "scriptSrc": "zkau/",
+    "scriptSrc": [
+      "zkau/"
+    ],
     "website": "https://zkoss.org"
   },
   "ZURB Foundation": {
@@ -46,7 +48,9 @@
     "meta": {
       "Author": "ZABBIX SIA\\;confidence:70"
     },
-    "url": "\\/zabbix\\/\\;confidence:30",
+    "url": [
+      "\\/zabbix\\/\\;confidence:30"
+    ],
     "website": "https://zabbix.com"
   },
   "Zakeke": {
@@ -86,7 +90,9 @@
       "WooCommerce"
     ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/zakeke-interactive-product-designer/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/zakeke-interactive-product-designer/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://www.zakeke.com"
   },
   "Zakeke Visual Customizer": {
@@ -107,7 +113,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "\\.zakeke\\.com/Scripts/integration/shopify/",
+    "scriptSrc": [
+      "\\.zakeke\\.com/Scripts/integration/shopify/"
+    ],
     "website": "https://www.zakeke.com"
   },
   "Zakra": {
@@ -130,7 +138,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/zakra/",
+    "scriptSrc": [
+      "/wp-content/themes/zakra/"
+    ],
     "website": "https://zakratheme.com"
   },
   "Zanox": {
@@ -144,7 +154,9 @@
     "js": {
       "zanox": ""
     },
-    "scriptSrc": "zanox\\.com/scripts/zanox\\.js$",
+    "scriptSrc": [
+      "zanox\\.com/scripts/zanox\\.js$"
+    ],
     "website": "https://zanox.com"
   },
   "Zeabur": {
@@ -184,7 +196,9 @@
       99
     ],
     "description": "Zeleris provides door to door shipment delivery to Ireland, UK and the EU.",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bZeleris\\b"
     ],
@@ -242,7 +256,9 @@
       "low"
     ],
     "saas": true,
-    "scriptSrc": "static\\.zdassets\\.com",
+    "scriptSrc": [
+      "static\\.zdassets\\.com"
+    ],
     "website": "https://zendesk.com"
   },
   "Zendesk Chat": {
@@ -256,7 +272,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "v2\\.zopim\\.com",
+    "scriptSrc": [
+      "v2\\.zopim\\.com"
+    ],
     "website": "https://zopim.com"
   },
   "Zendesk Sunshine Conversations": {
@@ -273,7 +291,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.smooch\\.io/",
+    "scriptSrc": [
+      "cdn\\.smooch\\.io/"
+    ],
     "website": "https://www.zendesk.com/platform/conversations"
   },
   "Zenfolio": {
@@ -298,7 +318,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.zeotap\\.com",
+    "scriptSrc": [
+      "\\.zeotap\\.com"
+    ],
     "website": "https://zeotap.com"
   },
   "Zepto": {
@@ -309,7 +331,9 @@
     "js": {
       "Zepto": ""
     },
-    "scriptSrc": "zepto.*\\.js",
+    "scriptSrc": [
+      "zepto.*\\.js"
+    ],
     "website": "https://zeptojs.com"
   },
   "ZestMoney": {
@@ -475,7 +499,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "/zipify-oneclickupsell-vendor\\.js",
+    "scriptSrc": [
+      "/zipify-oneclickupsell-vendor\\.js"
+    ],
     "website": "https://zipify.com/apps/ocu/"
   },
   "Zipify Pages": {
@@ -526,7 +552,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "c(?:reator)?\\.zmags\\.com/",
+    "scriptSrc": [
+      "c(?:reator)?\\.zmags\\.com/"
+    ],
     "website": "https://www.creatorbyzmags.com"
   },
   "Zocdoc": {
@@ -540,7 +568,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "offsiteschedule\\.zocdoc\\.com",
+    "scriptSrc": [
+      "offsiteschedule\\.zocdoc\\.com"
+    ],
     "website": "https://www.zocdoc.com"
   },
   "Zoey": {
@@ -561,7 +591,9 @@
       "zoey.developer": "",
       "zoeyDev": ""
     },
-    "scriptSrc": "cdna4\\.zoeysite\\.com",
+    "scriptSrc": [
+      "cdna4\\.zoeysite\\.com"
+    ],
     "website": "https://www.zoey.com/"
   },
   "Zoho": {
@@ -617,7 +649,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.pagesense\\.(?:cn|io)?",
+    "scriptSrc": [
+      "\\.pagesense\\.(?:cn|io)?"
+    ],
     "website": "https://www.zoho.com/pagesense/"
   },
   "Zoko": {
@@ -638,7 +672,9 @@
       "mid"
     ],
     "saas": true,
-    "scriptSrc": "zoko-shopify-prod\\.web\\.app",
+    "scriptSrc": [
+      "zoko-shopify-prod\\.web\\.app"
+    ],
     "website": "https://www.zoko.io/"
   },
   "Zone.js": {
@@ -669,7 +705,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.zonos\\.com/",
+    "scriptSrc": [
+      "\\.zonos\\.com/"
+    ],
     "website": "https://zonos.com"
   },
   "ZoodPay": {
@@ -682,7 +720,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "wp-content/plugins/zoodpay/(?:.+\\?ver=([\\d\\.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "wp-content/plugins/zoodpay/(?:.+\\?ver=([\\d\\.]+))?\\;version:\\1"
+    ],
     "website": "https://www.zoodpay.com"
   },
   "Zoominfo": {
@@ -692,7 +732,9 @@
     "description": "ZoomInfo provides actionable B2B contact and company information for sales and marketing teams.",
     "icon": "Zoominfo.svg",
     "saas": true,
-    "scriptSrc": "ws\\.zoominfo\\.com",
+    "scriptSrc": [
+      "ws\\.zoominfo\\.com"
+    ],
     "website": "https://www.zoominfo.com/"
   },
   "Zoominfo Chat": {
@@ -702,7 +744,9 @@
     "description": "ZoomInfo chat is a live chat solution.",
     "icon": "Zoominfo.svg",
     "saas": true,
-    "scriptSrc": "madstreetden\\.widget\\.insent\\.ai",
+    "scriptSrc": [
+      "madstreetden\\.widget\\.insent\\.ai"
+    ],
     "website": "https://www.zoominfo.com/chat"
   },
   "Zope": {
@@ -753,7 +797,9 @@
     "meta": {
       "generator": "Zozo Ecommerce"
     },
-    "scriptSrc": "zozo-main\\.min\\.js",
+    "scriptSrc": [
+      "zozo-main\\.min\\.js"
+    ],
     "website": "https://zozo.vn"
   },
   "Zuppler": {

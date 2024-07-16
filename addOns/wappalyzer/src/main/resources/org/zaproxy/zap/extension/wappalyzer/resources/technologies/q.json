@@ -22,7 +22,9 @@
     ],
     "description": "Q4 Cookie Monster is an cookie compliance widget built by Q4.",
     "icon": "Q4.png",
-    "scriptSrc": "widgets\\.q4app\\.com/widgets/q4\\.cookiemonster\\.([\\d\\.]+)\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "widgets\\.q4app\\.com/widgets/q4\\.cookiemonster\\.([\\d\\.]+)\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://q4mobile.github.io/q4widgets-jquery-ui/doc_html/q4.cookieMonster.html"
   },
   "QUIC.cloud": {
@@ -54,7 +56,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "//secure\\.qgiv\\.com/",
+    "scriptSrc": [
+      "//secure\\.qgiv\\.com/"
+    ],
     "website": "https://www.qgiv.com"
   },
   "Qikify": {
@@ -72,7 +76,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "sdk\\.qikify\\.com/",
+    "scriptSrc": [
+      "sdk\\.qikify\\.com/"
+    ],
     "website": "https://qikify.com"
   },
   "Qstomizer": {
@@ -91,7 +97,9 @@
       "low"
     ],
     "saas": true,
-    "scriptSrc": "/qsmz-scripttag/qstomizer_st(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "/qsmz-scripttag/qstomizer_st(?:\\.min)?\\.js"
+    ],
     "website": "https://www.qstomizer.com"
   },
   "Qualaroo": {
@@ -110,7 +118,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.qualaroo\\.com",
+    "scriptSrc": [
+      "\\.qualaroo\\.com"
+    ],
     "website": "https://qualaroo.com"
   },
   "Qualified": {
@@ -128,7 +138,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.qualified\\.com/",
+    "scriptSrc": [
+      "\\.qualified\\.com/"
+    ],
     "website": "https://www.qualified.com"
   },
   "Qualtrics": {
@@ -145,7 +157,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.qualtrics\\.com/",
+    "scriptSrc": [
+      "\\.qualtrics\\.com/"
+    ],
     "website": "https://www.qualtrics.com"
   },
   "Quanta": {
@@ -166,7 +180,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.quanta\\.io/(?:.+/quanta-rum-v([\\d\\.]+)\\.min\\.js)?\\;version:\\1",
+    "scriptSrc": [
+      "\\.quanta\\.io/(?:.+/quanta-rum-v([\\d\\.]+)\\.min\\.js)?\\;version:\\1"
+    ],
     "website": "https://www.quanta.io"
   },
   "Quantcast Choice": {
@@ -180,7 +196,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "quantcast\\.mgr\\.consensu\\.org",
+    "scriptSrc": [
+      "quantcast\\.mgr\\.consensu\\.org"
+    ],
     "website": "https://www.quantcast.com/products/choice-consent-management-platform"
   },
   "Quantcast Measure": {
@@ -198,7 +216,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.quantserve\\.com/quant\\.js",
+    "scriptSrc": [
+      "\\.quantserve\\.com/quant\\.js"
+    ],
     "website": "https://www.quantcast.com/products/measure-audience-insights"
   },
   "Quantum Metric": {
@@ -208,7 +228,9 @@
     "description": "Quantum Metric is a continuous product design platform that helps organizations build better products faster.",
     "icon": "Quantummetric.png",
     "saas": true,
-    "scriptSrc": "cdn\\.quantummetric\\.com",
+    "scriptSrc": [
+      "cdn\\.quantummetric\\.com"
+    ],
     "website": "https://www.quantummetric.com/"
   },
   "Quasar": {
@@ -250,7 +272,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "static\\.goqubit\\.com",
+    "scriptSrc": [
+      "static\\.goqubit\\.com"
+    ],
     "website": "https://www.qubit.com"
   },
   "Question2Answer": {
@@ -266,7 +290,9 @@
     "implies": [
       "PHP"
     ],
-    "scriptSrc": "\\./qa-content/qa-page\\.js\\?([0-9.]+)\\;version:\\1",
+    "scriptSrc": [
+      "\\./qa-content/qa-page\\.js\\?([0-9.]+)\\;version:\\1"
+    ],
     "website": "https://www.question2answer.org"
   },
   "Queue-it": {
@@ -283,7 +309,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.queue-it\\.net/",
+    "scriptSrc": [
+      "\\.queue-it\\.net/"
+    ],
     "website": "https://queue-it.com"
   },
   "Quick.CMS": {
@@ -324,7 +352,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.quicksell\\.co/",
+    "scriptSrc": [
+      "\\.quicksell\\.co/"
+    ],
     "website": "https://quicksell.co"
   },
   "Quickbutik": {
@@ -341,7 +371,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.quickbutik\\.com/",
+    "scriptSrc": [
+      "\\.quickbutik\\.com/"
+    ],
     "website": "https://quickbutik.com"
   },
   "Quicklink": {
@@ -355,7 +387,9 @@
       "drupalSettings.quicklink": "",
       "quicklink": ""
     },
-    "scriptSrc": "quicklink@([\\d.]+)/dist/quicklink.*\\.js\\;version:\\1",
+    "scriptSrc": [
+      "quicklink@([\\d.]+)/dist/quicklink.*\\.js\\;version:\\1"
+    ],
     "website": "https://getquick.link/"
   },
   "Quicq": {
@@ -420,7 +454,9 @@
     "js": {
       "qp.qp": ""
     },
-    "scriptSrc": "\\.quora\\.com/",
+    "scriptSrc": [
+      "\\.quora\\.com/"
+    ],
     "website": "https://quoraadsupport.zendesk.com/hc/en-us/categories/115001573928-Pixels-Tracking"
   },
   "Qwik": {
@@ -453,7 +489,9 @@
     },
     "icon": "qiankun.svg",
     "oss": true,
-    "scripts": "__POWERED_BY_QIANKUN__",
+    "scripts": [
+      "__POWERED_BY_QIANKUN__"
+    ],
     "website": "https://qiankun.umijs.org"
   }
 }

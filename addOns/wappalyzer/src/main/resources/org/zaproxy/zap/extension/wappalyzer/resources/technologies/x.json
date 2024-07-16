@@ -33,7 +33,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "(?:cdn)?x\\.ai/.*/xdotai-embed\\.js",
+    "scriptSrc": [
+      "(?:cdn)?x\\.ai/.*/xdotai-embed\\.js"
+    ],
     "website": "https://x.ai"
   },
   "XAMPP": {
@@ -65,7 +67,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "//assets\\.xgen\\.dev/",
+    "scriptSrc": [
+      "//assets\\.xgen\\.dev/"
+    ],
     "website": "https://xgen.ai"
   },
   "XMB": {
@@ -148,7 +152,9 @@
     ],
     "cpe": "cpe:2.3:a:xajax:xajax:*:*:*:*:*:*:*:*",
     "icon": "Xajax.png",
-    "scriptSrc": "xajax_core.*\\.js",
+    "scriptSrc": [
+      "xajax_core.*\\.js"
+    ],
     "website": "https://xajax-project.org"
   },
   "Xanario": {
@@ -200,7 +206,9 @@
     "implies": [
       "Microsoft ASP.NET"
     ],
-    "scriptSrc": "/_bi_sps_v.+\\.js",
+    "scriptSrc": [
+      "/_bi_sps_v.+\\.js"
+    ],
     "website": "https://www.xeora.org"
   },
   "Xitami": {
@@ -225,7 +233,9 @@
     "meta": {
       "keywords": "xonic-solutions"
     },
-    "scriptSrc": "core/jslib/jquery\\.xonic\\.js\\.php",
+    "scriptSrc": [
+      "core/jslib/jquery\\.xonic\\.js\\.php"
+    ],
     "website": "https://www.xonic-solutions.de"
   },
   "XpressEngine": {
@@ -256,7 +266,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "apps\\.xpresslane\\.in/",
+    "scriptSrc": [
+      "apps\\.xpresslane\\.in/"
+    ],
     "website": "https://www.xpresslane.in"
   },
   "Xretail": {
@@ -309,7 +321,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/xtra/.+custom\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/xtra/.+custom\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://xtratheme.com"
   },
   "Xtremepush": {
@@ -336,7 +350,9 @@
     "js": {
       "xChart": ""
     },
-    "scriptSrc": "xcharts\\.js",
+    "scriptSrc": [
+      "xcharts\\.js"
+    ],
     "website": "https://tenxer.github.io/xcharts/"
   },
   "xtCommerce": {

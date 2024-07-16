@@ -104,7 +104,9 @@
     "js": {
       "JSChart": ""
     },
-    "scriptSrc": "jscharts.{0,32}\\.js",
+    "scriptSrc": [
+      "jscharts.{0,32}\\.js"
+    ],
     "website": "https://www.jscharts.com"
   },
   "JSEcoin": {
@@ -116,7 +118,9 @@
     "js": {
       "jseMine": ""
     },
-    "scriptSrc": "^(?:https):?//load\\.jsecoin\\.com/load/",
+    "scriptSrc": [
+      "^(?:https):?//load\\.jsecoin\\.com/load/"
+    ],
     "website": "https://jsecoin.com/"
   },
   "JSS": {
@@ -166,7 +170,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "checkout-button-.+/just-pay-button\\.js",
+    "scriptSrc": [
+      "checkout-button-.+/just-pay-button\\.js"
+    ],
     "website": "https://www.getjusto.com"
   },
   "JW Player": {
@@ -194,7 +200,9 @@
       "\\.jwpcdn\\.com"
     ],
     "website": "https://www.jwplayer.com",
-    "xhr": "\\.jwpsrv\\.com"
+    "xhr": [
+      "\\.jwpsrv\\.com"
+    ]
   },
   "Jahia DX": {
     "cats": [
@@ -251,7 +259,9 @@
       "$jit": "",
       "$jit.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "jit(?:-yc)?\\.js",
+    "scriptSrc": [
+      "jit(?:-yc)?\\.js"
+    ],
     "website": "https://philogb.github.io/jit/"
   },
   "JavaServer Faces": {
@@ -352,7 +362,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/jetpack/",
+    "scriptSrc": [
+      "/wp-content/plugins/jetpack/"
+    ],
     "website": "https://jetpack.com"
   },
   "Jetpack Boost": {
@@ -365,7 +377,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/jetpack-boost/",
+    "scriptSrc": [
+      "/wp-content/plugins/jetpack-boost/"
+    ],
     "website": "https://jetpack.com"
   },
   "Jetshop": {
@@ -413,7 +427,9 @@
     "meta": {
       "generator": "Jibres"
     },
-    "scriptSrc": "/jibres\\.js",
+    "scriptSrc": [
+      "/jibres\\.js"
+    ],
     "website": "https://jibres.com"
   },
   "Jilt App": {
@@ -441,7 +457,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "\\.jilt\\.com/.+/jilt\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "\\.jilt\\.com/.+/jilt\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/jilt-for-woocommerce"
   },
   "Jimdo": {
@@ -463,7 +481,9 @@
       "recurring"
     ],
     "saas": true,
-    "url": "\\.jimdo(?:site)?\\.com/",
+    "url": [
+      "\\.jimdo(?:site)?\\.com/"
+    ],
     "website": "https://www.jimdo.com"
   },
   "Jirafe": {
@@ -475,7 +495,9 @@
     "js": {
       "jirafe": ""
     },
-    "scriptSrc": "/jirafe\\.js",
+    "scriptSrc": [
+      "/jirafe\\.js"
+    ],
     "website": "https://docs.jirafe.com"
   },
   "Jitsi": {
@@ -485,7 +507,9 @@
     "cpe": "cpe:2.3:a:jitsi:jitsi:*:*:*:*:*:*:*:*",
     "description": "Jitsi is a free and open-source multiplatform voice (VoIP), videoconferencing and instant messaging applications for the web platform.",
     "icon": "Jitsi.png",
-    "scriptSrc": "lib-jitsi-meet.*\\.js",
+    "scriptSrc": [
+      "lib-jitsi-meet.*\\.js"
+    ],
     "website": "https://jitsi.org"
   },
   "Jive": {
@@ -519,7 +543,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.jivosite\\.com",
+    "scriptSrc": [
+      "\\.jivosite\\.com"
+    ],
     "website": "https://www.jivosite.com"
   },
   "Jivox": {
@@ -533,7 +559,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.jivox\\.com/",
+    "scriptSrc": [
+      "\\.jivox\\.com/"
+    ],
     "website": "https://jivox.com"
   },
   "JobAdder": {
@@ -548,7 +576,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.jobadder\\.com/",
+    "scriptSrc": [
+      "\\.jobadder\\.com/"
+    ],
     "website": "https://jobadder.com"
   },
   "JobberBase": {
@@ -604,7 +634,9 @@
     "pricing": [
       "onetime"
     ],
-    "scriptSrc": "/components/com_jshopping/",
+    "scriptSrc": [
+      "/components/com_jshopping/"
+    ],
     "website": "https://www.webdesigner-profi.de/joomla-webdesign/joomla-shop"
   },
   "Joomla": {
@@ -631,7 +663,9 @@
       "generator": "Joomla!(?: ([\\d.]+))?\\;version:\\1"
     },
     "oss": true,
-    "url": "option=com_",
+    "url": [
+      "option=com_"
+    ],
     "website": "https://www.joomla.org/"
   },
   "JouwWeb": {
@@ -650,7 +684,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "(?:cdn)?\\.(?:jwwb|jouwweb)\\.nl/",
+    "scriptSrc": [
+      "(?:cdn)?\\.(?:jwwb|jouwweb)\\.nl/"
+    ],
     "website": "https://www.jouwweb.nl"
   },
   "JsObservable": {
@@ -672,7 +708,9 @@
       "JsViews"
     ],
     "oss": true,
-    "scriptSrc": "([\\d\\.]+)?/jsrender(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "([\\d\\.]+)?/jsrender(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://www.jsviews.com/#jsrender"
   },
   "JsViews": {
@@ -686,7 +724,9 @@
       "JsRender"
     ],
     "oss": true,
-    "scriptSrc": "([\\d\\.]+)?/jsviews(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "([\\d\\.]+)?/jsviews(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://www.jsviews.com/#jsviews"
   },
   "Judge.me": {
@@ -704,7 +744,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.judge\\.me",
+    "scriptSrc": [
+      "cdn\\.judge\\.me"
+    ],
     "website": "https://judge.me"
   },
   "JuicyAds": {
@@ -734,7 +776,9 @@
     "implies": [
       "Shopify"
     ],
-    "scriptSrc": "mt\\.tryjumbo\\.com",
+    "scriptSrc": [
+      "mt\\.tryjumbo\\.com"
+    ],
     "website": "https://www.tryjumbo.com/"
   },
   "Jumio": {
@@ -792,7 +836,9 @@
       "static\\.june\\.so/analytics\\.js/"
     ],
     "website": "https://june.so",
-    "xhr": "a\\.june\\.so"
+    "xhr": [
+      "a\\.june\\.so"
+    ]
   },
   "Junip": {
     "cats": [
@@ -809,9 +855,13 @@
       "recurring",
       "payg"
     ],
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "saas": true,
-    "scriptSrc": "\\.juniphq\\.com/",
+    "scriptSrc": [
+      "\\.juniphq\\.com/"
+    ],
     "website": "https://junip.co"
   },
   "Juo": {
@@ -824,7 +874,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.juo\\.io/",
+    "scriptSrc": [
+      "cdn\\.juo\\.io/"
+    ],
     "website": "https://get.juo.io"
   },
   "Juspay": {
@@ -849,7 +901,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.getjusto\\.com/",
+    "scriptSrc": [
+      "\\.getjusto\\.com/"
+    ],
     "website": "https://www.getjusto.com"
   },
   "Justuno": {
@@ -891,7 +945,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "//scripttags\\.justuno\\.com/shopify_justuno",
+    "scriptSrc": [
+      "//scripttags\\.justuno\\.com/shopify_justuno"
+    ],
     "website": "https://apps.shopify.com/justuno-pop-ups-email-conversion"
   },
   "jComponent": {
@@ -922,8 +978,12 @@
       "jPlayerPlaylist": ""
     },
     "oss": true,
-    "scriptSrc": "/jquery\\.jplayer\\.min\\.js",
-    "scripts": "jquery\\.jplayer\\.min\\.js",
+    "scriptSrc": [
+      "/jquery\\.jplayer\\.min\\.js"
+    ],
+    "scripts": [
+      "jquery\\.jplayer\\.min\\.js"
+    ],
     "website": "https://jplayer.org"
   },
   "jQTouch": {
@@ -935,7 +995,9 @@
     "js": {
       "jQT": ""
     },
-    "scriptSrc": "jqtouch.*\\.js",
+    "scriptSrc": [
+      "jqtouch.*\\.js"
+    ],
     "website": "https://jqtouch.com"
   },
   "jQuery": {
@@ -965,7 +1027,9 @@
     "implies": [
       "jQuery"
     ],
-    "scriptSrc": "code\\.jquery\\.com/",
+    "scriptSrc": [
+      "code\\.jquery\\.com/"
+    ],
     "website": "https://code.jquery.com/"
   },
   "jQuery DevBridge Autocomplete": {
@@ -1001,7 +1065,9 @@
       "jQuery.migrateWarnings": "",
       "jqueryMigrate": ""
     },
-    "scriptSrc": "jquery-migrate(?:\\.min)?(?:-?((?:\\d+\\.)+\\d+))?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "scriptSrc": [
+      "jquery-migrate(?:\\.min)?(?:-?((?:\\d+\\.)+\\d+))?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2"
+    ],
     "website": "https://github.com/jquery/jquery-migrate"
   },
   "jQuery Mobile": {
@@ -1016,7 +1082,9 @@
     "js": {
       "jQuery.mobile.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "jquery[.-]mobile(?:-([\\d.]))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2",
+    "scriptSrc": [
+      "jquery[.-]mobile(?:-([\\d.]))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2"
+    ],
     "website": "https://jquerymobile.com"
   },
   "jQuery Modal": {
@@ -1030,7 +1098,9 @@
       "jQuery"
     ],
     "oss": true,
-    "scriptSrc": "jquery-modal/([\\d\\.]+)/jquery\\.modal\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "jquery-modal/([\\d\\.]+)/jquery\\.modal\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://jquerymodal.com"
   },
   "jQuery Sparklines": {
@@ -1041,7 +1111,9 @@
     "implies": [
       "jQuery"
     ],
-    "scriptSrc": "jquery\\.sparkline.*\\.js",
+    "scriptSrc": [
+      "jquery\\.sparkline.*\\.js"
+    ],
     "website": "https://omnipotent.net/jquery.sparkline/"
   },
   "jQuery UI": {
@@ -1083,7 +1155,9 @@
       "pjax-replace": "",
       "pjax-timeout": ""
     },
-    "scriptSrc": "jquery[.-]pjax(?:-([\\d.]))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2",
+    "scriptSrc": [
+      "jquery[.-]pjax(?:-([\\d.]))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2"
+    ],
     "website": "https://github.com/defunkt/jquery-pjax"
   },
   "jqPlot": {
@@ -1094,7 +1168,9 @@
     "implies": [
       "jQuery"
     ],
-    "scriptSrc": "jqplot.*\\.js",
+    "scriptSrc": [
+      "jqplot.*\\.js"
+    ],
     "website": "https://www.jqplot.com"
   },
   "jsDelivr": {
@@ -1104,8 +1180,12 @@
     "description": "JSDelivr is a free public CDN for open-source projects. It can serve web files directly from the npm registry and GitHub repositories without any configuration.",
     "dom": "link[href*='cdn.jsdelivr.net']",
     "icon": "jsdelivr-icon.svg",
-    "scriptSrc": "cdn\\.jsdelivr\\.net",
+    "scriptSrc": [
+      "cdn\\.jsdelivr\\.net"
+    ],
     "website": "https://www.jsdelivr.com/",
-    "xhr": "cdn\\.jsdelivr\\.net"
+    "xhr": [
+      "cdn\\.jsdelivr\\.net"
+    ]
   }
 }
