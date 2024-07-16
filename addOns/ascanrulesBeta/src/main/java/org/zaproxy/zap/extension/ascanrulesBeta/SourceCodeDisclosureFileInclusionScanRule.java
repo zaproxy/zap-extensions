@@ -448,7 +448,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
      * @param fileExtension
      * @return
      */
-    private boolean dataMatchesExtension(byte[] data, String fileExtension) {
+    private static boolean dataMatchesExtension(byte[] data, String fileExtension) {
         if (fileExtension != null) {
             if (fileExtension.equals("JSP")) {
                 if (PATTERN_JSP.matcher(new String(data)).find()) return true;
@@ -502,7 +502,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
      * @param b
      * @return
      */
-    private int calcLengthMatchPercentage(int a, int b) {
+    private static int calcLengthMatchPercentage(int a, int b) {
         if (a == 0 && b == 0) return 100;
         if (a == 0 || b == 0) return 0;
 

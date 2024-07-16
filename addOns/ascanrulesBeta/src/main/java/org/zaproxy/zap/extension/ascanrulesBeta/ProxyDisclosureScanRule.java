@@ -765,7 +765,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
         }
     }
 
-    private String getPath(URI uri) {
+    private static String getPath(URI uri) {
         String path = uri.getEscapedPath();
         if (path != null) {
             return path;

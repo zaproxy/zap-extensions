@@ -366,7 +366,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         return Alert.RISK_HIGH;
     }
 
-    private String getOtherInfo(TestType testType, String testValue) {
+    private static String getOtherInfo(TestType testType, String testValue) {
         return Constant.messages.getString(
                 MESSAGE_PREFIX + "otherinfo." + testType.getNameKey(), testValue);
     }

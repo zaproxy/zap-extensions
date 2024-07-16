@@ -99,7 +99,7 @@ public class UserControlledCookieScanRule extends PluginPassiveScanner
 
     // Cookies are commonly URL encoded, maybe other encodings.
     // TODO: apply other decodings?  htmlDecode, etc.
-    private String decodeCookie(String cookie, String charset) {
+    private static String decodeCookie(String cookie, String charset) {
         if (charset != null) {
             try {
                 return URLDecoder.decode(cookie, charset);
@@ -158,11 +158,11 @@ public class UserControlledCookieScanRule extends PluginPassiveScanner
         return newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_LOW)
-                .setDescription(getDescriptionMessage())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setParam(param.getName())
                 .setOtherInfo(getExtraInfoMessage(msg, param, cookie))
-                .setSolution(getSolutionMessage())
-                .setReference(getReferenceMessage())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setCweId(565) // CWE-565: Reliance on Cookies without Validation and Integrity
                 // Checking
                 .setWascId(20); // WASC-20: Improper Input Handling
@@ -178,23 +178,7 @@ public class UserControlledCookieScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    /*
-     * Rule-associated messages
-     */
-
-    private String getDescriptionMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolutionMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReferenceMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    private String getExtraInfoMessage(HttpMessage msg, HtmlParameter param, String cookie) {
+    private static String getExtraInfoMessage(HttpMessage msg, HtmlParameter param, String cookie) {
         String introMessage = "";
         if ("GET".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {
             introMessage = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.get");

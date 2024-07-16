@@ -132,7 +132,7 @@ public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner
      * @return {@code true} if {@code viewState} is cryptographically secure, and {@code false}
      *     otherwise (there might be false positives and false negatives)
      */
-    private boolean isViewStateSecure(String viewState, String charset) {
+    private static boolean isViewStateSecure(String viewState, String charset) {
         if (viewState == null || viewState.equals("")) {
             return true;
         }
@@ -185,7 +185,7 @@ public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner
         return output.toByteArray();
     }
 
-    private boolean isRawViewStateSecure(String viewState) {
+    private static boolean isRawViewStateSecure(String viewState) {
         if (viewState == null || viewState.equals("")) {
             return true;
         }
@@ -216,7 +216,7 @@ public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner
 
     // jsf server side implementation in com.sun.faces.renderkit.ServerSideStateHelper
     // two id's separated by :
-    private boolean isViewStateStoredOnServer(String val) {
+    private static boolean isViewStateStoredOnServer(String val) {
         return val != null && val.contains(":");
     }
 

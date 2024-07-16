@@ -314,7 +314,7 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
 
-    private NanoServerHandler createNanoHandler(
+    private static NanoServerHandler createNanoHandler(
             String path, NanoHTTPD.Response.IStatus status, String responseBody) {
         return new NanoServerHandler(path) {
             @Override

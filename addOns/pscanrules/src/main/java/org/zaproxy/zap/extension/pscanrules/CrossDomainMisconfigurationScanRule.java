@@ -139,15 +139,15 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner
 
     private AlertBuilder buildAlert(String evidence) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_MEDIUM)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setCweId(264) // CWE 264: Permissions, Privileges, and Access Controls
+                .setWascId(14); // WASC-14: Server Misconfiguration
     }
 
     private static String extractEvidence(String header, String headerName) {
@@ -155,21 +155,9 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner
         return header.substring(start, header.indexOf("\r", start));
     }
 
-    public int getRisk() {
-        return Alert.RISK_MEDIUM;
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 264; // CWE 264: Permissions, Privileges, and Access Controls
-    }
-
-    public int getWascId() {
-        return 14; // WASC-14: Server Misconfiguration
     }
 
     /**
@@ -180,15 +168,6 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner
     @Override
     public int getPluginId() {
         return 10098;
-    }
-
-    /**
-     * get the description of the alert
-     *
-     * @return
-     */
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
     @Override

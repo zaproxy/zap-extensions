@@ -120,33 +120,9 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return null;
-    }
-
-    public int getRisk() {
-        return Alert.RISK_MEDIUM;
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 200;
-    }
-
-    public int getWascId() {
-        return 13;
     }
 
     /**
@@ -171,7 +147,9 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner
                 // No need to alert
                 return;
             }
-            raiseAlert(msg, id, msg.getResponseHeader().getPrimeHeader(), Alert.RISK_LOW);
+            buildAlert(msg, id, msg.getResponseHeader().getPrimeHeader())
+                    .setRisk(Alert.RISK_LOW)
+                    .raise();
 
         } else if (!getHelper().isPage404(msg)
                 && !msg.getResponseHeader().hasContentType("application/wasm")) {
@@ -184,7 +162,7 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner
             String body = msg.getResponseBody().toString();
             for (String payload : getCustomPayloads().get()) {
                 if (body.contains(payload)) {
-                    raiseAlert(msg, id, payload, getRisk());
+                    raiseAlert(msg, id, payload);
                     return;
                 }
             }
@@ -193,33 +171,31 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner
                 // We found it!
                 // There exists a positive match of an
                 // application error occurrence
-                raiseAlert(msg, id, evidence, getRisk());
+                raiseAlert(msg, id, evidence);
             }
         }
     }
 
     // Internal service method for alert management
-    private void raiseAlert(HttpMessage msg, int id, String evidence, int risk) {
-        buildAlert(msg, id, evidence, risk).raise();
+    private void raiseAlert(HttpMessage msg, int id, String evidence) {
+        buildAlert(msg, id, evidence).raise();
     }
 
-    private AlertBuilder buildAlert(HttpMessage msg, int id, String evidence, int risk) {
+    private AlertBuilder buildAlert(HttpMessage msg, int id, String evidence) {
         return newAlert()
-                .setRisk(risk)
+                .setRisk(Alert.RISK_MEDIUM)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setCweId(200)
+                .setWascId(13);
     }
 
     @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
-        Alert example =
-                buildAlert(null, 0, "ERROR: parser: parse error at or near", getRisk()).build();
+        Alert example = buildAlert(null, 0, "ERROR: parser: parse error at or near").build();
         example.setTags(
                 CommonAlertTag.mergeTags(example.getTags(), CommonAlertTag.CUSTOM_PAYLOADS));
         alerts.add(example);

@@ -376,7 +376,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         return false;
     }
 
-    private String getCspNoticesString(List<PolicyError> notices) {
+    private static String getCspNoticesString(List<PolicyError> notices) {
         if (notices.isEmpty()) {
             return "";
         }
@@ -431,7 +431,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
      * @param header The header field(s) to be found
      * @return list of the matched headers
      */
-    private List<String> getHeaderField(HttpMessage msg, String header) {
+    private static List<String> getHeaderField(HttpMessage msg, String header) {
         List<String> matchedHeaders = new ArrayList<>();
         String headers = msg.getResponseHeader().toString();
         String[] headerElements = headers.split("\\r\\n");
@@ -446,7 +446,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         return matchedHeaders;
     }
 
-    private List<String> getAllowedWildcardSources(String policyText) {
+    private static List<String> getAllowedWildcardSources(String policyText) {
 
         List<String> allowedSources = new ArrayList<>();
         Policy pol = Policy.parseSerializedCSP(policyText, PolicyErrorConsumer.ignored);
@@ -550,25 +550,9 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 693; // CWE-693: Protection Mechanism Failure
-    }
-
-    public int getWascId() {
-        return 15; // WASC-15: Application Misconfiguration
     }
 
     private AlertBuilder getBuilder(String name, String alertRef) {
@@ -577,10 +561,10 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
                 .setName(alertName)
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
-                .setSolution(getSolution())
-                .setReference(getReference())
-                .setCweId(getCweId())
-                .setWascId(getWascId())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
+                .setCweId(693) // CWE-693: Protection Mechanism Failure
+                .setWascId(15) // WASC-15: Application Misconfiguration
                 .setAlertRef(PLUGIN_ID + "-" + alertRef);
     }
 

@@ -370,7 +370,7 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
         return msg;
     }
 
-    private void setUpHttpSessionsParam() {
+    private static void setUpHttpSessionsParam() {
         HttpSessionsParam sessionOptions = new HttpSessionsParam();
         sessionOptions.load(new ZapXmlConfiguration());
         Model.getSingleton().getOptionsParam().addParamSet(sessionOptions);
@@ -385,7 +385,7 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
                         + "></input></form></html>");
     }
 
-    private HtmlParameter getCookieAs(String cookieName) {
+    private static HtmlParameter getCookieAs(String cookieName) {
         return new HtmlParameter(
                 HtmlParameter.Type.cookie, cookieName, "FF4F838FDA9E1974DEEB4020AB6127FD");
     }

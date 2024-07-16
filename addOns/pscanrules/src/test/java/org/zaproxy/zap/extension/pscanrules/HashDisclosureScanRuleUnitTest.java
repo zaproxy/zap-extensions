@@ -191,7 +191,7 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
         super.shouldHaveValidReferences();
     }
 
-    private HttpMessage createMsg(String hashVal) throws HttpMalformedHeaderException {
+    private static HttpMessage createMsg(String hashVal) throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");

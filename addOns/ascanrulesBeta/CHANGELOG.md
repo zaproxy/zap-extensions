@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Log exception details in Out of Band XSS scan rule.
+- Maintenance changes.
 
 ## [55] - 2024-09-02
 ### Changed

@@ -179,7 +179,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         alertMap.computeIfAbsent(summary.getPattern(), k -> new ArrayList<>()).add(summary);
     }
 
-    private String truncateString(String str) {
+    private static String truncateString(String str) {
         if (str.length() > MAX_ELEMENT_CHRS_TO_REPORT) {
             return str.substring(0, MAX_ELEMENT_CHRS_TO_REPORT);
         }
@@ -188,13 +188,13 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
 
     private AlertBuilder createAlert(String detail, int confidence, String evidence) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_INFO)
                 .setConfidence(confidence)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(detail)
-                .setSolution(getSolution())
-                .setCweId(getCweId())
-                .setWascId(getWascId())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setCweId(200) // CWE Id 200 - Information Exposure)
+                .setWascId(13) // WASC Id - Info leakage)
                 .setEvidence(evidence);
     }
 
@@ -205,7 +205,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         return patterns;
     }
 
-    private List<Pattern> initPatterns() {
+    private static List<Pattern> initPatterns() {
         List<Pattern> targetPatterns = new ArrayList<>();
         for (String payload : payloadProvider.get()) {
             targetPatterns.add(compilePayload(payload));
@@ -213,7 +213,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         return targetPatterns;
     }
 
-    private Pattern compilePayload(String payload) {
+    private static Pattern compilePayload(String payload) {
         return Pattern.compile("\\b" + payload + "\\b", Pattern.CASE_INSENSITIVE);
     }
 
@@ -221,34 +221,14 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         payloadProvider = provider == null ? DEFAULT_PAYLOAD_PROVIDER : provider;
     }
 
-    public int getRisk() {
-        return Alert.RISK_INFO;
-    }
-
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 200; // CWE Id 200 - Information Exposure
-    }
-
-    public int getWascId() {
-        return 13; // WASC Id - Info leakage
     }
 
     @Override

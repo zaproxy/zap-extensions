@@ -265,7 +265,8 @@ class InsecureJsfViewStatePassiveScanRuleUnitTest
         return output.toByteArray();
     }
 
-    private void setTextHtmlResponseHeader(HttpMessage msg) throws HttpMalformedHeaderException {
+    private static void setTextHtmlResponseHeader(HttpMessage msg)
+            throws HttpMalformedHeaderException {
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
                         + "Server: Apache-Coyote/1.1\r\n"

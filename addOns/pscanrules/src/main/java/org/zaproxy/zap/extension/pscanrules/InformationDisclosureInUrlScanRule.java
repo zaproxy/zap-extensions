@@ -99,21 +99,21 @@ public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner
         }
     }
 
-    private String getSsnOtherInfo() {
+    private static String getSsnOtherInfo() {
         return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.ssn");
     }
 
     private AlertBuilder buildAlert(String param, String evidence, String other) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setParam(param)
                 .setOtherInfo(other)
-                .setSolution(getSolution())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setCweId(200) // CWE Id 200 - Information Exposure)
+                .setWascId(13); // WASC Id - Info leakage
     }
 
     private static List<String> loadFile(String file) {
@@ -155,21 +155,9 @@ public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner
         return null;
     }
 
-    public int getRisk() {
-        return Alert.RISK_INFO;
-    }
-
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
-    }
-
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
     @Override
@@ -177,30 +165,22 @@ public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
-        return 200; // CWE Id 200 - Information Exposure
-    }
-
-    public int getWascId() {
-        return 13; // WASC Id - Info leakage
-    }
-
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
     }
 
-    private boolean isEmailAddress(String emailAddress) {
+    private static boolean isEmailAddress(String emailAddress) {
         Matcher matcher = emailAddressPattern.matcher(emailAddress);
         return matcher.find();
     }
 
-    private boolean isCreditCard(String creditCard) {
+    private static boolean isCreditCard(String creditCard) {
         Matcher matcher = creditCardPattern.matcher(creditCard);
         return matcher.find();
     }
 
-    private boolean isUsSSN(String usSSN) {
+    private static boolean isUsSSN(String usSSN) {
         Matcher matcher = usSSNPattern.matcher(usSSN);
         return matcher.find();
     }

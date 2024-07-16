@@ -98,12 +98,8 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(352)));
-        assertThat(wasc, is(equalTo(9)));
         assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
@@ -461,7 +457,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
                 "<html><head></head><body><form id=\"no_csrf_token\"><input type=\"text\"/><input type=\"submit\"/></form></body></html>");
     }
 
-    private HttpMessage createScopedMessage(boolean isInScope) throws URIException {
+    private static HttpMessage createScopedMessage(boolean isInScope) throws URIException {
         HttpMessage newMsg =
                 new HttpMessage() {
                     @Override
