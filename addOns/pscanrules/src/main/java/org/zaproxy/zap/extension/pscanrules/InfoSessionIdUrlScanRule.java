@@ -248,17 +248,17 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
     };
 
     // The name of this sub-alert
-    private String getRefererAlert() {
+    private static String getRefererAlert() {
         return Constant.messages.getString(MESSAGE_PREFIX + "referrer.alert");
     }
 
     // The description of this sub-alert
-    private String getRefererDescription() {
+    private static String getRefererDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "referrer.desc");
     }
 
     // The solution of this sub-alert
-    private String getRefererSolution() {
+    private static String getRefererSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "referrer.soln");
     }
 

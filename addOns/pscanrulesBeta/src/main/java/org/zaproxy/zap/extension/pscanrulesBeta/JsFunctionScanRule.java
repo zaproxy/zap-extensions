@@ -149,9 +149,9 @@ public class JsFunctionScanRule extends PluginPassiveScanner implements CommonPa
         return newAlert()
                 .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_LOW)
-                .setDescription(getDescription())
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
                 .setCweId(749); // CWE-749: Exposed Dangerous Method or Function
     }
@@ -190,18 +190,6 @@ public class JsFunctionScanRule extends PluginPassiveScanner implements CommonPa
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
-    }
-
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     @Override

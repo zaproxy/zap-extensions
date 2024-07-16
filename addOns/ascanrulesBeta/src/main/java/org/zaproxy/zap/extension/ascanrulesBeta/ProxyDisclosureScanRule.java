@@ -752,7 +752,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                                 Constant.messages.getString(
                                         MESSAGE_PREFIX + "desc",
                                         step2numberOfNodes - 1 + silentProxySet.size()))
-                        .setAttack(getAttack())
+                        .setAttack(Constant.messages.getString(MESSAGE_PREFIX + "attack"))
                         .setOtherInfo(extraInfo)
                         .setMessage(getBaseMsg())
                         .raise();
@@ -765,16 +765,12 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
         }
     }
 
-    private String getPath(URI uri) {
+    private static String getPath(URI uri) {
         String path = uri.getEscapedPath();
         if (path != null) {
             return path;
         }
         return "/";
-    }
-
-    private String getAttack() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "attack");
     }
 
     @Override

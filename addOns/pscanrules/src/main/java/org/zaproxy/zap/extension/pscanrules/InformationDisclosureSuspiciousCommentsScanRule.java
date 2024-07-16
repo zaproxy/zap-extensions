@@ -179,7 +179,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         alertMap.computeIfAbsent(summary.getPattern(), k -> new ArrayList<>()).add(summary);
     }
 
-    private String truncateString(String str) {
+    private static String truncateString(String str) {
         if (str.length() > MAX_ELEMENT_CHRS_TO_REPORT) {
             return str.substring(0, MAX_ELEMENT_CHRS_TO_REPORT);
         }
@@ -205,7 +205,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         return patterns;
     }
 
-    private List<Pattern> initPatterns() {
+    private static List<Pattern> initPatterns() {
         List<Pattern> targetPatterns = new ArrayList<>();
         for (String payload : payloadProvider.get()) {
             targetPatterns.add(compilePayload(payload));
@@ -213,7 +213,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         return targetPatterns;
     }
 
-    private Pattern compilePayload(String payload) {
+    private static Pattern compilePayload(String payload) {
         return Pattern.compile("\\b" + payload + "\\b", Pattern.CASE_INSENSITIVE);
     }
 

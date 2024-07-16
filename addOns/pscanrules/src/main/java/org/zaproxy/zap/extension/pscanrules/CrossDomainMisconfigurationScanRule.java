@@ -137,7 +137,7 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner
         return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
@@ -187,15 +187,6 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner
     @Override
     public int getPluginId() {
         return 10098;
-    }
-
-    /**
-     * get the description of the alert
-     *
-     * @return
-     */
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
     @Override

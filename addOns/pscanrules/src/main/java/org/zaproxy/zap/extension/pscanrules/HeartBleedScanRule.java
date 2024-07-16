@@ -116,10 +116,12 @@ public class HeartBleedScanRule extends PluginPassiveScanner implements CommonPa
         return newAlert()
                 .setRisk(Alert.RISK_HIGH)
                 .setConfidence(Alert.CONFIDENCE_LOW)
-                .setDescription(getDescription())
-                .setOtherInfo(getExtraInfo(fullVersionString))
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "extrainfo", fullVersionString))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(fullVersionString)
                 .setCweId(119) // CWE 119: Failure to Constrain Operations within the Bounds of a
                 // Memory Buffer
@@ -129,22 +131,6 @@ public class HeartBleedScanRule extends PluginPassiveScanner implements CommonPa
     @Override
     public int getPluginId() {
         return 10034;
-    }
-
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    private String getExtraInfo(String opensslVersion) {
-        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", opensslVersion);
     }
 
     @Override

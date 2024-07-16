@@ -653,15 +653,15 @@ class ContentSecurityPolicyScanRuleUnitTest
                 is(equalTo("Warnings:\nThe prefetch-src directive has been deprecated\n")));
     }
 
-    private HttpMessage createHttpMessageWithReasonableCsp(String cspHeaderName) {
+    private static HttpMessage createHttpMessageWithReasonableCsp(String cspHeaderName) {
         return createHttpMessage(cspHeaderName, REASONABLE_POLICY);
     }
 
-    private HttpMessage createHttpMessage(String cspPolicy) {
+    private static HttpMessage createHttpMessage(String cspPolicy) {
         return createHttpMessage(HttpFieldsNames.CONTENT_SECURITY_POLICY, cspPolicy);
     }
 
-    private HttpMessage createHttpMessage(String cspHeaderName, String cspPolicy) {
+    private static HttpMessage createHttpMessage(String cspHeaderName, String cspPolicy) {
         HttpMessage msg = new HttpMessage();
 
         String header =
@@ -689,7 +689,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         return msg;
     }
 
-    private HttpMessage createHttpMessage() {
+    private static HttpMessage createHttpMessage() {
         HttpMessage msg = new HttpMessage();
         try {
             msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");

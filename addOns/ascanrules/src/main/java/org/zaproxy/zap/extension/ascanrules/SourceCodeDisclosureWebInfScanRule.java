@@ -277,7 +277,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin
      * @return
      * @throws URIException
      */
-    private URI getClassURI(URI hostURI, String classname) throws URIException {
+    private static URI getClassURI(URI hostURI, String classname) throws URIException {
         return new URI(
                 hostURI.getScheme()
                         + "://"
@@ -288,7 +288,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin
                 false);
     }
 
-    private URI getPropsFileURI(URI hostURI, String propsfilename) throws URIException {
+    private static URI getPropsFileURI(URI hostURI, String propsfilename) throws URIException {
         return new URI(
                 hostURI.getScheme()
                         + "://"

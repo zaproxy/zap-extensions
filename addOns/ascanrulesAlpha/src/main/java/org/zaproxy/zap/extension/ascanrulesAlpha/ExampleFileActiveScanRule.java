@@ -80,10 +80,6 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getOtherInfo() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "other");
-    }
-
     @Override
     public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
@@ -159,7 +155,7 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setParam(param)
                             .setAttack(attack)
-                            .setOtherInfo(getOtherInfo())
+                            .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "other"))
                             .setEvidence(evidence)
                             .setMessage(testMsg)
                             .raise();
@@ -194,7 +190,7 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
         return null;
     }
 
-    private List<String> loadFile(String file) {
+    private static List<String> loadFile(String file) {
         /*
          * ZAP will have already extracted the file from the add-on and put it underneath the 'ZAP home' directory
          */

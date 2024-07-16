@@ -342,7 +342,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
      * @param msg the current message where reflected redirection should be check into
      * @return get back the redirection type if exists
      */
-    private int isRedirected(String payload, HttpMessage msg) {
+    private static int isRedirected(String payload, HttpMessage msg) {
 
         // (1) Check if redirection by "Location" header
         // http://en.wikipedia.org/wiki/HTTP_location
@@ -471,7 +471,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
      * @param type the redirection type
      * @return a string representing the reason of this redirection
      */
-    private String getRedirectionReason(int type) {
+    private static String getRedirectionReason(int type) {
         switch (type) {
             case REDIRECT_LOCATION_HEADER:
                 return Constant.messages.getString(MESSAGE_PREFIX + "reason.location.header");

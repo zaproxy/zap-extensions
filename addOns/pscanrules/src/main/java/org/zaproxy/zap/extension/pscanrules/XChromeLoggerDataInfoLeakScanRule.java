@@ -83,19 +83,7 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    private String getOtherInfo(String headerValue) {
+    private static String getOtherInfo(String headerValue) {
         try {
             byte[] decodedByteArray = Base64.getDecoder().decode(headerValue);
             return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.msg")
@@ -117,10 +105,10 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner
         return newAlert()
                 .setRisk(Alert.RISK_MEDIUM)
                 .setConfidence(Alert.CONFIDENCE_HIGH)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(getOtherInfo(xcldField))
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(xcldField)
                 .setCweId(200)
                 .setWascId(13);

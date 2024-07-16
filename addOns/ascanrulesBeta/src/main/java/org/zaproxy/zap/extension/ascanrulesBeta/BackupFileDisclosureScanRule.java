@@ -426,7 +426,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin
                         .build());
     }
 
-    private boolean isEmptyResponse(byte[] response) {
+    private static boolean isEmptyResponse(byte[] response) {
         return response.length == 0;
     }
 

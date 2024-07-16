@@ -243,11 +243,11 @@ class SourceCodeDisclosureScanRuleUnitTest
         assertThat(example.getName(), is(equalTo("Source Code Disclosure - PHP")));
     }
 
-    private String wrapWithHTML(String code) {
+    private static String wrapWithHTML(String code) {
         return CODE_HTML + code + CODE_HTML;
     }
 
-    private void assertAlertAttributes(Alert alert, String evidence, final String language) {
+    private static void assertAlertAttributes(Alert alert, String evidence, final String language) {
         assertThat(alert.getRisk(), is(Alert.RISK_MEDIUM));
         assertThat(alert.getConfidence(), is(Alert.CONFIDENCE_MEDIUM));
         assertThat(alert.getName(), is(getLocalisedString("name") + " - " + language));
@@ -261,7 +261,7 @@ class SourceCodeDisclosureScanRuleUnitTest
         assertThat(alert.getWascId(), is(13));
     }
 
-    private String getLocalisedString(String key, Object... params) {
+    private static String getLocalisedString(String key, Object... params) {
         return Constant.messages.getString("pscanbeta.sourcecodedisclosure." + key, params);
     }
 }
