@@ -98,7 +98,9 @@
     "description": "TDesign launched by Tencent contains rich and reusable design component resources, such as color system, text system, motion design, etc.",
     "dom": ".t-button__text, .t-layout",
     "icon": "TDesign.svg",
-    "scriptSrc": "tdesign\\.gtimg\\.com/",
+    "scriptSrc": [
+      "tdesign\\.gtimg\\.com/"
+    ],
     "website": "https://tdesign.tencent.com"
   },
   "THG Ingenuity": {
@@ -153,7 +155,9 @@
     ],
     "description": "TNS Payments, is designed to deliver payment transaction information to banks, merchants, processors and other payment institutions.",
     "icon": "tnsi.png",
-    "scriptSrc": "secure\\.ap\\.tnspayments\\.com",
+    "scriptSrc": [
+      "secure\\.ap\\.tnspayments\\.com"
+    ],
     "website": "https://tnsi.com/products/payments/"
   },
   "TRISOshop": {
@@ -223,7 +227,9 @@
     "implies": [
       "Perl"
     ],
-    "scriptSrc": "(?:TWikiJavascripts|twikilib(?:\\.min)?\\.js)",
+    "scriptSrc": [
+      "(?:TWikiJavascripts|twikilib(?:\\.min)?\\.js)"
+    ],
     "website": "https://twiki.org"
   },
   "TYPO3 CMS": {
@@ -244,8 +250,12 @@
     "probe": {
       "/typo3/sysext/core/Resources/Public/Images/typo3_orange.svg": ""
     },
-    "scriptSrc": "^/?typo3(?:conf|temp)/",
-    "url": "/typo3/",
+    "scriptSrc": [
+      "^/?typo3(?:conf|temp)/"
+    ],
+    "url": [
+      "/typo3/"
+    ],
     "website": "https://typo3.org/"
   },
   "Tabarnapp": {
@@ -265,7 +275,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.tabarn\\.app/",
+    "scriptSrc": [
+      "cdn\\.tabarn\\.app/"
+    ],
     "website": "https://tabarnapp.com"
   },
   "Tabby": {
@@ -280,7 +292,9 @@
       "TabbyPromo": ""
     },
     "saas": true,
-    "scriptSrc": "checkout\\.tabby\\.ai",
+    "scriptSrc": [
+      "checkout\\.tabby\\.ai"
+    ],
     "website": "https://tabby.ai/"
   },
   "TableBooker": {
@@ -301,7 +315,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "reservations\\.tablebooker\\.\\w+/",
+    "scriptSrc": [
+      "reservations\\.tablebooker\\.\\w+/"
+    ],
     "website": "https://www.tablebooker.com"
   },
   "TableCheck": {
@@ -317,7 +333,9 @@
       }
     },
     "icon": "TableCheck.svg",
-    "scriptSrc": "tc_widget\\.js",
+    "scriptSrc": [
+      "tc_widget\\.js"
+    ],
     "website": "https://www.tablecheck.com"
   },
   "TablePress": {
@@ -338,7 +356,9 @@
       59
     ],
     "description": "Flexible client-side table sorting.",
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)[-\\/](?:dist\\/js\\/)?)?(?:jquery\\.)?tablesorter(?:[\\.\\/]pager)?(?:-custom-controls)?(?:\\.widgets)?(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)[-\\/](?:dist\\/js\\/)?)?(?:jquery\\.)?tablesorter(?:[\\.\\/]pager)?(?:-custom-controls)?(?:\\.widgets)?(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://mottie.github.io/tablesorter/"
   },
   "Taboola": {
@@ -366,9 +386,13 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.taboola\\.com",
+    "scriptSrc": [
+      "\\.taboola\\.com"
+    ],
     "website": "https://www.taboola.com",
-    "xhr": "\\.taboola\\.com"
+    "xhr": [
+      "\\.taboola\\.com"
+    ]
   },
   "Tachyons": {
     "cats": [
@@ -404,7 +428,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.trytada\\.com/",
+    "scriptSrc": [
+      "cdn\\.trytada\\.com/"
+    ],
     "website": "https://trytada.com"
   },
   "TagPro": {
@@ -420,7 +446,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "tagpro\\.adpromedia\\.net/",
+    "scriptSrc": [
+      "tagpro\\.adpromedia\\.net/"
+    ],
     "website": "https://tagpro.adpromedia.net"
   },
   "Tagboard": {
@@ -435,7 +463,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.tagboard\\.com/",
+    "scriptSrc": [
+      "\\.tagboard\\.com/"
+    ],
     "website": "https://tagboard.com"
   },
   "Tagembed": {
@@ -455,7 +485,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "//widget\\.tagembed\\.com/",
+    "scriptSrc": [
+      "//widget\\.tagembed\\.com/"
+    ],
     "website": "https://tagembed.com"
   },
   "Taggbox": {
@@ -477,7 +509,9 @@
       "\\.taggbox\\.com",
       "taggbox\\.com/app/js/embed\\.min\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
     ],
-    "url": "\\.taggbox\\.com",
+    "url": [
+      "\\.taggbox\\.com"
+    ],
     "website": "https://taggbox.com/"
   },
   "Taiga": {
@@ -504,7 +538,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.tailtarget\\.com/",
+    "scriptSrc": [
+      "\\.tailtarget\\.com/"
+    ],
     "website": "https://www.tail.digital"
   },
   "Tailwind CSS": {
@@ -526,7 +562,9 @@
     "js": {
       "tailwind": ""
     },
-    "scriptSrc": "\\.tailwindcss(?:tailwind-config-cdn)?\\.(?:com|js)",
+    "scriptSrc": [
+      "\\.tailwindcss(?:tailwind-config-cdn)?\\.(?:com|js)"
+    ],
     "website": "https://tailwindcss.com/"
   },
   "TakeDrop": {
@@ -574,7 +612,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "tallentor\\.com/js/script_tracker\\.js",
+    "scriptSrc": [
+      "tallentor\\.com/js/script_tracker\\.js"
+    ],
     "website": "https://tallentor.com"
   },
   "Tallentor Widget": {
@@ -612,7 +652,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "//tally\\.so/",
+    "scriptSrc": [
+      "//tally\\.so/"
+    ],
     "website": "https://tally.so/"
   },
   "Tamago": {
@@ -636,7 +678,9 @@
       "TamaraProductWidget": ""
     },
     "saas": true,
-    "scriptSrc": "cdn\\.tamara\\.co",
+    "scriptSrc": [
+      "cdn\\.tamara\\.co"
+    ],
     "website": "https://tamara.co/"
   },
   "Tangled Network": {
@@ -689,7 +733,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.tapcart\\.com/",
+    "scriptSrc": [
+      "cdn\\.tapcart\\.com/"
+    ],
     "website": "https://tapcart.com"
   },
   "Tapfiliate": {
@@ -706,7 +752,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.tapfiliate\\.com/",
+    "scriptSrc": [
+      "\\.tapfiliate\\.com/"
+    ],
     "website": "https://tapfiliate.com"
   },
   "Target2Sell": {
@@ -715,7 +763,9 @@
     ],
     "description": "Target2Sell is a personalisation solution for ecommerce sites.",
     "icon": "Target2Sell.png",
-    "scriptSrc": "static\\.target2sell\\.com",
+    "scriptSrc": [
+      "static\\.target2sell\\.com"
+    ],
     "website": "https://www.target2sell.com/"
   },
   "Tatari": {
@@ -743,7 +793,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "//embed\\.tawk\\.to",
+    "scriptSrc": [
+      "//embed\\.tawk\\.to"
+    ],
     "website": "https://tawk.to"
   },
   "Teachable": {
@@ -768,7 +820,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.teachablecdn\\.com",
+    "scriptSrc": [
+      "\\.teachablecdn\\.com"
+    ],
     "website": "https://teachable.com"
   },
   "Teads": {
@@ -777,9 +831,13 @@
     ],
     "description": "Teads is a technology provider that sells ads on publisher websites.",
     "icon": "Teads.svg",
-    "scriptSrc": "teads\\.tv",
+    "scriptSrc": [
+      "teads\\.tv"
+    ],
     "website": "https://www.teads.com",
-    "xhr": "\\.teads\\.tv"
+    "xhr": [
+      "\\.teads\\.tv"
+    ]
   },
   "Tealium": {
     "cats": [
@@ -813,7 +871,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.tealiumiq\\.com",
+    "scriptSrc": [
+      "\\.tealiumiq\\.com"
+    ],
     "website": "https://tealium.com/products/audiencestream"
   },
   "Tealium Consent Management": {
@@ -907,7 +967,9 @@
       "Cart Functionality"
     ],
     "saas": true,
-    "scripts": "\\.tebexLogin",
+    "scripts": [
+      "\\.tebexLogin"
+    ],
     "website": "https://www.tebex.io"
   },
   "Telescope": {
@@ -929,7 +991,9 @@
       10
     ],
     "icon": "tajs.png",
-    "scriptSrc": "tajs\\.qq\\.com/stats",
+    "scriptSrc": [
+      "tajs\\.qq\\.com/stats"
+    ],
     "website": "https://ta.qq.com/"
   },
   "Tencent Cloud": {
@@ -945,7 +1009,9 @@
     "pricing": [
       "payg"
     ],
-    "scriptSrc": "\\.tencent-cloud\\.(?:cn|com)/",
+    "scriptSrc": [
+      "\\.tencent-cloud\\.(?:cn|com)/"
+    ],
     "website": "https://intl.cloud.tencent.com"
   },
   "Tencent QQ": {
@@ -986,7 +1052,9 @@
     ],
     "description": "Termly provides free website policy resources and web-based policy creation software.",
     "icon": "termly.svg",
-    "scriptSrc": "app\\.termly\\.io/embed\\.min\\.js",
+    "scriptSrc": [
+      "app\\.termly\\.io/embed\\.min\\.js"
+    ],
     "website": "https://termly.io/"
   },
   "Tern": {
@@ -1001,7 +1069,9 @@
     "requires": [
       "Shopify"
     ],
-    "scriptSrc": "live\\.tern-returns\\.eastsideapps\\.io/",
+    "scriptSrc": [
+      "live\\.tern-returns\\.eastsideapps\\.io/"
+    ],
     "website": "https://www.tern.eco"
   },
   "TerriaJS": {
@@ -1043,7 +1113,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.testfreaks\\.com/",
+    "scriptSrc": [
+      "\\.testfreaks\\.com/"
+    ],
     "website": "https://www.testfreaks.com"
   },
   "Texthelp": {
@@ -1052,7 +1124,9 @@
     ],
     "description": "TextHelp is a literacy, accessibility and dyslexia software developer for people with reading and writing difficulties.",
     "icon": "Texthelp.svg",
-    "scriptSrc": "browsealoud\\.com/.*/browsealoud\\.js",
+    "scriptSrc": [
+      "browsealoud\\.com/.*/browsealoud\\.js"
+    ],
     "website": "https://www.texthelp.com/en-gb/products/browsealoud/"
   },
   "Textpattern CMS": {
@@ -1116,7 +1190,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/the-events-calendar(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/plugins/the-events-calendar(?:-pro)?/"
+    ],
     "website": "https://theeventscalendar.com"
   },
   "The Hotels Network": {
@@ -1138,7 +1214,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.thehotelsnetwork\\.com/",
+    "scriptSrc": [
+      "\\.thehotelsnetwork\\.com/"
+    ],
     "website": "https://thehotelsnetwork.com"
   },
   "The SEO Framework": {
@@ -1181,7 +1259,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/make(?:-child)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/make(?:-child)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://thethemefoundry.com/wordpress-themes/make"
   },
   "The.com": {
@@ -1201,7 +1281,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "the-dotcom-public-cdn\\.s3\\.amazonaws\\.com/",
+    "scriptSrc": [
+      "the-dotcom-public-cdn\\.s3\\.amazonaws\\.com/"
+    ],
     "website": "https://www.the.com"
   },
   "Theatre.js": {
@@ -1275,7 +1357,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/edge(?:-plus)?/",
+    "scriptSrc": [
+      "/wp-content/themes/edge(?:-plus)?/"
+    ],
     "website": "https://themefreesia.com/themes/edge"
   },
   "Theme Freesia Photograph": {
@@ -1291,7 +1375,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/photograph(?:-plus)?/",
+    "scriptSrc": [
+      "/wp-content/themes/photograph(?:-plus)?/"
+    ],
     "website": "https://themefreesia.com/themes/Photograph"
   },
   "Theme Freesia ShoppingCart": {
@@ -1310,7 +1396,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/shoppingcart(?:-plus)?/",
+    "scriptSrc": [
+      "/wp-content/themes/shoppingcart(?:-plus)?/"
+    ],
     "website": "https://themefreesia.com/themes/shoppingcart"
   },
   "Theme Horse Attitude": {
@@ -1327,7 +1415,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/attitude(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/attitude(?:-pro)?/"
+    ],
     "website": "https://www.themehorse.com/themes/attitude"
   },
   "Theme Horse NewsCard": {
@@ -1344,7 +1434,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/newscard(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/newscard(?:-pro)?/"
+    ],
     "website": "https://www.themehorse.com/themes/newscard"
   },
   "Theme Vision Agama": {
@@ -1364,7 +1456,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/agama(?:-pro)?/.+functions\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/agama(?:-pro)?/.+functions\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://theme-vision.com/agama"
   },
   "Theme4Press Evolve": {
@@ -1383,7 +1477,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/evolve(?:-plus)?/",
+    "scriptSrc": [
+      "/wp-content/themes/evolve(?:-plus)?/"
+    ],
     "website": "https://theme4press.com/evolve-multipurpose-wordpress-theme"
   },
   "ThemeGrill Accelerate": {
@@ -1402,7 +1498,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/accelerate(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/accelerate(?:-pro)?/"
+    ],
     "website": "https://themegrill.com/themes/accelerate"
   },
   "ThemeGrill Cenote": {
@@ -1421,7 +1519,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/cenote(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/cenote(?:-pro)?/"
+    ],
     "website": "https://themegrill.com/themes/cenote"
   },
   "ThemeGrill ColorMag": {
@@ -1440,7 +1540,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/colormag(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/colormag(?:-pro)?/"
+    ],
     "website": "https://themegrill.com/themes/colormag"
   },
   "ThemeGrill Flash": {
@@ -1459,7 +1561,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/flash(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/flash(?:-pro)?/"
+    ],
     "website": "https://themegrill.com/themes/flash"
   },
   "ThemeGrill Radiate": {
@@ -1481,7 +1585,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/radiate(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/radiate(?:-pro)?/"
+    ],
     "website": "https://themegrill.com/themes/radiate"
   },
   "ThemeGrill Spacious": {
@@ -1503,7 +1609,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/spacious(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/spacious(?:-pro)?/"
+    ],
     "website": "https://themegrill.com/themes/spacious"
   },
   "ThemeGrill eStore": {
@@ -1527,7 +1635,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/e(?:s|S)tore(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/e(?:s|S)tore(?:-pro)?/"
+    ],
     "website": "https://themegrill.com/themes/estore"
   },
   "ThemeIsle Menu Icons": {
@@ -1561,7 +1671,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/donovan/",
+    "scriptSrc": [
+      "/wp-content/themes/donovan/"
+    ],
     "website": "https://themezee.com/themes/donovan"
   },
   "ThemeZee Poseidon": {
@@ -1582,7 +1694,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/poseidon/",
+    "scriptSrc": [
+      "/wp-content/themes/poseidon/"
+    ],
     "website": "https://themezee.com/themes/poseidon"
   },
   "ThemeZee Wellington": {
@@ -1603,7 +1717,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/wellington/",
+    "scriptSrc": [
+      "/wp-content/themes/wellington/"
+    ],
     "website": "https://themezee.com/themes/wellington"
   },
   "Themeansar Newsberg": {
@@ -1638,7 +1754,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/newsup(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/newsup(?:-pro)?/"
+    ],
     "website": "https://themeansar.com/free-themes/newsup"
   },
   "Themebeez Cream Magazine": {
@@ -1675,7 +1793,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/orchid-store(?:-child)?/.+bundle\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/orchid-store(?:-child)?/.+bundle\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://themebeez.com/themes/orchid-store"
   },
   "Themegraphy Graphy": {
@@ -1691,7 +1811,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/graphy(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/graphy(?:-pro)?/"
+    ],
     "website": "https://themegraphy.com/wordpress-themes/graphy"
   },
   "Themes4Wp Bulk": {
@@ -1707,7 +1829,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/bulk(?:-pro)?/.+customscript\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/bulk(?:-pro)?/.+customscript\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://themes4wp.com/theme/bulk"
   },
   "ThemezHut Bam": {
@@ -1723,7 +1847,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/bam(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/bam(?:-pro)?/"
+    ],
     "website": "https://themezhut.com/themes/bam"
   },
   "ThemezHut HitMag": {
@@ -1739,7 +1865,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/hitmag(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/hitmag(?:-pro)?/"
+    ],
     "website": "https://themezhut.com/themes/hitmag"
   },
   "Themonic Iconic One": {
@@ -1756,7 +1884,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/iconic-one(?:-[\\w]+)?/",
+    "scriptSrc": [
+      "/wp-content/themes/iconic-one(?:-[\\w]+)?/"
+    ],
     "website": "https://themonic.com/iconic-one"
   },
   "Thesis": {
@@ -1773,7 +1903,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "thix\\.ttsep\\.com/",
+    "scriptSrc": [
+      "thix\\.ttsep\\.com/"
+    ],
     "website": "https://www.thesistesting.com"
   },
   "ThimPress Course Review": {
@@ -1838,7 +1970,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/learnpress/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/learnpress/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/learnpress"
   },
   "Thimatic": {
@@ -1853,7 +1987,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "thimatic-apps\\.com/product_review/.*?v=([\\d.]+)\\;version:\\1",
+    "scriptSrc": [
+      "thimatic-apps\\.com/product_review/.*?v=([\\d.]+)\\;version:\\1"
+    ],
     "website": "https://thimatic-apps.com/"
   },
   "Think Up Themes Consulting": {
@@ -1870,7 +2006,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/consulting(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/consulting(?:-pro)?/"
+    ],
     "website": "https://www.thinkupthemes.com/themes/consulting"
   },
   "Think Up Themes Minamaze": {
@@ -1887,7 +2025,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/minamaze(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/minamaze(?:-pro)?/"
+    ],
     "website": "https://www.thinkupthemes.com/themes/minamaze"
   },
   "ThinkPHP": {
@@ -1927,7 +2067,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn(?:-themes)?\\.thinkific\\.com",
+    "scriptSrc": [
+      "cdn(?:-themes)?\\.thinkific\\.com"
+    ],
     "website": "https://www.thinkific.com"
   },
   "ThreatMetrix": {
@@ -1941,7 +2083,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.online-metrix\\.net",
+    "scriptSrc": [
+      "\\.online-metrix\\.net"
+    ],
     "website": "https://risk.lexisnexis.com/products/threatmetrix"
   },
   "Three.js": {
@@ -1956,7 +2100,9 @@
       "__THREE__": "^(.+)$\\;version:\\1"
     },
     "oss": true,
-    "scriptSrc": "three(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "three(?:\\.min)?\\.js"
+    ],
     "website": "https://threejs.org"
   },
   "Threekit": {
@@ -1993,7 +2139,9 @@
       "WordPress"
     ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/thrive-apprentice/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/thrive-apprentice/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://thrivethemes.com/apprentice/"
   },
   "Thrive Architect": {
@@ -2012,7 +2160,9 @@
       "WordPress"
     ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/thrive-visual-editor/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/thrive-visual-editor/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://thrivethemes.com/architect/"
   },
   "Thrive Comments": {
@@ -2030,7 +2180,9 @@
       "WordPress"
     ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/thrive-comments/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/thrive-comments/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://thrivethemes.com/comments/"
   },
   "Thrive Leads": {
@@ -2048,7 +2200,9 @@
       "WordPress"
     ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/thrive-leads/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/thrive-leads/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://thrivethemes.com/leads/"
   },
   "Thrive Quiz Builder": {
@@ -2066,7 +2220,9 @@
       "WordPress"
     ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/thrive-quiz-builder/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/thrive-quiz-builder/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://thrivethemes.com/quizbuilder"
   },
   "Thrive Ultimatum": {
@@ -2084,7 +2240,9 @@
       "WordPress"
     ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/thrive-ultimatum/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/thrive-ultimatum/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://thrivethemes.com/ultimatum/"
   },
   "ThriveCart": {
@@ -2101,7 +2259,9 @@
       "onetime"
     ],
     "saas": true,
-    "scriptSrc": "thrivecart\\.js",
+    "scriptSrc": [
+      "thrivecart\\.js"
+    ],
     "website": "https://thrivecart.com"
   },
   "Ticimax": {
@@ -2162,7 +2322,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "code\\.tidio\\.co",
+    "scriptSrc": [
+      "code\\.tidio\\.co"
+    ],
     "website": "https://www.tidio.com"
   },
   "Tiendanube": {
@@ -2192,7 +2354,9 @@
       "recurring",
       "freemium"
     ],
-    "scriptSrc": "(?://|\\.)tiiny\\.(?:host|site)/",
+    "scriptSrc": [
+      "(?://|\\.)tiiny\\.(?:host|site)/"
+    ],
     "website": "https://tiiny.host"
   },
   "TikTok Pixel": {
@@ -2211,7 +2375,9 @@
       "TiktokAnalyticsObject": ""
     },
     "website": "https://ads.tiktok.com",
-    "xhr": "analytics\\.tiktok\\.com"
+    "xhr": [
+      "analytics\\.tiktok\\.com"
+    ]
   },
   "Tiki Wiki CMS Groupware": {
     "cats": [
@@ -2226,7 +2392,9 @@
     "meta": {
       "generator": "^Tiki"
     },
-    "scriptSrc": "(?:/|_)tiki",
+    "scriptSrc": [
+      "(?:/|_)tiki"
+    ],
     "website": "https://tiki.org"
   },
   "Tiktak Pro": {
@@ -2259,7 +2427,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "tilda(?:cdn|\\.ws|-blocks)",
+    "scriptSrc": [
+      "tilda(?:cdn|\\.ws|-blocks)"
+    ],
     "website": "https://tilda.cc"
   },
   "Tiledesk": {
@@ -2292,7 +2462,9 @@
     "js": {
       "Timeplot": ""
     },
-    "scriptSrc": "timeplot.*\\.js",
+    "scriptSrc": [
+      "timeplot.*\\.js"
+    ],
     "website": "https://www.simile-widgets.org/timeplot/"
   },
   "Timify": {
@@ -2309,7 +2481,9 @@
       "freemium",
       "recurring"
     ],
-    "scriptSrc": "\\.timify\\.com/",
+    "scriptSrc": [
+      "\\.timify\\.com/"
+    ],
     "website": "https://www.timify.com"
   },
   "Tiny Slider": {
@@ -2319,7 +2493,9 @@
     "description": "Tiny Slider is a vanilla javascript slider for all purposes.",
     "icon": "default.svg",
     "oss": true,
-    "scriptSrc": "(?:/([\\d\\.]+)/min/)?tiny-slider(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:/([\\d\\.]+)/min/)?tiny-slider(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://github.com/ganlanyuan/tiny-slider"
   },
   "TinyMCE": {
@@ -2333,7 +2509,9 @@
       "tinyMCE.majorVersion": "([\\d.]+)\\;version:\\1",
       "tinymce": ""
     },
-    "scriptSrc": "/tiny_?mce(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "/tiny_?mce(?:\\.min)?\\.js"
+    ],
     "website": "https://www.tiny.cloud/tinymce/"
   },
   "Tinybird": {
@@ -2362,7 +2540,9 @@
     ],
     "description": "A library for manipulating a websites favicon.",
     "oss": true,
-    "scriptSrc": "tinycon(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "tinycon(?:\\.min)?\\.js"
+    ],
     "website": "https://github.com/tommoor/tinycon"
   },
   "Tippy.js": {
@@ -2376,7 +2556,9 @@
       "tippy.defaultProps": ""
     },
     "oss": true,
-    "scriptSrc": "/tippy\\.js(?:@|/)?([\\d\\.]+)?\\;version:\\1",
+    "scriptSrc": [
+      "/tippy\\.js(?:@|/)?([\\d\\.]+)?\\;version:\\1"
+    ],
     "website": "https://atomiks.github.io/tippyjs"
   },
   "Tipsa": {
@@ -2385,7 +2567,9 @@
     ],
     "description": "TIPSA is a parcel delivery company in Spain, Portugal and Andorra.",
     "icon": "Tipsa.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bTipsa\\b"
     ],
@@ -2447,7 +2631,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.tolt\\.io/",
+    "scriptSrc": [
+      "\\.tolt\\.io/"
+    ],
     "website": "https://tolt.io"
   },
   "TomTom Maps": {
@@ -2460,9 +2646,13 @@
       "tomtom.Map": ""
     },
     "saas": true,
-    "scriptSrc": "api\\.tomtom\\.com",
+    "scriptSrc": [
+      "api\\.tomtom\\.com"
+    ],
     "website": "https://www.tomtom.com",
-    "xhr": "api\\.tomtom\\.com"
+    "xhr": [
+      "api\\.tomtom\\.com"
+    ]
   },
   "TomatoCart": {
     "cats": [
@@ -2594,7 +2784,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "track123\\.com\\/common\\/checkout-script-loader\\.js",
+    "scriptSrc": [
+      "track123\\.com\\/common\\/checkout-script-loader\\.js"
+    ],
     "website": "https://www.track123.com"
   },
   "TrackJs": {
@@ -2607,7 +2799,9 @@
       "TrackJs": "",
       "trackJs": ""
     },
-    "scriptSrc": "cdn\\.trackjs\\.com",
+    "scriptSrc": [
+      "cdn\\.trackjs\\.com"
+    ],
     "website": "https://trackjs.com"
   },
   "Trackify X": {
@@ -2625,7 +2819,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "trackifyx\\.redretarget\\.com/",
+    "scriptSrc": [
+      "trackifyx\\.redretarget\\.com/"
+    ],
     "website": "https://trackifyapp.com"
   },
   "Tradedoubler": {
@@ -2642,7 +2838,9 @@
       }
     },
     "icon": "Tradedoubler.svg",
-    "scriptSrc": "swrap\\.tradedoubler\\.com",
+    "scriptSrc": [
+      "swrap\\.tradedoubler\\.com"
+    ],
     "website": "https://www.tradedoubler.com/"
   },
   "TradingView": {
@@ -2686,7 +2884,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.tsyndicate\\.com/",
+    "scriptSrc": [
+      "\\.tsyndicate\\.com/"
+    ],
     "website": "https://trafficstars.com"
   },
   "Transcend": {
@@ -2761,7 +2961,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/google-language-translator/.+scripts\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/google-language-translator/.+scripts\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://gtranslate.io"
   },
   "Transmart": {
@@ -2769,7 +2971,9 @@
       99
     ],
     "description": "Transmart is a shipping company in Turkey.",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bTransmart\\b"
     ],
@@ -2786,7 +2990,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "tcdn\\.com\\.br",
+    "scriptSrc": [
+      "tcdn\\.com\\.br"
+    ],
     "website": "https://www.tray.com.br"
   },
   "Trbo": {
@@ -2809,7 +3015,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.trbo\\.com",
+    "scriptSrc": [
+      "\\.trbo\\.com"
+    ],
     "website": "https://www.trbo.com"
   },
   "Treasure Data": {
@@ -2826,7 +3034,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.treasuredata\\.com/",
+    "scriptSrc": [
+      "cdn\\.treasuredata\\.com/"
+    ],
     "website": "https://www.treasuredata.com"
   },
   "Trengo": {
@@ -2843,7 +3053,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.widget\\.trengo\\.eu/",
+    "scriptSrc": [
+      "\\.widget\\.trengo\\.eu/"
+    ],
     "website": "https://trengo.com"
   },
   "Triggerbee": {
@@ -2861,7 +3073,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "t\\.myvisitors\\.se",
+    "scriptSrc": [
+      "t\\.myvisitors\\.se"
+    ],
     "website": "https://triggerbee.com"
   },
   "Trinity Audio": {
@@ -2880,7 +3094,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "//trinitymedia\\.ai/",
+    "scriptSrc": [
+      "//trinitymedia\\.ai/"
+    ],
     "website": "https://www.trinityaudio.ai"
   },
   "Tripadviser.Widget": {
@@ -2889,7 +3105,9 @@
     ],
     "description": "Tripadvisor embed reviews widget.",
     "icon": "Tripadviser.Widget.svg",
-    "scriptSrc": "tripadvisor\\.[\\w]+/WidgetEmbed",
+    "scriptSrc": [
+      "tripadvisor\\.[\\w]+/WidgetEmbed"
+    ],
     "website": "https://www.tripadvisor.com/Widgets"
   },
   "Triple Whale": {
@@ -2904,7 +3122,9 @@
     ],
     "saas": true,
     "website": "https://triplewhale.com/",
-    "xhr": "triplewhale-pixel\\.web\\.app"
+    "xhr": [
+      "triplewhale-pixel\\.web\\.app"
+    ]
   },
   "TripleLift": {
     "cats": [
@@ -2925,7 +3145,9 @@
     ],
     "saas": true,
     "website": "https://triplelift.com",
-    "xhr": "\\.3lift\\.com"
+    "xhr": [
+      "\\.3lift\\.com"
+    ]
   },
   "Tritac Katana Commerce": {
     "cats": [
@@ -2969,7 +3191,9 @@
     "icon": "trove.png",
     "saas": true,
     "website": "https://trove.co",
-    "xhr": "reware-production\\.yerdlesite\\.com"
+    "xhr": [
+      "reware-production\\.yerdlesite\\.com"
+    ]
   },
   "TruValidate": {
     "cats": [
@@ -2999,7 +3223,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.truefitcorp\\.com/(?:.+/([\\d\\.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "cdn\\.truefitcorp\\.com/(?:.+/([\\d\\.]+))?\\;version:\\1"
+    ],
     "website": "https://www.truefit.com"
   },
   "TrueCommerce": {
@@ -3008,7 +3234,9 @@
     ],
     "description": "TrueCommerce is an eCommerce platform.",
     "icon": "Truecommerce.svg",
-    "scriptSrc": "cdn\\.nexternal\\.com/",
+    "scriptSrc": [
+      "cdn\\.nexternal\\.com/"
+    ],
     "website": "https://www.truecommerce.com"
   },
   "Truepush": {
@@ -3048,7 +3276,9 @@
     ],
     "description": "Trunkrs is a Dutch parcel delivery service.",
     "icon": "Trunkrs.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bTrunkrs\\b"
     ],
@@ -3060,7 +3290,9 @@
     ],
     "description": "TrustArc provides software and services to help corporations update their privacy management processes so they comply with government laws and best practices.",
     "icon": "TrustArc.svg",
-    "scriptSrc": "consent\\.trustarc\\.com",
+    "scriptSrc": [
+      "consent\\.trustarc\\.com"
+    ],
     "website": "https://trustarc.com"
   },
   "TrustYou": {
@@ -3090,7 +3322,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "widgets\\.trustedshops\\.com/",
+    "scriptSrc": [
+      "widgets\\.trustedshops\\.com/"
+    ],
     "website": "https://www.trustedshops.co.uk"
   },
   "Trustindex": {
@@ -3125,7 +3359,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.trustpilot\\.com",
+    "scriptSrc": [
+      "\\.trustpilot\\.com"
+    ],
     "website": "https://business.trustpilot.com"
   },
   "Trustspot": {
@@ -3138,7 +3374,9 @@
       "trustspot_key": ""
     },
     "saas": true,
-    "scriptSrc": "trustspot\\.io",
+    "scriptSrc": [
+      "trustspot\\.io"
+    ],
     "website": "https://trustspot.io/"
   },
   "Trustvox": {
@@ -3175,7 +3413,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.trynow\\.net/shopify/([\\d\\.]+)/\\;version:\\1",
+    "scriptSrc": [
+      "\\.trynow\\.net/shopify/([\\d\\.]+)/\\;version:\\1"
+    ],
     "website": "https://www.trynow.io"
   },
   "Tumblr": {
@@ -3190,7 +3430,9 @@
       "<iframe src=\"[^>]+tumblr\\.com"
     ],
     "icon": "Tumblr.png",
-    "url": "^https?://(?:www\\.)?[^/]+\\.tumblr\\.com/",
+    "url": [
+      "^https?://(?:www\\.)?[^/]+\\.tumblr\\.com/"
+    ],
     "website": "https://www.tumblr.com"
   },
   "Turbo": {
@@ -3214,7 +3456,9 @@
       "Turbolinks": ""
     },
     "oss": true,
-    "scriptSrc": "turolinks\\.js",
+    "scriptSrc": [
+      "turolinks\\.js"
+    ],
     "website": "https://github.com/turbolinks/turbolinks"
   },
   "TurfJS": {
@@ -3228,7 +3472,9 @@
       "turf.point": "",
       "turf.random": ""
     },
-    "scriptSrc": "(turf@[\\d.]+)?/?turf\\.min\\.js",
+    "scriptSrc": [
+      "(turf@[\\d.]+)?/?turf\\.min\\.js"
+    ],
     "website": "https://turfjs.org/"
   },
   "Twenty Eleven": {
@@ -3259,7 +3505,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/twentyfifteen/",
+    "scriptSrc": [
+      "/wp-content/themes/twentyfifteen/"
+    ],
     "website": "https://wordpress.org/themes/twentyfifteen"
   },
   "Twenty Fourteen": {
@@ -3275,7 +3523,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/twentyfourteen/",
+    "scriptSrc": [
+      "/wp-content/themes/twentyfourteen/"
+    ],
     "website": "https://wordpress.org/themes/twentyfourteen"
   },
   "Twenty Nineteen": {
@@ -3291,7 +3541,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/twentynineteen/",
+    "scriptSrc": [
+      "/wp-content/themes/twentynineteen/"
+    ],
     "website": "https://wordpress.org/themes/twentynineteen"
   },
   "Twenty Seventeen": {
@@ -3310,7 +3562,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/twentyseventeen/",
+    "scriptSrc": [
+      "/wp-content/themes/twentyseventeen/"
+    ],
     "website": "https://wordpress.org/themes/twentyseventeen"
   },
   "Twenty Sixteen": {
@@ -3326,7 +3580,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/twentysixteen/",
+    "scriptSrc": [
+      "/wp-content/themes/twentysixteen/"
+    ],
     "website": "https://wordpress.org/themes/twentysixteen"
   },
   "Twenty Ten": {
@@ -3342,7 +3598,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/twentyten/",
+    "scriptSrc": [
+      "/wp-content/themes/twentyten/"
+    ],
     "website": "https://wordpress.org/themes/twentyten"
   },
   "Twenty Thirteen": {
@@ -3358,7 +3616,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/twentythirteen/",
+    "scriptSrc": [
+      "/wp-content/themes/twentythirteen/"
+    ],
     "website": "https://wordpress.org/themes/twentythirteen"
   },
   "Twenty Twelve": {
@@ -3374,7 +3634,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/twentytwelve/",
+    "scriptSrc": [
+      "/wp-content/themes/twentytwelve/"
+    ],
     "website": "https://wordpress.org/themes/twentytwelve"
   },
   "Twenty Twenty": {
@@ -3393,7 +3655,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/twentytwenty/",
+    "scriptSrc": [
+      "/wp-content/themes/twentytwenty/"
+    ],
     "website": "https://wordpress.org/themes/twentytwenty"
   },
   "Twenty Twenty-One": {
@@ -3413,7 +3677,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/twentytwentyone/",
+    "scriptSrc": [
+      "/wp-content/themes/twentytwentyone/"
+    ],
     "website": "https://wordpress.org/themes/twentytwentyone"
   },
   "Twenty Twenty-Three": {
@@ -3494,7 +3760,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": ".+\\.twic\\.pics",
+    "scriptSrc": [
+      ".+\\.twic\\.pics"
+    ],
     "website": "https://www.twicpics.com"
   },
   "Twik": {
@@ -3513,7 +3781,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.twik\\.io",
+    "scriptSrc": [
+      "cdn\\.twik\\.io"
+    ],
     "website": "https://www.twik.io/"
   },
   "Twikoo": {
@@ -3526,7 +3796,9 @@
       "twikoo.version": "^([\\d\\.]+)$\\;version:\\1"
     },
     "oss": true,
-    "scriptSrc": "/twikoo/dist/twikoo\\.all\\.min\\.js",
+    "scriptSrc": [
+      "/twikoo/dist/twikoo\\.all\\.min\\.js"
+    ],
     "website": "https://twikoo.js.org"
   },
   "Twilight CMS": {
@@ -3592,7 +3864,9 @@
     ],
     "description": "Twitter is a 'microblogging' system that allows you to send and receive short posts called tweets.",
     "icon": "Twitter.svg",
-    "scriptSrc": "//platform\\.twitter\\.com/widgets\\.js",
+    "scriptSrc": [
+      "//platform\\.twitter\\.com/widgets\\.js"
+    ],
     "website": "https://twitter.com"
   },
   "Twitter Ads": {
@@ -3608,7 +3882,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "static\\.ads-twitter\\.com/uwt\\.js",
+    "scriptSrc": [
+      "static\\.ads-twitter\\.com/uwt\\.js"
+    ],
     "website": "https://ads.twitter.com"
   },
   "Twitter Analytics": {
@@ -3621,7 +3897,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "analytics\\.twitter\\.com",
+    "scriptSrc": [
+      "analytics\\.twitter\\.com"
+    ],
     "website": "https://analytics.twitter.com"
   },
   "Twitter Emoji (Twemoji)": {
@@ -3634,7 +3912,9 @@
       "twemoji.base": "twemoji\\.maxcdn\\.com/v/([\\d\\.]+)/\\;version:\\1"
     },
     "oss": true,
-    "scriptSrc": "twemoji(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "twemoji(?:\\.min)?\\.js"
+    ],
     "website": "https://twitter.github.io/twemoji/"
   },
   "Twitter Flight": {
@@ -3661,7 +3941,9 @@
     "js": {
       "typeahead": ""
     },
-    "scriptSrc": "(?:typeahead|bloodhound)\\.(?:jquery|bundle)?(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "(?:typeahead|bloodhound)\\.(?:jquery|bundle)?(?:\\.min)?\\.js"
+    ],
     "website": "https://twitter.github.io/typeahead.js"
   },
   "TypeDoc": {
@@ -3685,7 +3967,9 @@
     "meta": {
       "generator": "typepad"
     },
-    "url": "typepad\\.com",
+    "url": [
+      "typepad\\.com"
+    ],
     "website": "https://www.typepad.com"
   },
   "TypeScript": {
@@ -3712,7 +3996,9 @@
     "meta": {
       "generator": "Typecho( [\\d.]+)?\\;version:\\1"
     },
-    "url": "/admin/login\\.php?referer=http%3A%2F%2F",
+    "url": [
+      "/admin/login\\.php?referer=http%3A%2F%2F"
+    ],
     "website": "https://typecho.org/"
   },
   "Typed.js": {
@@ -3721,7 +4007,9 @@
     ],
     "description": "Typed.js is a library that types. It is designed to create typewriter-style animations with ease.",
     "oss": true,
-    "scriptSrc": "typed(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "typed(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://mattboldt.com/demos/typed-js/"
   },
   "Typeform": {
@@ -3740,7 +4028,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "embed\\.typeform\\.com/",
+    "scriptSrc": [
+      "embed\\.typeform\\.com/"
+    ],
     "website": "https://www.typeform.com"
   },
   "Typekit": {
@@ -3760,7 +4050,9 @@
       "freemium",
       "recurring"
     ],
-    "scriptSrc": "use\\.typekit\\.com",
+    "scriptSrc": [
+      "use\\.typekit\\.com"
+    ],
     "website": "https://typekit.com"
   },
   "Typof": {
@@ -3778,7 +4070,9 @@
       "low"
     ],
     "saas": true,
-    "scriptSrc": "portal/js/typof\\.js\\;confidence:50",
+    "scriptSrc": [
+      "portal/js/typof\\.js\\;confidence:50"
+    ],
     "website": "https://typof.com"
   },
   "Tyslo EasySell": {
@@ -3825,9 +4119,13 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.adsrvr\\.org/",
+    "scriptSrc": [
+      "\\.adsrvr\\.org/"
+    ],
     "website": "https://www.thetradedesk.com",
-    "xhr": "adsvr\\.org"
+    "xhr": [
+      "adsvr\\.org"
+    ]
   },
   "thttpd": {
     "cats": [
@@ -3849,7 +4147,9 @@
       "timeago": ""
     },
     "oss": true,
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?(?:jquery\\.)?[Tt]imeago(?:_mkdocs_material)?(?:\\.full)?(?:\\.locales)?(?:\\.native)?(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/)?(?:jquery\\.)?[Tt]imeago(?:_mkdocs_material)?(?:\\.full)?(?:\\.locales)?(?:\\.native)?(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://timeago.yarp.com/"
   },
   "toastr": {

@@ -56,7 +56,9 @@
       "mdb.ScrollSpy": ""
     },
     "oss": true,
-    "scriptSrc": "(?:/mdbootstrap/([\\d\\.]+)/)?js/mdb\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:/mdbootstrap/([\\d\\.]+)/)?js/mdb\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://mdbootstrap.com"
   },
   "MDBootstrap WP theme": {
@@ -122,7 +124,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.mgid\\.com/",
+    "scriptSrc": [
+      "\\.mgid\\.com/"
+    ],
     "website": "https://www.mgid.com"
   },
   "MGPanel": {
@@ -141,7 +145,9 @@
       "PHP"
     ],
     "saas": true,
-    "scriptSrc": "\\.mgpanel\\.org/",
+    "scriptSrc": [
+      "\\.mgpanel\\.org/"
+    ],
     "website": "https://mgpanel.org"
   },
   "MIYN Online Appointment": {
@@ -192,7 +198,9 @@
       "low"
     ],
     "saas": true,
-    "scriptSrc": "/assets/components/templates/\\;confidence:50",
+    "scriptSrc": [
+      "/assets/components/templates/\\;confidence:50"
+    ],
     "website": "https://modx.com/content-management-framework"
   },
   "Morphext": {
@@ -203,7 +211,9 @@
     "description": "A simple, high-performance and cross-browser jQuery rotating / carousel plugin for text phrases powered by Animate.css.",
     "icon": "Morphext.svg",
     "oss": true,
-    "scriptSrc": "morphext(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "morphext(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://morphext.fyianlai.com/"
   },
   "Morris.js": {
@@ -216,7 +226,9 @@
       "jQuery",
       "Raphael"
     ],
-    "scriptSrc": "morris(?:\\/(?:area|bar|donut|grid|hover|line))?(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "morris(?:\\/(?:area|bar|donut|grid|hover|line))?(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://morrisjs.github.io/morris.js/"
   },
   "Moxie": {
@@ -237,7 +249,9 @@
     ],
     "description": "MRW is a Spanish courier company specialised in express national and international shipping services.",
     "icon": "MRW.png",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bMRW\\b"
     ],
@@ -254,7 +268,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "static\\.hotishop\\.com/",
+    "scriptSrc": [
+      "static\\.hotishop\\.com/"
+    ],
     "website": "https://hotishop.com"
   },
   "MTCaptcha": {
@@ -273,7 +289,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "service(?:2)?\\.mtcaptcha\\.com/",
+    "scriptSrc": [
+      "service(?:2)?\\.mtcaptcha\\.com/"
+    ],
     "website": "https://www.mtcaptcha.com"
   },
   "MUI": {
@@ -322,7 +340,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/Newsmag(?:-child)?/",
+    "scriptSrc": [
+      "/wp-content/themes/Newsmag(?:-child)?/"
+    ],
     "website": "https://www.machothemes.com/item/newsmag-lite"
   },
   "MadAdsMedia": {
@@ -334,7 +354,9 @@
       "setMIframe": "",
       "setMRefURL": ""
     },
-    "scriptSrc": "^https?://(?:ads-by|pixel)\\.madadsmedia\\.com/",
+    "scriptSrc": [
+      "^https?://(?:ads-by|pixel)\\.madadsmedia\\.com/"
+    ],
     "website": "https://madadsmedia.com"
   },
   "MadCap Software": {
@@ -381,7 +403,9 @@
     "requires": [
       "Magento"
     ],
-    "scriptSrc": "MageWorx_SearchSuiteAutocomplete",
+    "scriptSrc": [
+      "MageWorx_SearchSuiteAutocomplete"
+    ],
     "website": "https://github.com/mageworx/search-suite-autocomplete"
   },
   "Magento": {
@@ -457,7 +481,9 @@
       "low",
       "recurring"
     ],
-    "scriptSrc": "\\.magisto\\.com/",
+    "scriptSrc": [
+      "\\.magisto\\.com/"
+    ],
     "website": "https://www.magisto.com"
   },
   "Magixite": {
@@ -472,7 +498,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "acc\\.magixite\\.com/",
+    "scriptSrc": [
+      "acc\\.magixite\\.com/"
+    ],
     "website": "https://acc.magixite.com"
   },
   "Magnific Popup": {
@@ -482,7 +510,9 @@
     "description": "Magnific Popup is a responsive lightbox & dialog script with focus on performance and providing best experience for user with any device.",
     "icon": "Magnific Popup.png",
     "oss": true,
-    "scriptSrc": "magnific-popup(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "magnific-popup(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://dimsemenov.com/plugins/magnific-popup/"
   },
   "MailChimp": {
@@ -514,7 +544,9 @@
       "cdn-images\\.mailchimp\\.com/[^>]*\\.css",
       "chimpstatic\\.com/mcjs-connected"
     ],
-    "url": "^https?://(?:www\\.)?mailchi\\.mp",
+    "url": [
+      "^https?://(?:www\\.)?mailchi\\.mp"
+    ],
     "website": "https://mailchimp.com"
   },
   "MailChimp for WooCommerce": {
@@ -532,7 +564,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/mailchimp-for-woocommerce/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/mailchimp-for-woocommerce/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://mailchimp.com/integrations/woocommerce"
   },
   "MailChimp for WordPress": {
@@ -557,7 +591,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/mailchimp-for-wp/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/mailchimp-for-wp/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://www.mc4wp.com"
   },
   "MailOptin": {
@@ -578,7 +614,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "mailoptin(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "mailoptin(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://mailoptin.io/"
   },
   "Mailcheck": {
@@ -588,7 +626,9 @@
     "description": "Mailcheck is a JavaScript library designed to address the issue of misspelled email addresses during user input.",
     "icon": "Mailcheck.png",
     "oss": true,
-    "scriptSrc": "mailcheck(?:\\.min)?\\.js(?:\\?v(?:er)?=(\\d+\\.\\d+\\.\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "mailcheck(?:\\.min)?\\.js(?:\\?v(?:er)?=(\\d+\\.\\d+\\.\\d+))?\\;version:\\1"
+    ],
     "website": "https://github.com/mailcheck/mailcheck"
   },
   "MailerLite": {
@@ -607,7 +647,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.mailerlite\\.com/",
+    "scriptSrc": [
+      "\\.mailerlite\\.com/"
+    ],
     "website": "https://www.mailerlite.com"
   },
   "MailerLite Website Builder": {
@@ -625,7 +667,9 @@
       "Caddy"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.mailerlite\\.com/moment/moment\\.min\\.js",
+    "scriptSrc": [
+      "cdn\\.mailerlite\\.com/moment/moment\\.min\\.js"
+    ],
     "website": "https://www.mailerlite.com/features/website-builder"
   },
   "MailerLite plugin": {
@@ -640,7 +684,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/woo-mailerlite/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/woo-mailerlite/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://ru.wordpress.org/plugins/official-mailerlite-sign-up-forms/"
   },
   "Mailgun": {
@@ -713,7 +759,9 @@
     "dom": "iframe[src*='.mainadv.com/']",
     "icon": "MainAd.svg",
     "saas": true,
-    "scriptSrc": "\\.mainadv\\.com/",
+    "scriptSrc": [
+      "\\.mainadv\\.com/"
+    ],
     "website": "https://www.mainad.com"
   },
   "Make-Sense": {
@@ -721,7 +769,9 @@
       68
     ],
     "icon": "Make-Sense.png",
-    "scriptSrc": "mk-sense\\.com/aweb\\?license",
+    "scriptSrc": [
+      "mk-sense\\.com/aweb\\?license"
+    ],
     "website": "https://mk-sense.com/"
   },
   "MakeShop": {
@@ -769,7 +819,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.gomalomo\\.com/",
+    "scriptSrc": [
+      "\\.gomalomo\\.com/"
+    ],
     "website": "https://gomalomo.com"
   },
   "Mambo": {
@@ -841,7 +893,9 @@
     "js": {
       "mcwidget": ""
     },
-    "scriptSrc": "widget\\.manychat\\.com",
+    "scriptSrc": [
+      "widget\\.manychat\\.com"
+    ],
     "website": "https://manychat.com/"
   },
   "ManyContacts": {
@@ -855,7 +909,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.manycontacts\\.com",
+    "scriptSrc": [
+      "\\.manycontacts\\.com"
+    ],
     "website": "https://www.manycontacts.com"
   },
   "MapLibre GL JS": {
@@ -870,7 +926,9 @@
       "rmap2.maplibreglCompare": ""
     },
     "oss": true,
-    "scriptSrc": "maplibre-gl@([\\d\\.]+)/dist/maplibre-gl\\.js\\;version:\\1",
+    "scriptSrc": [
+      "maplibre-gl@([\\d\\.]+)/dist/maplibre-gl\\.js\\;version:\\1"
+    ],
     "website": "https://github.com/maplibre/maplibre-gl-js"
   },
   "MapPress": {
@@ -902,7 +960,9 @@
       "mapboxgl.version": "^(.+)$\\;version:\\1\\;confidence:0"
     },
     "oss": true,
-    "scriptSrc": "mapbox-gl\\.js",
+    "scriptSrc": [
+      "mapbox-gl\\.js"
+    ],
     "website": "https://github.com/mapbox/mapbox-gl-js"
   },
   "Mapbox.js": {
@@ -916,8 +976,12 @@
       "Leaflet"
     ],
     "oss": true,
-    "scriptSrc": "api\\.mapbox\\.com/mapbox\\.js/v([\\d\\.]+)/\\;version:\\1",
-    "scripts": "api\\.mapbox\\.com/mapbox\\.js/v([\\d\\.]+)/\\;version:\\1",
+    "scriptSrc": [
+      "api\\.mapbox\\.com/mapbox\\.js/v([\\d\\.]+)/\\;version:\\1"
+    ],
+    "scripts": [
+      "api\\.mapbox\\.com/mapbox\\.js/v([\\d\\.]+)/\\;version:\\1"
+    ],
     "website": "https://github.com/mapbox/mapbox.js"
   },
   "Mapp": {
@@ -989,7 +1053,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.marchex\\.io/",
+    "scriptSrc": [
+      "\\.marchex\\.io/"
+    ],
     "website": "https://www.marchex.com"
   },
   "Marfeel": {
@@ -1036,7 +1102,9 @@
       "Marionette": "",
       "Marionette.VERSION": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "backbone\\.marionette.*\\.js",
+    "scriptSrc": [
+      "backbone\\.marionette.*\\.js"
+    ],
     "website": "https://marionettejs.com"
   },
   "Marked": {
@@ -1048,7 +1116,9 @@
     "js": {
       "marked": ""
     },
-    "scriptSrc": "/marked(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "/marked(?:\\.min)?\\.js"
+    ],
     "website": "https://marked.js.org"
   },
   "Marker": {
@@ -1065,7 +1135,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "edge\\.marker\\.io",
+    "scriptSrc": [
+      "edge\\.marker\\.io"
+    ],
     "website": "https://marker.io"
   },
   "Marketo": {
@@ -1081,7 +1153,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "munchkin\\.marketo\\.\\w+/(?:([\\d.]+)/)?munchkin\\.js\\;version:\\1",
+    "scriptSrc": [
+      "munchkin\\.marketo\\.\\w+/(?:([\\d.]+)/)?munchkin\\.js\\;version:\\1"
+    ],
     "website": "https://www.marketo.com"
   },
   "Marketo Forms": {
@@ -1142,7 +1216,9 @@
       "markoVars": ""
     },
     "oss": true,
-    "scripts": "\\.marko(\\.js)?",
+    "scripts": [
+      "\\.marko(\\.js)?"
+    ],
     "website": "https://markojs.com"
   },
   "Master Slider": {
@@ -1226,7 +1302,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.mapp\\.sa/",
+    "scriptSrc": [
+      "cdn\\.mapp\\.sa/"
+    ],
     "website": "https://mapp.sa"
   },
   "Material Design Lite": {
@@ -1241,7 +1319,9 @@
     "js": {
       "MaterialIconToggle": ""
     },
-    "scriptSrc": "(?:/([\\d.]+))?/material(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:/([\\d.]+))?/material(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://getmdl.io"
   },
   "Materialize CSS": {
@@ -1252,7 +1332,9 @@
     "dom": "link[href*='/materialize.min.css']",
     "icon": "Materialize CSS.svg",
     "oss": true,
-    "scriptSrc": "([\\d\\.]+)/.*/materialize\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "([\\d\\.]+)/.*/materialize\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://materializecss.com"
   },
   "MathJax": {
@@ -1265,7 +1347,9 @@
       "MathJax": "",
       "MathJax.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "([\\d.]+)?/mathjax\\.js\\;version:\\1",
+    "scriptSrc": [
+      "([\\d.]+)?/mathjax\\.js\\;version:\\1"
+    ],
     "website": "https://www.mathjax.org"
   },
   "Matomo Analytics": {
@@ -1293,7 +1377,9 @@
       "freemium",
       "payg"
     ],
-    "scriptSrc": "piwik\\.js|piwik\\.php",
+    "scriptSrc": [
+      "piwik\\.js|piwik\\.php"
+    ],
     "website": "https://matomo.org"
   },
   "Matomo Tag Manager": {
@@ -1314,7 +1400,9 @@
     "description": "Matter.js is a 2D physics engine for the web. It provides JavaScript-based tools for simulating rigid body physics in 2D environments.",
     "icon": "Matter.js.png",
     "oss": true,
-    "scriptSrc": "matter(?:-wrap)?(?:\\/demo\\/js\\/lib(?:\\/matter-tools\\/jquery)?(?:\\/decomp)?)?(?:\\/?-?((?:\\d+\\.)+\\d+))?(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "matter(?:-wrap)?(?:\\/demo\\/js\\/lib(?:\\/matter-tools\\/jquery)?(?:\\/decomp)?)?(?:\\/?-?((?:\\d+\\.)+\\d+))?(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://brm.io/matter-js/"
   },
   "Mattermost": {
@@ -1350,7 +1438,9 @@
       "MauticSDK": "",
       "MauticTrackingObject": ""
     },
-    "scriptSrc": "[^a-z]mtc.*\\.js",
+    "scriptSrc": [
+      "[^a-z]mtc.*\\.js"
+    ],
     "website": "https://www.mautic.org/"
   },
   "Mavo": {
@@ -1385,7 +1475,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "(?:max)?megamenu(?:-pro)?(?:\\/assets)?(?:\\/public)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "(?:max)?megamenu(?:-pro)?(?:\\/assets)?(?:\\/public)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://www.megamenu.com/"
   },
   "MaxCDN": {
@@ -1418,7 +1510,9 @@
       "geoip-js\\.com/.+/v([\\d\\.]+)/\\;version:\\1"
     ],
     "website": "https://www.maxmind.com",
-    "xhr": "\\.maxmind\\.com"
+    "xhr": [
+      "\\.maxmind\\.com"
+    ]
   },
   "MaxSite CMS": {
     "cats": [
@@ -1471,7 +1565,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "tag\\.measured\\.com",
+    "scriptSrc": [
+      "tag\\.measured\\.com"
+    ],
     "website": "https://www.measured.com"
   },
   "Medallia": {
@@ -1490,7 +1586,9 @@
       "k_track": "",
       "kampyle": ""
     },
-    "scriptSrc": "cf\\.kampyle\\.com/k_button\\.js",
+    "scriptSrc": [
+      "cf\\.kampyle\\.com/k_button\\.js"
+    ],
     "website": "https://www.medallia.com"
   },
   "Media.net": {
@@ -1501,7 +1599,9 @@
     "dom": "link[href*='.media.net']",
     "icon": "Media.net.svg",
     "saas": true,
-    "scriptSrc": "\\.media\\.net/",
+    "scriptSrc": [
+      "\\.media\\.net/"
+    ],
     "website": "https://www.media.net"
   },
   "MediaElement.js": {
@@ -1553,7 +1653,9 @@
     "js": {
       "$mediavine.web": ""
     },
-    "scriptSrc": "\\.mediavine\\.com/",
+    "scriptSrc": [
+      "\\.mediavine\\.com/"
+    ],
     "website": "https://www.mediavine.com"
   },
   "Medium": {
@@ -1568,8 +1670,12 @@
     "implies": [
       "Node.js"
     ],
-    "scriptSrc": "medium\\.com",
-    "url": "^https?://(?:www\\.)?medium\\.com",
+    "scriptSrc": [
+      "medium\\.com"
+    ],
+    "url": [
+      "^https?://(?:www\\.)?medium\\.com"
+    ],
     "website": "https://medium.com"
   },
   "Meebo": {
@@ -1590,7 +1696,9 @@
     "description": "Meeting Scheduler is a schedule appointments widget.",
     "dom": "a[href*='bookmenow.info/book']",
     "icon": "Meeting Scheduler.png",
-    "scriptSrc": "bookmenow\\.info/(?:runtime|main).+\\.js",
+    "scriptSrc": [
+      "bookmenow\\.info/(?:runtime|main).+\\.js"
+    ],
     "website": "https://bookmenow.info"
   },
   "Megagroup CMS.S3": {
@@ -1688,7 +1796,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "memberspace\\.com(?:\\/widget)?(?:\\/\\w{0,25})?(?:\\/scripts)?(?:\\/widgets)?(?:\\/main)?\\.js",
+    "scriptSrc": [
+      "memberspace\\.com(?:\\/widget)?(?:\\/\\w{0,25})?(?:\\/scripts)?(?:\\/widgets)?(?:\\/main)?\\.js"
+    ],
     "website": "https://www.memberspace.com"
   },
   "MemberStack": {
@@ -1709,8 +1819,12 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "memberstack\\.js",
-    "url": "^https?//.+\\.memberstack\\.io",
+    "scriptSrc": [
+      "memberstack\\.js"
+    ],
+    "url": [
+      "^https?//.+\\.memberstack\\.io"
+    ],
     "website": "https://www.memberstack.io"
   },
   "Mention Me": {
@@ -1726,7 +1840,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.mention-me\\.com/",
+    "scriptSrc": [
+      "\\.mention-me\\.com/"
+    ],
     "website": "https://www.mention-me.com"
   },
   "Menufy Online Ordering": {
@@ -1755,7 +1871,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "sitecontent-menufycom\\.netdna-ssl\\.com/",
+    "scriptSrc": [
+      "sitecontent-menufycom\\.netdna-ssl\\.com/"
+    ],
     "website": "https://restaurant.menufy.com"
   },
   "Mercado Shops": {
@@ -1771,7 +1889,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "frontend-assets/mshops-web-home/vendor",
+    "scriptSrc": [
+      "frontend-assets/mshops-web-home/vendor"
+    ],
     "website": "https://www.mercadoshops.com"
   },
   "Mermaid": {
@@ -1784,7 +1904,9 @@
     "js": {
       "mermaid": ""
     },
-    "scriptSrc": "/mermaid(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "/mermaid(?:\\.min)?\\.js"
+    ],
     "website": "https://mermaidjs.github.io/"
   },
   "Mesmerize Companion": {
@@ -1798,7 +1920,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "mesmerize-companion\\/theme-data\\/mesmerize\\/assets\\/js\\/companion(?:\\.bundle)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "mesmerize-companion\\/theme-data\\/mesmerize\\/assets\\/js\\/companion(?:\\.bundle)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/mesmerize-companion"
   },
   "MetaSlider": {
@@ -1816,7 +1940,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/ml-slider(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/plugins/ml-slider(?:-pro)?/"
+    ],
     "website": "https://www.metaslider.com"
   },
   "Meteor": {
@@ -1882,7 +2008,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.metrilo\\.com/",
+    "scriptSrc": [
+      "\\.metrilo\\.com/"
+    ],
     "website": "https://www.metrilo.com"
   },
   "MetroUI": {
@@ -1921,7 +2049,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "metronet-profile-picture(?:\\/js)?(?:\\/mpp-frontend)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "metronet-profile-picture(?:\\/js)?(?:\\/mpp-frontend)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/metronet-profile-picture/"
   },
   "Mews": {
@@ -1939,7 +2069,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.mews\\.li/",
+    "scriptSrc": [
+      "\\.mews\\.li/"
+    ],
     "website": "https://www.mews.com"
   },
   "Microsoft 365": {
@@ -1975,7 +2107,9 @@
       "<input[^>]+name=\"__VIEWSTATE"
     ],
     "icon": "Microsoft ASP.NET.svg",
-    "url": "\\.aspx?(?:$|\\?)",
+    "url": [
+      "\\.aspx?(?:$|\\?)"
+    ],
     "website": "https://www.asp.net"
   },
   "Microsoft Advertising": {
@@ -1997,7 +2131,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "bat\\.bing\\.com/bat\\.js",
+    "scriptSrc": [
+      "bat\\.bing\\.com/bat\\.js"
+    ],
     "website": "https://ads.microsoft.com"
   },
   "Microsoft Ajax Content Delivery Network": {
@@ -2006,7 +2142,9 @@
     ],
     "description": "Microsoft Ajax Content Delivery Network hosts popular third party JavaScript libraries such as jQuery and enables you to easily add them to your web applications.",
     "icon": "Microsoft.svg",
-    "scriptSrc": "ajax\\.aspnetcdn\\.com/ajax/",
+    "scriptSrc": [
+      "ajax\\.aspnetcdn\\.com/ajax/"
+    ],
     "website": "https://docs.microsoft.com/en-us/aspnet/ajax/cdn/overview"
   },
   "Microsoft Application Insights": {
@@ -2073,7 +2211,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "www\\.clarity\\.ms/.+/([\\d.]+)/clarity\\.js\\;version:\\1",
+    "scriptSrc": [
+      "www\\.clarity\\.ms/.+/([\\d.]+)/clarity\\.js\\;version:\\1"
+    ],
     "website": "https://clarity.microsoft.com"
   },
   "Microsoft Dynamics 365 Commerce": {
@@ -2091,7 +2231,9 @@
       "Azure"
     ],
     "saas": true,
-    "scriptSrc": "\\.dynamics365commerce\\.ms/",
+    "scriptSrc": [
+      "\\.dynamics365commerce\\.ms/"
+    ],
     "website": "https://dynamics.microsoft.com/commerce/overview"
   },
   "Microsoft Excel": {
@@ -2225,7 +2367,9 @@
       "low",
       "recurring"
     ],
-    "scriptSrc": "[Mm]icroweber(?:\\/includes)?(?:\\/api)?(?:\\/libs)?[\\w\\.\\/-]{0,45}(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "[Mm]icroweber(?:\\/includes)?(?:\\/api)?(?:\\/libs)?[\\w\\.\\/-]{0,45}(?:\\.min)?\\.js"
+    ],
     "website": "https://microweber.com"
   },
   "Miestro": {
@@ -2242,7 +2386,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.miestro\\.com",
+    "scriptSrc": [
+      "\\.miestro\\.com"
+    ],
     "website": "https://miestro.com"
   },
   "Mighty Network": {
@@ -2330,7 +2476,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\w+\\.healcode\\.com",
+    "scriptSrc": [
+      "\\w+\\.healcode\\.com"
+    ],
     "website": "https://www.mindbodyonline.com"
   },
   "Mindbox": {
@@ -2373,7 +2521,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "miniorange-login-openid\\/includes\\/js(?:\\/mo_openid_jquery)?(?:\\/mo-openid-social_login)?(?:\\/social_login)?(?:\\/jquery)?(?:\\.cookie)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "miniorange-login-openid\\/includes\\/js(?:\\/mo_openid_jquery)?(?:\\/mo-openid-social_login)?(?:\\/social_login)?(?:\\/jquery)?(?:\\.cookie)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/miniorange-login-openid"
   },
   "MiniServ": {
@@ -2398,7 +2548,9 @@
     "js": {
       "Mint": ""
     },
-    "scriptSrc": "mint/\\?js",
+    "scriptSrc": [
+      "mint/\\?js"
+    ],
     "website": "https://haveamint.com"
   },
   "Mintlify": {
@@ -2433,7 +2585,9 @@
     ],
     "saas": true,
     "website": "https://miso.ai",
-    "xhr": "\\.askmiso\\.com/"
+    "xhr": [
+      "\\.askmiso\\.com/"
+    ]
   },
   "Misskey": {
     "cats": [
@@ -2457,7 +2611,9 @@
     "description": "A Javascript Framework for building applications.",
     "icon": "Mithril.svg",
     "oss": true,
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?mithril(?:[\\.-]min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/)?mithril(?:[\\.-]min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2"
+    ],
     "website": "https://mithril.js.org/"
   },
   "Mittwald": {
@@ -2494,7 +2650,9 @@
       "mivaJS.Screen": "",
       "mivaJS.Store_Code": ""
     },
-    "scriptSrc": "mvga\\.js",
+    "scriptSrc": [
+      "mvga\\.js"
+    ],
     "website": "https://www.miva.com"
   },
   "Mixin": {
@@ -2519,7 +2677,9 @@
     ],
     "description": "A CSS3 and jQuery Filter & Sort Plugin.",
     "icon": "kunkalabs.svg",
-    "scriptSrc": "mixitup(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "mixitup(?:\\.min)?\\.js"
+    ],
     "website": "https://www.kunkalabs.com/mixitup/"
   },
   "Mixpanel": {
@@ -2587,7 +2747,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.moengage\\.\\w+",
+    "scriptSrc": [
+      "cdn\\.moengage\\.\\w+"
+    ],
     "website": "https://www.moengage.com"
   },
   "MobX": {
@@ -2600,7 +2762,9 @@
       "__mobxGlobals": "",
       "__mobxInstanceCount": ""
     },
-    "scriptSrc": "(?:/([\\d\\.]+))?/mobx(?:\\.[a-z]+){0,2}\\.js(?:$|\\?)\\;version:\\1",
+    "scriptSrc": [
+      "(?:/([\\d\\.]+))?/mobx(?:\\.[a-z]+){0,2}\\.js(?:$|\\?)\\;version:\\1"
+    ],
     "website": "https://mobx.js.org"
   },
   "Mobify": {
@@ -2645,7 +2809,9 @@
       "MochiKit": "",
       "MochiKit.MochiKit.VERSION": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "MochiKit(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "MochiKit(?:\\.min)?\\.js"
+    ],
     "website": "https://mochi.github.io/mochikit/"
   },
   "MochiWeb": {
@@ -2690,7 +2856,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.modiface\\.com/",
+    "scriptSrc": [
+      "\\.modiface\\.com/"
+    ],
     "website": "https://modiface.com"
   },
   "Modified": {
@@ -2730,7 +2898,9 @@
     "implies": [
       "PHP"
     ],
-    "scriptSrc": "mg-(?:core|plugins|templates)/",
+    "scriptSrc": [
+      "mg-(?:core|plugins|templates)/"
+    ],
     "website": "https://moguta.ru"
   },
   "MoinMoin": {
@@ -2749,7 +2919,9 @@
     "js": {
       "show_switch2gui": ""
     },
-    "scriptSrc": "moin(?:_static(\\d)(\\d)(\\d)|.+)/common/js/common\\.js\\;version:\\1.\\2.\\3",
+    "scriptSrc": [
+      "moin(?:_static(\\d)(\\d)(\\d)|.+)/common/js/common\\.js\\;version:\\1.\\2.\\3"
+    ],
     "website": "https://moinmo.in"
   },
   "Mojolicious": {
@@ -2774,7 +2946,9 @@
     "description": "Mokka is a Buy Now Pay Later solution that connects target customer acquisition and settlement costs through marketing and promotion.",
     "icon": "Mokka.svg",
     "saas": true,
-    "scriptSrc": "revoiframe\\.js",
+    "scriptSrc": [
+      "revoiframe\\.js"
+    ],
     "website": "https://mokka.ro"
   },
   "Mollie": {
@@ -2787,7 +2961,9 @@
       "Mollie": ""
     },
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/mollie-payments-for-woocommerce/",
+    "scriptSrc": [
+      "/wp-content/plugins/mollie-payments-for-woocommerce/"
+    ],
     "website": "https://www.mollie.com"
   },
   "Mollom": {
@@ -2799,7 +2975,9 @@
       "<img[^>]+\\.mollom\\.com"
     ],
     "icon": "Mollom.png",
-    "scriptSrc": "mollom(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "mollom(?:\\.min)?\\.js"
+    ],
     "website": "https://mollom.com"
   },
   "Moment Timezone": {
@@ -2810,7 +2988,9 @@
     "implies": [
       "Moment.js"
     ],
-    "scriptSrc": "moment-timezone(?:-data)?(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "moment-timezone(?:-data)?(?:\\.min)?\\.js"
+    ],
     "website": "https://momentjs.com/timezone/"
   },
   "Moment.js": {
@@ -2824,7 +3004,9 @@
       "moment": "",
       "moment.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "moment(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "moment(?:\\.min)?\\.js"
+    ],
     "website": "https://momentjs.com"
   },
   "Monaco Editor": {
@@ -2850,7 +3032,9 @@
     ],
     "description": "Mondial Relay is a parcel shipping and delivery service in Europe.",
     "icon": "Mondial Relay.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bMondial Relay\\b"
     ],
@@ -2900,7 +3084,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/woocommerce-gateway-moneris/",
+    "scriptSrc": [
+      "/wp-content/plugins/woocommerce-gateway-moneris/"
+    ],
     "website": "https://wordpress.org/plugins/wc-moneris-payment-gateway"
   },
   "Monetate": {
@@ -2919,7 +3105,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.monetate\\.net",
+    "scriptSrc": [
+      "\\.monetate\\.net"
+    ],
     "website": "https://monetate.com"
   },
   "MongoDB": {
@@ -2977,7 +3165,9 @@
     "js": {
       "_monoTracker": ""
     },
-    "scriptSrc": "monotracker(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "monotracker(?:\\.min)?\\.js"
+    ],
     "website": "https://www.mono.net/en"
   },
   "Monsido": {
@@ -3018,7 +3208,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/google-analytics-for-wordpress/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/google-analytics-for-wordpress/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://www.monsterinsights.com"
   },
   "MooTools": {
@@ -3031,7 +3223,9 @@
       "MooTools": "",
       "MooTools.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "mootools.*\\.js",
+    "scriptSrc": [
+      "mootools.*\\.js"
+    ],
     "website": "https://mootools.net"
   },
   "Moodle": {
@@ -3065,7 +3259,9 @@
       12
     ],
     "icon": "moon.svg",
-    "scriptSrc": "/moon(?:\\.min)?\\.js$",
+    "scriptSrc": [
+      "/moon(?:\\.min)?\\.js$"
+    ],
     "website": "https://kbrsh.github.io/moon/"
   },
   "Moove GDPR Consent": {
@@ -3102,7 +3298,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "deploy\\.mopinion\\.com/",
+    "scriptSrc": [
+      "deploy\\.mopinion\\.com/"
+    ],
     "website": "https://mopinion.com"
   },
   "Moshimo": {
@@ -3112,7 +3310,9 @@
     "description": "Moshimo is a free affiliate service for individuals.",
     "dom": "link[href*='i.moshimo.com'], img[src*='i.moshimo.com']",
     "icon": "Moshimo.png",
-    "scriptSrc": "\\.moshimo\\.com/af/",
+    "scriptSrc": [
+      "\\.moshimo\\.com/af/"
+    ],
     "website": "https://af.moshimo.com"
   },
   "Motherhost": {
@@ -3143,7 +3343,9 @@
       "AngularJS",
       "jQuery"
     ],
-    "scriptSrc": "/mt-includes/js/website(?:assets)?\\.(?:min)?\\.js",
+    "scriptSrc": [
+      "/mt-includes/js/website(?:assets)?\\.(?:min)?\\.js"
+    ],
     "website": "https://motocms.com"
   },
   "Mountain": {
@@ -3205,7 +3407,9 @@
     "meta": {
       "author": "Mozard"
     },
-    "url": "/mozard/!suite",
+    "url": [
+      "/mozard/!suite"
+    ],
     "website": "https://mozard.nl"
   },
   "Mulberry": {
@@ -3225,7 +3429,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.getmulberry\\.com/",
+    "scriptSrc": [
+      "\\.getmulberry\\.com/"
+    ],
     "website": "https://www.getmulberry.com"
   },
   "Mura CMS": {
@@ -3257,7 +3463,9 @@
     "js": {
       "Mustache.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "mustache(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "mustache(?:\\.min)?\\.js"
+    ],
     "website": "https://mustache.github.io"
   },
   "Muuri": {
@@ -3278,7 +3486,9 @@
     ],
     "description": "My Flying Box is an international parcel shipping company.",
     "icon": "My Flying Box.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bMy Flying Box\\b"
     ],
@@ -3326,7 +3536,9 @@
       5
     ],
     "icon": "MyBlogLog.png",
-    "scriptSrc": "pub\\.mybloglog\\.com",
+    "scriptSrc": [
+      "pub\\.mybloglog\\.com"
+    ],
     "website": "https://www.mybloglog.com"
   },
   "MyCashFlow": {
@@ -3354,7 +3566,9 @@
       "onetime"
     ],
     "website": "https://www.myfonts.com",
-    "xhr": "\\.myfonts\\.net/"
+    "xhr": [
+      "\\.myfonts\\.net/"
+    ]
   },
   "MyLiveChat": {
     "cats": [
@@ -3370,7 +3584,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "mylivechat\\.com/",
+    "scriptSrc": [
+      "mylivechat\\.com/"
+    ],
     "website": "https://mylivechat.com"
   },
   "MyOnlineStore": {
@@ -3522,7 +3738,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/news-portal(?:-pro)?/.+np-custom-scripts\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/news-portal(?:-pro)?/.+np-custom-scripts\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://mysterythemes.com/wp-themes/news-portal"
   },
   "MysteryThemes News Portal Lite": {
@@ -3576,7 +3794,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.mparticle\\.com/",
+    "scriptSrc": [
+      "\\.mparticle\\.com/"
+    ],
     "website": "https://www.mparticle.com"
   },
   "math.js": {
@@ -3589,7 +3809,9 @@
       "mathjs": ""
     },
     "oss": true,
-    "scriptSrc": "math(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "math(?:\\.min)?\\.js"
+    ],
     "website": "https://mathjs.org"
   },
   "mdBook": {
@@ -3599,7 +3821,9 @@
     "description": "mdBook is a utility to create modern online books from Markdown files.",
     "icon": "mdBook.svg",
     "oss": true,
-    "scripts": "localStorage\\.getItem\\('mdbook-(?:sidebar|theme)'\\)",
+    "scripts": [
+      "localStorage\\.getItem\\('mdbook-(?:sidebar|theme)'\\)"
+    ],
     "website": "https://github.com/rust-lang/mdBook"
   },
   "metisMenu": {
@@ -3615,7 +3839,9 @@
       "metisMenu": ""
     },
     "oss": true,
-    "scriptSrc": "(?:/|\\.)metisMenu(?:js)?(?:\\.min)?\\.js(?:\\?([\\d\\.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "(?:/|\\.)metisMenu(?:js)?(?:\\.min)?\\.js(?:\\?([\\d\\.]+))?\\;version:\\1"
+    ],
     "website": "https://github.com/onokumus/metismenu"
   },
   "microCMS": {
@@ -3633,7 +3859,9 @@
     ],
     "saas": true,
     "website": "https://microcms.io",
-    "xhr": "\\.microcms\\.io"
+    "xhr": [
+      "\\.microcms\\.io"
+    ]
   },
   "mini_httpd": {
     "cats": [
@@ -3668,7 +3896,9 @@
     ],
     "description": "Mobicred is a credit facility that allows you to safely shop online with our participating retailers.",
     "icon": "Mobicred.png",
-    "scriptSrc": "app\\.mobicredwidget\\.co\\.za",
+    "scriptSrc": [
+      "app\\.mobicredwidget\\.co\\.za"
+    ],
     "website": "https://mobicred.co.za/"
   },
   "mobile-detect.js": {
@@ -3677,7 +3907,9 @@
     ],
     "description": "Mobile-detect.js is a compact JavaScript library designed to detect devices by comparing patterns against a given User-Agent string.",
     "oss": true,
-    "scriptSrc": "mobile-detect(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "mobile-detect(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://hgoebl.github.io/mobile-detect.js/doc/MobileDetect.html"
   },
   "mod_auth_pam": {

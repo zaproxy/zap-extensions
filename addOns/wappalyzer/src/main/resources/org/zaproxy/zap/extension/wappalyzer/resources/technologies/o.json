@@ -42,7 +42,9 @@
     "implies": [
       "jQuery"
     ],
-    "scriptSrc": "owl\\.carousel.*\\.js",
+    "scriptSrc": [
+      "owl\\.carousel.*\\.js"
+    ],
     "website": "https://owlcarousel2.github.io/OwlCarousel2/"
   },
   "OXID eShop": {
@@ -141,7 +143,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.shopify\\.com/extensions/.+/([\\.\\d]{3,})/assets/upsell\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "cdn\\.shopify\\.com/extensions/.+/([\\.\\d]{3,})/assets/upsell\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://obsidianapps.co"
   },
   "Obsidian Publish": {
@@ -183,7 +187,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "deploy\\.hiconversion\\.com",
+    "scriptSrc": [
+      "deploy\\.hiconversion\\.com"
+    ],
     "website": "https://www.obviyo.com"
   },
   "Occasion": {
@@ -206,7 +212,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "app\\.getoccasion\\.com",
+    "scriptSrc": [
+      "app\\.getoccasion\\.com"
+    ],
     "website": "https://www.getoccasion.com"
   },
   "OceanWP": {
@@ -232,7 +240,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "themes/oceanwp\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "themes/oceanwp\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1"
+    ],
     "website": "https://oceanwp.org"
   },
   "Ochanoko": {
@@ -249,7 +259,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "ocnk-min\\.js",
+    "scriptSrc": [
+      "ocnk-min\\.js"
+    ],
     "website": "https://www.ocnk.com"
   },
   "Oct8ne": {
@@ -267,7 +279,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.oct8ne\\.com/",
+    "scriptSrc": [
+      "\\.oct8ne\\.com/"
+    ],
     "website": "https://oct8ne.com"
   },
   "Octane AI": {
@@ -285,7 +299,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.octaneai\\.com/",
+    "scriptSrc": [
+      "\\.octaneai\\.com/"
+    ],
     "website": "https://www.octaneai.com"
   },
   "October CMS": {
@@ -324,7 +340,9 @@
     "meta": {
       "generator": "Octopress"
     },
-    "scriptSrc": "/octopress\\.js",
+    "scriptSrc": [
+      "/octopress\\.js"
+    ],
     "website": "https://octopress.org"
   },
   "Ocuco FitMix": {
@@ -364,7 +382,9 @@
       "generator": "Odoo"
     },
     "oss": true,
-    "scriptSrc": "/web/js/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25",
+    "scriptSrc": [
+      "/web/js/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25"
+    ],
     "website": "https://odoo.com"
   },
   "Oh Dear": {
@@ -381,7 +401,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.ohdear\\.app/",
+    "scriptSrc": [
+      "\\.ohdear\\.app/"
+    ],
     "website": "https://ohdear.app"
   },
   "Okendo": {
@@ -432,7 +454,9 @@
       "freemium",
       "recurring"
     ],
-    "scriptSrc": "oktacdn\\.com/.+/([\\d.]+)/\\;version:\\1",
+    "scriptSrc": [
+      "oktacdn\\.com/.+/([\\d.]+)/\\;version:\\1"
+    ],
     "website": "https://developer.okta.com"
   },
   "Olapic": {
@@ -466,7 +490,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.olark\\.com/",
+    "scriptSrc": [
+      "\\.olark\\.com/"
+    ],
     "website": "https://www.olark.com/"
   },
   "Omeka": {
@@ -503,7 +529,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.ometria\\.com",
+    "scriptSrc": [
+      "cdn\\.ometria\\.com"
+    ],
     "website": "https://ometria.com"
   },
   "Omise": {
@@ -519,7 +547,9 @@
     "pricing": [
       "payg"
     ],
-    "scriptSrc": "cdn\\.omise\\.co",
+    "scriptSrc": [
+      "cdn\\.omise\\.co"
+    ],
     "website": "https://www.omise.co"
   },
   "Omni CMS": {
@@ -549,7 +579,9 @@
       "mid",
       "recurring"
     ],
-    "scriptSrc": "cdn\\.omniconvert\\.com",
+    "scriptSrc": [
+      "cdn\\.omniconvert\\.com"
+    ],
     "website": "https://www.omniconvert.com"
   },
   "Omnisend": {
@@ -574,7 +606,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "omnisrc\\.com",
+    "scriptSrc": [
+      "omnisrc\\.com"
+    ],
     "website": "https://www.omnisend.com"
   },
   "Omnisend Email Marketing & SMS": {
@@ -595,7 +629,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "omnis(?:nippet1|rc)\\.com/inShop/Embed/shopify\\.js",
+    "scriptSrc": [
+      "omnis(?:nippet1|rc)\\.com/inShop/Embed/shopify\\.js"
+    ],
     "website": "https://apps.shopify.com/omnisend"
   },
   "Omny Studio": {
@@ -706,7 +742,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "api\\.oneall\\.com/socialize",
+    "scriptSrc": [
+      "api\\.oneall\\.com/socialize"
+    ],
     "website": "https://www.oneall.com"
   },
   "OneCause": {
@@ -720,7 +758,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.onecause\\.com/",
+    "scriptSrc": [
+      "\\.onecause\\.com/"
+    ],
     "website": "https://www.onecause.com"
   },
   "OnePage Express": {
@@ -742,7 +782,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/one-page-express(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/one-page-express(?:-pro)?/"
+    ],
     "website": "https://onepageexpress.com"
   },
   "OnePress Social Locker": {
@@ -762,7 +804,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/social-?locker(?:-next-premium)?/bizpanda/assets/",
+    "scriptSrc": [
+      "/wp-content/plugins/social-?locker(?:-next-premium)?/bizpanda/assets/"
+    ],
     "website": "https://wordpress.org/plugins/social-locker"
   },
   "OneSignal": {
@@ -782,7 +826,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.onesignal\\.com",
+    "scriptSrc": [
+      "cdn\\.onesignal\\.com"
+    ],
     "website": "https://onesignal.com"
   },
   "OneStat": {
@@ -830,8 +876,12 @@
     "pricing": [
       "payg"
     ],
-    "requiresCategory": 6,
-    "scriptSrc": "/modules/oney(?:/)?/views/js/front\\.js",
+    "requiresCategory": [
+      6
+    ],
+    "scriptSrc": [
+      "/modules/oney(?:/)?/views/js/front\\.js"
+    ],
     "website": "https://www.oney.com"
   },
   "Onfido": {
@@ -869,7 +919,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.speedtestcustom\\.com/",
+    "scriptSrc": [
+      "\\.speedtestcustom\\.com/"
+    ],
     "website": "https://www.ookla.com/speedtest-custom"
   },
   "Oopy": {
@@ -1081,7 +1133,9 @@
       "Java"
     ],
     "oss": true,
-    "scriptSrc": "opencms",
+    "scriptSrc": [
+      "opencms"
+    ],
     "website": "https://www.opencms.org"
   },
   "OpenElement": {
@@ -1144,7 +1198,9 @@
       "ol.CanvasMap": ""
     },
     "oss": true,
-    "scriptSrc": "openlayers",
+    "scriptSrc": [
+      "openlayers"
+    ],
     "website": "https://openlayers.org"
   },
   "OpenNemas": {
@@ -1167,7 +1223,9 @@
     ],
     "description": "Openpay is an innovative online and in-store payment solution enabling you to purchase now and pay later, with no interest.",
     "icon": "openpay.png",
-    "scriptSrc": "openpay\\.com.\\au",
+    "scriptSrc": [
+      "openpay\\.com.\\au"
+    ],
     "website": "https://www.openpay.com.au/"
   },
   "OpenResty": {
@@ -1258,7 +1316,9 @@
     "js": {
       "sap.ui.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "sap-ui-core\\.js",
+    "scriptSrc": [
+      "sap-ui-core\\.js"
+    ],
     "website": "https://openui5.org/"
   },
   "OpenWeb": {
@@ -1306,7 +1366,9 @@
     "pricing": [
       "poa"
     ],
-    "scriptSrc": "//dealer-cdn\\.com/",
+    "scriptSrc": [
+      "//dealer-cdn\\.com/"
+    ],
     "website": "https://operatebeyond.com/dealer-websites-marketing"
   },
   "Opigno LMS": {
@@ -1319,7 +1381,9 @@
     "requires": [
       "Drupal"
     ],
-    "scripts": "opigno_(?:commerce|wtp_app|scorm|learning_path)",
+    "scripts": [
+      "opigno_(?:commerce|wtp_app|scorm|learning_path)"
+    ],
     "website": "https://www.opigno.org"
   },
   "OpinionLab": {
@@ -1336,7 +1400,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.foresee\\.com/code/([\\d.]+)-oo/oo_engine\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "\\.foresee\\.com/code/([\\d.]+)-oo/oo_engine\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://www.opinionlab.com"
   },
   "OptiMonk": {
@@ -1353,7 +1419,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "\\.optimonk\\.com/",
+    "scriptSrc": [
+      "\\.optimonk\\.com/"
+    ],
     "website": "https://www.optimonk.com"
   },
   "Optimise": {
@@ -1366,7 +1434,9 @@
     "js": {
       "OMID": "^[0-9]+$"
     },
-    "scriptSrc": "track\\.omguk\\.com",
+    "scriptSrc": [
+      "track\\.omguk\\.com"
+    ],
     "website": "https://www.optimisemedia.com"
   },
   "Optimizely": {
@@ -1389,7 +1459,9 @@
       "high"
     ],
     "saas": true,
-    "scriptSrc": "optimizely\\.com.*\\.js",
+    "scriptSrc": [
+      "optimizely\\.com.*\\.js"
+    ],
     "website": "https://www.optimizely.com"
   },
   "Optimizely Commerce": {
@@ -1407,7 +1479,9 @@
     "pricing": [
       "poa"
     ],
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "website": "https://www.optimizely.com/products/commerce/b2c/"
   },
   "Optimizely Content Management": {
@@ -1439,7 +1513,9 @@
     "pricing": [
       "poa"
     ],
-    "scriptSrc": "\\.episerver.net/",
+    "scriptSrc": [
+      "\\.episerver.net/"
+    ],
     "website": "https://www.optimizely.com/products/content/"
   },
   "Optimove": {
@@ -1457,7 +1533,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.optimove\\.net/.+v([\\d\\.]+)\\.js\\;version:\\1",
+    "scriptSrc": [
+      "\\.optimove\\.net/.+v([\\d\\.]+)\\.js\\;version:\\1"
+    ],
     "website": "https://www.optimove.com"
   },
   "OptinMonster": {
@@ -1491,7 +1569,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/optinmonster/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/optinmonster/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://optinmonster.com"
   },
   "Oracle Application Express": {
@@ -1535,7 +1615,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "tags\\.(?:bluekai|bkrtx)\\.com/",
+    "scriptSrc": [
+      "tags\\.(?:bluekai|bkrtx)\\.com/"
+    ],
     "website": "https://www.oracle.com/cx/marketing/data-management-platform"
   },
   "Oracle Commerce": {
@@ -1599,7 +1681,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "c\\.oracleinfinity\\.io",
+    "scriptSrc": [
+      "c\\.oracleinfinity\\.io"
+    ],
     "website": "https://www.oracle.com/cx/marketing/digital-intelligence/"
   },
   "Oracle Maxymiser": {
@@ -1617,7 +1701,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "service\\.maxymiser\\.net",
+    "scriptSrc": [
+      "service\\.maxymiser\\.net"
+    ],
     "website": "https://www.oracle.com/uk/cx/marketing/personalization-testing"
   },
   "Oracle Moat Measurement": {
@@ -1636,7 +1722,9 @@
       10
     ],
     "icon": "Oracle.svg",
-    "scriptSrc": "atgsvcs.+atgsvcs\\.js",
+    "scriptSrc": [
+      "atgsvcs.+atgsvcs\\.js"
+    ],
     "website": "https://www.oracle.com/us/products/applications/commerce/recommendations-on-demand/index.html"
   },
   "Oracle Web Cache": {
@@ -1682,7 +1770,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "www\\.orankl\\.com/",
+    "scriptSrc": [
+      "www\\.orankl\\.com/"
+    ],
     "website": "https://www.orankl.com"
   },
   "Orbit Slider": {
@@ -1727,7 +1817,9 @@
       "generator": "Orchard"
     },
     "oss": true,
-    "scriptSrc": "/OrchardCore\\.",
+    "scriptSrc": [
+      "/OrchardCore\\."
+    ],
     "website": "https://orchardcore.net"
   },
   "Orckestra": {
@@ -1789,7 +1881,9 @@
       "recurring"
     ],
     "saas": true,
-    "url": "\\.(?:eu|us1)\\.ordercast\\.io/",
+    "url": [
+      "\\.(?:eu|us1)\\.ordercast\\.io/"
+    ],
     "website": "https://www.ordercast.io"
   },
   "OrderLogic app": {
@@ -1843,7 +1937,9 @@
       "recurring",
       "mid"
     ],
-    "scriptSrc": "\\.ordergroove\\.com/",
+    "scriptSrc": [
+      "\\.ordergroove\\.com/"
+    ],
     "website": "https://www.ordergroove.com/"
   },
   "Ordersify Product Alerts": {
@@ -1864,7 +1960,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.ordersify\\.com/sdk/productalerts-shopify\\.js",
+    "scriptSrc": [
+      "cdn\\.ordersify\\.com/sdk/productalerts-shopify\\.js"
+    ],
     "website": "https://ordersify.com/products/product-alerts"
   },
   "OroCommerce": {
@@ -1900,7 +1998,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cmp\\.osano\\.com/",
+    "scriptSrc": [
+      "cmp\\.osano\\.com/"
+    ],
     "website": "https://www.osano.com"
   },
   "Osterreichische Post": {
@@ -1909,7 +2009,9 @@
     ],
     "description": "Österreichische Post is an Austrian logistics and postal services provider.",
     "icon": "Post AG.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bpost\\.at\\b",
       "\\bPost AG\\b",
@@ -1936,7 +2038,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "scripts/OutSystems(?:[\\w]+)?\\.js",
+    "scriptSrc": [
+      "scripts/OutSystems(?:[\\w]+)?\\.js"
+    ],
     "website": "https://www.outsystems.com"
   },
   "OutTheBoxThemes Panoramic": {
@@ -1953,7 +2057,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/panoramic/.+custom\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/panoramic/.+custom\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://www.outtheboxthemes.com/wordpress-themes/panoramic"
   },
   "Outbrain": {
@@ -1973,7 +2079,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.outbrain\\.com/",
+    "scriptSrc": [
+      "\\.outbrain\\.com/"
+    ],
     "website": "https://www.outbrain.com"
   },
   "Outlook Web App": {
@@ -1995,7 +2103,9 @@
     "js": {
       "IsOwaPremiumBrowser": ""
     },
-    "url": "/owa/auth/log(?:on|off)\\.aspx",
+    "url": [
+      "/owa/auth/log(?:on|off)\\.aspx"
+    ],
     "website": "https://help.outlook.com"
   },
   "Oxatis": {
@@ -2021,7 +2131,9 @@
     "description": "Oxi Social Login provides one click login with services like Facebook, Google and many more.",
     "icon": "OxiSocialLogin.png",
     "saas": true,
-    "scriptSrc": "social-login\\.oxiapps\\.com",
+    "scriptSrc": [
+      "social-login\\.oxiapps\\.com"
+    ],
     "website": "https://www.oxiapps.com/"
   },
   "Oxygen": {
@@ -2126,7 +2238,9 @@
     "implies": [
       "Perl"
     ],
-    "scriptSrc": "^/otrs-web/js/",
+    "scriptSrc": [
+      "^/otrs-web/js/"
+    ],
     "website": "https://www.otrs.com"
   },
   "ownCloud": {

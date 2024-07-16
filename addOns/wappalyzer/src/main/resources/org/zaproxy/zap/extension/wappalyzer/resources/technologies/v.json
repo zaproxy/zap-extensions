@@ -13,7 +13,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "\\.vaptcha\\.com/v([\\d\\.]+)\\.js\\;version:\\1",
+    "scriptSrc": [
+      "\\.vaptcha\\.com/v([\\d\\.]+)\\.js\\;version:\\1"
+    ],
     "website": "https://en.vaptcha.com"
   },
   "VDX.tv": {
@@ -53,7 +55,9 @@
     "description": "VK is a Russian online social media and social networking service.",
     "dom": "img[src*='vk.com/rtrg?p=VK-RTRG-']",
     "icon": "vk.svg",
-    "scriptSrc": "vk\\.com/js/api/openapi\\.js",
+    "scriptSrc": [
+      "vk\\.com/js/api/openapi\\.js"
+    ],
     "website": "https://vk.com/"
   },
   "VKUI": {
@@ -77,7 +81,9 @@
     "implies": [
       "Microsoft ASP.NET"
     ],
-    "scriptSrc": "vs350\\.js",
+    "scriptSrc": [
+      "vs350\\.js"
+    ],
     "website": "https://www.vpasp.com"
   },
   "VTEX": {
@@ -144,7 +150,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.pushcrew\\.\\w+",
+    "scriptSrc": [
+      "cdn\\.pushcrew\\.\\w+"
+    ],
     "website": "https://vwo.com/engage"
   },
   "Vaadin": {
@@ -159,7 +167,9 @@
     "js": {
       "vaadin": ""
     },
-    "scriptSrc": "vaadinBootstrap\\.js(?:\\?v=([\\d.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "vaadinBootstrap\\.js(?:\\?v=([\\d.]+))?\\;version:\\1"
+    ],
     "website": "https://vaadin.com"
   },
   "ValueCommerce": {
@@ -180,7 +190,9 @@
       }
     },
     "icon": "ValueCommerce.png",
-    "scriptSrc": "\\.valuecommerce\\.com",
+    "scriptSrc": [
+      "\\.valuecommerce\\.com"
+    ],
     "website": "https://www.valuecommerce.co.jp"
   },
   "Vanco Payment Solutions": {
@@ -197,7 +209,9 @@
       "low"
     ],
     "saas": true,
-    "scriptSrc": "\\.eservicepayments\\.com/",
+    "scriptSrc": [
+      "\\.eservicepayments\\.com/"
+    ],
     "website": "https://www.vancopayments.com"
   },
   "Vanilla": {
@@ -382,7 +396,9 @@
     "js": {
       "VuVeoxaContent": ""
     },
-    "scriptSrc": "tracking\\.veoxa\\.com",
+    "scriptSrc": [
+      "tracking\\.veoxa\\.com"
+    ],
     "website": "https://veoxa.com"
   },
   "Vercel": {
@@ -443,7 +459,9 @@
       "payg"
     ],
     "saas": true,
-    "scripts": "2checkout\\.com",
+    "scripts": [
+      "2checkout\\.com"
+    ],
     "website": "https://www.2checkout.com"
   },
   "VerifyPass": {
@@ -533,7 +551,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "js\\.verygoodvault\\.com/",
+    "scriptSrc": [
+      "js\\.verygoodvault\\.com/"
+    ],
     "website": "https://www.verygoodsecurity.com"
   },
   "Vev": {
@@ -552,7 +572,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.vev\\.design/",
+    "scriptSrc": [
+      "\\.vev\\.design/"
+    ],
     "website": "https://www.vev.design"
   },
   "ViaBill": {
@@ -569,7 +591,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.viabill\\.com/",
+    "scriptSrc": [
+      "\\.viabill\\.com/"
+    ],
     "website": "https://viabill.com"
   },
   "Viafoura": {
@@ -604,7 +628,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.vidazoo\\.com",
+    "scriptSrc": [
+      "\\.vidazoo\\.com"
+    ],
     "website": "https://www.vidazoo.com"
   },
   "Video Greet": {
@@ -657,7 +683,9 @@
       "<link[^>]* href=[^>]+(?:\\.vigbo\\.com|\\.gophotoweb\\.com)"
     ],
     "icon": "vigbo.png",
-    "scriptSrc": "(?:\\.vigbo\\.com|\\.gophotoweb\\.com)",
+    "scriptSrc": [
+      "(?:\\.vigbo\\.com|\\.gophotoweb\\.com)"
+    ],
     "website": "https://vigbo.com"
   },
   "Vigil": {
@@ -721,7 +749,9 @@
     ],
     "saas": true,
     "website": "https://vimeo.com/ott",
-    "xhr": "api\\.vhx\\.tv"
+    "xhr": [
+      "api\\.vhx\\.tv"
+    ]
   },
   "Viqeo": {
     "cats": [
@@ -752,7 +782,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "app\\.viral-loops\\.com/",
+    "scriptSrc": [
+      "app\\.viral-loops\\.com/"
+    ],
     "website": "https://viral-loops.com"
   },
   "Virgool": {
@@ -763,7 +795,9 @@
       "X-Powered-By": "^Virgool$"
     },
     "icon": "Virgool.svg",
-    "url": "^https?://(?:www\\.)?virgool\\.io",
+    "url": [
+      "^https?://(?:www\\.)?virgool\\.io"
+    ],
     "website": "https://virgool.io"
   },
   "Virtooal": {
@@ -777,9 +811,13 @@
       "low",
       "recurring"
     ],
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "saas": true,
-    "scriptSrc": "\\.virtooal\\.com/",
+    "scriptSrc": [
+      "\\.virtooal\\.com/"
+    ],
     "website": "https://try.virtooal.com"
   },
   "Virtuagym": {
@@ -807,7 +845,9 @@
     "description": "Virtual Chat is a live-chat service for web sites.",
     "icon": "Virtual Chat.png",
     "saas": true,
-    "scriptSrc": "virtual-chat\\.co\\.il/",
+    "scriptSrc": [
+      "virtual-chat\\.co\\.il/"
+    ],
     "website": "https://www.virtual-chat.co.il"
   },
   "VirtualSpirits": {
@@ -853,7 +893,9 @@
       "Copyright": "^Copyright &copy; \\d{4} OpenLink Software",
       "Keywords": "^OpenLink Virtuoso Sparql"
     },
-    "url": "/sparql",
+    "url": [
+      "/sparql"
+    ],
     "website": "https://virtuoso.openlinksw.com/"
   },
   "Virtuous": {
@@ -866,7 +908,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.virtuoussoftware\\.com/",
+    "scriptSrc": [
+      "\\.virtuoussoftware\\.com/"
+    ],
     "website": "https://virtuous.org"
   },
   "Virtusize": {
@@ -879,7 +923,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.virtusize\\.jp/",
+    "scriptSrc": [
+      "\\.virtusize\\.jp/"
+    ],
     "website": "https://www.virtusize.com"
   },
   "Visa": {
@@ -901,7 +947,9 @@
     ],
     "description": "Visa facilitates electronic funds transfers throughout the world, most commonly through Visa-branded credit cards, debit cards and prepaid cards.",
     "icon": "Visa.svg",
-    "scriptSrc": "secure\\.checkout\\.visa\\.com",
+    "scriptSrc": [
+      "secure\\.checkout\\.visa\\.com"
+    ],
     "website": "https://checkout.visa.com"
   },
   "Visely": {
@@ -977,7 +1025,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "//whai-cdn\\.nyc\\d\\.cdn\\.digitaloceanspaces\\.com/",
+    "scriptSrc": [
+      "//whai-cdn\\.nyc\\d\\.cdn\\.digitaloceanspaces\\.com/"
+    ],
     "website": "https://apps.shopify.com/product-recommendation-quiz"
   },
   "Visualsoft": {
@@ -1040,7 +1090,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "//appsolve\\.io/",
+    "scriptSrc": [
+      "//appsolve\\.io/"
+    ],
     "website": "https://vitals.co"
   },
   "Vite": {
@@ -1089,7 +1141,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.vitrin\\.me/",
+    "scriptSrc": [
+      "\\.vitrin\\.me/"
+    ],
     "website": "https://vitrin.me"
   },
   "Vizury": {
@@ -1106,7 +1160,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.vizury\\.com",
+    "scriptSrc": [
+      "\\.vizury\\.com"
+    ],
     "website": "https://www.vizury.com"
   },
   "Vnda": {
@@ -1165,7 +1221,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "/volusion\\.js(?:\\?([\\d.]*))?\\;version:\\1",
+    "scriptSrc": [
+      "/volusion\\.js(?:\\?([\\d.]*))?\\;version:\\1"
+    ],
     "website": "https://www.volusion.com"
   },
   "Vonage Video API": {
@@ -1179,7 +1237,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.opentok\\.com/",
+    "scriptSrc": [
+      "\\.opentok\\.com/"
+    ],
     "website": "https://www.vonage.com/communications-apis/video/"
   },
   "Voog.com Website Builder": {
@@ -1191,7 +1251,9 @@
       "<script [^>]*src=\"[^\"]*voog\\.com/tracker\\.js"
     ],
     "icon": "Voog.png",
-    "scriptSrc": "voog\\.com/tracker\\.js",
+    "scriptSrc": [
+      "voog\\.com/tracker\\.js"
+    ],
     "website": "https://www.voog.com/"
   },
   "Voracio": {
@@ -1405,7 +1467,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.v4guard\\.io/checkpoint",
+    "scriptSrc": [
+      "\\.v4guard\\.io/checkpoint"
+    ],
     "website": "https://v4guard.io"
   },
   "vBulletin": {

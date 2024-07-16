@@ -46,7 +46,9 @@
       "YUI.version": "^(.+)$\\;version:\\1"
     },
     "oss": true,
-    "scriptSrc": "(?:/yui/|yui\\.yahooapis\\.com)",
+    "scriptSrc": [
+      "(?:/yui/|yui\\.yahooapis\\.com)"
+    ],
     "website": "https://clarle.github.io/yui3"
   },
   "YUI Doc": {
@@ -86,7 +88,9 @@
       "yahoo_ydn_conv_label": "",
       "yahoo_ydn_conv_transaction_id": ""
     },
-    "scriptSrc": "(?:adinterax|adserver\\.yahoo)\\.com",
+    "scriptSrc": [
+      "(?:adinterax|adserver\\.yahoo)\\.com"
+    ],
     "website": "https://www.adtech.yahooinc.com"
   },
   "Yahoo! Ecommerce": {
@@ -113,7 +117,9 @@
       "<!-- (?:End )?Yahoo! Tag Manager -->"
     ],
     "icon": "Yahoo.svg",
-    "scriptSrc": "b\\.yjtag\\.jp/iframe",
+    "scriptSrc": [
+      "b\\.yjtag\\.jp/iframe"
+    ],
     "website": "https://tagmanager.yahoo.co.jp/"
   },
   "Yahoo! Web Analytics": {
@@ -124,7 +130,9 @@
     "js": {
       "YWA": ""
     },
-    "scriptSrc": "d\\.yimg\\.com/mi/ywa\\.js",
+    "scriptSrc": [
+      "d\\.yimg\\.com/mi/ywa\\.js"
+    ],
     "website": "https://web.analytics.yahoo.com"
   },
   "YalinHost": {
@@ -172,7 +180,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.yampi\\.io/",
+    "scriptSrc": [
+      "cdn\\.yampi\\.io/"
+    ],
     "website": "https://www.yampi.com.br/loja-virtual"
   },
   "Yandex SmartCaptcha": {
@@ -229,7 +239,9 @@
       "yandex_ad_format": "",
       "yandex_partner_id": ""
     },
-    "scriptSrc": "https?://an\\.yandex\\.ru/",
+    "scriptSrc": [
+      "https?://an\\.yandex\\.ru/"
+    ],
     "website": "https://partner.yandex.com"
   },
   "Yandex.Messenger": {
@@ -245,7 +257,9 @@
     "pricing": [
       "payg"
     ],
-    "scriptSrc": "chat\\.s3\\.yandex\\.net/widget\\.js",
+    "scriptSrc": [
+      "chat\\.s3\\.yandex\\.net/widget\\.js"
+    ],
     "website": "https://dialogs.yandex.ru"
   },
   "Yandex.Metrika": {
@@ -354,7 +368,9 @@
       }
     },
     "icon": "Yelp.svg",
-    "scriptSrc": "yelp\\.com/biz_badge_js",
+    "scriptSrc": [
+      "yelp\\.com/biz_badge_js"
+    ],
     "website": "https://yelp.com"
   },
   "Yepcomm": {
@@ -378,7 +394,9 @@
       "YETT_BLACKLIST": ""
     },
     "oss": true,
-    "scriptSrc": "/yett@([\\d\\.]+)/dist/yett\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "/yett@([\\d\\.]+)/dist/yett\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://github.com/elbywan/yett"
   },
   "Yext": {
@@ -418,7 +436,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.yieldify\\.com",
+    "scriptSrc": [
+      "\\.yieldify\\.com"
+    ],
     "website": "https://www.yieldify.com"
   },
   "Yieldlab": {
@@ -426,7 +446,9 @@
       36
     ],
     "icon": "Yieldlab.png",
-    "scriptSrc": "^https?://(?:[^/]+\\.)?yieldlab\\.net/",
+    "scriptSrc": [
+      "^https?://(?:[^/]+\\.)?yieldlab\\.net/"
+    ],
     "website": "https://yieldlab.de"
   },
   "Yii": {
@@ -538,7 +560,9 @@
       99
     ],
     "description": "Yodel is a delivery company for B2B and B2C orders in the United Kingdom.",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bYodel\\b"
     ],
@@ -556,7 +580,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.yola(?:cdn)?\\.(?:net|com)/",
+    "scriptSrc": [
+      "\\.yola(?:cdn)?\\.(?:net|com)/"
+    ],
     "website": "https://www.yola.com"
   },
   "YooMoney": {
@@ -573,7 +599,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.yoomoney\\.ru/",
+    "scriptSrc": [
+      "\\.yoomoney\\.ru/"
+    ],
     "website": "https://yoomoney.ru"
   },
   "Yoori": {
@@ -594,7 +622,9 @@
     "pricing": [
       "onetime"
     ],
-    "scripts": "console\\.log\\(\\'Yoori-Ecommerce",
+    "scripts": [
+      "console\\.log\\(\\'Yoori-Ecommerce"
+    ],
     "website": "https://spagreen.net/yoori-ecommerce-solution"
   },
   "Yotpo Loyalty & Referrals": {
@@ -613,7 +643,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn(?:-loyalty)?\\.(?:swellrewards|yotpo)\\.com/",
+    "scriptSrc": [
+      "cdn(?:-loyalty)?\\.(?:swellrewards|yotpo)\\.com/"
+    ],
     "website": "https://www.yotpo.com/platform/loyalty/"
   },
   "Yotpo Reviews": {
@@ -631,7 +663,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "(?!cdn-loyalty)\\.yotpo\\.com/",
+    "scriptSrc": [
+      "(?!cdn-loyalty)\\.yotpo\\.com/"
+    ],
     "website": "https://www.yotpo.com/platform/reviews/"
   },
   "Yotpo SMSBump": {
@@ -657,7 +691,9 @@
       "X-Yottaa-Metrics": "",
       "X-Yottaa-Optimizations": ""
     },
-    "scriptSrc": "cdn\\.yottaa\\.\\w+/",
+    "scriptSrc": [
+      "cdn\\.yottaa\\.\\w+/"
+    ],
     "website": "https://www.yottaa.com"
   },
   "YouCam Makeup": {
@@ -675,7 +711,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "plugins-media\\.(?:perfectcorp|makeupar)\\.com/",
+    "scriptSrc": [
+      "plugins-media\\.(?:perfectcorp|makeupar)\\.com/"
+    ],
     "website": "https://www.perfectcorp.com/business/products/virtual-makeup"
   },
   "YouCan": {
@@ -720,7 +758,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "app\\.youpay\\.ai/",
+    "scriptSrc": [
+      "app\\.youpay\\.ai/"
+    ],
     "website": "https://youpay.co"
   },
   "YouTrack": {
@@ -745,7 +785,9 @@
       "<(?:param|embed|iframe)[^>]+youtube(?:-nocookie)?\\.com/(?:v|embed)"
     ],
     "icon": "YouTube.png",
-    "scriptSrc": "\\.youtube\\.com/",
+    "scriptSrc": [
+      "\\.youtube\\.com/"
+    ],
     "website": "https://www.youtube.com"
   },
   "YunoHost": {
@@ -759,7 +801,9 @@
       "Debian"
     ],
     "oss": true,
-    "scriptSrc": "/ynh_portal\\.js",
+    "scriptSrc": [
+      "/ynh_portal\\.js"
+    ],
     "website": "https://yunohost.org"
   },
   "yellow.ai": {
@@ -775,7 +819,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.yellowmessenger\\.com",
+    "scriptSrc": [
+      "cdn\\.yellowmessenger\\.com"
+    ],
     "website": "https://yellow.ai/"
   }
 }

@@ -127,7 +127,9 @@
       "katex.version": "^(.+)$\\;version:\\1"
     },
     "oss": true,
-    "scriptSrc": "katex(@|/)[0-9.]+(?:/dist)?/katex(?:\\.min)?\\.(mjs|js|css)\\;version:\\1",
+    "scriptSrc": [
+      "katex(@|/)[0-9.]+(?:/dist)?/katex(?:\\.min)?\\.(mjs|js|css)\\;version:\\1"
+    ],
     "website": "https://katex.org/"
   },
   "Kadence WP Blocks": {
@@ -148,7 +150,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/kadence-blocks/dist/.+/kb-form-block\\.min\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/kadence-blocks/dist/.+/kb-form-block\\.min\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1"
+    ],
     "website": "https://www.kadencewp.com/kadence-blocks/"
   },
   "Kadence WP Kadence": {
@@ -171,7 +175,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/kadence/.+navigation\\.min\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/kadence/.+navigation\\.min\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1"
+    ],
     "website": "https://www.kadencewp.com/kadence-theme"
   },
   "Kadence WP Virtue": {
@@ -189,7 +195,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/virtue/.+main-min\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/virtue/.+main-min\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1"
+    ],
     "website": "https://www.kadencewp.com/product/virtue-free-theme"
   },
   "Kaira Vogue": {
@@ -206,7 +214,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/vogue(?:-child)?/",
+    "scriptSrc": [
+      "/wp-content/themes/vogue(?:-child)?/"
+    ],
     "website": "https://kairaweb.com/wordpress-theme/vogue"
   },
   "Kajabi": {
@@ -236,7 +246,9 @@
     "js": {
       "Kakao.VERSION": "^([\\d\\.]+)$\\;version:\\1"
     },
-    "scriptSrc": "\\.kakao\\.com/",
+    "scriptSrc": [
+      "\\.kakao\\.com/"
+    ],
     "website": "https://developers.kakao.com/product"
   },
   "Kaltura": {
@@ -260,8 +272,12 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "api\\.kaltura\\.(?:nordu\\.net|com)/",
-    "scripts": "kalturaPlayer",
+    "scriptSrc": [
+      "api\\.kaltura\\.(?:nordu\\.net|com)/"
+    ],
+    "scripts": [
+      "kalturaPlayer"
+    ],
     "website": "https://corp.kaltura.com"
   },
   "Kameleoon": {
@@ -283,7 +299,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.kameleoon\\.\\w+/kameleoon\\.js",
+    "scriptSrc": [
+      "\\.kameleoon\\.\\w+/kameleoon\\.js"
+    ],
     "website": "https://kameleoon.com/"
   },
   "Kamva": {
@@ -297,7 +315,9 @@
     "meta": {
       "generator": "[CK]amva"
     },
-    "scriptSrc": "cdn\\.mykamva\\.ir",
+    "scriptSrc": [
+      "cdn\\.mykamva\\.ir"
+    ],
     "website": "https://kamva.ir"
   },
   "Kapix Studio": {
@@ -338,7 +358,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.kapturecrm\\.com/.+\\?ver=([\\d\\.]+)\\;version:\\1",
+    "scriptSrc": [
+      "\\.kapturecrm\\.com/.+\\?ver=([\\d\\.]+)\\;version:\\1"
+    ],
     "website": "https://www.kapturecrm.com"
   },
   "Karma": {
@@ -354,7 +376,9 @@
       "karma.vars.version": "(.+)\\;version:\\1"
     },
     "oss": true,
-    "scriptSrc": "karma\\.mdpcdn\\.com",
+    "scriptSrc": [
+      "karma\\.mdpcdn\\.com"
+    ],
     "website": "https://karma-runner.github.io"
   },
   "Karte": {
@@ -393,7 +417,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "app\\.kartra\\.com",
+    "scriptSrc": [
+      "app\\.kartra\\.com"
+    ],
     "website": "https://home.kartra.com"
   },
   "Kasada": {
@@ -426,9 +452,13 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.infusionsoft\\.com/",
+    "scriptSrc": [
+      "\\.infusionsoft\\.com/"
+    ],
     "website": "https://keap.com",
-    "xhr": "property\\.infusionsoft\\.com"
+    "xhr": [
+      "property\\.infusionsoft\\.com"
+    ]
   },
   "Keen Delivery": {
     "cats": [
@@ -436,7 +466,9 @@
     ],
     "description": "Keen Delivery is a Dutch shipping platform ",
     "icon": "Keen Delivery.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bKeen Delivery\\b"
     ],
@@ -525,7 +557,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "app\\.keptify\\.com/",
+    "scriptSrc": [
+      "app\\.keptify\\.com/"
+    ],
     "website": "https://keptify.com"
   },
   "Kerberos": {
@@ -561,7 +595,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.ketchcdn\\.com/",
+    "scriptSrc": [
+      "\\.ketchcdn\\.com/"
+    ],
     "website": "https://www.ketch.com"
   },
   "Kevel": {
@@ -579,7 +615,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "adzerk\\.net/",
+    "scriptSrc": [
+      "adzerk\\.net/"
+    ],
     "website": "https://www.kevel.com"
   },
   "KeyCDN": {
@@ -631,7 +669,9 @@
       "Node.js",
       "Elasticsearch"
     ],
-    "url": "kibana#/dashboard/",
+    "url": [
+      "kibana#/dashboard/"
+    ],
     "website": "https://www.elastic.co/products/kibana"
   },
   "Kibo Commerce": {
@@ -643,7 +683,9 @@
     "pricing": [
       "poa"
     ],
-    "scriptSrc": "cdn-tp\\d+\\.mozu\\.com",
+    "scriptSrc": [
+      "cdn-tp\\d+\\.mozu\\.com"
+    ],
     "website": "https://kibocommerce.com"
   },
   "Kibo Personalization": {
@@ -697,7 +739,9 @@
       "recurring"
     ],
     "saas": true,
-    "url": "/modules/kiliba/logo\\.png",
+    "url": [
+      "/modules/kiliba/logo\\.png"
+    ],
     "website": "https://en.kiliba.com"
   },
   "Kindful": {
@@ -729,7 +773,9 @@
       "Kinetic": "",
       "Kinetic.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "kinetic(?:-v?([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "kinetic(?:-v?([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://github.com/ericdrowell/KineticJS/"
   },
   "Kinsta": {
@@ -760,7 +806,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/kirki/",
+    "scriptSrc": [
+      "/wp-content/plugins/kirki/"
+    ],
     "website": "https://kirki.org"
   },
   "Kitcart": {
@@ -796,7 +844,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.static\\.kiwisizing\\.com/",
+    "scriptSrc": [
+      "cdn\\.static\\.kiwisizing\\.com/"
+    ],
     "website": "https://www.kiwisizing.com"
   },
   "Klarna Checkout": {
@@ -824,7 +874,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.klarnaservices\\.com/lib\\.js",
+    "scriptSrc": [
+      "\\.klarnaservices\\.com/lib\\.js"
+    ],
     "website": "https://www.klarna.com/international/"
   },
   "Klaro": {
@@ -855,7 +907,9 @@
     "js": {
       "KlashaClient": ""
     },
-    "scriptSrc": "klasha-integration\\.js",
+    "scriptSrc": [
+      "klasha-integration\\.js"
+    ],
     "website": "https://www.klasha.com/"
   },
   "Klaviyo": {
@@ -868,7 +922,9 @@
       "KlaviyoSubscribe": "",
       "klaviyo": ""
     },
-    "scriptSrc": "klaviyo\\.com",
+    "scriptSrc": [
+      "klaviyo\\.com"
+    ],
     "website": "https://www.klaviyo.com/"
   },
   "Klevu": {
@@ -888,7 +944,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "js\\.klevu\\.\\w+/klevu-js-v([\\d.]+)\\;version:\\1",
+    "scriptSrc": [
+      "js\\.klevu\\.\\w+/klevu-js-v([\\d.]+)\\;version:\\1"
+    ],
     "website": "https://www.klevu.com"
   },
   "KlickPages": {
@@ -909,7 +967,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.klickpages\\.com\\.br/",
+    "scriptSrc": [
+      "\\.klickpages\\.com\\.br/"
+    ],
     "website": "https://klickpages.com.br"
   },
   "Klickly": {
@@ -922,7 +982,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "analytics\\.klickly\\.com/pixel\\.js\\?v=([\\d\\.]+)\\;version:\\1",
+    "scriptSrc": [
+      "analytics\\.klickly\\.com/pixel\\.js\\?v=([\\d\\.]+)\\;version:\\1"
+    ],
     "website": "https://www.klickly.com"
   },
   "Knak": {
@@ -968,7 +1030,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "ko-fi\\.com/widgets",
+    "scriptSrc": [
+      "ko-fi\\.com/widgets"
+    ],
     "website": "https://ko-fi.com"
   },
   "Koa": {
@@ -1001,9 +1065,13 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.getkoala\\.com/",
+    "scriptSrc": [
+      "cdn\\.getkoala\\.com/"
+    ],
     "website": "https://getkoala.com/",
-    "xhr": "api\\.getkoala\\.com"
+    "xhr": [
+      "api\\.getkoala\\.com"
+    ]
   },
   "Koala Framework": {
     "cats": [
@@ -1094,7 +1162,9 @@
     "meta": {
       "generator": "Koken ([\\d.]+)\\;version:\\1"
     },
-    "scriptSrc": "koken(?:\\.js\\?([\\d.]+)|/storage)\\;version:\\1",
+    "scriptSrc": [
+      "koken(?:\\.js\\?([\\d.]+)|/storage)\\;version:\\1"
+    ],
     "website": "https://koken.me"
   },
   "Komodo CMS": {
@@ -1125,7 +1195,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.k-analytix\\.com",
+    "scriptSrc": [
+      "\\.k-analytix\\.com"
+    ],
     "website": "https://www.konduto.com"
   },
   "Kong": {
@@ -1186,7 +1258,9 @@
     "implies": [
       "Microsoft ASP.NET"
     ],
-    "scriptSrc": "/Kooboo",
+    "scriptSrc": [
+      "/Kooboo"
+    ],
     "website": "https://kooboo.com"
   },
   "Kooomo": {
@@ -1216,7 +1290,9 @@
       1
     ],
     "icon": "Kotisivukone.png",
-    "scriptSrc": "kotisivukone(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "kotisivukone(?:\\.min)?\\.js"
+    ],
     "website": "https://www.kotisivukone.fi"
   },
   "Kotlin": {
@@ -1305,7 +1381,9 @@
     "pricing": [
       "payg"
     ],
-    "scriptSrc": "cdn\\.kueskipay\\.com",
+    "scriptSrc": [
+      "cdn\\.kueskipay\\.com"
+    ],
     "website": "https://kueskipay.com/"
   },
   "Kustomer": {

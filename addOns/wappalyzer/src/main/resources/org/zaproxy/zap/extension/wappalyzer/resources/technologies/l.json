@@ -52,9 +52,13 @@
       "lkqdSettings": "",
       "lkqd_http_response": ""
     },
-    "scriptSrc": "\\.lkqd\\.net",
+    "scriptSrc": [
+      "\\.lkqd\\.net"
+    ],
     "website": "https://wiki.lkqd.com",
-    "xhr": "\\.lkqd\\.net"
+    "xhr": [
+      "\\.lkqd\\.net"
+    ]
   },
   "LOU": {
     "cats": [
@@ -62,7 +66,9 @@
     ],
     "description": "LOU is a Digital Adoption Platform that streamlines user onboarding and training.",
     "icon": "LOU.png",
-    "scriptSrc": "cdn\\.louassist\\.com*",
+    "scriptSrc": [
+      "cdn\\.louassist\\.com*"
+    ],
     "website": "https://www.louassist.com"
   },
   "Lagoon": {
@@ -93,7 +99,9 @@
       "freemium",
       "mid"
     ],
-    "scriptSrc": "\\.landbot\\.io/.*-([\\d\\.]+)\\.js",
+    "scriptSrc": [
+      "\\.landbot\\.io/.*-([\\d\\.]+)\\.js"
+    ],
     "website": "https://landbot.io"
   },
   "LandingPress": {
@@ -110,7 +118,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/landingpress-wp/.+script\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/landingpress-wp/.+script\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://landingpress.net"
   },
   "LangShop": {
@@ -134,7 +144,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "\\.langshop\\.app/",
+    "scriptSrc": [
+      "\\.langshop\\.app/"
+    ],
     "website": "https://langshop.io"
   },
   "Laravel": {
@@ -181,7 +193,9 @@
     "meta": {
       "laterpay:connector:callbacks:on_user_has_access": "deobfuscateText"
     },
-    "scriptSrc": "https?://connectormwi\\.laterpay\\.net/([0-9.]+)[a-zA-z-]*/live/[\\w-]+\\.js\\;version:\\1",
+    "scriptSrc": [
+      "https?://connectormwi\\.laterpay\\.net/([0-9.]+)[a-zA-z-]*/live/[\\w-]+\\.js\\;version:\\1"
+    ],
     "website": "https://www.laterpay.net/"
   },
   "LatitudePay": {
@@ -199,7 +213,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "\\.latitudepayapps\\.com/",
+    "scriptSrc": [
+      "\\.latitudepayapps\\.com/"
+    ],
     "website": "https://www.latitudepay.com"
   },
   "LaunchDarkly": {
@@ -218,7 +234,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "(?:\\.|\\-)launchdarkly(?:\\.com/|\\-sdk\\.)",
+    "scriptSrc": [
+      "(?:\\.|\\-)launchdarkly(?:\\.com/|\\-sdk\\.)"
+    ],
     "website": "https://launchdarkly.com",
     "xhr": [
       "app\\.launchdarkly\\.com",
@@ -244,7 +262,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "builder\\.launchrock\\.com",
+    "scriptSrc": [
+      "builder\\.launchrock\\.com"
+    ],
     "website": "https://www.launchrock.com"
   },
   "LayBuy": {
@@ -264,7 +284,9 @@
     "pricing": [
       "payg"
     ],
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "saas": true,
     "scriptSrc": [
       "\\.laybuy\\.com/",
@@ -288,7 +310,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "app\\.layouthub\\.com/shopify/layouthub\\.js",
+    "scriptSrc": [
+      "app\\.layouthub\\.com/shopify/layouthub\\.js"
+    ],
     "website": "https://layouthub.com"
   },
   "Layui": {
@@ -340,7 +364,9 @@
     "description": "LazySizes unveilhooks plugin extends lazySizes to lazyload scripts/widgets, background images, styles and video/audio elements.",
     "icon": "default.svg",
     "oss": true,
-    "scriptSrc": "ls\\.unveilhooks(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "ls\\.unveilhooks(?:\\.min)?\\.js"
+    ],
     "website": "https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/unveilhooks"
   },
   "LeadChat": {
@@ -357,7 +383,9 @@
     "requires": [
       "LiveChat"
     ],
-    "scriptSrc": "(?://|\\.)chatsystem\\.io/",
+    "scriptSrc": [
+      "(?://|\\.)chatsystem\\.io/"
+    ],
     "website": "https://www.leadchat.com"
   },
   "Leadfeeder": {
@@ -378,7 +406,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.leadfeeder\\.com/",
+    "scriptSrc": [
+      "\\.leadfeeder\\.com/"
+    ],
     "website": "https://www.leadfeeder.com"
   },
   "Leadinfo": {
@@ -396,7 +426,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.leadinfo\\.net",
+    "scriptSrc": [
+      "cdn\\.leadinfo\\.net"
+    ],
     "website": "https://www.leadinfo.com"
   },
   "Leadster": {
@@ -430,7 +462,9 @@
       "L.PosAnimation": "",
       "L.version": "^(.+)$\\;version:\\1\\;confidence:0"
     },
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/(?:dist\\/)?)?leaflet[\\w\\-\\.]{0,32}\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?(?!.+shopify)\\;version:\\1\\2",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/(?:dist\\/)?)?leaflet[\\w\\-\\.]{0,32}\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?(?!.+shopify)\\;version:\\1\\2"
+    ],
     "website": "https://leafletjs.com"
   },
   "Leaflet platform": {
@@ -447,7 +481,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "scripts\\.leaflet\\.co/",
+    "scriptSrc": [
+      "scripts\\.leaflet\\.co/"
+    ],
     "website": "https://join.leaflet.co"
   },
   "Leanplum": {
@@ -464,7 +500,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "npm/leanplum-sdk\\@([\\d.]+)\\;version:\\1",
+    "scriptSrc": [
+      "npm/leanplum-sdk\\@([\\d.]+)\\;version:\\1"
+    ],
     "website": "https://www.leanplum.com"
   },
   "LearnDash": {
@@ -506,7 +544,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.mycourse\\.app/v([\\d\\.]+)/\\;version:\\1",
+    "scriptSrc": [
+      "cdn\\.mycourse\\.app/v([\\d\\.]+)/\\;version:\\1"
+    ],
     "website": "https://www.learnworlds.com"
   },
   "Leaseweb": {
@@ -563,7 +603,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.legalmonster\\.com/",
+    "scriptSrc": [
+      "\\.legalmonster\\.com/"
+    ],
     "website": "https://www.legalmonster.com"
   },
   "Lemon Squeezy": {
@@ -593,7 +635,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.lengow\\.com/",
+    "scriptSrc": [
+      "\\.lengow\\.com/"
+    ],
     "website": "https://www.lengow.com"
   },
   "Lenis": {
@@ -626,7 +670,9 @@
       "__LEPTOS_RESOURCE_RESOLVERS": ""
     },
     "oss": true,
-    "scripts": "export function microtask\\(f\\)\\;confidence:75",
+    "scripts": [
+      "export function microtask\\(f\\)\\;confidence:75"
+    ],
     "website": "https://leptos.dev"
   },
   "Less": {
@@ -663,7 +709,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "letro\\.jp/tags",
+    "scriptSrc": [
+      "letro\\.jp/tags"
+    ],
     "website": "https://service.aainc.co.jp/product/letro/"
   },
   "Levar": {
@@ -725,7 +773,9 @@
     ],
     "description": "Lexity is the one-stop-shop of ecommerce services for SMBs.",
     "icon": "Lexity.png",
-    "scriptSrc": "\\.lexity\\.com/",
+    "scriptSrc": [
+      "\\.lexity\\.com/"
+    ],
     "website": "https://lexity.com"
   },
   "Liberapay": {
@@ -735,7 +785,9 @@
     "description": "Liberapay is a non-profit organisation subscription payment platform.",
     "dom": "a[href*='//liberapay.com/'][target='_blank']",
     "icon": "Liberapay.svg",
-    "scriptSrc": "//liberapay\\.com/",
+    "scriptSrc": [
+      "//liberapay\\.com/"
+    ],
     "website": "https://liberapay.com/"
   },
   "Libravatar": {
@@ -837,7 +889,9 @@
       "lightbox.$lightbox": ""
     },
     "oss": true,
-    "scriptSrc": "lightbox(?:-plus-jquery)?.{0,32}\\.js",
+    "scriptSrc": [
+      "lightbox(?:-plus-jquery)?.{0,32}\\.js"
+    ],
     "website": "https://lokeshdhakar.com/projects/lightbox2/"
   },
   "Lightning": {
@@ -858,7 +912,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/lightning(?:-pro)?/.+lightning\\.min\\.js(?:.+ver=([\\d\\.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/lightning(?:-pro)?/.+lightning\\.min\\.js(?:.+ver=([\\d\\.]+))?\\;version:\\1"
+    ],
     "website": "https://lightning.vektor-inc.co.jp/en/"
   },
   "Lightspeed eCom": {
@@ -873,8 +929,12 @@
       "low"
     ],
     "saas": true,
-    "scriptSrc": "http://assets\\.webshopapp\\.com",
-    "url": "seoshop.webshopapp.com",
+    "scriptSrc": [
+      "http://assets\\.webshopapp\\.com"
+    ],
+    "url": [
+      "seoshop.webshopapp.com"
+    ],
     "website": "https://www.lightspeedhq.com/products/ecommerce/"
   },
   "LimeChat": {
@@ -887,7 +947,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.limechat\\.ai/",
+    "scriptSrc": [
+      "\\.limechat\\.ai/"
+    ],
     "website": "https://www.limechat.ai"
   },
   "LimeSpot": {
@@ -905,7 +967,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.personalizer\\.io/",
+    "scriptSrc": [
+      "\\.personalizer\\.io/"
+    ],
     "website": "https://www.limespot.com"
   },
   "Limepay": {
@@ -974,7 +1038,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.linkmink\\.com/lm-js/([\\d\\.]+)/\\;version:\\1",
+    "scriptSrc": [
+      "cdn\\.linkmink\\.com/lm-js/([\\d\\.]+)/\\;version:\\1"
+    ],
     "website": "https://linkmink.com"
   },
   "Linkedin Ads": {
@@ -1018,7 +1084,9 @@
       "snap\\.licdn\\.com/li\\.lms-analytics/insight\\.min\\.js",
       "cdn\\.oribi\\.io"
     ],
-    "scripts": "_linkedin_partner_id",
+    "scripts": [
+      "_linkedin_partner_id"
+    ],
     "website": "https://business.linkedin.com/marketing-solutions/insight-tag"
   },
   "Linkedin Sign-in": {
@@ -1031,7 +1099,9 @@
       "OnLinkedInAuth": "",
       "onLinkedInLoad": ""
     },
-    "scriptSrc": "platform\\.linkedin\\.com/(?:.*)?in\\.js(?:\\?version)?([\\d.]+)?\\;version:\\1",
+    "scriptSrc": [
+      "platform\\.linkedin\\.com/(?:.*)?in\\.js(?:\\?version)?([\\d.]+)?\\;version:\\1"
+    ],
     "website": "https://www.linkedin.com/developers"
   },
   "Linx Commerce": {
@@ -1188,7 +1258,9 @@
       "mid",
       "recurring"
     ],
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "saas": true,
     "website": "https://www.littledata.io"
   },
@@ -1236,7 +1308,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/livecanvas/",
+    "scriptSrc": [
+      "/wp-content/plugins/livecanvas/"
+    ],
     "website": "https://livecanvas.com"
   },
   "LiveChat": {
@@ -1252,7 +1326,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.livechatinc\\.com/.*tracking\\.js",
+    "scriptSrc": [
+      "cdn\\.livechatinc\\.com/.*tracking\\.js"
+    ],
     "website": "https://www.livechat.com/"
   },
   "LiveHelp": {
@@ -1285,9 +1361,13 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.liadm\\.com",
+    "scriptSrc": [
+      "\\.liadm\\.com"
+    ],
     "website": "https://www.liveintent.com",
-    "xhr": "\\.liadm\\.com"
+    "xhr": [
+      "\\.liadm\\.com"
+    ]
   },
   "LiveJournal": {
     "cats": [
@@ -1295,7 +1375,9 @@
     ],
     "description": "LiveJournal is a social networking service where users can keep a blog, journal or diary.",
     "icon": "LiveJournal.png",
-    "url": "\\.livejournal\\.com",
+    "url": [
+      "\\.livejournal\\.com"
+    ],
     "website": "https://www.livejournal.com"
   },
   "LivePerson": {
@@ -1313,7 +1395,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.(?:liveperson|contactatonce)?\\.(?:com|net|co\\.uk)/",
+    "scriptSrc": [
+      "\\.(?:liveperson|contactatonce)?\\.(?:com|net|co\\.uk)/"
+    ],
     "website": "https://www.liveperson.com"
   },
   "LiveRamp DPM": {
@@ -1325,7 +1409,9 @@
     "js": {
       "dpmComscoreVars": ""
     },
-    "scriptSrc": "c\\.tvpixel\\.com/js/current/dpm_pixel_min\\.js",
+    "scriptSrc": [
+      "c\\.tvpixel\\.com/js/current/dpm_pixel_min\\.js"
+    ],
     "website": "https://liveramp.com/data-plus-math"
   },
   "LiveRamp PCM": {
@@ -1338,7 +1424,9 @@
     "js": {
       "wpJsonpLiverampGdprCmp": ""
     },
-    "scriptSrc": "gdpr\\.privacymanager\\.io",
+    "scriptSrc": [
+      "gdpr\\.privacymanager\\.io"
+    ],
     "website": "https://liveramp.com/our-platform/preference-consent-management"
   },
   "LiveSession": {
@@ -1409,7 +1497,9 @@
       "LF.CommentCount": "",
       "fyre": ""
     },
-    "scriptSrc": "livefyre_init\\.js",
+    "scriptSrc": [
+      "livefyre_init\\.js"
+    ],
     "website": "https://livefyre.com"
   },
   "Liveinternet": {
@@ -1440,7 +1530,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.livescale\\.tv/",
+    "scriptSrc": [
+      "\\.livescale\\.tv/"
+    ],
     "website": "https://www.livescale.tv"
   },
   "Livewire": {
@@ -1460,7 +1552,9 @@
       "livewire": ""
     },
     "oss": true,
-    "scriptSrc": "livewire(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "livewire(?:\\.min)?\\.js"
+    ],
     "website": "https://laravel-livewire.com"
   },
   "LlamaLink Cloud Server": {
@@ -1504,7 +1598,9 @@
     "implies": [
       "Shopify"
     ],
-    "scriptSrc": "\\.loadifyapp\\.ninety9\\.dev",
+    "scriptSrc": [
+      "\\.loadifyapp\\.ninety9\\.dev"
+    ],
     "website": "https://apps.shopify.com/loadify"
   },
   "LocalFocus": {
@@ -1544,7 +1640,9 @@
     ],
     "saas": true,
     "website": "https://www.localised.com",
-    "xhr": "api\\.localised\\.com"
+    "xhr": [
+      "api\\.localised\\.com"
+    ]
   },
   "Locksmith": {
     "cats": [
@@ -1579,7 +1677,9 @@
       "LocomotiveScroll": ""
     },
     "oss": true,
-    "scriptSrc": "locomotive-scroll(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "locomotive-scroll(?:\\.min)?\\.js"
+    ],
     "website": "https://scroll.locomotive.ca/docs/#/"
   },
   "LocomotiveCMS": {
@@ -1611,7 +1711,9 @@
       "_.differenceBy": "",
       "_.templateSettings.imports._.templateSettings.imports._.VERSION": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "lodash.*\\.js",
+    "scriptSrc": [
+      "lodash.*\\.js"
+    ],
     "website": "https://www.lodash.com"
   },
   "Loglib": {
@@ -1646,7 +1748,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.(?:lr-ingest|logrocket)\\.(?:com|io)",
+    "scriptSrc": [
+      "cdn\\.(?:lr-ingest|logrocket)\\.(?:com|io)"
+    ],
     "website": "https://logrocket.com"
   },
   "Loggly": {
@@ -1664,7 +1768,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.loggly\\.com/",
+    "scriptSrc": [
+      "\\.loggly\\.com/"
+    ],
     "website": "https://www.loggly.com"
   },
   "LogiCommerce": {
@@ -1728,7 +1834,9 @@
     ],
     "description": "LogoiX is a German shipping company.",
     "icon": "LogoiX.png",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bLogoiX\\b"
     ],
@@ -1761,7 +1869,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "lojamestre\\.\\w+\\.br",
+    "scriptSrc": [
+      "lojamestre\\.\\w+\\.br"
+    ],
     "website": "https://www.lojamestre.com.br/"
   },
   "Loja Virtual": {
@@ -1798,7 +1908,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "loja2\\.com\\.br",
+    "scriptSrc": [
+      "loja2\\.com\\.br"
+    ],
     "website": "https://www.loja2.com.br"
   },
   "Loom": {
@@ -1836,7 +1948,9 @@
       "low",
       "recurring"
     ],
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "saas": true,
     "website": "https://www.loopreturns.com"
   },
@@ -1877,7 +1991,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "lootly\\.io/",
+    "scriptSrc": [
+      "lootly\\.io/"
+    ],
     "website": "https://lootly.io"
   },
   "Loox": {
@@ -1894,7 +2010,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "loox\\.io/widget",
+    "scriptSrc": [
+      "loox\\.io/widget"
+    ],
     "website": "https://loox.app"
   },
   "Loqate": {
@@ -1944,7 +2062,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "sdk\\.loyaltylion\\.net/",
+    "scriptSrc": [
+      "sdk\\.loyaltylion\\.net/"
+    ],
     "website": "https://loyaltylion.com"
   },
   "Lozad.js": {
@@ -1958,7 +2078,9 @@
       "lozad": ""
     },
     "oss": true,
-    "scripts": "/lozad\\.min\\.js",
+    "scripts": [
+      "/lozad\\.min\\.js"
+    ],
     "website": "https://apoorv.pro/lozad.js/"
   },
   "Lua": {
@@ -2019,7 +2141,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.luckyorange\\.com/",
+    "scriptSrc": [
+      "\\.luckyorange\\.com/"
+    ],
     "website": "https://www.luckyorange.com"
   },
   "Luigi’s Box": {
@@ -2080,7 +2204,9 @@
       "lunr": ""
     },
     "oss": true,
-    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?lunr(?:-store)?(?:-en)?(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/)?lunr(?:-store)?(?:-en)?(?:\\.min)?\\.js"
+    ],
     "website": "https://lunrjs.com/"
   },
   "LyraThemes Kale": {
@@ -2100,7 +2226,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/kale(?:-pro)?/",
+    "scriptSrc": [
+      "/wp-content/themes/kale(?:-pro)?/"
+    ],
     "website": "https://www.lyrathemes.com/kale"
   },
   "Lytics": {
@@ -2117,7 +2245,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.lytics\\.io/",
+    "scriptSrc": [
+      "\\.lytics\\.io/"
+    ],
     "website": "https://www.lytics.com"
   },
   "langify": {
@@ -2135,7 +2265,9 @@
       "low",
       "recurring"
     ],
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "saas": true,
     "website": "https://langify-app.com"
   },
@@ -2150,7 +2282,9 @@
       "libphonenumber.DIGITS": ""
     },
     "oss": true,
-    "scriptSrc": "(?:/([\\d\\.]+))?/libphonenumber(?:-js\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:/([\\d\\.]+))?/libphonenumber(?:-js\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://github.com/google/libphonenumber"
   },
   "libwww-perl-daemon": {

@@ -5,7 +5,9 @@
     ],
     "description": "GEODIS is a global transport and logistics company.",
     "icon": "GEODIS.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bGeodis\\b"
     ],
@@ -55,7 +57,9 @@
       "mid",
       "recurring"
     ],
-    "scriptSrc": "//.*glpi.+common\\.min\\.js\\?v=(\\d+\\.\\d+\\.\\d+)\\;version:\\1",
+    "scriptSrc": [
+      "//.*glpi.+common\\.min\\.js\\?v=(\\d+\\.\\d+\\.\\d+)\\;version:\\1"
+    ],
     "website": "https://glpi-project.org"
   },
   "GLS": {
@@ -64,7 +68,9 @@
     ],
     "description": "GLS offers parcel, logistics and express services, throughout Europe as well as in the US and in Canada.",
     "icon": "GLS.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bGLS\\b"
     ],
@@ -150,7 +156,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/gpt3-ai-content-generator/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/gpt3-ai-content-generator/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://gptaipower.com"
   },
   "GSAP": {
@@ -165,7 +173,9 @@
       "gsap.version": "([\\d.]+)\\;version:\\1",
       "gsapVersions": ""
     },
-    "scriptSrc": "TweenMax(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "TweenMax(?:\\.min)?\\.js"
+    ],
     "website": "https://greensock.com/gsap"
   },
   "GTranslate": {
@@ -202,7 +212,9 @@
     "requires": [
       "Shopify"
     ],
-    "scriptSrc": "gtranslate\\.io/shopify/",
+    "scriptSrc": [
+      "gtranslate\\.io/shopify/"
+    ],
     "website": "https://apps.shopify.com/multilingual-shop-by-gtranslate"
   },
   "GX WebManager": {
@@ -249,7 +261,9 @@
     "js": {
       "gambio": ""
     },
-    "scriptSrc": "gm_javascript\\.js\\.php",
+    "scriptSrc": [
+      "gm_javascript\\.js\\.php"
+    ],
     "website": "https://gambio.de"
   },
   "Gameball": {
@@ -270,7 +284,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "assets\\.gameball\\.co/",
+    "scriptSrc": [
+      "assets\\.gameball\\.co/"
+    ],
     "website": "https://www.gameball.co"
   },
   "Gatsby": {
@@ -331,7 +347,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.geetest\\.com/",
+    "scriptSrc": [
+      "\\.geetest\\.com/"
+    ],
     "website": "https://www.geetest.com"
   },
   "GemPages": {
@@ -353,7 +371,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "/files/gempagev\\d+\\.js",
+    "scriptSrc": [
+      "/files/gempagev\\d+\\.js"
+    ],
     "website": "https://gempages.net"
   },
   "Gemius": {
@@ -445,7 +465,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "themes\\/generatepress(?:(?:%20)?_?child)?(?:\\/assets)?(?:\\/inc)?(?:\\/js)?(?:\\/accordion){0,2}(?:\\/lity)?(?:\\/menu)?(?:\\/owl)?(?:\\/slick){0,2}(?:\\/vs(?:loadmore)?(?:postviews)?)?(?:\\/back-to-top)?(?:\\/keen-slider)?(?:\\/tab-img)?(?:-init)?(?:\\.carousel)?(?:\\/jquery)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "themes\\/generatepress(?:(?:%20)?_?child)?(?:\\/assets)?(?:\\/inc)?(?:\\/js)?(?:\\/accordion){0,2}(?:\\/lity)?(?:\\/menu)?(?:\\/owl)?(?:\\/slick){0,2}(?:\\/vs(?:loadmore)?(?:postviews)?)?(?:\\/back-to-top)?(?:\\/keen-slider)?(?:\\/tab-img)?(?:-init)?(?:\\.carousel)?(?:\\/jquery)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://generatepress.com"
   },
   "GeneratePress GP Premium": {
@@ -465,7 +487,9 @@
       "WordPress"
     ],
     "saas": true,
-    "scriptSrc": "wp-content\\/plugins\\/gp-premium(?:\\/menu-plus)?(?:\\/sections)?\\/functions\\/js(?:\\/offside)?(?:\\/parallax)?(?:\\/sticky)?(?:\\.min)?(?:-((?:\\d+\\.)+\\d+))?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "scriptSrc": [
+      "wp-content\\/plugins\\/gp-premium(?:\\/menu-plus)?(?:\\/sections)?\\/functions\\/js(?:\\/offside)?(?:\\/parallax)?(?:\\/sticky)?(?:\\.min)?(?:-((?:\\d+\\.)+\\d+))?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2"
+    ],
     "website": "https://docs.generatepress.com/article/installing-gp-premium/"
   },
   "Genesis theme": {
@@ -481,7 +505,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/genesis/lib/js/",
+    "scriptSrc": [
+      "/wp-content/themes/genesis/lib/js/"
+    ],
     "website": "https://www.studiopress.com/themes/genesis"
   },
   "Genesys Cloud": {
@@ -517,7 +543,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.gsspcln\\.jp/",
+    "scriptSrc": [
+      "\\.gsspcln\\.jp/"
+    ],
     "website": "https://geniee.co.jp"
   },
   "Gentoo": {
@@ -542,7 +570,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "geotargetly\\.co/",
+    "scriptSrc": [
+      "geotargetly\\.co/"
+    ],
     "website": "https://geotargetly.com"
   },
   "Gerrit": {
@@ -565,7 +595,9 @@
     "meta": {
       "title": "^Gerrit Code Review$"
     },
-    "scriptSrc": "^gerrit_ui/gerrit_ui",
+    "scriptSrc": [
+      "^gerrit_ui/gerrit_ui"
+    ],
     "website": "https://www.gerritcodereview.com"
   },
   "Get Satisfaction": {
@@ -591,7 +623,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.getbutton\\.io/",
+    "scriptSrc": [
+      "\\.getbutton\\.io/"
+    ],
     "website": "https://getbutton.io"
   },
   "GetFeedback": {
@@ -641,7 +675,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.getresponse\\.com/",
+    "scriptSrc": [
+      "\\.getresponse\\.com/"
+    ],
     "website": "https://www.getresponse.com"
   },
   "GetSimple CMS": {
@@ -673,7 +709,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "api\\.at\\.getsocial\\.io",
+    "scriptSrc": [
+      "api\\.at\\.getsocial\\.io"
+    ],
     "website": "https://getsocial.io"
   },
   "GetYourGuide": {
@@ -699,7 +737,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.getyourguide\\.com/",
+    "scriptSrc": [
+      "\\.getyourguide\\.com/"
+    ],
     "website": "https://partner.getyourguide.com"
   },
   "Getintent": {
@@ -713,7 +753,9 @@
     ],
     "saas": true,
     "website": "https://getintent.com",
-    "xhr": "\\.adhigh\\.net"
+    "xhr": [
+      "\\.adhigh\\.net"
+    ]
   },
   "Getsitecontrol": {
     "cats": [
@@ -727,7 +769,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.getsitecontrol\\.com/",
+    "scriptSrc": [
+      "\\.getsitecontrol\\.com/"
+    ],
     "website": "https://getsitecontrol.com"
   },
   "Ghost": {
@@ -759,7 +803,9 @@
       "recurring",
       "freemium"
     ],
-    "url": "\\.gigalixirapp\\.com",
+    "url": [
+      "\\.gigalixirapp\\.com"
+    ],
     "website": "https://gigalixir.com/"
   },
   "Gist": {
@@ -793,7 +839,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "assets/js/giftship\\.([\\d\\.]+)\\.js\\;version:\\1",
+    "scriptSrc": [
+      "assets/js/giftship\\.([\\d\\.]+)\\.js\\;version:\\1"
+    ],
     "website": "https://gist-apps.com/giftship"
   },
   "GitBook": {
@@ -816,7 +864,9 @@
       "recurring"
     ],
     "saas": true,
-    "url": "^https?://[^/]+\\.gitbook\\.com/",
+    "url": [
+      "^https?://[^/]+\\.gitbook\\.com/"
+    ],
     "website": "https://www.gitbook.com"
   },
   "GitHub Pages": {
@@ -829,7 +879,9 @@
       "X-GitHub-Request-Id": ""
     },
     "icon": "GitHub.svg",
-    "url": "^https?://[^/]+\\.github\\.io",
+    "url": [
+      "^https?://[^/]+\\.github\\.io"
+    ],
     "website": "https://pages.github.com/"
   },
   "GitLab": {
@@ -936,7 +988,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.givesmart\\.com/",
+    "scriptSrc": [
+      "\\.givesmart\\.com/"
+    ],
     "website": "https://www.givesmart.com"
   },
   "GiveWP": {
@@ -957,7 +1011,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/give/.+give\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/give/.+give\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://givewp.com"
   },
   "GivingFuel": {
@@ -972,7 +1028,9 @@
       "low"
     ],
     "saas": true,
-    "scriptSrc": "\\.givingfuel\\.com/",
+    "scriptSrc": [
+      "\\.givingfuel\\.com/"
+    ],
     "website": "https://www.givingfuel.com"
   },
   "Gladly": {
@@ -986,7 +1044,9 @@
       "Gladly": ""
     },
     "saas": true,
-    "scriptSrc": "cdn\\.gladly\\.com",
+    "scriptSrc": [
+      "cdn\\.gladly\\.com"
+    ],
     "website": "https://www.gladly.com"
   },
   "GlassFish": {
@@ -1017,7 +1077,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.glassboxcdn\\.com/",
+    "scriptSrc": [
+      "cdn\\.glassboxcdn\\.com/"
+    ],
     "website": "https://www.glassbox.com"
   },
   "Glassix": {
@@ -1045,7 +1107,9 @@
       "Glide": ""
     },
     "oss": true,
-    "scriptSrc": "/@glidejs/glide(?:@([\\d\\.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "/@glidejs/glide(?:@([\\d\\.]+))?\\;version:\\1"
+    ],
     "website": "https://glidejs.com"
   },
   "Glider.js": {
@@ -1055,7 +1119,9 @@
     "description": "Glider.js is a fast, lightweight, responsive, dependency-free scrollable list with customisable paging controls.",
     "icon": "Glider.js.svg",
     "oss": true,
-    "scriptSrc": "(?:/|@)?([\\d\\.]{2,})?/glider\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:/|@)?([\\d\\.]{2,})?/glider\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://nickpiscitelli.github.io/Glider.js"
   },
   "Glitch": {
@@ -1069,7 +1135,9 @@
       "low",
       "recurring"
     ],
-    "url": "https://[^.]+\\.glitch\\.me",
+    "url": [
+      "https://[^.]+\\.glitch\\.me"
+    ],
     "website": "https://glitch.com"
   },
   "Global-e": {
@@ -1091,7 +1159,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.global-e\\.com",
+    "scriptSrc": [
+      "\\.global-e\\.com"
+    ],
     "website": "https://www.global-e.com"
   },
   "GlobalShopex": {
@@ -1108,7 +1178,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "//globalshopex\\.com/",
+    "scriptSrc": [
+      "//globalshopex\\.com/"
+    ],
     "website": "https://www.globalshopex.com"
   },
   "Globo Also Bought": {
@@ -1126,7 +1198,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "assets/globo\\.alsobought\\.js",
+    "scriptSrc": [
+      "assets/globo\\.alsobought\\.js"
+    ],
     "website": "https://apps.shopify.com/globo-related-products"
   },
   "Globo Color Swatch": {
@@ -1142,7 +1216,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "assets/globo\\.swatch\\.data\\.js",
+    "scriptSrc": [
+      "assets/globo\\.swatch\\.data\\.js"
+    ],
     "website": "https://apps.shopify.com/globo-related-products"
   },
   "Globo Form Builder": {
@@ -1161,7 +1237,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "/assets/globo\\.formbuilder\\.init\\.js",
+    "scriptSrc": [
+      "/assets/globo\\.formbuilder\\.init\\.js"
+    ],
     "website": "https://apps.shopify.com/form-builder-contact-form"
   },
   "Globo Pre-Order": {
@@ -1197,7 +1275,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.glopal\\.com/",
+    "scriptSrc": [
+      "\\.glopal\\.com/"
+    ],
     "website": "https://www.glopal.com"
   },
   "GloriaFood": {
@@ -1282,7 +1362,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "//gis\\.goinstore\\.com/",
+    "scriptSrc": [
+      "//gis\\.goinstore\\.com/"
+    ],
     "website": "https://goinstore.com"
   },
   "GoAffPro": {
@@ -1299,7 +1381,9 @@
       "mid",
       "recurring"
     ],
-    "scriptSrc": "api\\.goaffpro\\.com/loader\\.js",
+    "scriptSrc": [
+      "api\\.goaffpro\\.com/loader\\.js"
+    ],
     "website": "https://goaffpro.com/"
   },
   "GoAhead": {
@@ -1354,7 +1438,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "assets\\.gocertify\\.me/",
+    "scriptSrc": [
+      "assets\\.gocertify\\.me/"
+    ],
     "website": "https://www.gocertify.me"
   },
   "GoDaddy": {
@@ -1385,7 +1471,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/coblocks/",
+    "scriptSrc": [
+      "/wp-content/plugins/coblocks/"
+    ],
     "website": "https://github.com/godaddy-wordpress/coblocks"
   },
   "GoDaddy Domain Parking": {
@@ -1394,7 +1482,9 @@
     ],
     "description": "GoDaddy is used as a web host and domain registrar.",
     "icon": "GoDaddy.svg",
-    "scripts": "wsimg\\.com/parking-lander",
+    "scripts": [
+      "wsimg\\.com/parking-lander"
+    ],
     "website": "https://www.godaddy.com"
   },
   "GoDaddy Escapade": {
@@ -1426,7 +1516,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/go/.+frontend\\.min\\.js(?:.+ver=([\\d\\.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/go/.+frontend\\.min\\.js(?:.+ver=([\\d\\.]+))?\\;version:\\1"
+    ],
     "website": "https://github.com/godaddy-wordpress/go"
   },
   "GoDaddy Lyrical": {
@@ -1465,7 +1557,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/primer/.+navigation\\.min\\.js(?:.+ver=([\\d\\.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/primer/.+navigation\\.min\\.js(?:.+ver=([\\d\\.]+))?\\;version:\\1"
+    ],
     "website": "https://github.com/godaddy-wordpress/primer"
   },
   "GoDaddy Uptown Style": {
@@ -1525,7 +1619,9 @@
     "pricing": [
       "poa"
     ],
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "saas": true,
     "website": "https://www.gokwik.co"
   },
@@ -1567,7 +1663,9 @@
     "description": "GoatCounter is an open source web analytics platform available as a hosted service (free for non-commercial use) or self-hosted app. It aims to offer easy to use and meaningful privacy-friendly web analytics as an alternative to Google Analytics or Matomo.",
     "icon": "goatcounter.svg",
     "oss": true,
-    "scriptSrc": "gc\\.zgo\\.at/count\\.js",
+    "scriptSrc": [
+      "gc\\.zgo\\.at/count\\.js"
+    ],
     "website": "https://www.goatcounter.com/"
   },
   "Goftino": {
@@ -1588,7 +1686,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.goftino\\.com/",
+    "scriptSrc": [
+      "\\.goftino\\.com/"
+    ],
     "website": "https://www.goftino.com"
   },
   "Gogs": {
@@ -1613,7 +1713,9 @@
       "keywords": "go, git, self-hosted, gogs"
     },
     "oss": true,
-    "scriptSrc": "js/gogs\\.js",
+    "scriptSrc": [
+      "js/gogs\\.js"
+    ],
     "website": "https://gogs.io"
   },
   "Gomag": {
@@ -1688,8 +1790,12 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "\\.googleadservices\\.com/pagead/conversion_async\\.js",
-    "scripts": "gtag\\([^)]+'(AW-)",
+    "scriptSrc": [
+      "\\.googleadservices\\.com/pagead/conversion_async\\.js"
+    ],
+    "scripts": [
+      "gtag\\([^)]+'(AW-)"
+    ],
     "website": "https://support.google.com/google-ads/answer/1722022"
   },
   "Google Analytics": {
@@ -1732,7 +1838,9 @@
     "js": {
       "gaplugins.EC": ""
     },
-    "scriptSrc": "google-analytics\\.com\\/plugins\\/ua\\/(?:ec|ecommerce)\\.js",
+    "scriptSrc": [
+      "google-analytics\\.com\\/plugins\\/ua\\/(?:ec|ecommerce)\\.js"
+    ],
     "website": "https://developers.google.com/analytics/devguides/collection/analyticsjs/enhanced-ecommerce"
   },
   "Google App Engine": {
@@ -1756,7 +1864,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "gstatic\\.com/call-tracking/.+\\.js",
+    "scriptSrc": [
+      "gstatic\\.com/call-tracking/.+\\.js"
+    ],
     "website": "https://support.google.com/google-ads/answer/6100664"
   },
   "Google Charts": {
@@ -1865,7 +1975,9 @@
     "js": {
       "WebFonts": ""
     },
-    "scriptSrc": "googleapis\\.com/.+webfont",
+    "scriptSrc": [
+      "googleapis\\.com/.+webfont"
+    ],
     "website": "https://google.com/fonts"
   },
   "Google Forms": {
@@ -1884,7 +1996,9 @@
     "description": "Google Hosted Libraries is a stable, reliable, high-speed, globally available content distribution network for the most popular, open-source JavaScript libraries.",
     "dom": "link[href*='ajax.googleapis.com/ajax/libs']",
     "icon": "Google Developers.svg",
-    "scriptSrc": "ajax\\.googleapis\\.com/ajax/libs/",
+    "scriptSrc": [
+      "ajax\\.googleapis\\.com/ajax/libs/"
+    ],
     "website": "https://developers.google.com/speed/libraries"
   },
   "Google Maps": {
@@ -1909,7 +2023,9 @@
       1
     ],
     "icon": "Google.svg",
-    "url": "https?://[^.]+\\.business\\.site",
+    "url": [
+      "https?://[^.]+\\.business\\.site"
+    ],
     "website": "https://www.google.com/business/website-builder"
   },
   "Google Optimize": {
@@ -1921,7 +2037,9 @@
     "js": {
       "google_optimize": ""
     },
-    "scriptSrc": "googleoptimize\\.com/optimize\\.js",
+    "scriptSrc": [
+      "googleoptimize\\.com/optimize\\.js"
+    ],
     "website": "https://optimize.google.com"
   },
   "Google PageSpeed": {
@@ -1974,7 +2092,9 @@
       "google-signin-client_id": "",
       "google-signin-scope": ""
     },
-    "scriptSrc": "accounts\\.google\\.com/gsi/client",
+    "scriptSrc": [
+      "accounts\\.google\\.com/gsi/client"
+    ],
     "website": "https://developers.google.com/identity/sign-in/web"
   },
   "Google Sites": {
@@ -1983,7 +2103,9 @@
     ],
     "dom": "[data-abuse-proto*='https://sites.google.com/']",
     "icon": "Google Sites.png",
-    "url": "^https?://sites\\.google\\.com",
+    "url": [
+      "^https?://sites\\.google\\.com"
+    ],
     "website": "https://sites.google.com"
   },
   "Google Tag Manager": {
@@ -2000,7 +2122,9 @@
       "googletag": ""
     },
     "saas": true,
-    "scriptSrc": "googletagmanager\\.com/gtm\\.js",
+    "scriptSrc": [
+      "googletagmanager\\.com/gtm\\.js"
+    ],
     "website": "https://www.google.com/tagmanager"
   },
   "Google Tag Manager for WordPress": {
@@ -2017,7 +2141,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/duracelltomi-google-tag-manager/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/duracelltomi-google-tag-manager/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://gtm4wp.com"
   },
   "Google Wallet": {
@@ -2133,7 +2259,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.shopify\\.com/extensions/.+/([\\d\\.]+)/assets/govalo\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "cdn\\.shopify\\.com/extensions/.+/([\\d\\.]+)/assets/govalo\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://govalo.com"
   },
   "Grab Pay Later": {
@@ -2148,7 +2276,9 @@
       "grab_widget_money_format": ""
     },
     "saas": true,
-    "scriptSrc": "grab-paylater\\.js",
+    "scriptSrc": [
+      "grab-paylater\\.js"
+    ],
     "website": "https://www.grab.com/sg/finance/pay-later/"
   },
   "Grafana": {
@@ -2166,8 +2296,12 @@
       "__grafana_public_path__": ""
     },
     "oss": true,
-    "scriptSrc": "grafana\\..+\\.com/public/build/",
-    "scripts": ".+latestVersion\":\"[\\d\\.\\w\\-]+\"\\,\"version\":\"([\\d\\.]+)\\;version:\\1\\;confidence:75",
+    "scriptSrc": [
+      "grafana\\..+\\.com/public/build/"
+    ],
+    "scripts": [
+      ".+latestVersion\":\"[\\d\\.\\w\\-]+\"\\,\"version\":\"([\\d\\.]+)\\;version:\\1\\;confidence:75"
+    ],
     "website": "https://grafana.com"
   },
   "Graffiti CMS": {
@@ -2184,7 +2318,9 @@
     "meta": {
       "generator": "Graffiti CMS ([^\"]+)\\;version:\\1"
     },
-    "scriptSrc": "/graffiti\\.js",
+    "scriptSrc": [
+      "/graffiti\\.js"
+    ],
     "website": "https://graffiticms.codeplex.com"
   },
   "GrandNode": {
@@ -2258,7 +2394,9 @@
       "freemium"
     ],
     "website": "https://graphcms.com",
-    "xhr": "\\.graphcms\\.com"
+    "xhr": [
+      "\\.graphcms\\.com"
+    ]
   },
   "GraphQL": {
     "cats": [
@@ -2272,7 +2410,9 @@
     },
     "oss": true,
     "website": "https://graphql.org",
-    "xhr": "graphql\\.[\\w]+\\.(?:com|net)/"
+    "xhr": [
+      "graphql\\.[\\w]+\\.(?:com|net)/"
+    ]
   },
   "Graphene": {
     "cats": [
@@ -2291,7 +2431,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/themes/graphene(?:-plus)?/.+graphene\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/themes/graphene(?:-plus)?/.+graphene\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://www.graphene-theme.com/graphene-theme"
   },
   "Grasp": {
@@ -2355,7 +2497,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "(?:cdn|id)\\.gravitec\\.(?:media|net)",
+    "scriptSrc": [
+      "(?:cdn|id)\\.gravitec\\.(?:media|net)"
+    ],
     "website": "https://gravitec.net"
   },
   "Gravity Forms": {
@@ -2373,7 +2517,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/gravityforms/js/[^/]+\\.js\\?ver=([\\d.]+)$\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/gravityforms/js/[^/]+\\.js\\?ver=([\\d.]+)$\\;version:\\1"
+    ],
     "website": "https://gravityforms.com"
   },
   "GreatPages": {
@@ -2387,7 +2533,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.greatpages\\.com\\.br/",
+    "scriptSrc": [
+      "\\.greatpages\\.com\\.br/"
+    ],
     "website": "https://www.greatpages.com.br"
   },
   "Green Valley CMS": {
@@ -2420,7 +2568,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.greenhouse\\.io/",
+    "scriptSrc": [
+      "\\.greenhouse\\.io/"
+    ],
     "website": "https://www.greenhouse.io"
   },
   "Griddo": {
@@ -2467,7 +2617,9 @@
       "Grin": ""
     },
     "saas": true,
-    "scriptSrc": "grin-sdk\\.js",
+    "scriptSrc": [
+      "grin-sdk\\.js"
+    ],
     "website": "https://grin.co/"
   },
   "GrocerKey": {
@@ -2493,7 +2645,9 @@
     "description": "GroupBy is a search enging for eCommerce sites.",
     "icon": "Groupby.svg",
     "saas": true,
-    "scriptSrc": "cdn\\.groupbycloud\\.com",
+    "scriptSrc": [
+      "cdn\\.groupbycloud\\.com"
+    ],
     "website": "https://groupbyinc.com/"
   },
   "Growave": {
@@ -2511,7 +2665,9 @@
       "Shopify"
     ],
     "saas": true,
-    "scriptSrc": "\\.socialshopwave\\.com/",
+    "scriptSrc": [
+      "\\.socialshopwave\\.com/"
+    ],
     "website": "https://growave.io"
   },
   "GrowingIO": {
@@ -2523,7 +2679,9 @@
       "grwng_uid": ""
     },
     "icon": "GrowingIO.png",
-    "scriptSrc": "assets\\.growingio\\.com/([\\d.]+)/gio\\.js\\;version:\\1",
+    "scriptSrc": [
+      "assets\\.growingio\\.com/([\\d.]+)/gio\\.js\\;version:\\1"
+    ],
     "website": "https://www.growingio.com/"
   },
   "Guestonline": {
@@ -2538,7 +2696,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "ib\\.guestonline\\.\\w+",
+    "scriptSrc": [
+      "ib\\.guestonline\\.\\w+"
+    ],
     "website": "https://www.guestonline.io"
   },
   "GuideIT": {
@@ -2569,7 +2729,9 @@
     ],
     "saas": true,
     "website": "https://gumgum.com",
-    "xhr": "\\.gumgum\\.com"
+    "xhr": [
+      "\\.gumgum\\.com"
+    ]
   },
   "Gumlet": {
     "cats": [
@@ -2581,7 +2743,9 @@
       "gumlet": ""
     },
     "saas": true,
-    "scriptSrc": "cdn\\.gumlet\\.com",
+    "scriptSrc": [
+      "cdn\\.gumlet\\.com"
+    ],
     "website": "https://www.gumlet.com/"
   },
   "Gumroad": {
@@ -2625,7 +2789,9 @@
       "Gumstack": ""
     },
     "saas": true,
-    "scriptSrc": "w\\.gumstack\\.com",
+    "scriptSrc": [
+      "w\\.gumstack\\.com"
+    ],
     "website": "https://gumstack.com/"
   },
   "Gutenberg": {
@@ -2646,7 +2812,9 @@
     "requires": [
       "WordPress"
     ],
-    "scriptSrc": "/wp-content/plugins/gutenberg/",
+    "scriptSrc": [
+      "/wp-content/plugins/gutenberg/"
+    ],
     "website": "https://github.com/WordPress/gutenberg"
   },
   "genezio": {
@@ -2705,7 +2873,9 @@
     "meta": {
       "generator": "gitweb(?:/([\\d.]+\\d))?\\;version:\\1"
     },
-    "scriptSrc": "static/gitweb\\.js$",
+    "scriptSrc": [
+      "static/gitweb\\.js$"
+    ],
     "website": "https://git-scm.com"
   },
   "govCMS": {
