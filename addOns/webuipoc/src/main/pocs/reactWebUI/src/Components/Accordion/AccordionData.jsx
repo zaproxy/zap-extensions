@@ -37,16 +37,6 @@ const Accordion = ({ site, fetchChildren }) => {
           </span>
         </span>
       </button>
-      {/* <div
-        className={`
-                    grid overflow-hidden transition-all duration-300 ease-in-out text-slate-400
-                    ${
-                      isAccordionOpen
-                        ? "grid-rows-[1fr] opacity-300"
-                        : "grid-rows-[0fr] opacity-0"
-                    }
-                `}
-      > */}
      {
               isAccordionOpen && (
                   <div>
