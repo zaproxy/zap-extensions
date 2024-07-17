@@ -669,22 +669,18 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
 
         DomAlertInfo result = scanHelper(attackVector, currUrl);
         if (result != null) {
-            String tagName = result.getTagName();
-            String otherInfo = "";
-            if (tagName != null) {
-                otherInfo =
-                        "Tag name: "
-                                + tagName
-                                + " Att name: "
-                                + result.getAttributeName()
-                                + " Att id: "
-                                + result.getAttributeId();
+            StringBuilder otherInfo = new StringBuilder();
+            appendNotEmpty(otherInfo, "Tag name: ", result.getTagName());
+            appendNotEmpty(otherInfo, "Attribute name: ", result.getAttributeName());
+            appendNotEmpty(otherInfo, "Attribute id: ", result.getAttributeId());
+            if (otherInfo.length() > 0) {
+                otherInfo.insert(0, "The affected client side element can be identified with the following data:\n");
             }
 
             buildAlert()
                     .setUri(result.getUrl())
                     .setAttack(result.getAttack())
-                    .setOtherInfo(otherInfo)
+                    .setOtherInfo(otherInfo.toString())
                     .setMessage(msg)
                     .raise();
             Stats.incCounter("domxss.attack." + attackVector);
@@ -692,6 +688,17 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
             return true;
         }
         return false;
+    }
+
+    private static void appendNotEmpty(StringBuilder sb, String label, String value) {
+        if (value == null || value.isBlank()) {
+            return;
+        }
+
+        if (sb.length() > 0) {
+            sb.append(' ');
+        }
+        sb.append(label).append(value);
     }
 
     @Override

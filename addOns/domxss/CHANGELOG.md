@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Include the whole HTTP message in the raised alerts.
+- Attempt to make the other info clearer.
 
 ## [19] - 2024-05-07
 ### Changed
