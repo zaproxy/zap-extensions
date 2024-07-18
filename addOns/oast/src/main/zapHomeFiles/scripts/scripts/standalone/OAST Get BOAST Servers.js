@@ -15,7 +15,7 @@ function printServerInfo(s) {
 if (registeredServers.isEmpty()) {
     print("No Servers Registered.")
     // print("Registering a server now...")
-    // var server = boast.register("https://odiss.eu:1337/events")
+    // var server = boast.register("https://odiss.eu:2096/events")
     // printServerInfo(server) 
 } else {
     registeredServers.forEach(printServerInfo)
