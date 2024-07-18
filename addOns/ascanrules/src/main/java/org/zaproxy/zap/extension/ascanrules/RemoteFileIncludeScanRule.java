@@ -87,8 +87,8 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin
         Pattern.compile("<title>Google</title>"),
         Pattern.compile("<title>Google</title>"),
         Pattern.compile("<title>Google</title>"),
-        Pattern.compile("<title.*?Google.*?/title>"),
-        Pattern.compile("<title.*?Google.*?/title>"),
+        Pattern.compile("<title.*?ZAP[ -]*?Google.*?/title>"),
+        Pattern.compile("<title.*?ZAP[ -]*?Google.*?/title>"),
     };
 
     /** The number of requests we will send per parameter, based on the attack strength */
