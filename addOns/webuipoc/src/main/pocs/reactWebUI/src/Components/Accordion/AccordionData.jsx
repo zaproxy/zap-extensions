@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { nodeIDContext } from "../../Contexts/SitesTreeNodeIDContext";
 
 const Accordion = ({ site, fetchChildren }) => {
     const [isAccordionOpen, setAccordionOpen] = useState(false);
     const [children, setChildren] = useState([])
+    const {setNodeID} = useContext(nodeIDContext)
 
     const handleExpand = async () => {
+      setNodeID (site.hrefId)
         if (isAccordionOpen == false && site.isLeaf == false) {
             const childNodes = await fetchChildren(site.name)
             setChildren(childNodes)
-        }
+      }
         setAccordionOpen(!isAccordionOpen);
     }
   
@@ -17,9 +20,7 @@ const Accordion = ({ site, fetchChildren }) => {
     <div className="py-1 w-[380px]">
       <button
         onClick={handleExpand}
-        className="flex justify-between w-full"
-      >
-        
+        className="flex justify-between w-full">  
         <span className="pl-2">
         {site.isLeaf? (
           <span className="mr-3">-</span>
