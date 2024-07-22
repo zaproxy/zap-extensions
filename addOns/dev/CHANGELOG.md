@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [0.6.0] - 2024-07-22
 ### Added
 - Page protected by auth in order to provide a simple test for authenticated spidering.
