@@ -42,7 +42,6 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -53,6 +52,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
+import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ScanPanel;
 import org.zaproxy.zap.view.SiteMapListener;
 import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
@@ -77,6 +77,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     private Map<String, TechTableModel> siteTechMap;
     private boolean enabled;
+    private Mode mode;
     private WappalyzerParam wappalyzerParam;
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionWappalyzer.class);
@@ -88,10 +89,28 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     private WappalyzerPassiveScanner passiveScanner;
     private WappalyzerAPI api;
 
+    public enum Mode {
+        QUICK(Constant.messages.getString("wappalyzer.mode.quick")),
+        EXHAUSTIVE(Constant.messages.getString("wappalyzer.mode.exhaustive"));
+        private final String name;
+
+        Mode(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        static boolean getBooleanForMode(Mode mode) {
+            return Mode.EXHAUSTIVE.equals(mode);
+        }
+    }
+
     /**
      * TODO implement Version handling Confidence handling - need to test for daemon mode (esp
      * revisits) Issues Handle load session - store tech in db? Sites pull down not populated if no
-     * tech found - is this actually a problem? One pattern still fails to compile
+     * tech found - is this actually a problem?
      */
     public ExtensionWappalyzer() {
         super(NAME);
@@ -132,6 +151,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         this.categories = result.getCategories();
 
         enabled = true;
+        mode = Mode.QUICK;
         wappalyzerParam = new WappalyzerParam();
         passiveScanner = new WappalyzerPassiveScanner(this);
     }
@@ -180,6 +200,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         super.optionsLoaded();
 
         setWappalyzer(wappalyzerParam.isEnabled());
+        setMode(wappalyzerParam.getMode());
     }
 
     void setWappalyzer(boolean enabled) {
@@ -192,12 +213,35 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         getPassiveScanner().setEnabled(enabled);
 
         if (hasView()) {
-            getTechPanel().getEnableToggleButton().setSelected(enabled);
+            ThreadUtils.invokeLater(
+                    () -> getTechPanel().getEnableToggleButton().setSelected(enabled));
         }
     }
 
     boolean isWappalyzerEnabled() {
         return enabled;
+    }
+
+    void setMode(Mode mode) {
+        if (this.mode.equals(mode)) {
+            return;
+        }
+        this.mode = mode;
+
+        wappalyzerParam.setMode(mode);
+        getPassiveScanner().setMode(mode);
+
+        if (hasView()) {
+            ThreadUtils.invokeLater(
+                    () ->
+                            getTechPanel()
+                                    .getModeToggleButton()
+                                    .setSelected(Mode.getBooleanForMode(mode)));
+        }
+    }
+
+    Mode getMode() {
+        return mode;
     }
 
     private TechPanel getTechPanel() {
@@ -392,7 +436,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     }
 
     @Override
-    public void sessionModeChanged(Mode arg0) {
+    public void sessionModeChanged(org.parosproxy.paros.control.Control.Mode arg0) {
         // Ignore
     }
 

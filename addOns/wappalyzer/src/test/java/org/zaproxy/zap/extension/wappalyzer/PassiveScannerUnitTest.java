@@ -31,12 +31,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
 class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveScanner> {
@@ -72,16 +75,36 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
 
     @Test
     void testApacheWithPhp() throws HttpMalformedHeaderException {
+        // Given
         HttpMessage msg = makeHttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test.php HTTP/1.1");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n" + "Server: Apache\n" + "X-Powered-By: PHP/5.6.34");
-
+        // When
         scan(msg);
-
+        // Then
         assertFoundAppCount("https://www.example.com", 2);
         assertFoundApp("https://www.example.com", "Apache");
-        assertFoundApp("https://www.example.com", "PHP", "5.6.34");
+        // No version when default (Mode.QUICK)
+        assertFoundApp("https://www.example.com", "PHP", "");
+    }
+
+    @ParameterizedTest
+    @CsvSource({"QUICK, ''", "EXHAUSTIVE, 5.6.34"})
+    void shouldFindVersionWhenExhaustive(String mode, String phpVersion)
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test.php HTTP/1.1");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n" + "Server: Apache\n" + "X-Powered-By: PHP/5.6.34");
+        // When
+        rule.setMode(Mode.valueOf(mode));
+        scan(msg);
+        // Then
+        assertFoundAppCount("https://www.example.com", 2);
+        assertFoundApp("https://www.example.com", "Apache");
+        assertFoundApp("https://www.example.com", "PHP", phpVersion);
     }
 
     @Test

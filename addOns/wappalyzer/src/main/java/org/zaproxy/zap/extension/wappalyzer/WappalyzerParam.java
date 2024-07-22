@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.wappalyzer;
 
 import org.zaproxy.zap.common.VersionedAbstractParam;
+import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
 
 public class WappalyzerParam extends VersionedAbstractParam {
 
@@ -37,9 +38,14 @@ public class WappalyzerParam extends VersionedAbstractParam {
     /** The configuration key for the state of wappalyzer functionality. */
     private static final String PARAM_WAPPALYZER_STATE = PARAM_BASE_KEY + ".enabled";
 
+    /** The configuration key for the mode of tech detection behavior. */
+    private static final String PARAM_WAPPALYZER_MODE = PARAM_BASE_KEY + ".mode";
+
     private static final boolean PARAM_WAPPALYZER_STATE_DEFAULT_VALUE = true;
+    private static final Mode PARAM_WAPPALYZER_MODE_DEFAULT_VALUE = Mode.QUICK;
 
     private boolean enabled;
+    private Mode mode;
 
     public boolean isEnabled() {
         return enabled;
@@ -53,9 +59,22 @@ public class WappalyzerParam extends VersionedAbstractParam {
         }
     }
 
+    public Mode getMode() {
+        return mode;
+    }
+
+    public void setMode(Mode mode) {
+        if (!this.mode.equals(mode)) {
+            this.mode = mode;
+
+            getConfig().setProperty(PARAM_WAPPALYZER_MODE, mode.name());
+        }
+    }
+
     @Override
     protected void parseImpl() {
         enabled = getBoolean(PARAM_WAPPALYZER_STATE, PARAM_WAPPALYZER_STATE_DEFAULT_VALUE);
+        mode = getEnum(PARAM_WAPPALYZER_MODE, PARAM_WAPPALYZER_MODE_DEFAULT_VALUE);
     }
 
     @Override
