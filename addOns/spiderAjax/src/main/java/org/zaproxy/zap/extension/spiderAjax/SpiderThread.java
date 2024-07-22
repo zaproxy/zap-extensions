@@ -413,7 +413,11 @@ public class SpiderThread implements Runnable {
                 return;
             }
 
-            httpMessage.setRequestingUser(target.getUser());
+            if (authHandler == null) {
+                // Only set the user if there is not an authHandler - if there is that will take
+                // responsibility for handling auth. If we do set the user then its likely to loop.
+                httpMessage.setRequestingUser(target.getUser());
+            }
         }
 
         private void setOutOfScopeResponse(HttpMessage httpMessage) {

@@ -30,7 +30,9 @@ public class SimpleJsonCookieDir extends TestAuthDirectory {
 
     public SimpleJsonCookieDir(TestProxyServer server, String name) {
         super(server, name);
+        this.addPage(new SimpleJsonCookieIndexPage(server));
         this.addPage(new SimpleJsonCookieLoginPage(server));
         this.addPage(new SimpleJsonCookieVerificationPage(server));
+        this.addPage(new SimpleJsonCookiePage1(server));
     }
 }
