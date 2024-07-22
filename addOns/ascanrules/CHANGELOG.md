@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [67] - 2024-07-22
 
 ### Changed
 - The following rules now includes example alert functionality for documentation generation purposes (Issue 6119), as well as now including Alert Tags (OWASP Top 10, WSTG, and updated CWE):
@@ -533,6 +533,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[67]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v67
 [66]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v66
 [65]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v65
 [64]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v64
