@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [23.20.0] - 2024-07-22
 ### Fixed
 - Issue with browser based auth.
 
@@ -317,6 +317,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.20.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.20.0
 [23.19.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.19.0
 [23.18.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.18.0
 [23.17.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.17.0
