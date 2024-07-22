@@ -75,6 +75,11 @@ public class TestDirectory implements HttpMessageHandler {
         if (name.length() == 0) {
             name = INDEX_PAGE;
         }
+
+        if (name.equals(this.getName())) {
+            // Handle the case where there is no trailing slash, otherwise this will 404
+            name = INDEX_PAGE;
+        }
         int qIndex = name.indexOf('?');
         if (qIndex > 0) {
             name = name.substring(0, qIndex - 1);
