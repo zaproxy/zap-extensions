@@ -22,7 +22,7 @@ const Accordion = ({ site, fetchChildren }) => {
         
         <span className="pl-2">
         {site.isLeaf? (
-          <span className="mr-3">-</span>
+          <span className="mr-2">• {site.method} :</span>
         ) : (
 <> 
       {!isAccordionOpen ? (
