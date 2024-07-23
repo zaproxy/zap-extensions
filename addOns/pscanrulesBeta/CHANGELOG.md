@@ -4,8 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-### Fixed
-- Typo in Polyfill.io script detection alert description.
+### Removed
+- Polyfill scan rule, promoted to release.
 
 ## [39] - 2024-06-28
 ### Added

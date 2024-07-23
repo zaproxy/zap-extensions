@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesBeta;
+package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.List;
 import java.util.Map;
@@ -36,7 +36,7 @@ public class PolyfillCdnScriptScanRule extends PluginPassiveScanner
         implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
-    private static final String MESSAGE_PREFIX = "pscanbeta.polyfillcdnscript.";
+    private static final String MESSAGE_PREFIX = "pscanrules.polyfillcdnscript.";
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(

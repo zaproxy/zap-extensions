@@ -4,11 +4,15 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Polyfill scan rule, promoted from beta.
+
 ### Changed
 - Maintenance changes.
 
 ### Fixed
 - Alert text for various rules has been updated to more consistently use periods and spaces in a uniform manner.
+- Typo in Polyfill.io script detection alert description.
 
 ## [58] - 2024-05-07
 ### Changed
