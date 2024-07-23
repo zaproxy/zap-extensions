@@ -51,7 +51,7 @@ public class SimpleJsonCookieIndexPage extends TestPage {
 
         if (cookie != null && user != null) {
             // Already logged in, dont display the login page again
-            getServer().redirect("page1.html", msg);
+            getServer().redirect("home.html", msg);
         } else {
             this.getServer().handleFile(getParent(), this.getName(), msg);
         }
