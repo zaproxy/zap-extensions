@@ -79,7 +79,7 @@ public class TestProxyServer {
         authDir.addDirectory(new PasswordAddedJsonDir(this, "password-added-json"));
         authDir.addDirectory(new PasswordHiddenJsonDir(this, "password-hidden-json"));
         authDir.addDirectory(new PasswordNewPageDir(this, "password-new-page"));
-        authDir.addDirectory(new PasswordAddedNoSubmitDir(this, "password-added-json"));
+        authDir.addDirectory(new PasswordAddedNoSubmitDir(this, "password-added-nosubmit"));
         authDir.addDirectory(new JsonMultipleCookiesDir(this, "json-multiple-cookies"));
 
         TestDirectory apiDir = new TestDirectory(this, "api");

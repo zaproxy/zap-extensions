@@ -75,11 +75,6 @@ public class TestDirectory implements HttpMessageHandler {
         if (name.length() == 0) {
             name = INDEX_PAGE;
         }
-
-        if (name.equals(this.getName())) {
-            // Handle the case where there is no trailing slash, otherwise this will 404
-            name = INDEX_PAGE;
-        }
         int qIndex = name.indexOf('?');
         if (qIndex > 0) {
             name = name.substring(0, qIndex - 1);
@@ -110,6 +105,11 @@ public class TestDirectory implements HttpMessageHandler {
             }
 
             if (body == null) {
+                if (name.equals(this.getName())) {
+                    // Redirect with a trailing slash
+                    getServer().redirect(name + "/", msg);
+                    return;
+                }
                 LOGGER.debug("Failed to find tutorial file {}", name);
                 body = server.getTextFile("404.html");
                 msg.setResponseBody(body);

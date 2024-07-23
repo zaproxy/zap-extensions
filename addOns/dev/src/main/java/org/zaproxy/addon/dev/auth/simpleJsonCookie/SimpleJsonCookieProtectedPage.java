@@ -28,12 +28,12 @@ import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-public class SimpleJsonCookiePage1 extends TestPage {
+public class SimpleJsonCookieProtectedPage extends TestPage {
 
-    private static final Logger LOGGER = LogManager.getLogger(SimpleJsonCookiePage1.class);
+    private static final Logger LOGGER = LogManager.getLogger(SimpleJsonCookieProtectedPage.class);
 
-    public SimpleJsonCookiePage1(TestProxyServer server) {
-        super(server, "page1.html");
+    public SimpleJsonCookieProtectedPage(TestProxyServer server, String name) {
+        super(server, name);
     }
 
     @Override
