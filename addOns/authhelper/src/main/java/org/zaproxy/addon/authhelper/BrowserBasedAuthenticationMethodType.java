@@ -376,8 +376,29 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
                 if (authMsg != null) {
                     // Update the session as it may have changed
+                    for (int i = 0; i < AuthUtils.getWaitLoopCount(); i++) {
+                        // The session management method is set via a pscan rule, so make sure it is
+                        // set
+                        LOGGER.debug(
+                                "Update session? {}",
+                                sessionManagementMethod.getClass().getCanonicalName());
+                        if (!(sessionManagementMethod
+                                instanceof
+                                AutoDetectSessionManagementMethodType
+                                        .AutoDetectSessionManagementMethod)) {
+                            break;
+                        }
+                        sessionManagementMethod = user.getContext().getSessionManagementMethod();
+                        AuthUtils.sleep(AuthUtils.TIME_TO_SLEEP_IN_MSECS);
+                    }
                     WebSession session = sessionManagementMethod.extractWebSession(authMsg);
-                    user.setAuthenticatedSession(session);
+                    if (session != null) {
+                        LOGGER.info(
+                                "Updating session management method {} with session {}",
+                                sessionManagementMethod.getClass().getCanonicalName(),
+                                session.getClass().getCanonicalName());
+                        user.setAuthenticatedSession(session);
+                    }
 
                     if (this.isAuthenticated(authMsg, user, true)) {
                         // Let the user know it worked
