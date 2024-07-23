@@ -30,6 +30,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -42,9 +43,9 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.renderer.MappedValue;
 import org.jdesktop.swingx.renderer.StringValues;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.utils.TableExportButton;
@@ -71,7 +72,7 @@ public class TechPanel extends AbstractPanel {
 
     private TableExportButton<JXTable> exportButton = null;
     private ZapToggleButton enableButton = null;
-    private ZapToggleButton modeButton = null;
+    private JButton optionsButton;
 
     private static final Icon TRANSPARENT_ICON =
             new Icon() {
@@ -111,7 +112,6 @@ public class TechPanel extends AbstractPanel {
         this.setMnemonic(Constant.messages.getChar("wappalyzer.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
         this.getEnableToggleButton().setSelected(extension.isWappalyzerEnabled());
-        this.getModeToggleButton().setSelected(Mode.getBooleanForMode(extension.getMode()));
     }
 
     /**
@@ -165,9 +165,9 @@ public class TechPanel extends AbstractPanel {
             panelToolbar.add(getSiteSelect());
             panelToolbar.add(getExportButton());
             panelToolbar.add(getEnableToggleButton());
-            panelToolbar.add(getModeToggleButton());
 
             panelToolbar.add(Box.createHorizontalGlue());
+            panelToolbar.add(getOptionsButton());
         }
         return panelToolbar;
     }
@@ -365,32 +365,23 @@ public class TechPanel extends AbstractPanel {
         return enableButton;
     }
 
-    ZapToggleButton getModeToggleButton() {
-        if (modeButton == null) {
-            modeButton = new ZapToggleButton(Mode.QUICK.getName(), true);
-            modeButton.setIcon(
+    private JButton getOptionsButton() {
+        if (optionsButton == null) {
+            optionsButton = new JButton();
+            optionsButton.setToolTipText(
+                    Constant.messages.getString("wappalyzer.toolbar.options.name"));
+            optionsButton.setIcon(
                     DisplayUtils.getScaledIcon(
-                            TechPanel.class.getResource(
-                                    ExtensionWappalyzer.RESOURCE + "/off.png")));
-            modeButton.setToolTipText(
-                    Constant.messages.getString("wappalyzer.toolbar.toggle.mode.quick.tooltip"));
-            modeButton.setSelectedIcon(
-                    DisplayUtils.getScaledIcon(
-                            TechPanel.class.getResource(ExtensionWappalyzer.RESOURCE + "/on.png")));
-            modeButton.setSelectedToolTipText(
-                    Constant.messages.getString(
-                            "wappalyzer.toolbar.toggle.mode.exhaustive.tooltip"));
-            modeButton.addItemListener(
-                    event -> {
-                        if (event.getStateChange() == ItemEvent.SELECTED) {
-                            modeButton.setText(Mode.EXHAUSTIVE.getName());
-                            extension.setMode(Mode.EXHAUSTIVE);
-                        } else {
-                            modeButton.setText(Mode.QUICK.getName());
-                            extension.setMode(Mode.QUICK);
-                        }
-                    });
+                            TechPanel.class.getResource("/resource/icon/16/041.png")));
+
+            optionsButton.addActionListener(
+                    e ->
+                            Control.getSingleton()
+                                    .getMenuToolsControl()
+                                    .options(
+                                            Constant.messages.getString(
+                                                    "wappalyzer.optionspanel.name")));
         }
-        return modeButton;
+        return optionsButton;
     }
 }

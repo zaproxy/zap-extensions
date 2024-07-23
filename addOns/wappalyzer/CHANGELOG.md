@@ -6,8 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
-- The toolbar now has a toggle button to allow users to select Quick/Exhaustive mode used by the passive scanner (part of Issue 8361).
-    - Quick > Return on first match; which may mean missing version information, but should be slightly more performant.
+- The add-on now has an options screen to allow users to select Quick/Exhaustive mode used by the passive scanner (part of Issue 8361).
+    - Quick > Return on first match; which may mean missing version information, but should be slightly more performant. (This is the default.)
     - Exhaustive > Keep matching and don't return early; likely slightly less performant.
 
 ## [21.39.0] - 2024-07-04
