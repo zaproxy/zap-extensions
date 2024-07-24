@@ -13,7 +13,6 @@ const App = () => {
     <div className="flex mt-16 overflow-auto">
       <HeaderBase />
       <Sidebar />
-<<<<<<< Updated upstream
       <SideTree />
 
       <div className="w-full bg-gray-600 text-white ">
@@ -22,18 +21,6 @@ const App = () => {
           <div className="flex flex-row text-center justify-center ">
             <div className=" w-1/3 p-4 font-serif text-center ">
               ID | Method | Host | Path | URI
-=======
-      <NodeIDProvider>
-        <SideTree />
-
-        <div className="w-full bg-gray-600 text-white ">
-          <SearchBar />
-          <div className="h-[400px]  mr-2 ml-2 bg-gray-800 rounded-lg ">
-            <div className="flex flex-row text-center justify-center ">
-              <div className=" w-1/3 p-4 font-serif text-center ">
-                ID | Method | Host | Path | URI
-              </div>
->>>>>>> Stashed changes
             </div>
             <div className="flex flex-row  justify-center text-center">
               <div className=" p-4">
@@ -47,17 +34,10 @@ const App = () => {
               </div>
             </div>
           </div>
-<<<<<<< Updated upstream
         </div>
 
         <RequestBar />
       </div>
-=======
-
-          <RequestBar />
-        </div>
-      </NodeIDProvider>
->>>>>>> Stashed changes
     </div>
   );
 };
