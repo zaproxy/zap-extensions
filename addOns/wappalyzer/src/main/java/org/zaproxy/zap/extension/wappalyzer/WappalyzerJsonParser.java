@@ -352,6 +352,9 @@ public class WappalyzerJsonParser {
         if (json instanceof JSONObject) {
             for (Object domSelectorObject : ((JSONObject) json).entrySet()) {
                 Map.Entry<?, ?> domEntryMap = (Map.Entry<?, ?>) domSelectorObject;
+                if (domEntryMap.getValue() instanceof String) {
+                    continue;
+                }
                 for (Object nodeSelectorObject : ((JSONObject) domEntryMap.getValue()).entrySet()) {
                     Map.Entry<?, ?> nodeEntryMap = (Map.Entry<?, ?>) nodeSelectorObject;
                     if (Objects.equals(nodeEntryMap.getKey(), "properties")) {
