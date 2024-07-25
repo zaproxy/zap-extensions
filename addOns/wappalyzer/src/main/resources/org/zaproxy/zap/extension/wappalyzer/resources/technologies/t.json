@@ -96,7 +96,9 @@
       66
     ],
     "description": "TDesign launched by Tencent contains rich and reusable design component resources, such as color system, text system, motion design, etc.",
-    "dom": ".t-button__text, .t-layout",
+    "dom": [
+      ".t-button__text, .t-layout"
+    ],
     "icon": "TDesign.svg",
     "scriptSrc": [
       "tdesign\\.gtimg\\.com/"
@@ -123,7 +125,9 @@
       95
     ],
     "description": "THRON is a digital asset management platform that provides a centralised hub for storing, organising, and distributing digital assets like images, videos, and documents.",
-    "dom": "link[href*='.thron.com/'], img[src*='.thron.com/']",
+    "dom": [
+      "link[href*='.thron.com/'], img[src*='.thron.com/']"
+    ],
     "icon": "THRON.png",
     "js": {
       "THRONPlayer": "",
@@ -165,7 +169,9 @@
       6
     ],
     "description": "TRISOshop is an ecommerce platform.",
-    "dom": "a[href*='www.trisoshop.pl'][target='_blank']",
+    "dom": [
+      "a[href*='www.trisoshop.pl'][target='_blank']"
+    ],
     "icon": "TRISOshop.svg",
     "pricing": [
       "low",
@@ -200,7 +206,9 @@
       36
     ],
     "description": "TVSquared is a cross-platform TV ad measurement, analytics and optimisation platform.",
-    "dom": "link[href*='.tvsquared.com']",
+    "dom": [
+      "link[href*='.tvsquared.com']"
+    ],
     "icon": "TVSquared.png",
     "js": {
       "TV2Track": "",
@@ -230,6 +238,7 @@
     "scriptSrc": [
       "(?:TWikiJavascripts|twikilib(?:\\.min)?\\.js)"
     ],
+    "cpe": "cpe:2.3:a:twiki:twiki:*:*:*:*:*:*:*:*",
     "website": "https://twiki.org"
   },
   "TYPO3 CMS": {
@@ -238,7 +247,9 @@
     ],
     "cpe": "cpe:2.3:a:typo3:typo3:*:*:*:*:*:*:*:*",
     "description": "TYPO3 is a free and open-source Web content management system written in PHP.",
-    "dom": "link[href*='typo3conf'], link[href*='typo3temp'], img[src*='typo3conf'], img[src*='typo3temp']",
+    "dom": [
+      "link[href*='typo3conf'], link[href*='typo3temp'], img[src*='typo3conf'], img[src*='typo3temp']"
+    ],
     "icon": "TYPO3.svg",
     "implies": [
       "PHP"
@@ -343,7 +354,9 @@
       87
     ],
     "description": "TablePress is a free and open source plugin for the WordPress publishing platform. It enables you to create and manage tables on your website, without any coding knowledge.",
-    "dom": "link[href*='/wp-content/plugins/tablepress/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/tablepress/']"
+    ],
     "icon": "TablePress.png",
     "oss": true,
     "requires": [
@@ -456,7 +469,9 @@
       96
     ],
     "description": "Tagboard is a platform which allows users to aggregate data from major social networking websites and embed, repost and redisplay it on various media.",
-    "dom": "iframe[src*='.tagboard.com/']",
+    "dom": [
+      "iframe[src*='.tagboard.com/']"
+    ],
     "icon": "Tagboard.svg",
     "pricing": [
       "high",
@@ -474,7 +489,9 @@
       5
     ],
     "description": "Tagembed is a social media aggregator that collects and displays engaging user-generated content from any social media network such as Instagram, Facebook, Twitter, Youtube, Tiktok, Google Reviews, Airbnb, and 18+ networks.",
-    "dom": "script[data-src*='widget.tagembed.com/']",
+    "dom": [
+      "script[data-src*='widget.tagembed.com/']"
+    ],
     "icon": "Tagembed.svg",
     "js": {
       "TagembedWidget": ""
@@ -572,7 +589,9 @@
       6
     ],
     "description": "TakeDrop is an ecommerce platform.",
-    "dom": "img[src*='main.takedropstorage.com']",
+    "dom": [
+      "img[src*='main.takedropstorage.com']"
+    ],
     "icon": "TakeDrop.png",
     "js": {
       "webpackJsonptakedrop-react": ""
@@ -707,7 +726,9 @@
       36
     ],
     "description": "Tapad is a venture-funded startup company that develops and markets software and services for cross-device advertising and content delivery.",
-    "dom": "link[href*='pixel.tapad.com'], img[src*='pixel.tapad.com']",
+    "dom": [
+      "link[href*='pixel.tapad.com'], img[src*='pixel.tapad.com']"
+    ],
     "icon": "Tapad.svg",
     "pricing": [
       "poa"
@@ -720,7 +741,9 @@
       19
     ],
     "description": "Tapcart is a mobile commerce SaaS platform that integrates directly with Shopify.",
-    "dom": "a[href*='tapcart.app'][target='_blank']",
+    "dom": [
+      "a[href*='tapcart.app'][target='_blank']"
+    ],
     "icon": "Tapcart.svg",
     "js": {
       "tapcartwebBanner": ""
@@ -865,7 +888,9 @@
       86
     ],
     "description": "Tealium AudienceStream is an omnichannel customer segmentation and real-time action engine.",
-    "dom": "link[href*='.tealiumiq.com']",
+    "dom": [
+      "link[href*='.tealiumiq.com']"
+    ],
     "icon": "Tealium.png",
     "pricing": [
       "poa"
@@ -881,7 +906,9 @@
       67
     ],
     "description": "Tealium Consent Management adds consent and data privacy support.",
-    "dom": "script#__tealiumGDPRecScript,div#__tealiumGDPRecModal",
+    "dom": [
+      "script#__tealiumGDPRecScript,div#__tealiumGDPRecModal"
+    ],
     "icon": "Tealium.png",
     "website": "https://docs.tealium.com/platforms/getting-started/consent-management"
   },
@@ -890,7 +917,9 @@
       5
     ],
     "description": "TeamBrain is a knowledge management solution which allows to use a self-learning dynamic FAQ on a website or widget on the bottom right of any page.",
-    "dom": "link[href*='//teambrain.app/']",
+    "dom": [
+      "link[href*='//teambrain.app/']"
+    ],
     "icon": "TeamBrain.png",
     "js": {
       "TeamBrainExternalApp": ""
@@ -1019,7 +1048,9 @@
       52
     ],
     "description": "Tencent QQ also known as QQ, is an instant messaging software service and web portal developed by the Chinese tech giant Tencent.",
-    "dom": "a[href*='tencent://message/']",
+    "dom": [
+      "a[href*='tencent://message/']"
+    ],
     "icon": "Tencent QQ.svg",
     "website": "https://im.qq.com"
   },
@@ -1079,7 +1110,9 @@
       35
     ],
     "description": "TerriaJS is an open-source framework for web-based geospatial catalogue explorers.",
-    "dom": "html[class*='terria']",
+    "dom": [
+      "html[class*='terria']"
+    ],
     "icon": "TerriaJS.png",
     "website": "https://terria.io/"
   },
@@ -1176,7 +1209,9 @@
       87
     ],
     "description": "The Events Calendar is a free event management plugin for WordPress.",
-    "dom": "link[href*='/wp-content/plugins/the-events-calendar/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/the-events-calendar/']"
+    ],
     "icon": "The Events Calendar.png",
     "js": {
       "TribeCalendar": "",
@@ -1406,7 +1441,9 @@
       80
     ],
     "description": "Attitude is a simple, clean and responsive retina ready WordPress theme by Theme Horse.",
-    "dom": "link[href*='/wp-content/themes/attitude-pro/']",
+    "dom": [
+      "link[href*='/wp-content/themes/attitude-pro/']"
+    ],
     "icon": "Theme Horse.png",
     "pricing": [
       "freemium",
@@ -1425,7 +1462,9 @@
       80
     ],
     "description": "NewsCard is a multi-purpose magazine/news WordPress theme by Theme Horse.",
-    "dom": "link[href*='/wp-content/themes/newscard-pro/']",
+    "dom": [
+      "link[href*='/wp-content/themes/newscard-pro/']"
+    ],
     "icon": "Theme Horse.png",
     "pricing": [
       "freemium",
@@ -1487,7 +1526,9 @@
       80
     ],
     "description": "ThemeGrill Accelerate is free minimal WordPress theme.",
-    "dom": "link#accelerate_style-css",
+    "dom": [
+      "link#accelerate_style-css"
+    ],
     "icon": "ThemeGrill.png",
     "pricing": [
       "freemium",
@@ -1508,7 +1549,9 @@
       80
     ],
     "description": "ThemeGrill Cenote is a creative blogging WordPress theme, fully compatible with WooCommerce and popular page builders.",
-    "dom": "link[href*='/wp-content/themes/cenote/'], link[href*='/wp-content/themes/cenote-pro/']",
+    "dom": [
+      "link[href*='/wp-content/themes/cenote/'], link[href*='/wp-content/themes/cenote-pro/']"
+    ],
     "icon": "ThemeGrill.png",
     "pricing": [
       "freemium",
@@ -1529,7 +1572,9 @@
       80
     ],
     "description": "ThemeGrill ColorMag is most popular magazine-newspaper style WordPress theme.",
-    "dom": "link#colormag_style-css",
+    "dom": [
+      "link#colormag_style-css"
+    ],
     "icon": "ThemeGrill.png",
     "pricing": [
       "freemium",
@@ -1550,7 +1595,9 @@
       80
     ],
     "description": "ThemeGrill Flash is one of the most flexible multipurpose WordPress themes.",
-    "dom": "link[href='/wp-content/themes/flash']",
+    "dom": [
+      "link[href='/wp-content/themes/flash']"
+    ],
     "icon": "ThemeGrill.png",
     "pricing": [
       "freemium",
@@ -1571,7 +1618,9 @@
       80
     ],
     "description": "ThemeGrill Radiate is a simple and minimal WordPress theme focused on blogging.",
-    "dom": "link#radiate-style-css",
+    "dom": [
+      "link#radiate-style-css"
+    ],
     "icon": "ThemeGrill.png",
     "js": {
       "radiateScriptParam": ""
@@ -1595,7 +1644,9 @@
       80
     ],
     "description": "ThemeGrill Spacious is beautiful small to medium business responsive WordPress theme.",
-    "dom": "link#spacious_style-css",
+    "dom": [
+      "link#spacious_style-css"
+    ],
     "icon": "ThemeGrill.png",
     "js": {
       "spacious_slider_value": ""
@@ -1645,7 +1696,9 @@
       87
     ],
     "description": "ThemeIsle Menu Icons plugin gives you the ability to add icons to your menu items, similar to the look of the latest dashboard menu.",
-    "dom": "link[href*='/wp-content/plugins/menu-icons/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/menu-icons/']"
+    ],
     "icon": "ThemeIsle.png",
     "requires": [
       "WordPress"
@@ -1727,7 +1780,9 @@
       80
     ],
     "description": "Themeansar Newsberg is a fast, clean, modern-looking, responsive news magazine WordPress theme.",
-    "dom": "link#newsberg-style-css",
+    "dom": [
+      "link#newsberg-style-css"
+    ],
     "excludes": [
       "Themeansar Newsup"
     ],
@@ -1913,7 +1968,9 @@
       87
     ],
     "description": "Course Review is a WordPress plugin by ThimPress. Course Review gives students the opportunity to evaluate and provide feedback in order to improve the course.",
-    "dom": "link[href*='/wp-content/plugins/learnpress-course-review/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/learnpress-course-review/']"
+    ],
     "icon": "ThimPress.svg",
     "pricing": [
       "freemium"
@@ -1928,7 +1985,9 @@
       87
     ],
     "description": "Course Wishlist is a WordPress plugin by ThimPress. Course Wishlist bring wishlist feature for LearnPress.",
-    "dom": "link[href*='/wp-content/plugins/learnpress-wishlist/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/learnpress-wishlist/']"
+    ],
     "icon": "ThimPress.svg",
     "pricing": [
       "freemium"
@@ -1944,7 +2003,9 @@
       87
     ],
     "description": "Gradebook is a WordPress plugin by ThimPress. Gradebook add-on for LearnPress makes it easier to track the students learning progress and result.",
-    "dom": "link[href*='/wp-content/plugins/learnpress-gradebook/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/learnpress-gradebook/']"
+    ],
     "icon": "ThimPress.svg",
     "pricing": [
       "onetime"
@@ -1961,7 +2022,9 @@
       21
     ],
     "description": "LearnPress is a WordPress LMS plugin by ThimPress.",
-    "dom": "link[href*='/wp-content/plugins/learnpress/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/learnpress/']"
+    ],
     "icon": "ThimPress.svg",
     "pricing": [
       "freemium",
@@ -1997,7 +2060,9 @@
       80
     ],
     "description": "Think Up Themes Consulting is a multipurpose WordPress theme that is available for free download and also offers a pro version.",
-    "dom": "link#consulting-style-css",
+    "dom": [
+      "link#consulting-style-css"
+    ],
     "icon": "Think Up Themes.png",
     "pricing": [
       "freemium",
@@ -2016,7 +2081,9 @@
       80
     ],
     "description": "Think Up Themes Minamaze is a multipurpose WordPress theme that is available for free download and also offers a pro version.",
-    "dom": "link#minamaze-style-css",
+    "dom": [
+      "link#minamaze-style-css"
+    ],
     "icon": "Think Up Themes.png",
     "pricing": [
       "freemium",
@@ -2093,7 +2160,9 @@
       25
     ],
     "description": "Three.js is a cross-browser JavaScript library and application programming interface used to create and display animated 3D computer graphics in a web browser using WebGL.",
-    "dom": "canvas[data-engine*='three.js']",
+    "dom": [
+      "canvas[data-engine*='three.js']"
+    ],
     "icon": "Three.js.svg",
     "js": {
       "THREE.REVISION": "^(.+)$\\;version:\\1",
@@ -2129,7 +2198,9 @@
       21
     ],
     "description": "Thrive Apprentice is a WordPress plugin for creating online courses and also a membership plugin.",
-    "dom": "link[href*='/wp-content/plugins/thrive-apprentice/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/thrive-apprentice/']"
+    ],
     "icon": "Thrive.svg",
     "pricing": [
       "low",
@@ -2150,7 +2221,9 @@
       51
     ],
     "description": "Thrive Architect is the visual page builder for WordPress.",
-    "dom": "link[href*='/wp-content/plugins/thrive-visual-editor/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/thrive-visual-editor/']"
+    ],
     "icon": "Thrive.svg",
     "pricing": [
       "low",
@@ -2170,7 +2243,9 @@
       87
     ],
     "description": "Thrive Comments plugin replaces the standard WordPress comments from your website.",
-    "dom": "link[href*='/wp-content/plugins/thrive-comments/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/thrive-comments/']"
+    ],
     "icon": "Thrive.svg",
     "pricing": [
       "low",
@@ -2190,7 +2265,9 @@
       87
     ],
     "description": "Thrive Leads is an all-in-one email list building plugin for WordPress.",
-    "dom": "link[href*='/wp-content/plugins/thrive-leads/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/thrive-leads/']"
+    ],
     "icon": "Thrive.svg",
     "pricing": [
       "low",
@@ -2210,7 +2287,9 @@
       87
     ],
     "description": "Thrive Quiz Builder is a powerful WordPress plugin that can help you to create quizzes for your website or blog.",
-    "dom": "link[href*='/wp-content/plugins/thrive-quiz-builder/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/thrive-quiz-builder/']"
+    ],
     "icon": "Thrive.svg",
     "pricing": [
       "low",
@@ -2230,7 +2309,9 @@
       87
     ],
     "description": "Thrive Ultimatum is a WordPress scarcity marketing plugin with built-in templates and campaign tracking tools from developer Thrive Themes.",
-    "dom": "link[href*='/wp-content/plugins/thrive-ultimatum/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/thrive-ultimatum/']"
+    ],
     "icon": "Thrive.svg",
     "pricing": [
       "low",
@@ -2550,7 +2631,9 @@
       59
     ],
     "description": "Tippy.js is the complete tooltip, popover, dropdown, and menu solution for the web, powered by Popper.",
-    "dom": "style[data-tippy-stylesheet]",
+    "dom": [
+      "style[data-tippy-stylesheet]"
+    ],
     "icon": "Tippy.js.svg",
     "js": {
       "tippy.defaultProps": ""
@@ -2581,7 +2664,9 @@
       71
     ],
     "description": "Tiqets provides a complete overview of a city - museums, attractions, zoos, canal cruises, concerts. Publishers joined to the Tiqets affiliate program can receive 6% commission during our 30-day cookie window from completed total bookings resulting from featuring links to Tiqets products and content across their brand: blog/website, social media, newsletters, etc.",
-    "dom": "a[href*='.tiqets.com/'][target='_blank'], iframe[src*='.tiqets.com/']",
+    "dom": [
+      "a[href*='.tiqets.com/'][target='_blank'], iframe[src*='.tiqets.com/']"
+    ],
     "icon": "Tiqets.svg",
     "js": {
       "__TIQETS_LOADER_REINIT": ""
@@ -2755,6 +2840,7 @@
     "cats": [
       13
     ],
+    "description": "Trac is an enhanced wiki and issue tracking system for software development projects.",
     "html": [
       "<a id=\"tracpowered",
       "Powered by <a href=\"[^\"]*\"><strong>Trac(?:[ /]([\\d.]+))?\\;version:\\1"
@@ -2848,7 +2934,9 @@
       25
     ],
     "description": "TradingView is used to show world chart, chats and trades markets.",
-    "dom": "iframe[src*='.tradingview.com/']",
+    "dom": [
+      "iframe[src*='.tradingview.com/']"
+    ],
     "icon": "trading_view.svg",
     "pricing": [
       "low",
@@ -2878,7 +2966,9 @@
       36
     ],
     "description": "TrafficStars is a self-served ad network and ad exchange that operates mainly in adult-related verticals.",
-    "dom": "img[src*='tsyndicate.com/'], a[href*='trafficstars.com']",
+    "dom": [
+      "img[src*='tsyndicate.com/'], a[href*='trafficstars.com']"
+    ],
     "icon": "TrafficStars.png",
     "pricing": [
       "payg"
@@ -2935,6 +3025,7 @@
     "js": {
       "Transifex.live.lib_version": "(.+)\\;version:\\1"
     },
+    "cpe": "cpe:2.3:a:transifex:transifex:*:*:*:*:*:*:*:*",
     "website": "https://www.transifex.com"
   },
   "Transistor.fm": {
@@ -2942,7 +3033,9 @@
       5
     ],
     "description": "Transistor.fm is a podcast host, distribution and management platform.",
-    "dom": "iframe[src*='.transistor.fm/']",
+    "dom": [
+      "iframe[src*='.transistor.fm/']"
+    ],
     "icon": "Transistor.fm.svg",
     "pricing": [
       "low",
@@ -3025,7 +3118,9 @@
       97
     ],
     "description": "Treasure Data is the only enterprise customer data platform.",
-    "dom": "link[href*='.treasuredata.com']",
+    "dom": [
+      "link[href*='.treasuredata.com']"
+    ],
     "icon": "Treasure Data.svg",
     "js": {
       "Treasure.version": "(.+)\\;version:\\1"
@@ -3181,7 +3276,9 @@
       6
     ],
     "description": "Trove (formerly Yerdle) builds white-label technology and end-to-end operations for ecommerce platforms.",
-    "dom": "img[src*='res.cloudinary.com/yerdle']",
+    "dom": [
+      "img[src*='res.cloudinary.com/yerdle']"
+    ],
     "headers": {
       "x-trove-app-name": "",
       "x-trove-country-code": "",
@@ -3256,7 +3353,9 @@
       72
     ],
     "description": "Trumba offers web-hosted event calendar software for publishing online, interactive, calendars of events.",
-    "dom": "a[href*='www.trumba.com/calendars/']",
+    "dom": [
+      "a[href*='www.trumba.com/calendars/']"
+    ],
     "icon": "Trumba.png",
     "js": {
       "$Trumba": "",
@@ -3332,7 +3431,9 @@
       90
     ],
     "description": "Trustindex is a review management tool that helps businesses effectively manage and monitor customer reviews.",
-    "dom": "link[href*='.trustindex.io/']",
+    "dom": [
+      "link[href*='.trustindex.io/']"
+    ],
     "icon": "Trustindex.svg",
     "js": {
       "Trustindex": ""
@@ -3482,7 +3583,9 @@
       80
     ],
     "description": "Twenty Eleven is the default WordPress theme for 2011.",
-    "dom": "link[href*='/wp-content/themes/twentyeleven/']",
+    "dom": [
+      "link[href*='/wp-content/themes/twentyeleven/']"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
@@ -3497,7 +3600,9 @@
       80
     ],
     "description": "Twenty Fifteen is the default WordPress theme for 2015.",
-    "dom": "link#twentyfifteen-style-css",
+    "dom": [
+      "link#twentyfifteen-style-css"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
@@ -3515,7 +3620,9 @@
       80
     ],
     "description": "Twenty Fourteen is the default WordPress theme for 2014.",
-    "dom": "link#twentyfourteen-style-css, style#twentyfourteen-lato-css",
+    "dom": [
+      "link#twentyfourteen-style-css, style#twentyfourteen-lato-css"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
@@ -3533,7 +3640,9 @@
       80
     ],
     "description": "Twenty Nineteen is the default WordPress theme for 2019.",
-    "dom": "link#twentynineteen-style-css",
+    "dom": [
+      "link#twentynineteen-style-css"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
@@ -3551,7 +3660,9 @@
       80
     ],
     "description": "Twenty Seventeen is the default WordPress theme for 2017.",
-    "dom": "link#twentyseventeen-style-css",
+    "dom": [
+      "link#twentyseventeen-style-css"
+    ],
     "icon": "WordPress.svg",
     "js": {
       "twentyseventeenScreenReaderText": ""
@@ -3572,7 +3683,9 @@
       80
     ],
     "description": "Twenty Sixteen is the default WordPress theme for 2016.",
-    "dom": "link#twentysixteen-style-css",
+    "dom": [
+      "link#twentysixteen-style-css"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
@@ -3590,7 +3703,9 @@
       80
     ],
     "description": "Twenty Ten is the default WordPress theme for 2010.",
-    "dom": "link[href*='/wp-content/themes/twentyten/']",
+    "dom": [
+      "link[href*='/wp-content/themes/twentyten/']"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
@@ -3608,7 +3723,9 @@
       80
     ],
     "description": "Twenty Thirteen is the default WordPress theme for 2013.",
-    "dom": "link#twentythirteen-style-css",
+    "dom": [
+      "link#twentythirteen-style-css"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
@@ -3626,7 +3743,9 @@
       80
     ],
     "description": "Twenty Twelve is the default WordPress theme for 2012.",
-    "dom": "link#twentytwelve-style-css",
+    "dom": [
+      "link#twentytwelve-style-css"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
@@ -3644,7 +3763,9 @@
       80
     ],
     "description": "Twenty Twenty is the default WordPress theme for 2020.",
-    "dom": "link#twentytwenty-style-css",
+    "dom": [
+      "link#twentytwenty-style-css"
+    ],
     "icon": "WordPress.svg",
     "js": {
       "twentytwenty": ""
@@ -3665,7 +3786,9 @@
       80
     ],
     "description": "Twenty Twenty-One is the default WordPress theme for 2021.",
-    "dom": "link#twenty-twenty-one-style-css",
+    "dom": [
+      "link#twenty-twenty-one-style-css"
+    ],
     "icon": "WordPress.svg",
     "js": {
       "twentytwentyoneCollapseMenuOnClickOutside": "",
@@ -3710,7 +3833,7 @@
     ],
     "description": "Twenty Twenty-Two is the default WordPress theme for 2022.",
     "dom": {
-      "link#twentytwentytwo-style-css": {},
+      "link#twentytwentytwo-style-css": "",
       "style#webfonts-inline-css": {
         "text": "/wp-content/themes/twentytwentytwo/assets/fonts/"
       },
@@ -3851,7 +3974,9 @@
       14
     ],
     "description": "Twitch is an American video live streaming service that focuses on video game live streaming, including broadcasts of esports competitions.",
-    "dom": "iframe[src*='player\\.twitch\\.tv']",
+    "dom": [
+      "iframe[src*='player\\.twitch\\.tv']"
+    ],
     "icon": "Twitch.svg",
     "js": {
       "Twitch.Player": ""
@@ -3999,6 +4124,7 @@
     "url": [
       "/admin/login\\.php?referer=http%3A%2F%2F"
     ],
+    "cpe": "cpe:2.3:a:typecho:typecho:*:*:*:*:*:*:*:*",
     "website": "https://typecho.org/"
   },
   "Typed.js": {
@@ -4017,7 +4143,9 @@
       73
     ],
     "description": "Typeform is a Spanish online software as a service (SaaS) company that specialises in online form building and online surveys.",
-    "dom": "link[href*='.typeform.com/']",
+    "dom": [
+      "link[href*='.typeform.com/']"
+    ],
     "icon": "Typeform.png",
     "js": {
       "tf.createPopover": "",

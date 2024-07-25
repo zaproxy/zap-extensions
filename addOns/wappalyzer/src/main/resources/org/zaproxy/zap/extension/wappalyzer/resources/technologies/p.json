@@ -187,7 +187,9 @@
       19
     ],
     "description": "Progressive Web Apps (PWAs) are web apps built and enhanced with modern APIs to deliver enhanced capabilities, reliability, and installability while reaching anyone, anywhere, on any device, all with a single codebase.",
-    "dom": "link[rel='manifest']",
+    "dom": [
+      "link[rel='manifest']"
+    ],
     "icon": "PWA.svg",
     "website": "https://web.dev/progressive-web-apps/"
   },
@@ -285,7 +287,9 @@
       41
     ],
     "description": "PagSeguro is an online or mobile payment-based ecommerce service for commercial operations.",
-    "dom": "form[action*='pagseguro.uol.com.br'][target='pagseguro']",
+    "dom": [
+      "form[action*='pagseguro.uol.com.br'][target='pagseguro']"
+    ],
     "icon": "PagSeguro.svg",
     "js": {
       "PagSeguroDirectPayment": "",
@@ -362,7 +366,9 @@
       87
     ],
     "description": "Drag and drop page builder for Wordpress.",
-    "dom": "link[href*='/wp-content/plugins/pagelayer/'], #pagelayer-frontend-css, #pagelayer-global-styles, .pagelayer-body, .pagelayer-header, .pagelayer-footer, .pagelayer-content",
+    "dom": [
+      "link[href*='/wp-content/plugins/pagelayer/'], #pagelayer-frontend-css, #pagelayer-global-styles, .pagelayer-body, .pagelayer-header, .pagelayer-footer, .pagelayer-content"
+    ],
     "icon": "PageLayer.png",
     "oss": true,
     "requires": [
@@ -662,7 +668,9 @@
       71
     ],
     "description": "Partnerize is the only partnership management solution for marketers seeking high quality, scalable subsidies to primary channels.",
-    "dom": "a[href*='prf.hn/click'], img[src*='.prf.hn/']",
+    "dom": [
+      "a[href*='prf.hn/click'], img[src*='.prf.hn/']"
+    ],
     "icon": "Partnerize.png",
     "pricing": [
       "payg"
@@ -700,7 +708,9 @@
       92
     ],
     "description": "Partytown is a lazy-loaded library to help relocate resource intensive scripts into a web worker, and off of the main thread.",
-    "dom": "script[type*='text/partytown']",
+    "dom": [
+      "script[type*='text/partytown']"
+    ],
     "icon": "Partytown.svg",
     "js": {
       "partytown": ""
@@ -777,7 +787,9 @@
       91
     ],
     "description": "Pay It Later collect payments in weekly instalments from you when you make a purchase online, so you can buy now and pay it later.",
-    "dom": "a[href*='.payitlater.com.au'][target='_blank'], img[src*='PayItLater'][alt='PayItLater']",
+    "dom": [
+      "a[href*='.payitlater.com.au'][target='_blank'], img[src*='PayItLater'][alt='PayItLater']"
+    ],
     "icon": "Pay It Later.png",
     "js": {
       "payitlater": ""
@@ -797,7 +809,9 @@
       91
     ],
     "description": "PayBright is a Canadian fintech company that offers short-term interest-free installment loans for online shopping to consumers at checkout.",
-    "dom": "link[href*='app.paybright.com']",
+    "dom": [
+      "link[href*='app.paybright.com']"
+    ],
     "icon": "PayBright.png",
     "js": {
       "_paybright_config": ""
@@ -812,7 +826,9 @@
       41
     ],
     "description": "PayFast is a payments processing service for South Africans & South African websites.",
-    "dom": "[aria-labelledby='pi-payfast_instant_eft']",
+    "dom": [
+      "[aria-labelledby='pi-payfast_instant_eft']"
+    ],
     "icon": "Payfast.svg",
     "website": "https://www.payfast.co.za/"
   },
@@ -912,7 +928,9 @@
       91
     ],
     "description": "PayPal Credit is a reusable line of credit that lets you pay for online purchases over time.",
-    "dom": "img[alt*='PayPal Credit'], a[title*='PayPal Credit']",
+    "dom": [
+      "img[alt*='PayPal Credit'], a[title*='PayPal Credit']"
+    ],
     "icon": "PayPal.svg",
     "implies": [
       "PayPal"
@@ -970,7 +988,9 @@
       91
     ],
     "description": "Payflex offers an online payment gateway solution to South African merchants that allows shoppers to pay over 6 weeks, interest-free.",
-    "dom": "[aria-labelledby='pi-payflex']",
+    "dom": [
+      "[aria-labelledby='pi-payflex']"
+    ],
     "icon": "Payflex.png",
     "saas": true,
     "scriptSrc": [
@@ -996,7 +1016,9 @@
       101
     ],
     "description": "Paylocity is an American company which provides cloud-based payroll and human capital management software.",
-    "dom": "a[href*='recruiting\\.paylocity\\.com/recruiting/jobs/']",
+    "dom": [
+      "a[href*='recruiting\\.paylocity\\.com/recruiting/jobs/']"
+    ],
     "icon": "Paylocity.svg",
     "pricing": [
       "low",
@@ -1332,7 +1354,9 @@
       72
     ],
     "description": "Periodic is a white-label scheduling system.",
-    "dom": "#periodic-embedded-calendar-script, .periodic-embedded-calendar-window, .bookingmain__maincontent",
+    "dom": [
+      "#periodic-embedded-calendar-script, .periodic-embedded-calendar-window, .bookingmain__maincontent"
+    ],
     "icon": "Periodic.svg",
     "pricing": [
       "low",
@@ -1349,7 +1373,9 @@
       10
     ],
     "description": "Peripl is a French software company that provides cloud-based software solutions for business management, including accounting, invoicing, payroll, and project management.",
-    "dom": "script#peripl-script",
+    "dom": [
+      "script#peripl-script"
+    ],
     "icon": "Peripl.png",
     "pricing": [
       "recurring",
@@ -1415,7 +1441,9 @@
       101
     ],
     "description": "Personio is the all-in-one HR software for small- and medium-sized companies with 10 to 2000 employees.",
-    "dom": "a[href*='.jobs.personio.']",
+    "dom": [
+      "a[href*='.jobs.personio.']"
+    ],
     "icon": "Personio.svg",
     "pricing": [
       "low",
@@ -1528,7 +1556,9 @@
       80
     ],
     "description": "Phlox is a modern, lightweight and customizable WordPress theme gratify for almost any type of website.",
-    "dom": "link[href*='/wp-content/themes/phlox/'], link[href*='/wp-content/themes/phlox-pro/']",
+    "dom": [
+      "link[href*='/wp-content/themes/phlox/'], link[href*='/wp-content/themes/phlox-pro/']"
+    ],
     "icon": "Phlox.png",
     "pricing": [
       "freemium",
@@ -1578,7 +1608,9 @@
       18
     ],
     "description": "Phoenix LiveView is a library that brings live, interactive, real-time user experiences to your Phoenix applications.",
-    "dom": "div[data-phx-session]",
+    "dom": [
+      "div[data-phx-session]"
+    ],
     "icon": "Phoenix Framework.svg",
     "implies": [
       "Phoenix Framework"
@@ -1614,7 +1646,9 @@
       7
     ],
     "description": "Photo Gallery plugin is a feature-rich, yet easy-to-use WordPress tool, which lets you add mobile-friendly image galleries and gallery groups to your website by 10Web.",
-    "dom": "link[href*='/wp-content/plugins/photo-gallery/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/photo-gallery/']"
+    ],
     "icon": "Photo Gallery.svg",
     "pricing": [
       "freemium",
@@ -1634,7 +1668,9 @@
       6
     ],
     "description": "PhotoShelter is a cloud storage service that doubles as a website and ecommerce platform for photographers.",
-    "dom": "link[href*='.c.photoshelter.com']",
+    "dom": [
+      "link[href*='.c.photoshelter.com']"
+    ],
     "icon": "PhotoShelter.png",
     "implies": [
       "PHP",
@@ -1796,7 +1832,9 @@
       66
     ],
     "description": "Pico CSS is a minimal CSS framework for semantic HTML, without using classes.",
-    "dom": "link[href*='/pico.min.css']",
+    "dom": [
+      "link[href*='/pico.min.css']"
+    ],
     "icon": "Pico CSS.svg",
     "oss": true,
     "website": "https://picocss.com"
@@ -1807,7 +1845,9 @@
       5
     ],
     "description": "Picreel is a conversion optimisation software.",
-    "dom": "iframe[src*='app.picreel.com']",
+    "dom": [
+      "iframe[src*='app.picreel.com']"
+    ],
     "icon": "Picreel.svg",
     "js": {
       "picreel": ""
@@ -1827,7 +1867,9 @@
       95
     ],
     "description": "Picturepark is designed to facilitate your DAM policies by storing, tagging, searching and delivering files in an automated and controlled way.",
-    "dom": "img[data-name*='Picturepark'], img[data-srcset*='picturepark'], div[style*='picturepark'], source[srcset*='picturepark']",
+    "dom": [
+      "img[data-name*='Picturepark'], img[data-srcset*='picturepark'], div[style*='picturepark'], source[srcset*='picturepark']"
+    ],
     "icon": "Picturepark.svg",
     "js": {
       "pictureparkConfiguration": ""
@@ -1854,7 +1896,9 @@
       68
     ],
     "description": "Piman is an open-source accessibility UI framework create by Blueplanet Inc.",
-    "dom": "button.bpa-btn",
+    "dom": [
+      "button.bpa-btn"
+    ],
     "icon": "Piman.svg",
     "oss": true,
     "website": "https://piman.cc"
@@ -1866,7 +1910,9 @@
     ],
     "cpe": "cpe:2.3:a:pimcore:pimcore:*:*:*:*:*:*:*:*",
     "description": "Pimcore is an open-source digital platform that aggregates, enriches, and manages enterprise data and provides up-to-date, consistent, and personalised experiences to customers.",
-    "dom": ".pimcore_area_content",
+    "dom": [
+      ".pimcore_area_content"
+    ],
     "headers": {
       "X-Powered-By": "^pimcore$"
     },
@@ -1987,7 +2033,9 @@
       10
     ],
     "description": "Pinterest Conversion Tag allows you to track actions people take on your website after viewing your Promoted Pin.",
-    "dom": "img[src*='ct.pinterest.com/v3/?tid']",
+    "dom": [
+      "img[src*='ct.pinterest.com/v3/?tid']"
+    ],
     "icon": "Pinterest.svg",
     "js": {
       "pintrk": ""
@@ -2028,6 +2076,7 @@
       "low",
       "recurring"
     ],
+    "cpe": "cpe:2.3:a:piwigo:piwigo:*:*:*:*:*:*:*:*",
     "saas": true,
     "website": "https://piwigo.com"
   },
@@ -2182,7 +2231,9 @@
       93
     ],
     "description": "PizzaNetz is an ordering system and shop system for pizzerias, Chinese restaurant and kebabs.",
-    "dom": "form[name*='pizzanetz']",
+    "dom": [
+      "form[name*='pizzanetz']"
+    ],
     "icon": "PizzaNetz.png",
     "pricing": [
       "low",
@@ -2228,7 +2279,9 @@
       51
     ],
     "description": "Plasmic is a visual, no-code headless page/content builder for any website or codebase.",
-    "dom": "div.plasmic_default__all",
+    "dom": [
+      "div.plasmic_default__all"
+    ],
     "icon": "Plasmic.svg",
     "js": {
       "__NEXT_DATA__.props.pageProps.plasmicData": ""
@@ -2336,7 +2389,9 @@
       103
     ],
     "description": "Plaza is a ecommerce platform that allows brands and retailers to communicate with customers via live video.",
-    "dom": "iframe[src*='stream.useplaza.com/']",
+    "dom": [
+      "iframe[src*='stream.useplaza.com/']"
+    ],
     "icon": "Plaza.svg",
     "pricing": [
       "freemium",
@@ -2411,7 +2466,9 @@
     ],
     "cpe": "cpe:2.3:a:plone:plone:*:*:*:*:*:*:*:*",
     "description": "Plone is a free and open source content management system (CMS) built on top of the Zope application server.",
-    "dom": "link[href^='/++resource++']",
+    "dom": [
+      "link[href^='/++resource++']"
+    ],
     "icon": "Plone.svg",
     "implies": [
       "Python"
@@ -2508,7 +2565,9 @@
       5
     ],
     "description": "Pocket is a social bookmarking service that can be integrated into a website with the use of a web widget.",
-    "dom": "iframe[src*='widgets.getpocket.com/']",
+    "dom": [
+      "iframe[src*='widgets.getpocket.com/']"
+    ],
     "icon": "pocket.svg",
     "meta": {
       "pocket-site-verification'": ""
@@ -2551,7 +2610,9 @@
       5
     ],
     "description": "Podigee is an independent company for podcast publishers. Podigee offers hosting, distribution, analytics and monetisation of podcasts.",
-    "dom": "iframe[src*='cdn.podigee.com/']",
+    "dom": [
+      "iframe[src*='cdn.podigee.com/']"
+    ],
     "icon": "Podigee.svg",
     "js": {
       "podigeePodcastPlayers": ""
@@ -2643,7 +2704,9 @@
       "pll_language": "[a-z]{2}"
     },
     "description": "Polylang is a WordPress plugin which allows you to create multilingual WordPress site.",
-    "dom": "#pll_switcher",
+    "dom": [
+      "#pll_switcher"
+    ],
     "headers": {
       "x-redirected-by": "Polylang(?: (Pro))?\\;version:\\1"
     },
@@ -2723,7 +2786,9 @@
       80
     ],
     "description": "PopularFX is a fully customizable responsive WordPress theme. It comes with drag and drop page builder.",
-    "dom": "link#popularfx-style-css",
+    "dom": [
+      "link#popularfx-style-css"
+    ],
     "icon": "PopularFX.png",
     "pricing": [
       "freemium",
@@ -2809,7 +2874,9 @@
       99
     ],
     "description": "PostNL (formerly TNT) is a mail, parcel and ecommerce corporation with operations in the Netherlands, Germany, Italy, Belgium, and the United Kingdom.",
-    "dom": "img[alt*='postnl' i], img[src*='postnl' i]",
+    "dom": [
+      "img[alt*='postnl' i], img[src*='postnl' i]"
+    ],
     "icon": "PostNL.svg",
     "requiresCategory": [
       6
@@ -3083,7 +3150,9 @@
       "__prepr_uid": ""
     },
     "description": "Prepr is a headless CMS with data-driven capabilities.",
-    "dom": "img[src*='.prepr.io/']",
+    "dom": [
+      "img[src*='.prepr.io/']"
+    ],
     "icon": "Prepr.svg",
     "meta": {
       "prepr:id": ""
@@ -3107,7 +3176,9 @@
       80
     ],
     "description": "Press Customizr is a multipurpose WordPress theme suitable for small businesses and ecommerce sites.",
-    "dom": "style#customizr-skin-inline-css, link#customizr-style-css",
+    "dom": [
+      "style#customizr-skin-inline-css, link#customizr-style-css"
+    ],
     "icon": "Press.svg",
     "pricing": [
       "freemium"
@@ -3125,7 +3196,9 @@
       80
     ],
     "description": "Press Hueman is a mobile friendly WordPress theme for blogs, magazines and business websites.",
-    "dom": "link[href*='/wp-content/themes/hueman/']",
+    "dom": [
+      "link[href*='/wp-content/themes/hueman/']"
+    ],
     "icon": "Press.svg",
     "js": {
       "HUParams": ""
@@ -3188,7 +3261,9 @@
     },
     "cpe": "cpe:2.3:a:prestashop:prestashop:*:*:*:*:*:*:*:*",
     "description": "PrestaShop is a freemium, open-source ecommerce solution, written in the PHP programming language with support for the MySQL database management system.",
-    "dom": "img[src*='/modules/prestablog/themes/'], img[data-src*='/modules/prestablog/themes/']",
+    "dom": [
+      "img[src*='/modules/prestablog/themes/'], img[data-src*='/modules/prestablog/themes/']"
+    ],
     "headers": {
       "Powered-By": "^Prestashop$"
     },
@@ -3221,7 +3296,9 @@
       71
     ],
     "description": "Pretty Links is a WordPress plugin URL shortener, link cloaker, branded link, and QR code generator.",
-    "dom": "link[href*='/wp-content/plugins/pretty-link/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/pretty-link/']"
+    ],
     "icon": "Pretty Links.png",
     "pricing": [
       "freemium",
@@ -3356,7 +3433,9 @@
       92
     ],
     "description": "Priority Hints exposes a mechanism for developers to signal a relative priority for browsers to consider when fetching resources.",
-    "dom": "iframe[fetchpriority], img[fetchpriority], script[fetchpriority], link[fetchpriority]",
+    "dom": [
+      "iframe[fetchpriority], img[fetchpriority], script[fetchpriority], link[fetchpriority]"
+    ],
     "icon": "Priority Hints.svg",
     "website": "https://wicg.github.io/priority-hints/"
   },
@@ -3383,7 +3462,9 @@
       1
     ],
     "description": "Prismic is a headless CMS for Jamstack.",
-    "dom": "img[src*='images.prismic.io']",
+    "dom": [
+      "img[src*='images.prismic.io']"
+    ],
     "icon": "Prismic.svg",
     "pricing": [
       "low",
@@ -3460,6 +3541,7 @@
     "js": {
       "ProcessWire": ""
     },
+    "cpe": "cpe:2.3:a:processwire:processwire:*:*:*:*:*:*:*:*",
     "oss": true,
     "website": "https://processwire.com/"
   },
@@ -3512,7 +3594,9 @@
       "ppwp_wp_session": ""
     },
     "description": "ProfilePress is a WordPress registration plugin that lets you create login forms, registration forms, user profiles, and more.",
-    "dom": "link[href*='/wp-content/plugins/wp-user-avatar/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/wp-user-avatar/']"
+    ],
     "icon": "ProfilePress.svg",
     "pricing": [
       "low",
@@ -3582,7 +3666,9 @@
     ],
     "cpe": "cpe:2.3:a:progress:ws_ftp_server:*:*:*:*:*:*:*:*",
     "description": "Progress WS_FTP is a file transfer client software developed by Progress Software Corporation, supporting FTP, FTPS, SFTP, and HTTPS protocols with features like drag-and-drop support, file synchronization, and encrypted data transmission.",
-    "dom": "form[name='formLogin'][action='login.aspx' i][id='formLogin']\\;confidence:40",
+    "dom": [
+      "form[name='formLogin'][action='login.aspx' i][id='formLogin']\\;confidence:40"
+    ],
     "icon": "Progress.svg",
     "requires": [
       "Microsoft ASP.NET"
@@ -3600,7 +3686,8 @@
     "icon": "ProgressBar.js.png",
     "oss": true,
     "scriptSrc": [
-      "(?:((?:\\d+\\.)+\\d+)\\/)?progressbar(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2"
+      "progressbar(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+      "(?:((?:\\d+\\.)+\\d+)\\/)?progressbar(?:\\.min)?\\.js\\;version:\\1"
     ],
     "website": "https://kimmobrunfeldt.github.io/progressbar.js/"
   },
@@ -3840,7 +3927,9 @@
       1
     ],
     "description": "PubLive is a headless CMS for online publishers.",
-    "dom": "link[href*='.thepublive.com/'], img[src*='.thepublive.com/']",
+    "dom": [
+      "link[href*='.thepublive.com/'], img[src*='.thepublive.com/']"
+    ],
     "icon": "PubLive.svg",
     "pricing": [
       "poa"
@@ -3853,7 +3942,9 @@
       36
     ],
     "description": "PubMatic is a company that develops and implements online advertising software and strategies for the digital publishing and advertising industry.",
-    "dom": "iframe[src*='.pubmatic.com'], link[href*='.pubmatic.com']",
+    "dom": [
+      "iframe[src*='.pubmatic.com'], link[href*='.pubmatic.com']"
+    ],
     "icon": "PubMatic.svg",
     "pricing": [
       "payg"
@@ -3901,7 +3992,9 @@
       1
     ],
     "description": "Agnostic server Static Site CMS built for Windows, MacOS and Linux.",
-    "dom": "meta[content*='Publii Open-Source CMS for Static Site']",
+    "dom": [
+      "meta[content*='Publii Open-Source CMS for Static Site']"
+    ],
     "icon": "Publii.png",
     "js": {
       "publiiThemeMenuConfig": ""
@@ -3961,7 +4054,9 @@
       6
     ],
     "description": "PureCars is an automotive software and managed services company serving dealerships, advertising associations, and OEMs across the North American retail automotive industry.",
-    "dom": "a[href*='app.purecars.com/']",
+    "dom": [
+      "a[href*='app.purecars.com/']"
+    ],
     "icon": "PureCars.png",
     "js": {
       "_pureCars": ""
@@ -3996,7 +4091,9 @@
       98
     ],
     "description": "Whatsapp Chat is an live chat and abondoned cart solution built by PushDaddy.",
-    "dom": "div.pushdaddy-chats",
+    "dom": [
+      "div.pushdaddy-chats"
+    ],
     "icon": "PushDaddy.png",
     "implies": [
       "WhatsApp Business Chat",
@@ -4078,7 +4175,9 @@
       32
     ],
     "description": "PushPushGo is a GDPR-ready platform which enables startups, SMBs and corporations to create and send automatic web push notification campaigns on desktop and via mobile to manage various scenarios including abandoned carts, segmentation, cross-selling, customer engagement, and return rates.",
-    "dom": "link[href*='.pushpushgo.com/']",
+    "dom": [
+      "link[href*='.pushpushgo.com/']"
+    ],
     "icon": "PushPushGo.svg",
     "pricing": [
       "mid",
@@ -4106,7 +4205,9 @@
       111
     ],
     "description": "Pushpay is a digital giving and engagement platform designed to help churches manage processes related to donations and fundraising.",
-    "dom": "a[href*='//ppay.co/'][target='_blank']",
+    "dom": [
+      "a[href*='//ppay.co/'][target='_blank']"
+    ],
     "icon": "Pushpay.svg",
     "pricing": [
       "payg"
@@ -4123,7 +4224,9 @@
     ],
     "cpe": "cpe:2.3:a:pyscript:pyscript:*:*:*:*:*:*:*:*",
     "description": "PyScript is a python script that can be run in the browser using a mix of Python and standard HTML.",
-    "dom": "py-script",
+    "dom": [
+      "py-script"
+    ],
     "icon": "PyScript.svg",
     "oss": true,
     "website": "https://pyscript.net"
@@ -4153,6 +4256,7 @@
     "implies": [
       "Laravel"
     ],
+    "cpe": "cpe:2.3:a:pyrocms:pyrocms:*:*:*:*:*:*:*:*",
     "website": "https://pyrocms.com"
   },
   "Python": {
@@ -4228,7 +4332,8 @@
     },
     "oss": true,
     "scriptSrc": [
-      "(?:((?:\\d+\\.)+\\d+)\\/)?parallax(?:\\/assets\\/js)?(?:\\/jquery)?(?:\\/scripts)?(?:\\/wow)?(?:[_\\.]move)?(?:\\.inview)?(?:\\.pkgd)?(?:\\.scrolling)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2"
+      "parallax(?:\\/assets\\/js)?(?:\\/jquery)?(?:\\/scripts)?(?:\\/wow)?(?:[_\\.]move)?(?:\\.inview)?(?:\\.pkgd)?(?:\\.scrolling)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+      "(?:((?:\\d+\\.)+\\d+)\\/)?parallax(?:\\/assets\\/js)?(?:\\/jquery)?(?:\\/scripts)?(?:\\/wow)?(?:[_\\.]move)?(?:\\.inview)?(?:\\.pkgd)?(?:\\.scrolling)?(?:\\.min)?\\.js\\;version:\\1"
     ],
     "website": "https://github.com/pixelcog/parallax.js"
   },
@@ -4250,7 +4355,9 @@
       25
     ],
     "description": "Particles.js is a JavaScript library for creating particles.",
-    "dom": "div#particles-js",
+    "dom": [
+      "div#particles-js"
+    ],
     "js": {
       "particlesJS": ""
     },

@@ -18,7 +18,9 @@
       6
     ],
     "description": "NEO is an ecommerce software that manages multiple online stores.",
-    "dom": "#svr[value^=\"NEOWEBV\"]",
+    "dom": [
+      "#svr[value^=\"NEOWEBV\"]"
+    ],
     "headers": {
       "powered": "jet-neo"
     },
@@ -32,7 +34,9 @@
     "cats": [
       66
     ],
-    "dom": ".nsw-container, .nsw-header, .nsw-icon, link[href*='nsw-design-system']",
+    "dom": [
+      ".nsw-container, .nsw-header, .nsw-icon, link[href*='nsw-design-system']"
+    ],
     "icon": "NSW Design System.svg",
     "js": {
       "NSW.initSite": ""
@@ -205,7 +209,9 @@
       99
     ],
     "description": "Narvar is a customer experience platform that helps retailers inspire long-term customer loyalty, at all steps of the post-purchase journey.",
-    "dom": "a[href*='.narvar.com/'], img[src*='.narvar.com/']",
+    "dom": [
+      "a[href*='.narvar.com/'], img[src*='.narvar.com/']"
+    ],
     "headers": {
       "Content-Security-Policy": "\\.narvar\\.com"
     },
@@ -243,7 +249,9 @@
       36
     ],
     "description": "Nativo is an advertising technology provider.",
-    "dom": "link[href*='.postrelease.com/'], img[src*='.postrelease.com/']",
+    "dom": [
+      "link[href*='.postrelease.com/'], img[src*='.postrelease.com/']"
+    ],
     "icon": "Nativo.png",
     "js": {
       "ntvConfig": ""
@@ -367,7 +375,9 @@
       111
     ],
     "description": "Neon CRM, a Neon One company, is a cloud-based customer relationship management (CRM) software suite for nonprofits of all sizes. Applications include fundraising management, donor management, membership management, event registration and management, customised reporting, and more.",
-    "dom": "a[href*='.app.neoncrm.com/']",
+    "dom": [
+      "a[href*='.app.neoncrm.com/']"
+    ],
     "icon": "Neon One.svg",
     "js": {
       "_neoncrm_ga": "",
@@ -515,7 +525,9 @@
       110
     ],
     "description": "Netlify Forms is a serverless form handling solution for static websites.",
-    "dom": "form[data-netlify]",
+    "dom": [
+      "form[data-netlify]"
+    ],
     "icon": "Netlify.svg",
     "implies": [
       "Netlify"
@@ -566,7 +578,9 @@
       111
     ],
     "description": "Network for Good is an American certified B Corporation software company that offers fundraising software and coaching for charities and non-profit organisations.",
-    "dom": "a[href*='.networkforgood.com/']",
+    "dom": [
+      "a[href*='.networkforgood.com/']"
+    ],
     "icon": "Network for Good.svg",
     "pricing": [
       "poa"
@@ -606,7 +620,9 @@
       78
     ],
     "description": "New Relic is a SaaS offering that focuses on performance and availability monitoring.",
-    "dom": "link[href*='.newrelic.com']",
+    "dom": [
+      "link[href*='.newrelic.com']"
+    ],
     "icon": "New Relic.svg",
     "js": {
       "NREUM": "",
@@ -645,7 +661,9 @@
       87
     ],
     "description": "Newspack is an open-source publishing platform built on WordPress for small to medium sized news organizations. It is an “opinionated” platform that stakes out clear, best-practice positions on technology, design, and business practice for news publishers.",
-    "dom": "a.imprint[href*='newspack.pub']",
+    "dom": [
+      "a.imprint[href*='newspack.pub']"
+    ],
     "icon": "NewspackLogo.png",
     "oss": true,
     "website": "https://github.com/Automattic/newspack-plugin"
@@ -935,7 +953,9 @@
       51
     ],
     "description": "Nicepage is a free website building tool that requires no coding skills and integrates seamlessly with all leading CMS systems.",
-    "dom": "link[href*='nicepage.css']",
+    "dom": [
+      "link[href*='nicepage.css']"
+    ],
     "icon": "Nicepage.png",
     "js": {
       "_npAccordionInit": "",
@@ -973,7 +993,9 @@
       110
     ],
     "description": "Ninja Forms is the WordPress form builder.",
-    "dom": "link[href*='/wp-content/plugins/ninja-forms/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/ninja-forms/']"
+    ],
     "icon": "Ninja Forms.svg",
     "js": {
       "nfForms": ""
@@ -1074,7 +1096,9 @@
       13
     ],
     "description": "NodePing is a tool in the Website Monitoring category of a tech stack. NodePing is an open source tool with GitHub stars and GitHub forks.",
-    "dom": "footer#poweredbynodeping",
+    "dom": [
+      "footer#poweredbynodeping"
+    ],
     "icon": "NodePing.svg",
     "oss": true,
     "pricing": [
@@ -1193,7 +1217,9 @@
     ],
     "cpe": "cpe:2.3:a:notion:notion:*:*:*:*:*:*:*:*",
     "description": "Notion is a collaboration platform with modified Markdown support that integrates kanban boards, tasks, wikis, and database.",
-    "dom": "html.notion-html",
+    "dom": [
+      "html.notion-html"
+    ],
     "icon": "Notion.svg",
     "pricing": [
       "freemium",
@@ -1268,7 +1294,9 @@
       6
     ],
     "description": "Nuvemshop is a website builder with customizable layouts, product, shipping and payment management, marketing tools and a mobile app.",
-    "dom": "a[href*='www.nuvemshop.com.br'][title*='Nuvemshop'][target='_blank']",
+    "dom": [
+      "a[href*='www.nuvemshop.com.br'][title*='Nuvemshop'][target='_blank']"
+    ],
     "icon": "Nuvemshop.svg",
     "js": {
       "LS.store.url": "^.+nuvem.com.br$",
@@ -1334,6 +1362,7 @@
     "meta": {
       "generator": "^nopCommerce$"
     },
+    "cpe": "cpe:2.3:a:nopcommerce:nopcommerce:*:*:*:*:*:*:*:*",
     "oss": true,
     "website": "https://www.nopcommerce.com"
   },
@@ -1342,7 +1371,9 @@
       19
     ],
     "description": "nopStation is a one stop ecommerce solution with custom integrations and custom built plugins based on custom tailored requirements on top of nopCommerce.",
-    "dom": "a[href*='.nop-station.com/']",
+    "dom": [
+      "a[href*='.nop-station.com/']"
+    ],
     "icon": "nopStation.png",
     "implies": [
       "Microsoft ASP.NET"

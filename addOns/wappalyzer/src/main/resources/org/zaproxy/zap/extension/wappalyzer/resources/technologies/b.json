@@ -37,6 +37,7 @@
     "meta": {
       "generator": "BIGACE ([\\d.]+)\\;version:\\1"
     },
+    "cpe": "cpe:2.3:a:bigace:bigace:*:*:*:*:*:*:*:*",
     "oss": true,
     "website": "https://github.com/bigace"
   },
@@ -150,7 +151,9 @@
       25
     ],
     "description": "Babylon.js is a real time 3D engine using a JavaScript library for displaying 3D graphics in a web browser via HTML5. The source code is available on GitHub and distributed under the Apache License 2.0.",
-    "dom": "canvas[data-engine*='Babylon.js']",
+    "dom": [
+      "canvas[data-engine*='Babylon.js']"
+    ],
     "icon": "babylonjs.svg",
     "js": {
       "BABYLON.AddressMode": ""
@@ -264,7 +267,9 @@
       101
     ],
     "description": "BambooHR is an American technology company that provides human resources software as a service.",
-    "dom": "a[href*='.bamboohr.com/'][target='_blank']",
+    "dom": [
+      "a[href*='.bamboohr.com/'][target='_blank']"
+    ],
     "headers": {
       "Content-Security-Policy": "\\.bamboohr\\.com"
     },
@@ -392,7 +397,9 @@
       66
     ],
     "description": "Basil.css is a responsive and customizable UI framework.",
-    "dom": "link[href*='/basil.css'], link[href*='/basilcss']",
+    "dom": [
+      "link[href*='/basil.css'], link[href*='/basilcss']"
+    ],
     "icon": "basilcss.svg",
     "website": "https://basilcss.com"
   },
@@ -545,7 +552,9 @@
       11
     ],
     "description": "Beehiiv is a relatively young, hosted newsletter platform built for businesses and creators.",
-    "dom": "link[href*='media.beehiiv.com/']",
+    "dom": [
+      "link[href*='media.beehiiv.com/']"
+    ],
     "icon": "Beehiiv.svg",
     "pricing": [
       "freemium",
@@ -560,7 +569,9 @@
       49
     ],
     "description": "Beehiiv RSS feed is a feature of the Beehiiv. Beehiiv is a relatively young, hosted newsletter platform built for businesses and creators.",
-    "dom": "iframe[src*='embeds.beehiiv.com/']",
+    "dom": [
+      "iframe[src*='embeds.beehiiv.com/']"
+    ],
     "icon": "Beehiiv.svg",
     "pricing": [
       "freemium",
@@ -626,7 +637,9 @@
       87
     ],
     "description": "Adds click to tweet boxes into your posts.",
-    "dom": "link[href*='/wp-content/plugins/better-click-to-tweet/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/better-click-to-tweet/']"
+    ],
     "icon": "Better Click To Tweet.png",
     "oss": true,
     "pricing": [
@@ -788,7 +801,9 @@
       6
     ],
     "description": "BigCommerce is a hosted ecommerce platform that allows business owners to set up an online store and sell their products online.",
-    "dom": "img[data-src*='.bigcommerce.com'], img[src*='.bigcommerce.com'], link[href*='.bigcommerce.com']",
+    "dom": [
+      "img[data-src*='.bigcommerce.com'], img[src*='.bigcommerce.com'], link[href*='.bigcommerce.com']"
+    ],
     "icon": "BigCommerce.svg",
     "js": {
       "bigcommerce_config": "",
@@ -955,7 +970,9 @@
       41
     ],
     "description": "Binance Pay is a contactless, borderless, and secure cryptocurrency payment technology designed by Binance.",
-    "dom": "a[href*='app.binance.com/payment/secpay']",
+    "dom": [
+      "a[href*='app.binance.com/payment/secpay']"
+    ],
     "icon": "Binance.svg",
     "pricing": [
       "freemium"
@@ -989,7 +1006,9 @@
     ],
     "cpe": "cpe:2.3:a:bitcoin:bitcoin:*:*:*:*:*:*:*:*",
     "description": "Bitcoin is a decentralized digital currency, without a central bank or single administrator, that can be sent from user to user on the peer-to-peer bitcoin network without the need for intermediaries.",
-    "dom": "[aria-labelledby='pi-bitcoin']",
+    "dom": [
+      "[aria-labelledby='pi-bitcoin']"
+    ],
     "icon": "Bitcoin.svg",
     "website": "https://en.wikipedia.org/wiki/Bitcoin"
   },
@@ -1038,6 +1057,7 @@
       "cdn\\.bitrix24\\.com",
       "\\.bitrix24\\..+/bitrix/js/crm/form_loader\\.js"
     ],
+    "cpe": "cpe:2.3:a:bitrix24:bitrix24:*:*:*:*:*:*:*:*",
     "website": "https://www.bitrix24.com"
   },
   "BittAds": {
@@ -1188,7 +1208,9 @@
       80
     ],
     "description": "Blocksy is a modern and lightweight WordPress theme designed for a variety of websites, including blogs, portfolios, ecommerce stores, and business websites.",
-    "dom": "link[href*='/wp-content/themes/blocksy/']",
+    "dom": [
+      "link[href*='/wp-content/themes/blocksy/']"
+    ],
     "icon": "Blocksy.svg",
     "js": {
       "blocksyJsonP": "",
@@ -1329,7 +1351,9 @@
       77
     ],
     "description": "Blue is a ecommerce data marketing, lead generation, real time bidding and recommendation solutions.",
-    "dom": "iframe[src*='.getblue.io']",
+    "dom": [
+      "iframe[src*='.getblue.io']"
+    ],
     "icon": "Blue.svg",
     "js": {
       "blueProductId": "",
@@ -1473,7 +1497,9 @@
       95
     ],
     "description": "Bluestone PIM is primarily a product information management (PIM) solution, which is focused on managing and distributing product data across multiple channels. However, it also includes some features that are typically associated with digital asset management (DAM), such as the ability to manage and store product images, videos, and other digital assets.",
-    "dom": "img[src*='media.bluestonepim.com/'], img[data-srcset*='media.bluestonepim.com/']",
+    "dom": [
+      "img[src*='media.bluestonepim.com/'], img[data-srcset*='media.bluestonepim.com/']"
+    ],
     "icon": "Bluestone PIM.svg",
     "pricing": [
       "poa"
@@ -1486,7 +1512,9 @@
       51
     ],
     "description": "Boats Group is a website platform for boat dealers and brokers.",
-    "dom": "a[href*='.boatsgroup.com/'][target='_blank']",
+    "dom": [
+      "a[href*='.boatsgroup.com/'][target='_blank']"
+    ],
     "icon": "Boats Group.png",
     "pricing": [
       "poa"
@@ -1829,7 +1857,9 @@
       41
     ],
     "description": "Bolt powers a checkout experience designed to convert shoppers.",
-    "dom": "bolt-checkout-button",
+    "dom": [
+      "bolt-checkout-button"
+    ],
     "icon": "Bolt.svg",
     "js": {
       "BoltCheckout": "",
@@ -1948,7 +1978,9 @@
       72
     ],
     "description": "Bookeo is a cloud-based booking and reservation solution that caters to tour operators, travel agencies, schools, therapists, photographers and event organizers.",
-    "dom": "a[href*='//bookeo.com/'], iframe[src*='//bookeo.com/']",
+    "dom": [
+      "a[href*='//bookeo.com/'], iframe[src*='//bookeo.com/']"
+    ],
     "icon": "Bookeo.svg",
     "js": {
       "bookeo_start": "",
@@ -1998,7 +2030,9 @@
       5
     ],
     "description": "Booking.com is one of the largest ecommerce travel companies in the world. As an affiliate member, you can make up to 40% commission.",
-    "dom": "form[action*='.booking.com/'][target='_blank'], img[src*='q-xx.bstatic.com/']",
+    "dom": [
+      "form[action*='.booking.com/'][target='_blank'], img[src*='q-xx.bstatic.com/']"
+    ],
     "icon": "Booking.com.svg",
     "implies": [
       "Booking.com"
@@ -2272,7 +2306,9 @@
       87
     ],
     "description": "Borlabs Cookie is a GDPR cookie consent plugin for WordPress.",
-    "dom": "#BorlabsCookieBox",
+    "dom": [
+      "#BorlabsCookieBox"
+    ],
     "icon": "Borlabs Cookie.svg",
     "js": {
       "borlabsCookieConfig": ""
@@ -2477,7 +2513,9 @@
       91
     ],
     "description": "Bread is a buy now, pay later platform for ecommerce websites.",
-    "dom": "#bread-mini-cart-btn",
+    "dom": [
+      "#bread-mini-cart-btn"
+    ],
     "icon": "Bread.svg",
     "js": {
       "BreadCalc": "",
@@ -2630,7 +2668,9 @@
       14
     ],
     "description": "Brightcove is a cloud-based online video platform.",
-    "dom": "iframe[src*='players.brightcove.'], link[href*='players.brightcove.']",
+    "dom": [
+      "iframe[src*='players.brightcove.'], link[href*='players.brightcove.']"
+    ],
     "icon": "Brightcove.png",
     "pricing": [
       "mid",
@@ -2735,7 +2775,9 @@
       6
     ],
     "description": "Brownie is a framework, CMS, ecommerce and ERP omni-channel platform to manage your entire business in one cloud solution.",
-    "dom": "a[href*='browniesuite.com'][target='_blank'] img[src*='brownie']",
+    "dom": [
+      "a[href*='browniesuite.com'][target='_blank'] img[src*='brownie']"
+    ],
     "headers": {
       "X-Powered-By": "Brownie"
     },
@@ -2866,6 +2908,7 @@
     "scriptSrc": [
       "/wp-content/plugins/buddypress/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
     ],
+    "cpe": "cpe:2.3:a:buddypress:buddypress:0.1:*:*:*:*:wordpress:*:*",
     "website": "https://buddypress.org"
   },
   "BugHerd": {
@@ -2954,7 +2997,9 @@
       1
     ],
     "description": "Builder.io is a headless CMS with a powerful drag-and-drop visual editor that lets you build and optimize digital experiences with speed and flexibility. ",
-    "dom": "[data-builder-content-id], img[src*='cdn.builder.io']",
+    "dom": [
+      "[data-builder-content-id], img[src*='cdn.builder.io']"
+    ],
     "icon": "Builder.svg",
     "pricing": [
       "low",
@@ -2971,7 +3016,9 @@
     "cats": [
       19
     ],
-    "dom": "iframe[src*='buildertrend.net'], script[src*='buildertrend.net']",
+    "dom": [
+      "iframe[src*='buildertrend.net'], script[src*='buildertrend.net']"
+    ],
     "icon": "Buildertrend.svg",
     "pricing": [
       "mid",
@@ -3022,7 +3069,9 @@
     "cats": [
       31
     ],
-    "dom": "[src*='.b-cdn.net'],[data-src*='.b-cdn.net']",
+    "dom": [
+      "[src*='.b-cdn.net'],[data-src*='.b-cdn.net']"
+    ],
     "headers": {
       "Server": "^BunnyCDN"
     },
@@ -3034,7 +3083,9 @@
       17
     ],
     "description": "Bunny Fonts is an open-source, privacy-first web font platform designed to put privacy back into the internet.",
-    "dom": "link[href*='fonts.bunny.net']",
+    "dom": [
+      "link[href*='fonts.bunny.net']"
+    ],
     "icon": "Bunny.svg",
     "implies": [
       "Bunny"
@@ -3070,7 +3121,9 @@
       1
     ],
     "description": "ButterCMS is a cloud-based headless content management system.",
-    "dom": "div[data-bg*='cdn.buttercms.com/'], img[src*='cdn.buttercms.com/'], link[href*='cdn.buttercms.com'], a[href*='cdn.buttercms.com/']",
+    "dom": [
+      "div[data-bg*='cdn.buttercms.com/'], img[src*='cdn.buttercms.com/'], link[href*='cdn.buttercms.com'], a[href*='cdn.buttercms.com/']"
+    ],
     "icon": "butter-cms.svg",
     "pricing": [
       "mid",
@@ -3105,7 +3158,9 @@
       111
     ],
     "description": "Buy me a coffee is a service for online content creators that they may use to receive tips and donations to support their work.",
-    "dom": "a[href*='www.buymeacoffee.com/'][target='_blank']",
+    "dom": [
+      "a[href*='www.buymeacoffee.com/'][target='_blank']"
+    ],
     "icon": "Buy me a coffee.svg",
     "pricing": [
       "payg"

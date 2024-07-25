@@ -375,7 +375,9 @@
       51
     ],
     "description": "Umso is a website builder for Startups.",
-    "dom": "link[href*='.umso.co/'], img[src*='.umso.co/'], video[poster*='.umso.co/']",
+    "dom": [
+      "link[href*='.umso.co/'], img[src*='.umso.co/'], video[poster*='.umso.co/']"
+    ],
     "icon": "Umso.svg",
     "pricing": [
       "low",
@@ -549,7 +551,9 @@
       31
     ],
     "description": "Unpkg is a content delivery network for everything on npm.",
-    "dom": "link[href*='unpkg.com']",
+    "dom": [
+      "link[href*='unpkg.com']"
+    ],
     "icon": "Unpkg.png",
     "oss": true,
     "scriptSrc": [
@@ -562,7 +566,9 @@
       36
     ],
     "description": "Unruly is a video advertising platform.",
-    "dom": "link[href*='.unrulymedia.com']",
+    "dom": [
+      "link[href*='.unrulymedia.com']"
+    ],
     "icon": "Unruly.png",
     "js": {
       "unruly.native": ""
@@ -632,7 +638,9 @@
       31
     ],
     "description": "Uploadcare is a complete file handling platform for online business. Receive files from you users via File Uploader or File Upload API, implement image optimization and transformations with Image CDN API, and get HIPAA-compliant storage.",
-    "dom": "img[src*='.ucarecdn.com/'], link[href*='ucarecdn.com'], img[data-src*='.ucarecdn.com/']",
+    "dom": [
+      "img[src*='.ucarecdn.com/'], link[href*='ucarecdn.com'], img[data-src*='.ucarecdn.com/']"
+    ],
     "icon": "Uploadcare.svg",
     "js": {
       "uploadcare.version": "^([\\d\\.]+)$\\;version:\\1"
@@ -662,7 +670,9 @@
       93
     ],
     "description": "Upserve is a restaurant management solution featuring an Android or iOS-based point-of-sale system, online ordering, contactless payments, automated inventory management, sales analytics, and more.",
-    "dom": "a[href*='app.upserve.com/']",
+    "dom": [
+      "a[href*='app.upserve.com/']"
+    ],
     "icon": "Upserve.svg",
     "pricing": [
       "payg"
@@ -747,7 +757,9 @@
       68
     ],
     "description": "UsableNet is a technology for web accessibility and digital transformation, providing end-to-end services.",
-    "dom": "iframe[src*='.usablenet.com/pt/']",
+    "dom": [
+      "iframe[src*='.usablenet.com/pt/']"
+    ],
     "icon": "UsableNet.png",
     "js": {
       "enableUsableNetAssistive": ""
@@ -828,7 +840,9 @@
       73
     ],
     "description": "UserReport is an online survey and feedback management platform.",
-    "dom": "a[href*='feedback.userreport.com/'][target='_blank']",
+    "dom": [
+      "a[href*='feedback.userreport.com/'][target='_blank']"
+    ],
     "icon": "UserReport.svg",
     "pricing": [
       "freemium",
@@ -904,7 +918,9 @@
       67
     ],
     "description": "Usercentrics is a SaaS enterprise solution for Consent Management (CMP) that helps enterprise customers to obtain, manage and document the user consent.",
-    "dom": "link[href*='app.usercentrics.eu'], script[data-usercentrics]",
+    "dom": [
+      "link[href*='app.usercentrics.eu'], script[data-usercentrics]"
+    ],
     "icon": "Usercentrics.svg",
     "js": {
       "usercentrics.appVersion": "([\\d.]+)\\;version:\\1"
@@ -1153,7 +1169,9 @@
       15
     ],
     "description": "Utterances is a lightweight comments widget built on GitHub issues.",
-    "dom": "iframe[src*='utteranc.es']",
+    "dom": [
+      "iframe[src*='utteranc.es']"
+    ],
     "icon": "utterances.svg",
     "oss": true,
     "website": "https://utteranc.es/",

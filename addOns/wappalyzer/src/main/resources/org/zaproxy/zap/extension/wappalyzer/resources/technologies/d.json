@@ -92,7 +92,9 @@
       1
     ],
     "description": "DM Polopoly is a web content management solution focused on enhancing the user experience built by Atex.",
-    "dom": "img[data-src*='/polopoly_fs/'], link[href*='/polopoly_fs/'], img[src*='/polopoly_fs/']",
+    "dom": [
+      "img[data-src*='/polopoly_fs/'], link[href*='/polopoly_fs/'], img[src*='/polopoly_fs/']"
+    ],
     "icon": "DM Polopoly.png",
     "implies": [
       "Java"
@@ -274,7 +276,9 @@
       14
     ],
     "description": "Dailymotion is a French video-sharing technology platform.",
-    "dom": "img[data-src*='.dailymotion.com/'], iframe[scr*='.dailymotion.com/']",
+    "dom": [
+      "img[data-src*='.dailymotion.com/'], iframe[scr*='.dailymotion.com/']"
+    ],
     "icon": "Dailymotion.svg",
     "meta": {
       "name": "dailymotion-domain-verification"
@@ -285,7 +289,7 @@
     "cats": [
       18
     ],
-    "description": "Mono.net delivers the a Software-as-a-Service (SaaS) platform to build and sell websites and other digital products.",
+    "description": "Dancer is a simple but powerful web application framework for Perl.",
     "headers": {
       "Server": "Perl Dancer ([\\d.]+)\\;version:\\1",
       "X-Powered-By": "Perl Dancer ([\\d.]+)\\;version:\\1"
@@ -297,6 +301,7 @@
     "pricing": [
       "poa"
     ],
+    "cpe": "cpe:2.3:a:dancer:dancer:*:*:*:*:*:*:*:*",
     "saas": true,
     "website": "https://perldancer.org"
   },
@@ -441,7 +446,9 @@
       1
     ],
     "description": "Datascape is a cloud-based solution designed to create new ways for councils to work and better engage with their communities.",
-    "dom": "link[href*='cdn-sites.datascape.cloud']",
+    "dom": [
+      "link[href*='cdn-sites.datascape.cloud']"
+    ],
     "icon": "Datascape.svg",
     "pricing": [
       "poa"
@@ -497,7 +504,9 @@
       97
     ],
     "description": "Datatrics is a data-driven marketing platform that provides businesses with advanced tools and analytics to optimise customer experiences, personalise marketing campaigns, and drive engagement through data-driven insights and automation.",
-    "dom": "link[href*='.datatrics.com']",
+    "dom": [
+      "link[href*='.datatrics.com']"
+    ],
     "icon": "Datatrics.svg",
     "js": {
       "DatatricsClick": "",
@@ -516,7 +525,9 @@
       1
     ],
     "description": "DatoCMS is a cloud-based headless Content as a service (CaaS) platform created to work with static websites, mobile apps and server-side applications of any kind.",
-    "dom": "link[href*='datocms-assets.com'], img[src*='datocms-assets.com'], source[src*='datocms-assets.com'], div[style*='datocms-assets.com']",
+    "dom": [
+      "link[href*='datocms-assets.com'], img[src*='datocms-assets.com'], source[src*='datocms-assets.com'], div[style*='datocms-assets.com']"
+    ],
     "headers": {
       "content-security-policy": "\\.datocms-assets\\.com"
     },
@@ -544,7 +555,9 @@
       32
     ],
     "description": "Dealer Spike is a digital marketing and advertising company focused that helps dealers grow their business.",
-    "dom": "meta[name='author'][content*='Dealer Spike']",
+    "dom": [
+      "meta[name='author'][content*='Dealer Spike']"
+    ],
     "icon": "Dealer Spike.svg",
     "pricing": [
       "poa"
@@ -715,7 +728,9 @@
       76
     ],
     "description": "Depict is an ecommerce personalisation solution for fashion.",
-    "dom": "link[href*='.depict.ai/']",
+    "dom": [
+      "link[href*='.depict.ai/']"
+    ],
     "icon": "Depict.svg",
     "pricing": [
       "poa"
@@ -826,7 +841,9 @@
       36
     ],
     "description": "Dianomi is an advertiser campaign management software for financial services, premium lifestyle, technology and corporate sectors.",
-    "dom": "iframe[src*='.dianomi.com/']",
+    "dom": [
+      "iframe[src*='.dianomi.com/']"
+    ],
     "icon": "Dianomi.svg",
     "pricing": [
       "high",
@@ -893,7 +910,9 @@
       71
     ],
     "description": "Digistore24 is a German digital reselling and affiliate marketing platform.",
-    "dom": "a[href*='www.digistore24.com'][target='_blank']",
+    "dom": [
+      "a[href*='www.digistore24.com'][target='_blank']"
+    ],
     "icon": "Digistore24.svg",
     "js": {
       "DIGISTORE_LINK_ID_KEY": "",
@@ -915,7 +934,9 @@
       6
     ],
     "description": "Digital Showroom is an ecommerce platform.",
-    "dom": "div.dd-showrom__layout",
+    "dom": [
+      "div.dd-showrom__layout"
+    ],
     "icon": "Digital Showroom.png",
     "pricing": [
       "freemium",
@@ -930,7 +951,9 @@
       63
     ],
     "description": "DigitalOcean Spaces is a cloud-based object storage service provided by DigitalOcean, a cloud infrastructure provider. It allows users to store and retrieve large amounts of data, such as images, videos, audio files, backups, and logs, using a simple RESTful API or a web-based graphical user interface (GUI).",
-    "dom": "img[data-src*='.digitaloceanspaces.com'], img[src*='.digitaloceanspaces.com']",
+    "dom": [
+      "img[data-src*='.digitaloceanspaces.com'], img[src*='.digitaloceanspaces.com']"
+    ],
     "icon": "DigitalOcean.svg",
     "pricing": [
       "payg",
@@ -966,7 +989,9 @@
       95
     ],
     "description": "Digizuite is a Digital Asset Management software for enterprises.",
-    "dom": "img[src^='/globalassets/digizuite/'], source[srcset^='/globalassets/digizuite/'], video[src^='/globalassets/digizuite/']",
+    "dom": [
+      "img[src^='/globalassets/digizuite/'], source[srcset^='/globalassets/digizuite/'], video[src^='/globalassets/digizuite/']"
+    ],
     "icon": "Digizuite.png",
     "pricing": [
       "poa"
@@ -1043,6 +1068,7 @@
     "js": {
       "Discourse": ""
     },
+    "cpe": "cpe:2.3:a:discourse:discourse:*:*:*:*:*:*:*:*",
     "meta": {
       "generator": "Discourse(?: ?/?([\\d.]+\\d))?\\;version:\\1"
     },
@@ -1073,7 +1099,9 @@
     ],
     "cpe": "cpe:2.3:a:disqus:disqus_comment_system:*:*:*:*:*:*:*:*",
     "description": "Disqus is a worldwide blog comment hosting service for web sites and online communities that use a networked platform.",
-    "dom": "div#disqus_thread",
+    "dom": [
+      "div#disqus_thread"
+    ],
     "icon": "Disqus.svg",
     "js": {
       "DISQUS": "",
@@ -1112,7 +1140,9 @@
       36
     ],
     "description": "District M is a programmatic advertising exchange.",
-    "dom": "iframe[src*='.districtm.io']",
+    "dom": [
+      "iframe[src*='.districtm.io']"
+    ],
     "icon": "District M.svg",
     "saas": true,
     "website": "https://districtm.net",
@@ -1177,7 +1207,9 @@
       91
     ],
     "description": "Dividebuy provides retailer financing solutions.",
-    "dom": "div[class*='dividebuy-softcredit']",
+    "dom": [
+      "div[class*='dividebuy-softcredit']"
+    ],
     "icon": "DivideBuy.png",
     "js": {
       "display_dividebuy_modal": ""
@@ -1368,6 +1400,7 @@
     "meta": {
       "generator": "Dokeos"
     },
+    "cpe": "cpe:2.3:a:dokeos:dokeos:*:*:*:*:*:*:*:*",
     "website": "https://dokeos.com"
   },
   "DokuWiki": {
@@ -1455,7 +1488,9 @@
       111
     ],
     "description": "Donorbox is a US-based technology company. It offers an online fundraising software that allows individuals and nonprofit organisations to receive donations over the Internet.",
-    "dom": "a[href*='//donorbox.org/'], iframe[src*='//donorbox.org/']",
+    "dom": [
+      "a[href*='//donorbox.org/'], iframe[src*='//donorbox.org/']"
+    ],
     "icon": "Donorbox.svg",
     "js": {
       "DONORBOX": "",
@@ -1697,7 +1732,9 @@
       10
     ],
     "description": "DoubleVerify is a software platform for digital media measurement, data, and analytics.",
-    "dom": "link[href*='.doubleverify.com']",
+    "dom": [
+      "link[href*='.doubleverify.com']"
+    ],
     "icon": "DoubleVerify.svg",
     "pricing": [
       "poa"
@@ -1724,7 +1761,9 @@
       87
     ],
     "description": "Download Monitor is a plugin for selling, uploading and managing downloads, tracking downloads and displaying links.",
-    "dom": "link[href*='/wp-content/plugins/download-monitor/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/download-monitor/']"
+    ],
     "icon": "Download Monitor.png",
     "js": {
       "DLM_XHR_Download": "",
@@ -1883,7 +1922,9 @@
       10
     ],
     "description": "Dreamdata is a B2B revenue attribution platform.",
-    "dom": "link[href*='.bizible.com']",
+    "dom": [
+      "link[href*='.bizible.com']"
+    ],
     "icon": "Dreamdata.svg",
     "js": {
       "BizTrackingA": "",
@@ -1959,7 +2000,9 @@
       11
     ],
     "description": "DropInBlog is a remotely hosted, cloud based platform that is designed to embed a blog into your html site.",
-    "dom": "link[href*='.dropinblog.com/']",
+    "dom": [
+      "link[href*='.dropinblog.com/']"
+    ],
     "icon": "DropInBlog.png",
     "pricing": [
       "low",
@@ -2089,7 +2132,9 @@
     ],
     "cpe": "cpe:2.3:a:commerceguys:commerce:*:*:*:*:*:*:*:*",
     "description": "Drupal Commerce is open-source ecommerce software that augments the content management system Drupal.",
-    "dom": "aside#cart-offcanvas, form.commerce-order-item-add-to-cart-form,form.commerce-add-to-cart",
+    "dom": [
+      "aside#cart-offcanvas, form.commerce-order-item-add-to-cart-form,form.commerce-add-to-cart"
+    ],
     "html": [
       "<[^>]+(?:id=\"block[_-]commerce[_-]cart[_-]cart|class=\"commerce[_-]product[_-]field)"
     ],

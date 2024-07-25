@@ -501,7 +501,9 @@
     ],
     "cpe": "cpe:2.3:a:omeka:omeka:*:*:*:*:*:*:*:*",
     "description": "Omeka is a free Content Management System (CMS) used by archives, historical societies, libraries, museums, and individual researchers for publishing digital collections.",
-    "dom": "link[rel*='stylesheet'][href*='css/myomeka.css'], link[rel*='stylesheet'][href*='/omeka/plugins/'], footer > p > a[href*='//omeka.org']",
+    "dom": [
+      "link[rel*='stylesheet'][href*='css/myomeka.css'], link[rel*='stylesheet'][href*='/omeka/plugins/'], footer > p > a[href*='//omeka.org']"
+    ],
     "icon": "Omeka.png",
     "js": {
       "Omeka": ""
@@ -518,7 +520,9 @@
       "ometria": ""
     },
     "description": "Ometria is a customer insight and marketing automation platform.",
-    "dom": "form[action*='api.ometria.com']",
+    "dom": [
+      "form[action*='api.ometria.com']"
+    ],
     "icon": "Ometria.svg",
     "js": {
       "AddOmetriaBasket": "",
@@ -557,7 +561,9 @@
       1
     ],
     "description": "Omni CMS (formerly OU Campus) is a web content management system developed by Modern Campus. Modern Campus is a SaaS-based student lifecycle management software designed to manage continuing education and non-degree programs.",
-    "dom": "a[href*='a.cms.omniupdate.com/11/']",
+    "dom": [
+      "a[href*='a.cms.omniupdate.com/11/']"
+    ],
     "icon": "Modern Campus.png",
     "pricing": [
       "poa"
@@ -570,7 +576,9 @@
       74
     ],
     "description": "Omniconvert is an award-winning conversion rate optimisation (CRO) software that can be used for A/B testing, online surveys, traffic segmentation.",
-    "dom": "link[href*='app.omniconvert.com']",
+    "dom": [
+      "link[href*='app.omniconvert.com']"
+    ],
     "icon": "Omniconvert.png",
     "js": {
       "_omni": ""
@@ -639,7 +647,9 @@
       5
     ],
     "description": "Omny Studio is a podcast hosting solution, which enables radio stations and enterprises to manage, monetize, publish, share, edit and analyze audio episodes.",
-    "dom": "iframe[src*='//omny.fm/shows/']",
+    "dom": [
+      "iframe[src*='//omny.fm/shows/']"
+    ],
     "icon": "Omny Studio.svg",
     "pricing": [
       "poa"
@@ -671,7 +681,9 @@
       6
     ],
     "description": "OnShop is an ecommerce platform for online merchants.",
-    "dom": "link[href*='cdn.onshop.asia/']",
+    "dom": [
+      "link[href*='cdn.onshop.asia/']"
+    ],
     "excludes": [
       "OpenCart"
     ],
@@ -693,7 +705,9 @@
       51
     ],
     "description": "OnUniverse is the first website builder and commerce platform built for mobile devices.",
-    "dom": "link[href*='onuniverse-assets.imgix.net'], img[src*='onuniverse-assets.imgix.net']",
+    "dom": [
+      "link[href*='onuniverse-assets.imgix.net'], img[src*='onuniverse-assets.imgix.net']"
+    ],
     "icon": "OnUniverse.png",
     "pricing": [
       "freemium",
@@ -752,7 +766,9 @@
       111
     ],
     "description": "OneCause is a fundraising platform designed for nonprofits to manage all types of fundraising campaigns.",
-    "dom": "a[href*='.onecause.com/'][target='_blank']",
+    "dom": [
+      "a[href*='.onecause.com/'][target='_blank']"
+    ],
     "icon": "OneCause.svg",
     "pricing": [
       "poa"
@@ -768,7 +784,9 @@
       80
     ],
     "description": "OnePage Express is a beautiful WordPress theme that can be used to create a one page website in minutes by drag and drop.",
-    "dom": "link#one-page-express-style-css",
+    "dom": [
+      "link#one-page-express-style-css"
+    ],
     "icon": "ExtendThemes.svg",
     "js": {
       "one_page_express_settings": ""
@@ -890,7 +908,9 @@
       69
     ],
     "description": "Onfido is a technology company that helps businesses verify people's identities using a photo-based identity document, a selfie and artificial intelligence algorithms.",
-    "dom": "link[href*='.onfido.com'], iframe[src*='onfido.com']",
+    "dom": [
+      "link[href*='.onfido.com'], iframe[src*='onfido.com']"
+    ],
     "headers": {
       "content-security-policy": "(?:api|sync)\\.onfido\\.com"
     },
@@ -908,7 +928,9 @@
       5
     ],
     "description": "Speedtest Custom is a robust and accurate testing solution that is HTML5-based, Flash-free and supports both mobile and desktop browsers built by Ookla.",
-    "dom": "iframe[src*='.speedtestcustom.com'], a[href*='.speedtestcustom.com']",
+    "dom": [
+      "iframe[src*='.speedtestcustom.com'], a[href*='.speedtestcustom.com']"
+    ],
     "headers": {
       "content-security-policy": "\\.speedtestcustom\\.com"
     },
@@ -972,7 +994,9 @@
       19
     ],
     "description": "Open Graph is a protocol that is used to integrate any web page into the social graph.",
-    "dom": "meta[property*='og:']",
+    "dom": [
+      "meta[property*='og:']"
+    ],
     "icon": "Open Graph.png",
     "oss": true,
     "website": "https://ogp.me"
@@ -1017,7 +1041,9 @@
       21
     ],
     "description": "The Open edX platform is a free and open source course management system.",
-    "dom": "meta[name='openedx-release-line'], #footer-openedx, .openedx, .open-edx-logo, .open-edx-link, .footer-about-openedx, a[href*='https://open.edx.org'], a[href*='https://openedx.org'], img[src*='https://files.edx.org/openedx-logos/'][alt='Powered by Open edX']",
+    "dom": [
+      "meta[name='openedx-release-line'], #footer-openedx, .openedx, .open-edx-logo, .open-edx-link, .footer-about-openedx, a[href*='https://open.edx.org'], a[href*='https://openedx.org'], img[src*='https://files.edx.org/openedx-logos/'][alt='Powered by Open edX']"
+    ],
     "icon": "Open edX.png",
     "oss": true,
     "website": "https://openedx.org/"
@@ -1043,7 +1069,9 @@
     ],
     "cpe": "cpe:2.3:a:open-xchange:app_suite:*:*:*:*:*:*:*:*",
     "description": "Open-Xchange is a web-based communication, collaboration and office productivity software suite.",
-    "dom": "#io-ox-core, form > input[value='open-xchange-appsuite']",
+    "dom": [
+      "#io-ox-core, form > input[value='open-xchange-appsuite']"
+    ],
     "icon": "openxchange.svg",
     "implies": [
       "Java"
@@ -1097,7 +1125,9 @@
     },
     "cpe": "cpe:2.3:a:opencart:opencart:*:*:*:*:*:*:*:*",
     "description": "OpenCart is a free and open-source ecommerce platform used for creating and managing online stores. It is written in PHP and uses a MySQL database to store information.",
-    "dom": "link[href*='catalog/view/theme/rgen-opencart/']",
+    "dom": [
+      "link[href*='catalog/view/theme/rgen-opencart/']"
+    ],
     "icon": "OpenCart.svg",
     "implies": [
       "PHP",
@@ -1240,6 +1270,7 @@
     "implies": [
       "Nginx"
     ],
+    "cpe": "cpe:2.3:a:openresty:openresty:*:*:*:*:*:*:*:*",
     "website": "https://openresty.org"
   },
   "OpenSSL": {
@@ -1260,7 +1291,9 @@
     ],
     "cpe": "cpe:2.3:a:openstreetmap:openstreetmap:*:*:*:*:*:wordpress:*:*",
     "description": "OpenStreetMap is a free, editable map of the whole world that is being built by volunteers largely from scratch and released with an open-content license.",
-    "dom": "iframe[src*='openstreetmap.org'],iframe[data-lazy-src*='openstreetmap.org']",
+    "dom": [
+      "iframe[src*='openstreetmap.org'],iframe[data-lazy-src*='openstreetmap.org']"
+    ],
     "icon": "OpenStreetMap.svg",
     "oss": true,
     "website": "https://www.openstreetmap.org"
@@ -1285,7 +1318,9 @@
       93
     ],
     "description": "OpenTable is an online restaurant-reservation service company founded by Sid Gorham, Eric Moe and Chuck Templeton on 2 July 1998 and is based in San Francisco, California.",
-    "dom": "iframe[src*='.opentable.com/'], form[action*='.opentable.com/'][target='_blank']",
+    "dom": [
+      "iframe[src*='.opentable.com/'], form[action*='.opentable.com/'][target='_blank']"
+    ],
     "icon": "OpenTable.svg",
     "pricing": [
       "mid",
@@ -1345,7 +1380,9 @@
     ],
     "cpe": "cpe:2.3:a:openx:openx:*:*:*:*:*:*:*:*",
     "description": "OpenX is a programmatic advertising technology company.",
-    "dom": "iframe[src*='.openx.net'], img[src*='.openx.net'], link[href*='.openx.net']",
+    "dom": [
+      "iframe[src*='.openx.net'], img[src*='.openx.net'], link[href*='.openx.net']"
+    ],
     "icon": "OpenX.png",
     "js": {
       "openx.name": "openx"
@@ -1411,7 +1448,9 @@
       77
     ],
     "description": "OptiMonk is an on-site message toolkit used to improve conversions using action-based popups ad bars.",
-    "dom": "link[href*='.optimonk.com']",
+    "dom": [
+      "link[href*='.optimonk.com']"
+    ],
     "icon": "OptiMonk.svg",
     "pricing": [
       "low",
@@ -1496,7 +1535,9 @@
     },
     "cpe": "cpe:2.3:a:episerver:episerver:*:*:*:*:*:*:*:*",
     "description": "Optimizely Content Management (formerly EPiServer) is digital content, ecommerce, and marketing management solution designed for editors and marketers.",
-    "dom": "link[href*='/EPiServer.Forms/']",
+    "dom": [
+      "link[href*='/EPiServer.Forms/']"
+    ],
     "headers": {
       "content-security-policy": "\\.episerver\\.net"
     },
@@ -1606,7 +1647,9 @@
       86
     ],
     "description": "Oracle BlueKai is a cloud-based big data platform that enables companies to personalise online, offline, and mobile marketing campaigns.",
-    "dom": "link[href*='tags.bluekai.com'],link[href*='tags.bkrtx.com']",
+    "dom": [
+      "link[href*='tags.bluekai.com'],link[href*='tags.bkrtx.com']"
+    ],
     "icon": "Oracle.svg",
     "js": {
       "bluekaiLoaded": ""
@@ -1626,7 +1669,9 @@
     ],
     "cpe": "cpe:2.3:a:oracle:commerce_platform:*:*:*:*:*:*:*:*",
     "description": "Oracle Commerce is a unified B2B and B2C ecommerce platform.",
-    "dom": "input[name*='/atg/commerce/'], .atgShoppingBagContent",
+    "dom": [
+      "input[name*='/atg/commerce/'], .atgShoppingBagContent"
+    ],
     "headers": {
       "X-ATG-Version": "(?:ATGPlatform/([\\d.]+))?\\;version:\\1"
     },
@@ -1639,7 +1684,9 @@
       6
     ],
     "description": "Oracle Commerce Cloud is a cloud-native, fully featured, extensible SaaS ecommerce solution, delivered in the Oracle Cloud, supporting B2C and B2B models in a single platform.",
-    "dom": "#oracle-cc",
+    "dom": [
+      "#oracle-cc"
+    ],
     "headers": {
       "OracleCommerceCloud-Version": "^(.+)$\\;version:\\1"
     },
@@ -1792,7 +1839,9 @@
       5
     ],
     "description": "OrbitFox is a multi-featured WordPress plugin that works with the Elementor, Beaver Builder and Gutenberg site-building utilities by Themeisle.",
-    "dom": "link[href*='/wp-content/plugins/themeisle-companion/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/themeisle-companion/']"
+    ],
     "icon": "OrbitFox.svg",
     "requires": [
       "WordPress"
@@ -1912,7 +1961,9 @@
       6
     ],
     "description": "OrderYOYO is an online ordering, payment, and marketing software solution provider.",
-    "dom": "a[href*='.orderyoyo.com/'][target='_blank']",
+    "dom": [
+      "a[href*='.orderyoyo.com/'][target='_blank']"
+    ],
     "icon": "OrderYOYO.png",
     "js": {
       "SmartBannerOY": ""
@@ -2037,6 +2088,7 @@
       "high",
       "recurring"
     ],
+    "cpe": "cpe:2.3:a:outsystems:outsystems:*:*:*:*:*:*:*:*",
     "saas": true,
     "scriptSrc": [
       "scripts/OutSystems(?:[\\w]+)?\\.js"
@@ -2048,7 +2100,9 @@
       80
     ],
     "description": "Panoramic is a fully responsive WordPress theme with a homepage slider by OutTheBoxThemes.",
-    "dom": "link#panoramic_customizer_theme_fonts-css",
+    "dom": [
+      "link#panoramic_customizer_theme_fonts-css"
+    ],
     "icon": "OutTheBoxThemes.png",
     "pricing": [
       "freemium",
@@ -2206,6 +2260,7 @@
       "PHP",
       "MySQL"
     ],
+    "cpe": "cpe:2.3:a:oscommerce:oscommerce:*:*:*:*:*:*:*:*",
     "oss": true,
     "website": "https://www.oscommerce.com"
   },
@@ -2221,6 +2276,7 @@
       "PHP",
       "MySQL"
     ],
+    "cpe": "cpe:2.3:a:osticket:osticket:*:*:*:*:*:*:*:*",
     "website": "https://osticket.com"
   },
   "otrs": {

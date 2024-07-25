@@ -88,7 +88,9 @@
       6
     ],
     "description": "Fabric is a headless commerce platform helping direct-to-consumer and B2B brands utilize an ecommerce platform designed for their needs.",
-    "dom": "img[data-src*='fabric.imgix.net/']",
+    "dom": [
+      "img[data-src*='fabric.imgix.net/']"
+    ],
     "icon": "Fabric.svg",
     "meta": {
       "powered-by": "FabricInc"
@@ -159,7 +161,9 @@
       10
     ],
     "description": "Facebook pixel is an analytics tool that allows you to measure the effectiveness of your advertising.",
-    "dom": "img[src*='facebook.com/tr']",
+    "dom": [
+      "img[src*='facebook.com/tr']"
+    ],
     "icon": "Facebook.svg",
     "js": {
       "_fbq": ""
@@ -277,7 +281,9 @@
       76
     ],
     "description": "Fanplayr is a real-time insights platform that provides website optimisation and personalisation solutions for businesses.",
-    "dom": "link[href*='cdn.fanplayr.com']",
+    "dom": [
+      "link[href*='cdn.fanplayr.com']"
+    ],
     "icon": "Fanplayr.svg",
     "js": {
       "fanplayr.platform.version": "^([\\d\\.]+)$\\;version:\\1"
@@ -509,7 +515,9 @@
       104
     ],
     "description": "Open source help desk system and ticket management tool.",
-    "dom": "link[href*='/lb-faveo/']",
+    "dom": [
+      "link[href*='/lb-faveo/']"
+    ],
     "icon": "Faveo.png",
     "oss": true,
     "scriptSrc": [
@@ -584,7 +592,9 @@
       90
     ],
     "description": "Feefo is a cloud-based consumer review and rating management software.",
-    "dom": "a[href*='.feefo.com/'][target='_blank'], link[href*='.feefo.com/'], img[src*='.feefo.com/']",
+    "dom": [
+      "a[href*='.feefo.com/'][target='_blank'], link[href*='.feefo.com/'], img[src*='.feefo.com/']"
+    ],
     "icon": "Feefo.svg",
     "js": {
       "feefoTracker": "",
@@ -680,7 +690,9 @@
       71
     ],
     "description": "FinanceAds is a performance marketing agency that has grown affiliate network for the financial sector.",
-    "dom": "link[href*='js.financeads.net'], link[href*='js.financeads.com'], a[href*='www.financeads.net/tc.php']",
+    "dom": [
+      "link[href*='js.financeads.net'], link[href*='js.financeads.com'], a[href*='www.financeads.net/tc.php']"
+    ],
     "icon": "Financeads.png",
     "pricing": [
       "payg"
@@ -809,7 +821,9 @@
     ],
     "cpe": "cpe:2.3:a:google:firebase_cloud_messaging:*:*:*:*:*:*:*:*",
     "description": "Firebase is a Google-backed application development software that enables developers to develop iOS, Android and Web apps.",
-    "dom": "iframe[src*='.firebaseapp.com/']",
+    "dom": [
+      "iframe[src*='.firebaseapp.com/']"
+    ],
     "headers": {
       "vary": "x-fh-requested-host"
     },
@@ -847,7 +861,9 @@
       100
     ],
     "description": "Firepush is an omnichannel marketing app that helps Shopify stores to drive sales with automated web push, email and SMS campaigns.",
-    "dom": "link[href*='cdn.firepush.net']",
+    "dom": [
+      "link[href*='cdn.firepush.net']"
+    ],
     "icon": "Firepush.svg",
     "implies": [
       "Shopify"
@@ -903,7 +919,9 @@
       71
     ],
     "description": "FirstPromoter is a software platform that helps businesses to create, manage and track their affiliate marketing programs.",
-    "dom": "link[href*='//firstpromoter.com/']",
+    "dom": [
+      "link[href*='//firstpromoter.com/']"
+    ],
     "icon": "FirstPromoter.svg",
     "js": {
       "FirstPromoterAPI": "",
@@ -1049,7 +1067,9 @@
       93
     ],
     "description": "Fleksa is an online ordering system for restaurants and delivery.",
-    "dom": "a[href*='play.google.com/store/apps/details?id=com.fleksa.'][target='_blank']",
+    "dom": [
+      "a[href*='play.google.com/store/apps/details?id=com.fleksa.'][target='_blank']"
+    ],
     "icon": "Fleksa.svg",
     "implies": [
       "Node.js",
@@ -1099,7 +1119,9 @@
       59
     ],
     "description": "Flickity is a JavaScript slider library, built by David DeSandro of Metafizzy fame.",
-    "dom": "style[data-context='foundation-flickity-css'], div.flickity-enabled",
+    "dom": [
+      "style[data-context='foundation-flickity-css'], div.flickity-enabled"
+    ],
     "js": {
       "Flickity": ""
     },
@@ -1126,7 +1148,9 @@
       5
     ],
     "description": "FlippingBook is a web-based software platform that enables users to create, publish, and share digital publications such as magazines, brochures, catalogs, and presentations.",
-    "dom": "a[href*='flippingbook.com/'][target='_blank']",
+    "dom": [
+      "a[href*='flippingbook.com/'][target='_blank']"
+    ],
     "icon": "FlippingBook.svg",
     "js": {
       "__flippingbook_csrf__": ""
@@ -1179,7 +1203,9 @@
       84
     ],
     "description": "Flocktory is a social referral marketing platform that enables users to share personalised offers via social networks.",
-    "dom": "iframe[src*='.flocktory.com/']",
+    "dom": [
+      "iframe[src*='.flocktory.com/']"
+    ],
     "icon": "Flocktory.png",
     "js": {
       "flocktory": "",
@@ -1202,7 +1228,8 @@
     "icon": "Flot.png",
     "oss": true,
     "scriptSrc": [
-      "(?:((?:\\d+\\.)+\\d+)\\/(?:jquery\\.)?)?flot(?:\\/curvedLines)?(?:\\/excanvas)?(?:\\/jquery)?(?:\\.categories)?(?:\\.pack)?(?:\\.pie)?(?:\\.resize)?(?:\\.selection)?(?:\\.spline)?(?:\\.symbol)?(?:\\.time)?(?:\\.tooltip)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2"
+      "(?:((?:\\d+\\.)+\\d+)\\/(?:jquery\\.)?)?flot(?:\\/curvedLines)?(?:\\/excanvas)?(?:\\/jquery)?(?:\\.categories)?(?:\\.pack)?(?:\\.pie)?(?:\\.resize)?(?:\\.selection)?(?:\\.spline)?(?:\\.symbol)?(?:\\.time)?(?:\\.tooltip)?(?:\\.min)?\\.js\\;version:\\1",
+      "(?:(?:jquery\\.)?)?flot(?:\\/curvedLines)?(?:\\/excanvas)?(?:\\/jquery)?(?:\\.categories)?(?:\\.pack)?(?:\\.pie)?(?:\\.resize)?(?:\\.selection)?(?:\\.spline)?(?:\\.symbol)?(?:\\.time)?(?:\\.tooltip)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
     ],
     "website": "https://flotcharts.org/"
   },
@@ -1276,6 +1303,7 @@
     "meta": {
       "id": "^flutterweb-theme$"
     },
+    "cpe": "cpe:2.3:a:flutter:flutter:*:*:*:*:*:*:*:*",
     "oss": true,
     "website": "https://flutter.dev"
   },
@@ -1318,7 +1346,9 @@
       87
     ],
     "description": "Flying Analytics is a performance optimisation plugin for WordPress websites designed to reduce page load times and improve the user experience.",
-    "dom": "link[href*='/wp-content/plugins/flying-analytics/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/flying-analytics/']"
+    ],
     "icon": "default.svg",
     "requires": [
       "WordPress"
@@ -1348,7 +1378,9 @@
       92
     ],
     "description": "Flying Pages is a performance optimisation plugin for WordPress websites designed to reduce page load times and improve the user experience.",
-    "dom": "link[href*='/wp-content/plugins/flying-pages/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/flying-pages/']"
+    ],
     "icon": "Flying Pages.svg",
     "js": {
       "flyingPages": ""
@@ -1367,7 +1399,9 @@
       92
     ],
     "description": "FlyingPress is a WordPress plugin that helps to improve website performance by optimising various aspects of a WordPress site. The plugin offers a range of features, including caching, image optimisation, lazy loading, database optimisation, and more.",
-    "dom": "link[href*='/wp-content/plugins/flying-press/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/flying-press/']"
+    ],
     "icon": "FlyingPress.svg",
     "pricing": [
       "low",
@@ -1570,7 +1604,9 @@
       93
     ],
     "description": "FoodBooking is a virtual food court based on a curated list of restaurants that use the GloriaFood ordering system.",
-    "dom": "a[href*='.foodbooking.com/ordering/restaurant/'][target='_blank']",
+    "dom": [
+      "a[href*='.foodbooking.com/ordering/restaurant/'][target='_blank']"
+    ],
     "icon": "FoodBooking.png",
     "implies": [
       "GloriaFood"
@@ -1660,7 +1696,9 @@
       110
     ],
     "description": "FormAssembly is a platform that enables to collection of data and processing via workflow.",
-    "dom": "form[action*='tfaforms.net'], iframe[src*='tfaforms.net']",
+    "dom": [
+      "form[action*='tfaforms.net'], iframe[src*='tfaforms.net']"
+    ],
     "icon": "FormAssembly.svg",
     "js": {
       "wFORMS.VERSION": "^(.+)$\\;version:\\1"
@@ -1676,7 +1714,9 @@
       110
     ],
     "description": "FormBold is a complete web forms solution for static websites that allows you to create forms, collect data, and send notifications.",
-    "dom": "form[action*='//formbold.com/']",
+    "dom": [
+      "form[action*='//formbold.com/']"
+    ],
     "icon": "FormBold.svg",
     "pricing": [
       "freemium",
@@ -1691,7 +1731,9 @@
       110
     ],
     "description": "Formaloo is a no-code collaboration platform that helps businesses create custom data-driven business applications and internal tools, automate their processes and engage their audience.",
-    "dom": "iframe[src*='//formaloo.net/']",
+    "dom": [
+      "iframe[src*='//formaloo.net/']"
+    ],
     "icon": "Formaloo.svg",
     "pricing": [
       "freemium",
@@ -1711,7 +1753,9 @@
       110
     ],
     "description": "Formidable Forms is a WordPress plugin that enables you to create quizzes, surveys, calculators, timesheets, multi-page application forms.",
-    "dom": "link[href*='/wp-content/plugins/formidable/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/formidable/']"
+    ],
     "icon": "Formidable Form.png",
     "pricing": [
       "freemium",
@@ -1971,7 +2015,9 @@
       87
     ],
     "description": "Frames is a tool that allows you to create wireframes in real time, design and develop systems, and access a library of components to help you build custom websites quickly and easily, without any restrictions on your creative input.",
-    "dom": "link[href*='/wp-content/plugins/frames-plugin/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/frames-plugin/']"
+    ],
     "icon": "Frames.svg",
     "pricing": [
       "low",
@@ -2014,6 +2060,7 @@
     "meta": {
       "generator": "^frappe$"
     },
+    "cpe": "cpe:2.3:a:frappe:frappe:*:*:*:*:*:*:*:*",
     "oss": true,
     "website": "https://frappeframework.com"
   },
@@ -2058,7 +2105,9 @@
       36
     ],
     "description": "FreakOut is a marketing technology company with programmatic solutions (DSP,SSP) that delivers in-feed display and video formats across global publishers.",
-    "dom": "img[src*='.fout.jp/'], link[href*='.fout.jp']",
+    "dom": [
+      "img[src*='.fout.jp/'], link[href*='.fout.jp']"
+    ],
     "icon": "FreakOut.png",
     "js": {
       "FOut": "",
@@ -2102,6 +2151,7 @@
       "FTB_API": "",
       "FTB_AddEvent": ""
     },
+    "cpe": "cpe:2.3:a:freetextbox:freetextbox:*:*:*:*:*:*:*:*",
     "website": "https://freetextbox.com"
   },
   "Freespee": {
@@ -2228,7 +2278,9 @@
       101
     ],
     "description": "Freshteam is a cloud-based HR and applicant tracking solution offered by Freshworks.",
-    "dom": "a[href*='.freshteam.com/jobs']",
+    "dom": [
+      "a[href*='.freshteam.com/jobs']"
+    ],
     "icon": "Freshteam.svg",
     "pricing": [
       "freemium",
@@ -2291,7 +2343,9 @@
       16
     ],
     "description": "Friendly Captcha is a proof-of-work based solution in which the user’s device does all the work.",
-    "dom": "div.frc-captcha",
+    "dom": [
+      "div.frc-captcha"
+    ],
     "icon": "FriendlyCaptcha.svg",
     "pricing": [
       "low",
@@ -2313,7 +2367,9 @@
       32
     ],
     "description": "Frizbit is a marketing tool that helps digital marketeers increase web traffic and revenue by combining web push notification.",
-    "dom": "link[href*='cdn.frizbit.com']",
+    "dom": [
+      "link[href*='cdn.frizbit.com']"
+    ],
     "icon": "Frizbit.png",
     "js": {
       "frizbit.configurationManager": "",
@@ -2377,7 +2433,9 @@
       108
     ],
     "description": "Front-Commerce is a React-based ecommerce framework that provides a development environment and tools for building online stores, offering seamless integration with backend systems through GraphQL and supporting popular platforms like Adobe Commerce, BigCommerce, OpenMage, Contentful or Prismic.",
-    "dom": "link[data-chunk*='front-commerce-src-web-theme-routes'], script[data-chunk*='front-commerce-src-web-theme-routes']",
+    "dom": [
+      "link[data-chunk*='front-commerce-src-web-theme-routes'], script[data-chunk*='front-commerce-src-web-theme-routes']"
+    ],
     "icon": "front-commerce.svg",
     "implies": [
       "React",
@@ -2418,7 +2476,9 @@
       95
     ],
     "description": "Frontify is a cloud-based brand management platform for creators and collaborators of brands.",
-    "dom": "a[href*='.frontify.com/'], img[src*='.frontify.com/'], link[href*='.frontify.com/']",
+    "dom": [
+      "a[href*='.frontify.com/'], img[src*='.frontify.com/'], link[href*='.frontify.com/']"
+    ],
     "icon": "Frontify.svg",
     "pricing": [
       "poa"
@@ -2557,7 +2617,9 @@
     "dns": {
       "SOA": "fundingchoicesmessages"
     },
-    "dom": ".fc-consent-root, iframe[name='googlefcLoaded'], iframe[name='googlefcPresent'], .fc-dialog, .fc-choice-dialog",
+    "dom": [
+      ".fc-consent-root, iframe[name='googlefcLoaded'], iframe[name='googlefcPresent'], .fc-dialog, .fc-choice-dialog"
+    ],
     "icon": "Google.svg",
     "js": {
       "__googlefc": ""
@@ -2590,7 +2652,9 @@
       32
     ],
     "description": "FunnelCockpit is an all-in-one funnel builder.",
-    "dom": "a[href*='.funnelcockpit.com/'][target='_blank'], iframe[src*='.funnelcockpit.com/']",
+    "dom": [
+      "a[href*='.funnelcockpit.com/'][target='_blank'], iframe[src*='.funnelcockpit.com/']"
+    ],
     "icon": "FunnelCockpit.png",
     "pricing": [
       "mid",
@@ -2623,7 +2687,9 @@
       111
     ],
     "description": "Funraise is a nonprofit fundraising platform that enables organisations to build fundraising websites as well as manage donations and campaigns.",
-    "dom": "a[href*='.funraise.org/']",
+    "dom": [
+      "a[href*='.funraise.org/']"
+    ],
     "icon": "Funraise.svg",
     "js": {
       "FR.IMAGE_BASE_URL": "\\.funraise\\.io"
@@ -2696,7 +2762,9 @@
       80
     ],
     "description": "Futurio is a lightweight and customizable multi-purpose and WooCommerce WordPress theme.",
-    "dom": "link[href*='/wp-content/themes/futurio/']",
+    "dom": [
+      "link[href*='/wp-content/themes/futurio/']"
+    ],
     "icon": "Futurio.png",
     "pricing": [
       "freemium",
@@ -2738,11 +2806,14 @@
       66
     ],
     "description": "Full Featured Mobile HTML Framework For Building iOS & Android Apps.",
-    "dom": "link[href*='framework7'], .framework7-root, .framework7-modals",
+    "dom": [
+      "link[href*='framework7'], .framework7-root, .framework7-modals"
+    ],
     "icon": "framework7.png",
     "oss": true,
     "scriptSrc": [
-      "(?:((?:\\d+\\.)+\\d+)\\/(?:js\\/)?)?framework7(?:-((?:\\d+\\.)+\\d+))?(?:\\.custom)?(?:\\.min)?(?:-vue)?_?[\\w\\.]{0,29}\\.js\\;version:\\1\\2"
+      "(?:\\/(?:js\\/)?)?framework7(?:-((?:\\d+\\.)+\\d+))?(?:\\.custom)?(?:\\.min)?(?:-vue)?_?[\\w\\.]{0,29}\\.js\\;version:\\1",
+      "(?:((?:\\d+\\.)+\\d+)\\/(?:js\\/)?)?framework7(?:-)?(?:\\.custom)?(?:\\.min)?(?:-vue)?_?[\\w\\.]{0,29}\\.js\\;version:\\1"
     ],
     "website": "https://framework7.io/"
   },
