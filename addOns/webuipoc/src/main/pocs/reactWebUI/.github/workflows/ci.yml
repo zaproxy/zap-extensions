@@ -1,4 +1,4 @@
-name: Check Formatting
+name: Lint and Check Formatting
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  format:
+  lint:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,10 +19,13 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20.0.0'
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
+
+      - name: Run ESLint
+        run: npm run lint
 
       - name: Check formatting with Prettier
         run: npm run check-format
