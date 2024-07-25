@@ -24,6 +24,13 @@ Provides a context menu to save content of HTTP messages as XML.
 <H1>Import HAR (HTTP Archive File)</H1>
 An option to import messages from a HTTP Archive (HAR), available via the 'Import' menu.
 
+<strong>Note</strong>: The following modifications may be made when importing a HAR (HTTP Archive File):
+<ul>
+  <li>Missing HTTP Version - If the message is missing the httpVersion attribute it will be set to "HTTP/1.1".</li>
+  <li>HTTP Version 3 - If the message has its httpVersion attribute set as "h3", "http/3", "http/3.0" it will be set to "HTTP/2".</li>
+  <li>Carriage return (CR) or Line feed (LF) in Headers - If the message contains headers with CR or LF, the CRLF(s) will be removed.</li>
+<ul>
+
 <H1>Import Log File</H1>
 Allows you to import log files from ModSecurity and files previously exported from ZAP.
 
