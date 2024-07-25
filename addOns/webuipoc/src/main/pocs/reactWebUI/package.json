@@ -20,11 +20,14 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "PUBLIC_URL=/reactWebUI/ BUILD_PATH=./dist react-scripts build",
+    "build": "npm run check-format && PUBLIC_URL=/reactWebUI/ BUILD_PATH=./dist react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint",
-     "format": "prettier --write \"src/**/*.{js,jsx}\""
+    "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
+    "format": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
+    "check-format": "prettier --check 'src/**/*.{js,jsx,ts,tsx}'"
+     
+     
   },
   "browserslist": {
     "production": [
