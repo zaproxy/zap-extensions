@@ -1,16 +1,28 @@
 name: Check Formatting
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   format:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '14'
-      - run: npm install
-      - run: npm run check-format
+          node-version: '20.0.0'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check formatting with Prettier
+        run: npm run check-format
