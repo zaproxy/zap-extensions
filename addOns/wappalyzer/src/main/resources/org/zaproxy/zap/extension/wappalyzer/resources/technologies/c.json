@@ -47,7 +47,9 @@
       52
     ],
     "description": "CEMax is a premium customer engagement platform.",
-    "dom": "div[data-chat-url*='.cemaxai.com/']",
+    "dom": [
+      "div[data-chat-url*='.cemaxai.com/']"
+    ],
     "icon": "CEMax.png",
     "pricing": [
       "poa"
@@ -212,7 +214,9 @@
       6
     ],
     "description": "CS Cart is a turnkey ecommerce shopping cart software solution.",
-    "dom": "a[href*='.cs-cart.com'][target='_blank']",
+    "dom": [
+      "a[href*='.cs-cart.com'][target='_blank']"
+    ],
     "icon": "CS Cart.svg",
     "implies": [
       "PHP"
@@ -362,7 +366,9 @@
       1
     ],
     "description": "Caisy is a headless CMS platform providing flexible content management, seamless integration with various devices and channels, and API access for structured content delivery.",
-    "dom": "img[src*='assets.caisy.io/']",
+    "dom": [
+      "img[src*='assets.caisy.io/']"
+    ],
     "icon": "Caisy.svg",
     "pricing": [
       "freemium",
@@ -442,7 +448,9 @@
       72
     ],
     "description": "Calendly is an app for scheduling appointments, meetings, and events.",
-    "dom": "a[href*='//calendly.com/'][target='_blank']",
+    "dom": [
+      "a[href*='//calendly.com/'][target='_blank']"
+    ],
     "icon": "Calendly.svg",
     "js": {
       "Calendly": ""
@@ -519,7 +527,9 @@
       75
     ],
     "description": "Campaign Monitor is a global technology company that provides an email marketing platform.",
-    "dom": "input[value='campaignmonitor_subscribe_form'][name='form_id'], form[action*='createsend'][class='js-cm-form']",
+    "dom": [
+      "input[value='campaignmonitor_subscribe_form'][name='form_id'], form[action*='createsend'][class='js-cm-form']"
+    ],
     "icon": "Campaign Monitor.svg",
     "pricing": [
       "low",
@@ -554,7 +564,9 @@
       13
     ],
     "description": "Canny is a cloud-based solution that helps small to large businesses collect, analyse, prioritise and track user feedback to make informed product decisions.",
-    "dom": "a[href*='.canny.io/']",
+    "dom": [
+      "a[href*='.canny.io/']"
+    ],
     "headers": {
       "Content-Security-Policy": "//canny\\.io"
     },
@@ -575,7 +587,9 @@
       95
     ],
     "description": "Canto is a digital asset management solution.",
-    "dom": "link[href*='.canto.com/'], a[href*='.canto.com/'], img[src*='.canto.com/']",
+    "dom": [
+      "link[href*='.canto.com/'], a[href*='.canto.com/'], img[src*='.canto.com/']"
+    ],
     "icon": "Canto.svg",
     "pricing": [
       "poa"
@@ -654,7 +668,9 @@
       5
     ],
     "description": "Captivate.fm is a podcast hosting and analytics platform that provides tools for creating, hosting, and distributing podcasts.",
-    "dom": "iframe[src*='player.captivate.fm/']",
+    "dom": [
+      "iframe[src*='player.captivate.fm/']"
+    ],
     "icon": "Captivate.fm.svg",
     "js": {
       "CAPTIVATE_PLAYER_APP_URL": ""
@@ -671,7 +687,9 @@
       36
     ],
     "description": "Carbon Ads is an ad tech company, that connects advertisers to users through targeted verticals called Circles.",
-    "dom": "div#carbonads-container",
+    "dom": [
+      "div#carbonads-container"
+    ],
     "icon": "Carbon Ads.svg",
     "js": {
       "_carbonads": "",
@@ -845,7 +863,9 @@
       6
     ],
     "description": "Cart.com is an ecommerce platform built for high volume online stores and complex products with features such as multi-store management.",
-    "dom": "p.AmeriCommerce-powered-by-link > a[href*='.americommerce.com/'][target='_blank']",
+    "dom": [
+      "p.AmeriCommerce-powered-by-link > a[href*='.americommerce.com/'][target='_blank']"
+    ],
     "icon": "Cart.com.svg",
     "js": {
       "AC.storeDomain": ""
@@ -961,7 +981,9 @@
       80
     ],
     "description": "Catch Box is a lightweight, box shaped, clean responsive WordPress theme by Catch Themes.",
-    "dom": "link[href*='/wp-content/themes/catch-box/']",
+    "dom": [
+      "link[href*='/wp-content/themes/catch-box/']"
+    ],
     "icon": "Catch Themes.png",
     "pricing": [
       "freemium",
@@ -980,7 +1002,9 @@
       80
     ],
     "description": "Fotografie is a modern photography WordPress theme that comes with high-quality features and minimal design by Catch Themes.",
-    "dom": "link[href*='/wp-content/themes/fotografie/']",
+    "dom": [
+      "link[href*='/wp-content/themes/fotografie/']"
+    ],
     "icon": "Catch Themes.png",
     "pricing": [
       "freemium",
@@ -1003,6 +1027,7 @@
     "meta": {
       "generator": "^Cecil(?: ([0-9.]+))?$\\;version:\\1"
     },
+    "cpe": "cpe:2.3:a:cecil:cecil:*:*:*:*:*:*:*:*",
     "website": "https://cecil.app"
   },
   "Celeritas": {
@@ -1024,7 +1049,9 @@
       95
     ],
     "description": "Celum is a software developer that specialises in enterprise digital asset management and marketing content management systems.",
-    "dom": "img[src*='/celum/'], img[src*='/celum_assets/']",
+    "dom": [
+      "img[src*='/celum/'], img[src*='/celum_assets/']"
+    ],
     "icon": "Celum.svg",
     "pricing": [
       "freemium",
@@ -1051,7 +1078,9 @@
       95
     ],
     "description": "Censhare is a commercial digital experience platform in the form of an enterprise content management system.",
-    "dom": "img[data-src*='CENSHARE'], img[src*='CENSHARE']",
+    "dom": [
+      "img[data-src*='CENSHARE'], img[src*='CENSHARE']"
+    ],
     "icon": "Censhare.svg",
     "pricing": [
       "high",
@@ -1093,7 +1122,9 @@
       6
     ],
     "description": "Centra is the headless ecommerce platform.",
-    "dom": "img[src*='.centracdn.net/']",
+    "dom": [
+      "img[src*='.centracdn.net/']"
+    ],
     "excludes": [
       "Magento"
     ],
@@ -1134,7 +1165,9 @@
       66
     ],
     "description": "Chakra UI is a simple, modular and accessible component library that gives you the building blocks you need to build your React applications.",
-    "dom": "html[style*='chakra-ui-color-mode'], body.chakra-ui-dark, body.chakra-ui-light, div.chakra-portal",
+    "dom": [
+      "html[style*='chakra-ui-color-mode'], body.chakra-ui-dark, body.chakra-ui-light, div.chakra-portal"
+    ],
     "icon": "Chakra UI.svg",
     "implies": [
       "React"
@@ -1187,7 +1220,9 @@
     ],
     "cpe": "cpe:2.3:a:chamilo:chamilo_lms:*:*:*:*:*:*:*:*",
     "description": "Chamilo is an open-source learning management and collaboration system.",
-    "dom": "link[href*='chamilo.org/']",
+    "dom": [
+      "link[href*='chamilo.org/']"
+    ],
     "headers": {
       "X-Powered-By": "Chamilo ([\\d.]+)\\;version:\\1"
     },
@@ -1224,7 +1259,9 @@
       32
     ],
     "description": "ChannelAdvisor is a provider of cloud-based solutions to ecommerce companies.",
-    "dom": "link[href*='.channeladvisor.com']",
+    "dom": [
+      "link[href*='.channeladvisor.com']"
+    ],
     "icon": "ChannelAdvisor.svg",
     "pricing": [
       "poa"
@@ -1365,7 +1402,9 @@
       5
     ],
     "description": "Chatango is a website used for connecting to a large selection of users.",
-    "dom": "iframe[src*='st.chatango.com']",
+    "dom": [
+      "iframe[src*='st.chatango.com']"
+    ],
     "icon": "Chatango.png",
     "pricing": [
       "freemium"
@@ -1415,6 +1454,7 @@
       "low",
       "recurring"
     ],
+    "cpe": "cpe:2.3:a:chatwoot:chatwoot:*:*:*:*:*:*:*:*",
     "saas": true,
     "website": "https://www.chatwoot.com"
   },
@@ -1509,8 +1549,9 @@
     "headers": {
       "Server": "CherryPy(?:/([\\d.]+))?\\;version:\\1"
     },
+    "cpe": "cpe:2.3:a:cherrypy:cherrypy:*:*:*:*:*:*:*:*",
     "icon": "CherryPy.svg",
-    "website": "https://cherrypy.org/"
+    "website": "https://cherrypy.dev/"
   },
   "Chevereto": {
     "cats": [
@@ -1532,6 +1573,7 @@
       "low",
       "onetime"
     ],
+    "cpe": "cpe:2.3:a:chevereto:chevereto:*:*:*:*:*:*:*:*",
     "saas": true,
     "scriptSrc": [
       "/chevereto\\.js"
@@ -1605,7 +1647,9 @@
       93
     ],
     "description": "Chinese Menu Online is an online food ordering service.",
-    "dom": "li > a[href*='chinesemenuonline.com']",
+    "dom": [
+      "li > a[href*='chinesemenuonline.com']"
+    ],
     "icon": "Chinese Menu Online.png",
     "pricing": [
       "payg"
@@ -1751,7 +1795,9 @@
       "_circle_session:": "\\;confidence:50"
     },
     "description": "Circie is an all-in-one community platform for businesses that brings together engaging courses, discussions, members, live streams, chat, events, and memberships.",
-    "dom": "a[href*='.circle.so/']",
+    "dom": [
+      "a[href*='.circle.so/']"
+    ],
     "icon": "Circle.svg",
     "js": {
       "circleUser": "\\;confidence:50"
@@ -1768,7 +1814,9 @@
       1
     ],
     "description": "Next-generation engagement tools for 21st century democracy.",
-    "dom": "a[href='https://www.delib.net/citizen_space']",
+    "dom": [
+      "a[href='https://www.delib.net/citizen_space']"
+    ],
     "icon": "CitizenSpace.png",
     "pricing": [
       "payg"
@@ -1830,9 +1878,12 @@
       53
     ],
     "description": "CiviCRM is a web-based suite of internationalised open-source software for constituency relationship management.",
-    "dom": "a[href*='/civicrm/contribute/transact'], link[href*='/com_civicrm/civicrm/']",
+    "dom": [
+      "a[href*='/civicrm/contribute/transact'], link[href*='/com_civicrm/civicrm/']"
+    ],
     "icon": "CiviCRM.png",
     "oss": true,
+    "cpe": "cpe:2.3:a:civicrm:civicrm:*:*:*:*:*:*:*:*",
     "website": "https://civicrm.org"
   },
   "CiviCRM plugins": {
@@ -1932,7 +1983,9 @@
       66
     ],
     "description": "Clarity is an open-source design system that brings together UX guidelines, an HTML/CSS framework, and Angular components.",
-    "dom": "link[href*='clr-ui'], clr-main-container",
+    "dom": [
+      "link[href*='clr-ui'], clr-main-container"
+    ],
     "icon": "clarity.svg",
     "implies": [
       "Angular"
@@ -1951,7 +2004,9 @@
       21
     ],
     "description": "Classeh is a LMS that allows user to participate in webinars and also use LMS options like messanger,finances,homework,quiz and some extra options like sending messages and more.",
-    "dom": "a[href*='apps.classeh.ir'][target='_blank']",
+    "dom": [
+      "a[href*='apps.classeh.ir'][target='_blank']"
+    ],
     "icon": "Classeh.svg",
     "implies": [
       "PHP",
@@ -2102,7 +2157,9 @@
       111
     ],
     "description": "Click & Pledge is an all-in-one digital fundraising platform.",
-    "dom": "a[href*='.clickandpledge.com/']",
+    "dom": [
+      "a[href*='.clickandpledge.com/']"
+    ],
     "icon": "Click & Pledge.png",
     "pricing": [
       "payg"
@@ -2229,7 +2286,9 @@
     "cats": [
       71
     ],
-    "dom": "a[href*='pay.clickbank.net?cbfid'], img[width='1'][src*='hop.clickbank.net?affiliate']",
+    "dom": [
+      "a[href*='pay.clickbank.net?cbfid'], img[width='1'][src*='hop.clickbank.net?affiliate']"
+    ],
     "icon": "Clickbank.svg",
     "js": {
       "cbtb": ""
@@ -2370,7 +2429,9 @@
       72
     ],
     "description": "Cloudbeds is a cloud-based hotel management platform which includes tools for managing reservations, availability, rates, distribution channels, payments, guests, housekeeping, and more.",
-    "dom": "a[href*='.cloudbeds.com/'][target='_blank']",
+    "dom": [
+      "a[href*='.cloudbeds.com/'][target='_blank']"
+    ],
     "icon": "Cloudbeds.svg",
     "js": {
       "CloudBeds_widget": ""
@@ -2409,7 +2470,9 @@
       "NS": "\\.cloudflare\\.com",
       "SOA": "\\.cloudflare\\.com"
     },
-    "dom": "img[src*='//cdn.cloudflare']",
+    "dom": [
+      "img[src*='//cdn.cloudflare']"
+    ],
     "headers": {
       "Server": "^cloudflare$",
       "cf-cache-status": "",
@@ -2472,7 +2535,9 @@
       103
     ],
     "description": "Cloudflare Stream is a serverless live and on-demand video streaming platform.",
-    "dom": "iframe[src*='.cloudflarestream\\.com'], iframe[src*='iframe\\.videodelivery\\.net/']",
+    "dom": [
+      "iframe[src*='.cloudflarestream\\.com'], iframe[src*='iframe\\.videodelivery\\.net/']"
+    ],
     "icon": "CloudFlare.svg",
     "pricing": [
       "recurring",
@@ -2559,7 +2624,9 @@
       95
     ],
     "description": "Cloudimage automates the transformation and optimisation of images on the fly and accelerates their distribution via the Content Delivery Network (CDN).",
-    "dom": "img[src*='.cloudimg.io/'], link[href*='.cloudimg.io/'], amp-img[src*='.cloudimg.io/']",
+    "dom": [
+      "img[src*='.cloudimg.io/'], link[href*='.cloudimg.io/'], amp-img[src*='.cloudimg.io/']"
+    ],
     "icon": "Cloudimage.svg",
     "js": {
       "ciResponsive.config.domain": "cloudimg\\.io"
@@ -2578,7 +2645,9 @@
       95
     ],
     "description": "Cloudinary is an end-to-end image- and video-management solution for websites and mobile apps, covering everything from image and video uploads, storage, manipulations, optimisations to delivery.",
-    "dom": "img[src*='.cloudinary.com/'], img[data-src*='.cloudinary.com/'], link[href*='.cloudinary.com/']",
+    "dom": [
+      "img[src*='.cloudinary.com/'], img[data-src*='.cloudinary.com/'], link[href*='.cloudinary.com/']"
+    ],
     "headers": {
       "Content-Security-Policy": "player\\.cloudinary\\.com"
     },
@@ -2662,7 +2731,9 @@
       35
     ],
     "description": "ClustrMaps widget is a visitor tracker, designed for general web and blog use.",
-    "dom": "img[src*='clustrmaps.com']",
+    "dom": [
+      "img[src*='clustrmaps.com']"
+    ],
     "icon": "ClustrMaps.svg",
     "scriptSrc": [
       "clustrmaps\\.com"
@@ -2685,7 +2756,9 @@
     "cats": [
       19
     ],
-    "dom": "a[href*='co-construct.com/skins'], iframe[src*='co-construct.com']",
+    "dom": [
+      "a[href*='co-construct.com/skins'], iframe[src*='co-construct.com']"
+    ],
     "icon": "CoConstruct.png",
     "pricing": [
       "mid",
@@ -2798,6 +2871,7 @@
       "CodeMirror": "",
       "CodeMirror.version": "^(.+)$\\;version:\\1"
     },
+    "cpe": "cpe:2.3:a:codemirror:codemirror:*:*:*:*:*:*:*:*",
     "website": "https://codemirror.net"
   },
   "CodeSandbox": {
@@ -2806,7 +2880,9 @@
       20
     ],
     "description": "CodeSandbox is an online code editor and prototyping tool that makes creating and sharing web apps faster.",
-    "dom": "iframe[src^='https://codesandbox.io/embed/']",
+    "dom": [
+      "iframe[src^='https://codesandbox.io/embed/']"
+    ],
     "icon": "CodeSandbox.svg",
     "pricing": [
       "low",
@@ -2872,7 +2948,9 @@
       56
     ],
     "description": "Coinhive Captcha provides captcha service that is simple to integrate, where your users’ devices need to solve a number of hashes, adjustable by you, in order to login or post a comment to your site.",
-    "dom": "div.coinhive-captcha",
+    "dom": [
+      "div.coinhive-captcha"
+    ],
     "icon": "CoinHive.svg",
     "scriptSrc": [
       "https?://authedmine\\.com/(?:lib/captcha|captcha)"
@@ -2884,7 +2962,9 @@
       41
     ],
     "description": "Coinbase Commerce is a platform that enables merchants to accept cryptocurrency payments.",
-    "dom": "a[href^='https://commerce.coinbase.com/checkout/']",
+    "dom": [
+      "a[href^='https://commerce.coinbase.com/checkout/']"
+    ],
     "icon": "Coinbase.svg",
     "website": "https://commerce.coinbase.com/"
   },
@@ -2935,7 +3015,9 @@
       51
     ],
     "description": "Colibri WP is a drag-and-drop WordPress website builder.",
-    "dom": "link[href*='/wp-content/plugins/colibri-page-builder']",
+    "dom": [
+      "link[href*='/wp-content/plugins/colibri-page-builder']"
+    ],
     "icon": "Colibri WP.png",
     "js": {
       "Colibri": "",
@@ -3024,7 +3106,9 @@
       80
     ],
     "description": "Colorlib Activello is a clean, minimal multipurpose WordPress blog theme developer using the Bootstrap frontend framework making it fully responsive and mobile-friendly.",
-    "dom": "link#activello-style-css",
+    "dom": [
+      "link#activello-style-css"
+    ],
     "icon": "Colorlib.png",
     "js": {
       "ActivelloIsMobile": ""
@@ -3045,7 +3129,9 @@
       80
     ],
     "description": "Colorlib Illdy is a stunning multipurpose WordPress theme built based on Bootstrap frontend framework making it fully responsive and mobile friendly.",
-    "dom": "link#illdy-style-css",
+    "dom": [
+      "link#illdy-style-css"
+    ],
     "icon": "Colorlib.png",
     "pricing": [
       "freemium"
@@ -3063,7 +3149,9 @@
       80
     ],
     "description": "Colorlib Shapely is considered as a powerful, clean and beautiful full-width free WordPress theme.",
-    "dom": "link#shapely-style-css",
+    "dom": [
+      "link#shapely-style-css"
+    ],
     "icon": "Colorlib.png",
     "js": {
       "ShapelyAdminObject": ""
@@ -3084,7 +3172,9 @@
       80
     ],
     "description": "Colorlib Sparkling is a clean, modern, flat design WordPress theme developed using Bootstrap.",
-    "dom": "link#sparkling-style-css",
+    "dom": [
+      "link#sparkling-style-css"
+    ],
     "icon": "Colorlib.png",
     "pricing": [
       "freemium"
@@ -3102,7 +3192,9 @@
       80
     ],
     "description": "Colorlib Travelify is a responsive, free, travel WordPress theme.",
-    "dom": "link#travelify-style-css",
+    "dom": [
+      "link#travelify-style-css"
+    ],
     "icon": "Colorlib.png",
     "js": {
       "travelify_slider_value": ""
@@ -3143,7 +3235,9 @@
       76
     ],
     "description": "Combeenation is a powerful cloud-based configurator platform.",
-    "dom": "iframe[src*='portal.combeenation.com/']",
+    "dom": [
+      "iframe[src*='portal.combeenation.com/']"
+    ],
     "icon": "Combeenation.png",
     "pricing": [
       "poa"
@@ -3316,7 +3410,9 @@
       111
     ],
     "description": "Community Funded is a digital fundraising and engagement platform.",
-    "dom": "a[href*='//give.communityfunded.com/']",
+    "dom": [
+      "a[href*='//give.communityfunded.com/']"
+    ],
     "icon": "Community Funded.png",
     "pricing": [
       "poa"
@@ -3381,7 +3477,9 @@
       87
     ],
     "description": "Adds conditional logic to Contact Form 7.",
-    "dom": "link[href*='/wp-content/plugins/cf7-conditional-fields/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/cf7-conditional-fields/']"
+    ],
     "icon": "Conditional Fields for Contact Form 7.png",
     "implies": [
       "Contact Form 7"
@@ -3507,7 +3605,9 @@
       75
     ],
     "description": "Constant Contact is a marketing automation and email marketing solution.",
-    "dom": "a[href*='.constantcontact.com/'][target='_blank']",
+    "dom": [
+      "a[href*='.constantcontact.com/'][target='_blank']"
+    ],
     "icon": "Constant Contact.svg",
     "js": {
       "_ctct_m": "",
@@ -3544,7 +3644,9 @@
       110
     ],
     "description": "Contact Form 7 is an WordPress plugin which can manage multiple contact forms. The form supports Ajax-powered submitting, CAPTCHA, Akismet spam filtering.",
-    "dom": "link[href*='/wp-content/plugins/contact-form-7/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/contact-form-7/']"
+    ],
     "icon": "Contact Form 7.png",
     "js": {
       "wpcf7": ""
@@ -3581,7 +3683,9 @@
     ],
     "cpe": "cpe:2.3:a:contao:contao_cms:*:*:*:*:*:*:*:*",
     "description": "Contao is an open source CMS that allows you to create websites and scalable web applications.",
-    "dom": "link[href*='/typolight.css'], link[href*='/contao.css']",
+    "dom": [
+      "link[href*='/typolight.css'], link[href*='/contao.css']"
+    ],
     "icon": "Contao.svg",
     "implies": [
       "PHP"
@@ -3639,7 +3743,9 @@
       96
     ],
     "description": "ContentStudio is an integrated cloud-based social media management and content marketing solution.",
-    "dom": "link[href*='/wp-content/plugins/contentstudio']",
+    "dom": [
+      "link[href*='/wp-content/plugins/contentstudio']"
+    ],
     "icon": "ContentStudio.png",
     "pricing": [
       "mid",
@@ -3654,7 +3760,9 @@
       87
     ],
     "description": "ContentViews is a lightweight and user-friendly WordPress Plugin, crafted specifically for efficient content management and display. This plugin offers seamless integration with Widgets and enables users to showcase their posts, pages, or custom post types in a highly responsive grid, list, or timeline layout.",
-    "dom": "link[href*='/wp-content/plugins/content-views-query-and-display-post-page/'], link[href*='/wp-content/plugins/pt-content-views-pro/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/content-views-query-and-display-post-page/'], link[href*='/wp-content/plugins/pt-content-views-pro/']"
+    ],
     "icon": "ContentViews.svg",
     "oss": true,
     "pricing": [
@@ -3752,7 +3860,9 @@
       87
     ],
     "description": "Add related posts to your WordPress site with inbuilt caching.",
-    "dom": "link[href*='/wp-content/plugins/contextual-related-posts/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/contextual-related-posts/']"
+    ],
     "icon": "Contextual Related Posts.png",
     "oss": true,
     "requires": [
@@ -3886,7 +3996,9 @@
       75
     ],
     "description": "ConvertKit is an email marketing tool built for content creators.",
-    "dom": "form[action*='.convertkit.com'], link[href*='.convertkit.com']",
+    "dom": [
+      "form[action*='.convertkit.com'], link[href*='.convertkit.com']"
+    ],
     "icon": "ConvertKit.svg",
     "pricing": [
       "low",
@@ -4148,7 +4260,9 @@
       87
     ],
     "description": "A simple tag cloud system for WordPress.",
-    "dom": "link#cool-tag-cloud-css[href*='/wp-content/plugins/cool-tag-cloud/'], .cool-tag-cloud, .widget_cool_tag_cloud, .cool-tag-cloud-open, .cool-tag-cloud-close, .cool-tag-cloud-inner",
+    "dom": [
+      "link#cool-tag-cloud-css[href*='/wp-content/plugins/cool-tag-cloud/'], .cool-tag-cloud, .widget_cool_tag_cloud, .cool-tag-cloud-open, .cool-tag-cloud-close, .cool-tag-cloud-inner"
+    ],
     "oss": true,
     "requires": [
       "WordPress"
@@ -4161,7 +4275,9 @@
       87
     ],
     "description": "Creates vertical and horizontal history timeline blocks.",
-    "dom": "link[href*='/plugins/cool-timeline/'], script[src*='/cool-timeline/'], .cooltimeline-body",
+    "dom": [
+      "link[href*='/plugins/cool-timeline/'], script[src*='/cool-timeline/'], .cooltimeline-body"
+    ],
     "oss": true,
     "requires": [
       "WordPress"
@@ -4253,7 +4369,9 @@
       1
     ],
     "description": "Corebine is a content management system designed for Sports",
-    "dom": "#corebine-app",
+    "dom": [
+      "#corebine-app"
+    ],
     "icon": "Corebine.png",
     "js": {
       "corebine": ""
@@ -4269,7 +4387,9 @@
       87
     ],
     "description": "Enhanced content management for WordPress.",
-    "dom": "#cornerstone-generated-css",
+    "dom": [
+      "#cornerstone-generated-css"
+    ],
     "oss": true,
     "requires": [
       "WordPress"
@@ -4316,7 +4436,9 @@
       1
     ],
     "description": "Cosmic is a cloud-based CMS that provides developers with an API and web interface for content management, enabling the creation of custom content types, relationship definitions, and webhooks for actions based on content changes.",
-    "dom": "link[href*='.cosmicjs.com/'], img[src*='.cosmicjs.com/'], img[data-src*='.cosmicjs.com/']",
+    "dom": [
+      "link[href*='.cosmicjs.com/'], img[src*='.cosmicjs.com/'], img[data-src*='.cosmicjs.com/']"
+    ],
     "icon": "cosmicjs.svg",
     "oss": true,
     "website": "https://www.cosmicjs.com"
@@ -4363,7 +4485,9 @@
       87
     ],
     "description": "Add and display responsive Countdown timer on your website.",
-    "dom": "link[href*='/wp-content/plugins/countdown-timer-ultimate/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/countdown-timer-ultimate/']"
+    ],
     "oss": true,
     "requires": [
       "WordPress"
@@ -4414,7 +4538,9 @@
       93
     ],
     "description": "CoverManager is a restaurant table booking widget.",
-    "dom": "iframe[src*='.covermanager.com/']",
+    "dom": [
+      "iframe[src*='.covermanager.com/']"
+    ],
     "icon": "CoverManager.svg",
     "pricing": [
       "poa"
@@ -4485,6 +4611,7 @@
     "headers": {
       "X-Powered-By": "^CppCMS/([\\d.]+)$\\;version:\\1"
     },
+    "cpe": "cpe:2.3:a:cppcms:cppcms:*:*:*:*:*:*:*:*",
     "icon": "CppCMS.png",
     "website": "https://cppcms.com"
   },
@@ -4570,7 +4697,9 @@
       87
     ],
     "description": "Syntax Highlighter supporting multiple languages, themes, fonts, highlighting from a URL, local file or post text.",
-    "dom": "link#crayon-css, link#crayon",
+    "dom": [
+      "link#crayon-css, link#crayon"
+    ],
     "js": {
       "CrayonSyntaxSettings": "",
       "CrayonSyntaxStrings": "",
@@ -4690,7 +4819,9 @@
       77
     ],
     "description": "Criteo provides personalised retargeting that works with Internet retailers to serve personalised online display advertisements to consumers who have previously visited the advertiser's website.",
-    "dom": "link[href*='.criteo.com']",
+    "dom": [
+      "link[href*='.criteo.com']"
+    ],
     "icon": "Criteo.svg",
     "js": {
       "Criteo": "",
@@ -4812,7 +4943,9 @@
       80
     ],
     "description": "Bravada is an unparalleled fullscreen WordPress theme created by Cryout Creations.",
-    "dom": "link#bravada-style-css, img[src*='/wp-content/themes/bravada/']",
+    "dom": [
+      "link#bravada-style-css, img[src*='/wp-content/themes/bravada/']"
+    ],
     "icon": "Cryout Creations.svg",
     "pricing": [
       "freemium",
@@ -4832,7 +4965,9 @@
       80
     ],
     "description": "Fluida is a modern, crystal clear and squeaky clean WordPress theme by Cryout Creations.",
-    "dom": "link#fluida-themefonts-css",
+    "dom": [
+      "link#fluida-themefonts-css"
+    ],
     "icon": "Cryout Creations.svg",
     "pricing": [
       "freemium",
@@ -4852,7 +4987,9 @@
       80
     ],
     "description": "Mantra is a do-it-yourself WordPress theme, featuring a pack of over 100 customization option created by Cryout Creations.",
-    "dom": "link#mantra-style-css, img[src*='/wp-content/themes/mantra/']",
+    "dom": [
+      "link#mantra-style-css, img[src*='/wp-content/themes/mantra/']"
+    ],
     "icon": "Cryout Creations.svg",
     "js": {
       "mantra_mobilemenu_init": "",
@@ -4877,7 +5014,9 @@
       80
     ],
     "description": "Parabola is an fully responsive, clean and elegant design WordPress theme created by Cryout Creations.",
-    "dom": "link#parabola-style-css, img[src*='/wp-content/themes/parabola/']",
+    "dom": [
+      "link#parabola-style-css, img[src*='/wp-content/themes/parabola/']"
+    ],
     "icon": "Cryout Creations.svg",
     "js": {
       "parabola_mobilemenu_init": "",
@@ -4917,7 +5056,9 @@
       6
     ],
     "description": "Crystallize is an ecommerce platform that offers a headless ecommerce solution for businesses.",
-    "dom": "link[href*='.crystallize.com']",
+    "dom": [
+      "link[href*='.crystallize.com']"
+    ],
     "icon": "Crystallize.svg",
     "js": {
       "__crystallizeConfig.API_URL": "\\.crystallize\\.com"
@@ -4936,7 +5077,9 @@
     ],
     "cpe": "cpe:2.3:a:cubecart:cubecart:*:*:*:*:*:*:*:*",
     "description": "CubeCart is a free ecommerce platform that businesses can use to build, manage, and market their online stores.",
-    "dom": "a[href*='.cubecart.com'][target='_blank']",
+    "dom": [
+      "a[href*='.cubecart.com'][target='_blank']"
+    ],
     "icon": "CubeCart.png",
     "implies": [
       "PHP"
@@ -4997,7 +5140,9 @@
       87
     ],
     "description": "Custom Twitter Feeds for Wordpress.",
-    "dom": "link[href*='/wp-content/plugins/custom-twitter-feeds/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/custom-twitter-feeds/']"
+    ],
     "requires": [
       "WordPress"
     ],
@@ -5046,7 +5191,9 @@
       87
     ],
     "description": "Cwicly is an advanced professional design and block toolkit that integrates directly with the WordPress editor.",
-    "dom": "link[href*='/wp-content/uploads/cwicly/']",
+    "dom": [
+      "link[href*='/wp-content/uploads/cwicly/']"
+    ],
     "icon": "Cwicly.png",
     "implies": [
       "Gutenberg"
@@ -5091,7 +5238,9 @@
       80
     ],
     "description": "CyberChimps Responsive is a modern, lightweight, fully customizable, fast and responsive WordPress theme.",
-    "dom": "link[href*='/wp-content/themes/responsive/'], link[href*='/wp-content/themes/responsivepro/']",
+    "dom": [
+      "link[href*='/wp-content/themes/responsive/'], link[href*='/wp-content/themes/responsivepro/']"
+    ],
     "icon": "CyberChimps.png",
     "pricing": [
       "freemium",
@@ -5194,7 +5343,9 @@
       31
     ],
     "description": "cdnjs is a free distributed JS library delivery service.",
-    "dom": "link[href*='cdnjs.cloudflare.com/']",
+    "dom": [
+      "link[href*='cdnjs.cloudflare.com/']"
+    ],
     "icon": "cdnjs.svg",
     "implies": [
       "Cloudflare"
@@ -5228,7 +5379,8 @@
     "description": "chroma.js is a small-ish zero-dependency JavaScript library for all kinds of color conversions and color scales.",
     "oss": true,
     "scriptSrc": [
-      "(?:((?:\\d+\\.)+\\d+)\\/)?chroma(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2"
+      "chroma(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+      "(?:((?:\\d+\\.)+\\d+)\\/)?chroma(?:\\.min)?\\.js\\;version:\\1"
     ],
     "website": "https://www.vis4.net/chromajs/"
   },
@@ -5248,7 +5400,9 @@
       10
     ],
     "description": "comScore is an American media measurement and analytics company providing marketing data and analytics to enterprises; media and advertising agencies; and publishers.",
-    "dom": "iframe[src*='.scorecardresearch.com/beacon'], iframe#comscore, iframe[src*='COMSCORE.beacon']",
+    "dom": [
+      "iframe[src*='.scorecardresearch.com/beacon'], iframe#comscore, iframe[src*='COMSCORE.beacon']"
+    ],
     "icon": "comScore.svg",
     "js": {
       "COMSCORE": "",
@@ -5270,7 +5424,9 @@
       6
     ],
     "description": "commercetools is a headless commerce platform.",
-    "dom": "link[href*='.commercetools.com/'], body[data-commerce-tools-host*='.commercetools.com']",
+    "dom": [
+      "link[href*='.commercetools.com/'], body[data-commerce-tools-host*='.commercetools.com']"
+    ],
     "icon": "commercetools.svg",
     "implies": [
       "GraphQL"

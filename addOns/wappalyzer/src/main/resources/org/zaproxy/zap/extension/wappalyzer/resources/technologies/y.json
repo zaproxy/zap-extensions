@@ -79,7 +79,9 @@
       77
     ],
     "description": "Yahoo Advertising includes a comprehensive suite of web, mobile, and video ad products across native, audience, and premium display, which are accessible through a new buying platform.",
-    "dom": "link[href*='bc.yahoo.com']",
+    "dom": [
+      "link[href*='bc.yahoo.com']"
+    ],
     "icon": "Yahoo.svg",
     "js": {
       "adxinserthtml": "",
@@ -190,7 +192,9 @@
       16
     ],
     "description": "Yandex SmartCaptcha is a service for verifying queries to identify user requests and block bots.",
-    "dom": "div#smartcaptcha-status",
+    "dom": [
+      "div#smartcaptcha-status"
+    ],
     "headers": {
       "x-yandex-captcha": ""
     },
@@ -219,7 +223,9 @@
       31
     ],
     "description": "Yandex.Cloud CDN helps you streamline static content delivery for your web service.",
-    "dom": "[href*='storage.yandexcloud.net'], [src*='storage.yandexcloud.net']",
+    "dom": [
+      "[href*='storage.yandexcloud.net'], [src*='storage.yandexcloud.net']"
+    ],
     "icon": "Yandex.Cloud.svg",
     "implies": [
       "Yandex.Cloud"
@@ -282,7 +288,9 @@
       111
     ],
     "description": "Yapla is a web-based software platform that provides event management and fundraising solutions for non-profit organisations, associations, and event planners.",
-    "dom": "a[href*='\\.yapla\\.com/'][target='_blank']",
+    "dom": [
+      "a[href*='\\.yapla\\.com/'][target='_blank']"
+    ],
     "icon": "Yapla.png",
     "js": {
       "yaplaConsent.cookieName": "yapla-consent"
@@ -316,7 +324,9 @@
       51
     ],
     "description": "Ycode is a no-code development platform that allows users to create web and mobile applications without any coding skills.",
-    "dom": "link[href*='.ycodeapp.com/']",
+    "dom": [
+      "link[href*='.ycodeapp.com/']"
+    ],
     "icon": "Ycode.svg",
     "pricing": [
       "freemium",
@@ -405,7 +415,9 @@
       19
     ],
     "description": "Yext is a technology company that provides a cloud-based platform for managing digital knowledge and online reputation.",
-    "dom": "form.yxt-SearchBar-form",
+    "dom": [
+      "form.yxt-SearchBar-form"
+    ],
     "icon": "Yext.svg",
     "js": {
       "ANSWERS._analyticsReporterService._baseUrl": "\\.yext-pixel\\.com",
@@ -479,7 +491,9 @@
       87
     ],
     "description": "Yoast Duplicate Post is a WordPress plugin which allows users to clone posts of any type, or copy them to new drafts for further editing.",
-    "dom": "link[href*='/wp-content/plugins/duplicate-post/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/duplicate-post/']"
+    ],
     "icon": "Yoast SEO.png",
     "requires": [
       "WordPress"
@@ -590,7 +604,9 @@
       41
     ],
     "description": "YooMoney is an IT company working with electronic payments on the Internet, creating and supporting financial services for individuals and businesses.",
-    "dom": "a[href*='yoomoney.ru'][target='_blank'], iframe[src*='yoomoney.ru'], img[src*='yoomoney.ru']",
+    "dom": [
+      "a[href*='yoomoney.ru'][target='_blank'], iframe[src*='yoomoney.ru'], img[src*='yoomoney.ru']"
+    ],
     "headers": {
       "Content-Security-Policy": "\\.yoomoney\\.ru"
     },
@@ -609,7 +625,9 @@
       6
     ],
     "description": "Yoori is a multi-vendor PWA ecommerce CMS.",
-    "dom": "div.yoori--cookies",
+    "dom": [
+      "div.yoori--cookies"
+    ],
     "icon": "Yoori.png",
     "implies": [
       "Laravel",

@@ -22,7 +22,9 @@
       66
     ],
     "description": "W3.CSS is a CSS framework developed by the World Wide Web Consortium (W3C), the main international standards organisation for the World Wide Web.",
-    "dom": "link[href*='/w3.css']",
+    "dom": [
+      "link[href*='/w3.css']"
+    ],
     "icon": "W3.CSS.svg",
     "oss": true,
     "website": "https://www.w3schools.com/w3css/"
@@ -179,7 +181,9 @@
       92
     ],
     "description": "WP Fastest Cache is one of a number of plugins for WordPress designed to accelerate the performance of your website.",
-    "dom": "link[href*='/wp-content/cache/wpfc-minified/']",
+    "dom": [
+      "link[href*='/wp-content/cache/wpfc-minified/']"
+    ],
     "icon": "WP Fastest Cache.png",
     "js": {
       "Wpfcll": ""
@@ -263,7 +267,9 @@
       5
     ],
     "description": "WP Live Visitor Counter is a WordPress plugin that displays the number of online visitors on a website in real-time.",
-    "dom": "link[href*='/wp-content/plugins/wp-visitors-widget/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/wp-visitors-widget/']"
+    ],
     "icon": "default.svg",
     "requires": [
       "WordPress"
@@ -331,7 +337,9 @@
       87
     ],
     "description": "WP Rocket is a caching and performance optimisation plugin to improve the loading speed of WordPress websites.",
-    "dom": "style#wpr-usedcss",
+    "dom": [
+      "style#wpr-usedcss"
+    ],
     "headers": {
       "X-Powered-By": "WP Rocket(?:/([\\d.]+))?\\;version:\\1",
       "X-Rocket-Nginx-Bypass": ""
@@ -383,7 +391,9 @@
       87
     ],
     "description": "WP-PageNavi is a WordPress plugin which adds a more advanced paging navigation interface to your WordPress blog.",
-    "dom": "link[href*='/wp-content/plugins/wp-pagenavi/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/wp-pagenavi/']"
+    ],
     "icon": "WP-PageNavi.svg",
     "oss": true,
     "requires": [
@@ -396,7 +406,9 @@
       80
     ],
     "description": "WP-Royal Ashe is a personal and multi-author WordPress blog theme.",
-    "dom": "link#ashe-style-css",
+    "dom": [
+      "link#ashe-style-css"
+    ],
     "icon": "WP-Royal.png",
     "js": {
       "ashePreloader": "",
@@ -419,7 +431,9 @@
       80
     ],
     "description": "WP-Royal Bard is a personal and multi-author WordPress blog theme.",
-    "dom": "link#bard-style-css, style#bard_predefined_custom_css",
+    "dom": [
+      "link#bard-style-css, style#bard_predefined_custom_css"
+    ],
     "icon": "WP-Royal.png",
     "pricing": [
       "freemium",
@@ -439,7 +453,9 @@
       87
     ],
     "description": "WP-Statistics is a WordPress plugin which allows you to know your website statistics.",
-    "dom": "link[href*='/wp-content/plugins/wp-statistics/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/wp-statistics/']"
+    ],
     "html": [
       "<!-- Analytics by WP-Statistics v([\\d\\.]+)\\;version:\\1"
     ],
@@ -664,7 +680,9 @@
       58
     ],
     "description": "WalkMe is a cloud-based interactive guidance and engagement platform.",
-    "dom": "link[href*='.walkme.com']",
+    "dom": [
+      "link[href*='.walkme.com']"
+    ],
     "icon": "WalkMe.svg",
     "js": {
       "WalkMeAPI": "",
@@ -737,7 +755,9 @@
       80
     ],
     "description": "Waveme is a WordPress theme that is suitable for individuals or businesses involved in the music industry, such as music producers, record labels, artist managers, or independent artists.",
-    "dom": "link[href*='/wp-content/themes/waveme/']",
+    "dom": [
+      "link[href*='/wp-content/themes/waveme/']"
+    ],
     "icon": "Waveme.svg",
     "implies": [
       "Gutenberg",
@@ -756,7 +776,9 @@
       41
     ],
     "description": "WayForPay is a payment processing service provider based in Europe.",
-    "dom": "form[action*='secure.wayforpay.com']",
+    "dom": [
+      "form[action*='secure.wayforpay.com']"
+    ],
     "icon": "WayForPay.svg",
     "scriptSrc": [
       "secure\\.wayforpay\\.com"
@@ -796,7 +818,9 @@
       80
     ],
     "description": "Weaver Xtreme is the orginal options-based WordPress theme.",
-    "dom": "link#weaverx-style-sheet-css",
+    "dom": [
+      "link#weaverx-style-sheet-css"
+    ],
     "icon": "Weaver Xtreme.png",
     "js": {
       "weaverxBottomFooter": "",
@@ -839,7 +863,9 @@
       5
     ],
     "description": "Web Stories is a format for visual storytelling for the open web.",
-    "dom": "amp-story",
+    "dom": [
+      "amp-story"
+    ],
     "icon": "Web-Stories.svg",
     "implies": [
       "AMP"
@@ -898,6 +924,7 @@
     "scriptSrc": [
       "web2py\\.js"
     ],
+    "cpe": "cpe:2.3:a:web2py:web2py:*:*:*:*:*:*:*:*",
     "website": "https://web2py.com"
   },
   "WebAssembly": {
@@ -945,7 +972,9 @@
       87
     ],
     "description": "WebFactory Maintenance is a WordPress plugin which allows you to create an maintenance page.",
-    "dom": "link[href*='/wp-content/plugins/maintenance/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/maintenance/']"
+    ],
     "icon": "WebFactory.png",
     "js": {
       "mtnc_front_options": ""
@@ -961,7 +990,9 @@
       87
     ],
     "description": "WebFactory Under Construction is a WordPress plugin which allows you to create an under construction page.",
-    "dom": "link[href*='/wp-content/plugins/under-construction-page/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/under-construction-page/']"
+    ],
     "icon": "WebFactory.png",
     "oss": true,
     "requires": [
@@ -1065,7 +1096,9 @@
       87
     ],
     "description": "WebToffee Stripe Payment Plugin for WooCommerce is a software add-on that allows online retailers using the WooCommerce ecommerce platform to accept payments through the Stripe payment gateway.",
-    "dom": "link[href*='/wp-content/plugins/payment-gateway-stripe-and-woocommerce-integration/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/payment-gateway-stripe-and-woocommerce-integration/']"
+    ],
     "icon": "WebToffee.svg",
     "implies": [
       "Stripe",
@@ -1169,7 +1202,9 @@
       51
     ],
     "description": "Webflow is Software-as-a-Service (SaaS) for website building and hosting.",
-    "dom": "html[data-wf-site]",
+    "dom": [
+      "html[data-wf-site]"
+    ],
     "icon": "webflow.svg",
     "js": {
       "Webflow": ""
@@ -1269,7 +1304,9 @@
       6
     ],
     "description": "Weblium let's you create a web site or online store without the need for a web developer or designer.",
-    "dom": "link[href*='res2.weblium.site']",
+    "dom": [
+      "link[href*='res2.weblium.site']"
+    ],
     "icon": "Weblium.svg",
     "implies": [
       "Node.js",
@@ -1432,6 +1469,7 @@
     "meta": {
       "generator": "WebsiteBaker"
     },
+    "cpe": "cpe:2.3:a:websitebaker:websitebaker:*:*:*:*:*:*:*:*",
     "website": "https://websitebaker2.org/en/home.php"
   },
   "WebsiteBuilder": {
@@ -1480,7 +1518,9 @@
       6
     ],
     "description": "Webx is a hosted ecommerce solution from Pakistan.",
-    "dom": "div#divPowered > div > p > a[href*='.webx.pk']",
+    "dom": [
+      "div#divPowered > div > p > a[href*='.webx.pk']"
+    ],
     "icon": "Webx.svg",
     "pricing": [
       "low",
@@ -1573,7 +1613,9 @@
       19
     ],
     "description": "Pearl Theme for Magento 2 by WeltPixel. Pearl Theme is following the Magento architecture, layouts and best practice in order to assure highest compatibility with 3rd party extensions.",
-    "dom": "body.theme-pearl",
+    "dom": [
+      "body.theme-pearl"
+    ],
     "icon": "WeltPixel.svg",
     "implies": [
       "Magento\\;version:2"
@@ -1612,7 +1654,9 @@
       52
     ],
     "description": "WhatsApp Business is a free to download app available on Android and iPhone using which businesses can connect with their customers.",
-    "dom": "a[href*='api.whatsapp.com/send'], a[href*='web.whatsapp.com/send'], a[href*='wa.me/'], div[class*='wptwa-container'], a[href*='wa.link'][target='_blank']",
+    "dom": [
+      "a[href*='api.whatsapp.com/send'], a[href*='web.whatsapp.com/send'], a[href*='wa.me/'], div[class*='wptwa-container'], a[href*='wa.link'][target='_blank']"
+    ],
     "icon": "WhatsApp.svg",
     "website": "https://www.whatsapp.com/business"
   },
@@ -1994,7 +2038,9 @@
       52
     ],
     "description": "Wix Answers is a cloud-based help desk software.",
-    "dom": "iframe[src*='.wixanswers.com/']",
+    "dom": [
+      "iframe[src*='.wixanswers.com/']"
+    ],
     "icon": "Wix Answers.svg",
     "pricing": [
       "recurring",
@@ -2095,7 +2141,9 @@
     ],
     "cpe": "cpe:2.3:a:woocommerce:woocommerce:*:*:*:*:*:wordpress:*:*",
     "description": "WooCommerce is an open-source ecommerce plugin for WordPress.",
-    "dom": ".woocommerce, .woocommerce-no-js, link[rel*='woocommerce']",
+    "dom": [
+      ".woocommerce, .woocommerce-no-js, link[rel*='woocommerce']"
+    ],
     "icon": "WooCommerce.svg",
     "js": {
       "woocommerce_params": ""
@@ -2154,7 +2202,9 @@
       87
     ],
     "description": "WooCommerce PayPal Checkout Payment Gateway is a WordPress plugin which allows you to securely sell your products and subscriptions online using in-context checkout.",
-    "dom": "link[href*='/wp-content/plugins/woocommerce-gateway-paypal-express-checkout/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/woocommerce-gateway-paypal-express-checkout/']"
+    ],
     "icon": "WooCommerce PayPal.png",
     "implies": [
       "PayPal"
@@ -2176,7 +2226,9 @@
       87
     ],
     "description": "WooCommerce PayPal Payments is a latest WordPress plugin with most complete payment processing solution. Accept PayPal exclusives, credit/debit cards and local payment methods.",
-    "dom": "link[href*='/wp-content/plugins/woocommerce-paypal-payments/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/woocommerce-paypal-payments/']"
+    ],
     "icon": "WooCommerce PayPal.png",
     "implies": [
       "PayPal"
@@ -2195,7 +2247,9 @@
       87
     ],
     "description": "WooCommerce Stripe Payment Gateway plugin extends WooCommerce allowing you to take payments directly on your store via Stripe’s API.",
-    "dom": "link[href*='/wp-content/plugins/woocommerce-gateway-stripe/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/woocommerce-gateway-stripe/']"
+    ],
     "icon": "WooCommerce Stripe Payment Gateway.png",
     "implies": [
       "Stripe"
@@ -2216,7 +2270,9 @@
       87
     ],
     "description": "WooCommerce Subscriptions primarily allows you to create and sell subscription products from your WooCommerce shop.",
-    "dom": "link[href*='/wp-content/plugins/woocommerce-subscriptions/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/woocommerce-subscriptions/']"
+    ],
     "icon": "WooCommerce.svg",
     "implies": [
       "WooCommerce"
@@ -2289,7 +2345,9 @@
       36
     ],
     "description": "WordAds is an advertising platform run by Automatic that allows bloggers and website owners to place advertisements on their blogs and websites.",
-    "dom": "link[href*='.pubmine.com']",
+    "dom": [
+      "link[href*='.pubmine.com']"
+    ],
     "icon": "WordAds.png",
     "pricing": [
       "freemium",
@@ -2347,7 +2405,9 @@
       80
     ],
     "description": "WordPress Default is a default WordPress theme.",
-    "dom": "link[href*='/wp-content/themes/default/']",
+    "dom": [
+      "link[href*='/wp-content/themes/default/']"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
@@ -2483,7 +2543,9 @@
       101
     ],
     "description": "Workable is the all-in-one hiring solution.",
-    "dom": "a[href*='.workable.com/']",
+    "dom": [
+      "a[href*='.workable.com/']"
+    ],
     "icon": "Workable.svg",
     "js": {
       "webpackChunk_workable_candidate": ""
@@ -2537,7 +2599,9 @@
       41
     ],
     "description": "WorldPay is a merchant services and payment processing provider offering a payment gateway for online transactions.",
-    "dom": "img[src*='secure.worldpay.com'], img[alt='Powered by WorldPay'], a[href*='worldpay.com'][target='_blank']",
+    "dom": [
+      "img[src*='secure.worldpay.com'], img[alt='Powered by WorldPay'], a[href*='worldpay.com'][target='_blank']"
+    ],
     "icon": "WorldPay.svg",
     "pricing": [
       "payg"
@@ -2612,7 +2676,9 @@
       73
     ],
     "description": "Wufoo is an online form builder that creates forms including contact forms, online payments, online surveys and event registrations.",
-    "dom": "a[href*='.wufoo.com/forms/'][target='_blank']",
+    "dom": [
+      "a[href*='.wufoo.com/forms/'][target='_blank']"
+    ],
     "icon": "Wufoo.svg",
     "pricing": [
       "freemium",
@@ -2652,7 +2718,9 @@
       32
     ],
     "description": "Wunderkind (Formerly BounceX) is a software for behavioural marketing technologies, created to de-anonymise site visitors, analyse their digital behaviour and create relevant digital experiences regardless of channel or device.",
-    "dom": "link[href*='.smarterhq.io']",
+    "dom": [
+      "link[href*='.smarterhq.io']"
+    ],
     "headers": {
       "Content-Security-Policy": "\\.smarterhq\\.io"
     },
@@ -2722,7 +2790,8 @@
     "description": "waitForImages is a lightweight, high-performance JavaScript library that simplifies the handling of image preloading events.",
     "oss": true,
     "scriptSrc": [
-      "(?:((?:\\d+\\.)+\\d+)\\/(?:jquery\\.)?)?waitforimages(?:-((?:\\d+\\.)+\\d+)-modded)?(?:\\.min)?\\.js\\;version:\\1\\2"
+      "(?:((?:\\d+\\.)+\\d+)\\/(?:jquery\\.)?)?waitforimages(?:-modded)?(?:\\.min)?\\.js\\;version:\\1",
+      "(?:(?:jquery\\.)?)?waitforimages(?:-((?:\\d+\\.)+\\d+)-modded)?(?:\\.min)?\\.js\\;version:\\1"
     ],
     "website": "https://github.com/alexanderdickson/waitForImages"
   },

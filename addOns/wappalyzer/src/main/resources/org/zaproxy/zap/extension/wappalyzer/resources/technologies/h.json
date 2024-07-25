@@ -23,7 +23,9 @@
       6
     ],
     "description": "HCL Commerce is a software platform framework for ecommerce, including marketing, sales, customer and order processing functionality.",
-    "dom": "link[href*='/wcsstore/'], link[href*='webapp/wcs/'], a[href*='/wcsstore/'], a[href*='webapp/wcs/'], script[src*='/wcsstore/'], script[src*='webapp/wcs/']",
+    "dom": [
+      "link[href*='/wcsstore/'], link[href*='webapp/wcs/'], a[href*='/wcsstore/'], a[href*='webapp/wcs/'], script[src*='/wcsstore/'], script[src*='webapp/wcs/']"
+    ],
     "icon": "HCL Commerce.svg",
     "implies": [
       "Java"
@@ -182,7 +184,9 @@
       87
     ],
     "description": "Elementor addons package for Elementor.",
-    "dom": "link[href*='/wp-content/plugins/ht-mega-for-elementor/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/ht-mega-for-elementor/']"
+    ],
     "icon": "HT Mega.png",
     "oss": true,
     "requires": [
@@ -256,7 +260,9 @@
     ],
     "cpe": "cpe:2.3:a:handlebars.js_project:handlebars.js:*:*:*:*:*:*:*:*",
     "description": "Handlebars is a JavaScript library used to create reusable webpage templates.",
-    "dom": "script[type='text/x-handlebars-template']",
+    "dom": [
+      "script[type='text/x-handlebars-template']"
+    ],
     "icon": "Handlebars.svg",
     "js": {
       "Handlebars": "",
@@ -319,7 +325,9 @@
       102
     ],
     "description": "Happy Returns is a return software and reverse logistics company, provides a packaging-free, in-person way for customers to return an online purchase for an immediate refund.",
-    "dom": "a[href*='.happyreturns.com'], img[src*='.happyreturns.com/']",
+    "dom": [
+      "a[href*='.happyreturns.com'], img[src*='.happyreturns.com/']"
+    ],
     "icon": "Happy Returns.png",
     "pricing": [
       "mid",
@@ -402,7 +410,9 @@
       60
     ],
     "description": "Harbor is an open-source registry that secures artifacts with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted.",
-    "dom": "harbor-app",
+    "dom": [
+      "harbor-app"
+    ],
     "icon": "Harbor.svg",
     "implies": [
       "Go"
@@ -434,7 +444,9 @@
       11
     ],
     "description": "Hashnode is a free developer blogging platform that allows you to publish articles on your own domain and helps you stay connected with a global developer community.",
-    "dom": "div.css-zigog8",
+    "dom": [
+      "div.css-zigog8"
+    ],
     "icon": "hashnode.png",
     "scriptSrc": [
       "hashnode\\.com"
@@ -449,7 +461,9 @@
       36
     ],
     "description": "Hashtag Labs is a full-service digital ad operations company.",
-    "dom": "link[href*='//htlbid.com']",
+    "dom": [
+      "link[href*='//htlbid.com']"
+    ],
     "icon": "Hashtag Labs.svg",
     "js": {
       "htlbid.cmd": ""
@@ -638,7 +652,9 @@
       18
     ],
     "description": "Helix Ultimate a free template framework for Joomla.",
-    "dom": "header#sp-header, body.helix-ultimate",
+    "dom": [
+      "header#sp-header, body.helix-ultimate"
+    ],
     "icon": "HelixUltimate.svg",
     "implies": [
       "Joomla"
@@ -768,7 +784,9 @@
       35
     ],
     "description": "HERE is a PaaS for creating custom maps, visualize location datasets, gather insights and buy and sell location assets.",
-    "dom": "link[href*='//js\\.api\\.here\\.com/']",
+    "dom": [
+      "link[href*='//js\\.api\\.here\\.com/']"
+    ],
     "icon": "here.svg",
     "js": {
       "H.buildInfo": "",
@@ -967,7 +985,9 @@
       53
     ],
     "description": "Hi Platform provider of an online customer relationship platform.",
-    "dom": "link[href*='.hiplatform.com']",
+    "dom": [
+      "link[href*='.hiplatform.com']"
+    ],
     "icon": "Hi Platform.svg",
     "pricing": [
       "mid",
@@ -1044,6 +1064,7 @@
     "scriptSrc": [
       "highcharts.*\\.js"
     ],
+    "cpe": "cpe:2.3:a:highcharts:highcharts:*:*:*:*:*:*:*:*",
     "website": "https://www.highcharts.com"
   },
   "Highlight.js": {
@@ -1103,7 +1124,9 @@
       101
     ],
     "description": "Hireology is a staffing and hiring platform for the franchise and retail-automotive industries.",
-    "dom": "a[href*='sites.hireology.com/']",
+    "dom": [
+      "a[href*='sites.hireology.com/']"
+    ],
     "icon": "Hireology.png",
     "pricing": [
       "poa",
@@ -1141,7 +1164,9 @@
       10
     ],
     "description": "Histats is a simple website visitor analysis and tracking tool.",
-    "dom": "img[src*='.histats.com/']",
+    "dom": [
+      "img[src*='.histats.com/']"
+    ],
     "icon": "Histats.png",
     "js": {
       "Histats.ver": "^([\\d\\.]+)$\\;version:\\1"
@@ -1182,7 +1207,9 @@
       17
     ],
     "description": "Hoefler&Co is a digital type foundry (font design studio) in Woburn, Massachusetts (formerly New York City), founded by type designer Jonathan Hoefler. Hoefler&Co designs typefaces for clients and for retail on its website.",
-    "dom": "link[href*='cloud.typography.com/']",
+    "dom": [
+      "link[href*='cloud.typography.com/']"
+    ],
     "icon": "Hoefler&Co.svg",
     "pricing": [
       "low",
@@ -1470,7 +1497,9 @@
       73
     ],
     "description": "Hotjar Incoming Feedback is a widget that sits at the edge of a page.",
-    "dom": "a[href*='hotjar.com/incoming-feedback'][target='_blank']",
+    "dom": [
+      "a[href*='hotjar.com/incoming-feedback'][target='_blank']"
+    ],
     "icon": "Hotjar.svg",
     "scriptSrc": [
       "\\.hotjar\\.com/preact-incoming-feedback"
@@ -1515,7 +1544,9 @@
       59
     ],
     "description": "Htmx is a JavaScript library for performing AJAX requests, triggering CSS transitions, and invoking WebSocket and server-sent events directly from HTML elements.",
-    "dom": "script[data-src*='/dist/htmx.min.js']",
+    "dom": [
+      "script[data-src*='/dist/htmx.min.js']"
+    ],
     "icon": "Htmx.svg",
     "js": {
       "htmx": ""
@@ -1610,7 +1641,9 @@
       67
     ],
     "description": "HubSpot Cookie Policy banner is a cookie compliance functionality from HubSpot.",
-    "dom": "#hs-eu-cookie-confirmation",
+    "dom": [
+      "#hs-eu-cookie-confirmation"
+    ],
     "icon": "HubSpot.svg",
     "website": "https://knowledge.hubspot.com/reports/customize-your-cookie-tracking-settings-and-privacy-policy-alert"
   },
@@ -1689,7 +1722,9 @@
       21
     ],
     "description": "Huddle is a digital product agency based in Amsterdam, Netherlands, specialising in developing and designing custom software solutions for startups and enterprises, including e-learning products, community platforms, and mobile applications.",
-    "dom": "link[href*='.thehuddle.nl/']",
+    "dom": [
+      "link[href*='.thehuddle.nl/']"
+    ],
     "icon": "Huddle.svg",
     "js": {
       "HuddleEvent": "",
@@ -1813,7 +1848,9 @@
       100
     ],
     "description": "HulkApps Product Reviews is a customer product reviews app for building social proof for store.",
-    "dom": "link[href*='reviews.hulkapps.com/']",
+    "dom": [
+      "link[href*='reviews.hulkapps.com/']"
+    ],
     "icon": "HulkApps.svg",
     "implies": [
       "Shopify"
@@ -1870,7 +1907,9 @@
       13
     ],
     "description": "Hund.io is an automated status pages with monitoring.",
-    "dom": "link[href*='hund-client-logos']",
+    "dom": [
+      "link[href*='hund-client-logos']"
+    ],
     "icon": "Hund.io.svg",
     "pricing": [
       "recurring",
@@ -1888,7 +1927,9 @@
       87
     ],
     "description": "HurryTimer is a cutting-edge WordPress plugin that enables users to create customizable, scheduled countdown timers to further engage visitors and increase conversions.",
-    "dom": "link[href*='/wp-content/uploads/hurrytimer/'], #hurrytimer, #hurrytimer-css",
+    "dom": [
+      "link[href*='/wp-content/uploads/hurrytimer/'], #hurrytimer, #hurrytimer-css"
+    ],
     "icon": "HurryTimer.png",
     "js": {
       "hurrytimer_ajax_object": ""
@@ -1911,7 +1952,9 @@
       32
     ],
     "description": "Hushly is an all-in-one B2B marketing software platform.",
-    "dom": "link[href*='.hushly.com/']",
+    "dom": [
+      "link[href*='.hushly.com/']"
+    ],
     "icon": "Hushly.png",
     "js": {
       "__hly_widget_object": ""
@@ -2096,7 +2139,9 @@
       "#cf-hcaptcha-container"
     ],
     "description": "hCaptcha is an anti-bot solution that protects user privacy and rewards websites.",
-    "dom": "link[href*='hcaptcha.com']",
+    "dom": [
+      "link[href*='hcaptcha.com']"
+    ],
     "headers": {
       "content-security-policy": "(?:\\.|//)hcaptcha\\.com"
     },
@@ -2154,7 +2199,8 @@
     "description": "Screenshots with JavaScript.",
     "oss": true,
     "scriptSrc": [
-      "(?:((?:\\d+\\.)+\\d+)\\/)?html2canvas(?:\\.min)?(?:[_\\w]{0,8})?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2"
+      "html2canvas(?:\\.min)?(?:[_\\w]{0,8})?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+      "(?:((?:\\d+\\.)+\\d+)\\/)?html2canvas(?:\\.min)?(?:[_\\w]{0,8})?\\.js\\;version:\\1"
     ],
     "website": "https://html2canvas.hertzen.com/"
   }

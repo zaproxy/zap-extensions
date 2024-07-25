@@ -196,7 +196,9 @@
       1
     ],
     "description": "ISAY (Internet Pages Management) is a CMS service provided by the Turkish Ministry of Interior for governorships, district governorships and various official websites.",
-    "dom": "div.topbar-img img[src*='/Areas/WebPart/Contents/FHeader/img/ataturk.svg']",
+    "dom": [
+      "div.topbar-img img[src*='/Areas/WebPart/Contents/FHeader/img/ataturk.svg']"
+    ],
     "icon": "ISAY.png",
     "requires": [
       "Microsoft ASP.NET"
@@ -330,7 +332,9 @@
       95
     ],
     "description": "Image Relay is a digital asset management system that allows organizations to upload, manage, organize, monitor and track their digital assets.",
-    "dom": "a[href*='.imagerelay.com/'][target='_blank']",
+    "dom": [
+      "a[href*='.imagerelay.com/'][target='_blank']"
+    ],
     "icon": "Image Relay.svg",
     "js": {
       "ImageRelay.accounts": ""
@@ -350,7 +354,9 @@
       92
     ],
     "description": "ImageEngine is an intelligent image content delivery network. ImageEngine will resize your image content tailored to the end users device.",
-    "dom": "link[href*='.imgeng.in/'], img[src*='.imgeng.in/'], img[data-src*='.imgeng.in/'], source[srcset*='.imgeng.in/']",
+    "dom": [
+      "link[href*='.imgeng.in/'], img[src*='.imgeng.in/'], img[data-src*='.imgeng.in/'], source[srcset*='.imgeng.in/']"
+    ],
     "icon": "ImageEngine.svg",
     "pricing": [
       "low",
@@ -365,7 +371,9 @@
       7
     ],
     "description": "NextGEN Gallery is a WordPress gallery plugin maintained by Imagely.",
-    "dom": "link[href*='/wp-content/plugins/nextgen-gallery/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/nextgen-gallery/']"
+    ],
     "icon": "Imagely.png",
     "pricing": [
       "freemium",
@@ -409,13 +417,16 @@
     "dns": {
       "SOA": "\\.imgix\\.net"
     },
-    "dom": "img[src*='.imgix.net/'], img[data-src*='.imgix.net/'], img[srcset*='.imgix.net/'], source[src*='.imgix.net/'], source[data-src*='.imgix.net/']",
+    "dom": [
+      "img[src*='.imgix.net/'], img[data-src*='.imgix.net/'], img[srcset*='.imgix.net/'], source[src*='.imgix.net/'], source[data-src*='.imgix.net/']"
+    ],
     "icon": "Imgix.svg",
     "pricing": [
       "freemium",
       "mid",
       "recurring"
     ],
+    "cpe": "cpe:2.3:a:imgix:imgix:*:*:*:*:*:*:*:*",
     "website": "https://imgix.com/"
   },
   "Immutable.js": {
@@ -579,7 +590,9 @@
       52
     ],
     "description": "InSyncai offers a conversational platform for enterprises to design and build chatbots having applications in customer support and services.",
-    "dom": "iframe[src*='insync_iframe_webchat_js_prod'], iframe#insync-iframe",
+    "dom": [
+      "iframe[src*='insync_iframe_webchat_js_prod'], iframe#insync-iframe"
+    ],
     "icon": "InSyncai.png",
     "pricing": [
       "poa"
@@ -741,7 +754,9 @@
       5
     ],
     "description": "Infogram is a web-based data visualisation and infographics platform.",
-    "dom": "iframe[src*='.infogram.com/']",
+    "dom": [
+      "iframe[src*='.infogram.com/']"
+    ],
     "icon": "Infogram.svg",
     "js": {
       "InfogramEmbeds": ""
@@ -791,7 +806,9 @@
       52
     ],
     "description": "InforUMobile is a multi-channel system that enables digital communication with customers, offering various channels for interacting and engaging with users, developed by the Shamir Systems Group.",
-    "dom": "iframe[src*='bot.frontcld.com/bot/chat']",
+    "dom": [
+      "iframe[src*='bot.frontcld.com/bot/chat']"
+    ],
     "pricing": [
       "poa"
     ],
@@ -839,7 +856,9 @@
       53
     ],
     "description": "Insightly CRM is a cloud-based customer relationship management software, helps businesses manage leads, contacts, and opportunities, track customer interactions, create custom reports, automate workflows, and integrate with third-party applications, improving customer engagement and streamlining business processes.",
-    "dom": "form[action*='.insightly.com/']",
+    "dom": [
+      "form[action*='.insightly.com/']"
+    ],
     "icon": "Insightly.svg",
     "pricing": [
       "recurring",
@@ -924,7 +943,9 @@
       87
     ],
     "description": "Display Instagram photos from any non-private Instagram accounts.",
-    "dom": "link[href*='/wp-content/plugins/instagram-feed'], a[data-full-res*='/wp-content/uploads/sb-instagram-feed-images/'], img[src*='/wp-content/uploads/sb-instagram-feed-images/'], img[src*='/wp-content/plugins/instagram-feed/'], img[data-src*='/wp-content/uploads/sb-instagram-feed-images/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/instagram-feed'], a[data-full-res*='/wp-content/uploads/sb-instagram-feed-images/'], img[src*='/wp-content/uploads/sb-instagram-feed-images/'], img[src*='/wp-content/plugins/instagram-feed/'], img[data-src*='/wp-content/uploads/sb-instagram-feed-images/']"
+    ],
     "oss": true,
     "pricing": [
       "low"
@@ -1089,7 +1110,9 @@
       36
     ],
     "description": "Integral Ad Science is an American publicly owned technology company that analyses the value of digital advertising placements.",
-    "dom": "link[href*='.adsafeprotected.com']",
+    "dom": [
+      "link[href*='.adsafeprotected.com']"
+    ],
     "icon": "Integral Ad Science.svg",
     "pricing": [
       "poa"
@@ -1319,7 +1342,9 @@
       17
     ],
     "description": "Ionicons is an open-source icon set crafted for web, iOS, Android, and desktop apps.",
-    "dom": "link[href*='/ionicons.min.css'], link[href*='/ionicons.css']",
+    "dom": [
+      "link[href*='/ionicons.min.css'], link[href*='/ionicons.css']"
+    ],
     "icon": "Ionicons.svg",
     "oss": true,
     "website": "https://ionicons.com"
@@ -1373,7 +1398,9 @@
       5
     ],
     "description": "Issuu is a digital discovery and publishing platform.",
-    "dom": "a[href*='issuu.com/'][target='_blank']",
+    "dom": [
+      "a[href*='issuu.com/'][target='_blank']"
+    ],
     "icon": "Issuu.svg",
     "js": {
       "IssuuReaders": "",
@@ -1480,7 +1507,9 @@
       36
     ],
     "description": "i-mobile is a advertising platform for clients to advertise their product and for publishers to monetize their cyberspace.",
-    "dom": "img[src*='.i-mobile.co.jp/']",
+    "dom": [
+      "img[src*='.i-mobile.co.jp/']"
+    ],
     "icon": "i-mobile.png",
     "pricing": [
       "payg"
@@ -1496,7 +1525,9 @@
       17
     ],
     "description": "i30con is an icon toolkit based on CSS and JavaScript.",
-    "dom": "[class^='i30con']",
+    "dom": [
+      "[class^='i30con']"
+    ],
     "icon": "30namaPlayer.png",
     "website": "https://30nama.com/"
   },
@@ -1505,7 +1536,9 @@
       52
     ],
     "description": "iAdvize is a conversational marketing platform that connects customers in need of advice with experts who are available 24/7 via messaging.",
-    "dom": "link[href*='.iadvize.com']",
+    "dom": [
+      "link[href*='.iadvize.com']"
+    ],
     "icon": "iAdvize.svg",
     "pricing": [
       "poa"
@@ -1599,7 +1632,9 @@
       16
     ],
     "description": " iThemes Security(formerly known as Better WP Security) plugin enhances the security and protection of your WordPress website.",
-    "dom": "link[href*='/wp-content/plugins/better-wp-security/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/better-wp-security/']"
+    ],
     "icon": "iThemes Security.svg",
     "pricing": [
       "freemium",
@@ -1666,7 +1701,9 @@
       1
     ],
     "description": "imperia CMS is a headless content management for large editorial.",
-    "dom": "source[srcset*='.de/imperia/md/images/']",
+    "dom": [
+      "source[srcset*='.de/imperia/md/images/']"
+    ],
     "icon": "imperiaCMS.svg",
     "implies": [
       "Perl"

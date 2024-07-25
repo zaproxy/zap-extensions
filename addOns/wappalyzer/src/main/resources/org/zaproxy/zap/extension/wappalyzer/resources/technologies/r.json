@@ -99,7 +99,9 @@
       6
     ],
     "description": "RND is a software technology used for companies to set up ecommerce infrastructure.",
-    "dom": "div#rnd-mobile-menu, a[href*='www.rnd.com.tr/?utm_source='][target='_blank']",
+    "dom": [
+      "div#rnd-mobile-menu, a[href*='www.rnd.com.tr/?utm_source='][target='_blank']"
+    ],
     "icon": "RND.png",
     "pricing": [
       "recurring"
@@ -193,7 +195,9 @@
       "--radix-tooltip-content-transform-origin"
     ],
     "description": "Radix UI is a React-based user interface component library that offers accessible, responsive, and customisable components for building web applications.",
-    "dom": "a[data-radix-collection-item], button[data-radix-collection-item]",
+    "dom": [
+      "a[data-radix-collection-item], button[data-radix-collection-item]"
+    ],
     "icon": "Radix UI.svg",
     "oss": true,
     "requires": [
@@ -248,7 +252,9 @@
       111
     ],
     "description": "RaiseDonors is for anyone raising money and cultivating donor relationships online.",
-    "dom": "a[href*='//raisedonors.com/'][target='_blank']",
+    "dom": [
+      "a[href*='//raisedonors.com/'][target='_blank']"
+    ],
     "icon": "RaiseDonors.png",
     "meta": {
       "author": "^RaiseDonors$"
@@ -333,7 +339,9 @@
       54
     ],
     "description": "RankMath SEO is a search engine optimisation plugin for WordPress.",
-    "dom": "link[href*='/wp-content/plugins/seo-by-rank-math/'], script.rank-math-schema-pro, script.rank-math-schema",
+    "dom": [
+      "link[href*='/wp-content/plugins/seo-by-rank-math/'], script.rank-math-schema-pro, script.rank-math-schema"
+    ],
     "icon": "RankMath SEO.svg",
     "pricing": [
       "freemium",
@@ -739,7 +747,9 @@
       5
     ],
     "description": "The SiteSpeaker text-to-speech widget is embedded into your posts and give users an alternate way to consume your content as audio.",
-    "dom": "div#ra-player, div[data-skin*='assets\\.sitespeaker\\.link/embed/skins']",
+    "dom": [
+      "div#ra-player, div[data-skin*='assets\\.sitespeaker\\.link/embed/skins']"
+    ],
     "icon": "default.svg",
     "website": "https://www.readaloudwidget.com",
     "xhr": [
@@ -810,7 +820,9 @@
       87
     ],
     "description": "Really Simple CAPTCHA does not work alone and is intended to work with other plugins. It is originally created for Contact Form 7, however, you can use it with your own plugin.",
-    "dom": "img[src*='/wp-content/plugins/really-simple-captcha/']",
+    "dom": [
+      "img[src*='/wp-content/plugins/really-simple-captcha/']"
+    ],
     "icon": "Really Simple CAPTCHA.png",
     "oss": true,
     "requires": [
@@ -1005,7 +1017,9 @@
       101
     ],
     "description": "Recruitee is an integrated cloud-based recruitment management and applicant tracking system.",
-    "dom": "a[href*='.recruitee.com']",
+    "dom": [
+      "a[href*='.recruitee.com']"
+    ],
     "icon": "Recruitee.svg",
     "js": {
       "RtApp.mapBoxToken": ""
@@ -1120,7 +1134,9 @@
       6
     ],
     "description": "RedShop provides a platform for SMEs to manage their ecommerce business.",
-    "dom": "link[href*='//redshop.s3.amazonaws.com/']",
+    "dom": [
+      "link[href*='//redshop.s3.amazonaws.com/']"
+    ],
     "icon": "RedShop.png",
     "implies": [
       "Amazon S3",
@@ -1254,7 +1270,9 @@
       18
     ],
     "description": "RedwoodJS is a full-stack serverless web application framework built by Tom Preston Werner (co-founder of Github) et al.",
-    "dom": "div#redwood-app",
+    "dom": [
+      "div#redwood-app"
+    ],
     "icon": "RedwoodJS.svg",
     "implies": [
       "React",
@@ -1309,7 +1327,9 @@
       84
     ],
     "description": "ReferralCandy is a marketing platform that gets shoppers to refer their friends.",
-    "dom": "iframe[src*='.referralcandy.com/'],li > a[href*='.referralcandy.com/'],div > a[href*='.referralcandy.com/'] ",
+    "dom": [
+      "iframe[src*='.referralcandy.com/'],li > a[href*='.referralcandy.com/'],div > a[href*='.referralcandy.com/'] "
+    ],
     "icon": "ReferralCandy.svg",
     "pricing": [
       "low",
@@ -1374,7 +1394,9 @@
       102
     ],
     "description": "Refundid provides ecommerce customers instant refunds for their online returns.",
-    "dom": "a[href*='.refundid.com/']",
+    "dom": [
+      "a[href*='.refundid.com/']"
+    ],
     "icon": "Refundid.png",
     "js": {
       "launchRefundidPopup": ""
@@ -1434,7 +1456,9 @@
       76
     ],
     "description": "Relewise is a platform that uses personalisation technology to provide customised online experiences through personalised search and recommendations.",
-    "dom": "link[href*='api.relewise.com/']",
+    "dom": [
+      "link[href*='api.relewise.com/']"
+    ],
     "icon": "Relewise.svg",
     "js": {
       "relewiseConfig": "",
@@ -1905,7 +1929,9 @@
       102
     ],
     "description": "Returnly is the provider of digital return experiences for direct-to-consumer brands.",
-    "dom": "a[href*='.returnly.com/']",
+    "dom": [
+      "a[href*='.returnly.com/']"
+    ],
     "icon": "Returnly.svg",
     "js": {
       "Returnly.ContainerSwitcher": "",
@@ -1946,7 +1972,9 @@
     ],
     "description": "RevContent is a monetization and recommendation engine that connects advertisers to highly engaged audiences on the web's leading publisher sites.",
     "icon": "revcontent.png",
-    "dom": "link[href*='.revcontent.com']",
+    "dom": [
+      "link[href*='.revcontent.com']"
+    ],
     "js": {
       "revcontent": ""
     },
@@ -1957,7 +1985,9 @@
       36
     ],
     "description": "RevJet is the first comprehensive Ad Experience Platform, for every audience, channel, format, inventory, and device.",
-    "dom": "link[href*='.revjet.com']",
+    "dom": [
+      "link[href*='.revjet.com']"
+    ],
     "icon": "RevJet.png",
     "pricing": [
       "poa"
@@ -2067,7 +2097,9 @@
       90
     ],
     "description": "Reviews.io is a review collection tool for companies to collect merchant (company) & product reviews from genuine customers, then share these on Google.",
-    "dom": "a[href*='.reviews.io/company-reviews/']",
+    "dom": [
+      "a[href*='.reviews.io/company-reviews/']"
+    ],
     "icon": "Reviews.io.svg",
     "js": {
       "reviewsio_hasVoted": "",
@@ -2195,7 +2227,9 @@
       90
     ],
     "description": "Rich Plugins Reviews is a WordPress plugin that integrates verified reviews from trusted sources such as Google and Facebook.",
-    "dom": "link[href*='/wp-content/plugins/widget-google-reviews/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/widget-google-reviews/']"
+    ],
     "icon": "Rich Plugins.png",
     "pricing": [
       "freemium",
@@ -2369,6 +2403,7 @@
     "meta": {
       "generator": "^RiteCMS(?: (.+))?\\;version:\\1"
     },
+    "cpe": "cpe:2.3:a:ritecms:ritecms:*:*:*:*:*:*:*:*",
     "website": "https://ritecms.com"
   },
   "Rive": {
@@ -2758,7 +2793,9 @@
       14
     ],
     "description": "Rumble is a Canadian video-streaming platform that presents itself as an alternative to YouTube.",
-    "dom": "iframe[src*='//rumble.com/']",
+    "dom": [
+      "iframe[src*='//rumble.com/']"
+    ],
     "icon": "Rumble.svg",
     "js": {
       "Rumble.gdpr": "",
@@ -2773,6 +2810,7 @@
     "description": "Rust is a multi-paradigm, general-purpose programming language designed for performance and safety, especially safe concurrency.",
     "icon": "Rust.svg",
     "oss": true,
+    "cpe": "cpe:2.3:a:rust-lang:rust:*:*:*:*:*:*:*:*",
     "website": "https://www.rust-lang.org"
   },
   "RxJS": {
@@ -2816,7 +2854,9 @@
       16
     ],
     "description": "reCAPTCHA is a free service from Google that helps protect websites from spam and abuse.",
-    "dom": "#recaptcha_image, iframe[src*='.google.com/recaptcha/'], div.g-recaptcha",
+    "dom": [
+      "#recaptcha_image, iframe[src*='.google.com/recaptcha/'], div.g-recaptcha"
+    ],
     "icon": "reCAPTCHA.svg",
     "js": {
       "Recaptcha": "",

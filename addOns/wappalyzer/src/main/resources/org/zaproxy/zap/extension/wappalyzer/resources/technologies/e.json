@@ -66,7 +66,9 @@
       25
     ],
     "description": "ECharts is an open-source JavaScript visualisation library.",
-    "dom": "div[_echarts_instance_]",
+    "dom": [
+      "div[_echarts_instance_]"
+    ],
     "icon": "echarts.png",
     "oss": true,
     "scriptSrc": [
@@ -259,7 +261,9 @@
       6
     ],
     "description": "Easy Orders is an ecommerce platform that offers a pricing plan where users can create their online store and pay a fee of 0.5 EGP per order.",
-    "dom": "img[src*='easyorders.fra1.digitaloceanspaces.com/'], link[href*='easyorders.fra1.digitaloceanspaces.com/']",
+    "dom": [
+      "img[src*='easyorders.fra1.digitaloceanspaces.com/'], link[href*='easyorders.fra1.digitaloceanspaces.com/']"
+    ],
     "icon": "Easy Orders.png",
     "implies": [
       "PostgreSQL",
@@ -624,6 +628,7 @@
       "freemium",
       "mid"
     ],
+    "cpe": "cpe:2.3:a:10up:elasticpress:*:*:*:*:*:wordpress:*:*",
     "saas": true,
     "website": "https://www.elasticpress.io/"
   },
@@ -663,7 +668,9 @@
     ],
     "cpe": "cpe:2.3:a:elastic:elasticsearch:*:*:*:*:*:*:*:*",
     "description": "Elasticsearch is a search engine based on the Lucene library. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents.",
-    "dom": "div#topsearchelastic_widget",
+    "dom": [
+      "div#topsearchelastic_widget"
+    ],
     "icon": "Elasticsearch.svg",
     "pricing": [
       "mid",
@@ -760,7 +767,9 @@
       87
     ],
     "description": "Elementor is a website builder platform for professionals on WordPress.",
-    "dom": "link[href*='/wp-content/plugins/elementor/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/elementor/']"
+    ],
     "icon": "Elementor.svg",
     "js": {
       "elementorFrontend.getElements": "",
@@ -789,7 +798,9 @@
       87
     ],
     "description": "Widgets and extensions to extend the Elementor Page Builder.",
-    "dom": "link[href*='/wp-content/plugins/addon-elements-for-elementor-page-builder/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/addon-elements-for-elementor-page-builder/']"
+    ],
     "icon": "Elementor Addon Elements.png",
     "oss": true,
     "requires": [
@@ -824,7 +835,9 @@
       87
     ],
     "description": "Elementor Header & Footer Builder is a simple yet powerful WordPress plugin that allows you to create a layout with Elementor and set it as.",
-    "dom": "link[href*='/wp-content/plugins/header-footer-elementor/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/header-footer-elementor/']"
+    ],
     "icon": "Elementor Header & Footer Builder.svg",
     "implies": [
       "Elementor"
@@ -919,6 +932,7 @@
     "scriptSrc": [
       "elgg(?:_dataTables)?(?:\\/Ajax)?(?:\\/Plugin)?(?:\\/require_config)?(?:\\/spinner)?(?:\\/dev)?(?:\\.\\w{0,10})?\\.js"
     ],
+    "cpe": "cpe:2.3:a:elgg:elgg:*:*:*:*:*:*:*:*",
     "website": "https://elgg.org/"
   },
   "Elixir": {
@@ -969,7 +983,9 @@
       101
     ],
     "description": "Ellucian CRM Recruit is a comprehensive solution that supports your entire recruiting and admissions lifecycle.",
-    "dom": " a[href*='.elluciancrmrecruit.com/']",
+    "dom": [
+      " a[href*='.elluciancrmrecruit.com/']"
+    ],
     "icon": "Ellucian CRM Recruit.svg",
     "js": {
       "Ellucian.Recruit": "",
@@ -1054,7 +1070,9 @@
       87
     ],
     "description": "Protect email addresses and phone numbers from spambots.",
-    "dom": "link#eeb-css-frontend-css, link[href*='/wp-content/plugins/email-encoder-bundle/']",
+    "dom": [
+      "link#eeb-css-frontend-css, link[href*='/wp-content/plugins/email-encoder-bundle/']"
+    ],
     "icon": "Email Encoder for Wordpress.png",
     "oss": true,
     "requires": [
@@ -1125,7 +1143,9 @@
       87
     ],
     "description": "Embed a PDF from the Media Library or elsewhere via oEmbed.",
-    "dom": "#embed-pdf-viewer-css, link[href*='/wp-content/plugins/embed-pdf-viewer/']",
+    "dom": [
+      "#embed-pdf-viewer-css, link[href*='/wp-content/plugins/embed-pdf-viewer/']"
+    ],
     "oss": true,
     "requires": [
       "WordPress"
@@ -1138,7 +1158,9 @@
       87
     ],
     "description": "Embed PDF, DOC, PPT and XLS documents easily on your WordPress website.",
-    "dom": "#awsm-ead-public-css, link[href*='/wp-content/plugins/embed-any-document/']",
+    "dom": [
+      "#awsm-ead-public-css, link[href*='/wp-content/plugins/embed-any-document/']"
+    ],
     "oss": true,
     "requires": [
       "WordPress"
@@ -1172,7 +1194,9 @@
       87
     ],
     "description": "Embed videos, images, posts, audio, maps and upload PDF, DOC, PPT in Wordpress.",
-    "dom": "#embedpress-css, #embedpress-elementor-css-css, #embedpress_blocks-cgb-style-css-css, link[href*='/wp-content/plugins/embedpress/']",
+    "dom": [
+      "#embedpress-css, #embedpress-elementor-css-css, #embedpress_blocks-cgb-style-css-css, link[href*='/wp-content/plugins/embedpress/']"
+    ],
     "icon": "EmbedPress.png",
     "oss": true,
     "requires": [
@@ -1255,7 +1279,9 @@
       47
     ],
     "description": "Emotion is a library designed for writing CSS styles with JavaScript.",
-    "dom": "style[data-emotion], style[data-emotion-css]",
+    "dom": [
+      "style[data-emotion], style[data-emotion-css]"
+    ],
     "icon": "Emotion.png",
     "website": "https://emotion.sh"
   },
@@ -1335,7 +1361,9 @@
     ],
     "description": "Essential software for changemakers. Facilitate, centralize, and analyze two-way conversations between you and your community.",
     "icon": "EngagementHQ.svg",
-    "dom": "link[href*='ehq-production-']",
+    "dom": [
+      "link[href*='ehq-production-']"
+    ],
     "website": "https://granicus.com/solution/govdelivery/engagementhq/"
   },
   "Engagio": {
@@ -1659,7 +1687,9 @@
       100
     ],
     "description": "EraofEcom WinAds is an all-in-one Facebook pixel app for Shopify.",
-    "dom": "link[href*='winads.eraofecom.org']",
+    "dom": [
+      "link[href*='winads.eraofecom.org']"
+    ],
     "icon": "EraofEcom.png",
     "implies": [
       "Shopify"
@@ -1708,7 +1738,9 @@
       53
     ],
     "description": "Open Source CRM Software.",
-    "dom": "meta[content*='EspoCRM'], link[href*='/espo/']",
+    "dom": [
+      "meta[content*='EspoCRM'], link[href*='/espo/']"
+    ],
     "icon": "EspoCRM.svg",
     "oss": true,
     "pricing": [
@@ -1720,6 +1752,7 @@
     "scriptSrc": [
       "espo(?:\\.min)?\\.js"
     ],
+    "cpe": "cpe:2.3:a:espocrm:espocrm:*:*:*:*:*:*:*:*",
     "website": "https://www.espocrm.com/"
   },
   "Essent SiteBuilder Pro": {
@@ -1728,7 +1761,9 @@
       6
     ],
     "description": "Essent SiteBuilder Pro is a fully-integrated web-based website design system, content management and ecommerce system.",
-    "dom": "a[href*='www.essent.com'][target='_blank']",
+    "dom": [
+      "a[href*='www.essent.com'][target='_blank']"
+    ],
     "icon": "Essent.png",
     "meta": {
       "GENERATOR": "^Essent® SiteBuilder Pro$"
@@ -1745,7 +1780,9 @@
       87
     ],
     "description": "Essential Addons for Elementor gives you 70+ creative elements and extensions to help you extend the stock features of Elementor page builder.",
-    "dom": "link[href*='/wp-content/uploads/essential-addons-elementor/']",
+    "dom": [
+      "link[href*='/wp-content/uploads/essential-addons-elementor/']"
+    ],
     "icon": "Essential Addons for Elementor.svg",
     "pricing": [
       "freemium",
@@ -1870,7 +1907,9 @@
       104
     ],
     "description": "Etix is an international web-based ticketing service provider for the entertainment, travel, and sports industries.",
-    "dom": "a[href*='.etix.com/ticket/'][target='_blank']",
+    "dom": [
+      "a[href*='.etix.com/ticket/'][target='_blank']"
+    ],
     "icon": "Etix.svg",
     "js": {
       "Etix.javaContext": ""
@@ -1907,7 +1946,9 @@
       87
     ],
     "description": "EventON is event calendar for WordPress.",
-    "dom": "link#eventon_dynamic_styles-css, link[href*='/css/eventon_styles\\.css']",
+    "dom": [
+      "link#eventon_dynamic_styles-css, link[href*='/css/eventon_styles\\.css']"
+    ],
     "icon": "eventon.png",
     "website": "https://www.myeventon.com"
   },
@@ -1932,7 +1973,9 @@
       111
     ],
     "description": "EveryAction provides fundraising software, donor management software, and CRM software to nonprofit organisations.",
-    "dom": "a[href*='secure.everyaction.com/'], div[data-form-url*='secure.everyaction.com/']",
+    "dom": [
+      "a[href*='secure.everyaction.com/'], div[data-form-url*='secure.everyaction.com/']"
+    ],
     "icon": "EveryAction.svg",
     "pricing": [
       "mid",
@@ -1969,7 +2012,9 @@
       67
     ],
     "description": "Evidon is a transparency company that helps organizations educate consumers on how and why data is collected, as well as provide consumers with the ability to give and withdraw consent to their data being used.",
-    "dom": "a[href*='info.evidon.com/pub_info/']",
+    "dom": [
+      "a[href*='info.evidon.com/pub_info/']"
+    ],
     "icon": "Evidon.png",
     "js": {
       "EB.EvidonConsent": "",
@@ -2110,7 +2155,9 @@
       105
     ],
     "description": "Expivi specialises in 3D visualisation technology for ecommerce stores.",
-    "dom": "iframe[src*='.expivi.net/']",
+    "dom": [
+      "iframe[src*='.expivi.net/']"
+    ],
     "icon": "Expivi.svg",
     "js": {
       "ExpiviComponent": "",
@@ -2199,7 +2246,9 @@
       87
     ],
     "description": "Extendify is a popular platform used by WordPress site owners to create high-performing and highly-aesthetic websites with ease.",
-    "dom": "link[href*='/plugins/extendify/'], #extendify-utility-styles-css",
+    "dom": [
+      "link[href*='/plugins/extendify/'], #extendify-utility-styles-css"
+    ],
     "icon": "Extendify.png",
     "oss": true,
     "requires": [
@@ -2212,7 +2261,9 @@
       80
     ],
     "description": "ExtendThemes Calliope is an flexible, multipurpose WordPress child theme of Colibri WP.",
-    "dom": "link[href*='/wp-content/themes/calliope/']",
+    "dom": [
+      "link[href*='/wp-content/themes/calliope/']"
+    ],
     "icon": "ExtendThemes.svg",
     "requires": [
       "WordPress"
@@ -2227,7 +2278,9 @@
       80
     ],
     "description": "ExtendThemes EmpowerWP is an flexible, multipurpose WordPress theme.",
-    "dom": "link[href*='/wp-content/themes/empowerwp']",
+    "dom": [
+      "link[href*='/wp-content/themes/empowerwp']"
+    ],
     "excludes": [
       "ExtendThemes Mesmerize"
     ],
@@ -2251,7 +2304,9 @@
       80
     ],
     "description": "ExtendThemes Highlight is an flexible, multipurpose WordPress theme.",
-    "dom": "link[href*='/wp-content/themes/highlight/'], link[href*='/wp-content/themes/highlight-pro/']",
+    "dom": [
+      "link[href*='/wp-content/themes/highlight/'], link[href*='/wp-content/themes/highlight-pro/']"
+    ],
     "excludes": [
       "ExtendThemes Mesmerize"
     ],
@@ -2275,7 +2330,9 @@
       80
     ],
     "description": "ExtendThemes Materialis is an flexible, multipurpose WordPress theme.",
-    "dom": "link#materialis-style-css",
+    "dom": [
+      "link#materialis-style-css"
+    ],
     "icon": "ExtendThemes.svg",
     "js": {
       "MaterialisTheme": "",
@@ -2301,7 +2358,9 @@
       80
     ],
     "description": "ExtendThemes Mesmerize is an flexible, multipurpose WordPress theme.",
-    "dom": "link#mesmerize-style-css",
+    "dom": [
+      "link#mesmerize-style-css"
+    ],
     "icon": "ExtendThemes.svg",
     "js": {
       "MesmerizeKube": "",
@@ -2329,7 +2388,9 @@
       84
     ],
     "description": "Extole is an online marketing platform that enables brands and businesses to get new customers through loyalty and referral programs.",
-    "dom": "li > a[href*='.extole.com/'][target='_blank']",
+    "dom": [
+      "li > a[href*='.extole.com/'][target='_blank']"
+    ],
     "icon": "Extole.png",
     "js": {
       "extole.VERSION": "^([\\d\\.]+)$\\;version:\\1"
@@ -2470,7 +2531,9 @@
       6
     ],
     "description": "eDokan is hosted ecommerce platform with drag-drop template builder and zero programming knowledge.",
-    "dom": "img[src*='cdn.edokan.co']",
+    "dom": [
+      "img[src*='cdn.edokan.co']"
+    ],
     "icon": "eDokan.png",
     "implies": [
       "Node.js",
@@ -2489,7 +2552,9 @@
       5
     ],
     "description": "eKomi is a German supplier and product review service.",
-    "dom": ".ekomi-widget-container",
+    "dom": [
+      ".ekomi-widget-container"
+    ],
     "icon": "eKomi.png",
     "js": {
       "ekomiWidgetMain": ""
@@ -2505,7 +2570,9 @@
       19
     ],
     "description": "eNamad is an electronic trust symbol.",
-    "dom": "a[href*='.enamad.ir/'][target='_blank'], div.e-namad-widget-wrapper, img[src*='.enamad.ir/']",
+    "dom": [
+      "a[href*='.enamad.ir/'][target='_blank'], div.e-namad-widget-wrapper, img[src*='.enamad.ir/']"
+    ],
     "icon": "eNamad.png",
     "meta": {
       "enamad": "^\\d+$"
@@ -2536,7 +2603,9 @@
       68
     ],
     "description": "eSSENTIAL Accessibility is a digital accessibility-as-a-service platform.",
-    "dom": " a[href*='.essentialaccessibility.com'] > img",
+    "dom": [
+      " a[href*='.essentialaccessibility.com'] > img"
+    ],
     "icon": "eSSENTIAL Accessibility.png",
     "pricing": [
       "poa"

@@ -49,7 +49,9 @@
       14
     ],
     "description": "30namaPlayer is a modified version of Video.js to work with videos on HTML using javascript.",
-    "dom": "section[class*='player30nama']",
+    "dom": [
+      "section[class*='player30nama']"
+    ],
     "icon": "30namaPlayer.png",
     "website": "https://30nama.com/"
   },
@@ -58,7 +60,9 @@
       36
     ],
     "description": "33Across is a technology company focused on solving the challenge of consumer attention for automated advertising.",
-    "dom": "iframe[src*='.33across.com'], link[href*='.33across.com'], link[href*='.tynt.com']",
+    "dom": [
+      "iframe[src*='.33across.com'], link[href*='.33across.com'], link[href*='.tynt.com']"
+    ],
     "icon": "33Across.png",
     "js": {
       "Tynt": ""
@@ -149,7 +153,9 @@
       31
     ],
     "description": "5centsCDN is a content delivery networks service provider.",
-    "dom": "link[href*='.5centscdn.com/']",
+    "dom": [
+      "link[href*='.5centscdn.com/']"
+    ],
     "headers": {
       "x-cdn": "^5centsCDN$"
     },
@@ -207,7 +213,9 @@
       105
     ],
     "description": "<model-viewer> is an open-source web component developed by Google and maintained through GitHub. <model-viewer> aims at putting 3D content on the web easily with a few lines of HTML code. This was first introduced with Chrome 72 in July 2019 and enables users to view 3D in the browser and mobile devices.",
-    "dom": "model-viewer",
+    "dom": [
+      "model-viewer"
+    ],
     "icon": "model-viewer.svg",
     "oss": true,
     "scriptSrc": [

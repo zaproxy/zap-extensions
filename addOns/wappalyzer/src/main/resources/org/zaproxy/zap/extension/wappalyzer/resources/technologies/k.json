@@ -64,7 +64,9 @@
       "NS": "ns\\d\\.kmkhosting\\.net",
       "SOA": "ns\\d\\.kmkhosting\\.net"
     },
-    "dom": "a[href*='.kmk.net.tr/'][target='_blank'], div#kmkCopyright",
+    "dom": [
+      "a[href*='.kmk.net.tr/'][target='_blank'], div#kmkCopyright"
+    ],
     "icon": "KMK.svg",
     "pricing": [
       "recurring",
@@ -137,7 +139,9 @@
       87
     ],
     "description": "Kadence WP Blocks is a plugin for WordPress that provides a collection of custom blocks for the Gutenberg editor, allowing users to create custom layouts and designs for their website without needing to know how to code.",
-    "dom": "link[href*='/wp-content/plugins/kadence-blocks/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/kadence-blocks/']"
+    ],
     "icon": "Kadence WP.svg",
     "implies": [
       "Gutenberg"
@@ -160,7 +164,9 @@
       80
     ],
     "description": "Kadence WP Kadence is a multipurpose WordPress theme that is available for free download and also offers a pro version.",
-    "dom": "link#kadence-global-css",
+    "dom": [
+      "link#kadence-global-css"
+    ],
     "icon": "Kadence WP.svg",
     "js": {
       "kadence": "",
@@ -185,7 +191,9 @@
       80
     ],
     "description": "Kadence WP Virtue is a multipurpose WordPress theme that is available for free download and also offers a pro version.",
-    "dom": "link[href*='/wp-content/themes/virtue/']",
+    "dom": [
+      "link[href*='/wp-content/themes/virtue/']"
+    ],
     "icon": "Kadence WP.svg",
     "pricing": [
       "freemium",
@@ -205,7 +213,9 @@
       80
     ],
     "description": "Vogue is a very easy to use multipurpose WordPress theme created by Kaira.",
-    "dom": "link#vogue-style-css",
+    "dom": [
+      "link#vogue-style-css"
+    ],
     "icon": "Kaira.png",
     "pricing": [
       "freemium",
@@ -241,7 +251,9 @@
       19
     ],
     "description": "Kakao platform provides various services such as Kakao Talk, Kakao Talk Channel, Kakao Story as well as Kakao Pay, Kakao Commerce, Kakao Page provided by the subsidiaries. Users can use all Kakao platform services with a united account called Kakao Account.",
-    "dom": "a[href*='.kakao.com/'][target='_blank']",
+    "dom": [
+      "a[href*='.kakao.com/'][target='_blank']"
+    ],
     "icon": "Kakao.svg",
     "js": {
       "Kakao.VERSION": "^([\\d\\.]+)$\\;version:\\1"
@@ -257,7 +269,9 @@
       103
     ],
     "description": "Kaltura is a video content management platform that allows users to upload, manage, share, publish, and stream videos.",
-    "dom": "link[href*='.kaltura.com'], div.kaltura-zone",
+    "dom": [
+      "link[href*='.kaltura.com'], div.kaltura-zone"
+    ],
     "icon": "Kaltura.svg",
     "js": {
       "Kplayer": "",
@@ -288,7 +302,9 @@
       "kameleoonVisitorCode": ""
     },
     "description": "Kameleoon is a personalisation technology platform for real-time omnichannel optimisation and conversion.",
-    "dom": "link[href*='.kameleoon.eu/kameleoon.js']",
+    "dom": [
+      "link[href*='.kameleoon.eu/kameleoon.js']"
+    ],
     "icon": "Kameleoon.svg",
     "js": {
       "Kameleoon.Gatherer.SCRIPT_VERSION": "(.+)\\;version:\\1",
@@ -406,7 +422,9 @@
       32
     ],
     "description": "Kartra is an online business platform that offers marketing and sales tools.",
-    "dom": "form[action*='app.kartra.com']",
+    "dom": [
+      "form[action*='app.kartra.com']"
+    ],
     "icon": "Kartra.svg",
     "js": {
       "init_kartra_tracking": "",
@@ -445,7 +463,9 @@
       53
     ],
     "description": "Keap offers an email marketing and sales platform for small businesses, including products to manage customers, customer relationship management, marketing, and ecommerce.",
-    "dom": "form[action*='property.infusionsoft.com'], link[href*='.infusionsoft.com']",
+    "dom": [
+      "form[action*='property.infusionsoft.com'], link[href*='.infusionsoft.com']"
+    ],
     "icon": "Keap.svg",
     "pricing": [
       "low",
@@ -479,7 +499,9 @@
       59
     ],
     "description": "Keen-Slider is a free library agnostic touch slider with native touch/swipe behavior.",
-    "dom": "div.keen-slider, div.keen-slider__slide",
+    "dom": [
+      "div.keen-slider, div.keen-slider__slide"
+    ],
     "icon": "keen-slider.svg",
     "js": {
       "KeenSlider": ""
@@ -605,7 +627,9 @@
       36
     ],
     "description": "Kevel (formerly Adzerk) is a developer of ad-serving APIs to help developers build server-side ad platforms.",
-    "dom": "iframe[src*='adzerk.net'], link[href*='adzerk.net']",
+    "dom": [
+      "iframe[src*='adzerk.net'], link[href*='adzerk.net']"
+    ],
     "icon": "Kevel.svg",
     "js": {
       "ados": "",
@@ -720,7 +744,9 @@
     "cookies": {
       "_kicksite_session": ""
     },
-    "dom": "iframe[src*='.kicksite.net/']",
+    "dom": [
+      "iframe[src*='.kicksite.net/']"
+    ],
     "pricing": [
       "mid",
       "recurring"
@@ -749,7 +775,9 @@
       111
     ],
     "description": "Kindful is a cloud-based donor management and fundraising software and database designed for nonprofit organisations.",
-    "dom": "a[href*='.kindful.com/']",
+    "dom": [
+      "a[href*='.kindful.com/']"
+    ],
     "icon": "Kindful.svg",
     "js": {
       "Bloomerang.version": "([\\d\\.]+)\\;version:\\1",
@@ -797,7 +825,9 @@
       87
     ],
     "description": "Kirki Customizer Framework is a toolkit allowing WordPress developers to use the Customizer and take advantage of its advanced features and flexibility by abstracting the code.",
-    "dom": "link[href*='/wp-content/plugins/kirki/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/kirki/']"
+    ],
     "icon": "Kirki Customizer Framework.png",
     "pricing": [
       "freemium",
@@ -816,7 +846,9 @@
       6
     ],
     "description": "KitCart is a cloud-based solution that helps businesses build ecommerce stores, manage inventory, and more.",
-    "dom": "a[href*='kitcart.net'][target='_blank'], form[action*='kitcart.net/']",
+    "dom": [
+      "a[href*='kitcart.net'][target='_blank'], form[action*='kitcart.net/']"
+    ],
     "icon": "Kitcart.png",
     "implies": [
       "Laravel",
@@ -859,7 +891,9 @@
       "ku1-vid": ""
     },
     "description": "Klarna Checkout is a complete payment solution where Klarna handles a store's entire checkout.",
-    "dom": "[aria-labelledby='pi-klarna']",
+    "dom": [
+      "[aria-labelledby='pi-klarna']"
+    ],
     "headers": {
       "content-security-policy": "\\.klarna(?:cdn|services)\\.(?:net|com)"
     },
@@ -992,7 +1026,9 @@
       75
     ],
     "description": "Knak is a platform that provides customisable email and landing page templates to simplify the creation of visually appealing marketing campaigns.",
-    "dom": "img[src*='.knak.io/']",
+    "dom": [
+      "img[src*='.knak.io/']"
+    ],
     "icon": "Knak.svg",
     "pricing": [
       "poa",
@@ -1019,7 +1055,9 @@
       111
     ],
     "description": "Ko-fi is an online platform that helps content creators get the financial support.",
-    "dom": "a[href*='ko-fi.com/'][target='_blank']",
+    "dom": [
+      "a[href*='ko-fi.com/'][target='_blank']"
+    ],
     "icon": "Ko-fi.svg",
     "js": {
       "kofiwidget2": ""
@@ -1185,7 +1223,9 @@
       16
     ],
     "description": "Konduto is a fraud detection service for ecommerce.",
-    "dom": "link[href*='.konduto.com']",
+    "dom": [
+      "link[href*='.konduto.com']"
+    ],
     "icon": "Konduto.png",
     "js": {
       "Konduto": "",
@@ -1221,7 +1261,9 @@
       1
     ],
     "description": "Kontent.ai is a SaaS-based modular content platform.",
-    "dom": "img[src*='.kc-usercontent.com'], link[href*='.kc-usercontent.com']",
+    "dom": [
+      "img[src*='.kc-usercontent.com'], link[href*='.kc-usercontent.com']"
+    ],
     "headers": {
       "content-security-policy": "\\.kc-usercontent\\.com"
     },
@@ -1268,7 +1310,9 @@
       6
     ],
     "description": "Kooomo is a SaaS ecommerce platform with a focus on localisation and internationalisation.",
-    "dom": "img[src*='.kooomo-cloud.com']",
+    "dom": [
+      "img[src*='.kooomo-cloud.com']"
+    ],
     "icon": "Kooomo.svg",
     "implies": [
       "PHP",
@@ -1347,7 +1391,9 @@
       47
     ],
     "cpe": "cpe:2.3:a:kubernetes:kubernetes:*:*:*:*:*:*:*:*",
-    "dom": "[ng-app='kubernetesDashboard']",
+    "dom": [
+      "[ng-app='kubernetesDashboard']"
+    ],
     "icon": "Kubernetes.svg",
     "website": "https://kubernetes.io/"
   },
@@ -1418,7 +1464,9 @@
       6
     ],
     "description": "k-eCommerce is mdf commerce’s platform for SMBs, providing all-in-one ecommerce and digital payment solutions integrated to Microsoft Dynamics and SAP Business One. ",
-    "dom": "a[href*='.k-ecommerce.com/'][target='_blank']",
+    "dom": [
+      "a[href*='.k-ecommerce.com/'][target='_blank']"
+    ],
     "icon": "k-eCommerce.png",
     "meta": {
       "generator": "k-eCommerce"

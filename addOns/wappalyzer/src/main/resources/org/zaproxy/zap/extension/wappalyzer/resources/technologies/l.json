@@ -32,7 +32,9 @@
       69
     ],
     "description": "LINE Login is an API that allows you to implement a login function into your services, regardless of whether they are web apps or native apps.",
-    "dom": "a[href*='access.line.me/']",
+    "dom": [
+      "a[href*='access.line.me/']"
+    ],
     "icon": "LINE.svg",
     "js": {
       "Constants.authorization_request_url": "access\\.line\\.me/oauth2/v([\\d\\.]+)/\\;version:\\1"
@@ -44,7 +46,9 @@
       36
     ],
     "description": "LKQD is a video advertising platform that enables publishers to serve video ads across multiple devices and formats.",
-    "dom": "iframe[src*='.lkqd.net']",
+    "dom": [
+      "iframe[src*='.lkqd.net']"
+    ],
     "icon": "LKQD.svg",
     "js": {
       "lkqdCall": "",
@@ -203,7 +207,9 @@
       91
     ],
     "description": "LatitudePay is an interest-free, buy now, pay later solution.",
-    "dom": "a[href*='latitudepay.com/'][target='_blank'], img[src='.latitudepayapps.com/']",
+    "dom": [
+      "a[href*='latitudepay.com/'][target='_blank'], img[src='.latitudepayapps.com/']"
+    ],
     "icon": "LatitudePay.svg",
     "js": {
       "checkout.enabledpayments.latitudepay": "^true$",
@@ -223,7 +229,9 @@
       85
     ],
     "description": "LaunchDarkly is a continuous delivery and feature flags as a service platform that integrates into a company's current development cycle.",
-    "dom": "link[href*='.launchdarkly.com']",
+    "dom": [
+      "link[href*='.launchdarkly.com']"
+    ],
     "icon": "LaunchDarkly.svg",
     "js": {
       "DDC.WS.state": "",
@@ -272,7 +280,9 @@
       91
     ],
     "description": "Laybuy is a payment service that lets you receive your purchase now and spread the total cost over 6 weekly automatic payments interest free.",
-    "dom": "iframe[src='.laybuy.com/'], a[href*='.laybuy.com/what-is-laybuy']",
+    "dom": [
+      "iframe[src='.laybuy.com/'], a[href*='.laybuy.com/what-is-laybuy']"
+    ],
     "icon": "LayBuy.svg",
     "js": {
       "LaybuyHelper": "",
@@ -325,6 +335,7 @@
       "layui.v": "([\\d\\.]+)\\;version:\\1"
     },
     "oss": true,
+    "cpe": "cpe:2.3:a:layui:layui:*:*:*:*:*:*:*:*",
     "website": "https://layui.gitee.io"
   },
   "Lazada": {
@@ -463,7 +474,8 @@
       "L.version": "^(.+)$\\;version:\\1\\;confidence:0"
     },
     "scriptSrc": [
-      "(?:((?:\\d+\\.)+\\d+)\\/(?:dist\\/)?)?leaflet[\\w\\-\\.]{0,32}\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?(?!.+shopify)\\;version:\\1\\2"
+      "(?:(?:dist\\/)?)?leaflet[\\w\\-\\.]{0,32}\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?(?!.+shopify)\\;version:\\1",
+      "(?:((?:\\d+\\.)+\\d+)\\/(?:dist\\/)?)?leaflet[\\w\\-\\.]{0,32}\\.js(?!.+shopify)\\;version:\\1"
     ],
     "website": "https://leafletjs.com"
   },
@@ -756,7 +768,9 @@
       101
     ],
     "description": "Lever is a software company headquartered in San Francisco, California and Toronto, Canada that provides an applicant tracking system for hiring.",
-    "dom": "a[href*='jobs.lever.co/']",
+    "dom": [
+      "a[href*='jobs.lever.co/']"
+    ],
     "headers": {
       "Content-Security-Policy": "\\.lever\\.co"
     },
@@ -783,7 +797,9 @@
       41
     ],
     "description": "Liberapay is a non-profit organisation subscription payment platform.",
-    "dom": "a[href*='//liberapay.com/'][target='_blank']",
+    "dom": [
+      "a[href*='//liberapay.com/'][target='_blank']"
+    ],
     "icon": "Liberapay.svg",
     "scriptSrc": [
       "//liberapay\\.com/"
@@ -795,7 +811,9 @@
       19
     ],
     "description": "Libravatar is a service for fetching avatar images for e-mail addresses and OpenIDs in a privacy respecting way.",
-    "dom": "img[src*='.libravatar.org/avatar/']",
+    "dom": [
+      "img[src*='.libravatar.org/avatar/']"
+    ],
     "icon": "libravatar.png",
     "oss": true,
     "website": "https://www.libravatar.org/"
@@ -899,7 +917,9 @@
       80
     ],
     "description": "Lightning is a very simple and easy to customize WordPress theme which is based on the Bootstrap.",
-    "dom": "link[href*='/wp-content/themes/lightning/'], link[href*='/wp-content/themes/lightning-pro/']",
+    "dom": [
+      "link[href*='/wp-content/themes/lightning/'], link[href*='/wp-content/themes/lightning-pro/']"
+    ],
     "icon": "Lightning.png",
     "js": {
       "lightningOpt.header_scrool": ""
@@ -995,7 +1015,9 @@
       16
     ],
     "description": "Limit Login Attempts Reloaded stops brute-force attacks and optimizes your site performance by limiting the number of login attempts that are possible through the normal login as well as XMLRPC, Woocommerce and custom login pages.",
-    "dom": "link#llar-login-page-styles-css",
+    "dom": [
+      "link#llar-login-page-styles-css"
+    ],
     "icon": "Limit Login Attempts Reloaded.png",
     "pricing": [
       "freemium",
@@ -1127,7 +1149,9 @@
       76
     ],
     "description": "Linx Impulse is a personalisation, media and retargeting solutions built by Linx.",
-    "dom": "link[href*='.linximpulse.net']",
+    "dom": [
+      "link[href*='.linximpulse.net']"
+    ],
     "icon": "Linx.png",
     "js": {
       "linx.banner": "",
@@ -1419,7 +1443,9 @@
       67
     ],
     "description": "LiveRamp PCM is a preference and consent management platform that enables comply with the ePrivacy Directive, GDPR, CCPA, and other data protection and privacy laws and regulations.",
-    "dom": "iframe[src*='gdpr-consent-tool\\.privacymanager\\.io']",
+    "dom": [
+      "iframe[src*='gdpr-consent-tool\\.privacymanager\\.io']"
+    ],
     "icon": "LiveRamp.svg",
     "js": {
       "wpJsonpLiverampGdprCmp": ""
@@ -1468,7 +1494,9 @@
     ],
     "cpe": "cpe:2.3:a:livezilla:livezilla:*:*:*:*:*:*:*:*",
     "description": "LiveZilla is a web-based live support platform.",
-    "dom": "#lz_overlay_chat",
+    "dom": [
+      "#lz_overlay_chat"
+    ],
     "icon": "LiveZilla.png",
     "js": {
       "lz_chat_execute": "",
@@ -1580,7 +1608,9 @@
       59
     ],
     "description": "Loadable-Components is a library to solve the React code-splitting client-side and server-side.",
-    "dom": "script#__LOADABLE_REQUIRED_CHUNKS__",
+    "dom": [
+      "script#__LOADABLE_REQUIRED_CHUNKS__"
+    ],
     "icon": "Loadable-Components.png",
     "js": {
       "__LOADABLE_LOADED_CHUNKS__": ""
@@ -1758,7 +1788,9 @@
       10
     ],
     "description": "Loggly is a cloud-based log management service provider.",
-    "dom": "link[href*='.loggly.com']",
+    "dom": [
+      "link[href*='.loggly.com']"
+    ],
     "icon": "Loggly.svg",
     "js": {
       "LogglyTracker": ""
@@ -1938,7 +1970,9 @@
       102
     ],
     "description": "Loop Returns is a return portal that automated all the returns and refunds of products.",
-    "dom": "a[href*='.loopreturns.com/']",
+    "dom": [
+      "a[href*='.loopreturns.com/']"
+    ],
     "icon": "Loop.svg",
     "js": {
       "Loop.config.variantParam": "",
@@ -1980,7 +2014,9 @@
       94
     ],
     "description": "Lootly is a loyalty and referral marketing automation software suite for ecommerce businesses.",
-    "dom": "iframe[src*='lootly.io/']",
+    "dom": [
+      "iframe[src*='lootly.io/']"
+    ],
     "icon": "Lootly.png",
     "js": {
       "Lootly.config": "",
@@ -2036,7 +2072,9 @@
       19
     ],
     "description": "LottieFiles is an open-source animation file format that's tiny, high quality, interactive, and can be manipulated at runtime.",
-    "dom": "lottie-player, div[data-animation-type='lottie'], div[data-testid='lottie-player'], clipPath[id*='__lottie_element_']",
+    "dom": [
+      "lottie-player, div[data-animation-type='lottie'], div[data-testid='lottie-player'], clipPath[id*='__lottie_element_']"
+    ],
     "icon": "LottieFiles.svg",
     "js": {
       "lottie.version": "^(.+)$\\;version:\\1"
@@ -2130,7 +2168,9 @@
       10
     ],
     "description": "Lucky Orange is a conversion optimisation tool with features including heatmaps, session recording, conversion funnels, form analytics, and chat.",
-    "dom": "link[href*='.luckyorange.com']",
+    "dom": [
+      "link[href*='.luckyorange.com']"
+    ],
     "icon": "Lucky Orange.svg",
     "js": {
       "__wtw_lucky_site_id": ""
@@ -2177,7 +2217,9 @@
       105
     ],
     "description": "Luna is a company that sells software that aids eyewear companies sell their products online using virtual fitting.",
-    "dom": "link[href*='bsdk.api.ditto.com']",
+    "dom": [
+      "link[href*='bsdk.api.ditto.com']"
+    ],
     "headers": {
       "Content-Security-Policy": "bsdk\\.api\\.ditto.com"
     },
@@ -2342,7 +2384,9 @@
       59
     ],
     "description": "The lite-youtube-embed technique renders the YouTube video inside the IFRAME tag only when the play button in clicked thus improving the core web vitals score of your website.",
-    "dom": "lite-youtube",
+    "dom": [
+      "lite-youtube"
+    ],
     "implies": [
       "YouTube"
     ],

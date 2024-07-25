@@ -18,7 +18,9 @@
       6
     ],
     "description": "GEOvendas is an ecommerce platform with analytics, sales force, B2B and B2C products.",
-    "dom": "a[href*='geovendas.com.br'][target='_blank']",
+    "dom": [
+      "a[href*='geovendas.com.br'][target='_blank']"
+    ],
     "icon": "GEOvendas.svg",
     "pricing": [
       "mid",
@@ -184,7 +186,9 @@
       89
     ],
     "description": "GTranslate is a website translator which can translate any website to any language automatically.",
-    "dom": "link[href*='/wp-content/plugins/gtranslate/'], img[src*='/wp-content/plugins/gtranslate/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/gtranslate/'], img[src*='/wp-content/plugins/gtranslate/']"
+    ],
     "icon": "GTranslate.svg",
     "pricing": [
       "freemium",
@@ -202,7 +206,9 @@
       89
     ],
     "description": "GTranslate app is a website translator which can translate any website to any language automatically.",
-    "dom": "img[src*='gtranslate.io/shopify']",
+    "dom": [
+      "img[src*='gtranslate.io/shopify']"
+    ],
     "icon": "GTranslate.svg",
     "pricing": [
       "freemium",
@@ -295,7 +301,9 @@
       12
     ],
     "description": "Gatsby is a React-based open-source framework with performance, scalability and security built-in.",
-    "dom": "div#___gatsby, style#gatsby-inlined-css",
+    "dom": [
+      "div#___gatsby, style#gatsby-inlined-css"
+    ],
     "icon": "Gatsby.svg",
     "implies": [
       "React",
@@ -311,7 +319,9 @@
       31
     ],
     "description": "Image CDN is a new feature of hosting on Gatsby Cloud. Instead of processing images at build time, Image CDN defers and offloads image processing to the edge.",
-    "dom": "img[srcset*='/_gatsby/image/'], source[srcset*='/_gatsby/image/']",
+    "dom": [
+      "img[srcset*='/_gatsby/image/'], source[srcset*='/_gatsby/image/']"
+    ],
     "icon": "Gatsby.svg",
     "pricing": [
       "freemium",
@@ -420,7 +430,9 @@
       51
     ],
     "description": "GenerateBlocks is a WordPress plugin that has the trappings of a page builder.",
-    "dom": "link#generateblocks-css",
+    "dom": [
+      "link#generateblocks-css"
+    ],
     "icon": "GenerateBlocks.svg",
     "pricing": [
       "freemium",
@@ -488,7 +500,8 @@
     ],
     "saas": true,
     "scriptSrc": [
-      "wp-content\\/plugins\\/gp-premium(?:\\/menu-plus)?(?:\\/sections)?\\/functions\\/js(?:\\/offside)?(?:\\/parallax)?(?:\\/sticky)?(?:\\.min)?(?:-((?:\\d+\\.)+\\d+))?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2"
+      "wp-content\\/plugins\\/gp-premium(?:\\/menu-plus)?(?:\\/sections)?\\/functions\\/js(?:\\/offside)?(?:\\/parallax)?(?:\\/sticky)?(?:\\.min)?(?:-)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+      "wp-content\\/plugins\\/gp-premium(?:\\/menu-plus)?(?:\\/sections)?\\/functions\\/js(?:\\/offside)?(?:\\/parallax)?(?:\\/sticky)?(?:\\.min)?(?:-((?:\\d+\\.)+\\d+))?\\.js\\;version:\\1"
     ],
     "website": "https://docs.generatepress.com/article/installing-gp-premium/"
   },
@@ -537,7 +550,9 @@
       36
     ],
     "description": "Geniee is an ad technology company.",
-    "dom": "img[src*='.gssprt.jp/'], link[href*='.gssprt.jp']",
+    "dom": [
+      "img[src*='.gssprt.jp/'], link[href*='.gssprt.jp']"
+    ],
     "icon": "Geniee.png",
     "pricing": [
       "poa"
@@ -644,7 +659,9 @@
       6
     ],
     "description": "GetMeAShop is a cloud-based ecommerce solution for small and midsize businesses across industries such as retail and manufacturing.",
-    "dom": "link[href*='.getmeashop.com']",
+    "dom": [
+      "link[href*='.getmeashop.com']"
+    ],
     "icon": "GetMeAShop.png",
     "js": {
       "gmas_base_url": "'\\.getmeashop\\.com",
@@ -663,7 +680,9 @@
       75
     ],
     "description": "GetResponse is an email marketing app that allows you to create a mailing list and capture data onto it.",
-    "dom": "form[action*='.getresponse.com/']",
+    "dom": [
+      "form[action*='.getresponse.com/']"
+    ],
     "icon": "GetResponse.svg",
     "js": {
       "GRAPP": "",
@@ -863,6 +882,7 @@
       "low",
       "recurring"
     ],
+    "cpe": "cpe:2.3:a:gitbook:gitbook:*:*:*:*:*:*:*:*",
     "saas": true,
     "url": [
       "^https?://[^/]+\\.gitbook\\.com/"
@@ -965,7 +985,9 @@
       111
     ],
     "description": "GiveCampus is a fundraising platform for nonprofit educational institutions.",
-    "dom": "a[href*='.givecampus.com/']",
+    "dom": [
+      "a[href*='.givecampus.com/']"
+    ],
     "icon": "GiveCampus.png",
     "meta": {
       "author": "^GiveCampus$"
@@ -982,7 +1004,9 @@
       111
     ],
     "description": "GiveSmart is an event fund gathering technology that offers customisable event size, mobile bidding, text-to-donate, enhanced dashboard and reporting, seating arrangement, and more.",
-    "dom": "a[href*='.givesmart.com/']",
+    "dom": [
+      "a[href*='.givesmart.com/']"
+    ],
     "icon": "GiveSmart.svg",
     "pricing": [
       "poa"
@@ -1021,7 +1045,9 @@
       111
     ],
     "description": "GivingFuel is a fundraising software solution.",
-    "dom": "a[href*='.givingfuel.com/']",
+    "dom": [
+      "a[href*='.givingfuel.com/']"
+    ],
     "icon": "GivingFuel.png",
     "pricing": [
       "freemium",
@@ -1101,7 +1127,9 @@
       59
     ],
     "description": "Glide.js is a dependency-free JavaScript ES6 slider and carousel.",
-    "dom": "div[data-glide-el]",
+    "dom": [
+      "div[data-glide-el]"
+    ],
     "icon": "Glide.js.svg",
     "js": {
       "Glide": ""
@@ -1431,7 +1459,9 @@
       "_gocertify_session": ""
     },
     "description": "GoCertify is a conversion-focused and cost-effective way to verify students, key workers, under-26s, over-60s, military and more for exclusive discounts.",
-    "dom": "a[href*='secure.gocertify.me']",
+    "dom": [
+      "a[href*='secure.gocertify.me']"
+    ],
     "icon": "GoCertify.png",
     "pricing": [
       "poa",
@@ -1465,7 +1495,9 @@
       51
     ],
     "description": "GoDaddy CoBlocks is a suite of professional page building content blocks for the WordPress Gutenberg block editor.",
-    "dom": "link[href*='/wp-content/plugins/coblocks/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/coblocks/']"
+    ],
     "icon": "GoDaddy.svg",
     "oss": true,
     "requires": [
@@ -1492,7 +1524,9 @@
       80
     ],
     "description": "GoDaddy Escapade is a GoDaddy Primer child theme with a unique sidebar navigation.",
-    "dom": "link[href*='/wp-content/themes/escapade/']",
+    "dom": [
+      "link[href*='/wp-content/themes/escapade/']"
+    ],
     "excludes": [
       "GoDaddy Primer"
     ],
@@ -1507,7 +1541,9 @@
       80
     ],
     "description": "GoDaddy Go is a flexible Gutenberg-first WordPress theme built for go-getters everywhere.",
-    "dom": "link#go-style-css",
+    "dom": [
+      "link#go-style-css"
+    ],
     "icon": "GoDaddy.svg",
     "js": {
       "goFrontend.openMenuOnHover": ""
@@ -1526,7 +1562,9 @@
       80
     ],
     "description": "GoDaddy Lyrical is a GoDaddy Primer child theme with a focus on photography and beautiful fonts.",
-    "dom": "link[href*='/wp-content/themes/lyrical/']",
+    "dom": [
+      "link[href*='/wp-content/themes/lyrical/']"
+    ],
     "excludes": [
       "GoDaddy Primer"
     ],
@@ -1552,7 +1590,9 @@
       80
     ],
     "description": "GoDaddy Primer is a powerful theme that brings clarity to your content in a fresh design. This is the parent for all themes in the GoDaddy Primer theme family.",
-    "dom": "link[href*='/wp-content/themes/primer/']",
+    "dom": [
+      "link[href*='/wp-content/themes/primer/']"
+    ],
     "icon": "GoDaddy.svg",
     "requires": [
       "WordPress"
@@ -1567,7 +1607,9 @@
       80
     ],
     "description": "GoDaddy Uptown Style is a GoDaddy Primer child theme with elegance and class.",
-    "dom": "link[href*='/wp-content/themes/uptown-style/']",
+    "dom": [
+      "link[href*='/wp-content/themes/uptown-style/']"
+    ],
     "excludes": [
       "GoDaddy Primer"
     ],
@@ -1745,7 +1787,9 @@
     ],
     "description": "Google AdSense is a program run by Google through which website publishers serve advertisements that are targeted to the site content and audience.",
     "icon": "Google AdSense.svg",
-    "dom": "amp-ad[type='adsense']",
+    "dom": [
+      "amp-ad[type='adsense']"
+    ],
     "js": {
       "Goog_AdSense_": "",
       "Goog_AdSense_OsdAdapter": "",
@@ -1809,7 +1853,9 @@
       "_gat": "\\;version:UA"
     },
     "description": "Google Analytics is a free web analytics service that tracks and reports website traffic.",
-    "dom": "amp-analytics[type*=googleanalytics]",
+    "dom": [
+      "amp-analytics[type*=googleanalytics]"
+    ],
     "icon": "Google Analytics.svg",
     "js": {
       "GoogleAnalyticsObject": "",
@@ -1947,7 +1993,9 @@
       90
     ],
     "description": "Google Customer Reviews is a badge on your site that can help users identify your site with the Google brand and can be placed on any page of your site.",
-    "dom": "iframe[src*='.google.com/shopping/customerreviews/'], a[href*='.google.com/shopping/customerreviews/'][target='_blank']",
+    "dom": [
+      "iframe[src*='.google.com/shopping/customerreviews/'], a[href*='.google.com/shopping/customerreviews/'][target='_blank']"
+    ],
     "icon": "Google.svg",
     "pricing": [
       "freemium"
@@ -1985,7 +2033,9 @@
       110
     ],
     "description": "Google Forms is a free online form builder that allows you to create and publish online forms, surveys, quizzes, order forms, and more.",
-    "dom": "form[action*='docs.google.com/forms/']",
+    "dom": [
+      "form[action*='docs.google.com/forms/']"
+    ],
     "icon": "Google Forms.svg",
     "website": "https://www.google.com/forms/about/"
   },
@@ -1994,7 +2044,9 @@
       31
     ],
     "description": "Google Hosted Libraries is a stable, reliable, high-speed, globally available content distribution network for the most popular, open-source JavaScript libraries.",
-    "dom": "link[href*='ajax.googleapis.com/ajax/libs']",
+    "dom": [
+      "link[href*='ajax.googleapis.com/ajax/libs']"
+    ],
     "icon": "Google Developers.svg",
     "scriptSrc": [
       "ajax\\.googleapis\\.com/ajax/libs/"
@@ -2006,7 +2058,9 @@
       35
     ],
     "description": "Google Maps is a web mapping service. It offers satellite imagery, aerial photography, street maps, 360° interactive panoramic views of streets, real-time traffic conditions, and route planning for traveling by foot, car, bicycle and air, or public transportation.",
-    "dom": "iframe[src*='google.com/maps']",
+    "dom": [
+      "iframe[src*='google.com/maps']"
+    ],
     "icon": "Google Maps.svg",
     "js": {
       "GoogleMap": "",
@@ -2061,7 +2115,9 @@
       41
     ],
     "description": "Google Pay is a digital wallet platform and online payment system developed by Google to power in-app and tap-to-pay purchases on mobile devices, enabling users to make payments with Android phones, tablets or watches.",
-    "dom": "[aria-labelledby='pi-google_pay'], ul[data-shopify-buttoncontainer] li",
+    "dom": [
+      "[aria-labelledby='pi-google_pay'], ul[data-shopify-buttoncontainer] li"
+    ],
     "icon": "Google.svg",
     "scriptSrc": [
       "pay\\.google\\.com/([a-z/]+)/pay\\.js"
@@ -2086,7 +2142,9 @@
       69
     ],
     "description": "Google Sign-In is a secure authentication system that reduces the burden of login for users, by enabling them to sign in with their Google account.",
-    "dom": "iframe[src*='accounts.google.com/o/oauth2'], a[href*='accounts.google.com/o/oauth2']",
+    "dom": [
+      "iframe[src*='accounts.google.com/o/oauth2'], a[href*='accounts.google.com/o/oauth2']"
+    ],
     "icon": "Google.svg",
     "meta": {
       "google-signin-client_id": "",
@@ -2101,7 +2159,9 @@
     "cats": [
       1
     ],
-    "dom": "[data-abuse-proto*='https://sites.google.com/']",
+    "dom": [
+      "[data-abuse-proto*='https://sites.google.com/']"
+    ],
     "icon": "Google Sites.png",
     "url": [
       "^https?://sites\\.google\\.com"
@@ -2132,7 +2192,9 @@
       87
     ],
     "description": "Google Tag Manager for WordPress plugin places the GTM container code snippets onto your wordpress website so that you do not need to add this manually.",
-    "dom": "link[href*='/wp-content/plugins/duracelltomi-google-tag-manager/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/duracelltomi-google-tag-manager/']"
+    ],
     "icon": "Google Tag Manager for WordPress.png",
     "implies": [
       "Google Tag Manager"
@@ -2228,7 +2290,9 @@
       31
     ],
     "description": "GotiPath is a content delivery network (CDN) provider that is associated with telecom giant Telekom Malaysia Berhad.",
-    "dom": "img[src*='.gotipath.com/'], link[href*='.gpcdn.net/']",
+    "dom": [
+      "img[src*='.gotipath.com/'], link[href*='.gpcdn.net/']"
+    ],
     "headers": {
       "X-Cache": "\\.swiftserve\\.com"
     },
@@ -2465,6 +2529,7 @@
     "meta": {
       "generator": "GravCMS(?:\\s([\\d.]+))?\\;version:\\1"
     },
+    "cpe": "cpe:2.3:a:getgrav:grav:*:*:*:*:*:*:*:*",
     "website": "https://getgrav.org"
   },
   "Gravatar": {
@@ -2620,6 +2685,7 @@
     "scriptSrc": [
       "grin-sdk\\.js"
     ],
+    "cpe": "cpe:2.3:a:grin:grin:*:*:*:*:*:*:*:*",
     "website": "https://grin.co/"
   },
   "GrocerKey": {
@@ -2689,7 +2755,9 @@
       93
     ],
     "description": "Guestonline is a restaurant table booking widget.",
-    "dom": "iframe[src*='ib.guestonline.']",
+    "dom": [
+      "iframe[src*='ib.guestonline.']"
+    ],
     "icon": "Guestonline.svg",
     "pricing": [
       "low",
@@ -2721,7 +2789,9 @@
       36
     ],
     "description": "GumGum is a technology and media company specializing in contextual intelligence.",
-    "dom": "iframe[src*='gumgum.com'], img[src*='gumgum.com']",
+    "dom": [
+      "iframe[src*='gumgum.com'], img[src*='gumgum.com']"
+    ],
     "icon": "GumGum.svg",
     "pricing": [
       "low",

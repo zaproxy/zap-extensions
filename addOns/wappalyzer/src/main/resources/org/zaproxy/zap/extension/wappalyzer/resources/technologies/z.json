@@ -123,7 +123,9 @@
       80
     ],
     "description": "Zakra is flexible, fast, lightweight and modern multipurpose WordPress theme that comes with many starter free sites.",
-    "dom": "link#zakra-style-css",
+    "dom": [
+      "link#zakra-style-css"
+    ],
     "icon": "Zakra.png",
     "js": {
       "zakraFrontend": "",
@@ -312,7 +314,9 @@
       97
     ],
     "description": "Zeotap is a customer intelligence platform that helps brands better understand their customers and predict behaviors.",
-    "dom": "link[href*='.zeotap.com']",
+    "dom": [
+      "link[href*='.zeotap.com']"
+    ],
     "icon": "Zeotap.png",
     "pricing": [
       "poa"
@@ -470,7 +474,9 @@
       91
     ],
     "description": "Zip is a payment service that lets you receive your purchase now and spread the total cost over a interest-free payment schedule.",
-    "dom": "link[href*='widgets.quadpay.com/'], div[data-quadpay-src*='.quadpay.com/']",
+    "dom": [
+      "link[href*='widgets.quadpay.com/'], div[data-quadpay-src*='.quadpay.com/']"
+    ],
     "icon": "zip_pay.svg",
     "js": {
       "QuadPayShopify": "",
@@ -562,7 +568,9 @@
       72
     ],
     "description": "Zocdoc is a New York City-based company offering an online service that allows people to find and book in-person or telemedicine appointments for medical or dental care.",
-    "dom": "a[href*='www.zocdoc.com'][target='_blank']",
+    "dom": [
+      "a[href*='www.zocdoc.com'][target='_blank']"
+    ],
     "icon": "Zocdoc.svg",
     "pricing": [
       "payg"
@@ -714,7 +722,9 @@
     "cats": [
       91
     ],
-    "dom": "img[src*='zoodpay']",
+    "dom": [
+      "img[src*='zoodpay']"
+    ],
     "icon": "ZoodPay.png",
     "pricing": [
       "payg"
@@ -807,7 +817,9 @@
       93
     ],
     "description": "Zuppler is a complete and branded online ordering solution for restaurants and caterers with multi-locations.",
-    "dom": "link[href*='.zuppler.com/']",
+    "dom": [
+      "link[href*='.zuppler.com/']"
+    ],
     "icon": "Zuppler.png",
     "pricing": [
       "payg"

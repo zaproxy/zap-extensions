@@ -24,7 +24,9 @@
       1
     ],
     "description": "The Jadu Digital Platform provides the foundation of accessible, responsive and award-winning Websites, Forms, CRM and Portal solutions.",
-    "dom": "a[href*='www.jadu.net']",
+    "dom": [
+      "a[href*='www.jadu.net']"
+    ],
     "headers": {
       "Node": "jadu-web-1"
     },
@@ -40,7 +42,9 @@
       71
     ],
     "description": "JANet is an affiliate marketing network.",
-    "dom": "img[src*='.j-a-net.jp'],img[data-src*='.j-a-net.jp']",
+    "dom": [
+      "img[src*='.j-a-net.jp'],img[data-src*='.j-a-net.jp']"
+    ],
     "icon": "JANet.png",
     "website": "https://j-a-net.jp"
   },
@@ -129,7 +133,9 @@
       47
     ],
     "description": "JSS is an authoring tool for CSS which allows you to use JavaScript to describe styles in a declarative, conflict-free and reusable way.",
-    "dom": "style[data-jss]",
+    "dom": [
+      "style[data-jss]"
+    ],
     "icon": "JSS.png",
     "oss": true,
     "website": "https://cssinjs.org/"
@@ -180,7 +186,9 @@
       14
     ],
     "description": "JW Player is a online video player with video engagement analytics, custom video player skins, and live video streaming capability.",
-    "dom": "div[data-video-provider*=jwplayer]",
+    "dom": [
+      "div[data-video-provider*=jwplayer]"
+    ],
     "icon": "JW Player.svg",
     "js": {
       "jwDefaults": "",
@@ -268,7 +276,9 @@
     "cats": [
       18
     ],
-    "dom": "input[type='hidden'][name='javax.faces.ViewState']",
+    "dom": [
+      "input[type='hidden'][name='javax.faces.ViewState']"
+    ],
     "headers": {
       "X-Powered-By": "JSF(?:/([\\d.]+))?\\;version:\\1"
     },
@@ -352,7 +362,9 @@
       87
     ],
     "description": "Jetpack is a popular WordPress plugin created by Automattic, the people behind WordPress.com.",
-    "dom": "link[href*='/wp-content/plugins/jetpack/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/jetpack/']"
+    ],
     "icon": "Jetpack.svg",
     "pricing": [
       "freemium",
@@ -372,7 +384,9 @@
       87
     ],
     "description": "Jetpack Boost – Website Speed, Performance and Critical CSS.",
-    "dom": "style[id='jetpack-boost-critical-css']",
+    "dom": [
+      "style[id='jetpack-boost-critical-css']"
+    ],
     "icon": "Jetpack.svg",
     "requires": [
       "WordPress"
@@ -553,7 +567,9 @@
       76
     ],
     "description": "Jivox is a cloud-based, data-driven platform for delivering personalised digital advertising and marketing experiences at scale.",
-    "dom": "link[href*='.jivox.com']",
+    "dom": [
+      "link[href*='.jivox.com']"
+    ],
     "icon": "Jivox.svg",
     "pricing": [
       "poa"
@@ -569,7 +585,9 @@
       101
     ],
     "description": "JobAdder is a cloud-based recruitment management platform for staffing agencies and in-house corporate hiring teams.",
-    "dom": "a[href*='clientapps.jobadder.com/'], link[href*='jobadder.com']",
+    "dom": [
+      "a[href*='clientapps.jobadder.com/'], link[href*='jobadder.com']"
+    ],
     "icon": "JobAdder.png",
     "pricing": [
       "payg",
@@ -605,7 +623,9 @@
       101
     ],
     "description": "Jobvite is an applicant tracking software and recruiting platform.",
-    "dom": "a[href*='.jobvite.com/']",
+    "dom": [
+      "a[href*='.jobvite.com/']"
+    ],
     "icon": "Jobvite.png",
     "js": {
       "Jobvite": ""
@@ -786,7 +806,9 @@
       16
     ],
     "description": "Jumio is an online mobile payments and identity verification company that provides card and ID scanning and validation products for mobile and web transactions.",
-    "dom": "iframe[src*='.netverify.com/']",
+    "dom": [
+      "iframe[src*='.netverify.com/']"
+    ],
     "icon": "Jumio.svg",
     "pricing": [
       "payg",
@@ -1066,7 +1088,8 @@
       "jqueryMigrate": ""
     },
     "scriptSrc": [
-      "jquery-migrate(?:\\.min)?(?:-?((?:\\d+\\.)+\\d+))?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2"
+      "jquery-migrate(?:\\.min)?(?:-)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+      "jquery-migrate(?:\\.min)?(?:-?((?:\\d+\\.)+\\d+))?(?:\\.min)?\\.js\\;version:\\1"
     ],
     "website": "https://github.com/jquery/jquery-migrate"
   },
@@ -1083,7 +1106,8 @@
       "jQuery.mobile.version": "^(.+)$\\;version:\\1"
     },
     "scriptSrc": [
-      "jquery[.-]mobile(?:-([\\d.]))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2"
+      "jquery[.-]mobile(?:-([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
+      "jquery[.-]mobile(?:-)?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
     ],
     "website": "https://jquerymobile.com"
   },
@@ -1092,7 +1116,9 @@
       59
     ],
     "description": "jQuery Modal is an overlay dialog box or in other words, a popup window that is made to display on the top or 'overlayed' on the current page.",
-    "dom": "link[href*='jquery.modal.min.css']",
+    "dom": [
+      "link[href*='jquery.modal.min.css']"
+    ],
     "icon": "jQuery Modal.png",
     "implies": [
       "jQuery"
@@ -1156,7 +1182,8 @@
       "pjax-timeout": ""
     },
     "scriptSrc": [
-      "jquery[.-]pjax(?:-([\\d.]))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2"
+      "jquery[.-]pjax(?:-([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
+      "jquery[.-]pjax(?:-)?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
     ],
     "website": "https://github.com/defunkt/jquery-pjax"
   },
@@ -1178,7 +1205,9 @@
       31
     ],
     "description": "JSDelivr is a free public CDN for open-source projects. It can serve web files directly from the npm registry and GitHub repositories without any configuration.",
-    "dom": "link[href*='cdn.jsdelivr.net']",
+    "dom": [
+      "link[href*='cdn.jsdelivr.net']"
+    ],
     "icon": "jsdelivr-icon.svg",
     "scriptSrc": [
       "cdn\\.jsdelivr\\.net"
