@@ -48,6 +48,11 @@ public class PassiveScanWaitJob extends AutomationJob {
     }
 
     @Override
+    public boolean supportsAlertTests() {
+        return true;
+    }
+
+    @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         ExtensionPassiveScan extPScan = getExtPassiveScan();
 
