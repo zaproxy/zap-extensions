@@ -34,7 +34,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
@@ -43,7 +45,7 @@ import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
 
-public class WappalyzerPassiveScanner implements PassiveScanner {
+public class WappalyzerPassiveScanner implements PassiveScanner, OptionsChangedListener {
 
     private static final Logger LOGGER = LogManager.getLogger(WappalyzerPassiveScanner.class);
     private WappalyzerApplicationHolder applicationHolder;
@@ -358,5 +360,10 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
     @Override
     public boolean appliesToHistoryType(int historyType) {
         return PluginPassiveScanner.getDefaultHistoryTypes().contains(historyType);
+    }
+
+    @Override
+    public void optionsChanged(OptionsParam optionsParam) {
+        mode = optionsParam.getParamSet(WappalyzerParam.class).getMode();
     }
 }

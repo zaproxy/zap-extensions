@@ -77,7 +77,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     private Map<String, TechTableModel> siteTechMap;
     private boolean enabled;
-    private Mode mode;
     private WappalyzerParam wappalyzerParam;
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionWappalyzer.class);
@@ -102,8 +101,9 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             return name;
         }
 
-        static boolean getBooleanForMode(Mode mode) {
-            return Mode.EXHAUSTIVE.equals(mode);
+        @Override
+        public String toString() {
+            return getName();
         }
     }
 
@@ -151,7 +151,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         this.categories = result.getCategories();
 
         enabled = true;
-        mode = Mode.QUICK;
         wappalyzerParam = new WappalyzerParam();
         passiveScanner = new WappalyzerPassiveScanner(this);
     }
@@ -182,6 +181,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             ExtensionHookView pv = extensionHook.getHookView();
             extensionHook.getHookView().addStatusPanel(getTechPanel());
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuEvidence());
+            extensionHook.getHookView().addOptionPanel(new TechOptionsPanel());
         }
 
         this.api = new WappalyzerAPI(this);
@@ -193,6 +193,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
                         .getExtensionLoader()
                         .getExtension(ExtensionPassiveScan.class);
         extPScan.addPassiveScanner(passiveScanner);
+        extensionHook.addOptionsChangedListener(passiveScanner);
     }
 
     @Override
@@ -200,7 +201,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         super.optionsLoaded();
 
         setWappalyzer(wappalyzerParam.isEnabled());
-        setMode(wappalyzerParam.getMode());
+        passiveScanner.setMode(wappalyzerParam.getMode());
     }
 
     void setWappalyzer(boolean enabled) {
@@ -220,28 +221,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     boolean isWappalyzerEnabled() {
         return enabled;
-    }
-
-    void setMode(Mode mode) {
-        if (this.mode.equals(mode)) {
-            return;
-        }
-        this.mode = mode;
-
-        wappalyzerParam.setMode(mode);
-        getPassiveScanner().setMode(mode);
-
-        if (hasView()) {
-            ThreadUtils.invokeLater(
-                    () ->
-                            getTechPanel()
-                                    .getModeToggleButton()
-                                    .setSelected(Mode.getBooleanForMode(mode)));
-        }
-    }
-
-    Mode getMode() {
-        return mode;
     }
 
     private TechPanel getTechPanel() {
