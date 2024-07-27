@@ -202,6 +202,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
         setWappalyzer(wappalyzerParam.isEnabled());
         passiveScanner.setMode(wappalyzerParam.getMode());
+        passiveScanner.setRaiseAlerts(wappalyzerParam.isRaiseAlerts());
     }
 
     void setWappalyzer(boolean enabled) {
@@ -395,6 +396,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     private void sessionChangedEventHandler(Session session) {
         // Clear all scans
         recreateSiteTreeMap();
+        getPassiveScanner().reset();
         if (hasView()) {
             this.getTechPanel().reset();
             if (session == null) {
