@@ -24,40 +24,42 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.withSettings;
 
 import org.apache.commons.httpclient.URI;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.quality.Strictness;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.automation.AutomationEnvironment;
+import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
-import org.zaproxy.addon.automation.jobs.ActiveScanJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
-import org.zaproxy.zap.network.HttpRequestBody;
+import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.zap.testutils.TestUtils;
 
 class UrlPresenceTestUnitTest extends TestUtils {
 
-    private static HttpMessage buildMessage(String body) throws HttpMalformedHeaderException {
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET http://example.com/ HTTP/1.1");
-        msg.setResponseBody(body);
-        return msg;
+    private static final String EXPECTED_URL = "http://example.com/";
+
+    private AutomationProgress progress;
+    private AutomationJob job;
+
+    @BeforeAll
+    static void beforeAll() {
+        mockMessages(new ExtensionAutomation());
     }
 
-    @Test
-    void shouldPassTestWithOperatorOrIfSpecifiedConditionIsSatisfied() throws Exception {
-        String operator = "or";
-        AutomationProgress progress = new AutomationProgress();
-        setUpZap();
+    @BeforeEach
+    void setup() throws Exception {
+        progress = new AutomationProgress();
+        job = mock(AutomationJob.class);
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        given(job.getEnv()).willReturn(env);
+
         Model model = mock(Model.class);
         Model.setSingletonForTesting(model);
 
@@ -73,34 +75,36 @@ class UrlPresenceTestUnitTest extends TestUtils {
         HistoryReference historyReference = mock(HistoryReference.class);
         given(siteNode.getHistoryReference()).willReturn(historyReference);
 
-        HttpMessage msg =
-                buildMessage(
-                        "<html><head><link href=\"https://site53.example.net/style.css\"\n"
-                                + "      integrity=\"sha384-c2hhMzg0LSsvTTZrcmVkSmN4ZHNxa2N6QlVqTUx2cXlIYjFLL0pUaERYV3NCVnhNRWVaSEVhTUtFT0VjdDMzOVZJdFgxekI=\"\n"
-                                + "      ></head><body></body></html>");
-
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET " + EXPECTED_URL + " HTTP/1.1");
+        msg.setResponseBody(
+                "<html><head><link href=\"https://site53.example.net/style.css\"></head><body></body></html>");
         given(historyReference.getHttpMessage()).willReturn(msg);
+    }
+
+    @Test
+    void shouldPassTestWithOperatorOrIfSpecifiedConditionIsSatisfied() {
+        String operator = "or";
         String name = "test";
         String onFail = "warn";
         String requestHeaderRegex = "";
         String requestBodyRegex = "";
         String responseHeaderRegex = "";
         String responseBodyRegex = "https://site53";
-        String url = "http://example.com/";
 
         UrlPresenceTest test =
                 new UrlPresenceTest(
                         name,
                         onFail,
                         operator,
-                        url,
+                        EXPECTED_URL,
                         requestHeaderRegex,
                         requestBodyRegex,
                         responseHeaderRegex,
                         responseBodyRegex,
-                        new ActiveScanJob(),
+                        job,
                         progress);
-        test.getJob().setEnv(new AutomationEnvironment(progress));
+
         boolean run = test.runTest(progress);
         test.logToProgress(progress);
         assertThat(run, is(true));
@@ -114,57 +118,26 @@ class UrlPresenceTestUnitTest extends TestUtils {
     @Test
     void shouldPassTestWithOperatorAndIfSpecifiedConditionIsSatisfied() throws Exception {
         String operator = "and";
-        AutomationProgress progress = new AutomationProgress();
-        setUpZap();
-        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
-        Model.setSingletonForTesting(model);
-
-        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
-        given(model.getSession()).willReturn(session);
-
-        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
-        given(session.getSiteTree()).willReturn(siteMap);
-
-        SiteNode siteNode = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
-        given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
-
-        HistoryReference historyReference = mock(HistoryReference.class);
-        given(siteNode.getHistoryReference()).willReturn(historyReference);
-
-        HttpMessage msg =
-                buildMessage(
-                        "<html><head><link href=\"https://site53.example.net/style.scss\"\n"
-                                + "      integrity=\"sha384-a2fhMzgVqTUjdhdiiwm21c0c44s4vf5seiyhtg78gh98hgnpbklsdwgsjVZJdFgxekI=\"\n"
-                                + "      ></head><body></body></html>");
-        HttpRequestBody requestBody =
-                new HttpRequestBody(
-                        "<html><head><script src=\"https://site43.example.net/script.js\"></script></head><body></body></html>");
-        msg.setRequestBody(requestBody);
-        HttpResponseHeader responseHeader = new HttpResponseHeader("HTTP/1.1 200 OK");
-        msg.setResponseHeader(responseHeader);
-
-        given(historyReference.getHttpMessage()).willReturn(msg);
         String name = "test";
         String onFail = "error";
         String requestHeaderRegex = "";
         String requestBodyRegex = "";
         String responseHeaderRegex = "";
         String responseBodyRegex = "site";
-        String url = "http://example.com/";
 
         UrlPresenceTest test =
                 new UrlPresenceTest(
                         name,
                         onFail,
                         operator,
-                        url,
+                        EXPECTED_URL,
                         requestHeaderRegex,
                         requestBodyRegex,
                         responseHeaderRegex,
                         responseBodyRegex,
-                        new ActiveScanJob(),
+                        job,
                         progress);
-        test.getJob().setEnv(new AutomationEnvironment(progress));
+
         boolean run = test.runTest(progress);
         test.logToProgress(progress);
         assertThat(run, is(true));
@@ -178,57 +151,26 @@ class UrlPresenceTestUnitTest extends TestUtils {
     @Test
     void shouldFailTestWithOperatorOrIfNoneOfTheSpecifiedConditionIsSatisfied() throws Exception {
         String operator = "or";
-        AutomationProgress progress = new AutomationProgress();
-        setUpZap();
-        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
-        Model.setSingletonForTesting(model);
-
-        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
-        given(model.getSession()).willReturn(session);
-
-        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
-        given(session.getSiteTree()).willReturn(siteMap);
-
-        SiteNode siteNode = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
-        given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
-
-        HistoryReference historyReference = mock(HistoryReference.class);
-        given(siteNode.getHistoryReference()).willReturn(historyReference);
-
-        HttpMessage msg =
-                buildMessage(
-                        "<html><head><link href=\"https://site53.example.net/style.scss\"\n"
-                                + "      integrity=\"sha384-a2fhMzgVqTUjdhdiiwm21c0c44s4vf5seiyhtg78gh98hgnpbklsdwgsjVZJdFgxekI=\"\n"
-                                + "      ></head><body></body></html>");
-        HttpRequestBody requestBody =
-                new HttpRequestBody(
-                        "<html><head><script src=\"https://site43.example.net/script.js\"></script></head><body></body></html>");
-        msg.setRequestBody(requestBody);
-        HttpResponseHeader responseHeader = new HttpResponseHeader("HTTP/1.1 200 OK");
-        msg.setResponseHeader(responseHeader);
-
-        given(historyReference.getHttpMessage()).willReturn(msg);
         String name = "test";
         String onFail = "warn";
         String requestHeaderRegex = "^freshpotatoes$";
         String requestBodyRegex = "";
         String responseHeaderRegex = "";
         String responseBodyRegex = "^<link href=\"https://site73\"/>$";
-        String url = "http://example.com/";
 
         UrlPresenceTest test =
                 new UrlPresenceTest(
                         name,
                         onFail,
                         operator,
-                        url,
+                        EXPECTED_URL,
                         requestHeaderRegex,
                         requestBodyRegex,
                         responseHeaderRegex,
                         responseBodyRegex,
-                        new ActiveScanJob(),
+                        job,
                         progress);
-        test.getJob().setEnv(new AutomationEnvironment(progress));
+
         boolean run = test.runTest(progress);
         test.logToProgress(progress);
 
@@ -243,57 +185,26 @@ class UrlPresenceTestUnitTest extends TestUtils {
     @Test
     void shouldFailWithOperatorAndIfSpecifiedConditionIsNotSatisfied() throws Exception {
         String operator = "and";
-        AutomationProgress progress = new AutomationProgress();
-        setUpZap();
-        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
-        Model.setSingletonForTesting(model);
-
-        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
-        given(model.getSession()).willReturn(session);
-
-        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
-        given(session.getSiteTree()).willReturn(siteMap);
-
-        SiteNode siteNode = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
-        given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
-
-        HistoryReference historyReference = mock(HistoryReference.class);
-        given(siteNode.getHistoryReference()).willReturn(historyReference);
-
-        HttpMessage msg =
-                buildMessage(
-                        "<html><head><link href=\"https://site53.example.net/style.scss\"\n"
-                                + "      integrity=\"sha384-a2fhMzgVqTUjdhdiiwm21c0c44s4vf5seiyhtg78gh98hgnpbklsdwgsjVZJdFgxekI=\"\n"
-                                + "      ></head><body></body></html>");
-        HttpRequestBody requestBody =
-                new HttpRequestBody(
-                        "<html><head><script src=\"https://site43.example.net/script.js\"></script></head><body></body></html>");
-        msg.setRequestBody(requestBody);
-        HttpResponseHeader responseHeader = new HttpResponseHeader("HTTP/1.1 200 OK");
-        msg.setResponseHeader(responseHeader);
-
-        given(historyReference.getHttpMessage()).willReturn(msg);
         String name = "test";
         String onFail = "warn";
         String requestHeaderRegex = "^freshpotatoes$";
         String requestBodyRegex = "";
         String responseHeaderRegex = "";
         String responseBodyRegex = "https://site73";
-        String url = "http://example.com/";
 
         UrlPresenceTest test =
                 new UrlPresenceTest(
                         name,
                         onFail,
                         operator,
-                        url,
+                        EXPECTED_URL,
                         requestHeaderRegex,
                         requestBodyRegex,
                         responseHeaderRegex,
                         responseBodyRegex,
-                        new ActiveScanJob(),
+                        job,
                         progress);
-        test.getJob().setEnv(new AutomationEnvironment(progress));
+
         boolean run = test.runTest(progress);
         test.logToProgress(progress);
 
@@ -317,30 +228,6 @@ class UrlPresenceTestUnitTest extends TestUtils {
         String responseBodyRegex = "";
         String operator = "or";
 
-        AutomationProgress progress = new AutomationProgress();
-        setUpZap();
-        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
-        Model.setSingletonForTesting(model);
-
-        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
-        given(model.getSession()).willReturn(session);
-
-        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
-        given(session.getSiteTree()).willReturn(siteMap);
-
-        SiteNode siteNode = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
-        given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
-
-        HistoryReference historyReference = mock(HistoryReference.class);
-        given(siteNode.getHistoryReference()).willReturn(historyReference);
-
-        HttpMessage msg =
-                buildMessage(
-                        "<html><head><link href=\"https://site53.example.net/style.scss\"\n"
-                                + "      integrity=\"sha384-a2fhMzgVqTUjdhdiiwm21c0c44s4vf5seiyhtg78gh98hgnpbklsdwgsjVZJdFgxekI=\"\n"
-                                + "      ></head><body></body></html>");
-        msg.setHistoryRef(historyReference);
-
         UrlPresenceTest test =
                 new UrlPresenceTest(
                         name,
@@ -351,9 +238,9 @@ class UrlPresenceTestUnitTest extends TestUtils {
                         requestBodyRegex,
                         responseHeaderRegex,
                         responseBodyRegex,
-                        new ActiveScanJob(),
+                        job,
                         progress);
-        test.getJob().setEnv(new AutomationEnvironment(progress));
+
         boolean hasrun = test.hasRun();
         test.logToProgress(progress);
         assertThat(hasrun, is(false));
@@ -366,25 +253,6 @@ class UrlPresenceTestUnitTest extends TestUtils {
 
     @Test
     void shouldFailOnBadOperator() throws Exception {
-        AutomationProgress progress = new AutomationProgress();
-        setUpZap();
-        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
-        Model.setSingletonForTesting(model);
-        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
-        given(model.getSession()).willReturn(session);
-        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
-        given(session.getSiteTree()).willReturn(siteMap);
-        SiteNode siteNode = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
-        given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
-        HistoryReference historyReference = mock(HistoryReference.class);
-        given(siteNode.getHistoryReference()).willReturn(historyReference);
-        HttpMessage msg =
-                buildMessage(
-                        "<html><head><link href=\"https://site53.example.net/style.scss\"\n"
-                                + "      integrity=\"sha384-a2fhMzgVqTUjdhdiiwm21c0c44s4vf5seiyhtg78gh98hgnpbklsdwgsjVZJdFgxekI=\"\n"
-                                + "      ></head><body></body></html>");
-        msg.setHistoryRef(historyReference);
-        given(historyReference.getHttpMessage()).willReturn(msg);
         String name = "test";
         String onFail = "warn";
         String operator = "bad";
@@ -392,21 +260,20 @@ class UrlPresenceTestUnitTest extends TestUtils {
         String requestBodyRegex = "";
         String responseHeaderRegex = "";
         String responseBodyRegex = "";
-        String url = "http://example.com/";
 
         UrlPresenceTest test =
                 new UrlPresenceTest(
                         name,
                         onFail,
                         operator,
-                        url,
+                        EXPECTED_URL,
                         requestHeaderRegex,
                         requestBodyRegex,
                         responseHeaderRegex,
                         responseBodyRegex,
-                        new ActiveScanJob(),
+                        job,
                         progress);
-        test.getJob().setEnv(new AutomationEnvironment(progress));
+
         boolean run = test.runTest(progress);
         test.logToProgress(progress);
 
@@ -420,25 +287,6 @@ class UrlPresenceTestUnitTest extends TestUtils {
 
     @Test
     void shouldPassIfNoRegexesAreGivenButUrlExists() throws Exception {
-        AutomationProgress progress = new AutomationProgress();
-        setUpZap();
-        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
-        Model.setSingletonForTesting(model);
-        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
-        given(model.getSession()).willReturn(session);
-        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
-        given(session.getSiteTree()).willReturn(siteMap);
-        SiteNode siteNode = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
-        given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
-        HistoryReference historyReference = mock(HistoryReference.class);
-        given(siteNode.getHistoryReference()).willReturn(historyReference);
-        HttpMessage msg =
-                buildMessage(
-                        "<html><head><link href=\"https://site53.example.net/style.scss\"\n"
-                                + "      integrity=\"sha384-a2fhMzgVqTUjdhdiiwm21c0c44s4vf5seiyhtg78gh98hgnpbklsdwgsjVZJdFgxekI=\"\n"
-                                + "      ></head><body></body></html>");
-        msg.setHistoryRef(historyReference);
-        given(historyReference.getHttpMessage()).willReturn(msg);
         String name = "test";
         String onFail = "warn";
         String operator = "or";
@@ -446,20 +294,19 @@ class UrlPresenceTestUnitTest extends TestUtils {
         String requestBodyRegex = "";
         String responseHeaderRegex = "";
         String responseBodyRegex = "";
-        String url = "http://example.com/";
         UrlPresenceTest test =
                 new UrlPresenceTest(
                         name,
                         onFail,
                         operator,
-                        url,
+                        EXPECTED_URL,
                         requestHeaderRegex,
                         requestBodyRegex,
                         responseHeaderRegex,
                         responseBodyRegex,
-                        new ActiveScanJob(),
+                        job,
                         progress);
-        test.getJob().setEnv(new AutomationEnvironment(progress));
+
         boolean run = test.runTest(progress);
         test.logToProgress(progress);
         assertThat(run, is(true));
@@ -471,26 +318,7 @@ class UrlPresenceTestUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldPassForPassiveScanJobIfConditionsAreSatisfied() throws Exception {
-        AutomationProgress progress = new AutomationProgress();
-        setUpZap();
-        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
-        Model.setSingletonForTesting(model);
-        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
-        given(model.getSession()).willReturn(session);
-        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
-        given(session.getSiteTree()).willReturn(siteMap);
-        SiteNode siteNode = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
-        given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
-        HistoryReference historyReference = mock(HistoryReference.class);
-        given(siteNode.getHistoryReference()).willReturn(historyReference);
-        HttpMessage msg =
-                buildMessage(
-                        "<html><head><link href=\"https://site53.example.net/style.scss\"\n"
-                                + "      integrity=\"sha384-a2fhMzgVqTUjdhdiiwm21c0c44s4vf5seiyhtg78gh98hgnpbklsdwgsjVZJdFgxekI=\"\n"
-                                + "      ></head><body></body></html>");
-        msg.setHistoryRef(historyReference);
-        given(historyReference.getHttpMessage()).willReturn(msg);
+    void shouldPassIfAnyOrConditionIsSatisfied() throws Exception {
         String name = "test";
         String onFail = "warn";
         String operator = "or";
@@ -498,21 +326,20 @@ class UrlPresenceTestUnitTest extends TestUtils {
         String requestBodyRegex = "";
         String responseHeaderRegex = "";
         String responseBodyRegex = "53.example";
-        String url = "http://example.com/";
 
         UrlPresenceTest test =
                 new UrlPresenceTest(
                         name,
                         onFail,
                         operator,
-                        url,
+                        EXPECTED_URL,
                         requestHeaderRegex,
                         requestBodyRegex,
                         responseHeaderRegex,
                         responseBodyRegex,
-                        new PassiveScanWaitJob(),
+                        job,
                         progress);
-        test.getJob().setEnv(new AutomationEnvironment(progress));
+
         boolean run = test.runTest(progress);
         test.logToProgress(progress);
 
