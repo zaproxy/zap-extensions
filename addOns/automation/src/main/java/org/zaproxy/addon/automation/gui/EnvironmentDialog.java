@@ -51,6 +51,7 @@ public class EnvironmentDialog extends StandardFieldsDialog {
     private static final String TITLE = "automation.dialog.env.title";
     private static final String FAIL_ON_ERROR_PARAM = "automation.dialog.env.failonerror";
     private static final String FAIL_ON_WARNING_PARAM = "automation.dialog.env.failonwarning";
+    private static final String CONTINUE_ON_FAILURE_PARAM = "automation.dialog.env.continueonfail";
     private static final String PROGRESS_TO_STDOUT_PARAM = "automation.dialog.env.progresstostdout";
 
     private static final String PROXY_HOSTNAME = "automation.dialog.env.proxyhost";
@@ -95,6 +96,8 @@ public class EnvironmentDialog extends StandardFieldsDialog {
         this.addCheckBoxField(
                 1, FAIL_ON_WARNING_PARAM, env.getData().getParameters().getFailOnWarning());
         this.addCheckBoxField(
+                1, CONTINUE_ON_FAILURE_PARAM, env.getData().getParameters().getContinueOnFailure());
+        this.addCheckBoxField(
                 1, PROGRESS_TO_STDOUT_PARAM, env.getData().getParameters().getProgressToStdout());
         this.addPadding(1);
 
@@ -120,6 +123,10 @@ public class EnvironmentDialog extends StandardFieldsDialog {
                 .getData()
                 .getParameters()
                 .setFailOnWarning(this.getBoolValue(FAIL_ON_WARNING_PARAM));
+        this.env
+                .getData()
+                .getParameters()
+                .setContinueOnFailure(this.getBoolValue(CONTINUE_ON_FAILURE_PARAM));
         this.env
                 .getData()
                 .getParameters()
