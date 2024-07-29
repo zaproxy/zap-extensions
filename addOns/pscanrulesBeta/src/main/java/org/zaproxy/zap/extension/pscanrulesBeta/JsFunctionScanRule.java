@@ -176,7 +176,7 @@ public class JsFunctionScanRule extends PluginPassiveScanner implements CommonPa
     private static void addPattern(String line, List<Pattern> list) {
         // Strip leading $, it's optionally included in the assembled patterns
         line = line.replace("$", "");
-        list.add(Pattern.compile("\\b\\$?" + line + "\\b", Pattern.CASE_INSENSITIVE));
+        list.add(Pattern.compile("\\b\\$?" + line + "\\s{0,5}\\(", Pattern.CASE_INSENSITIVE));
     }
 
     public static void setPayloadProvider(Supplier<Iterable<String>> provider) {
