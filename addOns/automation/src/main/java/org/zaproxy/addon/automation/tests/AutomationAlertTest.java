@@ -31,11 +31,7 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.addon.automation.gui.AlertTestDialog;
-import org.zaproxy.addon.automation.jobs.ActiveScanJob;
-import org.zaproxy.addon.automation.jobs.ActiveScanJobResultData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
-import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
 public class AutomationAlertTest extends AbstractAutomationTest {
@@ -76,8 +72,7 @@ public class AutomationAlertTest extends AbstractAutomationTest {
                     Constant.messages.getString(
                             "automation.tests.alert.nullExtension", job.getType()));
         }
-        if (!(job.getType().equals(ActiveScanJob.JOB_NAME)
-                || job.getType().equals(PassiveScanWaitJob.JOB_NAME))) {
+        if (!job.supportsAlertTests()) {
             progress.error(
                     Constant.messages.getString(
                             "automation.tests.alert.invalidJobType", job.getType()));
@@ -168,10 +163,7 @@ public class AutomationAlertTest extends AbstractAutomationTest {
     @Override
     public boolean runTest(AutomationProgress progress) {
         boolean passIfAbsent = this.getData().getAction().equals(ACTION_PASS_IF_ABSENT);
-        String key =
-                (getJobType().equals(ActiveScanJob.JOB_NAME))
-                        ? ActiveScanJobResultData.KEY
-                        : PassiveScanJobResultData.KEY;
+        String key = getJob().getKeyAlertTestsResultData();
         JobResultData resultData = progress.getJobResultData(key);
         List<Alert> alerts =
                 resultData.getAllAlertData().stream()
