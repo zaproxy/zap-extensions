@@ -9,6 +9,7 @@ env:                                   # The environment, mandatory
   parameters:
     failOnError: true                  # If set exit on an error         
     failOnWarning: false               # If set exit on a warning
+    continueOnFailure: false           # Continue running all jobs, even if one fails
     progressToStdout: true             # If set will write job progress to stdout
 
 jobs:
