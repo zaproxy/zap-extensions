@@ -128,7 +128,7 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
 
         @Override
         public HttpHeaderBasedSession extractWebSession(HttpMessage msg) {
-            Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg);
+            Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, true);
             LOGGER.debug(
                     "extractWebSession {} # tokens {}",
                     msg.getRequestHeader().getURI(),
