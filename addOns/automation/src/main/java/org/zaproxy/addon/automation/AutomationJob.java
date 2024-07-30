@@ -497,6 +497,10 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         return false;
     }
 
+    public String getKeyAlertTestsResultData() {
+        return null;
+    }
+
     public boolean supportsMonitorTests() {
         return false;
     }
