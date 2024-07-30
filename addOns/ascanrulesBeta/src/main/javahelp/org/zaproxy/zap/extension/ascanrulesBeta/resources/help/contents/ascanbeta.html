@@ -177,6 +177,7 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/42/">42</a>.
 
 <H2 id="id-43">Source Code Disclosure - File Inclusion</H2>
 Uses local file inclusion techniques to scan for files containing source code on the web server.
+Skips messages which originally resulted in a client or server error response status code.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureFileInclusionScanRule.java">SourceCodeDisclosureFileInclusionScanRule.java</a>
 <br>
