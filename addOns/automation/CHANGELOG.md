@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Address errors when the last plan loaded had a `passiveScan-config` job with configured rules.
+
 ## [0.40.1] - 2024-05-28
 ### Fixed
 - Address HTTP authentication failure when the realm is not configured.
