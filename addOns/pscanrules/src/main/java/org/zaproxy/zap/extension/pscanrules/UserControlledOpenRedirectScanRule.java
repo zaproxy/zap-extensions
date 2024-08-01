@@ -138,11 +138,11 @@ public class UserControlledOpenRedirectScanRule extends PluginPassiveScanner
         return newAlert()
                 .setRisk(Alert.RISK_HIGH)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescriptionMessage())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setParam(paramName)
                 .setOtherInfo(getExtraInfoMessage(msg, paramName, paramValue, responseLocation))
-                .setSolution(getSolutionMessage())
-                .setReference(getReferenceMessage())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setCweId(601) // CWE-601: URL Redirection to Untrusted Site ('Open Redirect')
                 .setWascId(38); // WASC-38: URL Redirector Abuse
     }
@@ -157,23 +157,7 @@ public class UserControlledOpenRedirectScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    /*
-     * Rule-associated messages
-     */
-
-    private String getDescriptionMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolutionMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReferenceMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    private String getExtraInfoMessage(
+    private static String getExtraInfoMessage(
             HttpMessage msg, String paramName, String paramValue, String responseLocation) {
         StringBuilder extraInfoSB = new StringBuilder();
         if ("GET".equalsIgnoreCase(msg.getRequestHeader().getMethod())) {

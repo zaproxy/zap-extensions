@@ -93,23 +93,15 @@ public class ModernAppDetectionScanRule extends PluginPassiveScanner
         return newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(otherInfo)
-                .setSolution(getSolution())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setEvidence(evidence);
     }
 
     @Override
     public int getPluginId() {
         return 10109;
-    }
-
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
     @Override

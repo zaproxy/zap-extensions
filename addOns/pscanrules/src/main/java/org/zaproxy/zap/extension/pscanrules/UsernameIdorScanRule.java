@@ -118,10 +118,12 @@ public class UsernameIdorScanRule extends PluginPassiveScanner
         return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_HIGH)
-                .setDescription(getDescription(username))
-                .setOtherInfo(getOtherinfo(hashType, evidence))
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc", username))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "otherinfo", hashType, evidence))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
                 .setCweId(getCweId())
                 .setWascId(getWascId());
@@ -151,22 +153,6 @@ public class UsernameIdorScanRule extends PluginPassiveScanner
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
-    }
-
-    public String getDescription(String username) {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc", username);
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    private String getOtherinfo(String hashType, String hashValue) {
-        return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", hashType, hashValue);
     }
 
     @Override

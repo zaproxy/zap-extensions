@@ -461,7 +461,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
                 "<html><head></head><body><form id=\"no_csrf_token\"><input type=\"text\"/><input type=\"submit\"/></form></body></html>");
     }
 
-    private HttpMessage createScopedMessage(boolean isInScope) throws URIException {
+    private static HttpMessage createScopedMessage(boolean isInScope) throws URIException {
         HttpMessage newMsg =
                 new HttpMessage() {
                     @Override

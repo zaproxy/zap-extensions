@@ -172,7 +172,7 @@ public class AntiClickjackingScanRule extends PluginPassiveScanner
         return 15; // WASC-15: Application Misconfiguration
     }
 
-    private String getAlertElement(VulnType currentVT, String element) {
+    private static String getAlertElement(VulnType currentVT, String element) {
         switch (currentVT) {
             case XFO_MISSING:
                 return Constant.messages.getString(MESSAGE_PREFIX + "missing." + element);
@@ -197,7 +197,7 @@ public class AntiClickjackingScanRule extends PluginPassiveScanner
      *     {@code null}.
      * @see <a href="https://tools.ietf.org/html/rfc7034#section-4">RFC 7034 Section 4</a>
      */
-    private String getMetaXFOEvidence(Source source) {
+    private static String getMetaXFOEvidence(Source source) {
         List<Element> metaElements = source.getAllElements(HTMLElementName.META);
         String httpEquiv;
 

@@ -645,7 +645,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
                 .setEvidence(evidence);
     }
 
-    private Matcher matchStyles(String body) {
+    private static Matcher matchStyles(String body) {
         // remove all " and ' for proper matching url('somefile.png')
         String styleBody = body.replaceAll("['\"]", "");
         return STYLE_URL_LOAD.matcher(styleBody);

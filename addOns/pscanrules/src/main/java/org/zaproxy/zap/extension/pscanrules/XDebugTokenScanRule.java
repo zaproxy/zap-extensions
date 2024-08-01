@@ -88,7 +88,7 @@ public class XDebugTokenScanRule extends PluginPassiveScanner implements CommonP
      * @param header the name of the header field being looked for
      * @return boolean status of existence
      */
-    private boolean responseHasHeader(HttpMessage msg, String header) {
+    private static boolean responseHasHeader(HttpMessage msg, String header) {
         return !msg.getResponseHeader().getHeaderValues(header).isEmpty();
     }
 
@@ -99,7 +99,7 @@ public class XDebugTokenScanRule extends PluginPassiveScanner implements CommonP
      * @param header the name of the header field(s) to be collected
      * @return list of the matched headers
      */
-    private List<String> getHeaders(HttpMessage msg, String header) {
+    private static List<String> getHeaders(HttpMessage msg, String header) {
         List<String> matchedHeaders = new ArrayList<>();
         String headers = msg.getResponseHeader().toString();
         String[] headerElements = headers.split("\\r\\n");

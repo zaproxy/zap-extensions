@@ -69,7 +69,7 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner
      * @param msg Response Http message
      * @return boolean status of existence
      */
-    private boolean isXPoweredByHeaderExist(HttpMessage msg) {
+    private static boolean isXPoweredByHeaderExist(HttpMessage msg) {
         return !msg.getResponseHeader().getHeaderValues(HEADER_NAME).isEmpty();
     }
 
@@ -79,7 +79,7 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner
      * @param msg Response Http message
      * @return list of the matched headers
      */
-    private List<String> getXPoweredByHeaders(HttpMessage msg) {
+    private static List<String> getXPoweredByHeaders(HttpMessage msg) {
         List<String> matchedHeaders = new ArrayList<>();
         String headers = msg.getResponseHeader().toString();
         String[] headerElements = headers.split("\\r\\n");

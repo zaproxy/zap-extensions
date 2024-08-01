@@ -99,7 +99,7 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
         return null;
     }
 
-    private List<String> loadFile(Path path) {
+    private static List<String> loadFile(Path path) {
         List<String> strings = new ArrayList<>();
         BufferedReader reader = null;
         File f = path.toFile();

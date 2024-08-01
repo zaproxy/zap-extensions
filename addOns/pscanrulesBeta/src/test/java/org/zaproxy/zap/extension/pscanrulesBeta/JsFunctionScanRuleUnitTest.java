@@ -267,7 +267,8 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
     }
 
-    private HttpMessage createHttpMessageWithRespBody(String responseBody, String contentType)
+    private static HttpMessage createHttpMessageWithRespBody(
+            String responseBody, String contentType)
             throws HttpMalformedHeaderException, URIException {
 
         HttpRequestHeader requestHeader = new HttpRequestHeader();

@@ -102,11 +102,11 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
         }
     }
 
-    private String getSsnOtherInfo() {
+    private static String getSsnOtherInfo() {
         return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.ssn");
     }
 
-    private boolean isRequestedURLSameDomainAsHTTPReferrer(String host, String referrerURL) {
+    private static boolean isRequestedURLSameDomainAsHTTPReferrer(String host, String referrerURL) {
         boolean result = false;
         if (referrerURL.startsWith("/")) {
             result = true;
@@ -151,7 +151,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
                 .setWascId(getWascId());
     }
 
-    private String getBinRecString(BinRecord binRec) {
+    private static String getBinRecString(BinRecord binRec) {
         StringBuilder recString = new StringBuilder(75);
         recString
                 .append(Constant.messages.getString(MESSAGE_PREFIX + "bin.field"))
@@ -175,7 +175,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
         return recString.toString();
     }
 
-    private List<String> loadFile(String file) {
+    private static List<String> loadFile(String file) {
         List<String> strings = new ArrayList<>();
         File f = new File(Constant.getZapHome() + File.separator + file);
         if (!f.exists()) {
@@ -251,7 +251,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
         return 13; // WASC Id - Info leakage
     }
 
-    private String doesContainEmailAddress(String emailAddress) {
+    private static String doesContainEmailAddress(String emailAddress) {
         Matcher matcher = emailAddressPattern.matcher(emailAddress);
         if (matcher.find()) {
             return matcher.group();
@@ -259,7 +259,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
         return null;
     }
 
-    private String doesContainCreditCard(String creditCard) {
+    private static String doesContainCreditCard(String creditCard) {
         Matcher matcher = creditCardPattern.matcher(creditCard);
         if (matcher.find()) {
             String candidate = matcher.group();
@@ -270,7 +270,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
         return null;
     }
 
-    private String doesContainUsSSN(String usSSN) {
+    private static String doesContainUsSSN(String usSSN) {
         Matcher matcher = usSSNPattern.matcher(usSSN);
         if (matcher.find()) {
             return matcher.group();

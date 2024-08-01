@@ -40,7 +40,7 @@ class ServerHeaderInfoLeakScanRuleUnitTest
 
     private static final String SERVER = "Server";
 
-    private HttpMessage createMessage() throws URIException {
+    private static HttpMessage createMessage() throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));
 

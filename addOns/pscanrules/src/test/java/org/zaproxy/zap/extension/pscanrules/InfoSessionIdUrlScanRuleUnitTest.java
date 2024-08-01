@@ -483,7 +483,7 @@ class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdU
         assertEquals(1, alertsRaised.size());
     }
 
-    private void setUpHttpSessionsParam() {
+    private static void setUpHttpSessionsParam() {
         OptionsParam options = Model.getSingleton().getOptionsParam();
         options.load(new ZapXmlConfiguration());
         HttpSessionsParam httpSessions = new HttpSessionsParam();

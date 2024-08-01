@@ -40,7 +40,7 @@ class XBackendServerInformationLeakScanRuleUnitTest
     private static final String XBS_HEADER = "X-Backend-Server";
     private static final String HEADER_VALUE = "developer1.webapp.scl3.mozilla.com";
 
-    private HttpMessage createMessage() throws URIException {
+    private static HttpMessage createMessage() throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));
 

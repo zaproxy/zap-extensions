@@ -242,7 +242,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin
      * @param url found in the body of the targeted page
      * @return a hashmap of the query string
      */
-    private Map<String, List<String>> getUrlParameters(String url) {
+    private static Map<String, List<String>> getUrlParameters(String url) {
         Map<String, List<String>> params = new HashMap<>();
 
         if (url != null) {

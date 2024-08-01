@@ -119,7 +119,7 @@ public class UserControlledCharsetScanRule extends PluginPassiveScanner
     }
 
     // TODO: taken from CharsetMismatchScanner. Extract into helper method
-    private String getBodyContentCharset(String bodyContentType) {
+    private static String getBodyContentCharset(String bodyContentType) {
         // preconditions
         assert bodyContentType != null;
 
@@ -176,7 +176,7 @@ public class UserControlledCharsetScanRule extends PluginPassiveScanner
 
     // TODO: these methods have been extracted from CharsetMismatchScanner
     // I think we should create helper methods for them
-    private boolean isResponseHTML(HttpMessage message, Source source) {
+    private static boolean isResponseHTML(HttpMessage message, Source source) {
         String contentType = message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
         if (contentType == null) {
             return false;
@@ -187,7 +187,7 @@ public class UserControlledCharsetScanRule extends PluginPassiveScanner
                 || contentType.indexOf("application/xhtml") != -1;
     }
 
-    private boolean isResponseXML(Source source) {
+    private static boolean isResponseXML(Source source) {
         return source.isXML();
     }
 
@@ -195,10 +195,10 @@ public class UserControlledCharsetScanRule extends PluginPassiveScanner
         return newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_LOW)
-                .setDescription(getDescriptionMessage())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setParam(param.getName())
                 .setOtherInfo(getExtraInfoMessage(tag, attr, param, charset))
-                .setSolution(getSolutionMessage())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setCweId(20) // CWE-20: Improper Input Validation
                 .setWascId(20); // WASC-20: Improper Input Handling
     }
@@ -216,15 +216,6 @@ public class UserControlledCharsetScanRule extends PluginPassiveScanner
     /*
      * Rule-associated messages
      */
-
-    private String getDescriptionMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolutionMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
     private static String getExtraInfoMessage(
             String tag, String attr, HtmlParameter param, String charset) {
         return Constant.messages.getString(
