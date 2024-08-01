@@ -16,17 +16,16 @@ val pocsSrcDir = projectDir.resolve("src/main/pocs")
 val pocsBuildDir = layout.buildDirectory.dir("pocs").get()
 val pocBuildTasks: MutableList<TaskProvider<*>> = mutableListOf()
 val pocBuildTasksGroup = "ZAP Web UI PoC Build"
-b/addOns/webuipoc/webuipoc.gradle.kts
  for (dir in pocsSrcDir.listFiles()!!) {
-                     workingDir = dir
-                     args.set(arrayListOf("run", "lint"))
+          workingDir = dir
+          args.set(arrayListOf("run", "lint"))
                  }
-            val checkFormatTask =
-                tasks.register<NpmTask>("checkFormatPoc$normalizedPocName") {
-                    group = pocBuildTasksGroup
-                    dependsOn(installTask)
-                    workingDir = dir
-                    args.set(arrayListOf("run", "check-format"))
+           val checkFormatTask =
+            tasks.register<NpmTask>("checkFormatPoc$normalizedPocName") {
+                group = pocBuildTasksGroup
+                dependsOn(installTask)
+                workingDir = dir
+                args.set(arrayListOf("run", "check-format"))
                 }
              tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {
                 dependsOn(lintTask, checkFormatTask)
