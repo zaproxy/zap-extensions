@@ -16,23 +16,7 @@ val pocsSrcDir = projectDir.resolve("src/main/pocs")
 val pocsBuildDir = layout.buildDirectory.dir("pocs").get()
 val pocBuildTasks: MutableList<TaskProvider<*>> = mutableListOf()
 val pocBuildTasksGroup = "ZAP Web UI PoC Build"
- for (dir in pocsSrcDir.listFiles()!!) {
-          workingDir = dir
-          args.set(arrayListOf("run", "lint"))
-                 }
-           val checkFormatTask =
-            tasks.register<NpmTask>("checkFormatPoc$normalizedPocName") {
-                group = pocBuildTasksGroup
-                dependsOn(installTask)
-                workingDir = dir
-                args.set(arrayListOf("run", "check-format"))
-                }
-             tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {
-                dependsOn(lintTask, checkFormatTask)
-             }
-         }
-     } else {
-
+for (dir in pocsSrcDir.listFiles()!!) {
     val packageJson = File(dir, "package.json")
     val outputDir = pocsBuildDir.dir("webuipoc").dir(dir.name)
     val normalizedPocName = dir.name.capitalized()
@@ -65,8 +49,15 @@ val pocBuildTasksGroup = "ZAP Web UI PoC Build"
                     workingDir = dir
                     args.set(arrayListOf("run", "lint"))
                 }
+            val checkFormatTask =
+                tasks.register<NpmTask>("checkFormatPoc$normalizedPocName") {
+                    group = pocBuildTasksGroup
+                    dependsOn(installTask)
+                    workingDir = dir
+                    args.set(arrayListOf("run", "check-format"))
+                }
             tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {
-                dependsOn(lintTask)
+                dependsOn(lintTask, checkFormatTask)
             }
         }
     } else {
