@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Alert text for various rules has been updated to more consistently use periods and spaces in a uniform manner.
+- Potential false positives in the LDAP Injection scan rule when the original message resulted in an error to start with (Issue 8519).
 
 ## [47] - 2024-03-28
 ### Changed
