@@ -34,12 +34,11 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
-import org.zaproxy.addon.exim.har.HarImporter;
 import org.zaproxy.zap.utils.ThreadUtils;
 
 public class PcapImporter {
 
-    private static final Logger LOGGER = LogManager.getLogger(HarImporter.class);
+    private static final Logger LOGGER = LogManager.getLogger(PcapImporter.class);
 
     private static ExtensionHistory extHistory;
 

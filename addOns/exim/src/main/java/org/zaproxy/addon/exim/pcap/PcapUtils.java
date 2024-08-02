@@ -37,6 +37,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -47,6 +48,8 @@ import org.zaproxy.zap.network.HttpResponseBody;
 public final class PcapUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(PcapUtils.class);
+
+    private static final String DOUBLE_CRLF = HttpHeader.CRLF + HttpHeader.CRLF;
 
     private static Map<StreamId, TcpStream> extractTcpStreams(File pcapFile) throws IOException {
         TcpStreamHandler streamHandler = new TcpStreamHandler();
@@ -134,7 +137,7 @@ public final class PcapUtils {
 
     private static List<HttpMessage> constructHttpRequests(String requestFlow) {
         List<HttpMessage> requests = new ArrayList<>();
-        ArrayList<String> flow = new ArrayList<>(List.of(requestFlow.split("\r\n\r\n")));
+        ArrayList<String> flow = new ArrayList<>(List.of(requestFlow.split(DOUBLE_CRLF)));
 
         ListIterator<String> flowIt = flow.listIterator();
 
@@ -167,7 +170,7 @@ public final class PcapUtils {
     private static List<HttpMessage> constructHttpResponses(
             byte[] responseFlow, List<HttpMessage> requests) {
         List<HttpMessage> messages = new ArrayList<>();
-        List<byte[]> flow = splitByteArray(responseFlow, "\r\n\r\n".getBytes());
+        List<byte[]> flow = splitByteArray(responseFlow, DOUBLE_CRLF.getBytes());
 
         int reqIndex = 0;
         ListIterator<byte[]> flowIt = flow.listIterator();
