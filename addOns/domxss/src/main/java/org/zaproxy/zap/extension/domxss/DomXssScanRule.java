@@ -107,9 +107,10 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
         HASH_HASH_IMG_ALERT,
     };
 
-    private static final String IMG_ALERT = "<img src=\"random.gif\" onerror=alert(1)>";
-    private static final String SCRIPT_ALERT = "<script>alert(1)</script>";
-    private static final String JAVASCRIPT_ALERT = "javascript:alert(1)";
+    private static final String IMG_ALERT =
+            "<img src=\"random.gif\" onerror=alert(" + UNLIKELY_INT + ")>";
+    private static final String SCRIPT_ALERT = "<script>alert(" + UNLIKELY_INT + ")</script>";
+    static final String JAVASCRIPT_ALERT = "javascript:alert(" + UNLIKELY_INT + ")";
 
     private static final String[] PARAM_ATTACK_STRINGS = {
         SCRIPT_ALERT, JAVASCRIPT_ALERT, IMG_ALERT
