@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Include the whole HTTP message in the raised alerts.
 
+### Fixed
+- Address false negatives through query parameters.
+
 ## [19] - 2024-05-07
 ### Changed
 - Update minimum ZAP version to 2.15.0.
