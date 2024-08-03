@@ -14,7 +14,7 @@ const Accordion = ({ site, fetchChildren, isChild }) => {
     const getDisplayName = (name) => {
         if (isChild) {
             const parts = name.split('/');
-            return parts.length > 1 ? `/${parts.slice(-1)[0]}` : name;
+            return parts.length > 1 ? `${parts.slice(-1)[0]}` : name;
         }
         return name;
     };
