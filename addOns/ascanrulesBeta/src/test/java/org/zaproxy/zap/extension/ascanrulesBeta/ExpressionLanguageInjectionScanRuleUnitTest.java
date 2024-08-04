@@ -20,11 +20,16 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class ExpressionLanguageInjectionScanRuleUnitTest
@@ -63,5 +68,19 @@ class ExpressionLanguageInjectionScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given /  When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts, hasSize(1));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getRisk(), is(equalTo(rule.getRisk())));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getParam(), is(equalTo("foo")));
+        assertThat(alert.getAttack(), is(not(emptyString())));
+        assertThat(alert.getEvidence(), is(not(emptyString())));
     }
 }
