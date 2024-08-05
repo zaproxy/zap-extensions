@@ -40,7 +40,7 @@ const Accordion = ({ site, fetchChildren }) => {
      {
               isAccordionOpen && (
                   <div>
-                    <p className="text-blue-200 break-all ml-2 overflow-auto">
+                    <p className="text-blue-200 break-all ml-2 ">
                       {
                           children.map((child) => (
                               <Accordion site={child} fetchChildren={fetchChildren}/>
