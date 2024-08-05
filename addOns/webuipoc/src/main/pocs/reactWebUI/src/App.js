@@ -9,7 +9,6 @@ import { sendChildNode } from "./Utilities/requests";
 import SearchBar from "./Components/SearchBar/SearchBar";
 
 const App = () => {
-
   return (
     <div className="flex mt-16 overflow-auto">
       <HeaderBase />
@@ -23,16 +22,16 @@ const App = () => {
             <div className=" w-1/3 p-4 font-serif text-center ">
               ID | Method | Host | Path | URI
             </div>
-          </div>
-          <div className="flex flex-row  justify-center text-center">
-            <div className=" p-4">
-              <p className="font-mono "></p>
-              {/* {childNode &&
+            <div className="flex flex-row  justify-center text-center">
+              <div className=" p-4">
+                <p className="font-mono "></p>
+                {/* {childNode &&
                 childNode.map((node) => (
                   <p className="" key={childNode}>
                     {node.hrefId}
                   </p>
                 ))} */}
+              </div>
             </div>
           </div>
         </div>
