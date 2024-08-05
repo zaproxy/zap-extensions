@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Accordion = ({ site, fetchChildren }) => {
+const Accordion = ({ site, fetchChildren, isChild }) => {
     const [isAccordionOpen, setAccordionOpen] = useState(false);
     const [children, setChildren] = useState([])
 
@@ -11,7 +11,13 @@ const Accordion = ({ site, fetchChildren }) => {
         }
         setAccordionOpen(!isAccordionOpen);
     }
-  
+    const getDisplayName = (name) => {
+        if (isChild) {
+            const parts = name.split('/');
+            return parts.length > 1 ? `${parts.slice(-1)[0]}` : name;
+        }
+        return name;
+    };
 
   return (
     <div className="py-1 w-[380px]">
@@ -33,7 +39,7 @@ const Accordion = ({ site, fetchChildren }) => {
     </>
         )}
           <span className="" key={site}>
-            {site.name}
+            {getDisplayName(site.name)}
           </span>
         </span>
       </button>
@@ -43,7 +49,7 @@ const Accordion = ({ site, fetchChildren }) => {
                     <p className="text-blue-200 break-all">
                       {
                           children.map((child) => (
-                              <Accordion site={child} fetchChildren={fetchChildren}/>
+                              <Accordion site={child} fetchChildren={fetchChildren} isChild={true}/>
                           )) 
                       }
                       </p>
