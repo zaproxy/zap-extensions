@@ -35,7 +35,9 @@ function reqResp() {
             <div className="w-1/3 p-4 font-serif text-center">Request</div>
           </div>     
           <div className="flex justify-center text-center">
-              <div className="p-4 overflow-x-auto">  {initialreqRep?.requestHeader}  </div>          
+              <div className="p-4 overflow-x-auto">
+  {initialreqRep?.requestHeader.split('\n').map((line) =>  (<p>{line}</p>  ))}
+       </div>       
           </div>
           
           <p className=" justify-center text-center overflow-x-auto">{initialreqRep?.requestBody}</p>
