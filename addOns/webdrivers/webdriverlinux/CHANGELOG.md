@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update ChromeDriver to 127.0.6533.99.
 - Update geckodriver to 0.35.0.
 
 ## [97] - 2024-07-31
