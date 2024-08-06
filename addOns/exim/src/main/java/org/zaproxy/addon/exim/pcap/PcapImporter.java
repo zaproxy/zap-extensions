@@ -33,6 +33,7 @@ import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.ui.ProgressPane;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.zap.utils.ThreadUtils;
 
@@ -42,15 +43,17 @@ public class PcapImporter {
 
     private static ExtensionHistory extHistory;
 
-    private ProgressPaneListener progressListener;
+    private ProgressPane progressPane = null;
+    private ProgressPaneListener progressListener = null;
     private boolean success;
 
     public PcapImporter(File file) {
-        this(file, null);
+        importPcapFile(file);
     }
 
-    public PcapImporter(File file, ProgressPaneListener listener) {
-        this.progressListener = listener;
+    public PcapImporter(File file, ProgressPane progressPane) {
+        this.progressPane = progressPane;
+        this.progressListener = new ProgressPaneListener(progressPane);
         importPcapFile(file);
     }
 
@@ -66,9 +69,12 @@ public class PcapImporter {
             return;
         }
 
+        setTotalTasks(messages.size());
         int count = 0;
         for (HttpMessage msg : messages) {
             if (msg == null) {
+                updateProgress(
+                        ++count, Constant.messages.getString("exim.progress.invalidmessage"));
                 continue;
             }
             persistMessage(msg);
@@ -128,6 +134,12 @@ public class PcapImporter {
 
     public boolean isSuccess() {
         return success;
+    }
+
+    private void setTotalTasks(int totalTasks) {
+        if (progressPane != null) {
+            progressPane.setTotalTasks(totalTasks);
+        }
     }
 
     private void updateProgress(int count, String line) {
