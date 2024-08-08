@@ -199,6 +199,9 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
          * URL Path parameters are problematic for the matching based scanners, because changing the URL path
          * "parameter" generates output that is wildly different from the unmodified URL path "parameter"
          */
+        if (isClientError(getBaseMsg()) || isServerError(getBaseMsg())) {
+            return;
+        }
         if (originalParam.getType() != NameValuePair.TYPE_URL_PATH) {
             super.scan(msg, originalParam);
         }
@@ -210,7 +213,6 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
      */
     @Override
     public void scan(HttpMessage originalmsg, String paramname, String paramvalue) {
-
         // for the purposes of our logic, we can handle a NULL parameter as an empty string. Saves
         // on NPEs.
         if (paramvalue == null) paramvalue = "";
