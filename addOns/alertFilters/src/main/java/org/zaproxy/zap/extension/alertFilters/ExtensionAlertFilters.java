@@ -33,7 +33,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.RecordAlert;
 import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -94,7 +93,6 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     private ExtensionAlert extAlert = null;
     private ExtensionHistory extHistory = null;
     private AlertFilterAPI api = null;
-    private int lastAlert = -1;
 
     private static ScanRulesInfo scanRulesInfo;
     private static ExtensionActiveScan extAscan;
@@ -362,31 +360,14 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         TableAlert tableAlert = Model.getSingleton().getDb().getTableAlert();
 
         String alertId = event.getParameters().get(AlertEventPublisher.ALERT_ID);
-        if (alertId != null) {
-            // From 2.4.3 an alertId is included with these events, which makes life much simpler!
-            try {
-                handleAlert(tableAlert.read(Integer.parseInt(alertId)));
-            } catch (Exception e) {
-                LOGGER.error("Error handling alert", e);
+        try {
+            RecordAlert rc = tableAlert.read(Integer.parseInt(alertId));
+            if (rc == null) {
+                return;
             }
-        } else {
-            // Required for pre 2.4.3 versions
-            RecordAlert recordAlert;
-            while (true) {
-                try {
-                    this.lastAlert++;
-                    recordAlert = tableAlert.read(this.lastAlert);
-                    if (recordAlert == null) {
-                        break;
-                    }
-                    handleAlert(recordAlert);
-
-                } catch (DatabaseException e) {
-                    break;
-                }
-            }
-            // The loop will always go 1 further than necessary
-            this.lastAlert--;
+            handleAlert(rc);
+        } catch (Exception e) {
+            LOGGER.error("Error handling alert", e);
         }
     }
 
@@ -426,7 +407,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     private void handleAlert(Alert alert) {
         String uri = alert.getUri();
-        LOGGER.debug("Alert: {} URL: {}", this.lastAlert, uri);
+        LOGGER.debug("Alert: {} URL: {}", alert.getAlertId(), uri);
         // Loop through global rules and apply as necessary
         for (AlertFilter filter : this.globalAlertFilterParam.getGlobalAlertFilters()) {
             if (filter.appliesToAlert(alert, true)) {
@@ -499,9 +480,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     }
 
     @Override
-    public void sessionChanged(Session session) {
-        this.lastAlert = -1;
-    }
+    public void sessionChanged(Session session) {}
 
     @Override
     public void sessionAboutToChange(Session session) {
