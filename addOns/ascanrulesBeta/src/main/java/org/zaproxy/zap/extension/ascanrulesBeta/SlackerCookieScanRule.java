@@ -22,9 +22,11 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -203,12 +205,11 @@ public class SlackerCookieScanRule extends AbstractAppPlugin implements CommonAc
 
         int riskLevel = calculateRisk(cookiesThatDoNOTMakeADifference, otherInfoBuff);
 
-        newAlert()
-                .setRisk(riskLevel)
-                .setConfidence(Alert.CONFIDENCE_LOW)
-                .setOtherInfo(otherInfoBuff.toString())
-                .setMessage(msg)
-                .raise();
+        createAlert(riskLevel, otherInfoBuff.toString()).setMessage(msg).raise();
+    }
+
+    private AlertBuilder createAlert(int risk, String otherInfo) {
+        return newAlert().setRisk(risk).setConfidence(Alert.CONFIDENCE_LOW).setOtherInfo(otherInfo);
     }
 
     private StringBuilder createOtherInfoText(
@@ -333,5 +334,18 @@ public class SlackerCookieScanRule extends AbstractAppPlugin implements CommonAc
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        SortedSet<String> impacting = new TreeSet<>();
+        impacting.add("foo");
+        impacting.add("bar");
+
+        return List.of(
+                createAlert(
+                                Alert.RISK_INFO,
+                                createOtherInfoText(Set.of("oops"), impacting).toString())
+                        .build());
     }
 }

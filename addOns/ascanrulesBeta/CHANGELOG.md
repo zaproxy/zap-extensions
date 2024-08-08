@@ -4,8 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Expression Language Injection
+    - Cookie Slack Detector
+
 ### Fixed
 - Potential false positives in the Source Code Disclosure - File Inclusion scan rule when responses are empty or the original message resulted in an error to start with (Issue 8517).
+- A spacing/punctuation issue in the Cookie Slack Detector scan rule, whereby the Other Info field would not have a space after colons and before lists of cookie names.
 
 ## [54] - 2024-07-22
 ### Changed
