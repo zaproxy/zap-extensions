@@ -19,31 +19,135 @@
  */
 package org.zaproxy.addon.exim.pcap;
 
+import io.pkts.streams.TcpStream;
 import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.ui.ProgressPane;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 public class PcapImporter {
 
-    private ProgressPaneListener progressListener;
+    private static final Logger LOGGER = LogManager.getLogger(PcapImporter.class);
+
+    private static ExtensionHistory extHistory;
+
+    private ProgressPane progressPane = null;
+    private ProgressPaneListener progressListener = null;
     private boolean success;
 
     public PcapImporter(File file) {
-        this(file, null);
+        importPcapFile(file);
     }
 
-    public PcapImporter(File file, ProgressPaneListener listener) {
-        this.progressListener = listener;
-        this.success = importPcapFile(file);
+    public PcapImporter(File file, ProgressPane progressPane) {
+        this.progressPane = progressPane;
+        this.progressListener = new ProgressPaneListener(progressPane);
+        importPcapFile(file);
+    }
+
+    private void importPcapFile(File file) {
+        List<HttpMessage> messages = null;
+
+        try {
+            messages = getHttpMessages(file);
+        } catch (IOException e) {
+            LOGGER.warn("Failed to read Pcap file: {}\n{}", file.getAbsolutePath(), e.getMessage());
+            success = false;
+            completed();
+            return;
+        }
+
+        setTotalTasks(messages.size());
+        int count = 0;
+        for (HttpMessage msg : messages) {
+            if (msg == null) {
+                updateProgress(
+                        ++count, Constant.messages.getString("exim.progress.invalidmessage"));
+                continue;
+            }
+            persistMessage(msg);
+            updateProgress(++count, msg.getRequestHeader().getURI().toString());
+        }
+        success = true;
         completed();
     }
 
-    private boolean importPcapFile(File file) {
-        // no import logic implemented yet
-        return false;
+    protected static List<HttpMessage> getHttpMessages(File pcapFile) throws IOException {
+        List<HttpMessage> httpMessages = new LinkedList<>();
+
+        Collection<TcpStream> httpStreams = PcapUtils.extractHttpStreams(pcapFile);
+
+        for (TcpStream httpStream : httpStreams) {
+            String requestFlow = PcapUtils.getHttpRequestFlow(httpStream);
+            byte[] responseFlow = PcapUtils.getHttpResponseFlow(httpStream);
+            httpMessages.addAll(PcapUtils.constructHttpMessages(requestFlow, responseFlow));
+        }
+
+        return httpMessages;
+    }
+
+    private static void persistMessage(HttpMessage message) {
+        HistoryReference historyRef;
+
+        try {
+            historyRef =
+                    new HistoryReference(
+                            Model.getSingleton().getSession(),
+                            HistoryReference.TYPE_ZAP_USER,
+                            message);
+        } catch (Exception e) {
+            LOGGER.warn(e.getMessage());
+            return;
+        }
+
+        if (getExtensionHistory() != null) {
+            ThreadUtils.invokeAndWaitHandled(() -> addMessage(historyRef, message));
+        }
+    }
+
+    private static ExtensionHistory getExtensionHistory() {
+        if (extHistory == null) {
+            extHistory =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionHistory.class);
+        }
+        return extHistory;
+    }
+
+    private static void addMessage(HistoryReference historyRef, HttpMessage message) {
+        getExtensionHistory().addHistory(historyRef);
+        Model.getSingleton().getSession().getSiteTree().addPath(historyRef, message);
     }
 
     public boolean isSuccess() {
         return success;
+    }
+
+    private void setTotalTasks(int totalTasks) {
+        if (progressPane != null) {
+            progressPane.setTotalTasks(totalTasks);
+        }
+    }
+
+    private void updateProgress(int count, String line) {
+        if (progressListener != null) {
+            progressListener.setTasksDone(count);
+            progressListener.setCurrentTask(
+                    Constant.messages.getString("exim.progress.currentimport", line));
+        }
     }
 
     private void completed() {
