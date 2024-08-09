@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.wappalyzer;
 
 import com.google.re2j.Pattern;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 
@@ -82,42 +81,63 @@ public class AppPattern {
         this.type = type;
     }
 
-    public List<String> findInString(String str) {
-        List<String> results = null;
+    public Result findInString(String str) {
+        Result result = new Result();
         if (this.re2jPattern != null) {
             com.google.re2j.Matcher re2jMatcher = this.re2jPattern.matcher(str);
             if (re2jMatcher.find()) {
-                results = createResultsList(re2jMatcher.groupCount());
+                result.setEvidence(re2jMatcher.group());
                 for (int i = 1; i <= re2jMatcher.groupCount(); i++) {
-                    addGroup(re2jMatcher.group(i), results);
+                    addGroup(re2jMatcher.group(i), result);
                 }
             }
         } else {
             Matcher matcher = this.javaPattern.matcher(str);
             if (matcher.find()) {
-                results = createResultsList(matcher.groupCount());
+                result.setEvidence(matcher.group());
                 for (int i = 1; i <= matcher.groupCount(); i++) {
-                    addGroup(matcher.group(i), results);
+                    addGroup(matcher.group(i), result);
                 }
             }
         }
-        return results;
+        return result;
     }
 
-    private List<String> createResultsList(int size) {
-        if (size == 0) {
-            return Collections.emptyList();
-        }
-        return new ArrayList<>(size);
-    }
-
-    private void addGroup(String group, List<String> results) {
+    private static void addGroup(String group, Result result) {
         if (group == null) {
             return;
         }
         String trimmedGroup = group.trim();
         if (!trimmedGroup.isEmpty()) {
-            results.add(trimmedGroup);
+            result.addVersion(trimmedGroup);
+        }
+    }
+
+    public static class Result {
+        private String evidence = "";
+        private List<String> versions;
+
+        Result() {
+            // Nothing to do
+        }
+
+        public String getEvidence() {
+            return evidence;
+        }
+
+        public void setEvidence(String evidence) {
+            this.evidence = evidence;
+        }
+
+        public List<String> getVersions() {
+            if (this.versions == null) {
+                versions = new ArrayList<String>();
+            }
+            return versions;
+        }
+
+        public void addVersion(String version) {
+            getVersions().add(version);
         }
     }
 }

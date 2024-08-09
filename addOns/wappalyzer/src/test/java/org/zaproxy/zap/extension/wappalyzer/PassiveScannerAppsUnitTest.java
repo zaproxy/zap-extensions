@@ -20,7 +20,9 @@
 package org.zaproxy.zap.extension.wappalyzer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.BDDMockito.given;
@@ -42,7 +44,7 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
-class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveScanner> {
+class PassiveScannerAppsUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveScanner> {
 
     ApplicationTestHolder defaultHolder;
 
@@ -205,7 +207,8 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
         scan(msg);
         // Then
         assertFoundAppCount("https://www.example.com", 1);
-        assertFoundApp("https://www.example.com", "Test Entry2");
+        // No evidence on DOM selectors
+        assertFoundApp("https://www.example.com", "Test Entry2", false);
     }
 
     @Test
@@ -248,7 +251,8 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
         // Then
         assertFoundAppCount("https://www.example.com", 2);
         assertFoundApp("https://www.example.com", "1C-Bitrix"); // Matched
-        assertFoundApp("https://www.example.com", "PHP"); // Implied
+        // No evidence when implied
+        assertFoundApp("https://www.example.com", "PHP", false); // Implied
     }
 
     @Test
@@ -435,7 +439,7 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
     }
 
-    private HttpMessage makeHttpMessage() throws HttpMalformedHeaderException {
+    private static HttpMessage makeHttpMessage() throws HttpMalformedHeaderException {
         HttpMessage httpMessage = new HttpMessage();
 
         HistoryReference ref = mock(HistoryReference.class);
@@ -461,10 +465,18 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
     }
 
     private void assertFoundApp(String site, String appName) {
-        assertFoundApp(site, appName, null);
+        assertFoundApp(site, appName, null, true);
+    }
+
+    private void assertFoundApp(String site, String appName, boolean withEvidence) {
+        assertFoundApp(site, appName, null, withEvidence);
     }
 
     private void assertFoundApp(String site, String appName, String version) {
+        assertFoundApp(site, appName, version, true);
+    }
+
+    private void assertFoundApp(String site, String appName, String version, boolean withEvidence) {
         List<ApplicationMatch> appsForSite = getDefaultHolder().getAppsForSite(site);
         assertThat(appsForSite, notNullValue());
 
@@ -476,6 +488,9 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
         assertThat("Application '" + appName + "' not present", app.isPresent(), is(true));
         if (version != null) {
             assertThat(app.get().getVersion(), is(version));
+        }
+        if (withEvidence) {
+            assertThat(app.get().getEvidences(), is(not(empty())));
         }
     }
 }
