@@ -34,7 +34,7 @@ function reqResp() {
           <div className="flex flex-row text-center justify-center ">
             <div className="w-1/3 p-4 font-serif text-center">Request</div>
           </div>     
-          <div className="flex justify-center text-center">
+          <div className="flex ">
               <div className="p-4 overflow-x-auto">
   {initialreqRep?.requestHeader.split('\n').map((line) =>  (<p>{line}</p>  ))}
        </div>       
@@ -48,11 +48,16 @@ function reqResp() {
           <div className="flex flex-row text-center justify-center">
             <div className="w-1/3 p-4 font-serif text-center">Response</div>
           </div>            
-          <div className="flex justify-center text-center">
-              <div className="p-4 overflow-x-auto">  {initialreqRep?.responseHeader}  </div>          
+          <div className="flex  ">
+              <div className="p-4 overflow-x-auto">
+  {initialreqRep?.responseHeader.split('\n').map((line) =>  (<p>{line}</p>  ))}
+       </div>       
           </div>
           
-          <p className=" p-4 justify-center text-center overflow-x-auto">{initialreqRep?.responseBody}</p>
+          <p className=" p-4 justify-center  overflow-x-auto">
+          {initialreqRep?.responseBody.split('\n').map((line) =>  (<p>{line}</p>  ))}
+            
+            </p>
        
         </div>
       
