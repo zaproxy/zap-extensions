@@ -18,10 +18,11 @@ const App = () => {
 
       <div className="w-full bg-gray-600 text-white ">
         <SearchBar />
-        <div className="h-[400px]  mr-2 ml-2 bg-gray-800 rounded-lg ">
+        <RequestBar />
+        <div className="h-[496px]  mr-2 ml-2 mt-2 bg-gray-800 rounded-lg ">
           <div className="flex flex-row text-center justify-center ">
             <div className=" w-1/3 p-4 font-serif text-center ">
-              ID | Method | Host | Path | URI
+            History Bar
             </div>
           </div>
           <div className="flex flex-row  justify-center text-center">
@@ -37,7 +38,8 @@ const App = () => {
           </div>
         </div>
 
-        <RequestBar />
+        
+        
       </div>
     </div>
   );
