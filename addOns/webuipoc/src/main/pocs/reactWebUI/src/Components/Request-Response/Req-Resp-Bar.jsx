@@ -54,10 +54,7 @@ function reqResp() {
        </div>       
           </div>
           
-          <p className=" p-4 justify-center  overflow-x-auto">
-          {initialreqRep?.responseBody.split('\n').map((line) =>  (<p>{line}</p>  ))}
-            
-            </p>
+          <p className=" justify-center text-center overflow-x-auto">{initialreqRep?.responseBody}</p>
        
         </div>
       
