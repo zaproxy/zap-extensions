@@ -745,10 +745,14 @@
         }
       },
       "img[src*='cdn.getyourguide.com/']": {
-        "src": ""
+        "attributes": {
+          "src": ""
+        }
       },
       "link[href*='cdn.getyourguide.com/']": {
-        "src": ""
+        "attributes": {
+          "src": ""
+        }
       }
     },
     "icon": "GetYourGuide.svg",

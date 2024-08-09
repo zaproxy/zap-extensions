@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [98] - 2024-08-07
+### Changed
+- Update ChromeDriver to 127.0.6533.99.
+- Update geckodriver to 0.35.0.
+
 ## [97] - 2024-07-31
 ### Changed
 - Update ChromeDriver to 127.0.6533.88.
@@ -419,6 +424,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27 IE 3.0.0
 
+[98]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v98
 [97]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v97
 [96]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v96
 [95]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v95

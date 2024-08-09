@@ -3833,7 +3833,7 @@
     ],
     "description": "Twenty Twenty-Two is the default WordPress theme for 2022.",
     "dom": {
-      "link#twentytwentytwo-style-css": "",
+      "link#twentytwentytwo-style-css": {},
       "style#webfonts-inline-css": {
         "text": "/wp-content/themes/twentytwentytwo/assets/fonts/"
       },
