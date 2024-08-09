@@ -7,6 +7,7 @@ import SideTree from "./Components/SitesTree/SitesTree";
 import RequestBar from "./Components/Request-Response/Req-Resp-Bar";
 import { sendChildNode } from "./Utilities/requests";
 import SearchBar from "./Components/SearchBar/SearchBar";
+import { NodeIDProvider } from "./Contexts/SitesTreeNodeIDContext";
 
 const App = () => {
 
@@ -14,8 +15,8 @@ const App = () => {
     <div className="flex mt-16 overflow-auto">
       <HeaderBase />
       <Sidebar />
+      <NodeIDProvider>
       <SideTree />
-
       <div className="w-full bg-gray-600 text-white ">
         <SearchBar />
         <div className="h-[400px]  mr-2 ml-2 bg-gray-800 rounded-lg ">
@@ -39,6 +40,7 @@ const App = () => {
 
         <RequestBar />
       </div>
+      </NodeIDProvider>
     </div>
   );
 };
