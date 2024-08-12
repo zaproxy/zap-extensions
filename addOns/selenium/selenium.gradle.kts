@@ -36,9 +36,9 @@ zapAddOn {
 }
 
 dependencies {
-    var seleniumVersion = "4.23.0"
+    var seleniumVersion = "4.23.1"
     selenium("org.seleniumhq.selenium:selenium-java:$seleniumVersion")
-    selenium("org.seleniumhq.selenium:htmlunit3-driver:4.22.0")
+    selenium("org.seleniumhq.selenium:htmlunit3-driver:4.23.0")
     implementation(libs.log4j.slf4j) {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
