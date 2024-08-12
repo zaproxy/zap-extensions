@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- Do not change the URL field of the Manual Explore panel when the Mode changes (Issue 8591).
 
 ## [48] - 2024-07-08
 ### Changed
