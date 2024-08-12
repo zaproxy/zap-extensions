@@ -103,8 +103,7 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                             AuthUtils.findSessionTokenSource(st.getValue());
                     if (smrd != null) {
                         // Yes, found the token in a 'non standard' place
-                        this.getTaskHelper()
-                                .raiseAlert(smrd.getMsg().getHistoryRef(), getAlert(smrd).build());
+                        getAlert(smrd).raise();
                         LOGGER.debug(
                                 "Found {} 'unknown' response session token(s) in {}",
                                 responseTokens.size(),
