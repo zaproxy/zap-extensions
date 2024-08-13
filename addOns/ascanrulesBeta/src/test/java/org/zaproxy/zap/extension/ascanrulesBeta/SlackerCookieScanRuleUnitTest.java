@@ -21,10 +21,13 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class SlackerCookieScanRuleUnitTest extends ActiveScannerTest<SlackerCookieScanRule> {
@@ -62,5 +65,26 @@ class SlackerCookieScanRuleUnitTest extends ActiveScannerTest<SlackerCookieScanR
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given /  When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts, hasSize(1));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+        assertThat(
+                alert.getOtherInfo(),
+                is(
+                        equalTo(
+                                "Cookies that don't have "
+                                        + "expected effects can reveal flaws in application logic. In "
+                                        + "the worst case, this can reveal where authentication via cookie "
+                                        + "token(s) is not actually enforced.\n"
+                                        + "These cookies affected the response: oops\n"
+                                        + "These cookies did NOT affect the response: bar,foo\n")));
     }
 }
