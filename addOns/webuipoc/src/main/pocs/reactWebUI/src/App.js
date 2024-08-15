@@ -5,8 +5,9 @@ import Sidebar from "./Components/Sidebar/Sidebar";
 import HeaderBase from "./Components/Header/HeaderBase";
 import SideTree from "./Components/SitesTree/SitesTree";
 import RequestBar from "./Components/Request-Response/Req-Resp-Bar";
-import { sendChildNode } from "./Utilities/requests";
 import SearchBar from "./Components/SearchBar/SearchBar";
+import History from "./Components/History/History";
+
 
 const App = () => {
 
@@ -19,29 +20,10 @@ const App = () => {
       <div className="w-full bg-gray-600 text-white ">
         <SearchBar />
         <RequestBar />
-        <div className="h-[496px]  mr-2 ml-2 mt-2 bg-gray-800 rounded-lg ">
-          <div className="flex flex-row text-center justify-center ">
-            <div className=" w-1/3 p-4 font-serif text-center ">
-            History Bar
-            </div>
-          </div>
-          <div className="flex flex-row  justify-center text-center">
-            <div className=" p-4">
-              <p className="font-mono "></p>
-              {/* {childNode &&
-                childNode.map((node) => (
-                  <p className="" key={childNode}>
-                    {node.hrefId}
-                  </p>
-                ))} */}
-            </div>
-          </div>
-        </div>
+        <History />
 
-        
-        
-      </div>
-    </div>
+   </div>
+   </div>
   );
 };
 
