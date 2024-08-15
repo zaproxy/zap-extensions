@@ -1,6 +1,5 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-
 description = "Use Retire.js to identify vulnerable or out-dated JavaScript packages."
 
 zapAddOn {
