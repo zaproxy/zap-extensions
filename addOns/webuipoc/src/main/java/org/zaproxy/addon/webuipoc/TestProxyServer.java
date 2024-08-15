@@ -202,7 +202,7 @@ public class TestProxyServer {
         String path = msg.getRequestHeader().getURI().getEscapedPath();
         return path.startsWith("/UI/")
                 || path.startsWith("/JSON/")
-	        	|| path.startsWith("/OTHER/")
+                || path.startsWith("/OTHER/")
                 || path.startsWith("/script.js");
     }
 

@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.apache.commons.httpclient.URIException;
@@ -167,13 +168,7 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin
                         paramName,
                         payload);
 
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setParam(paramName)
-                        .setAttack(payload)
-                        .setEvidence(addedString)
-                        .setMessage(msg)
-                        .raise();
+                createAlert(paramName, payload, addedString).setMessage(msg).raise();
             }
 
         } catch (IOException ex) {
@@ -185,5 +180,18 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin
                     payload,
                     ex);
         }
+    }
+
+    private AlertBuilder createAlert(String paramName, String attack, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(paramName)
+                .setAttack(attack)
+                .setEvidence(evidence);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("foo", "${719117+853088}", "1572205").build());
     }
 }
