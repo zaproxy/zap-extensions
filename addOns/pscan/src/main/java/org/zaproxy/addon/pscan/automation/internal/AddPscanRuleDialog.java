@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation.gui;
+package org.zaproxy.addon.pscan.automation.internal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,8 +28,7 @@ import java.util.stream.Collectors;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob.Rule;
+import org.zaproxy.addon.pscan.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
@@ -39,9 +38,9 @@ public class AddPscanRuleDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String TITLE = "automation.dialog.addrule.title";
-    private static final String RULE_PARAM = "automation.dialog.addrule.rule";
-    private static final String THREHOLD_PARAM = "automation.dialog.addrule.threshold";
+    private static final String TITLE = "pscan.automation.dialog.addrule.title";
+    private static final String RULE_PARAM = "pscan.automation.dialog.addrule.rule";
+    private static final String THREHOLD_PARAM = "pscan.automation.dialog.addrule.threshold";
 
     private PassiveScanConfigJob.Rule rule;
     private int tableIndex;
@@ -73,7 +72,9 @@ public class AddPscanRuleDialog extends StandardFieldsDialog {
                         .collect(Collectors.toList());
         // Remove any rules already set
         allNames.removeAll(
-                model.getRules().stream().map(Rule::getName).collect(Collectors.toList()));
+                model.getRules().stream()
+                        .map(PassiveScanConfigJob.Rule::getName)
+                        .collect(Collectors.toList()));
         nameToPlugin =
                 allRules.stream()
                         .collect(
@@ -103,7 +104,7 @@ public class AddPscanRuleDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         if (rule == null) {
-            rule = new Rule();
+            rule = new PassiveScanConfigJob.Rule();
             PluginPassiveScanner plugin = this.nameToPlugin.get(this.getStringValue(RULE_PARAM));
             rule.setId(plugin.getPluginId());
             rule.setName(plugin.getName());

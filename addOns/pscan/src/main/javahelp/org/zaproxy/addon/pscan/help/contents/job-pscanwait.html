@@ -2,11 +2,11 @@
 <HTML>
 <HEAD>
 <TITLE>
-Automation Framework - passiveScan-wait Job
+Passive Scanner Automation Framework - passiveScan-wait Job
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Automation Framework - passiveScan-wait Job</H1>
+<H1>Passive Scanner Automation Framework - passiveScan-wait Job</H1>
 
 This job waits for the passive scanner to finishing scanning the requests and responses in the current queue.
 You should typically run this job after the jobs that explore you application, such as the spider jobs or those that import API definitions.
@@ -27,8 +27,8 @@ It is covered in the video: <a href="https://youtu.be/hcftgjz_Vgc">ZAP Chat 12 A
 The following class will be made available to add-ons that provide access to the Job Data such as the Reporting add-on.
 Note that in this case the data is from the currently enabled Passive Scan rules, regardless of whether they have been used as a result of the Automation Framework, the UI, or the API.
 <ul>
-<li>Key: <code>passiveScanData</code>
-<li>Class: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/automation/src/main/java/org/zaproxy/addon/automation/jobs/PassiveScanJobResultData.java">PassiveScanJobResultData</a>
+<li>Key: <code>passiveScanData2</code>
+<li>Class: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscan/src/main/java/org/zaproxy/addon/pscan/automation/jobs/PassiveScanJobResultData.java">PassiveScanJobResultData</a>
 </ul>
 
 </BODY>

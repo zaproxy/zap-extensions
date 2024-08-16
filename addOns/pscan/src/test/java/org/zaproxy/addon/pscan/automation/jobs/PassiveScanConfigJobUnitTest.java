@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation.jobs;
+package org.zaproxy.addon.pscan.automation.jobs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -51,6 +51,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.PassiveScanParam;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -308,7 +309,7 @@ class PassiveScanConfigJobUnitTest {
         assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(
                 progress.getWarnings().get(0),
-                is(equalTo("!automation.error.pscan.rule.unknown!")));
+                is(equalTo("!pscan.automation.error.pscan.rule.unknown!")));
     }
 
     @Test
@@ -338,7 +339,8 @@ class PassiveScanConfigJobUnitTest {
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.getInfos().size(), is(equalTo(1)));
-        assertThat(progress.getInfos().get(0), is(equalTo("!automation.info.pscan.rule.noid!")));
+        assertThat(
+                progress.getInfos().get(0), is(equalTo("!pscan.automation.info.pscan.rule.noid!")));
     }
 
     @Test

@@ -29,11 +29,11 @@ import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationAlertTest;
+import org.zaproxy.addon.pscan.automation.jobs.PassiveScanConfigJob;
+import org.zaproxy.addon.pscan.automation.jobs.PassiveScanWaitJob;
 
 public class RetestPlanGenerator {
 

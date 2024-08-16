@@ -41,8 +41,6 @@ import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
-import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.addon.commonlib.Constants;
@@ -250,6 +248,7 @@ public class AjaxSpiderJob extends AutomationJob {
     }
 
     @Override
+    @SuppressWarnings("removal")
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
         ContextWrapper context = getContextWrapper(env, progress);
@@ -273,18 +272,23 @@ public class AjaxSpiderJob extends AutomationJob {
         }
 
         if (Boolean.TRUE.equals(this.getParameters().getRunOnlyIfModern())) {
-            JobResultData resultData = progress.getJobResultData(PassiveScanJobResultData.KEY);
+            JobResultData resultData =
+                    progress.getJobResultData(
+                            org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.KEY);
             if (resultData == null) {
                 // They havnt run the passive scan wait job
                 progress.warn(
                         Constant.messages.getString("spiderajax.automation.error.nopscanresults"));
-            } else if (resultData instanceof PassiveScanJobResultData) {
-                PassiveScanJobResultData pscanResultData = (PassiveScanJobResultData) resultData;
+            } else if (resultData
+                    instanceof org.zaproxy.addon.automation.jobs.PassiveScanJobResultData) {
+                org.zaproxy.addon.automation.jobs.PassiveScanJobResultData pscanResultData =
+                        (org.zaproxy.addon.automation.jobs.PassiveScanJobResultData) resultData;
 
-                List<RuleData> modernRuleData =
-                        pscanResultData.getAllRuleData().stream()
-                                .filter(r -> r.getId() == MODERN_WEB_DETECTION_RULE_ID)
-                                .collect(Collectors.toList());
+                List<org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData>
+                        modernRuleData =
+                                pscanResultData.getAllRuleData().stream()
+                                        .filter(r -> r.getId() == MODERN_WEB_DETECTION_RULE_ID)
+                                        .collect(Collectors.toList());
 
                 if (modernRuleData.isEmpty()
                         || AlertThreshold.OFF.equals(modernRuleData.get(0).getThreshold())) {

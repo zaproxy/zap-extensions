@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation.jobs;
+package org.zaproxy.addon.pscan.automation.jobs;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -38,11 +38,10 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 
-@Deprecated(forRemoval = true)
 public class PassiveScanJobResultData extends JobResultData {
 
     private static final Logger LOGGER = LogManager.getLogger(PassiveScanJobResultData.class);
-    public static final String KEY = "passiveScanData";
+    public static final String KEY = "passiveScanData2";
 
     private Map<Integer, RuleData> ruleDataMap = new HashMap<>();
     private Map<Integer, Alert> alertDataMap = new HashMap<>();

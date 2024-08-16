@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation.jobs;
+package org.zaproxy.addon.pscan.automation.jobs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -104,7 +104,7 @@ class PassiveScanJobResultsUnitTest {
 
         // Then
         assertThat(data, is(notNullValue()));
-        assertThat(data.getKey(), is(equalTo("passiveScanData")));
+        assertThat(data.getKey(), is(equalTo("passiveScanData2")));
         assertThat(data.getAllRuleData().size(), is(equalTo(2)));
         assertThat(data.getRuleData(1), is(notNullValue()));
         assertThat(data.getRuleData(1).getId(), is(equalTo(1)));
@@ -175,7 +175,7 @@ class PassiveScanJobResultsUnitTest {
 
         // Then
         assertThat(data, is(notNullValue()));
-        assertThat(data.getKey(), is(equalTo("passiveScanData")));
+        assertThat(data.getKey(), is(equalTo("passiveScanData2")));
         assertThat(data.getAllAlertData().size(), is(equalTo(2)));
 
         assertThat(data.getAlertData(pluginId_100), is(notNullValue()));

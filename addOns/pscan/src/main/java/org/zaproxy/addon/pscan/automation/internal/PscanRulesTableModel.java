@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation.gui;
+package org.zaproxy.addon.pscan.automation.internal;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +25,7 @@ import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob.Rule;
+import org.zaproxy.addon.pscan.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -36,9 +35,9 @@ public class PscanRulesTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
 
     private static final String[] columnNames = {
-        Constant.messages.getString("automation.dialog.pscanconfig.table.header.id"),
-        Constant.messages.getString("automation.dialog.pscanconfig.table.header.name"),
-        Constant.messages.getString("automation.dialog.pscanconfig.table.header.threshold")
+        Constant.messages.getString("pscan.automation.dialog.pscanconfig.table.header.id"),
+        Constant.messages.getString("pscan.automation.dialog.pscanconfig.table.header.name"),
+        Constant.messages.getString("pscan.automation.dialog.pscanconfig.table.header.threshold")
     };
 
     private List<PassiveScanConfigJob.Rule> rules = new ArrayList<>();
@@ -108,12 +107,12 @@ public class PscanRulesTableModel extends AbstractTableModel {
         this.rules.clear();
     }
 
-    public void add(Rule rule) {
+    public void add(PassiveScanConfigJob.Rule rule) {
         this.rules.add(rule);
         this.fireTableRowsInserted(this.rules.size() - 1, this.rules.size() - 1);
     }
 
-    public void update(int tableIndex, Rule rule) {
+    public void update(int tableIndex, PassiveScanConfigJob.Rule rule) {
         this.rules.set(tableIndex, rule);
         this.fireTableRowsUpdated(tableIndex, tableIndex);
     }
