@@ -22,7 +22,7 @@ package org.zaproxy.zap.extension.wappalyzer;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
 
-public class WappalyzerParam extends VersionedAbstractParam {
+public class TechDetectParam extends VersionedAbstractParam {
 
     /**
      * The version of the configurations. Used to keep track of configurations changes between

@@ -54,12 +54,12 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.wappalyzer.AppPattern.Result;
 import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
 
-public class WappalyzerPassiveScanner implements PassiveScanner, OptionsChangedListener {
+public class TechPassiveScanner implements PassiveScanner, OptionsChangedListener {
 
-    private static final Logger LOGGER = LogManager.getLogger(WappalyzerPassiveScanner.class);
+    private static final Logger LOGGER = LogManager.getLogger(TechPassiveScanner.class);
     private static final int PLUGIN_ID = 10004;
 
-    private WappalyzerApplicationHolder applicationHolder;
+    private ApplicationHolder applicationHolder;
     private Map<String, Set<String>> tracker;
     private Set<String> visitedSiteIdentifiers;
     private volatile boolean enabled = true;
@@ -75,20 +75,20 @@ public class WappalyzerPassiveScanner implements PassiveScanner, OptionsChangedL
 
     private List<CustomProcessor> messageHeaderProcessors =
             List.of(
-                    WappalyzerPassiveScanner.this::checkUrlMatches,
-                    WappalyzerPassiveScanner.this::checkHeadersMatches,
-                    WappalyzerPassiveScanner.this::checkCookieMatches);
+                    TechPassiveScanner.this::checkUrlMatches,
+                    TechPassiveScanner.this::checkHeadersMatches,
+                    TechPassiveScanner.this::checkCookieMatches);
 
     private List<CustomProcessor> messageBodyProcessors =
             List.of(
-                    WappalyzerPassiveScanner.this::checkBodyMatches,
-                    WappalyzerPassiveScanner.this::checkSimpleDomMatches,
-                    WappalyzerPassiveScanner.this::checkDomElementMatches,
-                    WappalyzerPassiveScanner.this::checkMetaElementsMatches,
-                    WappalyzerPassiveScanner.this::checkScriptElementsMatches,
-                    WappalyzerPassiveScanner.this::checkCssElementsMatches);
+                    TechPassiveScanner.this::checkBodyMatches,
+                    TechPassiveScanner.this::checkSimpleDomMatches,
+                    TechPassiveScanner.this::checkDomElementMatches,
+                    TechPassiveScanner.this::checkMetaElementsMatches,
+                    TechPassiveScanner.this::checkScriptElementsMatches,
+                    TechPassiveScanner.this::checkCssElementsMatches);
 
-    public WappalyzerPassiveScanner(WappalyzerApplicationHolder applicationHolder) {
+    public TechPassiveScanner(ApplicationHolder applicationHolder) {
         super();
         this.applicationHolder = applicationHolder;
         this.reset();
@@ -503,7 +503,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner, OptionsChangedL
 
     @Override
     public void optionsChanged(OptionsParam optionsParam) {
-        WappalyzerParam param = optionsParam.getParamSet(WappalyzerParam.class);
+        TechDetectParam param = optionsParam.getParamSet(TechDetectParam.class);
         mode = param.getMode();
         raiseAlerts = param.isRaiseAlerts();
     }

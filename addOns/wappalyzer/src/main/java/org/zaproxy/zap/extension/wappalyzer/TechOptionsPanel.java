@@ -95,7 +95,7 @@ public class TechOptionsPanel extends AbstractParamPanel {
     @Override
     public void initParam(Object obj) {
         OptionsParam options = (OptionsParam) obj;
-        WappalyzerParam param = options.getParamSet(WappalyzerParam.class);
+        TechDetectParam param = options.getParamSet(TechDetectParam.class);
 
         modeComboBox.setSelectedItem(param.getMode());
         raiseAlertsCheckBox.setSelected(param.isRaiseAlerts());
@@ -104,7 +104,7 @@ public class TechOptionsPanel extends AbstractParamPanel {
     @Override
     public void saveParam(Object obj) throws Exception {
         OptionsParam options = (OptionsParam) obj;
-        WappalyzerParam param = options.getParamSet(WappalyzerParam.class);
+        TechDetectParam param = options.getParamSet(TechDetectParam.class);
 
         param.setMode((Mode) modeComboBox.getSelectedItem());
         param.setRaiseAlerts(raiseAlertsCheckBox.isSelected());

@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WappalyzerData {
+public class TechData {
 
     private Map<String, String> categories = new HashMap<>();
     private List<Application> applications = Collections.synchronizedList(new ArrayList<>());

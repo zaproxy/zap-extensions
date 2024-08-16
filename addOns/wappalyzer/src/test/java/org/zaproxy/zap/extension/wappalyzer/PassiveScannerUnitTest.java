@@ -47,7 +47,7 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
-class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveScanner> {
+class PassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScanner> {
 
     ApplicationTestHolder defaultHolder;
 
@@ -55,8 +55,8 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
         if (defaultHolder == null) {
             try {
                 defaultHolder = new ApplicationTestHolder();
-                WappalyzerJsonParser parser = new WappalyzerJsonParser();
-                WappalyzerData result =
+                TechsJsonParser parser = new TechsJsonParser();
+                TechData result =
                         parser.parse(
                                 "categories.json", Collections.singletonList("apps.json"), true);
                 defaultHolder.setApplications(result.getApplications());
@@ -73,9 +73,9 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
     }
 
     @Override
-    protected WappalyzerPassiveScanner createScanner() {
+    protected TechPassiveScanner createScanner() {
         getDefaultHolder().resetApplicationsToSite();
-        return new WappalyzerPassiveScanner(getDefaultHolder());
+        return new TechPassiveScanner(getDefaultHolder());
     }
 
     @Test
@@ -559,12 +559,12 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
     }
 
     @Nested
-    class AlertsUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveScanner> {
+    class AlertsUnitTest extends PassiveScannerTestUtils<TechPassiveScanner> {
 
         @Override
-        protected WappalyzerPassiveScanner createScanner() {
+        protected TechPassiveScanner createScanner() {
             getDefaultHolder().resetApplicationsToSite();
-            return new WappalyzerPassiveScanner(getDefaultHolder());
+            return new TechPassiveScanner(getDefaultHolder());
         }
 
         @Test
