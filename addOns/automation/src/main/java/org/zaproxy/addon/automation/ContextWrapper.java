@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +48,7 @@ import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.Script
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.model.StandardParameterParser;
 import org.zaproxy.zap.users.User;
 
 public class ContextWrapper {
@@ -86,6 +88,7 @@ public class ContextWrapper {
 
         this.data.setSessionManagement(new SessionManagementData(context));
         this.data.setTechnology(new TechnologyData(context));
+        this.data.setStructure(new StructureData(context));
         this.data.setAuthentication(new AuthenticationData(context));
 
         if (getExtUserMgmt() != null) {
@@ -174,6 +177,9 @@ public class ContextWrapper {
                     break;
                 case "technology":
                     data.setTechnology(new TechnologyData(value, env, progress));
+                    break;
+                case "structure":
+                    data.setStructure(new StructureData(value, progress));
                     break;
                 case "users":
                     if (!(value instanceof ArrayList)) {
@@ -323,6 +329,9 @@ public class ContextWrapper {
         if (getData().getTechnology() != null) {
             getData().getTechnology().initContextTechnology(context, progress);
         }
+        if (getData().getStructure() != null) {
+            getData().getStructure().initContext(context, env, progress);
+        }
         if (getData().getUsers() != null) {
             initContextUsers(context, env);
         }
@@ -413,6 +422,7 @@ public class ContextWrapper {
         private AuthenticationData authentication;
         private SessionManagementData sessionManagement;
         private TechnologyData technology;
+        private StructureData structure;
         private List<UserData> users;
 
         public String getName() {
@@ -478,6 +488,14 @@ public class ContextWrapper {
         public void setUsers(List<UserData> users) {
             this.users = users;
         }
+
+        public StructureData getStructure() {
+            return structure;
+        }
+
+        public void setStructure(StructureData structure) {
+            this.structure = structure;
+        }
     }
 
     public static class UserData extends AutomationData {
@@ -528,6 +546,92 @@ public class ContextWrapper {
 
         public void setCredentials(Map<String, String> credentials) {
             this.credentials = credentials;
+        }
+    }
+
+    public static class StructureData {
+
+        private List<String> structuralParameters;
+
+        public StructureData() {
+            structuralParameters = new ArrayList<>();
+        }
+
+        StructureData(Context context) {
+            this();
+
+            var urlParamParser = context.getUrlParamParser();
+            if (urlParamParser instanceof StandardParameterParser) {
+                var spp = (StandardParameterParser) urlParamParser;
+                structuralParameters = new ArrayList<>(spp.getStructuralParameters());
+            }
+        }
+
+        StructureData(Object data, AutomationProgress progress) {
+            this();
+
+            if (!(data instanceof Map)) {
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.context.badstructure",
+                                data.getClass().getSimpleName()));
+                return;
+            }
+
+            Map<?, ?> dataMap = (Map<?, ?>) data;
+            for (Entry<?, ?> cdata : dataMap.entrySet()) {
+                if ("structuralParameters".equals(cdata.getKey().toString())) {
+                    Object value = cdata.getValue();
+                    if (!(value instanceof List)) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.context.badstructuralparameterslist",
+                                        value));
+
+                    } else {
+                        ((List<?>) value)
+                                .stream().map(Object::toString).forEach(structuralParameters::add);
+                    }
+
+                } else {
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "automation.error.options.unknown",
+                                    AutomationEnvironment.AUTOMATION_CONTEXT_NAME,
+                                    cdata.getKey().toString()));
+                }
+            }
+        }
+
+        void initContext(Context context, AutomationEnvironment env, AutomationProgress progress) {
+            var urlParamParser = new StandardParameterParser();
+            urlParamParser.setStructuralParameters(
+                    structuralParameters.stream()
+                            .map(env::replaceVars)
+                            .filter(
+                                    e -> {
+                                        if (e.matches("\\w+")) {
+                                            return true;
+                                        }
+
+                                        progress.error(
+                                                Constant.messages.getString(
+                                                        "automation.error.context.badstructuralparametername",
+                                                        e));
+                                        return false;
+                                    })
+                            .collect(Collectors.toList()));
+
+            context.setUrlParamParser(urlParamParser);
+            urlParamParser.setContext(context);
+        }
+
+        public List<String> getStructuralParameters() {
+            return structuralParameters;
+        }
+
+        public void setStructuralParameters(List<String> structuralParameters) {
+            this.structuralParameters = structuralParameters;
         }
     }
 }
