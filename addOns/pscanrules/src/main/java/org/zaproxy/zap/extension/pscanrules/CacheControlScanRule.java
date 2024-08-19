@@ -27,6 +27,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
@@ -47,6 +48,7 @@ public class CacheControlScanRule extends PluginPassiveScanner
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (msg.getRequestHeader().isSecure()
                 && msg.getResponseBody().length() > 0
+                && !HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod())
                 && !ResourceIdentificationUtils.isImage(msg)) {
 
             if (!AlertThreshold.LOW.equals(this.getAlertThreshold())
