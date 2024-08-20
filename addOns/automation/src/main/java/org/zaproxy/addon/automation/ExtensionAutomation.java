@@ -197,7 +197,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     }
 
     @Override
-    public void postInit() {
+    public void start() {
         if (hasView() && this.getParam().isOpenLastPlan()) {
             String path = getParam().getLastPlanPath();
             if (path != null) {

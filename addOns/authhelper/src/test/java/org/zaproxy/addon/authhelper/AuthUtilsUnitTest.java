@@ -279,7 +279,7 @@ class AuthUtilsUnitTest extends TestUtils {
                                         + "Header2: Value2\r\n"),
                         new HttpResponseBody("Response Body"));
         // When
-        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, false);
 
         // Then
         assertThat(tokens.size(), is(equalTo(2)));
@@ -298,7 +298,7 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("Response Body"));
         // When
-        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, false);
 
         // Then
         assertThat(tokens.size(), is(equalTo(2)));
@@ -328,7 +328,7 @@ class AuthUtilsUnitTest extends TestUtils {
                                         + "  }\n"
                                         + "}}"));
         // When
-        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, false);
 
         // Then
         assertThat(tokens.size(), is(equalTo(8)));
@@ -347,7 +347,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldExtractCookies() throws Exception {
+    void shouldExtractAllCookies() throws Exception {
         // Given
         HttpMessage msg =
                 new HttpMessage(
@@ -360,12 +360,35 @@ class AuthUtilsUnitTest extends TestUtils {
                                 "HTTP/1.1 200 OK\r\n" + "Set-Cookie: ccc=ddd; HttpOnly; Secure"),
                         new HttpResponseBody("Response Body"));
         // When
-        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, true);
 
         // Then
-        System.out.println(tokens);
         assertThat(tokens.size(), is(equalTo(3)));
         assertThat(tokens.get("cookie:aaa").getValue(), is(equalTo("bbb")));
+        assertThat(tokens.get("cookie:ccc").getValue(), is(equalTo("ddd")));
+        assertThat(
+                tokens.get("header:Set-Cookie").getValue(),
+                is(equalTo("ccc=ddd; HttpOnly; Secure")));
+    }
+
+    @Test
+    void shouldExtractResponseCookies() throws Exception {
+        // Given
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                "GET https://example.com/ HTTP/1.1\r\n"
+                                        + "Host: example.com\r\n"
+                                        + "Cookie: aaa=bbb\r\n\r\n"),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader(
+                                "HTTP/1.1 200 OK\r\n" + "Set-Cookie: ccc=ddd; HttpOnly; Secure"),
+                        new HttpResponseBody("Response Body"));
+        // When
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, false);
+
+        // Then
+        assertThat(tokens.size(), is(equalTo(2)));
         assertThat(tokens.get("cookie:ccc").getValue(), is(equalTo("ddd")));
         assertThat(
                 tokens.get("header:Set-Cookie").getValue(),

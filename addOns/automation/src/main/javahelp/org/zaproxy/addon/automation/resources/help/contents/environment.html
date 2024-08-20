@@ -56,6 +56,8 @@ env:                                   # The environment, mandatory
       technology:
         exclude:                       # List of tech to exclude, as per https://www.zaproxy.org/techtags/ (just use last names)
         include:                       # List of tech to include, should only be used when targeting specific techs, the exclude takes precedence when configuring the context.
+      structure:
+        structuralParameters:          # List of names of structural parameters.
       users:                           # List of one or more users available to use for authentication
       - name:                          # String, the name to be used by the jobs
         credentials:                   # List of user credentials - may include any required for scripts
@@ -67,6 +69,7 @@ env:                                   # The environment, mandatory
   parameters:
     failOnError: true                  # If set exit on an error         
     failOnWarning: false               # If set exit on a warning
+    continueOnFailure: false           # Continue running all jobs, even if one fails
     progressToStdout: true             # If set will write job progress to stdout
   proxy:                               # Optional upstream proxy settings
     hostname:                          # String, the proxy host

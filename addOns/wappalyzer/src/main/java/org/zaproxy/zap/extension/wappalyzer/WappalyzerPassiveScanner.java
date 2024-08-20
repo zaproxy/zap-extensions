@@ -19,21 +19,28 @@
  */
 package org.zaproxy.zap.extension.wappalyzer;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Alert.Builder;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.OptionsParam;
@@ -41,17 +48,23 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
+import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.wappalyzer.AppPattern.Result;
 import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
 
 public class WappalyzerPassiveScanner implements PassiveScanner, OptionsChangedListener {
 
     private static final Logger LOGGER = LogManager.getLogger(WappalyzerPassiveScanner.class);
+    private static final int PLUGIN_ID = 10004;
+
     private WappalyzerApplicationHolder applicationHolder;
-    private Set<String> visitedSiteIdentifiers = Collections.synchronizedSet(new HashSet<>());
+    private Map<String, Set<String>> tracker;
+    private Set<String> visitedSiteIdentifiers;
     private volatile boolean enabled = true;
     private volatile Mode mode = Mode.QUICK;
+    private volatile boolean raiseAlerts = true;
 
     /** Functional interface for looped processing of HttpMessages in different ways. */
     @FunctionalInterface
@@ -78,6 +91,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner, OptionsChangedL
     public WappalyzerPassiveScanner(WappalyzerApplicationHolder applicationHolder) {
         super();
         this.applicationHolder = applicationHolder;
+        this.reset();
     }
 
     @Override
@@ -94,19 +108,47 @@ public class WappalyzerPassiveScanner implements PassiveScanner, OptionsChangedL
         }
 
         long startTime = System.currentTimeMillis();
+        String site = getSite(msg);
+        tracker.putIfAbsent(site, new HashSet<String>());
+
         for (Application app : this.getApps()) {
-            ApplicationMatch appMatch = checkAppMatches(null, app, msg, source);
-            if (appMatch != null) {
-                String site = ExtensionWappalyzer.normalizeSite(msg.getRequestHeader().getURI());
-                LOGGER.debug("Adding {} to {}", app.getName(), site);
-                addApplicationsToSite(site, appMatch);
+            // Track matched based on site (authority)
+            synchronized (tracker) {
+                if (tracker.get(site).contains(app.getName())) {
+                    // Already exists, so continue
+                    LOGGER.debug("\"{}\" already identified on {}", app.getName(), site);
+                    continue;
+                }
+                ApplicationMatch appMatch = checkAppMatches(null, app, msg, source);
+                if (appMatch != null) {
+                    LOGGER.debug(
+                            "Adding \"{}\" to tracker {} identified via {}.",
+                            app.getName(),
+                            site,
+                            msg.getRequestHeader().getURI());
+                    addApplicationsToSite(
+                            ExtensionWappalyzer.normalizeSite(msg.getRequestHeader().getURI()),
+                            appMatch);
+                    raiseAlert(msg, appMatch);
+                    tracker.get(site).add(app.getName());
+                }
             }
         }
 
         LOGGER.debug("Analysis took {} ms", System.currentTimeMillis() - startTime);
     }
 
-    private String getSiteIdentifier(HttpMessage msg) {
+    private static String getSite(HttpMessage msg) {
+        String site = "";
+        try {
+            site = msg.getRequestHeader().getURI().getAuthority();
+        } catch (URIException e) {
+            // Ignore - Should never happen
+        }
+        return site;
+    }
+
+    private static String getSiteIdentifier(HttpMessage msg) {
         SiteNode node = getSiteNode(msg);
         if (node != null) {
             return node.getHierarchicNodeName() + "_" + node.getNodeName();
@@ -114,7 +156,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner, OptionsChangedL
         return msg.getRequestHeader().getURI().toString();
     }
 
-    private SiteNode getSiteNode(HttpMessage msg) {
+    private static SiteNode getSiteNode(HttpMessage msg) {
         HistoryReference href = msg.getHistoryRef();
         if (href == null) {
             return null;
@@ -271,10 +313,19 @@ public class WappalyzerPassiveScanner implements PassiveScanner, OptionsChangedL
             ApplicationMatch appMatch, Application currentApp, HttpMessage msg, Source source) {
         for (Map<String, AppPattern> sp : currentApp.getHeaders()) {
             for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
-                String header = msg.getResponseHeader().getHeader(entry.getKey());
-                if (header != null) {
-                    AppPattern p = entry.getValue();
-                    appMatch = addIfMatches(appMatch, currentApp, p, header);
+                List<String> hasRelevantHeaders =
+                        msg.getResponseHeader().getHeaderValues(entry.getKey());
+                if (!hasRelevantHeaders.isEmpty()) {
+                    if (skipValueCheck(entry)) {
+                        AppPattern p = new AppPattern();
+                        p.setType("HEADER");
+                        p.setPattern(entry.getKey());
+                        appMatch = addIfMatches(appMatch, currentApp, p, entry.getKey());
+                    } else {
+                        String headerValue = msg.getResponseHeader().getHeader(entry.getKey());
+                        AppPattern p = entry.getValue();
+                        appMatch = addIfMatches(appMatch, currentApp, p, headerValue);
+                    }
                 }
             }
         }
@@ -287,13 +338,25 @@ public class WappalyzerPassiveScanner implements PassiveScanner, OptionsChangedL
             for (Map.Entry<String, AppPattern> entry : sp.entrySet()) {
                 for (HtmlParameter cookie : msg.getCookieParams()) {
                     if (entry.getKey().equals(cookie.getName())) {
-                        AppPattern p = entry.getValue();
-                        appMatch = addIfMatches(appMatch, currentApp, p, cookie.getValue());
+                        if (skipValueCheck(entry)) {
+                            AppPattern p = new AppPattern();
+                            p.setType("Cookies");
+                            p.setPattern(entry.getKey());
+                            appMatch = addIfMatches(appMatch, currentApp, p, cookie.getName());
+                        } else {
+                            AppPattern p = entry.getValue();
+                            appMatch = addIfMatches(appMatch, currentApp, p, cookie.getValue());
+                        }
                     }
                 }
             }
         }
         return appMatch;
+    }
+
+    boolean skipValueCheck(Map.Entry<String, AppPattern> entry) {
+        return entry.getValue().getJavaPattern().toString().isEmpty()
+                && entry.getValue().getRe2jPattern().toString().isEmpty();
     }
 
     private ApplicationMatch checkUrlMatches(
@@ -305,7 +368,7 @@ public class WappalyzerPassiveScanner implements PassiveScanner, OptionsChangedL
         return appMatch;
     }
 
-    private ApplicationMatch addIfDomMatches(
+    private static ApplicationMatch addIfDomMatches(
             ApplicationMatch appMatch, Application currentApp, String selector, String content) {
         Document doc = Jsoup.parse(content);
         Elements elements = doc.select(selector);
@@ -315,28 +378,100 @@ public class WappalyzerPassiveScanner implements PassiveScanner, OptionsChangedL
         return appMatch;
     }
 
-    private ApplicationMatch addIfMatches(
+    private static ApplicationMatch addIfMatches(
             ApplicationMatch appMatch,
             Application currentApp,
             AppPattern appPattern,
             String content) {
-        List<String> results = appPattern.findInString(content);
-        if (results != null) {
+        Result result = appPattern.findInString(content);
+        if (!result.getVersions().isEmpty() || !result.getEvidence().isEmpty()) {
             appMatch = getAppMatch(appMatch, currentApp);
             // TODO may need to account for the wappalyzer spec in dealing with version info:
             // https://www.wappalyzer.com/docs/specification
-            results.forEach(appMatch::addVersion);
+            appMatch.addEvidence(result.getEvidence());
+            result.getVersions().forEach(appMatch::addVersion);
             LOGGER.debug(
                     "{} matched {}", appPattern.getType(), appMatch.getApplication().getName());
         }
         return appMatch;
     }
 
+    private void raiseAlert(HttpMessage msg, ApplicationMatch appMatch) {
+        if (raiseAlerts) {
+            LOGGER.debug(
+                    "Adding \"{}\" alert for \"{}\"",
+                    appMatch.getApplication().getName(),
+                    msg.getRequestHeader().getURI());
+            ExtensionAlert extAlert =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
+            if (extAlert != null) {
+                Alert alert = createAlert(msg, appMatch);
+                extAlert.alertFound(alert, msg.getHistoryRef());
+            }
+        }
+    }
+
+    Alert createAlert(HttpMessage msg, ApplicationMatch appMatch) {
+        Application app = appMatch.getApplication();
+
+        Builder builder = Alert.builder();
+        builder.setPluginId(PLUGIN_ID)
+                .setName(Constant.messages.getString("wappalyzer.alert.name.prefix", app.getName()))
+                .setMessage(msg)
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setUri(msg.getRequestHeader().getURI().toString())
+                .setDescription(getDesc(app))
+                .setCweId(200)
+                .setWascId(13);
+        if (!appMatch.getEvidences().isEmpty()) {
+            builder.setEvidence(appMatch.getEvidences().stream().findFirst().get());
+        }
+        builder.setOtherInfo(getOtherInfo(appMatch));
+        if (app.getWebsite() != null && !app.getWebsite().isEmpty()) {
+            builder.setReference(app.getWebsite());
+        }
+        return builder.build();
+    }
+
+    private static String getDesc(Application app) {
+        String desc =
+                Constant.messages.getString(
+                        "wappalyzer.alert.desc",
+                        collectionToString(app.getCategories()),
+                        app.getName());
+        if (app.getDescription() != null && !app.getDescription().isEmpty()) {
+            desc =
+                    desc
+                            + Constant.messages.getString(
+                                    "wappalyzer.alert.desc.extended", app.getDescription());
+        }
+        return desc;
+    }
+
+    private static String getOtherInfo(ApplicationMatch appMatch) {
+        String cpeInfo = "";
+        if (appMatch.getApplication().getCpe() != null
+                && !appMatch.getApplication().getCpe().isBlank()) {
+            cpeInfo =
+                    Constant.messages.getString(
+                            "wappalyzer.alert.otherinfo.cpe", appMatch.getApplication().getCpe());
+        }
+        String versionInfo = "";
+        if (appMatch.getVersion() != null && !appMatch.getVersions().isEmpty()) {
+            versionInfo =
+                    Constant.messages.getString(
+                            "wappalyzer.alert.otherinfo.version",
+                            collectionToString(appMatch.getVersions()));
+        }
+        return cpeInfo.isEmpty() ? versionInfo : cpeInfo + '\n' + versionInfo;
+    }
+
     private List<Application> getApps() {
         return applicationHolder.getApplications();
     }
 
-    private ApplicationMatch getAppMatch(ApplicationMatch appMatch, Application currentApp) {
+    private static ApplicationMatch getAppMatch(ApplicationMatch appMatch, Application currentApp) {
         if (appMatch == null) {
             appMatch = new ApplicationMatch(currentApp);
         }
@@ -357,6 +492,10 @@ public class WappalyzerPassiveScanner implements PassiveScanner, OptionsChangedL
         this.mode = mode;
     }
 
+    void setRaiseAlerts(boolean raiseAlerts) {
+        this.raiseAlerts = raiseAlerts;
+    }
+
     @Override
     public boolean appliesToHistoryType(int historyType) {
         return PluginPassiveScanner.getDefaultHistoryTypes().contains(historyType);
@@ -364,6 +503,17 @@ public class WappalyzerPassiveScanner implements PassiveScanner, OptionsChangedL
 
     @Override
     public void optionsChanged(OptionsParam optionsParam) {
-        mode = optionsParam.getParamSet(WappalyzerParam.class).getMode();
+        WappalyzerParam param = optionsParam.getParamSet(WappalyzerParam.class);
+        mode = param.getMode();
+        raiseAlerts = param.isRaiseAlerts();
+    }
+
+    private static String collectionToString(Collection<?> collection) {
+        return collection.stream().map(String::valueOf).collect(Collectors.joining(", "));
+    }
+
+    void reset() {
+        tracker = Collections.synchronizedMap(new TreeMap<>());
+        visitedSiteIdentifiers = Collections.synchronizedSet(new HashSet<>());
     }
 }

@@ -72,6 +72,11 @@ public class ActiveScanJob extends AutomationJob {
         return true;
     }
 
+    @Override
+    public String getKeyAlertTestsResultData() {
+        return ActiveScanJobResultData.KEY;
+    }
+
     private ExtensionActiveScan getExtAScan() {
         if (extAScan == null) {
             extAScan =

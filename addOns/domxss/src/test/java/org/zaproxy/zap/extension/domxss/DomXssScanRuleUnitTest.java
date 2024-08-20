@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -48,6 +49,7 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.network.ExtensionNetwork;
@@ -72,6 +74,7 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
         Model.setSingletonForTesting(model);
         given(model.getVariantFactory()).willReturn(new VariantFactory());
         given(model.getOptionsParam()).willReturn(new OptionsParam());
+        given(model.getSession()).willReturn(new Session(model));
         extensionNetwork = new ExtensionNetwork();
         extensionNetwork.initModel(model);
         Control.initSingletonForTesting(model, mock(ExtensionLoader.class));
@@ -169,15 +172,24 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
 
     /** Alerts raised are timing dependent, so any of these are good. */
     private void assertAlertsRaised() {
+        assertAlertsRaised("", "");
+    }
+
+    private void assertAlertsRaised(String param, String otherInfo) {
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
-        assertThat(alertsRaised.get(0).getParam(), equalTo(""));
+        assertThat(alertsRaised.get(0).getParam(), equalTo(param));
+        if (!otherInfo.isEmpty()) {
+            assertThat(alertsRaised.get(0).getOtherInfo(), equalTo(otherInfo));
+        }
         assertThat(
                 alertsRaised.get(0).getAttack(),
                 Matchers.anyOf(
                         equalTo(DomXssScanRule.POLYGLOT_ALERT),
                         equalTo(DomXssScanRule.HASH_JAVASCRIPT_ALERT),
-                        equalTo(DomXssScanRule.QUERY_HASH_IMG_ALERT)));
+                        equalTo(DomXssScanRule.QUERY_HASH_IMG_ALERT),
+                        equalTo(DomXssScanRule.JAVASCRIPT_ALERT),
+                        equalTo("<img src=\"random.gif\" onerror=alert(5397)>")));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
     }
@@ -353,6 +365,15 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
 
         // Then
         assertAlertsRaised();
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                equalTo(
+                        ("The following steps were done to trigger the DOM XSS:\n"
+                                        + "With <PAYLOAD_0> as: #jaVasCript:/*-/*`/*\\`/*'/*\"/**/(/* */oNcliCk=alert(5397) )//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\\x3csVg/<sVg/oNloAd=alert(5397)//>\\x3e\n"
+                                        + "Access: http://localhost:%PORT%/shouldReportXssInLocationHashFormAction/<PAYLOAD_0>\n"
+                                        + "Write to /html/form/input the value: <PAYLOAD_0>\n"
+                                        + "Click element: /html/form/input\n")
+                                .replace("%PORT%", String.valueOf(nano.getListeningPort()))));
     }
 
     /**
@@ -424,6 +445,84 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
 
         // Then
         assertAlertsRaised();
+    }
+
+    @ParameterizedTest
+    @MethodSource("testBrowsers")
+    void shouldReportXssInQueryParameters(String browser) throws NullPointerException, IOException {
+        // Given
+        String test = "/";
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        String value = getFirstParamValue(session, "iv");
+                        if (value == null) {
+                            value = "";
+                        }
+                        return newFixedLengthResponse(
+                                "<html><body>\n"
+                                        + "<script>var input=\""
+                                        + value
+                                        + "\";eval(input);</script>\n"
+                                        + "</body></html>");
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?iv=value");
+        this.rule.getConfig().setProperty("rules.domxss.browserid", browser);
+        this.rule.init(msg, this.parent);
+
+        // When
+        this.rule.scan();
+
+        // Then
+        assertAlertsRaised("iv", "");
+    }
+
+    @ParameterizedTest
+    @MethodSource("testBrowsers")
+    void shouldReportStepsInOtherInfoForXssInQueryParameters(String browser)
+            throws NullPointerException, IOException {
+        // Given
+        String test = "/";
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        String value = getFirstParamValue(session, "iv");
+                        if (value != null
+                                && value.startsWith(
+                                        "<img src=\"random.gif\" onerror=alert(5397)>")) {
+                            value = "javascript:alert(5397)";
+                        } else {
+                            value = "";
+                        }
+                        return newFixedLengthResponse(
+                                "<html><body>\n"
+                                        + "<script>var input=\""
+                                        + value
+                                        + "\";eval(input);</script>\n"
+                                        + "</body></html>");
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?iv=value");
+        this.rule.getConfig().setProperty("rules.domxss.browserid", browser);
+        this.rule.init(msg, this.parent);
+
+        // When
+        this.rule.scan();
+
+        // Then
+        assertAlertsRaised("iv", "");
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                equalTo(
+                        ("The following steps were done to trigger the DOM XSS:\n"
+                                        + "With <PAYLOAD_1> as: %3Cimg%20src=%22random.gif%22%20onerror=alert(5397)%3E\n"
+                                        + "Access: http://localhost:%PORT%/?iv=<PAYLOAD_1>\n")
+                                .replace("%PORT%", String.valueOf(nano.getListeningPort()))));
     }
 
     @Test

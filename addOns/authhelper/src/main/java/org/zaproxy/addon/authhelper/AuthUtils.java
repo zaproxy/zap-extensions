@@ -488,7 +488,8 @@ public class AuthUtils {
         map.put(token.getToken(), token);
     }
 
-    protected static Map<String, SessionToken> getAllTokens(HttpMessage msg) {
+    protected static Map<String, SessionToken> getAllTokens(
+            HttpMessage msg, boolean incReqCookies) {
         Map<String, SessionToken> tokens = new HashMap<>();
         String responseData = msg.getResponseBody().toString();
         if (msg.getResponseHeader().isJson() && StringUtils.isNotBlank(responseData)) {
@@ -529,16 +530,18 @@ public class AuthUtils {
                                                 p.getName(),
                                                 p.getValue())));
         // Add Cookies
-        msg.getRequestHeader()
-                .getCookieParams()
-                .forEach(
-                        c ->
-                                addToMap(
-                                        tokens,
-                                        new SessionToken(
-                                                SessionToken.COOKIE_SOURCE,
-                                                c.getName(),
-                                                c.getValue())));
+        if (incReqCookies) {
+            msg.getRequestHeader()
+                    .getCookieParams()
+                    .forEach(
+                            c ->
+                                    addToMap(
+                                            tokens,
+                                            new SessionToken(
+                                                    SessionToken.COOKIE_SOURCE,
+                                                    c.getName(),
+                                                    c.getValue())));
+        }
         msg.getResponseHeader()
                 .getHttpCookies(null)
                 .forEach(
@@ -597,7 +600,7 @@ public class AuthUtils {
                 try {
                     HttpMessage msg = hr.getHttpMessage();
                     Optional<SessionToken> es =
-                            AuthUtils.getAllTokens(msg).values().stream()
+                            AuthUtils.getAllTokens(msg, false).values().stream()
                                     .filter(v -> v.getValue().equals(token))
                                     .findFirst();
                     if (es.isPresent()) {

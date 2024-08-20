@@ -45,7 +45,7 @@ class JsonParserUnitTest {
         assertEquals("Test Entry is a test entry for UnitTests", app.getDescription());
         assertEquals("https://www.example.com/testentry", app.getWebsite());
         assertEquals(expectedCategory, app.getCategories());
-        assertEquals(1, app.getHeaders().size());
+        assertEquals(2, app.getHeaders().size());
         assertEquals(1, app.getUrl().size());
         assertEquals(2, app.getHtml().size());
         assertEquals(2, app.getScript().size());

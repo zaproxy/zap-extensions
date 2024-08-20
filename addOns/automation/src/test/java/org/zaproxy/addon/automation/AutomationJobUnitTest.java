@@ -45,7 +45,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
-import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest.OnFail;
 import org.zaproxy.addon.automation.tests.AutomationAlertTest;
@@ -485,8 +484,8 @@ class AutomationJobUnitTest {
         AutomationJob job =
                 new AutomationJobImpl(tpc) {
                     @Override
-                    public String getType() {
-                        return ActiveScanJob.JOB_NAME;
+                    public boolean supportsAlertTests() {
+                        return true;
                     }
                 };
 
@@ -567,8 +566,8 @@ class AutomationJobUnitTest {
         AutomationJob job =
                 new AutomationJobImpl(tpc) {
                     @Override
-                    public String getType() {
-                        return ActiveScanJob.JOB_NAME;
+                    public boolean supportsAlertTests() {
+                        return true;
                     }
                 };
 
@@ -627,8 +626,8 @@ class AutomationJobUnitTest {
         AutomationJob job =
                 new AutomationJobImpl(tpc) {
                     @Override
-                    public String getType() {
-                        return ActiveScanJob.JOB_NAME;
+                    public boolean supportsAlertTests() {
+                        return true;
                     }
                 };
 
@@ -696,8 +695,8 @@ class AutomationJobUnitTest {
         AutomationJob job =
                 new AutomationJobImpl(tpc) {
                     @Override
-                    public String getType() {
-                        return ActiveScanJob.JOB_NAME;
+                    public boolean supportsAlertTests() {
+                        return true;
                     }
 
                     @Override
