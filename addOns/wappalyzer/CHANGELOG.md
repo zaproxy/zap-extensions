@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The add-on now has an options screen to allow users to select Quick/Exhaustive mode used by the passive scanner (part of Issue 8361).
     - Quick > Return on first match; which may mean missing version information, but should be slightly more performant. (This is the default.)
     - Exhaustive > Keep matching and don't return early; likely slightly less performant.
+- The add-on now also has the ability to optionally raise Alerts for each technology identified. The default setting is enabled. (Issue 8361)
 
 ## [21.39.0] - 2024-07-04
 ### Changed
@@ -17,8 +18,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [21.38.0] - 2024-06-03
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
-
-
 
 ## [21.37.0] - 2024-05-21
 ### Changed

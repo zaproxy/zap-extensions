@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Include the whole HTTP message in the raised alerts.
+- Include the steps to reproduce the DOM XSS in the other info of the alert.
+
+### Fixed
+- Address false negatives through query parameters.
 
 ## [19] - 2024-05-07
 ### Changed

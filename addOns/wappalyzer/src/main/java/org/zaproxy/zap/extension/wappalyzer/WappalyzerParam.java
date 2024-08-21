@@ -41,11 +41,15 @@ public class WappalyzerParam extends VersionedAbstractParam {
     /** The configuration key for the mode of tech detection behavior. */
     private static final String PARAM_WAPPALYZER_MODE = PARAM_BASE_KEY + ".mode";
 
+    private static final String PARAM_WAPPALYZER_ALERTS = PARAM_BASE_KEY + ".alerts";
+
     private static final boolean PARAM_WAPPALYZER_STATE_DEFAULT_VALUE = true;
     private static final Mode PARAM_WAPPALYZER_MODE_DEFAULT_VALUE = Mode.QUICK;
+    private static final boolean PARAM_WAPPALYZER_ALERTS_DEAULT = true;
 
     private boolean enabled;
     private Mode mode;
+    private boolean raiseAlerts;
 
     public boolean isEnabled() {
         return enabled;
@@ -71,10 +75,23 @@ public class WappalyzerParam extends VersionedAbstractParam {
         }
     }
 
+    public void setRaiseAlerts(boolean raiseAlerts) {
+        if (this.raiseAlerts != raiseAlerts) {
+            this.raiseAlerts = raiseAlerts;
+
+            getConfig().setProperty(PARAM_WAPPALYZER_ALERTS, Boolean.valueOf(raiseAlerts));
+        }
+    }
+
+    public boolean isRaiseAlerts() {
+        return raiseAlerts;
+    }
+
     @Override
     protected void parseImpl() {
         enabled = getBoolean(PARAM_WAPPALYZER_STATE, PARAM_WAPPALYZER_STATE_DEFAULT_VALUE);
         mode = getEnum(PARAM_WAPPALYZER_MODE, PARAM_WAPPALYZER_MODE_DEFAULT_VALUE);
+        raiseAlerts = getBoolean(PARAM_WAPPALYZER_ALERTS, PARAM_WAPPALYZER_ALERTS_DEAULT);
     }
 
     @Override

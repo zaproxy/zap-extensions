@@ -2846,14 +2846,14 @@
       18
     ],
     "cookies": {
-      "ci_csrf_token": "^(.+)$\\;version:\\1?2+:",
+      "ci_csrf_token": "",
       "ci_session": "",
       "exp_last_activity": "",
       "exp_tracker": ""
     },
     "cpe": "cpe:2.3:a:codeigniter:codeigniter:*:*:*:*:*:*:*:*",
     "html": [
-      "<input[^>]+name=\"ci_csrf_token\"\\;version:2+"
+      "<input[^>]+name=\"ci_csrf_token\""
     ],
     "icon": "CodeIgniter.png",
     "implies": [
