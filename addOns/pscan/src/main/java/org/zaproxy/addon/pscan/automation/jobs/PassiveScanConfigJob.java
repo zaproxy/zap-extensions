@@ -17,13 +17,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation.jobs;
+package org.zaproxy.addon.pscan.automation.jobs;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -32,12 +35,13 @@ import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.jobs.JobData;
+import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.pscan.automation.internal.PassiveScanConfigJobDialog;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.PassiveScanParam;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-@SuppressWarnings("removal")
-@Deprecated(forRemoval = true)
 public class PassiveScanConfigJob extends AutomationJob {
 
     public static final String JOB_NAME = "passiveScan-config";
@@ -121,7 +125,8 @@ public class PassiveScanConfigJob extends AutomationJob {
                         if (idObj == null) {
                             progress.info(
                                     Constant.messages.getString(
-                                            "automation.info.pscan.rule.noid", this.getName()));
+                                            "pscan.automation.info.pscan.rule.noid",
+                                            this.getName()));
                             continue;
                         }
                         int id = Integer.parseInt(idObj.toString());
@@ -129,7 +134,7 @@ public class PassiveScanConfigJob extends AutomationJob {
                         if (plugin == null) {
                             progress.warn(
                                     Constant.messages.getString(
-                                            "automation.error.pscan.rule.unknown",
+                                            "pscan.automation.error.pscan.rule.unknown",
                                             this.getName(),
                                             id));
                             continue;
@@ -148,7 +153,7 @@ public class PassiveScanConfigJob extends AutomationJob {
                     } catch (NumberFormatException e) {
                         progress.error(
                                 Constant.messages.getString(
-                                        "automation.error.options.badint",
+                                        "pscan.automation.error.options.badint",
                                         this.getType(),
                                         PARAM_ID,
                                         ruleMap.get(PARAM_ID)));
@@ -158,7 +163,7 @@ public class PassiveScanConfigJob extends AutomationJob {
         } else if (o != null) {
             progress.warn(
                     Constant.messages.getString(
-                            "automation.error.options.badlist", this.getName(), "rules", o));
+                            "pscan.automation.error.options.badlist", this.getName(), "rules", o));
         }
     }
 
@@ -195,7 +200,7 @@ public class PassiveScanConfigJob extends AutomationJob {
                 plugin.setEnabled(!AlertThreshold.OFF.equals(pluginTh));
                 progress.info(
                         Constant.messages.getString(
-                                "automation.info.pscan.rule.setthreshold",
+                                "pscan.automation.info.pscan.rule.setthreshold",
                                 this.getName(),
                                 rule.getId(),
                                 pluginTh.name()));
@@ -254,9 +259,34 @@ public class PassiveScanConfigJob extends AutomationJob {
     }
 
     @Override
+    public void showDialog() {
+        new PassiveScanConfigJobDialog(this).setVisible(true);
+    }
+
+    @Override
+    public String getTemplateDataMin() {
+        return getResourceAsString(getType() + "-min.yaml");
+    }
+
+    @Override
+    public String getTemplateDataMax() {
+        return getResourceAsString(getType() + "-max.yaml");
+    }
+
+    private static String getResourceAsString(String fileName) {
+        try (InputStream in = PassiveScanConfigJob.class.getResourceAsStream(fileName)) {
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            CommandLine.error(
+                    Constant.messages.getString("pscan.automation.error.nofile", fileName));
+        }
+        return "";
+    }
+
+    @Override
     public String getSummary() {
         return Constant.messages.getString(
-                "automation.dialog.pscanconfig.summary", this.getData().getRules().size());
+                "pscan.automation.dialog.pscanconfig.summary", this.getData().getRules().size());
     }
 
     public static class Rule extends AutomationData {

@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation.jobs;
+package org.zaproxy.addon.pscan.automation.jobs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -199,7 +199,7 @@ class PassiveScanWaitJobUnitTest {
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
-        assertThat(progress.getJobResultData("passiveScanData"), is(notNullValue()));
+        assertThat(progress.getJobResultData("passiveScanData2"), is(notNullValue()));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -239,6 +239,6 @@ class PassiveScanWaitJobUnitTest {
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
-        assertThat(progress.getJobResultData("passiveScanData"), is(notNullValue()));
+        assertThat(progress.getJobResultData("passiveScanData2"), is(notNullValue()));
     }
 }

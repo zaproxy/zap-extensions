@@ -17,13 +17,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation.jobs;
+package org.zaproxy.addon.pscan.automation.jobs;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.AutomationData;
@@ -31,10 +34,11 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.JobResultData;
+import org.zaproxy.addon.automation.jobs.JobData;
+import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.pscan.automation.internal.PassiveScanWaitJobDialog;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 
-@SuppressWarnings("removal")
-@Deprecated(forRemoval = true)
 public class PassiveScanWaitJob extends AutomationJob {
 
     public static final String JOB_NAME = "passiveScan-wait";
@@ -51,11 +55,6 @@ public class PassiveScanWaitJob extends AutomationJob {
     @Override
     public boolean supportsAlertTests() {
         return true;
-    }
-
-    @Override
-    public String getKeyAlertTestsResultData() {
-        return PassiveScanJobResultData.KEY;
     }
 
     @Override
@@ -82,11 +81,16 @@ public class PassiveScanWaitJob extends AutomationJob {
     }
 
     @Override
+    @SuppressWarnings("removal")
     public List<JobResultData> getJobResultData() {
         List<JobResultData> list = new ArrayList<>();
         list.add(
                 new PassiveScanJobResultData(
                         this.getName(), getExtPassiveScan().getPluginPassiveScanners()));
+        // XXX Provided for compatibility with older add-ons.
+        list.add(
+                new org.zaproxy.addon.automation.jobs.PassiveScanJobResultData(
+                        getName(), getExtPassiveScan().getPluginPassiveScanners()));
         return list;
     }
 
@@ -131,9 +135,34 @@ public class PassiveScanWaitJob extends AutomationJob {
     }
 
     @Override
+    public void showDialog() {
+        new PassiveScanWaitJobDialog(this).setVisible(true);
+    }
+
+    @Override
+    public String getTemplateDataMin() {
+        return getResourceAsString(getType() + "-min.yaml");
+    }
+
+    @Override
+    public String getTemplateDataMax() {
+        return getResourceAsString(getType() + "-max.yaml");
+    }
+
+    private static String getResourceAsString(String fileName) {
+        try (InputStream in = PassiveScanConfigJob.class.getResourceAsStream(fileName)) {
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            CommandLine.error(
+                    Constant.messages.getString("pscan.automation.error.nofile", fileName));
+        }
+        return "";
+    }
+
+    @Override
     public String getSummary() {
         return Constant.messages.getString(
-                "automation.dialog.pscanwait.summary", this.getParameters().getMaxDuration());
+                "pscan.automation.dialog.pscanwait.summary", this.getParameters().getMaxDuration());
     }
 
     @Override

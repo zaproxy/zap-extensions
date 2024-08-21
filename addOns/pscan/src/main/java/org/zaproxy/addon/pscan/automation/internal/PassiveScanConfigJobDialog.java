@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation.gui;
+package org.zaproxy.addon.pscan.automation.internal;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -29,7 +29,7 @@ import javax.swing.JTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
+import org.zaproxy.addon.pscan.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -39,19 +39,21 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
     private static final long serialVersionUID = 1L;
 
     private static final String[] TAB_LABELS = {
-        "automation.dialog.tab.params", "automation.dialog.pscanconfig.tab.rules"
+        "pscan.automation.dialog.tab.params", "pscan.automation.dialog.pscanconfig.tab.rules"
     };
 
-    private static final String TITLE = "automation.dialog.pscanconfig.title";
-    private static final String NAME_PARAM = "automation.dialog.all.name";
+    private static final String TITLE = "pscan.automation.dialog.pscanconfig.title";
+    private static final String NAME_PARAM = "pscan.automation.dialog.all.name";
     private static final String MAX_ALERTS_PER_RULE_PARAM =
-            "automation.dialog.pscanconfig.maxalertsperrule";
+            "pscan.automation.dialog.pscanconfig.maxalertsperrule";
     private static final String SCAN_ONLY_IN_SCOPE_PARAM =
-            "automation.dialog.pscanconfig.scanonlyinscope";
-    private static final String MAX_BODY_SIZE_PARAM = "automation.dialog.pscanconfig.maxbodysize";
-    private static final String ENABLE_TAGS_PARAM = "automation.dialog.pscanconfig.enabletags";
+            "pscan.automation.dialog.pscanconfig.scanonlyinscope";
+    private static final String MAX_BODY_SIZE_PARAM =
+            "pscan.automation.dialog.pscanconfig.maxbodysize";
+    private static final String ENABLE_TAGS_PARAM =
+            "pscan.automation.dialog.pscanconfig.enabletags";
     private static final String DISABLE_ALL_RULES_PARAM =
-            "automation.dialog.pscanconfig.disableallrules";
+            "pscan.automation.dialog.pscanconfig.disableallrules";
 
     private PassiveScanConfigJob job;
 
@@ -124,7 +126,7 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
     private JButton getAddButton() {
         if (this.addButton == null) {
             this.addButton =
-                    new JButton(Constant.messages.getString("automation.dialog.button.add"));
+                    new JButton(Constant.messages.getString("pscan.automation.dialog.button.add"));
             this.addButton.addActionListener(
                     e -> {
                         AddPscanRuleDialog dialog = new AddPscanRuleDialog(getRulesModel());
@@ -137,7 +139,8 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
     private JButton getModifyButton() {
         if (this.modifyButton == null) {
             this.modifyButton =
-                    new JButton(Constant.messages.getString("automation.dialog.button.modify"));
+                    new JButton(
+                            Constant.messages.getString("pscan.automation.dialog.button.modify"));
             modifyButton.setEnabled(false);
             this.modifyButton.addActionListener(
                     e -> {
@@ -154,7 +157,8 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
     private JButton getRemoveButton() {
         if (this.removeButton == null) {
             this.removeButton =
-                    new JButton(Constant.messages.getString("automation.dialog.button.remove"));
+                    new JButton(
+                            Constant.messages.getString("pscan.automation.dialog.button.remove"));
             this.removeButton.setEnabled(false);
             final PassiveScanConfigJobDialog parent = this;
             this.removeButton.addActionListener(
@@ -164,7 +168,7 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
                                         .showConfirmDialog(
                                                 parent,
                                                 Constant.messages.getString(
-                                                        "automation.dialog.pscanconfig.remove.confirm"))) {
+                                                        "pscan.automation.dialog.pscanconfig.remove.confirm"))) {
                             getRulesModel().remove(getRulesTable().getSelectedRow());
                         }
                     });

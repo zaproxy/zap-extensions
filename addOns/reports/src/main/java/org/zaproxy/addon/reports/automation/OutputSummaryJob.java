@@ -27,7 +27,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,8 +41,6 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
-import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.HttpStatusReason;
 import org.zaproxy.zap.extension.alert.AlertNode;
@@ -146,6 +143,7 @@ public class OutputSummaryJob extends AutomationJob {
      * internationalised as neither was the output of the packaged scans.
      */
     @Override
+    @SuppressWarnings("removal")
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         String summaryFile = this.getParameters().getSummaryFile();
         Format format = this.getParameters().getFormat();
@@ -189,27 +187,27 @@ public class OutputSummaryJob extends AutomationJob {
             }
 
             // Passing rules, for now just passive, ordered by id
-            PassiveScanJobResultData pscanData =
-                    (PassiveScanJobResultData) progress.getJobResultData("passiveScanData");
+            org.zaproxy.addon.automation.jobs.PassiveScanJobResultData pscanData =
+                    (org.zaproxy.addon.automation.jobs.PassiveScanJobResultData)
+                            progress.getJobResultData(
+                                    org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.KEY);
             if (pscanData != null) {
-                Collection<RuleData> pscanRuleData = pscanData.getAllRuleData();
+                Collection<org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData>
+                        pscanRuleData = pscanData.getAllRuleData();
                 Map<Integer, Integer> alertCounts = getExtReport().getAlertCountsByRule();
 
-                RuleData[] pscanRuleArray = new RuleData[pscanRuleData.size()];
+                var pscanRuleArray =
+                        new org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData
+                                [pscanRuleData.size()];
                 pscanRuleData.toArray(pscanRuleArray);
                 Arrays.sort(
                         pscanRuleArray,
-                        new Comparator<RuleData>() {
-
-                            @Override
-                            public int compare(RuleData o1, RuleData o2) {
+                        (o1, o2) ->
                                 // Compare as strings, for backwards compatibility
-                                return Integer.toString(o1.getId())
-                                        .compareTo(Integer.toString(o2.getId()));
-                            }
-                        });
+                                Integer.toString(o1.getId())
+                                        .compareTo(Integer.toString(o2.getId())));
 
-                for (RuleData psRule : pscanRuleArray) {
+                for (var psRule : pscanRuleArray) {
                     if (!alertCounts.containsKey(psRule.getId())) {
                         if (Format.LONG.equals(format)) {
                             out.println("PASS: " + psRule.getName() + " [" + psRule.getId() + "]");
@@ -285,8 +283,9 @@ public class OutputSummaryJob extends AutomationJob {
         }
     }
 
+    @SuppressWarnings("removal")
     private int outputResults(
-            RuleData[] pscanRuleArray,
+            org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData[] pscanRuleArray,
             Map<Integer, Integer> alertCounts,
             List<Integer> ignoreIds,
             List<Integer> infoIds,
@@ -294,7 +293,7 @@ public class OutputSummaryJob extends AutomationJob {
             Result result) {
         int total = 0;
         String resStr;
-        for (RuleData rule : pscanRuleArray) {
+        for (var rule : pscanRuleArray) {
             if (alertCounts.containsKey(rule.getId())) {
                 if (ignoreIds.contains(rule.getId())) {
                     if (!Result.IGNORE.equals(result)) {

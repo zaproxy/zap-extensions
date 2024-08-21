@@ -17,11 +17,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation.gui;
+package org.zaproxy.addon.pscan.automation.internal;
 
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
+import org.zaproxy.addon.pscan.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -30,9 +30,10 @@ public class PassiveScanWaitJobDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String TITLE = "automation.dialog.pscanwait.title";
-    private static final String NAME_PARAM = "automation.dialog.all.name";
-    private static final String MAX_DURATION_PARAM = "automation.dialog.pscanwait.maxduration";
+    private static final String TITLE = "pscan.automation.dialog.pscanwait.title";
+    private static final String NAME_PARAM = "pscan.automation.dialog.all.name";
+    private static final String MAX_DURATION_PARAM =
+            "pscan.automation.dialog.pscanwait.maxduration";
 
     private PassiveScanWaitJob job;
 
