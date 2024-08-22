@@ -22,6 +22,7 @@ package org.zaproxy.addon.exim.automation;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
@@ -72,6 +73,8 @@ class ImportJobUnitTest {
         assertThat(job.getType(), is(equalTo("import")));
         assertThat(job.getName(), is(equalTo("import")));
         assertThat(job.getOrder(), is(equalTo(AutomationJob.Order.EXPLORE)));
+        assertThat(job.getTemplateDataMin(), is(not(equalTo(""))));
+        assertThat(job.getTemplateDataMax(), is(not(equalTo(""))));
         assertThat(job.getParamMethodObject(), is(nullValue()));
         assertThat(job.getParamMethodName(), is(nullValue()));
     }
