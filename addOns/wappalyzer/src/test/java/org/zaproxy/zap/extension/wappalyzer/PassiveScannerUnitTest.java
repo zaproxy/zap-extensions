@@ -21,7 +21,9 @@ package org.zaproxy.zap.extension.wappalyzer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
@@ -499,6 +501,20 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScanner>
         assertFoundApp(site, "Test Entry");
     }
 
+    @Test
+    void shouldHaveHelpLink() {
+        // Given / When
+        String helpLink = rule.getHelpLink();
+        // Then
+        assertThat(helpLink, is(not(emptyString())));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
     private void scan(HttpMessage msg) {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
     }
@@ -578,7 +594,8 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScanner>
             app.setCpe("cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*");
             ApplicationMatch appMatch = new ApplicationMatch(app);
             appMatch.addVersion("2.4.7");
-            Alert alert = rule.createAlert(msg, appMatch);
+            Alert alert =
+                    rule.createAlert(msg.getRequestHeader().getURI().toString(), appMatch).build();
             // Then
             assertThat(
                     alert.getOtherInfo(),
@@ -600,7 +617,8 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScanner>
             // When
             Application app = new Application();
             ApplicationMatch appMatch = new ApplicationMatch(app);
-            Alert alert = rule.createAlert(msg, appMatch);
+            Alert alert =
+                    rule.createAlert(msg.getRequestHeader().getURI().toString(), appMatch).build();
             // Then
             assertThat(alert.getOtherInfo(), is(equalTo("")));
             assertThat(alert.getReference(), is(equalTo("")));
@@ -618,10 +636,32 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScanner>
             Application app = new Application();
             app.setWebsite("https://httpd.apache.org");
             ApplicationMatch appMatch = new ApplicationMatch(app);
-            Alert alert = rule.createAlert(msg, appMatch);
+            Alert alert =
+                    rule.createAlert(msg.getRequestHeader().getURI().toString(), appMatch).build();
             // Then
             assertThat(alert.getOtherInfo(), is(equalTo("")));
             assertThat(alert.getReference(), is(equalTo("https://httpd.apache.org")));
+            assertThat(alert.getWascId(), is(equalTo(13)));
+            assertThat(alert.getCweId(), is(equalTo(200)));
+        }
+
+        @Test
+        void shouldHaveExpectedExampleAlert() {
+            // Given / When
+            List<Alert> alerts = rule.getExampleAlerts();
+            // Then
+            assertThat(alerts, hasSize(1));
+            Alert alert = alerts.get(0);
+            assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
+            assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+            assertThat(alert.getReference(), is(equalTo("https://httpd.apache.org")));
+            assertThat(alert.getEvidence(), is(equalTo("Apache")));
+            assertThat(
+                    alert.getOtherInfo(),
+                    is(
+                            equalTo(
+                                    "The following CPE is associated with the identified tech: cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*\n"
+                                            + "The following version(s) is/are associated with the identified tech: 2.4.7")));
             assertThat(alert.getWascId(), is(equalTo(13)));
             assertThat(alert.getCweId(), is(equalTo(200)));
         }

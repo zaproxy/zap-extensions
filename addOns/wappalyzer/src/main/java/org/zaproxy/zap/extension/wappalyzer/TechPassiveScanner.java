@@ -405,22 +405,24 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
             ExtensionAlert extAlert =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
             if (extAlert != null) {
-                Alert alert = createAlert(msg, appMatch);
+                Alert alert =
+                        createAlert(msg.getRequestHeader().getURI().toString(), appMatch)
+                                .setMessage(msg)
+                                .build();
                 extAlert.alertFound(alert, msg.getHistoryRef());
             }
         }
     }
 
-    Alert createAlert(HttpMessage msg, ApplicationMatch appMatch) {
+    Builder createAlert(String url, ApplicationMatch appMatch) {
         Application app = appMatch.getApplication();
 
         Builder builder = Alert.builder();
         builder.setPluginId(PLUGIN_ID)
                 .setName(Constant.messages.getString("wappalyzer.alert.name.prefix", app.getName()))
-                .setMessage(msg)
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setUri(msg.getRequestHeader().getURI().toString())
+                .setUri(url)
                 .setDescription(getDesc(app))
                 .setCweId(200)
                 .setWascId(13);
@@ -431,7 +433,7 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
         if (app.getWebsite() != null && !app.getWebsite().isEmpty()) {
             builder.setReference(app.getWebsite());
         }
-        return builder.build();
+        return builder;
     }
 
     private static String getDesc(Application app) {
@@ -510,6 +512,24 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
 
     private static String collectionToString(Collection<?> collection) {
         return collection.stream().map(String::valueOf).collect(Collectors.joining(", "));
+    }
+
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("https://example.org/", getAppForExample()).build());
+    }
+
+    private static ApplicationMatch getAppForExample() {
+        Application exampleApp = new Application();
+        exampleApp.setCpe("cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*");
+        ApplicationMatch exampleMatch = new ApplicationMatch(exampleApp);
+        exampleMatch.addEvidence("Apache");
+        exampleMatch.addVersion("2.4.7");
+        exampleApp.setWebsite("https://httpd.apache.org");
+        return exampleMatch;
+    }
+
+    public String getHelpLink() {
+        return "https://www.zaproxy.org/docs/desktop/addons/technology-detection/options/#10004";
     }
 
     void reset() {
