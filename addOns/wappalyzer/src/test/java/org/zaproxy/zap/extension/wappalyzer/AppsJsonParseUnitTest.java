@@ -35,16 +35,15 @@ class AppsJsonParseUnitTest {
         List<String> errs = Collections.synchronizedList(new ArrayList<>());
         List<Exception> parsingExceptions = Collections.synchronizedList(new ArrayList<>());
         // When
-        WappalyzerJsonParser parser =
-                new WappalyzerJsonParser(
-                        (pattern, e) -> errs.add(e.toString()), parsingExceptions::add);
+        TechsJsonParser parser =
+                new TechsJsonParser((pattern, e) -> errs.add(e.toString()), parsingExceptions::add);
         parser.parse("categories.json", generateFileList(), true);
         // Then
         assertEquals(Collections.emptyList(), errs);
         assertEquals(Collections.emptyList(), parsingExceptions);
     }
 
-    private List<String> generateFileList() {
+    private static List<String> generateFileList() {
         char[] techFileNames = "_abcdefghijklmnopqrstuvwxyz".toCharArray();
         List<String> fileList = new ArrayList<>();
 

@@ -26,11 +26,11 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.JobResultData;
 
-public class WappalyzerJob extends AutomationJob {
+public class TechJob extends AutomationJob {
 
     private static final String JOB_NAME = "wappalyzer";
 
-    public WappalyzerJob() {}
+    public TechJob() {}
 
     @Override
     public boolean isDataJob() {
@@ -39,7 +39,7 @@ public class WappalyzerJob extends AutomationJob {
 
     @Override
     public List<JobResultData> getJobResultData() {
-        return Collections.singletonList(new WappalyzerJobResultData(this.getName()));
+        return Collections.singletonList(new TechJobResultData(this.getName()));
     }
 
     @Override

@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Quick > Return on first match; which may mean missing version information, but should be slightly more performant. (This is the default.)
     - Exhaustive > Keep matching and don't return early; likely slightly less performant.
 - The add-on now also has the ability to optionally raise Alerts for each technology identified. The default setting is enabled. (Issue 8361)
+- Maintenance changes.
+    - This may be a breaking change for anyone that has code using the Automation Framework's Tech Detection (Wappalyzer) data.
 
 ## [21.39.0] - 2024-07-04
 ### Changed

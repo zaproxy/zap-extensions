@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.wappalyzer;
 
 import java.util.List;
 
-public interface WappalyzerApplicationHolder {
+public interface ApplicationHolder {
 
     void addApplicationsToSite(String site, ApplicationMatch applicationMatch);
 

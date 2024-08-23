@@ -31,7 +31,7 @@ import org.zaproxy.zap.extension.api.ApiResponseList;
 import org.zaproxy.zap.extension.api.ApiResponseSet;
 import org.zaproxy.zap.extension.api.ApiView;
 
-public class WappalyzerAPI extends ApiImplementor {
+public class TechApi extends ApiImplementor {
 
     public static final String PREFIX = "wappalyzer";
 
@@ -44,11 +44,11 @@ public class WappalyzerAPI extends ApiImplementor {
     private ExtensionWappalyzer extension = null;
 
     /** Provided only for API client generator usage. */
-    public WappalyzerAPI() {
+    public TechApi() {
         this(null);
     }
 
-    public WappalyzerAPI(ExtensionWappalyzer ext) {
+    public TechApi(ExtensionWappalyzer ext) {
         this.extension = ext;
         this.addApiView(new ApiView(VIEW_LIST_SITES));
         this.addApiView(new ApiView(VIEW_LIST_ALL));
@@ -104,7 +104,7 @@ public class WappalyzerAPI extends ApiImplementor {
         return resultList;
     }
 
-    private ApiResponseList sitesToList(String name, Set<String> sites) {
+    private static ApiResponseList sitesToList(String name, Set<String> sites) {
         ApiResponseList resultList = new ApiResponseList(name);
         sites.forEach(site -> resultList.addItem(new ApiResponseElement("site", site)));
         return resultList;

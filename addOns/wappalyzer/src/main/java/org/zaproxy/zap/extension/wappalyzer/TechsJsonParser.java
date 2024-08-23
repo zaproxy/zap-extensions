@@ -52,29 +52,29 @@ import org.jsoup.select.QueryParser;
 import org.jsoup.select.Selector.SelectorParseException;
 import org.zaproxy.addon.commonlib.Constants;
 
-public class WappalyzerJsonParser {
+public class TechsJsonParser {
 
     private static final String FIELD_CONFIDENCE = "confidence:";
     private static final String FIELD_VERSION = "version:";
     private static final String FIELD_SEPARATOR = "\\\\;";
     private static final int SIZE = 16;
 
-    private static final Logger LOGGER = LogManager.getLogger(WappalyzerJsonParser.class);
+    private static final Logger LOGGER = LogManager.getLogger(TechsJsonParser.class);
     private final PatternErrorHandler patternErrorHandler;
     private final ParsingExceptionHandler parsingExceptionHandler;
 
-    public WappalyzerJsonParser() {
+    public TechsJsonParser() {
         this(
                 (pattern, e) -> LOGGER.error("Invalid pattern syntax {}", pattern, e),
                 e -> LOGGER.error(e.getMessage(), e));
     }
 
-    WappalyzerJsonParser(PatternErrorHandler peh, ParsingExceptionHandler parsingExceptionHandler) {
+    TechsJsonParser(PatternErrorHandler peh, ParsingExceptionHandler parsingExceptionHandler) {
         this.patternErrorHandler = peh;
         this.parsingExceptionHandler = parsingExceptionHandler;
     }
 
-    WappalyzerData parse(String categories, List<String> technologies, boolean createIcons) {
+    TechData parse(String categories, List<String> technologies, boolean createIcons) {
         LOGGER.info("Starting to parse Tech Detection technologies.");
         if (createIcons) {
             // Access the SVGPaint class to hopefully address class contention when parallel loading
@@ -82,8 +82,8 @@ public class WappalyzerJsonParser {
             SVGPaint.DEFAULT_PAINT.paint();
         }
         Instant start = Instant.now();
-        WappalyzerData wappalyzerData = new WappalyzerData();
-        parseCategories(wappalyzerData, getStringResource(categories));
+        TechData techData = new TechData();
+        parseCategories(techData, getStringResource(categories));
         // Process the files/paths in parallel
         ExecutorService executor =
                 Executors.newFixedThreadPool(
@@ -96,7 +96,7 @@ public class WappalyzerJsonParser {
                                         CompletableFuture.runAsync(
                                                 () ->
                                                         parseJson(
-                                                                wappalyzerData,
+                                                                techData,
                                                                 getStringResource(path),
                                                                 createIcons),
                                                 executor))
@@ -107,9 +107,9 @@ public class WappalyzerJsonParser {
         Instant finish = Instant.now();
         LOGGER.info(
                 "Loaded {} Tech Detection technologies, in {}ms",
-                wappalyzerData.getApplications().size(),
+                techData.getApplications().size(),
                 Duration.between(start, finish).toMillis());
-        return wappalyzerData;
+        return techData;
     }
 
     private String getStringResource(String resourceName) {
@@ -129,7 +129,7 @@ public class WappalyzerJsonParser {
     }
 
     @SuppressWarnings("unchecked")
-    private void parseCategories(WappalyzerData wappalyzerData, String jsonStr) {
+    private void parseCategories(TechData techData, String jsonStr) {
         try {
             JSONObject json = JSONObject.fromObject(jsonStr);
 
@@ -137,16 +137,16 @@ public class WappalyzerJsonParser {
             for (Object cat : json.entrySet()) {
                 Map.Entry<String, JSONObject> mCat = (Map.Entry<String, JSONObject>) cat;
                 LOGGER.debug("{}:{}", mCat.getKey(), mCat.getValue().getString("name"));
-                wappalyzerData.addCategory(mCat.getKey(), mCat.getValue().getString("name"));
+                techData.addCategory(mCat.getKey(), mCat.getValue().getString("name"));
             }
-            LOGGER.debug("Parsed {} categories", wappalyzerData.getCategories().size());
+            LOGGER.debug("Parsed {} categories", techData.getCategories().size());
         } catch (Exception e) {
             parsingExceptionHandler.handleException(e);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void parseJson(WappalyzerData wappalyzerData, String jsonStr, boolean createIcons) {
+    private void parseJson(TechData techData, String jsonStr, boolean createIcons) {
 
         try {
             if (!jsonStr.isEmpty()) {
@@ -163,8 +163,8 @@ public class WappalyzerJsonParser {
                     app.setDescription(appData.optString("description"));
                     app.setWebsite(appData.getString("website"));
                     app.setCategories(
-                            this.jsonToCategoryList(
-                                    wappalyzerData.getCategories(), appData.get("cats")));
+                            TechsJsonParser.jsonToCategoryList(
+                                    techData.getCategories(), appData.get("cats")));
                     app.setHeaders(this.jsonToAppPatternMapList("HEADER", appData.get("headers")));
                     app.setCookies(this.jsonToAppPatternMapList("COOKIE", appData.get("cookies")));
                     app.setUrl(this.jsonToPatternList("URL", appData.get("url")));
@@ -174,7 +174,7 @@ public class WappalyzerJsonParser {
                     app.setCss(this.jsonToPatternList("CSS", appData.get("css")));
                     app.setDom(this.jsonToAppPatternNestedMapList("DOM", appData.get("dom")));
                     app.setSimpleDom(this.jsonToDomStringList(appData.get("dom")));
-                    app.setImplies(this.jsonToStringList(appData.get("implies")));
+                    app.setImplies(TechsJsonParser.jsonToStringList(appData.get("implies")));
                     app.setCpe(appData.optString("cpe"));
 
                     if (createIcons) {
@@ -197,7 +197,7 @@ public class WappalyzerJsonParser {
                         }
                     }
 
-                    wappalyzerData.addApplication(app);
+                    techData.addApplication(app);
                 }
             }
         } catch (Exception e) {
@@ -271,12 +271,12 @@ public class WappalyzerJsonParser {
         return list;
     }
 
-    private String strToDomSelector(String json) {
+    private static String strToDomSelector(String json) {
         String[] parts = json.split(FIELD_SEPARATOR);
         return parts[0];
     }
 
-    private List<String> jsonToStringList(Object json) {
+    private static List<String> jsonToStringList(Object json) {
         List<String> list = new ArrayList<>();
         if (json instanceof JSONArray) {
             for (Object obj : (JSONArray) json) {
@@ -288,7 +288,7 @@ public class WappalyzerJsonParser {
         return list;
     }
 
-    private List<String> jsonToCategoryList(Map<String, String> categories, Object json) {
+    private static List<String> jsonToCategoryList(Map<String, String> categories, Object json) {
         List<String> list = new ArrayList<>();
         if (json instanceof JSONArray) {
             for (Object obj : (JSONArray) json) {
@@ -336,7 +336,8 @@ public class WappalyzerJsonParser {
         return list;
     }
 
-    private Map<String, AppPattern> createMapAppPattern(String type, String key, String value) {
+    private static Map<String, AppPattern> createMapAppPattern(
+            String type, String key, String value) {
         Map<String, AppPattern> map = new HashMap<>();
         map.put(key, strToAppPattern(type, value));
         return map;
@@ -369,7 +370,9 @@ public class WappalyzerJsonParser {
                                 Map<String, Map<String, AppPattern>> nodeSelectorMap =
                                         new HashMap<>();
                                 Map<String, AppPattern> value = new HashMap<>();
-                                appPat = this.strToAppPattern(type, (String) valueMap.getValue());
+                                appPat =
+                                        TechsJsonParser.strToAppPattern(
+                                                type, (String) valueMap.getValue());
                                 value.put((String) valueMap.getKey(), appPat);
                                 nodeSelectorMap.put((String) nodeEntryMap.getKey(), value);
                                 String query = (String) domEntryMap.getKey();
@@ -387,7 +390,9 @@ public class WappalyzerJsonParser {
                                     new HashMap<>();
                             Map<String, Map<String, AppPattern>> nodeSelectorMap = new HashMap<>();
                             Map<String, AppPattern> value = new HashMap<>();
-                            appPat = this.strToAppPattern(type, (String) nodeEntryMap.getValue());
+                            appPat =
+                                    TechsJsonParser.strToAppPattern(
+                                            type, (String) nodeEntryMap.getValue());
                             value.put((String) nodeEntryMap.getKey(), appPat);
                             nodeSelectorMap.put((String) nodeEntryMap.getKey(), value);
                             String query = (String) (domEntryMap).getKey();
@@ -433,7 +438,7 @@ public class WappalyzerJsonParser {
                 }
                 try {
                     if (!objStr.isEmpty()) {
-                        list.add(this.strToAppPattern(type, objStr));
+                        list.add(TechsJsonParser.strToAppPattern(type, objStr));
                     }
                 } catch (PatternSyntaxException e) {
                     patternErrorHandler.handleError(objStr, e);
@@ -443,7 +448,7 @@ public class WappalyzerJsonParser {
             try {
                 String jsonValue = json.toString();
                 if (!jsonValue.isEmpty()) {
-                    list.add(this.strToAppPattern(type, jsonValue));
+                    list.add(TechsJsonParser.strToAppPattern(type, jsonValue));
                 }
             } catch (PatternSyntaxException e) {
                 patternErrorHandler.handleError(json.toString(), e);
@@ -452,7 +457,7 @@ public class WappalyzerJsonParser {
         return list;
     }
 
-    private AppPattern strToAppPattern(String type, String str) {
+    private static AppPattern strToAppPattern(String type, String str) {
         AppPattern ap = new AppPattern();
         ap.setType(type);
         String[] values = str.split(FIELD_SEPARATOR);
@@ -481,7 +486,7 @@ public class WappalyzerJsonParser {
         return ap;
     }
 
-    private int parseConfidence(String confidence) {
+    private static int parseConfidence(String confidence) {
         try {
             if (confidence.contains(".")) {
                 return (int) Double.parseDouble(confidence) * 100;

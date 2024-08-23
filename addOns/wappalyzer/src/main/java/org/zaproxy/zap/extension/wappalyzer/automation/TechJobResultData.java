@@ -30,13 +30,13 @@ import org.zaproxy.zap.extension.wappalyzer.ApplicationMatch;
 import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer;
 import org.zaproxy.zap.extension.wappalyzer.TechTableModel;
 
-public class WappalyzerJobResultData extends JobResultData {
+public class TechJobResultData extends JobResultData {
 
     public static final String DATA_KEY = "wappalyzerData";
 
     private Map<String, List<TechnologyData>> siteTechMap = new HashMap<>();
 
-    public WappalyzerJobResultData(String jobName) {
+    public TechJobResultData(String jobName) {
         super(jobName);
 
         ExtensionWappalyzer ext =

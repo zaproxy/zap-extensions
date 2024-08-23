@@ -31,8 +31,8 @@ class JsonParserUnitTest {
     @Test
     void shouldParseExample() {
         // Given
-        WappalyzerJsonParser wjp = new WappalyzerJsonParser();
-        WappalyzerData wappData =
+        TechsJsonParser wjp = new TechsJsonParser();
+        TechData wappData =
                 wjp.parse("categories.json", Collections.singletonList("apps.json"), true);
         List<String> expectedCategory = new ArrayList<>(1);
         expectedCategory.add("Advertising"); // 36 - Advertising
@@ -68,9 +68,8 @@ class JsonParserUnitTest {
         // Given
         List<String> errs = Collections.synchronizedList(new ArrayList<>());
         List<Exception> parsingExceptions = Collections.synchronizedList(new ArrayList<>());
-        WappalyzerJsonParser wjp =
-                new WappalyzerJsonParser(
-                        (pattern, e) -> errs.add(e.toString()), parsingExceptions::add);
+        TechsJsonParser wjp =
+                new TechsJsonParser((pattern, e) -> errs.add(e.toString()), parsingExceptions::add);
         // When
         wjp.parse("categories.json", Collections.singletonList("broken.json"), true);
         // Then
