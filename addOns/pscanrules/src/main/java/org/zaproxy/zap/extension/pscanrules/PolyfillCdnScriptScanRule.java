@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,26 +46,39 @@ public class PolyfillCdnScriptScanRule extends PluginPassiveScanner
 
     private static final int PLUGIN_ID = 10115;
 
-    private static Pattern POLYFILL_IO =
-            Pattern.compile("http[s]?://.*polyfill\\.io/.*", Pattern.CASE_INSENSITIVE);
-    private static Pattern BOOTCSS_COM =
-            Pattern.compile("http[s]?://.*bootcss\\.com/.*", Pattern.CASE_INSENSITIVE);
-    private static Pattern BOOTCDN_NET =
-            Pattern.compile("http[s]?://.*bootcdn\\.net/.*", Pattern.CASE_INSENSITIVE);
-    private static Pattern STATICFILE_NET =
-            Pattern.compile("http[s]?://.*staticfile\\.net/.*", Pattern.CASE_INSENSITIVE);
-    private static Pattern STATICFILE_ORG =
-            Pattern.compile("http[s]?://.*staticfile\\.org/.*", Pattern.CASE_INSENSITIVE);
-    private static Pattern UNIONADJS_COM =
-            Pattern.compile("http[s]?://.*unionadjs\\.com/.*", Pattern.CASE_INSENSITIVE);
-    private static Pattern XHSBPZA_COM =
-            Pattern.compile("http[s]?://.*xhsbpza\\.com/.*", Pattern.CASE_INSENSITIVE);
-    private static Pattern UNION_MACOMS_LA =
-            Pattern.compile("http[s]?://.*union\\.macoms\\.la/.*", Pattern.CASE_INSENSITIVE);
-    private static Pattern NEWCRBPC_COM =
-            Pattern.compile("http[s]?://.*newcrbpc\\.com/.*", Pattern.CASE_INSENSITIVE);
+    private static final String START_P = "http[s]?://.*";
+    private static final String END_P = ".*\\w";
 
-    private static Pattern[] ALL_DOMAINS = {
+    private static final String POLYFILL_IO = "polyfill.io/";
+    private static final String BOOTCSS_COM = "bootcss.com/";
+    private static final String BOOTCDN_NET = "bootcdn.net/";
+    private static final String STATICFILE_NET = "staticfile.net/";
+    private static final String STATICFILE_ORG = "staticfile.org/";
+    private static final String UNIONADJS_COM = "unionadjs.com/";
+    private static final String XHSBPZA_COM = "xhsbpza.com/";
+    private static final String UNION_MACOMS_LA = "union.macoms.la/";
+    private static final String NEWCRBPC_COM = "newcrbpc.com/";
+
+    private static final Pattern POLYFILL_IO_URL =
+            Pattern.compile(START_P + POLYFILL_IO + END_P, Pattern.CASE_INSENSITIVE);
+    private static final Pattern BOOTCSS_COM_URL =
+            Pattern.compile(START_P + BOOTCSS_COM + END_P, Pattern.CASE_INSENSITIVE);
+    private static final Pattern BOOTCDN_NET_URL =
+            Pattern.compile(START_P + BOOTCDN_NET + END_P, Pattern.CASE_INSENSITIVE);
+    private static final Pattern STATICFILE_NET_URL =
+            Pattern.compile(START_P + STATICFILE_NET + END_P, Pattern.CASE_INSENSITIVE);
+    private static final Pattern STATICFILE_ORG_URL =
+            Pattern.compile(START_P + STATICFILE_ORG + END_P, Pattern.CASE_INSENSITIVE);
+    private static final Pattern UNIONADJS_COM_URL =
+            Pattern.compile(START_P + UNIONADJS_COM + END_P, Pattern.CASE_INSENSITIVE);
+    private static final Pattern XHSBPZA_COM_URL =
+            Pattern.compile(START_P + XHSBPZA_COM + END_P, Pattern.CASE_INSENSITIVE);
+    private static final Pattern UNION_MACOMS_LA_URL =
+            Pattern.compile(START_P + UNION_MACOMS_LA + END_P, Pattern.CASE_INSENSITIVE);
+    private static final Pattern NEWCRBPC_COM_URL =
+            Pattern.compile(START_P + NEWCRBPC_COM + END_P, Pattern.CASE_INSENSITIVE);
+
+    private static final String[] ALL_DOMAINS = {
         POLYFILL_IO,
         BOOTCSS_COM,
         BOOTCDN_NET,
@@ -76,6 +90,18 @@ public class PolyfillCdnScriptScanRule extends PluginPassiveScanner
         NEWCRBPC_COM
     };
 
+    private static final Pattern[] ALL_DOMAIN_URLS = {
+        POLYFILL_IO_URL,
+        BOOTCSS_COM_URL,
+        BOOTCDN_NET_URL,
+        STATICFILE_NET_URL,
+        STATICFILE_ORG_URL,
+        UNIONADJS_COM_URL,
+        XHSBPZA_COM_URL,
+        UNION_MACOMS_LA_URL,
+        NEWCRBPC_COM_URL
+    };
+
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isHtml()) {
@@ -85,7 +111,7 @@ public class PolyfillCdnScriptScanRule extends PluginPassiveScanner
                 for (Element sourceElement : sourceElements) {
                     String src = sourceElement.getAttributeValue("src");
                     if (src != null) {
-                        for (Pattern pattern : ALL_DOMAINS) {
+                        for (Pattern pattern : ALL_DOMAIN_URLS) {
                             if (pattern.matcher(src).matches()) {
                                 this.createHighConfidenceAlert(src, sourceElement.toString())
                                         .raise();
@@ -101,12 +127,18 @@ public class PolyfillCdnScriptScanRule extends PluginPassiveScanner
                 // Check the script contents, in case they are loading scripts via JS
                 for (Element sourceElement : sourceElements) {
                     String contents = sourceElement.getContent().toString();
+                    String contentsLc = contents.toLowerCase(Locale.ROOT);
 
-                    for (Pattern pattern : ALL_DOMAINS) {
-                        Matcher matcher = pattern.matcher(contents);
-                        if (matcher.find()) {
-                            this.createLowConfidenceAlert(null, matcher.group(0)).raise();
-                            break;
+                    for (int i = 0; i < ALL_DOMAINS.length; i++) {
+                        String domain = ALL_DOMAINS[i];
+                        // Use "contains" first as it makes a huge difference in speed
+                        if (contentsLc.contains(domain)) {
+                            Pattern pattern = ALL_DOMAIN_URLS[i];
+                            Matcher matcher = pattern.matcher(contents);
+                            if (matcher.find()) {
+                                this.createLowConfidenceAlert(null, matcher.group(0)).raise();
+                                break;
+                            }
                         }
                     }
                 }
