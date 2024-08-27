@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+### Fixed
+- Bug in session detection scan rule which impacted performance.
 
 ## [0.14.0] - 2024-07-31
 ### Fixed
