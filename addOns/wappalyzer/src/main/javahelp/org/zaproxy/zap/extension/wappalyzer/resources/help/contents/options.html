@@ -17,8 +17,13 @@ The Mode which controls the behavior of the technology detection passive scan ru
   <li>Exhaustive > Keep matching and don't return early; likely slightly less performant.</li>
 </ul>
 
-<H3>Alerts</H3>
+<H3 id="10004">Alerts</H3>
 Allows the user to select whether or not the technology detection passive scan rule should raise alerts as technologies are identified (Enabled by default).
+Alerts are Informational and include the Tech Name, a Description of the tech if available, Other Info may include CPE or version details, and References may contain Tech specific URLs.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/TechPassiveScanner.java">TechPassiveScanner.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10004/">10004</a>
 
 </BODY>
 </HTML>

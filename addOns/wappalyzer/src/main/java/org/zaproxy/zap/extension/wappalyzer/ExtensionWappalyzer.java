@@ -42,6 +42,7 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -50,6 +51,7 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.utils.ThreadUtils;
@@ -58,7 +60,10 @@ import org.zaproxy.zap.view.SiteMapListener;
 import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 
 public class ExtensionWappalyzer extends ExtensionAdaptor
-        implements SessionChangedListener, SiteMapListener, ApplicationHolder {
+        implements SessionChangedListener,
+                SiteMapListener,
+                ApplicationHolder,
+                ExampleAlertProvider {
 
     public static final String NAME = "ExtensionWappalyzer";
 
@@ -463,5 +468,14 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         if (updateLoggers) {
             ctx.updateLoggers();
         }
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return passiveScanner.getExampleAlerts();
+    }
+
+    public String getHelpLink() {
+        return passiveScanner.getHelpLink();
     }
 }

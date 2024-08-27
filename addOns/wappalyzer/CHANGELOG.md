@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The add-on now also has the ability to optionally raise Alerts for each technology identified. The default setting is enabled. (Issue 8361)
 - Maintenance changes.
     - This may be a breaking change for anyone that has code using the Automation Framework's Tech Detection (Wappalyzer) data.
+- The scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
+- Link website alert page and help (Issues 8189).
 
 ## [21.39.0] - 2024-07-04
 ### Changed
