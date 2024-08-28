@@ -201,6 +201,9 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (!msg.getResponseHeader().isText()) {
+            return;
+        }
         if (ResourceIdentificationUtils.isJavaScript(msg)
                 && !AlertThreshold.LOW.equals(this.getAlertThreshold())) {
             return;

@@ -64,6 +64,18 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
     }
 
     @Test
+    void shouldNotRaiseAlertWhenImageResponse() throws Exception {
+        // Given
+        String hashVal = "DD6433D07B73FC14A2A4D03C5A8FAA90";
+        HttpMessage msg = createMsg(hashVal);
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "image/jpeg");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
     void shouldRaiseAlertWhenResponseContainsLowerMd5Hash() throws Exception {
         // Given - Lower MD5
         String hashVal = "cc03e747a6afbbcbf8be7668acfebee5";
@@ -113,7 +125,7 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
         // Given
         String hashVal = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFEE37";
         HttpMessage msg = createMsg(hashVal);
-        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/javascript");
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/javascript");
         rule.setAlertThreshold(threshold);
         // When
         scanHttpResponseReceive(msg);
@@ -181,6 +193,7 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/html");
         msg.setResponseBody("{\"hash\": \"" + hashVal + "\"}");
         return msg;
     }

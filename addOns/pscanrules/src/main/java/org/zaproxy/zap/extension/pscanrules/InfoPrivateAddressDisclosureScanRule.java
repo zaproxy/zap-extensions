@@ -161,6 +161,9 @@ public class InfoPrivateAddressDisclosureScanRule extends PluginPassiveScanner
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (!msg.getResponseHeader().isText()) {
+            return;
+        }
         String host = msg.getRequestHeader().getHostName();
 
         String txtBody = msg.getResponseBody().toString();

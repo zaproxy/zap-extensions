@@ -77,6 +77,9 @@ public class UsernameIdorScanRule extends PluginPassiveScanner
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (!msg.getResponseHeader().isText()) {
+            return;
+        }
         List<User> scanUsers = getUsers();
         if (scanUsers.isEmpty()) { // Should continue if not empty
             LOGGER.debug("There does not appear to be any contexts with configured users.");

@@ -10,6 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Re-examine Cache-control Directives scan rule now ignores cache-control for POST method requests (Issue 8592).
 ### Fixed
 - Polyfill scan rule running slowly.
+- Only scan text responses for:
+  - Hash Disclosure
+  - Private IP Disclosure
+  - Username Hash Found
+- Performance improvements for:
+  - Cross-Domain JavaScript Source File Inclusion.
+  - Cross-Domain Misconfiguration.
 
 ## [59] - 2024-07-24
 ### Added

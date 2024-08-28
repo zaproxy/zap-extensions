@@ -35,6 +35,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -161,6 +162,17 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
         assertThat(alertsRaised.size(), is(equalTo(1)));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(privateIp));
         validateAlert(requestUri, alertsRaised.get(0));
+    }
+
+    @Test
+    void shouldNotAlertWhenImageResponse() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createHttpMessage("https://192.168.36.127/");
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "image/jpeg");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(equalTo(0)));
     }
 
     @ParameterizedTest
@@ -418,6 +430,7 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
         requestUri = requestUri.startsWith("http") ? requestUri : "http://" + requestUri;
         msg.setRequestHeader("GET " + requestUri + " HTTP/1.1");
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n");
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/html");
         msg.setResponseBody(body);
         return msg;
     }
