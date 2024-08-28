@@ -149,7 +149,6 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                         }
                     }
                 }
-                foundTokens.forEach(t -> AuthUtils.removeSessionToken(t));
             } else if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(
                         "Failed to find source of session management tokens in {}:",
