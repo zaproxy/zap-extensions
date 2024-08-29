@@ -83,6 +83,27 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
     }
 
     @Test
+    void shouldNotAlertOnHttpsPostRequest() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("POST https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        given(passiveScanData.isClientError(any())).willReturn(false);
+        given(passiveScanData.isServerError(any())).willReturn(false);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
     void shouldNotAlertOnHttpsAllPresentCacheRequest() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();

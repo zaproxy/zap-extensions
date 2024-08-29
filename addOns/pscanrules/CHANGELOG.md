@@ -4,7 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Clarified Missing Anti-clickjacking Header description.
+- Depend on Passive Scanner add-on to include it by default (Issue 7959).
+- Re-examine Cache-control Directives scan rule now ignores cache-control for POST method requests (Issue 8592).
+### Fixed
+- Polyfill scan rule running slowly.
 
 ## [59] - 2024-07-24
 ### Added

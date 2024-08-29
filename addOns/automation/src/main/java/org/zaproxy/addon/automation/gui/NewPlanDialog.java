@@ -40,8 +40,6 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -66,47 +64,31 @@ public class NewPlanDialog extends StandardFieldsDialog {
     private static final String REPORT_JOB_NAME = "report";
 
     private static final String[] BASELINE_PROFILE = {
-        PassiveScanConfigJob.JOB_NAME,
-        "spider",
-        "spiderAjax",
-        PassiveScanWaitJob.JOB_NAME,
-        REPORT_JOB_NAME
+        "passiveScan-config", "spider", "spiderAjax", "passiveScan-wait", REPORT_JOB_NAME
     };
     private static final String[] IMPORT_PROFILE = {
-        PassiveScanConfigJob.JOB_NAME,
+        "passiveScan-config",
         "import",
         "spider",
         "spiderAjax",
-        PassiveScanWaitJob.JOB_NAME,
+        "passiveScan-wait",
         ActiveScanJob.JOB_NAME,
         REPORT_JOB_NAME
     };
     private static final String[] OPENAPI_PROFILE = {
-        PassiveScanConfigJob.JOB_NAME,
-        "openapi",
-        PassiveScanWaitJob.JOB_NAME,
-        ActiveScanJob.JOB_NAME,
-        REPORT_JOB_NAME
+        "passiveScan-config", "openapi", "passiveScan-wait", ActiveScanJob.JOB_NAME, REPORT_JOB_NAME
     };
     private static final String[] GRAPHQL_PROFILE = {
-        PassiveScanConfigJob.JOB_NAME,
-        "graphql",
-        PassiveScanWaitJob.JOB_NAME,
-        ActiveScanJob.JOB_NAME,
-        REPORT_JOB_NAME
+        "passiveScan-config", "graphql", "passiveScan-wait", ActiveScanJob.JOB_NAME, REPORT_JOB_NAME
     };
     private static final String[] SOAP_PROFILE = {
-        PassiveScanConfigJob.JOB_NAME,
-        "soap",
-        PassiveScanWaitJob.JOB_NAME,
-        ActiveScanJob.JOB_NAME,
-        REPORT_JOB_NAME
+        "passiveScan-config", "soap", "passiveScan-wait", ActiveScanJob.JOB_NAME, REPORT_JOB_NAME
     };
     private static final String[] FULL_SCAN_PROFILE = {
-        PassiveScanConfigJob.JOB_NAME,
+        "passiveScan-config",
         "spider",
         "spiderAjax",
-        PassiveScanWaitJob.JOB_NAME,
+        "passiveScan-wait",
         ActiveScanJob.JOB_NAME,
         REPORT_JOB_NAME
     };

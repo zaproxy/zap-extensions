@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Leverage Jackson library from the Common Library add-on.
 
+### Fixed
+- Correctly load Automation Framework template plans.
+
 ## [0.10.0] - 2024-07-22
 ### Changed
 - HAR importing now uses Sebastian Stöhr's har-reader library. It should be much more tolerant of 'weird' HAR things, and thus be able to import more samples. (If you come across HAR that won't import please open an issue and provide a sample so we can work on further improvements!)

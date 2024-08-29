@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-description = "Retire.js"
+description = "Use Retire.js to identify vulnerable or out-dated JavaScript packages."
 
 zapAddOn {
     addOnName.set("Retire.js")

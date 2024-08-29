@@ -15,6 +15,10 @@ zapAddOn {
                 register("commonlib") {
                     version.set(">= 1.17.0 & < 2.0.0")
                 }
+
+                // Not an actual dependency (yet) but allows to include passive scan add-on "by default".
+                // Can be removed for the next main core release.
+                register("pscan")
             }
         }
 

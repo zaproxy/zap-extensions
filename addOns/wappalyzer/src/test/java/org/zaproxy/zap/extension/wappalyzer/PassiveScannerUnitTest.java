@@ -20,7 +20,12 @@
 package org.zaproxy.zap.extension.wappalyzer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.emptyString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.BDDMockito.given;
@@ -30,9 +35,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpHeader;
@@ -42,7 +49,7 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
-class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveScanner> {
+class PassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScanner> {
 
     ApplicationTestHolder defaultHolder;
 
@@ -50,8 +57,8 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
         if (defaultHolder == null) {
             try {
                 defaultHolder = new ApplicationTestHolder();
-                WappalyzerJsonParser parser = new WappalyzerJsonParser();
-                WappalyzerData result =
+                TechsJsonParser parser = new TechsJsonParser();
+                TechData result =
                         parser.parse(
                                 "categories.json", Collections.singletonList("apps.json"), true);
                 defaultHolder.setApplications(result.getApplications());
@@ -68,9 +75,9 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
     }
 
     @Override
-    protected WappalyzerPassiveScanner createScanner() {
+    protected TechPassiveScanner createScanner() {
         getDefaultHolder().resetApplicationsToSite();
-        return new WappalyzerPassiveScanner(getDefaultHolder());
+        return new TechPassiveScanner(getDefaultHolder());
     }
 
     @Test
@@ -205,7 +212,8 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
         scan(msg);
         // Then
         assertFoundAppCount("https://www.example.com", 1);
-        assertFoundApp("https://www.example.com", "Test Entry2");
+        // No evidence on DOM selectors
+        assertFoundApp("https://www.example.com", "Test Entry2", false);
     }
 
     @Test
@@ -248,7 +256,8 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
         // Then
         assertFoundAppCount("https://www.example.com", 2);
         assertFoundApp("https://www.example.com", "1C-Bitrix"); // Matched
-        assertFoundApp("https://www.example.com", "PHP"); // Implied
+        // No evidence when implied
+        assertFoundApp("https://www.example.com", "PHP", false); // Implied
     }
 
     @Test
@@ -431,11 +440,86 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
         assertNothingFound("https://www.example.com");
     }
 
+    @Test
+    void shouldMatchHeaderNameAndValueInRequestWhenBothExpected()
+            throws HttpMalformedHeaderException {
+        // Given
+        String site = "https://www.example.com";
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET " + site + "/test HTTP/1.1");
+        msg.getResponseHeader().addHeader("Test", "Test Entry");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount(site, 1);
+        assertFoundApp(site, "Test Entry");
+    }
+
+    @Test
+    void shouldNotMatchHeaderNameAndValueInRequestWhenBothExpectedAndValueNotPresent()
+            throws HttpMalformedHeaderException {
+        // Given
+        String site = "https://www.example.com";
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET " + site + "/test HTTP/1.1");
+        msg.getResponseHeader().addHeader("Test", "");
+        // When
+        scan(msg);
+        // Then
+        assertNothingFound(site);
+    }
+
+    @Test
+    void shouldMatchHeaderNameInRequestWhenValueNotExpected() throws HttpMalformedHeaderException {
+        // Given
+        String site = "https://www.example.com";
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET " + site + "/test HTTP/1.1");
+        msg.getResponseHeader().addHeader("Foo", "");
+        // When
+        scan(msg);
+        // Then
+        assertFoundAppCount(site, 1);
+        assertFoundApp(site, "Test Entry");
+    }
+
+    @Test
+    void shouldNotMatchMultipleTimesAgainstSameMessage() throws HttpMalformedHeaderException {
+        // Given
+        String site = "https://www.example.com";
+        HttpMessage msg = makeHttpMessage();
+        msg.setRequestHeader("GET " + site + "/test HTTP/1.1");
+        msg.getResponseHeader().addHeader("Test", "Test Entry");
+        // When
+        scan(msg);
+        int initialCount = getDefaultHolder().getAppsForSite(site).size();
+        scan(msg);
+        int secondaryCount = getDefaultHolder().getAppsForSite(site).size();
+        // Then
+        assertThat(initialCount, is(equalTo(secondaryCount)));
+        assertFoundAppCount(site, 1);
+        assertFoundApp(site, "Test Entry");
+    }
+
+    @Test
+    void shouldHaveHelpLink() {
+        // Given / When
+        String helpLink = rule.getHelpLink();
+        // Then
+        assertThat(helpLink, is(not(emptyString())));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
     private void scan(HttpMessage msg) {
         rule.scanHttpResponseReceive(msg, -1, this.createSource(msg));
     }
 
-    private HttpMessage makeHttpMessage() throws HttpMalformedHeaderException {
+    private static HttpMessage makeHttpMessage() throws HttpMalformedHeaderException {
         HttpMessage httpMessage = new HttpMessage();
 
         HistoryReference ref = mock(HistoryReference.class);
@@ -461,10 +545,18 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
     }
 
     private void assertFoundApp(String site, String appName) {
-        assertFoundApp(site, appName, null);
+        assertFoundApp(site, appName, null, true);
+    }
+
+    private void assertFoundApp(String site, String appName, boolean withEvidence) {
+        assertFoundApp(site, appName, null, withEvidence);
     }
 
     private void assertFoundApp(String site, String appName, String version) {
+        assertFoundApp(site, appName, version, true);
+    }
+
+    private void assertFoundApp(String site, String appName, String version, boolean withEvidence) {
         List<ApplicationMatch> appsForSite = getDefaultHolder().getAppsForSite(site);
         assertThat(appsForSite, notNullValue());
 
@@ -476,6 +568,102 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveSc
         assertThat("Application '" + appName + "' not present", app.isPresent(), is(true));
         if (version != null) {
             assertThat(app.get().getVersion(), is(version));
+        }
+        if (withEvidence) {
+            assertThat(app.get().getEvidences(), is(not(empty())));
+        }
+    }
+
+    @Nested
+    class AlertsUnitTest extends PassiveScannerTestUtils<TechPassiveScanner> {
+
+        @Override
+        protected TechPassiveScanner createScanner() {
+            getDefaultHolder().resetApplicationsToSite();
+            return new TechPassiveScanner(getDefaultHolder());
+        }
+
+        @Test
+        void shouldHaveCpeAndVersionInAlertIfAvailable() throws HttpMalformedHeaderException {
+            // Given
+            HttpMessage msg = new HttpMessage();
+            msg.setRequestHeader("GET https://www.example.com/test HTTP/1.1");
+            msg.getResponseHeader().addHeader("Server", "Apache/2.4.7 (Ubuntu)");
+            // When
+            Application app = new Application();
+            app.setCpe("cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*");
+            ApplicationMatch appMatch = new ApplicationMatch(app);
+            appMatch.addVersion("2.4.7");
+            Alert alert =
+                    rule.createAlert(msg.getRequestHeader().getURI().toString(), appMatch).build();
+            // Then
+            assertThat(
+                    alert.getOtherInfo(),
+                    is(
+                            equalTo(
+                                    "The following CPE is associated with the identified tech: cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*\n"
+                                            + "The following version(s) is/are associated with the identified tech: 2.4.7")));
+            assertThat(alert.getWascId(), is(equalTo(13)));
+            assertThat(alert.getCweId(), is(equalTo(200)));
+        }
+
+        @Test
+        void shouldNotHaveCpeAndVersionInAlertIfNotAvailablet()
+                throws HttpMalformedHeaderException {
+            // Given
+            HttpMessage msg = new HttpMessage();
+            msg.setRequestHeader("GET https://www.example.com/test HTTP/1.1");
+            msg.getResponseHeader().addHeader("Server", "Apache/2.4.7 (Ubuntu)");
+            // When
+            Application app = new Application();
+            ApplicationMatch appMatch = new ApplicationMatch(app);
+            Alert alert =
+                    rule.createAlert(msg.getRequestHeader().getURI().toString(), appMatch).build();
+            // Then
+            assertThat(alert.getOtherInfo(), is(equalTo("")));
+            assertThat(alert.getReference(), is(equalTo("")));
+            assertThat(alert.getWascId(), is(equalTo(13)));
+            assertThat(alert.getCweId(), is(equalTo(200)));
+        }
+
+        @Test
+        void shouldHaveRefInAlertIfWebsiteAvailable() throws HttpMalformedHeaderException {
+            // Given
+            HttpMessage msg = new HttpMessage();
+            msg.setRequestHeader("GET https://www.example.com/test HTTP/1.1");
+            msg.getResponseHeader().addHeader("Server", "Apache/2.4.7 (Ubuntu)");
+            // When
+            Application app = new Application();
+            app.setWebsite("https://httpd.apache.org");
+            ApplicationMatch appMatch = new ApplicationMatch(app);
+            Alert alert =
+                    rule.createAlert(msg.getRequestHeader().getURI().toString(), appMatch).build();
+            // Then
+            assertThat(alert.getOtherInfo(), is(equalTo("")));
+            assertThat(alert.getReference(), is(equalTo("https://httpd.apache.org")));
+            assertThat(alert.getWascId(), is(equalTo(13)));
+            assertThat(alert.getCweId(), is(equalTo(200)));
+        }
+
+        @Test
+        void shouldHaveExpectedExampleAlert() {
+            // Given / When
+            List<Alert> alerts = rule.getExampleAlerts();
+            // Then
+            assertThat(alerts, hasSize(1));
+            Alert alert = alerts.get(0);
+            assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
+            assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+            assertThat(alert.getReference(), is(equalTo("https://httpd.apache.org")));
+            assertThat(alert.getEvidence(), is(equalTo("Apache")));
+            assertThat(
+                    alert.getOtherInfo(),
+                    is(
+                            equalTo(
+                                    "The following CPE is associated with the identified tech: cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*\n"
+                                            + "The following version(s) is/are associated with the identified tech: 2.4.7")));
+            assertThat(alert.getWascId(), is(equalTo(13)));
+            assertThat(alert.getCweId(), is(equalTo(200)));
         }
     }
 }

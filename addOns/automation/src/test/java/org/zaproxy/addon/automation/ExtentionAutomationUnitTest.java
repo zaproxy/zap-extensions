@@ -56,8 +56,6 @@ import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
@@ -117,12 +115,10 @@ class ExtentionAutomationUnitTest extends TestUtils {
         Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
 
         // Then
-        assertThat(jobs.size(), is(equalTo(7)));
+        assertThat(jobs.size(), is(equalTo(5)));
         assertThat(
                 jobs.containsKey(org.zaproxy.addon.automation.jobs.AddOnJob.JOB_NAME),
                 is(equalTo(true)));
-        assertThat(jobs.containsKey(PassiveScanConfigJob.JOB_NAME), is(equalTo(true)));
-        assertThat(jobs.containsKey(PassiveScanWaitJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(DelayJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(ActiveScanJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(ParamsJob.JOB_NAME), is(equalTo(true)));

@@ -14,10 +14,6 @@ env:                                   # The environment, mandatory
 
 jobs:
 
-  - type: passiveScan-config
-    name: passiveScan-config
-    parameters:
-
   - type: requestor
     name: requestor
     parameters:
@@ -28,11 +24,6 @@ jobs:
   - type: delay
     name: delay
     parameters:
-
-  - type: passiveScan-wait
-    name: passiveScan-wait
-    parameters:
-      maxDuration: 0
 
   - type: activeScan
     name: activeScan

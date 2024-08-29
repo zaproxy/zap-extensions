@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Changed
+- Use the Passive Scanner add-on for the Automation Framework passive scan jobs (Issue 7959).
 
 ## [0.9.0] - 2024-05-07
 ### Changed
