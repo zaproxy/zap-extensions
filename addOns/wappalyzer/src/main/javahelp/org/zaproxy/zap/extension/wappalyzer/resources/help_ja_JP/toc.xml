@@ -8,6 +8,7 @@
 		<tocitem text="アドオン" tocid="addons">
 			<tocitem text="探索テクノロジー" image="addon.wappalyzer.icon" target="addon.wappalyzer">
 				<tocitem text="API" target="addon.wappalyzer.api" />
+				<tocitem text="Options" target="addon.wappalyzer.options" />
 			</tocitem>
 		</tocitem>
 	</tocitem>
