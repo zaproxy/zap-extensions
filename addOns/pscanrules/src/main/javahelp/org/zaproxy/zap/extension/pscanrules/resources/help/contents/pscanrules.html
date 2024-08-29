@@ -230,7 +230,7 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10033/">10033</a>.
 Passively scans for password hashes disclosed by the web server. <br>
 Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes.
 <br>
-<strong>Note:</strong> This scan rule will only analyze JavaScript responses on LOW Threshold. 
+<strong>Note:</strong> This scan rule will only analyze text responses, and only analyze JavaScript responses on LOW Threshold. 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/HashDisclosureScanRule.java">HashDisclosureScanRule.java</a>
 <br>
@@ -377,6 +377,8 @@ such as vp09.02.51.10.01.09.16, where the latter 4 octets appear to be a RFC 191
 After review an analyst can mark such alerts as False Positives in ZAP. For handling during 
 repeated scans the "Context Alert Filters" add-on could be leveraged.
 <p>
+This scan rule will only analyze text responses. 
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InfoPrivateAddressDisclosureScanRule.java">InfoPrivateAddressDisclosureScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/2/">2</a>.
@@ -497,6 +499,8 @@ If any context contains defined users this scan rule checks all responses for th
 They will also be hashed and searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the 
 amount of time needed to passively scan. (The default payloads are "Admin" and "admin".)<br>
 <p>Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact.
+<p>
+This scan rule will only analyze text responses. 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UsernameIdorScanRule.java">UsernameIdorScanRule.java</a>
 <br>

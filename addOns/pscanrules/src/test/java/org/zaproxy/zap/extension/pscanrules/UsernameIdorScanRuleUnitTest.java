@@ -34,6 +34,7 @@ import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -62,6 +63,7 @@ class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdorScanRu
 
         msg = new HttpMessage();
         msg.setRequestHeader(requestHeader);
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/html");
         UsernameIdorScanRule.setPayloadProvider(null);
     }
 
@@ -226,5 +228,19 @@ class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdorScanRu
         // Then
         assertEquals(alertsRaised.size(), 1);
         assertEquals(alertsRaised.get(0).getEvidence(), FOOBAR_MD2);
+    }
+
+    @Test
+    void shouldNotRaiseAlertForImageResponse() {
+        // Given
+        msg.getResponseHeader().setHeader("X-Test-Thing", FOOBAR_MD2);
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "image/jpeg");
+        msg.setResponseBody("Some text <h1>Some Title Element</h1>");
+        List<String> testUsers = Arrays.asList("foobar");
+        UsernameIdorScanRule.setPayloadProvider(() -> testUsers);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(alertsRaised.size(), 0);
     }
 }

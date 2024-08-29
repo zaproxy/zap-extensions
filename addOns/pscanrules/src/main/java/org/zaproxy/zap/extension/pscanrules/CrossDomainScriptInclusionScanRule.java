@@ -58,17 +58,17 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        trustedDomains.update(getConfig().getString(RuleConfigParam.RULE_DOMAINS_TRUSTED, ""));
-
         if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isHtml()) {
             List<Element> sourceElements = source.getAllElements(HTMLElementName.SCRIPT);
             if (sourceElements != null) {
+                trustedDomains.update(
+                        getConfig().getString(RuleConfigParam.RULE_DOMAINS_TRUSTED, ""));
                 for (Element sourceElement : sourceElements) {
                     String src = sourceElement.getAttributeValue("src");
                     if (src != null
+                            && !trustedDomains.isIncluded(src)
                             && isScriptFromOtherDomain(
-                                    msg.getRequestHeader().getHostName(), src, msg)
-                            && !trustedDomains.isIncluded(src)) {
+                                    msg.getRequestHeader().getHostName(), src, msg)) {
                         String integrity = sourceElement.getAttributeValue("integrity");
                         if (integrity == null || integrity.trim().length() == 0) {
                             /*
