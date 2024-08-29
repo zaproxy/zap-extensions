@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Link to "no browser" FAQ in warning messages.
 
+### Changed
+- Update Selenium to version 4.24.0.
+
 ## [15.28.0] - 2024-08-12
 ### Changed
 - Update Selenium to version 4.23.1.
