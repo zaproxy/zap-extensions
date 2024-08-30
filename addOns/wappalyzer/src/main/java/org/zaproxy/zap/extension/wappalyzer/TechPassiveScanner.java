@@ -529,11 +529,14 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
 
     private static ApplicationMatch getAppForExample() {
         Application exampleApp = new Application();
+        exampleApp.setCategories(List.of("Web servers"));
+        exampleApp.setName("Apache HTTP Server");
         exampleApp.setCpe("cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*");
+        exampleApp.setWebsite("https://httpd.apache.org");
+
         ApplicationMatch exampleMatch = new ApplicationMatch(exampleApp);
         exampleMatch.addEvidence("Apache");
         exampleMatch.addVersion("2.4.7");
-        exampleApp.setWebsite("https://httpd.apache.org");
         return exampleMatch;
     }
 
