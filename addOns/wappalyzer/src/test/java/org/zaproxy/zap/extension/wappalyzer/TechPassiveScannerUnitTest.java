@@ -28,7 +28,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
@@ -41,15 +40,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
+import org.zaproxy.zap.utils.Stats;
 
-class PassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScanner> {
+class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScanner> {
 
     ApplicationTestHolder defaultHolder;
 
@@ -502,6 +502,34 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScanner>
     }
 
     @Test
+    void shouldMaintainStats() throws HttpMalformedHeaderException {
+        // Given
+        Stats.clearAll();
+        InMemoryStats stats = new InMemoryStats();
+        Stats.addListener(stats);
+        String site = "https://www.example.com";
+        HttpMessage msg1 = makeHttpMessage(site + "/test1");
+        msg1.getResponseHeader().addHeader("Test", "Test Entry");
+        HttpMessage msg2 = makeHttpMessage(site + "/test2");
+        msg2.setRequestHeader("GET " + site + "/test2 HTTP/1.1");
+        msg2.getResponseHeader().addHeader("Test", "Test Entry");
+        HttpMessage msg3 = makeHttpMessage(site + "/test3");
+        msg3.setRequestHeader("GET " + site + "/test3 HTTP/1.1");
+        // When
+        scan(msg1);
+        scan(msg2);
+        scan(msg3);
+        // Then
+        assertFoundAppCount(site, 1);
+        assertFoundApp(site, "Test Entry");
+        assertThat(stats.getStat(site, "stats.tech.reqcount.id"), is(2L));
+        // Note that this should be 3 but there's a bug in the core
+        assertThat(stats.getStat(site, "stats.tech.reqcount.total"), is(4L));
+
+        Stats.removeListener(stats);
+    }
+
+    @Test
     void shouldHaveHelpLink() {
         // Given / When
         String helpLink = rule.getHelpLink();
@@ -520,14 +548,17 @@ class PassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScanner>
     }
 
     private static HttpMessage makeHttpMessage() throws HttpMalformedHeaderException {
+        return makeHttpMessage("https://www.example.com/");
+    }
+
+    private static HttpMessage makeHttpMessage(String url) throws HttpMalformedHeaderException {
         HttpMessage httpMessage = new HttpMessage();
 
         HistoryReference ref = mock(HistoryReference.class);
-        given(ref.getSiteNode()).willReturn(mock(SiteNode.class));
 
         httpMessage.setHistoryRef(ref);
 
-        httpMessage.setRequestHeader("GET https://www.example.com/ HTTP/1.1");
+        httpMessage.setRequestHeader("GET " + url + " HTTP/1.1");
         httpMessage.setResponseHeader("HTTP/1.1 200 OK");
         httpMessage.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "text/html");
         return httpMessage;
