@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Removed
+- Remove the active and passive script templates, superseded by the ones provided by the GraalVM JavaScript add-on.
 
 ## [45.5.0] - 2024-07-22
 ### Added
