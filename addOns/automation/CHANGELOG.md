@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Allow to configure the structural parameters of a context (Issue 7780).
 
+### Fixed
+- NPE in GUI if the technology was not specified.
+
 ### Changed
 - Rely on Passive Scanner add-on for the passive scan related jobs (Issue 7959).
 
