@@ -683,6 +683,12 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
             // Then
             assertThat(alerts, hasSize(1));
             Alert alert = alerts.get(0);
+            assertThat(alert.getName(), is(equalTo("Tech Detected - Apache HTTP Server")));
+            assertThat(
+                    alert.getDescription(),
+                    is(
+                            equalTo(
+                                    "The following \"Web servers\" technology was identified: Apache HTTP Server.")));
             assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
             assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
             assertThat(alert.getReference(), is(equalTo("https://httpd.apache.org")));

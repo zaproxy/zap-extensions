@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Request stats.
 
+### Fixed
+- Example alert details for documentation generation (Issue 6119).
+
 ## [21.40.0] - 2024-08-28
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
