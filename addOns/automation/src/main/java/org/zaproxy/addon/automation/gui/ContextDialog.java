@@ -133,11 +133,19 @@ public class ContextDialog extends StandardFieldsDialog {
         this.context.setUrls(stringParamToList(URLS_PARAM));
         this.context.setIncludePaths(stringParamToList(INCLUDE_PARAM));
         this.context.setExcludePaths(stringParamToList(EXCLUDE_PARAM));
-        this.context
-                .getTechnology()
-                .setExclude(
-                        TechnologyUtils.techSetToExcludeList(
-                                this.getTechnologyPanel().getTechSet()));
+
+        TechnologyData tech = this.context.getTechnology();
+        List<String> excludeTech =
+                TechnologyUtils.techSetToExcludeList(this.getTechnologyPanel().getTechSet());
+        if (tech == null && excludeTech.size() == 0) {
+            // Can ignore
+        } else {
+            if (tech == null) {
+                tech = new TechnologyData();
+            }
+            tech.setExclude(excludeTech);
+            this.context.setTechnology(tech);
+        }
         context.setStructure(getStructurePanel().getStructure());
         if (this.isNew) {
             envDialog.addContext(context);
