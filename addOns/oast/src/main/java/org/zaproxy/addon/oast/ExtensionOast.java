@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.collections.map.AbstractReferenceMap;
 import org.apache.commons.collections.map.ReferenceMap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -130,6 +131,8 @@ public class ExtensionOast extends ExtensionAdaptor {
         extensionHook.addOptionsChangedListener(callbackService);
         extensionHook.addOptionsChangedListener(interactshService);
 
+        extensionHook.addApiImplementor(new OastApi(this));
+
         if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOastOptionsPanel());
             getOastOptionsPanel().addServicePanel(new GeneralOastOptionsPanelTab());
@@ -140,6 +143,10 @@ public class ExtensionOast extends ExtensionAdaptor {
             extensionHook.getHookView().addStatusPanel(getOastPanel());
             ExtensionHelp.enableHelpKey(getOastPanel(), "oast.tab");
         }
+    }
+
+    public OastParam getParams() {
+        return oastParam;
     }
 
     @Override
@@ -255,6 +262,17 @@ public class ExtensionOast extends ExtensionAdaptor {
             return null;
         }
         return getOastServices().get(oastParam.getActiveScanServiceName());
+    }
+
+    public void setActiveScanOastService(String serviceName) {
+        if (StringUtils.isEmpty(serviceName)) {
+            serviceName = OastParam.NO_ACTIVE_SCAN_SERVICE_SELECTED_OPTION;
+        } else if (!OastParam.NO_ACTIVE_SCAN_SERVICE_SELECTED_OPTION.equals(serviceName)
+                && !services.containsKey(serviceName)) {
+            throw new IllegalArgumentException(
+                    "No service with the given name exists: " + serviceName);
+        }
+        oastParam.setActiveScanServiceName(serviceName);
     }
 
     public String registerAlertAndGetPayloadForCallbackService(Alert alert, String handler) {
