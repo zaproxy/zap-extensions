@@ -78,6 +78,7 @@ public class AuthUtils {
     public static final String AUTH_NO_USER_FIELD_STATS = "stats.auth.browser.nouserfield";
     public static final String AUTH_NO_PASSWORD_FIELD_STATS = "stats.auth.browser.nopasswordfield";
     public static final String AUTH_FOUND_FIELDS_STATS = "stats.auth.browser.foundfields";
+    public static final String AUTH_SESSION_TOKEN_STATS_PREFIX = "stats.auth.sessiontoken.";
     public static final String AUTH_SESSION_TOKENS_MAX = "stats.auth.sessiontokens.max";
     public static final String AUTH_BROWSER_PASSED_STATS = "stats.auth.browser.passed";
     public static final String AUTH_BROWSER_FAILED_STATS = "stats.auth.browser.failed";
@@ -448,6 +449,11 @@ public class AuthUtils {
         }
         if (!map.isEmpty()) {
             LOGGER.debug("Found session tokens in {} : {}", msg.getRequestHeader().getURI(), map);
+            map.forEach(
+                    (k, v) ->
+                            AuthUtils.incStatsCounter(
+                                    msg.getRequestHeader().getURI(),
+                                    AUTH_SESSION_TOKEN_STATS_PREFIX + v.getKey()));
         }
 
         return map;
@@ -599,6 +605,9 @@ public class AuthUtils {
                                     .filter(v -> v.getValue().equals(token))
                                     .findFirst();
                     if (es.isPresent()) {
+                        AuthUtils.incStatsCounter(
+                                msg.getRequestHeader().getURI(),
+                                AuthUtils.AUTH_SESSION_TOKEN_STATS_PREFIX + es.get().getKey());
                         List<SessionToken> tokens = new ArrayList<>();
                         tokens.add(
                                 new SessionToken(
