@@ -38,12 +38,14 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.spider.SpiderParam;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.network.HttpResponseBody;
+import org.zaproxy.zap.users.User;
 
 /** Unit test for {@link ParseContext}. */
 class ParseContextUnitTest {
 
     private SpiderParam spiderParam;
     private ValueGenerator valueGenerator;
+    private User user;
     private HttpMessage httpMessage;
     private String responseData;
     private String path;
@@ -56,6 +58,7 @@ class ParseContextUnitTest {
     void setup() throws Exception {
         spiderParam = mock(SpiderParam.class);
         valueGenerator = mock(ValueGenerator.class);
+        user = mock(User.class);
         httpMessage = mock(HttpMessage.class);
         responseData = "<html></html>";
         path = "/path";
@@ -76,6 +79,10 @@ class ParseContextUnitTest {
         // Given / When
         ctx = new ParseContext(spiderParam, valueGenerator, httpMessage, path, depth);
         // Then
+        assertInitialConstructorValues();
+    }
+
+    private void assertInitialConstructorValues() {
         assertThat(ctx.getSpiderParam(), is(sameInstance(spiderParam)));
         assertThat(ctx.getValueGenerator(), is(sameInstance(valueGenerator)));
         assertThat(ctx.getHttpMessage(), is(sameInstance(httpMessage)));
@@ -84,6 +91,15 @@ class ParseContextUnitTest {
         assertThat(ctx.getBaseUrl(), is(equalTo(uri)));
         assertThat(ctx.getSource(), is(notNullValue()));
         assertThat(ctx.getSource().toString(), is(equalTo(responseData)));
+    }
+
+    @Test
+    void shouldCreateWithGivenAdditionalValues() {
+        // Given / When
+        ctx = new ParseContext(spiderParam, valueGenerator, user, httpMessage, path, depth);
+        // Then
+        assertInitialConstructorValues();
+        assertThat(ctx.getUser(), is(sameInstance(user)));
     }
 
     @Test

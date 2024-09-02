@@ -24,6 +24,7 @@ import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.spider.SpiderParam;
 import org.zaproxy.zap.model.ValueGenerator;
+import org.zaproxy.zap.users.User;
 
 /**
  * A parse context.
@@ -36,6 +37,7 @@ public class ParseContext {
     private final ValueGenerator valueGenerator;
     private final HttpMessage httpMessage;
     private final String path;
+    private final User user;
     private final int depth;
     private String baseUrl;
     private Source source;
@@ -57,8 +59,32 @@ public class ParseContext {
             HttpMessage httpMessage,
             String path,
             int depth) {
+        this(spiderParam, valueGenerator, null, httpMessage, path, depth);
+    }
+
+    /**
+     * Constructs a {@code ParseContext} with the given values.
+     *
+     * @param spiderParam the spider options, must not be {@code null}.
+     * @param valueGenerator the value generator, must not be {@code null}.
+     * @param user the user being used by/in the current spidering scan.
+     * @param httpMessage the message, must not be {@code null}.
+     * @param path the path of the HTTP message.
+     * @param depth the current depth of the parsing.
+     * @throws NullPointerException if any of {@code spiderParam}, {@code valueGenerator}, or {@code
+     *     httpMessage} is {@code null}.
+     * @since 0.12.0
+     */
+    public ParseContext(
+            SpiderParam spiderParam,
+            ValueGenerator valueGenerator,
+            User user,
+            HttpMessage httpMessage,
+            String path,
+            int depth) {
         this.spiderParam = Objects.requireNonNull(spiderParam);
         this.valueGenerator = Objects.requireNonNull(valueGenerator);
+        this.user = user;
         this.httpMessage = Objects.requireNonNull(httpMessage);
         this.path = path;
         this.depth = depth;
@@ -80,6 +106,16 @@ public class ParseContext {
      */
     public ValueGenerator getValueGenerator() {
         return valueGenerator;
+    }
+
+    /**
+     * Gets the user used by/in the spidering scan.
+     *
+     * @return the user, or {@code null}.
+     * @since 0.12.0
+     */
+    public User getUser() {
+        return user;
     }
 
     /**
