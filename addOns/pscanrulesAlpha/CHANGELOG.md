@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [43] - 2024-09-02
 ### Changed
 - Update minimum ZAP version to 2.15.0.
 
@@ -366,6 +366,7 @@ As well as Alert Refs where applicable (Issues 6119 & 7100).
 - Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 - http://www.testcases.org/watcher/ test pages.
 
+[43]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v40
