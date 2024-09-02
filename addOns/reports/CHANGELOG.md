@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.33.0] - 2024-09-02
 ### Changed
 - Maintenance changes related to Passive Scanner add-on (Issue 7959).
 
@@ -283,6 +283,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.33.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.33.0
 [0.32.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.32.0
 [0.31.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.31.0
 [0.30.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.30.0

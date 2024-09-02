@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [49] - 2024-09-02
 ### Fixed
 - Do not change the URL field of the Manual Explore panel when the Mode changes (Issue 8591).
 
@@ -263,6 +263,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[49]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v46

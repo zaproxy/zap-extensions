@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.15.1] - 2024-09-02
 ### Changed
 - Restored stats removed in previous release as these could be used in AF tests.
 
@@ -106,6 +106,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.15.1]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.15.1
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.15.0
 [0.14.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.13.0

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [60] - 2024-09-02
 ### Changed
 - Clarified Missing Anti-clickjacking Header description.
 - Depend on Passive Scanner add-on to include it by default (Issue 7959).
@@ -560,6 +560,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[60]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v60
 [59]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v59
 [58]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v58
 [57]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v57
