@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
@@ -43,7 +44,9 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 
@@ -140,6 +143,8 @@ class OpenApiJobUnitTest extends TestUtils {
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class));
+        given(env.getContextWrapper(any())).willReturn(contextWrapper);
         String yamlStr = "parameters:\n" + "  apiUrl: 'Invalid URL.'";
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -163,7 +168,9 @@ class OpenApiJobUnitTest extends TestUtils {
         mockMessages(new ExtensionOpenApi());
         AutomationPlan plan = new AutomationPlan();
         AutomationProgress progress = plan.getProgress();
-        AutomationEnvironment env = plan.getEnv();
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class));
+        given(env.getContextWrapper(any())).willReturn(contextWrapper);
         String yamlStr = "parameters:\n" + "  apiFile: 'Invalid file path'";
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);

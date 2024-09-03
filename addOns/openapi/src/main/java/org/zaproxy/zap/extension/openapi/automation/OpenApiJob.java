@@ -31,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
@@ -111,11 +110,15 @@ public class OpenApiJob extends AutomationJob {
         if (!StringUtils.isEmpty(targetStr)) {
             targetUrl = env.replaceVars(targetStr);
         }
-        String context = this.getParameters().getContext();
-        int contextId =
-                context != null
-                        ? Model.getSingleton().getSession().getContext(context).getId()
-                        : -1;
+
+        var contextWrapper = env.getContextWrapper(getParameters().getContext());
+        if (contextWrapper == null) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.context.unknown", getParameters().getContext()));
+            return;
+        }
+        int contextId = contextWrapper.getContext().getId();
 
         if (!StringUtils.isEmpty(apiFile)) {
             File file = JobUtils.getFile(apiFile, getPlan());

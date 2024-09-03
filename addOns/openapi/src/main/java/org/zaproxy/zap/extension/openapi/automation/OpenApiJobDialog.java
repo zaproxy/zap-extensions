@@ -25,7 +25,6 @@ import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -79,8 +78,7 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setApiFile(this.getStringValue(API_FILE_PARAM));
         this.job.getParameters().setApiUrl(this.getStringValue(API_URL_PARAM));
         this.job.getParameters().setTargetUrl(this.getStringValue(TARGET_URL_PARAM));
-        Context context = this.getContextValue(CONTEXT_PARAM);
-        this.job.getParameters().setContext(context != null ? context.getName() : null);
+        this.job.getParameters().setContext(getStringValue(CONTEXT_PARAM));
         this.job.resetAndSetChanged();
     }
 
