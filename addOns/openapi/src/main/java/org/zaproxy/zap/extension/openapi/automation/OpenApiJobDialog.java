@@ -21,9 +21,9 @@ package org.zaproxy.zap.extension.openapi.automation;
 
 import java.awt.Component;
 import java.io.File;
+import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -66,11 +66,10 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
         if (targetUrlField instanceof JTextField) {
             ((JTextField) targetUrlField).setText(this.job.getParameters().getTargetUrl());
         }
-        this.addContextSelectField(
-                CONTEXT_PARAM,
-                Model.getSingleton()
-                        .getSession()
-                        .getContext(this.job.getParameters().getContext()));
+
+        List<String> contextNames = job.getEnv().getContextNames();
+        contextNames.add(0, "");
+        this.addComboField(CONTEXT_PARAM, contextNames, job.getParameters().getContext());
         this.addPadding();
     }
 
