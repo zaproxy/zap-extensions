@@ -369,7 +369,14 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                 timer = new Timer(1000, e -> getAutomationPanel().updateJob(job));
                 timer.start();
             }
-            job.runJob(env, progress);
+            try {
+                job.runJob(env, progress);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.unexpected.internal", e.getMessage()));
+            }
             job.setTimeFinished();
             if (timer != null) {
                 timer.stop();

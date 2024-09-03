@@ -20,6 +20,7 @@
 package org.zaproxy.addon.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -42,6 +43,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.quality.Strictness;
@@ -982,6 +984,51 @@ class ExtentionAutomationUnitTest extends TestUtils {
         // Then
         assertThat(count1, is(1));
         assertThat(count2, is(0));
+    }
+
+    @Test
+    @Timeout(5)
+    void shouldHandleRunJobExceptions() throws Exception {
+        // Given
+        var latch = new CountDownLatch(1);
+        var job =
+                new AutomationJobImpl() {
+                    @Override
+                    public String getType() {
+                        return "job";
+                    }
+
+                    @Override
+                    public void runJob(AutomationEnvironment env, AutomationProgress progress) {
+                        throw new RuntimeException("Exception while running");
+                    }
+
+                    @Override
+                    public void setTimeFinished() {
+                        super.setTimeFinished();
+
+                        latch.countDown();
+                    }
+
+                    @Override
+                    public AutomationJob newJob() {
+                        return this;
+                    }
+                };
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        Path filePath = getResourcePath("resources/testPlan-withTests.yaml");
+        extAuto.registerAutomationJob(job);
+        AutomationPlan plan = new AutomationPlan(extAuto, filePath.toFile());
+
+        // When
+        extAuto.runPlanAsync(plan);
+        latch.await();
+
+        // Then
+        var progress = plan.getProgress();
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors(), contains("!automation.error.unexpected.internal!"));
     }
 
     // Methods are accessed via reflection
