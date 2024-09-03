@@ -524,19 +524,19 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     }
 
     public List<Alert> getExampleAlerts() {
-        return List.of(createAlert("https://example.org/", getAppForExample()).build());
+        return List.of(
+                createAlert("https://example.org/", getAppForExample()).setName(getName()).build());
     }
 
     private static ApplicationMatch getAppForExample() {
         Application exampleApp = new Application();
-        exampleApp.setCategories(List.of("Web servers"));
-        exampleApp.setName("Apache HTTP Server");
-        exampleApp.setCpe("cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*");
-        exampleApp.setWebsite("https://httpd.apache.org");
+        exampleApp.setCategories(List.of("Widgets"));
+        exampleApp.setName("Example Software");
+        exampleApp.setCpe("cpe:2.3:a:example_vendor:example_software:55.4.3:*:*:*:*:*:*:*");
 
         ApplicationMatch exampleMatch = new ApplicationMatch(exampleApp);
-        exampleMatch.addEvidence("Apache");
-        exampleMatch.addVersion("2.4.7");
+        exampleMatch.addEvidence("Exampleware");
+        exampleMatch.addVersion("55.4.3");
         return exampleMatch;
     }
 

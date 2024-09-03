@@ -683,22 +683,21 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
             // Then
             assertThat(alerts, hasSize(1));
             Alert alert = alerts.get(0);
-            assertThat(alert.getName(), is(equalTo("Tech Detected - Apache HTTP Server")));
+            assertThat(alert.getName(), is(equalTo("Tech Detection Passive Scanner")));
             assertThat(
                     alert.getDescription(),
                     is(
                             equalTo(
-                                    "The following \"Web servers\" technology was identified: Apache HTTP Server.")));
+                                    "The following \"Widgets\" technology was identified: Example Software.")));
             assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
             assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-            assertThat(alert.getReference(), is(equalTo("https://httpd.apache.org")));
-            assertThat(alert.getEvidence(), is(equalTo("Apache")));
+            assertThat(alert.getEvidence(), is(equalTo("Exampleware")));
             assertThat(
                     alert.getOtherInfo(),
                     is(
                             equalTo(
-                                    "The following CPE is associated with the identified tech: cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*\n"
-                                            + "The following version(s) is/are associated with the identified tech: 2.4.7")));
+                                    "The following CPE is associated with the identified tech: cpe:2.3:a:example_vendor:example_software:55.4.3:*:*:*:*:*:*:*\n"
+                                            + "The following version(s) is/are associated with the identified tech: 55.4.3")));
             assertThat(alert.getWascId(), is(equalTo(13)));
             assertThat(alert.getCweId(), is(equalTo(200)));
         }
