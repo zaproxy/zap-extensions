@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Allow to select the contexts of the Automation Framework plan when configuring the job.
+- Correctly handle empty context name in the Automation Framework job.
 
 ## [42] - 2024-07-04
 
