@@ -41,6 +41,7 @@ import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.EmptyDefinitionException;
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidDefinitionException;
 import org.zaproxy.zap.extension.openapi.OpenApiResults;
+import org.zaproxy.zap.users.User;
 
 public class OpenApiJob extends AutomationJob {
 
@@ -51,6 +52,7 @@ public class OpenApiJob extends AutomationJob {
     private static final String PARAM_API_FILE = "apiFile";
     private static final String PARAM_TARGET_URL = "targetUrl";
     private static final String PARAM_CONTEXT = "context";
+    private static final String PARAM_USER = "user";
 
     private ExtensionOpenApi extOpenApi;
 
@@ -83,6 +85,8 @@ public class OpenApiJob extends AutomationJob {
                 this.getName(),
                 null,
                 progress);
+
+        verifyUser(getParameters().getUser(), progress);
     }
 
     @Override
@@ -97,6 +101,7 @@ public class OpenApiJob extends AutomationJob {
         map.put(PARAM_API_FILE, "");
         map.put(PARAM_TARGET_URL, "");
         map.put(PARAM_CONTEXT, "");
+        map.put(PARAM_USER, "");
         return map;
     }
 
@@ -120,6 +125,8 @@ public class OpenApiJob extends AutomationJob {
         }
         int contextId = contextWrapper.getContext().getId();
 
+        User user = getUser(this.getParameters().getUser(), progress);
+
         if (!StringUtils.isEmpty(apiFile)) {
             File file = JobUtils.getFile(apiFile, getPlan());
             if (file.exists() && file.canRead()) {
@@ -127,7 +134,8 @@ public class OpenApiJob extends AutomationJob {
                 try {
                     results =
                             getExtOpenApi()
-                                    .importOpenApiDefinitionV2(file, targetUrl, false, contextId);
+                                    .importOpenApiDefinitionV2(
+                                            file, targetUrl, false, contextId, user);
                 } catch (EmptyDefinitionException | InvalidDefinitionException e) {
                     progress.error(e.getLocalizedMessage());
                     return;
@@ -159,7 +167,8 @@ public class OpenApiJob extends AutomationJob {
             try {
                 URI uri = new URI(apiUrl, true);
                 OpenApiResults results =
-                        getExtOpenApi().importOpenApiDefinitionV2(uri, targetUrl, false, contextId);
+                        getExtOpenApi()
+                                .importOpenApiDefinitionV2(uri, targetUrl, false, contextId, user);
                 List<String> errors = results.getErrors();
                 if (errors != null && errors.size() > 0) {
                     for (String error : errors) {
@@ -272,6 +281,7 @@ public class OpenApiJob extends AutomationJob {
         private String apiUrl;
         private String targetUrl;
         private String context;
+        private String user;
 
         public String getApiFile() {
             return apiFile;
@@ -303,6 +313,14 @@ public class OpenApiJob extends AutomationJob {
 
         public void setContext(String context) {
             this.context = context;
+        }
+
+        public String getUser() {
+            return user;
+        }
+
+        public void setUser(String user) {
+            this.user = user;
         }
     }
 }

@@ -39,11 +39,12 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
     private static final String API_URL_PARAM = "openapi.automation.dialog.apiurl";
     private static final String TARGET_URL_PARAM = "openapi.automation.dialog.targeturl";
     private static final String CONTEXT_PARAM = "openapi.automation.dialog.context";
+    private static final String USER_PARAM = "automation.dialog.all.user";
 
     private OpenApiJob job;
 
     public OpenApiJobDialog(OpenApiJob job) {
-        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 250));
+        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 300));
         this.job = job;
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
@@ -69,6 +70,10 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
         List<String> contextNames = job.getEnv().getContextNames();
         contextNames.add(0, "");
         this.addComboField(CONTEXT_PARAM, contextNames, job.getParameters().getContext());
+
+        List<String> users = job.getEnv().getAllUserNames();
+        users.add(0, "");
+        addComboField(USER_PARAM, users, job.getData().getParameters().getUser());
         this.addPadding();
     }
 
@@ -79,6 +84,7 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setApiUrl(this.getStringValue(API_URL_PARAM));
         this.job.getParameters().setTargetUrl(this.getStringValue(TARGET_URL_PARAM));
         this.job.getParameters().setContext(getStringValue(CONTEXT_PARAM));
+        this.job.getParameters().setUser(getStringValue(USER_PARAM));
         this.job.resetAndSetChanged();
     }
 

@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Allow to import the OpenAPI definitions with a user (Issue 7739).
+
 ### Fixed
 - Allow to select the contexts of the Automation Framework plan when configuring the job.
 - Correctly handle empty context name in the Automation Framework job.
