@@ -21,10 +21,13 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class XpathInjectionScanRuleUnitTest extends ActiveScannerTest<XpathInjectionScanRule> {
@@ -62,5 +65,22 @@ class XpathInjectionScanRuleUnitTest extends ActiveScannerTest<XpathInjectionSca
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_09_XPATH.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_09_XPATH.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts, hasSize(1));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(alert.getAlertRef(), is(equalTo("90021")));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

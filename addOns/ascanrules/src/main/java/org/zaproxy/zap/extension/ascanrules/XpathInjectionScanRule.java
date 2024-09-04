@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -199,13 +200,7 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin
                                 paramName,
                                 evilPayload);
 
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_HIGH)
-                                .setParam(paramName)
-                                .setAttack(evilPayload)
-                                .setEvidence(errorString)
-                                .setMessage(msg)
-                                .raise();
+                        createAlert(paramName, evilPayload, errorString).setMessage(msg).raise();
 
                         // All done. No need to look for vulnerabilities on subsequent
                         // parameters on the same request (to reduce performance impact)
@@ -231,5 +226,18 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin
                 return;
             }
         }
+    }
+
+    private AlertBuilder createAlert(String param, String payload, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setParam(param)
+                .setAttack(payload)
+                .setEvidence(evidence);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("foo", XPATH_PAYLOADS[0], XPATH_ERRORS[0]).build());
     }
 }
