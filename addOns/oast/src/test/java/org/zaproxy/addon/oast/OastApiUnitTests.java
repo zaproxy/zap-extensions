@@ -29,6 +29,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,16 +126,46 @@ class OastApiUnitTests extends TestUtils {
     @Test
     void shouldSetActiveService() throws Exception {
         // Given
-        JSONObject params = new JSONObject();
-        params.put("name", "BOAST");
+        JSONObject apiParams = new JSONObject();
+        apiParams.put("name", "BOAST");
 
         // When
-        ApiResponse res = api.handleApiAction("setActiveScanService", params);
+        ApiResponse res = api.handleApiAction("setActiveScanService", apiParams);
 
         // Then
         assertThat(res instanceof ApiResponseElement, is(true));
         assertThat(((ApiResponseElement) res).getName(), is("Result"));
         assertThat(((ApiResponseElement) res).getValue(), is("OK"));
+    }
+
+    @Test
+    void shouldGetDaysToKeepRecords() throws Exception {
+        // Given / When
+        given(ext.getParams()).willReturn(params);
+        ApiResponse res = api.handleApiView("getDaysToKeepRecords", new JSONObject());
+
+        // Then
+        assertThat(res instanceof ApiResponseElement, is(true));
+        assertThat(((ApiResponseElement) res).getName(), is("getDaysToKeepRecords"));
+        assertThat(((ApiResponseElement) res).getValue(), is("45"));
+    }
+
+    @Test
+    void shouldSetDaysToKeepRecords() throws Exception {
+        // Given
+        given(ext.getParams()).willReturn(params);
+        JSONObject apiParams = new JSONObject();
+        apiParams.put("days", "44");
+
+        // When
+        ApiResponse res = api.handleApiAction("setDaysToKeepRecords", apiParams);
+
+        // Then
+        assertThat(res instanceof ApiResponseElement, is(true));
+        assertThat(((ApiResponseElement) res).getName(), is("Result"));
+        assertThat(((ApiResponseElement) res).getValue(), is("OK"));
+        assertThat(params.getDaysToKeepRecords(), is(44));
+        verify(ext).trimDatabase(44);
     }
 
     @Test
@@ -203,7 +234,7 @@ class OastApiUnitTests extends TestUtils {
     void shouldSetBoastOptions() throws Exception {
         // Given
         Model model = mock(Model.class);
-        given(model.getOptionsParam()).willReturn(new OptionsParam());
+        given(model.getOptionsParam()).willReturn(mock(OptionsParam.class));
         given(ext.getModel()).willReturn(model);
         BoastService service = mock(BoastService.class);
         BoastParam bparams = new BoastParam();
@@ -254,7 +285,7 @@ class OastApiUnitTests extends TestUtils {
     void shouldSetCallbackOptions() throws Exception {
         // Given
         Model model = mock(Model.class);
-        given(model.getOptionsParam()).willReturn(new OptionsParam());
+        given(model.getOptionsParam()).willReturn(mock(OptionsParam.class));
         given(ext.getModel()).willReturn(model);
         CallbackService service = mock(CallbackService.class);
         CallbackParam bparams = new CallbackParam();
@@ -307,7 +338,7 @@ class OastApiUnitTests extends TestUtils {
     void shouldSetInteractshOptions() throws Exception {
         // Given
         Model model = mock(Model.class);
-        given(model.getOptionsParam()).willReturn(new OptionsParam());
+        given(model.getOptionsParam()).willReturn(mock(OptionsParam.class));
         given(ext.getModel()).willReturn(model);
         InteractshService service = mock(InteractshService.class);
         InteractshParam bparams = new InteractshParam();
