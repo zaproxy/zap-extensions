@@ -23,6 +23,7 @@ import java.util.Objects;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.spider.SpiderParam;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.users.User;
 
@@ -37,6 +38,7 @@ public class ParseContext {
     private final ValueGenerator valueGenerator;
     private final HttpMessage httpMessage;
     private final String path;
+    private final Context context;
     private final User user;
     private final int depth;
     private String baseUrl;
@@ -59,7 +61,7 @@ public class ParseContext {
             HttpMessage httpMessage,
             String path,
             int depth) {
-        this(spiderParam, valueGenerator, null, httpMessage, path, depth);
+        this(spiderParam, valueGenerator, null, null, httpMessage, path, depth);
     }
 
     /**
@@ -67,6 +69,7 @@ public class ParseContext {
      *
      * @param spiderParam the spider options, must not be {@code null}.
      * @param valueGenerator the value generator, must not be {@code null}.
+     * @param context the context being used by/in the current spidering scan.
      * @param user the user being used by/in the current spidering scan.
      * @param httpMessage the message, must not be {@code null}.
      * @param path the path of the HTTP message.
@@ -78,12 +81,14 @@ public class ParseContext {
     public ParseContext(
             SpiderParam spiderParam,
             ValueGenerator valueGenerator,
+            Context context,
             User user,
             HttpMessage httpMessage,
             String path,
             int depth) {
         this.spiderParam = Objects.requireNonNull(spiderParam);
         this.valueGenerator = Objects.requireNonNull(valueGenerator);
+        this.context = context;
         this.user = user;
         this.httpMessage = Objects.requireNonNull(httpMessage);
         this.path = path;
@@ -106,6 +111,16 @@ public class ParseContext {
      */
     public ValueGenerator getValueGenerator() {
         return valueGenerator;
+    }
+
+    /**
+     * Gets the context used by/in the spidering scan.
+     *
+     * @return the context, or {@code null}.
+     * @since 0.12.0
+     */
+    public Context getContext() {
+        return context;
     }
 
     /**
