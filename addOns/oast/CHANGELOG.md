@@ -9,6 +9,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added 
 - API support.
 
+### Fixed
+- Address warnings when using BOAST payloads.
+
 ## [0.19.0] - 2024-07-18
 ### Changed
 - Update BOAST port, use 2096 instead of 1337.
