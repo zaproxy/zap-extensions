@@ -75,6 +75,7 @@ public class ExtensionOast extends ExtensionAdaptor {
     private final Map<String, OastService> services = new HashMap<>();
 
     private OastOptionsPanel oastOptionsPanel;
+    private BoastOptionsPanelTab boastOptionsPanelTab;
     private OastPanel oastPanel;
     private OastParam oastParam;
     private BoastService boastService;
@@ -129,8 +130,8 @@ public class ExtensionOast extends ExtensionAdaptor {
 
         if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOastOptionsPanel());
-            getOastOptionsPanel().addServicePanel(new GeneralOastOptionsPanelTab());
-            getOastOptionsPanel().addServicePanel(new BoastOptionsPanelTab(boastService));
+            getOastOptionsPanel().addServicePanel(new GeneralOastOptionsPanelTab(this));
+            getOastOptionsPanel().addServicePanel(getBoastOptionsPanelTab());
             getOastOptionsPanel().addServicePanel(new CallbackOptionsPanelTab(callbackService));
             getOastOptionsPanel().addServicePanel(new InteractshOptionsPanelTab(interactshService));
             extensionHook.getHookMenu().addPopupMenuItem(new OastInsertPayloadMenu(this));
@@ -154,11 +155,24 @@ public class ExtensionOast extends ExtensionAdaptor {
     @Override
     public void postInit() {
         if (oastParam.isUsePermanentDatabase()) {
-            getPermanentDatabase();
+            trimDatabase(oastParam.getDaysToKeepRecords());
         }
+
         boastService.startService();
         callbackService.startService();
         interactshService.startService();
+    }
+
+    public void trimDatabase(int days) {
+        getPermanentDatabase().trim(days);
+    }
+
+    public void clearAllRecords() {
+        getPermanentDatabase().clearAllRecords();
+        boastService.clearRegisteredServers();
+        if (hasView()) {
+            ThreadUtils.invokeAndWaitHandled(() -> getBoastOptionsPanelTab().resetBoastServers());
+        }
     }
 
     private void optionsChanged(OptionsParam optionsParam) {
@@ -238,6 +252,13 @@ public class ExtensionOast extends ExtensionAdaptor {
             oastOptionsPanel = new OastOptionsPanel();
         }
         return oastOptionsPanel;
+    }
+
+    private BoastOptionsPanelTab getBoastOptionsPanelTab() {
+        if (boastOptionsPanelTab == null) {
+            boastOptionsPanelTab = new BoastOptionsPanelTab(boastService);
+        }
+        return boastOptionsPanelTab;
     }
 
     public OastPanel getOastPanel() {

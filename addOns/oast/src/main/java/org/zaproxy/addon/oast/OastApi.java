@@ -35,11 +35,14 @@ public class OastApi extends ApiImplementor {
     private static final String PREFIX = "oast";
 
     private static final String ACTION_SET_ACTIVE_SCAN_SERVICE = "setActiveScanService";
+    private static final String ACTION_SET_DAYS_TO_KEEP_RECORDS = "setDaysToKeepRecords";
     private static final String ACTION_SET_BOAST_OPTIONS = "setBoastOptions";
     private static final String ACTION_SET_CALLBACK_OPTIONS = "setCallbackOptions";
     private static final String ACTION_SET_INTERACTSH_OPTIONS = "setInteractshOptions";
+
     private static final String VIEW_GET_ACTIVE_SCAN_SERVICE = "getActiveScanService";
     private static final String VIEW_GET_SERVICES = "getServices";
+    private static final String VIEW_GET_DAYS_TO_KEEP_RECORDS = "getDaysToKeepRecords";
     private static final String VIEW_GET_BOAST_OPTIONS = "getBoastOptions";
     private static final String VIEW_GET_CALLBACK_OPTIONS = "getCallbackOptions";
     private static final String VIEW_GET_INTERACTSH_OPTIONS = "getInteractshOptions";
@@ -51,6 +54,7 @@ public class OastApi extends ApiImplementor {
     private static final String PARAM_SERVER = "server";
     private static final String PARAM_POLL_IN_SECS = "pollInSecs";
     private static final String PARAM_PORT = "port";
+    private static final String PARAM_DAYS = "days";
 
     private ExtensionOast ext;
 
@@ -68,6 +72,8 @@ public class OastApi extends ApiImplementor {
         this.addApiView(new ApiView(VIEW_GET_BOAST_OPTIONS));
         this.addApiView(new ApiView(VIEW_GET_CALLBACK_OPTIONS));
         this.addApiView(new ApiView(VIEW_GET_INTERACTSH_OPTIONS));
+        this.addApiView(new ApiView(VIEW_GET_DAYS_TO_KEEP_RECORDS));
+
         this.addApiAction(new ApiAction(ACTION_SET_ACTIVE_SCAN_SERVICE, new String[] {PARAM_NAME}));
         this.addApiAction(
                 new ApiAction(
@@ -80,6 +86,8 @@ public class OastApi extends ApiImplementor {
                 new ApiAction(
                         ACTION_SET_INTERACTSH_OPTIONS,
                         new String[] {PARAM_SERVER, PARAM_POLL_IN_SECS, PARAM_AUTH_TOKEN}));
+        this.addApiAction(
+                new ApiAction(ACTION_SET_DAYS_TO_KEEP_RECORDS, new String[] {PARAM_DAYS}));
     }
 
     @Override
@@ -98,6 +106,12 @@ public class OastApi extends ApiImplementor {
                             ApiException.Type.ILLEGAL_PARAMETER, params.getString(PARAM_NAME));
                 }
                 break;
+            case ACTION_SET_DAYS_TO_KEEP_RECORDS:
+                int days = ApiUtils.getIntParam(params, PARAM_DAYS);
+                ext.getParams().setDaysToKeepRecords(days);
+                ext.trimDatabase(days);
+                break;
+
             case ACTION_SET_BOAST_OPTIONS:
                 ext.getBoastService().getParam().setBoastUri(params.getString(PARAM_SERVER));
                 ext.getBoastService()
@@ -140,6 +154,9 @@ public class OastApi extends ApiImplementor {
             case VIEW_GET_ACTIVE_SCAN_SERVICE:
                 OastService service = ext.getActiveScanOastService();
                 return new ApiResponseElement(name, service != null ? service.getName() : "");
+            case VIEW_GET_DAYS_TO_KEEP_RECORDS:
+                return new ApiResponseElement(
+                        name, Integer.toString(ext.getParams().getDaysToKeepRecords()));
             case VIEW_GET_SERVICES:
                 ApiResponseList servList = new ApiResponseList(name);
 

@@ -68,4 +68,64 @@ public class OastPermanentDatabase extends PermanentDatabase {
         }
         return null;
     }
+
+    public void trim(int days) {
+        if (days <= 0) {
+            return;
+        }
+        LOGGER.debug("Trimming records older than {} days", days);
+        try {
+            // Yes, passing parameters in this way is horrible!
+            // But I couldn't get the parameters working the "correct" way and we know its
+            // definitely a positive int..
+            String dateClause = "DATE_SUB(CURRENT_TIMESTAMP, INTERVAL " + days + " DAY)";
+
+            Object res =
+                    runQuery(
+                            "DELETE FROM BOAST WHERE REGISTERED_TIMESTAMP < " + dateClause,
+                            null,
+                            false);
+            if (Integer.parseInt(res.toString()) > 0) {
+                LOGGER.info("Number of old BOAST records trimmed: {}", res);
+            }
+
+            res = runQuery("DELETE FROM ALERT WHERE CREATETIMESTAMP < " + dateClause, null, false);
+            if (Integer.parseInt(res.toString()) > 0) {
+                LOGGER.info("Number of old ALERT records trimmed: {}", res);
+            }
+
+            res =
+                    runQuery(
+                            "DELETE FROM MESSAGE WHERE CREATETIMESTAMP < " + dateClause,
+                            null,
+                            false);
+            if (Integer.parseInt(res.toString()) > 0) {
+                LOGGER.info("Number of old MESSAGE records trimmed: {}", res);
+            }
+
+        } catch (Exception e) {
+            LOGGER.error("Failed to trim OAST permanent db", e);
+        }
+    }
+
+    public void clearAllRecords() {
+        try {
+            Object res = runQuery("DELETE FROM BOAST", null, false);
+            if (Integer.parseInt(res.toString()) > 0) {
+                LOGGER.info("Number of old BOAST records trimmed: {}", res);
+            }
+
+            res = runQuery("DELETE FROM ALERT", null, false);
+            if (Integer.parseInt(res.toString()) > 0) {
+                LOGGER.info("Number of old ALERT records trimmed: {}", res);
+            }
+
+            res = runQuery("DELETE FROM MESSAGE", null, false);
+            if (Integer.parseInt(res.toString()) > 0) {
+                LOGGER.info("Number of old MESSAGE records trimmed: {}", res);
+            }
+        } catch (Exception e) {
+            LOGGER.error("Failed to trim db", e);
+        }
+    }
 }

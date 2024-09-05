@@ -9,6 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added 
 - API support.
 - Raise alerts for OAST interactions that happened in other sessions.
+- Options to trim the OAST permanent database.
 
 ### Changed
 - Depend on newer version of Database add-on.

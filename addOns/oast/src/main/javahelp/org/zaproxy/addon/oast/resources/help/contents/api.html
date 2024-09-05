@@ -11,10 +11,11 @@
 	<h3>Views</h3>
 	<ul>
 		<li>getActiveScanService: Gets the service used with the active scanner, if any.</li>
-		<li>getBoastOptions: Gets the BOAST options.</li
-		<li>getCallbackOptions Gets the Callback options.</li
-		<li>getInteractshOptions: Gets the Interactsh options.</li
-		<li>getServices: Gets all of the services.</li
+		<li>getBoastOptions: Gets the BOAST options.</li>
+		<li>getCallbackOptions: Gets the Callback options.</li>
+		<li>getDaysToKeepRecords: Gets the number of days the OAST records will be kept for.</li>
+		<li>getInteractshOptions: Gets the Interactsh options.</li>
+		<li>getServices: Gets all of the services.</li>
 	</ul>
 
 
@@ -41,6 +42,12 @@
 				<li>localAddress: The local address</li>
 				<li>remoteAddress: The remote address.</li>
 				<li>port: The port to listen on.</li>
+			</ul>
+		</li>
+		<li>
+			setDaysToKeepRecords (days*): Sets the number of days the OAST records will be kept for.
+			<ul>
+				<li>days: The number of days.</li>
 			</ul>
 		</li>
 		<li>
