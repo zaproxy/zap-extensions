@@ -16,7 +16,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("database") {
-                    version.set(">= 0.1.0")
+                    version.set(">= 0.6.0")
                 }
                 register("network") {
                     version.set(">= 0.1.0")
