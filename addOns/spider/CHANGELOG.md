@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Allow the parsers to obtain the user being used by/in the current spidering scan (Issue 7739).
+- Allow the parsers to obtain the context and user being used by/in the current spidering scan (Issue 8021 and 7739).
 
 ### Changed
 - Maintenance changes.

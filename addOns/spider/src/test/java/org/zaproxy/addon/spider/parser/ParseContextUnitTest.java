@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.spider.SpiderParam;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.users.User;
@@ -45,6 +46,7 @@ class ParseContextUnitTest {
 
     private SpiderParam spiderParam;
     private ValueGenerator valueGenerator;
+    private Context context;
     private User user;
     private HttpMessage httpMessage;
     private String responseData;
@@ -58,6 +60,7 @@ class ParseContextUnitTest {
     void setup() throws Exception {
         spiderParam = mock(SpiderParam.class);
         valueGenerator = mock(ValueGenerator.class);
+        context = mock(Context.class);
         user = mock(User.class);
         httpMessage = mock(HttpMessage.class);
         responseData = "<html></html>";
@@ -96,9 +99,12 @@ class ParseContextUnitTest {
     @Test
     void shouldCreateWithGivenAdditionalValues() {
         // Given / When
-        ctx = new ParseContext(spiderParam, valueGenerator, user, httpMessage, path, depth);
+        ctx =
+                new ParseContext(
+                        spiderParam, valueGenerator, context, user, httpMessage, path, depth);
         // Then
         assertInitialConstructorValues();
+        assertThat(ctx.getContext(), is(sameInstance(context)));
         assertThat(ctx.getUser(), is(sameInstance(user)));
     }
 
