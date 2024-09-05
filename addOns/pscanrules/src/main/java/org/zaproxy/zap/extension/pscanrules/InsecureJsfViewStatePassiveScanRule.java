@@ -116,7 +116,7 @@ public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner
                         // If the ViewState is not secured cryptographic
                         // protections then raise an alert.
                         if (!isViewStateSecure(val, msg.getRequestBody().getCharset())) {
-                            raiseAlert(msg, id, src);
+                            createAlert(src).setMessage(msg).raise();
                         }
                     }
                 }
@@ -202,8 +202,8 @@ public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner
         return true;
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String viewState) {
-        newAlert()
+    private AlertBuilder createAlert(String viewState) {
+        return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(getDescription())
@@ -211,8 +211,7 @@ public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
     }
 
     // jsf server side implementation in com.sun.faces.renderkit.ServerSideStateHelper
@@ -253,5 +252,12 @@ public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner
 
     public int getWascId() {
         return 14; // WASC Id - Server Misconfiguration
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert("<input type=\"hidden\" id=\"javax.faces.viewstate\" value=\"1231\"")
+                        .build());
     }
 }
