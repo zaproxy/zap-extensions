@@ -76,6 +76,16 @@ public abstract class Database implements Closeable {
         }
     }
 
+    /**
+     * Gets a {@code PersistenceManager}.
+     *
+     * @return the persistence manager.
+     * @since 0.6.0
+     */
+    protected PersistenceManager getPm() {
+        return pmf.getPersistenceManager();
+    }
+
     public void persistEntity(Object entity) {
         if (entity == null) {
             return;

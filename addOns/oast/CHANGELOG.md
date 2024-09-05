@@ -8,6 +8,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## Unreleased
 ### Added 
 - API support.
+- Raise alerts for OAST interactions that happened in other sessions.
+
+### Changed
+- Depend on newer version of Database add-on.
 
 ### Fixed
 - Address warnings when using BOAST payloads.
