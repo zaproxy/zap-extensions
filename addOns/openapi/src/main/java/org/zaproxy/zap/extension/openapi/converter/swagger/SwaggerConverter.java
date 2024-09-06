@@ -198,14 +198,17 @@ public class SwaggerConverter implements Converter {
     }
 
     @Override
-    public List<RequestModel> getRequestModels() throws SwaggerException {
-        return convertToRequest(getOperationModels());
+    public List<RequestModel> getRequestModels(Context context) throws SwaggerException {
+        return convertToRequest(context, getOperationModels());
     }
 
-    private List<RequestModel> convertToRequest(List<OperationModel> operations) {
+    private List<RequestModel> convertToRequest(Context context, List<OperationModel> operations) {
         List<RequestModel> requests = new LinkedList<>();
         for (OperationModel operation : operations) {
-            requests.add(requestConverter.convert(operation, generators));
+            var model = requestConverter.convert(operation, generators);
+            if (context == null || !context.isExcluded(model.getUrl())) {
+                requests.add(model);
+            }
         }
         return requests;
     }
@@ -479,15 +482,22 @@ public class SwaggerConverter implements Converter {
             if (PATH_PART_PATTERN.matcher(uri).find()) {
                 String regex = uri.replaceAll(PATH_PART_PATTERN.pattern(), "[^/?]+");
                 variantChecks.pathsWithParamsRegex.put(operation, Pattern.compile(regex));
-                if (!context.isIncluded(uri.replaceAll("[{}]", ""))) {
+                if (isContextIncludeNeeded(context, uri.replaceAll("[{}]", ""))) {
                     context.addIncludeInContextRegex(regex);
                 }
             } else {
                 variantChecks.pathsWithNoParams.add(operation);
-                if (!context.isIncluded(uri)) {
+                if (isContextIncludeNeeded(context, uri)) {
                     context.addIncludeInContextRegex(uri);
                 }
             }
         }
+    }
+
+    private static boolean isContextIncludeNeeded(Context context, String uri) {
+        if (context.isExcluded(uri)) {
+            return false;
+        }
+        return !context.isIncluded(uri);
     }
 }

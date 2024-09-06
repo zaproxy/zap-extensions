@@ -423,15 +423,13 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                     public void run() {
                         ProgressPane currentImportPane = null;
                         try {
-                            List<RequestModel> requestModels = converter.getRequestModels();
-                            if (contextId != -1) {
-                                Context context = getModel().getSession().getContext(contextId);
-                                if (context != null) {
-                                    converter.updateVariantChecks(
-                                            context,
-                                            variantChecksMap.computeIfAbsent(
-                                                    contextId, VariantOpenApiChecks::new));
-                                }
+                            Context context = getModel().getSession().getContext(contextId);
+                            List<RequestModel> requestModels = converter.getRequestModels(context);
+                            if (context != null) {
+                                converter.updateVariantChecks(
+                                        context,
+                                        variantChecksMap.computeIfAbsent(
+                                                contextId, VariantOpenApiChecks::new));
                             }
                             if (requestor == null) {
                                 return;

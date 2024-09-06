@@ -83,7 +83,7 @@ class OpenApiPrimitivesInBodyUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
