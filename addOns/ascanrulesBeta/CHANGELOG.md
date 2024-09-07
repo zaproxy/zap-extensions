@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Log exception details in Out of Band XSS scan rule.
 - Maintenance changes.
+- The Anti-CSRF Tokens Check scan rule now only considers GET requests at Low Threshold (Issue 7741).
 
 ### Fixed
 - Address time-based false positives in Remote Code Execution - Shell Shock scan rule (Issue 8516).

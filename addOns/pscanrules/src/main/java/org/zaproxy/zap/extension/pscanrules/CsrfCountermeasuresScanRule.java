@@ -37,6 +37,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
@@ -88,6 +89,11 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (AlertThreshold.HIGH.equals(getAlertThreshold()) && !msg.isInScope()
                 || !msg.getResponseHeader().isHtml()) {
+            return;
+        }
+
+        if (!AlertThreshold.LOW.equals(getAlertThreshold())
+                && HttpRequestHeader.GET.equals(msg.getRequestHeader().getMethod())) {
             return;
         }
 
