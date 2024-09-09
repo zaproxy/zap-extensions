@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.pscanrules;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 
 import java.util.List;
 import java.util.Map;
@@ -103,7 +104,7 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
     }
 
     @Test
-    void shouldRaiseAlertWhenResponseContainsOsxSha1AtLowThreshold() throws Exception {
+    void shouldRaiseAlertWhenJavascriptResponseContainsHashAtLowThreshold() throws Exception {
         // Given
         String hashVal = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFEE37";
         HttpMessage msg = createMsg(hashVal);
@@ -112,15 +113,16 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
-        assertThat(alertsRaised.get(0).getName(), is("Hash Disclosure - Mac OSX salted SHA-1"));
+        assertThat(alertsRaised.get(0).getName(), startsWith("Hash Disclosure - "));
         assertThat(alertsRaised.get(0).getEvidence(), is(hashVal));
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_LOW)));
     }
 
     @ParameterizedTest
     @EnumSource(
             value = Plugin.AlertThreshold.class,
             names = {"HIGH", "MEDIUM"})
-    void shouldNotRaiseAlertWhenResponseContainsOsxSha1InJsAtNonLowThreshold(
+    void shouldNotRaiseAlertWhenJavascriptResponseContainsHashAtNonLowThreshold(
             AlertThreshold threshold) throws Exception {
         // Given
         String hashVal = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFEE37";
