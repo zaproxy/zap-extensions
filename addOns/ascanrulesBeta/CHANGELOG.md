@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- The Proxy Disclosure scan rule will no longer alert on HTTP messages that have evidence to start with, in order to reduce possible false positives (Issue 8556). The misleading Attack string for the Alerts was also removed.
 
 ## [59] - 2025-06-20
 ### Changed
