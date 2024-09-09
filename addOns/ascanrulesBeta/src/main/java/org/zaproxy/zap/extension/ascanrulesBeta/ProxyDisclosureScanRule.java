@@ -341,7 +341,12 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                             String proxyServer = PROXY_REQUEST_HEADERS.get(proxyHeaderPattern);
                             Matcher proxyHeaderMatcher =
                                     proxyHeaderPattern.matcher(traceResponseBody);
-                            if (proxyHeaderMatcher.find()) {
+                            Matcher originalBodyMatcher =
+                                    proxyHeaderPattern.matcher(
+                                            getBaseMsg().getResponseBody().toString());
+                            // Ensure the original message didn't already have evidence type
+                            // content
+                            if (!originalBodyMatcher.find() && proxyHeaderMatcher.find()) {
                                 String proxyHeaderName = proxyHeaderMatcher.group(1);
                                 proxyActuallyFound = true;
                                 LOGGER.debug(
@@ -762,7 +767,6 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                                 Constant.messages.getString(
                                         MESSAGE_PREFIX + "desc",
                                         step2numberOfNodes - 1 + silentProxySet.size()))
-                        .setAttack(getAttack())
                         .setOtherInfo(extraInfo)
                         .setMessage(getBaseMsg())
                         .raise();
@@ -785,10 +789,6 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
             return path;
         }
         return "/";
-    }
-
-    private String getAttack() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "attack");
     }
 
     @Override
