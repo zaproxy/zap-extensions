@@ -26,10 +26,12 @@ return (
     History
     </div>
   </div>
-  <div className="flex flex-row justify-center">
-    <div className="w-full overflow-x-auto">
-      <table className="min-w-full bg-gray-700 text-white">
-        <thead className="bg-gray-800 text-white">
+  <div className="w-full overflow-auto">
+  <div className="overflow-x-auto">
+    <table className="min-w-full bg-gray-700 text-white">
+      <thead className="bg-gray-800 text-white sticky top-0">
+
+
           <tr>
             <th className="py-3 px-4 border-b">ID</th>
             <th className="py-3 px-4 border-b">Method</th>
