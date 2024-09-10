@@ -11,8 +11,6 @@
     <mapID target="automation.env" url="contents/environment.html" />
     <mapID target="automation.auth" url="contents/authentication.html" />
     <mapID target="automation.addons" url="contents/job-addons.html" />
-    <mapID target="automation.pscanconf" url="contents/job-pscanconf.html" />
-    <mapID target="automation.pscanwait" url="contents/job-pscanwait.html" />
     <mapID target="automation.ascan" url="contents/job-ascan.html" />
     <mapID target="automation.about" url="contents/about.html" />
     <mapID target="automation.tests" url="contents/tests.html" />

@@ -31,6 +31,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
@@ -44,6 +47,7 @@ import org.zaproxy.zap.extension.openapi.AbstractOpenApiTest;
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.EmptyDefinitionException;
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidUrlException;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
+import org.zaproxy.zap.model.Context;
 
 /** Unit test for {@link SwaggerConverter}. */
 class SwaggerConverterUnitTest extends AbstractOpenApiTest {
@@ -1117,7 +1121,7 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
         String definition = getHtml("openapi_path_servers.yaml");
         SwaggerConverter converter = new SwaggerConverter(definition, null);
         // When
-        List<RequestModel> requests = converter.getRequestModels();
+        List<RequestModel> requests = converter.getRequestModels(null);
         // Then
         assertThat(converter.getErrorMessages(), is(empty()));
         assertThat(
@@ -1136,7 +1140,7 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
         SwaggerConverter converter =
                 new SwaggerConverter("/v2/", "http://localhost/definition/", definition, null);
         // When
-        List<RequestModel> requests = converter.getRequestModels();
+        List<RequestModel> requests = converter.getRequestModels(null);
         // Then
         assertThat(converter.getErrorMessages(), is(empty()));
         assertThat(
@@ -1153,7 +1157,7 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
         String definition = getHtml("openapi_operation_servers.yaml");
         SwaggerConverter converter = new SwaggerConverter(definition, null);
         // When
-        List<RequestModel> requests = converter.getRequestModels();
+        List<RequestModel> requests = converter.getRequestModels(null);
         // Then
         assertThat(converter.getErrorMessages(), is(empty()));
         assertThat(
@@ -1177,7 +1181,7 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
         SwaggerConverter converter =
                 new SwaggerConverter("/v2/", "http://localhost/definition/", definition, null);
         // When
-        List<RequestModel> requests = converter.getRequestModels();
+        List<RequestModel> requests = converter.getRequestModels(null);
         // Then
         assertThat(converter.getErrorMessages(), is(empty()));
         assertThat(
@@ -1191,6 +1195,51 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
                         "OPTIONS http://server6.localhost/v2/operations/with/servers",
                         "DELETE http://server7.localhost/v2/operations/with/servers",
                         "PATCH http://server8.localhost/v2/operations/with/servers"));
+    }
+
+    @Test
+    void shouldConvertAllEndpointsIfNoContextProvided() throws Exception {
+        // Given
+        String definition = getHtml("openapi_paths_misc.yaml");
+        SwaggerConverter converter = new SwaggerConverter(definition, null);
+        Context context = null;
+        // When
+        List<RequestModel> requests = converter.getRequestModels(context);
+        // Then
+        assertThat(converter.getErrorMessages(), is(empty()));
+        assertThat(
+                urlsOf(requests),
+                contains(
+                        "http://server.localhost/path/a/",
+                        "http://server.localhost/path/b/",
+                        "http://server.localhost/path/b/1/",
+                        "http://server.localhost/path/c/",
+                        "http://server.localhost/path/c/1/",
+                        "http://server.localhost/path/c/2/"));
+    }
+
+    @Test
+    void shouldNotConvertEndpointsExcludedFromContext() throws Exception {
+        // Given
+        String definition = getHtml("openapi_paths_misc.yaml");
+        SwaggerConverter converter = new SwaggerConverter(definition, null);
+        var context = mock(Context.class);
+        given(context.isExcluded(anyString()))
+                .willAnswer(
+                        e -> {
+                            var uri = e.getArgument(0).toString();
+                            return uri.contains("/path/b/") || uri.contains("/path/c/1/");
+                        });
+        // When
+        List<RequestModel> requests = converter.getRequestModels(context);
+        // Then
+        assertThat(converter.getErrorMessages(), is(empty()));
+        assertThat(
+                urlsOf(requests),
+                contains(
+                        "http://server.localhost/path/a/",
+                        "http://server.localhost/path/c/",
+                        "http://server.localhost/path/c/2/"));
     }
 
     private static List<String> urlsOf(List<RequestModel> requests) {

@@ -33,6 +33,7 @@ import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -94,6 +95,9 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     protected static final String QUERY_HASH_IMG_ALERT =
             "?name=abc#<img src=\"random.gif\" onerror=alert(" + UNLIKELY_INT + ")>";
 
+    private static final String PAYLOAD_1 = "<PAYLOAD_1>";
+    private static final String PAYLOAD_0 = "<PAYLOAD_0>";
+
     // In order of effectiveness vs benchmark apps
     private static final String[] ATTACK_STRINGS = {
         POLYGLOT_ALERT,
@@ -139,6 +143,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     private WebDriverWrapper driver;
     private boolean vulnerable = false;
     private Browser browser;
+    private List<String> steps;
 
     @Override
     public int getId() {
@@ -197,6 +202,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
         }
 
         LOGGER.debug("Using browser: {}", browser);
+        steps = new ArrayList<>();
     }
 
     private static boolean isSupportedBrowser(Browser browser) {
@@ -393,6 +399,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     private void getHelper(WebDriverWrapper wrapper, String url, int retry) {
         try {
             Stats.incCounter("domxss.gets.count");
+            steps.add(Constant.messages.getString("domxss.step.access", url));
             wrapper.getDriver().get(url);
 
         } catch (UnhandledAlertException uae) {
@@ -513,6 +520,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 return null;
             }
             WebElement element = possibleDomXSSTriggers.get(i);
+            String xpath = getXPath(element);
             String tagName = null;
             String attributeId = null;
             String attributeName = null;
@@ -523,9 +531,12 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 attributeName = element.getAttribute("name");
 
                 if (tagName.equals("input")) {
+                    steps.add(
+                            Constant.messages.getString("domxss.step.input", xpath, attackVector));
                     element.sendKeys(attackVector);
                 }
 
+                addClickStep(xpath);
                 element.click();
             } catch (UnhandledAlertException uae) {
                 // Ignore
@@ -576,6 +587,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 return null;
             }
             WebElement element = allElements.get(i);
+            String xpath = getXPath(element);
             String tagName = null;
             String attributeId = null;
             String attributeName = null;
@@ -586,6 +598,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 attributeId = element.getAttribute("id");
                 attributeName = element.getAttribute("name");
 
+                addClickStep(xpath);
                 element.click();
                 getHelper(driver, url);
                 allElements = findHelper(driver, By.tagName("div"));
@@ -608,6 +621,10 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
             }
         }
         return null;
+    }
+
+    private void addClickStep(String xpath) {
+        steps.add(Constant.messages.getString("domxss.step.click", xpath));
     }
 
     @Override
@@ -649,6 +666,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
 
         try {
             for (String attackVector : attackVectors) {
+                steps.clear();
                 if (scan(
                         attackVector,
                         getBaseMsg().getRequestHeader().getURI().toString() + attackVector)) {
@@ -665,27 +683,65 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
         }
     }
 
+    private static String getXPath(WebElement element) {
+        StringBuilder strBuilder = new StringBuilder(100);
+        insertXPath(element, strBuilder);
+        return strBuilder.toString();
+    }
+
+    private static void insertXPath(WebElement element, StringBuilder path) {
+        String tag = element.getTagName();
+        if ("html".equalsIgnoreCase(tag)) {
+            insertTag(path, tag);
+            return;
+        }
+
+        WebElement parent = element.findElement(By.xpath(".."));
+        List<WebElement> children = parent.findElements(By.tagName(tag));
+        if (children.size() != 1) {
+            path.insert(0, "]");
+            path.insert(0, children.indexOf(element) + 1);
+            path.insert(0, "[");
+        }
+
+        insertTag(path, tag);
+        insertXPath(parent, path);
+    }
+
+    private static void insertTag(StringBuilder path, String tag) {
+        path.insert(0, tag);
+        path.insert(0, "/");
+    }
+
     public boolean scan(String attackVector, String currUrl) {
+        return scan(attackVector, "", currUrl);
+    }
+
+    private boolean scan(String attackVector, String processedAttackVector, String currUrl) {
         HttpMessage msg = getBaseMsg();
 
         DomAlertInfo result = scanHelper(attackVector, currUrl);
         if (result != null) {
-            String tagName = result.getTagName();
-            String otherInfo = "";
-            if (tagName != null) {
-                otherInfo =
-                        "Tag name: "
-                                + tagName
-                                + " Att name: "
-                                + result.getAttributeName()
-                                + " Att id: "
-                                + result.getAttributeId();
+            StringBuilder otherInfo = new StringBuilder();
+            otherInfo.append(Constant.messages.getString("domxss.step.intro")).append('\n');
+            steps.replaceAll(e -> e.replace(result.getAttack(), PAYLOAD_0));
+
+            if (contains(steps, PAYLOAD_0)) {
+                appendPayloadStep(otherInfo, PAYLOAD_0, result.getAttack());
             }
+
+            if (!processedAttackVector.isEmpty()) {
+                steps.replaceAll(e -> e.replace(processedAttackVector, PAYLOAD_1));
+                if (contains(steps, PAYLOAD_1)) {
+                    appendPayloadStep(otherInfo, PAYLOAD_1, processedAttackVector);
+                }
+            }
+            steps.forEach(e -> otherInfo.append(e).append('\n'));
 
             buildAlert()
                     .setUri(result.getUrl())
                     .setAttack(result.getAttack())
-                    .setOtherInfo(otherInfo)
+                    .setOtherInfo(otherInfo.toString())
                     .setMessage(msg)
                     .raise();
             Stats.incCounter("domxss.attack." + attackVector);
@@ -693,6 +749,16 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
             return true;
         }
         return false;
+    }
+
+    private void appendPayloadStep(StringBuilder otherInfo, String payload, String attack) {
+        otherInfo
+                .append(Constant.messages.getString("domxss.step.payload", payload, attack))
+                .append('\n');
+    }
+
+    private static boolean contains(List<String> list, String value) {
+        return list.stream().anyMatch(e -> e.contains(value));
     }
 
     @Override
@@ -742,6 +808,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
         Stats.incCounter("domxss.scan.count");
 
         for (String attackVector : PARAM_ATTACK_STRINGS) {
+            steps.clear();
             TreeSet<HtmlParameter> urlParams = msg.getUrlParams();
             for (HtmlParameter param : urlParams) {
                 if (param.getName().equals(paramName)) {
@@ -752,7 +819,13 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                     urlParams); // setParameter and setEscapedParameter results in spaces being + vs
             // %20 (or actual space)
 
-            if (scan(attackVector, msg.getRequestHeader().getURI().toString())) {
+            if (scan(
+                    attackVector,
+                    getEncodedValue(
+                            msg.getRequestHeader().getURI().getEscapedQuery(),
+                            paramName,
+                            attackVector),
+                    msg.getRequestHeader().getURI().toString())) {
                 if (!Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
                     // Only report one issue per URL unless
                     // Alert threshold is LOW
@@ -760,6 +833,15 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 }
             }
         }
+    }
+
+    private static String getEncodedValue(String escapedQuery, String paramName, String fallback) {
+        var result =
+                Stream.of(escapedQuery.split("&")).filter(e -> e.startsWith(paramName)).findFirst();
+        if (result.isEmpty()) {
+            return fallback;
+        }
+        return result.get().split("=", 2)[1];
     }
 
     private AlertBuilder buildAlert() {

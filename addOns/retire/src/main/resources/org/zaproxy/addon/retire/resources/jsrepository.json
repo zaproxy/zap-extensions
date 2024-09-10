@@ -123,54 +123,6 @@
         ]
       },
       {
-        "atOrAbove": "1.8.0",
-        "below": "1.12.0",
-        "cwe": [
-          "CWE-79"
-        ],
-        "severity": "medium",
-        "identifiers": {
-          "summary": "3rd party CORS request may execute",
-          "issue": "2432",
-          "CVE": [
-            "CVE-2015-9251"
-          ],
-          "githubID": "GHSA-rmxg-73gg-4p98"
-        },
-        "info": [
-          "http://blog.jquery.com/2016/01/08/jquery-2-2-and-1-12-released/",
-          "http://research.insecurelabs.org/jquery/test/",
-          "https://bugs.jquery.com/ticket/11974",
-          "https://github.com/advisories/GHSA-rmxg-73gg-4p98",
-          "https://github.com/jquery/jquery/issues/2432",
-          "https://nvd.nist.gov/vuln/detail/CVE-2015-9251"
-        ]
-      },
-      {
-        "atOrAbove": "1.12.2",
-        "below": "2.2.0",
-        "cwe": [
-          "CWE-79"
-        ],
-        "severity": "medium",
-        "identifiers": {
-          "summary": "3rd party CORS request may execute",
-          "issue": "2432",
-          "CVE": [
-            "CVE-2015-9251"
-          ],
-          "githubID": "GHSA-rmxg-73gg-4p98"
-        },
-        "info": [
-          "http://blog.jquery.com/2016/01/08/jquery-2-2-and-1-12-released/",
-          "http://research.insecurelabs.org/jquery/test/",
-          "https://bugs.jquery.com/ticket/11974",
-          "https://github.com/advisories/GHSA-rmxg-73gg-4p98",
-          "https://github.com/jquery/jquery/issues/2432",
-          "https://nvd.nist.gov/vuln/detail/CVE-2015-9251"
-        ]
-      },
-      {
         "below": "2.999.999",
         "cwe": [
           "CWE-1104"
@@ -178,7 +130,8 @@
         "severity": "low",
         "identifiers": {
           "summary": "jQuery 1.x and 2.x are End-of-Life and no longer receiving security updates",
-          "retid": "73"
+          "retid": "73",
+          "issue": "162"
         },
         "info": [
           "https://github.com/jquery/jquery.com/issues/162"
@@ -187,30 +140,6 @@
       {
         "atOrAbove": "1.12.3",
         "below": "3.0.0-beta1",
-        "cwe": [
-          "CWE-79"
-        ],
-        "severity": "medium",
-        "identifiers": {
-          "summary": "3rd party CORS request may execute",
-          "issue": "2432",
-          "CVE": [
-            "CVE-2015-9251"
-          ],
-          "githubID": "GHSA-rmxg-73gg-4p98"
-        },
-        "info": [
-          "http://blog.jquery.com/2016/01/08/jquery-2-2-and-1-12-released/",
-          "http://research.insecurelabs.org/jquery/test/",
-          "https://bugs.jquery.com/ticket/11974",
-          "https://github.com/advisories/GHSA-rmxg-73gg-4p98",
-          "https://github.com/jquery/jquery/issues/2432",
-          "https://nvd.nist.gov/vuln/detail/CVE-2015-9251"
-        ]
-      },
-      {
-        "atOrAbove": "2.2.2",
-        "below": "3.0.0",
         "cwe": [
           "CWE-79"
         ],
@@ -926,7 +855,7 @@
   "jquery-deparam": {
     "vulnerabilities": [
       {
-        "below": "999",
+        "below": "0.5.4",
         "severity": "high",
         "cwe": [
           "CWE-1321"
@@ -3277,21 +3206,7 @@
         ]
       },
       {
-        "below": "1.999",
-        "severity": "low",
-        "cwe": [
-          "CWE-1104"
-        ],
-        "identifiers": {
-          "summary": "End-of-Life: Long term support for AngularJS has been discontinued as of December 31, 2021",
-          "retid": "54"
-        },
-        "info": [
-          "https://blog.angular.io/discontinued-long-term-support-for-angularjs-cc066b82e65a?gi=9d3103b5445c"
-        ]
-      },
-      {
-        "below": "999",
+        "below": "1.8.4",
         "severity": "medium",
         "cwe": [
           "CWE-1333"
@@ -3308,7 +3223,7 @@
         ]
       },
       {
-        "below": "999",
+        "below": "1.8.4",
         "severity": "medium",
         "cwe": [
           "CWE-1333"
@@ -3325,7 +3240,7 @@
         ]
       },
       {
-        "below": "999",
+        "below": "1.8.4",
         "severity": "medium",
         "cwe": [
           "CWE-79"
@@ -3342,7 +3257,7 @@
         ]
       },
       {
-        "below": "999",
+        "below": "1.8.4",
         "severity": "medium",
         "cwe": [
           "CWE-1333"
@@ -3360,7 +3275,7 @@
       },
       {
         "atOrAbove": "1.3.0",
-        "below": "999",
+        "below": "1.8.4",
         "cwe": [
           "CWE-1333"
         ],
@@ -3380,6 +3295,20 @@
           "https://security.snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-6241747",
           "https://security.snyk.io/vuln/SNYK-JS-ANGULAR-6091113",
           "https://stackblitz.com/edit/angularjs-vulnerability-ng-srcset-redos"
+        ]
+      },
+      {
+        "below": "1.999",
+        "severity": "low",
+        "cwe": [
+          "CWE-1104"
+        ],
+        "identifiers": {
+          "summary": "End-of-Life: Long term support for AngularJS has been discontinued as of December 31, 2021",
+          "retid": "54"
+        },
+        "info": [
+          "https://docs.angularjs.org/misc/version-support-status"
         ]
       },
       {
@@ -5141,6 +5070,29 @@
         ]
       },
       {
+        "atOrAbove": "2.0.0",
+        "below": "3.4.2",
+        "cwe": [
+          "CWE-79"
+        ],
+        "severity": "medium",
+        "identifiers": {
+          "summary": "Bootstrap Cross-Site Scripting (XSS) vulnerability",
+          "CVE": [
+            "CVE-2024-6484"
+          ],
+          "githubID": "GHSA-9mvj-f7w8-pvh2"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-9mvj-f7w8-pvh2",
+          "https://nvd.nist.gov/vuln/detail/CVE-2024-6484",
+          "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/bootstrap-sass/CVE-2024-6484.yml",
+          "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/bootstrap/CVE-2024-6484.yml",
+          "https://github.com/twbs/bootstrap",
+          "https://www.herodevs.com/vulnerability-directory/cve-2024-6484"
+        ]
+      },
+      {
         "below": "3.999.999",
         "severity": "low",
         "cwe": [
@@ -5248,6 +5200,28 @@
         "info": [
           "https://github.com/advisories/GHSA-9v3m-8fp8-mj99",
           "https://github.com/twbs/bootstrap/issues/28236"
+        ]
+      },
+      {
+        "atOrAbove": "4.0.0",
+        "below": "4.6.3",
+        "cwe": [
+          "CWE-79"
+        ],
+        "severity": "medium",
+        "identifiers": {
+          "summary": "Bootstrap Cross-Site Scripting (XSS) vulnerability",
+          "CVE": [
+            "CVE-2024-6531"
+          ],
+          "githubID": "GHSA-vc8w-jr9v-vj7f"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-vc8w-jr9v-vj7f",
+          "https://nvd.nist.gov/vuln/detail/CVE-2024-6531",
+          "https://github.com/rubysec/ruby-advisory-db/blob/master/gems/bootstrap/CVE-2024-6531.yml",
+          "https://github.com/twbs/bootstrap",
+          "https://www.herodevs.com/vulnerability-directory/cve-2024-6531"
         ]
       }
     ],
@@ -5847,6 +5821,27 @@
         "info": [
           "https://github.com/sveltejs/svelte/pull/7530"
         ]
+      },
+      {
+        "below": "4.2.19",
+        "cwe": [
+          "CWE-79"
+        ],
+        "severity": "medium",
+        "identifiers": {
+          "summary": "Svelte has a potential mXSS vulnerability due to improper HTML escaping",
+          "CVE": [
+            "CVE-2024-45047"
+          ],
+          "githubID": "GHSA-8266-84wp-wv5c"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-8266-84wp-wv5c",
+          "https://github.com/sveltejs/svelte/security/advisories/GHSA-8266-84wp-wv5c",
+          "https://nvd.nist.gov/vuln/detail/CVE-2024-45047",
+          "https://github.com/sveltejs/svelte/commit/83e96e044deb5ecbae2af361ae9e31d3e1ac43a3",
+          "https://github.com/sveltejs/svelte"
+        ]
       }
     ],
     "extractors": {
@@ -5858,6 +5853,7 @@
       ],
       "filecontent": [
         "generated by Svelte v\\$\\{['\"](§§version§§)['\"]\\}",
+        "generated by Svelte v(§§version§§) \\*/",
         "version: '(§§version§§)' [\\s\\S]{80,200}'SvelteDOMInsert'",
         "VERSION = '(§§version§§)'[\\s\\S]{21,200}parse\\$[0-9][\\s\\S]{10,80}preprocess",
         "var version\\$[0-9] = \"(§§version§§)\";[\\s\\S]{10,30}normalizeOptions\\(options\\)[\\s\\S]{80,200}'SvelteComponent.html'"
@@ -5987,6 +5983,33 @@
         },
         "info": [
           "https://github.com/axios/axios/pull/6300"
+        ]
+      },
+      {
+        "atOrAbove": "1.3.2",
+        "below": "1.7.4",
+        "cwe": [
+          "CWE-918"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "Server-Side Request Forgery in axios",
+          "CVE": [
+            "CVE-2024-39338"
+          ],
+          "githubID": "GHSA-8hc4-vh64-cxmj"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-8hc4-vh64-cxmj",
+          "https://nvd.nist.gov/vuln/detail/CVE-2024-39338",
+          "https://github.com/axios/axios/issues/6463",
+          "https://github.com/axios/axios/pull/6539",
+          "https://github.com/axios/axios/pull/6543",
+          "https://github.com/axios/axios/commit/6b6b605eaf73852fb2dae033f1e786155959de3a",
+          "https://github.com/axios/axios",
+          "https://github.com/axios/axios/releases",
+          "https://github.com/axios/axios/releases/tag/v1.7.4",
+          "https://jeffhacks.com/advisories/2024/06/24/CVE-2024-39338.html"
         ]
       }
     ],
@@ -6676,7 +6699,8 @@
     "extractors": {
       "filecontent": [
         "version=\"(§§version§§)\".{1,1500}document\\.getElementById\\(\"__NEXT_DATA__\"\\)\\.textContent",
-        "document\\.getElementById\\(\"__NEXT_DATA__\"\\)\\.textContent\\);window\\.__NEXT_DATA__=.;.\\.version=\"(§§version§§)\""
+        "document\\.getElementById\\(\"__NEXT_DATA__\"\\)\\.textContent\\);window\\.__NEXT_DATA__=.;.\\.version=\"(§§version§§)\"",
+        "=\"(§§version§§)\"[\\s\\S]{10,100}Component[\\s\\S]{1,10}componentDidCatch[\\s\\S]{10,30}componentDidMount"
       ],
       "func": [
         "next && next.version"
@@ -7530,7 +7554,7 @@
       },
       {
         "atOrAbove": "0",
-        "below": "999",
+        "below": "2.7.10",
         "cwe": [
           "CWE-1333"
         ],

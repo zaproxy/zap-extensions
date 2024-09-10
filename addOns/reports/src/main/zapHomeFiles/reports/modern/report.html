@@ -251,9 +251,9 @@
 								</th:block>
 							</th:block>
 							<th:block
-								th:if="${reportData.reportObjects.get('passiveScanData') != null}">
+								th:if="${reportData.reportObjects.get('passiveScanData2') != null}">
 								<th:block
-									th:each="pscan : ${reportData.reportObjects.get('passiveScanData').allRuleData}">
+									th:each="pscan : ${reportData.reportObjects.get('passiveScanData2').allRuleData}">
 									<tr th:if="${alertCountsByRule.get(pscan.id) == null}">
 										<td><a
 											th:href="${'https://www.zaproxy.org/docs/alerts/' + pscan.id + '/'}"

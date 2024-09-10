@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [45.6.0] - 2024-09-02
+### Removed
+- Remove the active and passive script templates, superseded by the ones provided by the GraalVM JavaScript add-on.
+
 ## [45.5.0] - 2024-07-22
 ### Added
 - Provide the `script` API on newer ZAP versions.
@@ -333,6 +337,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.6.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.6.0
 [45.5.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.5.0
 [45.4.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.4.0
 [45.3.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.3.0

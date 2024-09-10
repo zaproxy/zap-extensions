@@ -74,6 +74,7 @@ import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.ValueGenerator;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
@@ -234,13 +235,24 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
      */
     public List<String> importOpenApiDefinition(
             final URI uri, final String targetUrl, boolean initViaUi, int contextId) {
-        return this.importOpenApiDefinitionV2(uri, targetUrl, initViaUi, contextId).getErrors();
+        return importOpenApiDefinition(uri, targetUrl, initViaUi, contextId, null);
+    }
+
+    List<String> importOpenApiDefinition(
+            final URI uri, final String targetUrl, boolean initViaUi, int contextId, User user) {
+        return importOpenApiDefinitionV2(uri, targetUrl, initViaUi, contextId, user).getErrors();
     }
 
     public OpenApiResults importOpenApiDefinitionV2(
             final URI uri, final String targetUrl, boolean initViaUi, int contextId) {
+        return importOpenApiDefinitionV2(uri, targetUrl, initViaUi, contextId, null);
+    }
+
+    public OpenApiResults importOpenApiDefinitionV2(
+            final URI uri, final String targetUrl, boolean initViaUi, int contextId, User user) {
         OpenApiResults results = new OpenApiResults();
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        requestor.setUser(user);
         requestor.addListener(new HistoryPersister(results));
         try {
             String path = uri.getPath();
@@ -318,14 +330,26 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
      */
     public List<String> importOpenApiDefinition(
             final File file, final String targetUrl, boolean initViaUi, int contextId) {
-        return this.importOpenApiDefinitionV2(file, targetUrl, initViaUi, contextId).getErrors();
+        return importOpenApiDefinition(file, targetUrl, initViaUi, contextId, null);
+    }
+
+    List<String> importOpenApiDefinition(
+            final File file, final String targetUrl, boolean initViaUi, int contextId, User user) {
+        return this.importOpenApiDefinitionV2(file, targetUrl, initViaUi, contextId, user)
+                .getErrors();
     }
 
     public OpenApiResults importOpenApiDefinitionV2(
             final File file, final String targetUrl, boolean initViaUi, int contextId) {
+        return importOpenApiDefinitionV2(file, targetUrl, initViaUi, contextId, null);
+    }
+
+    public OpenApiResults importOpenApiDefinitionV2(
+            final File file, final String targetUrl, boolean initViaUi, int contextId, User user) {
         OpenApiResults results = new OpenApiResults();
         try {
             Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+            requestor.setUser(user);
             requestor.addListener(new HistoryPersister(results));
 
             if (!file.exists()) {
@@ -399,15 +423,13 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                     public void run() {
                         ProgressPane currentImportPane = null;
                         try {
-                            List<RequestModel> requestModels = converter.getRequestModels();
-                            if (contextId != -1) {
-                                Context context = getModel().getSession().getContext(contextId);
-                                if (context != null) {
-                                    converter.updateVariantChecks(
-                                            context,
-                                            variantChecksMap.computeIfAbsent(
-                                                    contextId, VariantOpenApiChecks::new));
-                                }
+                            Context context = getModel().getSession().getContext(contextId);
+                            List<RequestModel> requestModels = converter.getRequestModels(context);
+                            if (context != null) {
+                                converter.updateVariantChecks(
+                                        context,
+                                        variantChecksMap.computeIfAbsent(
+                                                contextId, VariantOpenApiChecks::new));
                             }
                             if (requestor == null) {
                                 return;

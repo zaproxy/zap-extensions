@@ -4,7 +4,23 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Rename Mac OSX salted SHA-1 in the Hash Disclosure scan rule to "Salted SHA-1", reduce the associated alerts to Low risk and Low confidence, to align with other SHA related patterns it will only be evaluated a Low Threshold. (Note such matches may indicate leaks related but not limited to: MacOS X, Oracle, Tiger-192, Haval-192) (Issue 8624).
 
+## [60] - 2024-09-02
+### Changed
+- Clarified Missing Anti-clickjacking Header description.
+- Depend on Passive Scanner add-on to include it by default (Issue 7959).
+- Re-examine Cache-control Directives scan rule now ignores cache-control for POST method requests (Issue 8592).
+### Fixed
+- Polyfill scan rule running slowly.
+- Only scan text responses for:
+  - Hash Disclosure
+  - Private IP Disclosure
+  - Username Hash Found
+- Performance improvements for:
+  - Cross-Domain JavaScript Source File Inclusion.
+  - Cross-Domain Misconfiguration.
 
 ## [59] - 2024-07-24
 ### Added
@@ -548,6 +564,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[60]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v60
 [59]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v59
 [58]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v58
 [57]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v57

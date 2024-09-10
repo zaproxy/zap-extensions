@@ -22,18 +22,17 @@ package org.zaproxy.zap.extension.wappalyzer;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
-import org.zaproxy.zap.utils.FontUtils;
 
 @SuppressWarnings("serial")
 public class TechOptionsPanel extends AbstractParamPanel {
@@ -41,11 +40,11 @@ public class TechOptionsPanel extends AbstractParamPanel {
     private static final long serialVersionUID = -4195576861254405033L;
 
     private static final String NAME = Constant.messages.getString("wappalyzer.optionspanel.name");
-    private static final String NAME_MODE =
+    private static final String MODE_LABEL =
             Constant.messages.getString("wappalyzer.optionspanel.mode");
 
     private JComboBox<Mode> modeComboBox;
-    private JPanel modePanel;
+    private JCheckBox raiseAlertsCheckBox;
 
     public TechOptionsPanel() {
         super();
@@ -64,40 +63,16 @@ public class TechOptionsPanel extends AbstractParamPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weighty = 0.0D;
         gbc.weightx = 1.0D;
-        panel.add(getModePanel(), gbc);
+        JLabel modeLabel = new JLabel(MODE_LABEL);
+        modeLabel.setLabelFor(getModeComboBox());
+        panel.add(modeLabel, gbc);
+        gbc.gridx = 1;
+        panel.add(getModeComboBox(), gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(getRaiseAlertsCheckBox(), gbc);
 
         add(panel, BorderLayout.NORTH);
-    }
-
-    private JPanel getModePanel() {
-        if (modePanel == null) {
-            modePanel = new JPanel();
-            modePanel.setLayout(new GridBagLayout());
-
-            GridBagConstraints gbc = new GridBagConstraints();
-
-            modePanel.setBorder(
-                    BorderFactory.createTitledBorder(
-                            null,
-                            NAME_MODE,
-                            TitledBorder.DEFAULT_JUSTIFICATION,
-                            TitledBorder.DEFAULT_POSITION,
-                            FontUtils.getFont(FontUtils.Size.standard)));
-
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.insets = new java.awt.Insets(2, 2, 2, 2);
-            gbc.anchor = GridBagConstraints.WEST;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.weightx = 0.5D;
-            modePanel.add(new JLabel(NAME_MODE), gbc);
-
-            gbc.gridx = 1;
-            gbc.gridy = 0;
-            gbc.ipadx = 50;
-            modePanel.add(getModeComboBox(), gbc);
-        }
-        return modePanel;
     }
 
     private JComboBox<Mode> getModeComboBox() {
@@ -107,19 +82,36 @@ public class TechOptionsPanel extends AbstractParamPanel {
         return modeComboBox;
     }
 
+    private JCheckBox getRaiseAlertsCheckBox() {
+        if (raiseAlertsCheckBox == null) {
+            raiseAlertsCheckBox =
+                    new JCheckBox(
+                            Constant.messages.getString("wappalyzer.optionspanel.raisealerts"));
+            raiseAlertsCheckBox.setHorizontalTextPosition(SwingConstants.LEADING);
+        }
+        return raiseAlertsCheckBox;
+    }
+
     @Override
     public void initParam(Object obj) {
         OptionsParam options = (OptionsParam) obj;
-        WappalyzerParam param = options.getParamSet(WappalyzerParam.class);
+        TechDetectParam param = options.getParamSet(TechDetectParam.class);
 
         modeComboBox.setSelectedItem(param.getMode());
+        raiseAlertsCheckBox.setSelected(param.isRaiseAlerts());
     }
 
     @Override
     public void saveParam(Object obj) throws Exception {
         OptionsParam options = (OptionsParam) obj;
-        WappalyzerParam param = options.getParamSet(WappalyzerParam.class);
+        TechDetectParam param = options.getParamSet(TechDetectParam.class);
 
         param.setMode((Mode) modeComboBox.getSelectedItem());
+        param.setRaiseAlerts(raiseAlertsCheckBox.isSelected());
+    }
+
+    @Override
+    public String getHelpIndex() {
+        return "addon.wappalyzer.options";
     }
 }

@@ -299,6 +299,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                     || key.startsWith("stats.fuzz.")
                     || key.startsWith("stats.graphql.")
                     || key.startsWith("stats.hud.")
+                    || key.startsWith("stats.network.")
                     || key.startsWith("stats.oast.")
                     || key.startsWith("stats.openapi.")
                     || key.startsWith("stats.quickstart.")
@@ -306,6 +307,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                     || key.startsWith("stats.script.")
                     || key.startsWith("stats.selenium.")
                     || key.startsWith("stats.spider.")
+                    || key.startsWith("stats.tech.")
                     || key.startsWith("stats.ui.")
                     || key.startsWith("stats.websockets.")
                     || PSCAN_PATTERN.matcher(key).matches();

@@ -23,6 +23,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
 import java.util.Arrays;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.quality.Strictness;
@@ -64,6 +66,11 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
 
     private Context context;
     private Model model;
+
+    @AfterEach
+    void cleanUp() {
+        AuthUtils.clean();
+    }
 
     @Test
     void shouldSetHeaderBasedSessionManagment() throws Exception {
@@ -125,5 +132,53 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         assertThat(hbsmm.getHeaderConfigs().size(), is(equalTo(1)));
         assertThat(hbsmm.getHeaderConfigs().get(0).first, is(equalTo("Authorization")));
         assertThat(hbsmm.getHeaderConfigs().get(0).second, is(equalTo("{%header:Authorization%}")));
+    }
+
+    @Test
+    void shouldCacheSessionToken() throws Exception {
+        // Given
+        Constant.messages = mock(I18N.class);
+        model = mock(Model.class);
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+
+        Control.initSingletonForTesting(model, extensionLoader);
+        Model.setSingletonForTesting(model);
+
+        Session session = mock(Session.class);
+        given(session.getContextsForUrl(anyString())).willReturn(Arrays.asList());
+        given(model.getSession()).willReturn(session);
+
+        String body = "Response Body";
+        String token = "67890123456789012345";
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                "GET / HTTP/1.1\r\n"
+                                        + "Header1: Value1\r\n"
+                                        + "Header2: Value2\r\n"
+                                        + "Authorization: "
+                                        + token
+                                        + "\r\n"
+                                        + "Host: example.com\r\n\r\n"),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
+                        new HttpResponseBody(body));
+
+        AuthUtils.recordSessionToken(
+                new SessionToken(SessionToken.HEADER_SOURCE, "Authorization", token));
+        PassiveScanData helper = mock(PassiveScanData.class);
+        PassiveScanTaskHelper taskHelper = mock(PassiveScanTaskHelper.class);
+        SessionDetectionScanRule rule = this.createScanner();
+        rule.setHelper(helper);
+        rule.setTaskHelper(taskHelper);
+
+        // When
+        rule.scanHttpResponseReceive(msg, 1, null);
+
+        // Then
+        assertThat(AuthUtils.getSessionToken(token), is(notNullValue()));
+        assertThat(AuthUtils.getSessionToken(token).getKey(), is("Authorization"));
+        assertThat(AuthUtils.getSessionToken(token).getValue(), is(token));
     }
 }

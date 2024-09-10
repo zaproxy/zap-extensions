@@ -16,7 +16,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("database") {
-                    version.set(">= 0.1.0")
+                    version.set(">= 0.6.0")
                 }
                 register("network") {
                     version.set(">= 0.1.0")
@@ -37,6 +37,10 @@ zapAddOn {
                 }
             }
         }
+    }
+    apiClientGen {
+        api.set("org.zaproxy.addon.oast.OastApi")
+        messages.set(file("src/main/resources/org/zaproxy/addon/oast/resources/Messages.properties"))
     }
 }
 

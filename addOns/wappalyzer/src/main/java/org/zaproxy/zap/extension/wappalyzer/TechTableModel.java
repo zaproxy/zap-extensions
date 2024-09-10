@@ -108,7 +108,7 @@ public class TechTableModel extends AbstractTableModel {
         return listToString(app.getImplies());
     }
 
-    private String categoriesToString(List<String> list) {
+    private static String categoriesToString(List<String> list) {
         if (list == null) {
             return null;
         }
@@ -125,7 +125,7 @@ public class TechTableModel extends AbstractTableModel {
         return sb.toString();
     }
 
-    private String listToString(List<String> list) {
+    private static String listToString(List<String> list) {
         if (list == null) {
             return null;
         }

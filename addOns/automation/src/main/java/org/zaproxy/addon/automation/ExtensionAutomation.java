@@ -63,8 +63,6 @@ import org.zaproxy.addon.automation.gui.OptionsPanel;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.ZAP.ProcessType;
@@ -125,9 +123,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         super.init();
 
         registerAutomationJob(new org.zaproxy.addon.automation.jobs.AddOnJob());
-        registerAutomationJob(new PassiveScanConfigJob());
         registerAutomationJob(new RequestorJob());
-        registerAutomationJob(new PassiveScanWaitJob());
         registerAutomationJob(new DelayJob());
         registerAutomationJob(new ActiveScanJob());
         registerAutomationJob(new ParamsJob());
@@ -373,7 +369,14 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                 timer = new Timer(1000, e -> getAutomationPanel().updateJob(job));
                 timer.start();
             }
-            job.runJob(env, progress);
+            try {
+                job.runJob(env, progress);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.unexpected.internal", e.getMessage()));
+            }
             job.setTimeFinished();
             if (timer != null) {
                 timer.stop();

@@ -11,8 +11,6 @@
     <indexitem text="automation - environment" target="automation.env" />
     <indexitem text="automation - authentication" target="automation.auth" />
     <indexitem text="automation - addOns job" target="automation.addons" />
-    <indexitem text="automation - passiveScan-config job" target="automation.pscanconf" />
-    <indexitem text="automation - passiveScan-wait job" target="automation.pscanwait" />
     <indexitem text="automation - activeScan job" target="automation.ascan" />
     <indexitem text="automation - about" target="automation.about" />
     <indexitem text="automation - tests" target="automation.tests" />

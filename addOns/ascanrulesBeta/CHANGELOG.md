@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Log exception details in Out of Band XSS scan rule.
+
+## [55] - 2024-09-02
+### Changed
 - The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
     - Expression Language Injection
     - Cookie Slack Detector
@@ -533,6 +537,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[55]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v52

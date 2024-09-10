@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [15.29.0] - 2024-09-02
+### Added
+- Link to "no browser" FAQ in warning messages.
+
+### Changed
+- Update Selenium to version 4.24.0.
+
 ## [15.28.0] - 2024-08-12
 ### Changed
 - Update Selenium to version 4.23.1.
@@ -256,6 +263,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.29.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.29.0
 [15.28.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.28.0
 [15.27.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.27.0
 [15.26.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.26.0

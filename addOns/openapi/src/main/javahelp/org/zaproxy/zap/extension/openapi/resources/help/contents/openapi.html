@@ -24,13 +24,17 @@ A menu item is added to the Import menu:
 The dialogue allows overriding the server URL present in the OpenAPI definition (or specify one if not present) through the Target URL field.
 The import progress is shown in the progress tab.
 
-<H3>Context for Adding DDNs</H3>
+<H3>Context</H3>
 The dialogues also allow selecting a Context, optionally. If a context is selected,
 <ul>
     <li>each imported endpoint is included in the context, unless its URL matches an already existing <em>Include in Context</em> regex entry.</li>
     <li>the imported spec is saved to the session database</li>
     <li>data driven nodes are generated for endpoints with path parameters</li>
 </ul>
+<strong>Note:</strong> Endpoints excluded by the Context will not be imported.
+
+<H3>User</H3>
+The dialogues also allow selecting a User, optionally, to do authenticated imports.
 
 <h3>Target URL Format</h3>
 The Target URL has the following format:<br>
@@ -47,8 +51,8 @@ Following some examples, overriding:
 <H2>API</H2>
 The following operations are added to the API:
 <ul>
-<li>ACTION importFile (file, target, contextId)</li>
-<li>ACTION importUrl (url, hostOverride, contextId)</li>
+<li>ACTION importFile (file, target, contextId, userId)</li>
+<li>ACTION importUrl (url, hostOverride, contextId, userId)</li>
 </ul>
 Both <code>target</code> and <code>hostOverride</code> support the <code>Target URL</code> format explained earlier.
 

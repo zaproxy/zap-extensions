@@ -77,7 +77,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
@@ -110,7 +110,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
@@ -146,7 +146,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkPetStoreRequests(accessedUrls, altHost);
     }
@@ -181,7 +181,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         assertTrue(
                 accessedUrls.containsKey(
@@ -233,7 +233,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                 };
         requestor.addListener(listener);
         // When
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
         // Then
         checkPetStoreRequests(accessedUrls, "http", defaultHost, "");
     }
@@ -256,7 +256,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
                         null);
         // When / Then
-        assertThrows(SwaggerException.class, () -> converter.getRequestModels());
+        assertThrows(SwaggerException.class, () -> converter.getRequestModels(null));
     }
 
     @Test
@@ -276,7 +276,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
                         null);
         // When / Then
-        assertThrows(SwaggerException.class, () -> converter.getRequestModels());
+        assertThrows(SwaggerException.class, () -> converter.getRequestModels(null));
     }
 
     @Test
@@ -312,7 +312,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                 };
         requestor.addListener(listener);
 
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         // what is the expected behavior?
         assertEquals(accessedUrls.size(), 19);
@@ -388,7 +388,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkPetStoreRequestsValGen(accessedUrls, "localhost:" + nano.getListeningPort());
     }
@@ -419,7 +419,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                             message.getRequestBody().toString());
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
@@ -450,7 +450,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                             message.getRequestBody().toString());
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         String baseUrl = "http://" + "localhost:" + nano.getListeningPort();
         assertTrue(accessedUrls.containsKey("POST " + baseUrl + "/example"));
@@ -482,7 +482,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                             message.getRequestBody().toString());
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         String baseUrl = "http://" + "localhost:" + nano.getListeningPort();
         assertTrue(accessedUrls.containsKey("POST " + baseUrl + "/example"));
@@ -512,7 +512,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                                     + message.getRequestHeader().getURI().toString(),
                             message.getRequestHeader().getHeader("Accept"));
                 });
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkRequestAcceptHeaders(accessedUrls, "localhost:" + nano.getListeningPort());
     }
@@ -541,7 +541,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                                     + message.getRequestHeader().getURI().toString(),
                             message.getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE));
                 });
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkRequestContentTypeHeaders(accessedUrls, "localhost:" + nano.getListeningPort());
     }
@@ -570,9 +570,9 @@ class OpenApiUnitTest extends AbstractServerTest {
                                     + message.getRequestHeader().getURI().toString(),
                             message.getRequestHeader().getHeader("Accept"));
                 });
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
-        assertEquals(19, converter.getRequestModels().size());
+        assertEquals(19, converter.getRequestModels(null).size());
     }
 
     private void checkRequestContentTypeHeaders(Map<String, String> accessedUrls, String host) {

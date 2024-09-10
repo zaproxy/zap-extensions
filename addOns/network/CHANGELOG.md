@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Send success/failure stats.
+
+## [0.17.0] - 2024-09-02
 ### Changed
 - Maintenance changes.
 
@@ -193,6 +197,7 @@ would not be cleared when reusing the same message.
   - Options panel to manage the root CA certificate and issued certificates.
   - API endpoints to configure the validity of the root CA certificate and issued certificates ([Issue 4673](https://github.com/zaproxy/zaproxy/issues/4673)).
 
+[0.17.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.17.0
 [0.16.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.16.0
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.15.0
 [0.14.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.14.0
