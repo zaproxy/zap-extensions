@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Document the engine name in the help page.
 
+### Changed
+- Maintenance changes.
+
 ## [0.7.0] - 2024-05-07
 ### Changed
 - Update minimum ZAP version to 2.15.0.
