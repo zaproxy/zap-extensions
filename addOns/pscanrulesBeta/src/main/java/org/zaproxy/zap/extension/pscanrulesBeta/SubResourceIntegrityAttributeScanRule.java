@@ -150,7 +150,7 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner
                                                                 .toString()));
             }
         } catch (Exception e) {
-            LOGGER.debug("Error occured while calculating the hash. Error: {}", e.getMessage(), e);
+            LOGGER.debug("Error occurred while calculating the hash. Error: {}", e.getMessage(), e);
         }
         return integrityHash;
     }
