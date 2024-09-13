@@ -28,6 +28,7 @@ import de.sstoehr.harreader.model.HarLog;
 import de.sstoehr.harreader.model.HarResponse;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -46,7 +47,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.addon.exim.ExtensionExim;
-import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
@@ -253,7 +253,19 @@ public class HarImporter {
         }
         message.setResponseFromTargetHost(true);
         if (harContent != null) {
-            message.setResponseBody(new HttpResponseBody(harContent.getText()));
+            if ("base64".equals(harContent.getEncoding())) {
+                var text = harContent.getText();
+                if (text != null)
+                    try {
+                        message.setResponseBody(Base64.getDecoder().decode(text));
+                    } catch (IllegalArgumentException e) {
+                        LOGGER.debug(
+                                "Failed to base64 decode body {}. Setting as plain text.", text, e);
+                        message.setResponseBody(text);
+                    }
+            } else {
+                message.setResponseBody(harContent.getText());
+            }
         }
     }
 
