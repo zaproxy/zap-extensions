@@ -335,6 +335,28 @@ class HarImporterUnitTest extends TestUtils {
                 is(equalTo("Skipping local private entry: about:blank")));
     }
 
+    @Test
+    void shouldBase64DecodeResponseBody() throws Exception {
+        // Given
+        HarLog harLog = getHarLog("response-base64.har", "");
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(1));
+        assertThat(messages.get(0).getResponseBody().toString(), is(equalTo("1234")));
+    }
+
+    @Test
+    void shouldFallbackToPlainTextOnMalformedBase64ResponseBody() throws Exception {
+        // Given
+        HarLog harLog = getHarLog("response-base64-invalid.har", "");
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(1));
+        assertThat(messages.get(0).getResponseBody().toString(), is(equalTo("Not base 64")));
+    }
+
     private HarLog getHarLog(String path, String replacement) throws HarReaderException {
         return new HarReader()
                 .readFromString(getHtml(path, Map.of(PLACEHOLDER, replacement)))
