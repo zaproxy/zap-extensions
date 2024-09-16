@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Maintenance changes.
+- Update script templates:
+  - authentication/Authentication default template GraalJS.js - remove outdated example code.
+  - httpsender/AddZapHeader GraalJS.js - fix runtime error (Issue 8611) and update documentation.
+  - httpsender/HttpSender default template GraalJS.js - update documentation.
 
 ## [0.7.0] - 2024-05-07
 ### Changed
