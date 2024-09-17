@@ -87,7 +87,7 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
         assertEquals(Alert.RISK_HIGH, alert.getRisk());
-        assertEquals(Alert.CONFIDENCE_LOW, alert.getConfidence());
+        assertEquals(Alert.CONFIDENCE_MEDIUM, alert.getConfidence());
         assertEquals(host, alert.getAttack());
     }
 

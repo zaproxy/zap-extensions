@@ -115,9 +115,6 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
                         this.createAlert(newRequest, host).raise();
                         return;
                     }
-
-                    this.createAlert(newRequest, host).raise();
-                    return;
                 }
             } catch (Exception e) {
                 LOGGER.warn("Error sending URL {}", newRequest.getRequestHeader().getURI(), e);
