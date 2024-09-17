@@ -95,7 +95,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
 
     public AlertBuilder createAlert(HttpMessage newRequest, String host) {
         return newAlert()
-                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setAttack(host)
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"))
                 .setMessage(newRequest);
@@ -110,6 +110,12 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
                 newRequest.setUserObject(Collections.singletonMap("host", host));
                 sendAndReceive(newRequest, false);
                 if (isSuccess(newRequest) && newRequest.getResponseBody().length() > 0) {
+                    String responseBody = newRequest.getResponseBody().toString();
+                    if (containsMetadataIndicators(responseBody)) {
+                        this.createAlert(newRequest, host).raise();
+                        return;
+                    }
+
                     this.createAlert(newRequest, host).raise();
                     return;
                 }
@@ -117,6 +123,17 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
                 LOGGER.warn("Error sending URL {}", newRequest.getRequestHeader().getURI(), e);
             }
         }
+    }
+
+    /**
+     * Checks if the response body contains indicators of AWS cloud metadata.
+     *
+     * @param responseBody the response body to check
+     * @return {@code true} if cloud metadata indicators are found; {@code false} otherwise
+     */
+    private boolean containsMetadataIndicators(String responseBody) {
+        return responseBody.contains("ami-id")
+                && responseBody.contains("ami-launch-index");
     }
 
     @Override
