@@ -105,7 +105,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private String getError(char c) {
+    private static String getError(char c) {
         return Constant.messages.getString(MESSAGE_PREFIX + "error" + c);
     }
 

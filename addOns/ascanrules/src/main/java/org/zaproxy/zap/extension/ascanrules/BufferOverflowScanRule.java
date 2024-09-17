@@ -169,7 +169,7 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin
         return 7;
     }
 
-    private String randomCharacterString(int length) {
+    private static String randomCharacterString(int length) {
         StringBuilder sb1 = new StringBuilder(length + 1);
         int counter = 0;
         int character = 0;

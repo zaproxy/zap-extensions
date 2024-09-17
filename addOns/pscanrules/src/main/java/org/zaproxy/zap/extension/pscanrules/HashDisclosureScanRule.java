@@ -265,9 +265,12 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
                 .setName(getName() + " - " + hashAlert.getDescription())
                 .setRisk(hashAlert.getRisk())
                 .setConfidence(hashAlert.getConfidence())
-                .setDescription(getDescription() + " - " + hashAlert.getDescription())
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setDescription(
+                        Constant.messages.getString(MESSAGE_PREFIX + "desc")
+                                + " - "
+                                + hashAlert.getDescription())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
                 .setCweId(200) // Information Exposure,
                 .setWascId(13); // Information Leakage
@@ -276,18 +279,6 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
     @Override
     public int getPluginId() {
         return 10097;
-    }
-
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     @Override

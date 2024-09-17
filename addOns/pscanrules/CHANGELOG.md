@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Maintenance changes.
 - Rename Mac OSX salted SHA-1 in the Hash Disclosure scan rule to "Salted SHA-1", reduce the associated alerts to Low risk and Low confidence, to align with other SHA related patterns it will only be evaluated a Low Threshold. (Note such matches may indicate leaks related but not limited to: MacOS X, Oracle, Tiger-192, Haval-192) (Issue 8624).
 - The Insecure JSF ViewState now includes example alert functionality for documentation generation purposes (Issue 6119).
 

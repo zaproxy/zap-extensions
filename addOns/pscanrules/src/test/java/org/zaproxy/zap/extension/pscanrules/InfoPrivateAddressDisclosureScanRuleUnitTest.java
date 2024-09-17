@@ -52,12 +52,8 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(200)));
-        assertThat(wasc, is(equalTo(13)));
         assertThat(tags.size(), is(equalTo(2)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
@@ -420,11 +416,11 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
         assertThat(alert.getUri(), equalTo(requestUri));
     }
 
-    private HttpMessage createHttpMessage(String body) throws HttpMalformedHeaderException {
+    private static HttpMessage createHttpMessage(String body) throws HttpMalformedHeaderException {
         return createHttpMessage(URI, body);
     }
 
-    private HttpMessage createHttpMessage(String requestUri, String body)
+    private static HttpMessage createHttpMessage(String requestUri, String body)
             throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         requestUri = requestUri.startsWith("http") ? requestUri : "http://" + requestUri;

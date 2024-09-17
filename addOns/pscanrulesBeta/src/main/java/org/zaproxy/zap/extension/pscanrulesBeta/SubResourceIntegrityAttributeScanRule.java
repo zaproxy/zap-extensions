@@ -128,7 +128,7 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner
         }
     }
 
-    private String calculateIntegrityHash(HttpMessage msg, Element element, SiteMap tree) {
+    private static String calculateIntegrityHash(HttpMessage msg, Element element, SiteMap tree) {
         String src = element.getAttributeValue("src");
         if (src == null) {
             return "";
@@ -155,7 +155,7 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner
         return integrityHash;
     }
 
-    private String getOtherInfo(HttpMessage msg, Element element, SiteMap tree) {
+    private static String getOtherInfo(HttpMessage msg, Element element, SiteMap tree) {
         String integrityHash = calculateIntegrityHash(msg, element, tree);
         if (integrityHash.isEmpty()) {
             return "";

@@ -40,7 +40,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class InsecureFormPostScanRuleUnitTest extends PassiveScannerTest<InsecureFormPostScanRule> {
 
-    private HttpMessage createMessage() throws URIException {
+    private static HttpMessage createMessage() throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("https://example.com", false));
 

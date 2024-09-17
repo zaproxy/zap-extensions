@@ -107,7 +107,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin
         return VULN.getReferencesAsString();
     }
 
-    private String getEvidence(String filename, String gitURIs) {
+    private static String getEvidence(String filename, String gitURIs) {
         return Constant.messages.getString(
                 "ascanbeta.sourcecodedisclosure.gitbased.evidence", filename, gitURIs);
     }
@@ -158,7 +158,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin
      * @param fileExtension
      * @return
      */
-    private boolean dataMatchesExtension(byte[] data, String fileExtension) {
+    private static boolean dataMatchesExtension(byte[] data, String fileExtension) {
         if (fileExtension != null) {
             if (fileExtension.equals("JSP")) {
                 if (PATTERN_JSP.matcher(new String(data)).find()) return true;

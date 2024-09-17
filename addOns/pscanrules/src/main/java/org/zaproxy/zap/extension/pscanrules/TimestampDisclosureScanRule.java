@@ -187,37 +187,24 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner
             String timestampType, String evidence, String param, Date timestamp) {
         return newAlert()
                 .setName(getName() + " - " + timestampType)
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_LOW)
-                .setDescription(getDescription() + " - " + timestampType)
+                .setDescription(
+                        Constant.messages.getString(MESSAGE_PREFIX + "desc")
+                                + " - "
+                                + timestampType)
                 .setParam(param)
                 .setOtherInfo(getExtraInfo(evidence, timestamp))
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setWascId(13); // WASC Id - Info leakage
     }
 
     @Override
     public int getPluginId() {
         return 10096;
-    }
-
-    public int getRisk() {
-        return Alert.RISK_LOW;
-    }
-
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     private static String getExtraInfo(String evidence, Date timestamp) {
@@ -228,14 +215,6 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 200; // CWE Id 200 - Information Exposure
-    }
-
-    public int getWascId() {
-        return 13; // WASC Id - Info leakage
     }
 
     @Override

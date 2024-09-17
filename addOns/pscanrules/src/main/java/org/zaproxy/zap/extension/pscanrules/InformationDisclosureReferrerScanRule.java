@@ -102,11 +102,11 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
         }
     }
 
-    private String getSsnOtherInfo() {
+    private static String getSsnOtherInfo() {
         return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.ssn");
     }
 
-    private boolean isRequestedURLSameDomainAsHTTPReferrer(String host, String referrerURL) {
+    private static boolean isRequestedURLSameDomainAsHTTPReferrer(String host, String referrerURL) {
         boolean result = false;
         if (referrerURL.startsWith("/")) {
             result = true;
@@ -126,32 +126,25 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
 
     private AlertBuilder buildAlert(String evidence, String other) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_INFO)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setWascId(13) // WASC Id - Info leakage
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
                 .setOtherInfo(other)
-                .setSolution(getSolution())
-                .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setEvidence(evidence);
     }
 
     private AlertBuilder buildCcAlert(String evidence, String other, BinRecord binRec) {
         if (binRec != null) {
             other = other + '\n' + getBinRecString(binRec);
         }
-        return newAlert()
-                .setRisk(getRisk())
-                .setConfidence(binRec != null ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
-                .setOtherInfo(other)
-                .setSolution(getSolution())
-                .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+        return buildAlert(evidence, other)
+                .setConfidence(binRec != null ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_MEDIUM);
     }
 
-    private String getBinRecString(BinRecord binRec) {
+    private static String getBinRecString(BinRecord binRec) {
         StringBuilder recString = new StringBuilder(75);
         recString
                 .append(Constant.messages.getString(MESSAGE_PREFIX + "bin.field"))
@@ -175,7 +168,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
         return recString.toString();
     }
 
-    private List<String> loadFile(String file) {
+    private static List<String> loadFile(String file) {
         List<String> strings = new ArrayList<>();
         File f = new File(Constant.getZapHome() + File.separator + file);
         if (!f.exists()) {
@@ -221,21 +214,9 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
         return PLUGIN_ID;
     }
 
-    public int getRisk() {
-        return Alert.RISK_INFO;
-    }
-
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
-    }
-
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
     @Override
@@ -243,15 +224,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
-        return 200; // CWE Id 200 - Information Exposure
-    }
-
-    public int getWascId() {
-        return 13; // WASC Id - Info leakage
-    }
-
-    private String doesContainEmailAddress(String emailAddress) {
+    private static String doesContainEmailAddress(String emailAddress) {
         Matcher matcher = emailAddressPattern.matcher(emailAddress);
         if (matcher.find()) {
             return matcher.group();
@@ -259,7 +232,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
         return null;
     }
 
-    private String doesContainCreditCard(String creditCard) {
+    private static String doesContainCreditCard(String creditCard) {
         Matcher matcher = creditCardPattern.matcher(creditCard);
         if (matcher.find()) {
             String candidate = matcher.group();
@@ -270,7 +243,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
         return null;
     }
 
-    private String doesContainUsSSN(String usSSN) {
+    private static String doesContainUsSSN(String usSSN) {
         Matcher matcher = usSSNPattern.matcher(usSSN);
         if (matcher.find()) {
             return matcher.group();

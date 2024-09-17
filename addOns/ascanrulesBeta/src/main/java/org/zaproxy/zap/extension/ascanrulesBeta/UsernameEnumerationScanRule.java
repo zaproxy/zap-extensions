@@ -730,7 +730,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
         return hirshberg.getLCS(a, b);
     }
 
-    private boolean shouldContinue(List<Context> contextList) {
+    private static boolean shouldContinue(List<Context> contextList) {
         boolean hasAuth = false;
         for (Context context : contextList) {
             if (context.getAuthenticationMethod() instanceof FormBasedAuthenticationMethod) {

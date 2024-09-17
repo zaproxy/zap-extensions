@@ -608,7 +608,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
         return false;
     }
 
-    private String getContentsToMatch(HttpMessage message) {
+    private static String getContentsToMatch(HttpMessage message) {
         return message.getResponseHeader().isHtml()
                 ? StringEscapeUtils.unescapeHtml4(message.getResponseBody().toString())
                 : message.getResponseHeader().toString() + message.getResponseBody().toString();
@@ -700,7 +700,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
             return matchWinDirectories(contents);
         }
 
-        private String matchNixDirectories(String contents) {
+        private static String matchNixDirectories(String contents) {
             Pattern procPattern =
                     Pattern.compile("(?:^|\\W)proc(?:\\W|$)", Pattern.CASE_INSENSITIVE);
             Pattern etcPattern = Pattern.compile("(?:^|\\W)etc(?:\\W|$)", Pattern.CASE_INSENSITIVE);
@@ -727,7 +727,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
             return null;
         }
 
-        private String matchWinDirectories(String contents) {
+        private static String matchWinDirectories(String contents) {
             if (contents.contains("Windows")
                     && Pattern.compile("Program\\sFiles").matcher(contents).find()) {
                 return "Windows";

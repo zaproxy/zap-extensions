@@ -65,24 +65,21 @@ public class XAspNetVersionScanRule extends PluginPassiveScanner
 
     private AlertBuilder createAlert(String evidence) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setCweId(
+                        933) // CWE-933: OWASP Top Ten 2013 Category A5 - Security Misconfiguration
+                .setWascId(14); //  WASC-14: Server Misconfiguration);
     }
 
     @Override
     public int getPluginId() {
         return 10061;
-    }
-
-    public int getRisk() {
-        return Alert.RISK_LOW;
     }
 
     @Override
@@ -93,14 +90,6 @@ public class XAspNetVersionScanRule extends PluginPassiveScanner
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 933; // CWE-933: OWASP Top Ten 2013 Category A5 - Security Misconfiguration
-    }
-
-    public int getWascId() {
-        return 14; //  WASC-14: Server Misconfiguration
     }
 
     @Override

@@ -110,7 +110,7 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         }
     }
 
-    private void assertNoLeadingSlash(String message, String path) {
+    private static void assertNoLeadingSlash(String message, String path) {
         assertThat(message.replace(REPLACE_TOKEN, path), !path.startsWith("/"), is(true));
     }
 
