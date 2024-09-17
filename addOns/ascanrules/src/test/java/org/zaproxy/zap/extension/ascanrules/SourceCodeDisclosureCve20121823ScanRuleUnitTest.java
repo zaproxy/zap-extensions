@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
@@ -250,6 +252,36 @@ class SourceCodeDisclosureCve20121823ScanRuleUnitTest
         rule.scan();
         // Then
         assertThat(httpMessagesSent, hasSize(1));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {PHP_SOURCE_TAGS, PHP_SOURCE_ECHO_TAG})
+    void shouldNotScanIfPhpSourceWasAlreadyPresentInResponse(String source) throws Exception {
+        // Given
+        var response =
+                "<html><body>PHP Tutorial: <code>"
+                        + StringEscapeUtils.escapeHtml4(source)
+                        + "</code></body></html>";
+        HttpMessage message = getHttpMessage("GET", "/", response);
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(0));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldNotScanBinaryResponse() throws Exception {
+        // Given
+        var response = "�PNG\n\n";
+        HttpMessage message = getHttpMessage("GET", "/", response);
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(0));
         assertThat(alertsRaised, hasSize(0));
     }
 
