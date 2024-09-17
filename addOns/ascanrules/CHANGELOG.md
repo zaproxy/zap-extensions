@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Cloud Metadata Scan Rule now supports multiple cloud providers. Implemented provider-specific metadata indicators to reduce false positives.
 - Maintenance changes.
 - The Spring Actuator Scan Rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 
