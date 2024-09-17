@@ -129,8 +129,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
      * @return {@code true} if cloud metadata indicators are found; {@code false} otherwise
      */
     private boolean containsMetadataIndicators(String responseBody) {
-        return responseBody.contains("ami-id")
-                && responseBody.contains("ami-launch-index");
+        return responseBody.contains("ami-id") && responseBody.contains("ami-launch-index");
     }
 
     @Override
