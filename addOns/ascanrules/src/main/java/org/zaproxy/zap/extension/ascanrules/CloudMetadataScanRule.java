@@ -19,11 +19,11 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -44,11 +44,6 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
     private static final String MESSAGE_PREFIX = "ascanrules.cloudmetadata.";
 
     private static final int PLUGIN_ID = 90034;
-    private static final String METADATA_PATH = "/latest/meta-data/";
-    private static final List<String> METADATA_HOSTS =
-            Arrays.asList(
-                    "169.254.169.254", "aws.zaproxy.org", "100.100.100.200", "alibaba.zaproxy.org");
-
     private static final Logger LOGGER = LogManager.getLogger(CloudMetadataScanRule.class);
     private static final Map<String, String> ALERT_TAGS;
 
@@ -61,6 +56,75 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
         alertTags.put(PolicyTag.API.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
+
+    private enum CloudProvider {
+        AWS(
+                List.of(
+                        new Endpoint("169.254.169.254", "/latest/meta-data/", Map.of()),
+                        new Endpoint("aws.zaproxy.org", "/latest/meta-data/", Map.of())),
+                Set.of("ami-id", "instance-id", "local-hostname", "public-hostname")),
+        GCP(
+                List.of(
+                        new Endpoint(
+                                "169.254.169.254",
+                                "/computeMetadata/v1/",
+                                Map.of("Metadata-Flavor", "Google")),
+                        new Endpoint(
+                                "metadata.google.internal",
+                                "/computeMetadata/v1/",
+                                Map.of("Metadata-Flavor", "Google"))),
+                Set.of("project-id", "zone", "machineType", "hostname")),
+        OCI(
+                List.of(
+                        new Endpoint("169.254.169.254", "/opc/v1/instance/", Map.of()),
+                        new Endpoint("metadata.oraclecloud.com", "/opc/v1/instance/", Map.of())),
+                Set.of("oci", "instance", "availabilityDomain", "region")),
+        ALIBABA_CLOUD(
+                List.of(
+                        new Endpoint("100.100.100.200", "/latest/meta-data/", Map.of()),
+                        new Endpoint("alibaba.zaproxy.org", "/latest/meta-data/", Map.of())),
+                Set.of("image-id", "instance-id", "hostname", "region-id")),
+        AZURE(
+                List.of(
+                        new Endpoint(
+                                "169.254.169.254",
+                                "/metadata/instance",
+                                Map.of("Metadata", "true"))),
+                Set.of("compute", "network", "osType", "vmSize"));
+
+        private final List<Endpoint> endpoints;
+        private final Set<String> indicators;
+
+        CloudProvider(List<Endpoint> endpoints, Set<String> indicators) {
+            this.endpoints = endpoints;
+            this.indicators = indicators;
+        }
+
+        public List<Endpoint> getEndpoints() {
+            return endpoints;
+        }
+
+        public boolean containsMetadataIndicators(String responseBody) {
+            for (String indicator : indicators) {
+                if (responseBody.contains(indicator)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static class Endpoint {
+            String host;
+            String path;
+            Map<String, String> headers;
+
+            Endpoint(String host, String path, Map<String, String> headers) {
+                this.host = host;
+                this.path = path;
+                this.headers = headers;
+            }
+        }
     }
 
     @Override
@@ -105,7 +169,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
 
     public AlertBuilder createAlert(HttpMessage newRequest, String host) {
         return newAlert()
-                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setAttack(host)
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"))
                 .setMessage(newRequest);
@@ -113,18 +177,27 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
 
     @Override
     public void scan() {
-        HttpMessage newRequest = getNewMsg();
-        for (String host : METADATA_HOSTS) {
-            try {
-                newRequest.getRequestHeader().getURI().setPath(METADATA_PATH);
-                newRequest.setUserObject(Collections.singletonMap("host", host));
-                sendAndReceive(newRequest, false);
-                if (isSuccess(newRequest) && newRequest.getResponseBody().length() > 0) {
-                    this.createAlert(newRequest, host).raise();
-                    return;
+        for (CloudProvider provider : CloudProvider.values()) {
+            for (CloudProvider.Endpoint endpoint : provider.getEndpoints()) {
+                HttpMessage newRequest = getNewMsg();
+                try {
+                    newRequest.getRequestHeader().getURI().setPath(endpoint.path);
+                    newRequest.setUserObject(Collections.singletonMap("host", endpoint.host));
+                    for (Map.Entry<String, String> header : endpoint.headers.entrySet()) {
+                        newRequest.getRequestHeader().setHeader(header.getKey(), header.getValue());
+                    }
+                    sendAndReceive(newRequest, false);
+                    if (isSuccess(newRequest) && newRequest.getResponseBody().length() > 0) {
+                        String responseBody = newRequest.getResponseBody().toString();
+                        if (provider.containsMetadataIndicators(responseBody)) {
+                            this.createAlert(newRequest, endpoint.host).raise();
+                            return;
+                        }
+                    }
+                } catch (Exception e) {
+                    LOGGER.warn(
+                            "Error sending request to {}: {}", endpoint.host, e.getMessage(), e);
                 }
-            } catch (Exception e) {
-                LOGGER.warn("Error sending URL {}", newRequest.getRequestHeader().getURI(), e);
             }
         }
     }
