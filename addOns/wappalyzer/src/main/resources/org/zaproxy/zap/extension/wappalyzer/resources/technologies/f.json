@@ -822,6 +822,19 @@
     ],
     "website": "https://pqina.nl/filepond/"
   },
+  "Fillout": {
+    "cats": [
+      5,
+      110
+    ],
+    "description": "Fillout is a form builder widget.",
+    "saas": true,
+    "oss": false,
+    "scriptSrc": [
+      "^https://server\\.fillout\\.com/embed/v(\\d)/\\;version:\\1"
+    ],
+    "website": "https://www.fillout.com/"
+  },
   "FinanceAds": {
     "cats": [
       71
