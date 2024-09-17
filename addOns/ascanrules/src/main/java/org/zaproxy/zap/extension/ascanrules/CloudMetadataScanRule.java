@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -48,78 +49,84 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
-    // this class hold metadata endpoint details
-    private static class CloudMetadataEndpoint {
-        String host;
-        String path;
-        String provider;
-        Map<String, String> headers;
+    private enum CloudProvider {
+        AWS(
+                Arrays.asList(
+                        new Endpoint(
+                                "169.254.169.254", "/latest/meta-data/", Collections.emptyMap()),
+                        new Endpoint(
+                                "aws.zaproxy.org", "/latest/meta-data/", Collections.emptyMap())),
+                Set.of("ami-id", "instance-id", "local-hostname", "public-hostname")),
+        GCP(
+                Arrays.asList(
+                        new Endpoint(
+                                "169.254.169.254",
+                                "/computeMetadata/v1/",
+                                Map.of("Metadata-Flavor", "Google")),
+                        new Endpoint(
+                                "metadata.google.internal",
+                                "/computeMetadata/v1/",
+                                Map.of("Metadata-Flavor", "Google"))),
+                Set.of("project-id", "zone", "machineType", "hostname")),
+        OCI(
+                Arrays.asList(
+                        new Endpoint(
+                                "169.254.169.254", "/opc/v1/instance/", Collections.emptyMap()),
+                        new Endpoint(
+                                "metadata.oraclecloud.com",
+                                "/opc/v1/instance/",
+                                Collections.emptyMap())),
+                Set.of("oci", "instance", "availabilityDomain", "region")),
+        AlibabaCloud(
+                Arrays.asList(
+                        new Endpoint(
+                                "100.100.100.200", "/latest/meta-data/", Collections.emptyMap()),
+                        new Endpoint(
+                                "alibaba.zaproxy.org",
+                                "/latest/meta-data/",
+                                Collections.emptyMap())),
+                Set.of("image-id", "instance-id", "hostname", "region-id")),
+        Azure(
+                Arrays.asList(
+                        new Endpoint(
+                                "169.254.169.254",
+                                "/metadata/instance",
+                                Map.of("Metadata", "true"))),
+                Set.of("compute", "network", "osType", "vmSize"));
 
-        CloudMetadataEndpoint(
-                String host, String path, String provider, Map<String, String> headers) {
-            this.host = host;
-            this.path = path;
-            this.provider = provider;
-            this.headers = headers;
+        private final List<Endpoint> endpoints;
+        private final Set<String> indicators;
+
+        CloudProvider(List<Endpoint> endpoints, Set<String> indicators) {
+            this.endpoints = endpoints;
+            this.indicators = indicators;
+        }
+
+        public List<Endpoint> getEndpoints() {
+            return endpoints;
+        }
+
+        public boolean containsMetadataIndicators(String responseBody) {
+            for (String indicator : indicators) {
+                if (responseBody.contains(indicator)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static class Endpoint {
+            String host;
+            String path;
+            Map<String, String> headers;
+
+            Endpoint(String host, String path, Map<String, String> headers) {
+                this.host = host;
+                this.path = path;
+                this.headers = headers;
+            }
         }
     }
-
-    // metadata endpoints to test
-    private static final List<CloudMetadataEndpoint> METADATA_ENDPOINTS =
-            Arrays.asList(
-                    // AWS
-                    new CloudMetadataEndpoint(
-                            "169.254.169.254", "/latest/meta-data/", "AWS", Collections.emptyMap()),
-                    new CloudMetadataEndpoint(
-                            "aws.zaproxy.org", "/latest/meta-data/", "AWS", Collections.emptyMap()),
-                    // GCP
-                    new CloudMetadataEndpoint(
-                            "169.254.169.254",
-                            "/computeMetadata/v1/",
-                            "GCP",
-                            Map.of("Metadata-Flavor", "Google")),
-                    new CloudMetadataEndpoint(
-                            "metadata.google.internal",
-                            "/computeMetadata/v1/",
-                            "GCP",
-                            Map.of("Metadata-Flavor", "Google")),
-                    // OCI
-                    new CloudMetadataEndpoint(
-                            "169.254.169.254", "/opc/v1/instance/", "OCI", Collections.emptyMap()),
-                    new CloudMetadataEndpoint(
-                            "metadata.oraclecloud.com",
-                            "/opc/v1/instance/",
-                            "OCI",
-                            Collections.emptyMap()),
-                    // Alibaba Cloud
-                    new CloudMetadataEndpoint(
-                            "100.100.100.200",
-                            "/latest/meta-data/",
-                            "AlibabaCloud",
-                            Collections.emptyMap()),
-                    new CloudMetadataEndpoint(
-                            "alibaba.zaproxy.org",
-                            "/latest/meta-data/",
-                            "AlibabaCloud",
-                            Collections.emptyMap()),
-                    // Azure
-                    new CloudMetadataEndpoint(
-                            "169.254.169.254",
-                            "/metadata/instance",
-                            "Azure",
-                            Map.of("Metadata", "true")));
-
-    // metadata indicators for each cloud provider
-    private static final Map<String, List<String>> PROVIDER_INDICATORS =
-            Map.of(
-                    "AWS",
-                            Arrays.asList(
-                                    "ami-id", "instance-id", "local-hostname", "public-hostname"),
-                    "GCP", Arrays.asList("project-id", "zone", "machineType", "hostname"),
-                    "Azure", Arrays.asList("compute", "network", "osType", "vmSize"),
-                    "AlibabaCloud",
-                            Arrays.asList("image-id", "instance-id", "hostname", "region-id"),
-                    "OCI", Arrays.asList("oci", "instance", "availabilityDomain", "region"));
 
     @Override
     public int getId() {
@@ -171,49 +178,29 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
 
     @Override
     public void scan() {
-        for (CloudMetadataEndpoint endpoint : METADATA_ENDPOINTS) {
-            HttpMessage newRequest = getNewMsg();
-            try {
-                // set the request path
-                newRequest.getRequestHeader().getURI().setPath(endpoint.path);
-                // set the Host header
-                newRequest.setUserObject(Collections.singletonMap("host", endpoint.host));
-                // set additional headers if required
-                for (Map.Entry<String, String> header : endpoint.headers.entrySet()) {
-                    newRequest.getRequestHeader().setHeader(header.getKey(), header.getValue());
-                }
-                sendAndReceive(newRequest, false);
-                if (isSuccess(newRequest) && newRequest.getResponseBody().length() > 0) {
-                    String responseBody = newRequest.getResponseBody().toString();
-                    if (containsMetadataIndicators(responseBody, endpoint.provider)) {
-                        this.createAlert(newRequest, endpoint.host).raise();
-                        return;
+        for (CloudProvider provider : CloudProvider.values()) {
+            for (CloudProvider.Endpoint endpoint : provider.getEndpoints()) {
+                HttpMessage newRequest = getNewMsg();
+                try {
+                    newRequest.getRequestHeader().getURI().setPath(endpoint.path);
+                    newRequest.setUserObject(Collections.singletonMap("host", endpoint.host));
+                    for (Map.Entry<String, String> header : endpoint.headers.entrySet()) {
+                        newRequest.getRequestHeader().setHeader(header.getKey(), header.getValue());
                     }
+                    sendAndReceive(newRequest, false);
+                    if (isSuccess(newRequest) && newRequest.getResponseBody().length() > 0) {
+                        String responseBody = newRequest.getResponseBody().toString();
+                        if (provider.containsMetadataIndicators(responseBody)) {
+                            this.createAlert(newRequest, endpoint.host).raise();
+                            return;
+                        }
+                    }
+                } catch (Exception e) {
+                    LOGGER.warn(
+                            "Error sending request to {}: {}", endpoint.host, e.getMessage(), e);
                 }
-            } catch (Exception e) {
-                LOGGER.warn("Error sending request to {}: {}", endpoint.host, e.getMessage(), e);
             }
         }
-    }
-
-    /**
-     * Checks if the response body contains metadata indicators specific to the cloud provider.
-     *
-     * @param responseBody the response body to check
-     * @param provider the cloud provider
-     * @return {@code true} if cloud metadata indicators are found; {@code false} otherwise
-     */
-    private boolean containsMetadataIndicators(String responseBody, String provider) {
-        List<String> indicators = PROVIDER_INDICATORS.get(provider);
-        if (indicators == null) {
-            return false;
-        }
-        for (String indicator : indicators) {
-            if (responseBody.contains(indicator)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
