@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -51,14 +50,14 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
 
     private enum CloudProvider {
         AWS(
-                Arrays.asList(
+                List.of(
                         new Endpoint(
                                 "169.254.169.254", "/latest/meta-data/", Collections.emptyMap()),
                         new Endpoint(
                                 "aws.zaproxy.org", "/latest/meta-data/", Collections.emptyMap())),
                 Set.of("ami-id", "instance-id", "local-hostname", "public-hostname")),
         GCP(
-                Arrays.asList(
+                List.of(
                         new Endpoint(
                                 "169.254.169.254",
                                 "/computeMetadata/v1/",
@@ -69,7 +68,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
                                 Map.of("Metadata-Flavor", "Google"))),
                 Set.of("project-id", "zone", "machineType", "hostname")),
         OCI(
-                Arrays.asList(
+                List.of(
                         new Endpoint(
                                 "169.254.169.254", "/opc/v1/instance/", Collections.emptyMap()),
                         new Endpoint(
@@ -78,7 +77,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
                                 Collections.emptyMap())),
                 Set.of("oci", "instance", "availabilityDomain", "region")),
         AlibabaCloud(
-                Arrays.asList(
+                List.of(
                         new Endpoint(
                                 "100.100.100.200", "/latest/meta-data/", Collections.emptyMap()),
                         new Endpoint(
@@ -87,7 +86,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
                                 Collections.emptyMap())),
                 Set.of("image-id", "instance-id", "hostname", "region-id")),
         Azure(
-                Arrays.asList(
+                List.of(
                         new Endpoint(
                                 "169.254.169.254",
                                 "/metadata/instance",
