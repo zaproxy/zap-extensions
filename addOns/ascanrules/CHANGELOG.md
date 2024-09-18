@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
-- The Spring Actuator Scan Rule now includes example alert functionality for documentation generation purposes (Issue 6119).
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Spring Actuator
+    - XSLT Injection
+    - XPath Injection
 
 ### Fixed
 - Address false positives with Source Code Disclosure - CVE-2012-1823 scan rule, by not scanning binary responses and responses that already contain PHP source (Issue 8638).
