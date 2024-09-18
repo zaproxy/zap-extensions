@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Log exception details in Out of Band XSS scan rule.
 - Maintenance changes.
 
+### Fixed
+- Address time-based false positives in Remote Code Execution - Shell Shock scan rule (Issue 8516).
+
 ## [55] - 2024-09-02
 ### Changed
 - The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
