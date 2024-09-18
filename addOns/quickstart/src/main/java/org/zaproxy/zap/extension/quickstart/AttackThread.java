@@ -32,15 +32,16 @@ import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.Stats;
 
 public class AttackThread extends Thread {
-
+    //Maybe another field for paused?  Just so we can get the thing rolling agin easily
     public enum Progress {
-        notstarted,
-        started,
-        spider,
         ajaxspider,
         ascan,
-        failed,
         complete,
+        failed,
+        notstarted,
+        paused,
+        spider,
+        started,
         stopped
     }
 
@@ -49,6 +50,8 @@ public class AttackThread extends Thread {
     private TraditionalSpider traditionalSpider;
     private PlugableSpider plugableSpider;
     private boolean stopAttack = false;
+    private boolean pauseAttack = false;
+
     private boolean useStdSpider;
 
     private static final Logger LOGGER = LogManager.getLogger(AttackThread.class);
@@ -77,6 +80,7 @@ public class AttackThread extends Thread {
     @Override
     public void run() {
         stopAttack = false;
+        pauseAttack = false;
         boolean completed = false;
         try {
             Stats.incCounter("stats.quickstart.attack");
@@ -89,6 +93,8 @@ public class AttackThread extends Thread {
                 // the problem
                 return;
             }
+
+            // what the heck am I supposed to do here?
             if (stopAttack) {
                 LOGGER.debug("Attack stopped manually");
                 extension.notifyProgress(Progress.stopped);
