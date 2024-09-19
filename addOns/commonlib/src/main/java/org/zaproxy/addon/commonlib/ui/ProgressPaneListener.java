@@ -49,6 +49,15 @@ public class ProgressPaneListener {
     }
 
     /**
+     * Sets the total number of tasks to be processed.
+     *
+     * @param totalTasks the total number of tasks to be processed.
+     */
+    public void setTotalTasks(int totalTasks) {
+        getProgressPane().setTotalTasks(totalTasks);
+    }
+
+    /**
      * Gets the number of tasks which have been processed.
      *
      * @return the number of tasks which have been processed.

@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -50,20 +49,21 @@ public final class PcapUtils {
     private static final Logger LOGGER = LogManager.getLogger(PcapUtils.class);
 
     private static final String DOUBLE_CRLF = HttpHeader.CRLF + HttpHeader.CRLF;
+    private static final byte[] DOUBLE_CRLF_BYTES = DOUBLE_CRLF.getBytes();
 
     private static Map<StreamId, TcpStream> extractTcpStreams(File pcapFile) throws IOException {
         TcpStreamHandler streamHandler = new TcpStreamHandler();
 
-        final Pcap pcap = Pcap.openStream(pcapFile);
+        Pcap pcap = Pcap.openStream(pcapFile);
         pcap.loop(streamHandler);
         pcap.close();
 
         return streamHandler.getStreams();
     }
 
-    public static Collection<TcpStream> extractHttpStreams(File pcapFile) throws IOException {
+    private static List<TcpStream> extractHttpStreams(File pcapFile) throws IOException {
         Map<StreamId, TcpStream> tcpStreams = extractTcpStreams(pcapFile);
-        Collection<TcpStream> httpStreams = new LinkedList<>();
+        List<TcpStream> httpStreams = new ArrayList<>();
         Collection<TcpStream> streams = tcpStreams.values();
 
         for (TcpStream stream : streams) {
@@ -74,6 +74,17 @@ public final class PcapUtils {
         return httpStreams;
     }
 
+    public static List<HttpMessage> extractHttpMessages(File pcapFile) throws IOException {
+        List<TcpStream> httpStreams = extractHttpStreams(pcapFile);
+        List<HttpMessage> httpMessages = new ArrayList<>();
+        for (TcpStream httpStream : httpStreams) {
+            String requestFlow = PcapUtils.getHttpRequestFlow(httpStream);
+            byte[] responseFlow = PcapUtils.getHttpResponseFlow(httpStream);
+            httpMessages.addAll(constructHttpMessages(requestFlow, responseFlow));
+        }
+        return httpMessages;
+    }
+
     // TODO: Implement robust http stream detection
     // For now, we only detect if the first tcp segment contains a valid HttpRequestHeader
     private static boolean isHttpStream(TcpStream stream) {
@@ -81,8 +92,7 @@ public final class PcapUtils {
         for (TCPPacket packet : packets) {
             if (packet.getPayload() != null && !packet.getPayload().isEmpty()) {
                 try {
-                    HttpRequestHeader reqHeader =
-                            new HttpRequestHeader(packet.getPayload().toString());
+                    new HttpRequestHeader(packet.getPayload().toString());
                     return true;
                 } catch (HttpMalformedHeaderException e) {
                     return false;
@@ -94,7 +104,7 @@ public final class PcapUtils {
 
     // TODO: Implement robust http flow reconstruction
     // For now we ignore retransmission/missing/overlapping/out-of-order data in tcp segments.
-    public static String getHttpRequestFlow(TcpStream stream) {
+    private static String getHttpRequestFlow(TcpStream stream) {
         List<TCPPacket> tcpPackets = stream.getPackets();
         StringBuilder requestFlow = new StringBuilder();
         TransportStreamId requestDirection =
@@ -111,7 +121,7 @@ public final class PcapUtils {
         return requestFlow.toString();
     }
 
-    public static byte[] getHttpResponseFlow(TcpStream stream) {
+    private static byte[] getHttpResponseFlow(TcpStream stream) {
         List<TCPPacket> tcpPackets = stream.getPackets();
         ByteArrayOutputStream responseFlow = new ByteArrayOutputStream();
         TransportStreamId responseDirection =
@@ -123,23 +133,22 @@ public final class PcapUtils {
                 try {
                     responseFlow.write(tcpPacket.getPayload().getArray());
                 } catch (IOException e) {
-                    LOGGER.error("Failed to write response payload: " + e.getMessage());
+                    LOGGER.warn("Failed to write response payload: {}", e.getMessage());
                 }
             }
         }
         return responseFlow.toByteArray();
     }
 
-    public static List<HttpMessage> constructHttpMessages(String requestFlow, byte[] responseFlow) {
+    private static List<HttpMessage> constructHttpMessages(
+            String requestFlow, byte[] responseFlow) {
         List<HttpMessage> requestsMessages = constructHttpRequests(requestFlow);
         return constructHttpResponses(responseFlow, requestsMessages);
     }
 
     private static List<HttpMessage> constructHttpRequests(String requestFlow) {
         List<HttpMessage> requests = new ArrayList<>();
-        ArrayList<String> flow = new ArrayList<>(List.of(requestFlow.split(DOUBLE_CRLF)));
-
-        ListIterator<String> flowIt = flow.listIterator();
+        ListIterator<String> flowIt = List.of(requestFlow.split(DOUBLE_CRLF)).listIterator();
 
         while (flowIt.hasNext()) {
             HttpRequestHeader reqHeader = new HttpRequestHeader();
@@ -148,8 +157,8 @@ public final class PcapUtils {
                 reqHeader = new HttpRequestHeader(flowIt.next());
                 if (flowIt.hasNext()) {
                     try {
-                        // if the lookahead is a header, then the request has an empty body
-                        HttpRequestHeader lookahead = new HttpRequestHeader(flowIt.next());
+                        // if next is a header, then the request has an empty body
+                        new HttpRequestHeader(flowIt.next());
                         flowIt.previous();
                     } catch (HttpMalformedHeaderException e) {
                         flowIt.previous();
@@ -158,7 +167,7 @@ public final class PcapUtils {
                 }
             } catch (HttpMalformedHeaderException e) {
                 // we assume the header will always come first
-                LOGGER.error("Failed to parse request header: " + e.getMessage());
+                LOGGER.warn("Failed to parse request header: {}", e.getMessage());
             } finally {
                 requests.add(new HttpMessage(reqHeader, reqBody));
             }
@@ -170,7 +179,7 @@ public final class PcapUtils {
     private static List<HttpMessage> constructHttpResponses(
             byte[] responseFlow, List<HttpMessage> requests) {
         List<HttpMessage> messages = new ArrayList<>();
-        List<byte[]> flow = splitByteArray(responseFlow, DOUBLE_CRLF.getBytes());
+        List<byte[]> flow = splitByteArray(responseFlow, DOUBLE_CRLF_BYTES);
 
         int reqIndex = 0;
         ListIterator<byte[]> flowIt = flow.listIterator();
@@ -181,8 +190,7 @@ public final class PcapUtils {
                 resHeader = new HttpResponseHeader(new String(flowIt.next()));
                 if (flowIt.hasNext()) {
                     try {
-                        HttpResponseHeader lookahead =
-                                new HttpResponseHeader(new String(flowIt.next()));
+                        new HttpResponseHeader(new String(flowIt.next()));
                         flowIt.previous();
                     } catch (HttpMalformedHeaderException e) {
                         flowIt.previous();
@@ -191,7 +199,7 @@ public final class PcapUtils {
                 }
             } catch (HttpMalformedHeaderException e) {
                 // we assume the header will always come first
-                LOGGER.error("Failed to parse response header: " + e.getMessage());
+                LOGGER.warn("Failed to parse response header: {}", e.getMessage());
             } finally {
                 // We assume 1) that there are as many responses as requests
                 // and 2) that they are in order (http 1.x)

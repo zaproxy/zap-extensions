@@ -19,11 +19,8 @@
  */
 package org.zaproxy.addon.exim.pcap;
 
-import io.pkts.streams.TcpStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +30,6 @@ import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.commonlib.ui.ProgressPane;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.zap.utils.ThreadUtils;
 
@@ -43,17 +39,15 @@ public class PcapImporter {
 
     private static ExtensionHistory extHistory;
 
-    private ProgressPane progressPane = null;
-    private ProgressPaneListener progressListener = null;
+    private ProgressPaneListener progressListener;
     private boolean success;
 
     public PcapImporter(File file) {
         importPcapFile(file);
     }
 
-    public PcapImporter(File file, ProgressPane progressPane) {
-        this.progressPane = progressPane;
-        this.progressListener = new ProgressPaneListener(progressPane);
+    public PcapImporter(File file, ProgressPaneListener listener) {
+        this.progressListener = listener;
         importPcapFile(file);
     }
 
@@ -69,7 +63,7 @@ public class PcapImporter {
             return;
         }
 
-        setTotalTasks(messages.size());
+        progressListener.setTotalTasks(messages.size());
         int count = 0;
         for (HttpMessage msg : messages) {
             if (msg == null) {
@@ -85,17 +79,7 @@ public class PcapImporter {
     }
 
     protected static List<HttpMessage> getHttpMessages(File pcapFile) throws IOException {
-        List<HttpMessage> httpMessages = new LinkedList<>();
-
-        Collection<TcpStream> httpStreams = PcapUtils.extractHttpStreams(pcapFile);
-
-        for (TcpStream httpStream : httpStreams) {
-            String requestFlow = PcapUtils.getHttpRequestFlow(httpStream);
-            byte[] responseFlow = PcapUtils.getHttpResponseFlow(httpStream);
-            httpMessages.addAll(PcapUtils.constructHttpMessages(requestFlow, responseFlow));
-        }
-
-        return httpMessages;
+        return PcapUtils.extractHttpMessages(pcapFile);
     }
 
     private static void persistMessage(HttpMessage message) {
@@ -134,12 +118,6 @@ public class PcapImporter {
 
     public boolean isSuccess() {
         return success;
-    }
-
-    private void setTotalTasks(int totalTasks) {
-        if (progressPane != null) {
-            progressPane.setTotalTasks(totalTasks);
-        }
     }
 
     private void updateProgress(int count, String line) {

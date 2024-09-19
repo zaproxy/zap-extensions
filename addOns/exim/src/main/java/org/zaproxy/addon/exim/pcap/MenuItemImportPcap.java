@@ -27,6 +27,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.commonlib.ui.ProgressPane;
+import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.addon.commonlib.ui.ReadableFileChooser;
 import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -63,7 +64,7 @@ public class MenuItemImportPcap extends ZapMenuItem {
                         ProgressPane currentImportPane =
                                 new ProgressPane(newFile.getAbsolutePath(), true);
                         ExtensionExim.getProgressPanel().addProgressPane(currentImportPane);
-                        new PcapImporter(newFile, currentImportPane);
+                        new PcapImporter(newFile, new ProgressPaneListener(currentImportPane));
                     }
                 });
     }

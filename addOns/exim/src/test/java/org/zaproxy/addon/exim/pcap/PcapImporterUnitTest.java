@@ -34,7 +34,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.commonlib.ui.ProgressPane;
+import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link PcapImporter}. */
@@ -92,7 +92,7 @@ class PcapImporterUnitTest extends TestUtils {
     void shouldCompleteListenerIfFileNotFound(@TempDir Path dir) {
         // Given
         File file = dir.resolve("missing.pcap").toFile();
-        ProgressPane progressPane = mock(ProgressPane.class);
+        ProgressPaneListener progressPane = mock(ProgressPaneListener.class);
         // When
         PcapImporter importer = new PcapImporter(file, progressPane);
         // Then
