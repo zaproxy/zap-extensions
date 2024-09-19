@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Log exception details in Out of Band XSS scan rule.
 - Maintenance changes.
+- The Proxy Disclosure scan rule will no longer alert on HTTP messages that have evidence to start with, in order to reduce possible false positives (Issue 8556). The misleading Attack string for the Alerts was also removed.
 
 ### Fixed
 - Address time-based false positives in Remote Code Execution - Shell Shock scan rule (Issue 8516).
