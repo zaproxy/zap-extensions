@@ -448,7 +448,9 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                             param,
                             context.getSurroundingQuote() + " src=http://badsite.com",
                             context,
-                            HtmlContext.IGNORE_TAG);
+                            HtmlContext.IGNORE_TAG
+                                    | HtmlContext.IGNORE_IN_URL
+                                    | HtmlContext.IGNORE_WITH_SRC);
             if (contexts2 == null) {
                 return false;
             }
@@ -508,7 +510,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                                 + context.getSurroundingQuote()
                                 + "alert(1);",
                         context,
-                        HtmlContext.IGNORE_TAG);
+                        HtmlContext.IGNORE_TAG | HtmlContext.IGNORE_IN_URL);
         if (contexts2 == null) {
             return false;
         }
