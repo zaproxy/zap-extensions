@@ -31,7 +31,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.26.0 & < 2.0.0")
+                    version.set(">= 1.28.0 & < 2.0.0")
                 }
             }
         }
@@ -59,6 +59,11 @@ dependencies {
         // Provided by commonlib add-on:
         exclude(group = "com.fasterxml.jackson.core")
     }
+    implementation(files("lib/pkts-core-3.0.11-tcp-streams-branch.jar"))
+    implementation(files("lib/pkts-streams-3.0.11-tcp-streams-branch.jar"))
+    implementation(files("lib/pkts-buffers-3.0.11-tcp-streams-branch.jar"))
+    implementation("io.hektor:hektor-fsm:0.0.5")
+    implementation(libs.log4j.slf4j)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(project(":testutils"))
