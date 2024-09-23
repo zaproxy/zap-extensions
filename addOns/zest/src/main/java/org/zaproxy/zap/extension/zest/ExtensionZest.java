@@ -1766,7 +1766,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     @Override
     public void scriptAdded(ScriptWrapper script, boolean display) {
-        if (script.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
+        if (ZestScriptEngineFactory.NAME.equals(script.getEngineName())) {
 
             ScriptNode typeNode =
                     this.getExtScript().getTreeModel().getTypeNode(script.getTypeName());
