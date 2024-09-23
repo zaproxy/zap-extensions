@@ -22,6 +22,8 @@ package org.zaproxy.addon.client;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,6 +36,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
@@ -128,8 +131,7 @@ class ExtensionClientIntegrationUnitTest {
         Control.initSingletonForTesting(mock(Model.class), extensionLoader);
         ExtensionSelenium extSel = mock(ExtensionSelenium.class);
         when(extensionLoader.getExtension(ExtensionSelenium.class)).thenReturn(extSel);
-        FirefoxProfileManager fpm = mock(FirefoxProfileManager.class);
-        when(extSel.getProfileManager(Browser.FIREFOX)).thenReturn(fpm);
+        given(extSel.getProxiedBrowser(anyString(), anyString())).willReturn(mock(WebDriver.class));
         ExtensionClientIntegration extClient = new ExtensionClientIntegration();
         ClientOptions options = new ClientOptions();
         options.load(new ZapXmlConfiguration());
@@ -142,6 +144,6 @@ class ExtensionClientIntegrationUnitTest {
         spider.stop();
 
         // Then
-        assertEquals(isRunning, true);
+        assertEquals(true, isRunning);
     }
 }
