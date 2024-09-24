@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -325,12 +326,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
                 String response = msg.getResponseBody().toString();
                 Matcher matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
                 if (matcher.find()) {
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setAttack(payload)
-                            .setEvidence(matcher.group())
-                            .setMessage(msg)
-                            .raise();
+                    createAlert(payload, matcher.group()).setMessage(msg).raise();
                 }
                 if (isStop()) {
                     return;
@@ -383,12 +379,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
             String response = msg.getResponseBody().toString();
             Matcher matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
             if (matcher.find()) {
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setAttack(payload)
-                        .setEvidence(matcher.group())
-                        .setMessage(msg)
-                        .raise();
+                createAlert(payload, matcher.group()).setMessage(msg).raise();
                 return true;
             }
             if (isStop()) {
@@ -404,5 +395,26 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
         sb.append(ATTACK_ENTITY);
         sb.append(requestBody.substring(tagMatcher.end(1)));
         return sb.toString();
+    }
+
+    private AlertBuilder createAlert(String attack, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setAttack(attack)
+                .setEvidence(evidence);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert(
+                                "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                                        + "<!DOCTYPE foo [\n"
+                                        + "  <!ELEMENT foo ANY >\n"
+                                        + "  <!ENTITY zapxxe SYSTEM \"file:///etc/passwd\">\n"
+                                        + "]>\n"
+                                        + "<comment><text>&zapxxe;</text></comment>",
+                                "root:*:0:0")
+                        .build());
     }
 }
