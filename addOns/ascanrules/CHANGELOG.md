@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [68] - 2024-09-24
 ### Changed
+- Cloud Metadata rule is improved to support GCP, Azure and OCI.
 - Maintenance changes.
 - The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
     - Spring Actuator
@@ -29,6 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - False positives in the Path Traversal rule.
 - Alert text for various rules has been updated to more consistently use periods and spaces in a uniform manner.
 - False Positives in the Remote File Inclusion rule (Issue 8561).
+- False Positives in Cloud Metadata rule.
 
 ## [66] - 2024-05-07
 ### Changed
