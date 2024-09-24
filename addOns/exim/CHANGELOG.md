@@ -4,8 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.11.0] - 2024-09-24
 ### Changed
 - Leverage Jackson library from the Common Library add-on.
+- Depend on newer version of Common Library add-on.
+- Leverage aboutsip's pkts.io library for parsing pcap files and organizing tcp streams
+- PCAP importing for simple HTTP/1.1 traffic, works for traces with: No duplicates or missing TCP segments, with no missing HTTP responses to HTTP requests, and for HTTP 1.1 only
 
 ### Fixed
 - Correctly load Automation Framework template plans.
@@ -90,6 +96,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release.
 
+[0.11.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.11.0
 [0.10.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.10.0
 [0.9.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.8.0

@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [43] - 2024-09-23
 ### Added
 - Allow to import the OpenAPI definitions with a user (Issue 7739).
 - Honour context exclusions when importing (Issue 8021).
@@ -325,6 +328,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[43]: https://github.com/zaproxy/zap-extensions/releases/openapi-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/openapi-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/openapi-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/openapi-v40

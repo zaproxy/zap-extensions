@@ -258,20 +258,21 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
         }
         HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
         List<HtmlContext> contexts;
-        if (Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
-            // High level, so check all results are in the expected context
-            contexts =
-                    hca.getHtmlContexts(
-                            findDecoded ? getURLDecode(evidence) : evidence,
-                            targetContext,
-                            ignoreFlags,
-                            ignoreSafeParents);
-        } else {
+        if (Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
+            // Low level, so don't check all results are in the expected context
             contexts =
                     hca.getHtmlContexts(
                             findDecoded ? getURLDecode(evidence) : evidence,
                             null,
                             0,
+                            ignoreSafeParents);
+        } else {
+            // High or Medium level, so check all results are in the expected context
+            contexts =
+                    hca.getHtmlContexts(
+                            findDecoded ? getURLDecode(evidence) : evidence,
+                            targetContext,
+                            ignoreFlags,
                             ignoreSafeParents);
         }
         if (mutateAttack || !contexts.isEmpty()) {
@@ -447,7 +448,9 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                             param,
                             context.getSurroundingQuote() + " src=http://badsite.com",
                             context,
-                            HtmlContext.IGNORE_TAG);
+                            HtmlContext.IGNORE_TAG
+                                    | HtmlContext.IGNORE_IN_URL
+                                    | HtmlContext.IGNORE_WITH_SRC);
             if (contexts2 == null) {
                 return false;
             }
@@ -507,7 +510,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                                 + context.getSurroundingQuote()
                                 + "alert(1);",
                         context,
-                        HtmlContext.IGNORE_TAG);
+                        HtmlContext.IGNORE_TAG | HtmlContext.IGNORE_IN_URL);
         if (contexts2 == null) {
             return false;
         }
@@ -832,7 +835,9 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
 
     private boolean performElementAttack(HtmlContext context, HttpMessage msg, String param) {
         String attackString1 = "tag " + ACCESSKEY_ATTRIBUTE_ALERT;
-        List<HtmlContext> context2 = performAttack(msg, param, attackString1, context, 0);
+        // In this case the parent effectively changes
+        List<HtmlContext> context2 =
+                performAttack(msg, param, attackString1, context, HtmlContext.IGNORE_PARENT);
         if (context2 == null) {
             context2 = performAttack(msg, param, TAG_ONCLICK_ALERT, context, 0);
             if (context2 == null) {

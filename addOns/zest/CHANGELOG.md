@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [47] - 2024-09-24
+### Fixed
+- Correctly handle added scripts with no engine name.
+
 ## [46] - 2024-06-28
 ### Added
 - Document the engine name in the help page.
@@ -338,6 +342,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[47]: https://github.com/zaproxy/zap-extensions/releases/zest-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/zest-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/zest-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/zest-v44

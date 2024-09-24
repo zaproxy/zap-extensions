@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [1.28.0] - 2024-09-24
+### Changed
+- Maintenance changes.
+
 ## [1.27.0] - 2024-09-02
 ### Fixed
 - Address false positives/negatives when handling cookies without name value pair separator (Issue 8613).
@@ -179,6 +183,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.28.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.28.0
 [1.27.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.27.0
 [1.26.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.26.0
 [1.25.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.25.0
