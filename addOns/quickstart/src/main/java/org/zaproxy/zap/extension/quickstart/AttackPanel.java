@@ -84,6 +84,7 @@ public class AttackPanel extends QuickStartSubPanel {
     @Override
     public JPanel getDescriptionPanel() {
         JPanel panel = new QuickStartBackgroundPanel();
+        // here we are.  God damn it
         panel.add(
                 QuickStartHelper.getWrappedLabel("quickstart.attack.panel.message1"),
                 LayoutHelper.getGBC(0, 0, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
@@ -152,9 +153,11 @@ public class AttackPanel extends QuickStartSubPanel {
 
             traditionalSpiderY = ++formPanelY;
             plugableSpiderY = ++formPanelY;
-
+            
+            // this sets the horizontal panel for the start and stop buttons I guess?
             JPanel buttonPanel = QuickStartHelper.getHorizontalPanel();
             buttonPanel.add(this.getAttackButton());
+            buttonPanel.add(this.getPauseButton());
             buttonPanel.add(this.getStopButton());
             buttonPanel.add(Box.createHorizontalGlue());
             contentPanel.add(buttonPanel, LayoutHelper.getGBC(2, ++formPanelY, 1, 1.0D));
@@ -331,6 +334,7 @@ public class AttackPanel extends QuickStartSubPanel {
             attackButton.setToolTipText(
                     Constant.messages.getString("quickstart.button.tooltip.attack"));
 
+                    //
             attackButton.addActionListener(
                     e -> {
                         if ((traditionalSpider == null || !traditionalSpider.isSelected())
@@ -346,6 +350,26 @@ public class AttackPanel extends QuickStartSubPanel {
                     });
         }
         return attackButton;
+    }
+
+    // what are we doing here?
+    private JButton getPauseButton() {
+        if (stopButton == null) {
+            stopButton = new JButton();
+            stopButton.setText(Constant.messages.getString("quickstart.button.label.pause"));
+            stopButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    SearchPanel.class.getResource(
+                                            "/resource/icon/16/141.png")))); // 'pause'
+            // icon
+            stopButton.setToolTipText(
+                    Constant.messages.getString("quickstart.button.tooltip.stop"));
+            stopButton.setEnabled(false);
+
+            stopButton.addActionListener(e -> stopAttack());
+        }
+        return stopButton;
     }
 
     private JButton getStopButton() {
@@ -367,6 +391,7 @@ public class AttackPanel extends QuickStartSubPanel {
         return stopButton;
     }
 
+    //! this part attacks
     boolean attackUrl() {
         Object item = this.getUrlField().getSelectedItem();
         if (item == null || DEFAULT_VALUE_URL_FIELD.equals(item.toString())) {
