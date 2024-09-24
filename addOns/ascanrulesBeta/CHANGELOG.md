@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [56] - 2024-09-24
 ### Changed
 - Log exception details in Out of Band XSS scan rule.
 - Maintenance changes.
@@ -542,6 +542,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[56]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v56
 [55]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v53

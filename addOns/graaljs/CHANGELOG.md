@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.8.0] - 2024-09-24
 ### Added
 - Document the engine name in the help page.
 
@@ -61,6 +61,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 First version.
 
+[0.8.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.8.0
 [0.7.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.5.0
