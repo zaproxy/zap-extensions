@@ -784,7 +784,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         return str.replaceFirst("generated=\".*\"", "generated=\"DATE\"")
                 .replaceFirst("@generated\": \".*\"", "@generated\": \"DATE\"")
                 .replaceAll("basic-.*/", "dir")
-                .replaceAll("[\\n\\r\\t]", "");
+                .replaceAll("[\\n\\r\\t ]+", " ");
     }
 
     @ParameterizedTest
@@ -1295,8 +1295,10 @@ class ExtensionReportsUnitTest extends TestUtils {
 
             generateTestFile("high-level-report");
             generateTestFile("traditional-json");
+            generateTestFile("traditional-json-plus");
             generateTestFile("traditional-md");
             generateTestFile("traditional-xml");
+            generateTestFile("traditional-xml-plus");
             generateTestFile("traditional-html");
             generateTestFile("traditional-html-plus");
 

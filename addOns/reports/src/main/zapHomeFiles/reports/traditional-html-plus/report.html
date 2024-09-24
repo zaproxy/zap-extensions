@@ -31,8 +31,8 @@
 <body>
 	<h1>
 		<!-- The ZAP Logo -->
-		<img th:src="${resources + '/zap32x32.png'}"
-			src="resources/zap32x32.png" alt="">
+		<img th:src="${resources + '/zap-by-checkmarx.png'}"
+			src="resources/zap-by-checkmarx.png" alt="">
 		<th:block th:text="${reportTitle}">Report Title</th:block>
 	</h1>
 	<p />
@@ -50,8 +50,7 @@
 		<th:block th:text="#{report.zapVersion(${zapVersion})}">ZAP Version</th:block>
 	</h3>
 	<h4>
-		ZAP is supported by the <a href="https://crashoverride.com/?zap=rep">Crash
-			Override Open Source Fellowship</a>
+		ZAP by <a href="https://checkmarx.com/">Checkmarx</a>
 	</h4>
 	<th:block th:if="${reportData.isIncludeSection('chart')}">
 		<canvas id="summaryChart" width="550" height="300"
