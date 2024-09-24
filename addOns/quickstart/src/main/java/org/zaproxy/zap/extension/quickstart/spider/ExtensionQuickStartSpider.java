@@ -135,6 +135,16 @@ public class ExtensionQuickStartSpider extends ExtensionAdaptor {
         }
 
         @Override
+        public void pauseScan() {
+            scan.pauseScan();
+        }
+
+        @Override
+        public void resumeScan() {
+            scan.resumeScan();
+        }
+
+        @Override
         public int getProgress() {
             return scan.getProgress();
         }

@@ -32,7 +32,6 @@ import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.Stats;
 
 public class AttackThread extends Thread {
-    //Maybe another field for paused?  Just so we can get the thing rolling agin easily
     public enum Progress {
         ajaxspider,
         ascan,
@@ -51,6 +50,10 @@ public class AttackThread extends Thread {
     private PlugableSpider plugableSpider;
     private boolean stopAttack = false;
     private boolean pauseAttack = false;
+    private boolean resumeAttack = false;
+
+    private boolean currentlyAttacking = false;
+
 
     private boolean useStdSpider;
 
@@ -77,10 +80,13 @@ public class AttackThread extends Thread {
         this.plugableSpider = plugableSpider;
     }
 
+    // running causes everything to be started.  As a result stopAttack and pauseAttack are to be set to false
     @Override
     public void run() {
         stopAttack = false;
         pauseAttack = false;
+        currentlyAttacking = true;
+
         boolean completed = false;
         try {
             Stats.incCounter("stats.quickstart.attack");
@@ -100,6 +106,15 @@ public class AttackThread extends Thread {
                 extension.notifyProgress(Progress.stopped);
                 return;
             }
+
+            if (pauseAttack) {
+                LOGGER.debug("Attack paused manually");
+                extension.notifyProgress(Progress.paused);
+                return;
+            }
+
+
+
             Target target = new Target(startNode);
             target.setRecurse(true);
             if (plugableSpider != null) {
@@ -127,7 +142,13 @@ public class AttackThread extends Thread {
                         if (this.stopAttack) {
                             spiderScan.stopScan();
                             break;
+                        } else if (this.pauseAttack) {
+                            spiderScan.pauseScan();
+                            break;
+                        } else if (this.resumeAttack) {
+                            spiderScan.resumeScan();
                         }
+
                         extension.notifyProgress(Progress.spider, spiderScan.getProgress());
                     }
                 } catch (InterruptedException e) {
@@ -139,6 +160,13 @@ public class AttackThread extends Thread {
                     return;
                 }
 
+                if (pauseAttack) {
+                    LOGGER.debug("Attack paused manually jesse2");
+                    extension.notifyProgress(Progress.paused);
+                    return;
+                }
+
+
                 // Pause after the spider seems to help
                 sleep(2000);
             }
@@ -146,6 +174,12 @@ public class AttackThread extends Thread {
             if (stopAttack) {
                 LOGGER.debug("Attack stopped manually");
                 extension.notifyProgress(Progress.stopped);
+                return;
+            }
+
+            if (pauseAttack) {
+                LOGGER.debug("Attack paused manually jesse3");
+                extension.notifyProgress(Progress.paused);
                 return;
             }
 
@@ -201,6 +235,10 @@ public class AttackThread extends Thread {
                     sleep(500);
                     if (this.stopAttack) {
                         extAscan.stopScan(scanId);
+                    } else if (this.pauseAttack) {
+                        extAscan.pauseScan(scanId);
+                    } else if (this.resumeAttack) {
+                        extAscan.resumeScan(scanId);
                     }
                     extension.notifyProgress(Progress.ascan, ascan.getProgress());
                 }
@@ -221,6 +259,9 @@ public class AttackThread extends Thread {
             } else if (stopAttack) {
                 LOGGER.debug("Attack stopped manually");
                 extension.notifyProgress(Progress.stopped);
+            } else if (pauseAttack) {
+                LOGGER.debug("Attack paused manually Jesse5");
+                extension.notifyProgress(Progress.paused);
             } else {
                 LOGGER.debug("Attack completed");
                 extension.notifyProgress(Progress.complete);
@@ -230,5 +271,22 @@ public class AttackThread extends Thread {
 
     public void stopAttack() {
         this.stopAttack = true;
+    }
+
+    public void togglePauseAttack() {
+        this.pauseAttack = true;
+        this.resumeAttack = false;
+        // this.currentlyAttacking = true;
+    }
+
+    public boolean returnPauseState() {
+        return this.pauseAttack;
+        // this.currentlyAttacking = true;
+    }
+
+
+    public void resumeAttack() {
+        this.pauseAttack = false;
+        this.resumeAttack = true;
     }
 }

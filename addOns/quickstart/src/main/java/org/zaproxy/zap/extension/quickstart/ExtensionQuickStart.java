@@ -461,6 +461,22 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         }
     }
 
+    public void togglePauseAttack() {
+        if (attackThread != null) {
+            attackThread.togglePauseAttack();
+        } 
+    }
+
+    public void resumeAttack() {
+        if (attackThread != null) {
+            attackThread.resumeAttack();
+        } 
+    }
+
+    public boolean checkPause() {
+        return attackThread.returnPauseState();
+    }
+
     public void showOnStart(boolean showOnStart) {
         if (!showOnStart) {
             // Remove the tab right away
