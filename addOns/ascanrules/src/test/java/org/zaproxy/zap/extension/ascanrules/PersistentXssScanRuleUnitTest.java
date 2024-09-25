@@ -24,8 +24,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 import java.util.Map;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.parosproxy.paros.core.scanner.Alert;
 
 /** Unit test for {@link PersistentXssScanRule}. */
 class PersistentXssScanRuleUnitTest extends ActiveScannerTest<PersistentXssScanRule> {
@@ -61,5 +63,17 @@ class PersistentXssScanRuleUnitTest extends ActiveScannerTest<PersistentXssScanR
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_02_STORED_XSS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_02_STORED_XSS.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        List<Alert> alerts = rule.getExampleAlerts();
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

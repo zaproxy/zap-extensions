@@ -681,6 +681,29 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin
     }
 
     @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "https://example.com/comments",
+                                "comment",
+                                "<script>alert('XSS');</script>",
+                                'P',
+                                "HTTP/1.1 500 Internal Server Error")
+                        .build());
+    }
+
+    private AlertBuilder buildAlert(
+            String url, String param, String attack, char type, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setUri(url)
+                .setParam(param)
+                .setAttack(attack)
+                .setOtherInfo(getError(type))
+                .setEvidence(evidence);
+    }
+
+    @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
     }
