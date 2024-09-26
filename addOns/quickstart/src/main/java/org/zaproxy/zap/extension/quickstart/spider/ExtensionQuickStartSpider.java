@@ -132,6 +132,7 @@ public class ExtensionQuickStartSpider extends ExtensionAdaptor {
         @Override
         public void stopScan() {
             scan.stopScan();
+            // investigate this
         }
 
         @Override

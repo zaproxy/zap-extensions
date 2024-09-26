@@ -20,6 +20,9 @@
 package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.GridBagLayout;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.net.URL;
 import java.util.List;
 import javax.swing.Box;
@@ -48,6 +51,7 @@ public class AttackPanel extends QuickStartSubPanel {
     private static final long serialVersionUID = 1L;
 
     private static final String DEFAULT_VALUE_URL_FIELD = "http://";
+    private static final Logger LOGGER = LogManager.getLogger(AttackPanel.class);
 
     private ImageIcon icon;
     private JButton attackButton;
@@ -379,6 +383,13 @@ public class AttackPanel extends QuickStartSubPanel {
                 // need to check if paused.  We need to check if the button was already clicked maybe?   
                 //just check if it paused and then handle accordingly
                 boolean checkPause = checkPauseStatus();
+                System.out.println(checkPause);
+                System.out.println("checkPause");
+                LOGGER.debug("what is this");
+                LOGGER.debug(checkPause);
+                LOGGER.info("does this help?");
+
+
                 if (checkPause == true) {
                     resumeAttack();
                 } else {
@@ -464,13 +475,14 @@ public class AttackPanel extends QuickStartSubPanel {
     }
 
     private void togglePauseAttack() {
+        LOGGER.info("toggle");
         getExtensionQuickStart().togglePauseAttack();
 
         // stopButton.setEnabled(false);
     }
 
     private void resumeAttack() {
-        getExtensionQuickStart().togglePauseAttack();
+        getExtensionQuickStart().resumeAttack();
 
         // stopButton.setEnabled(false);
     }

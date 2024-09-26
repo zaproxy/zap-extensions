@@ -56,7 +56,7 @@ public class AttackThread extends Thread {
 
 
     private boolean useStdSpider;
-
+//! s
     private static final Logger LOGGER = LogManager.getLogger(AttackThread.class);
 
     private static final HttpRequestConfig REQ_CONFIG =
@@ -109,7 +109,7 @@ public class AttackThread extends Thread {
 
             if (pauseAttack) {
                 LOGGER.debug("Attack paused manually");
-                extension.notifyProgress(Progress.paused);
+                // extension.notifyProgress(Progress.paused);
                 return;
             }
 
@@ -146,7 +146,9 @@ public class AttackThread extends Thread {
                             spiderScan.pauseScan();
                             break;
                         } else if (this.resumeAttack) {
+                            LOGGER.debug("running resume scan");
                             spiderScan.resumeScan();
+                            break;
                         }
 
                         extension.notifyProgress(Progress.spider, spiderScan.getProgress());
@@ -162,7 +164,7 @@ public class AttackThread extends Thread {
 
                 if (pauseAttack) {
                     LOGGER.debug("Attack paused manually jesse2");
-                    extension.notifyProgress(Progress.paused);
+                    // extension.notifyProgress(Progress.paused);
                     return;
                 }
 
@@ -179,7 +181,7 @@ public class AttackThread extends Thread {
 
             if (pauseAttack) {
                 LOGGER.debug("Attack paused manually jesse3");
-                extension.notifyProgress(Progress.paused);
+                // extension.notifyProgress(Progress.paused);
                 return;
             }
 
@@ -261,7 +263,7 @@ public class AttackThread extends Thread {
                 extension.notifyProgress(Progress.stopped);
             } else if (pauseAttack) {
                 LOGGER.debug("Attack paused manually Jesse5");
-                extension.notifyProgress(Progress.paused);
+                // extension.notifyProgress(Progress.paused);
             } else {
                 LOGGER.debug("Attack completed");
                 extension.notifyProgress(Progress.complete);
@@ -274,6 +276,8 @@ public class AttackThread extends Thread {
     }
 
     public void togglePauseAttack() {
+        LOGGER.debug("paused inside the toggle");
+
         this.pauseAttack = true;
         this.resumeAttack = false;
         // this.currentlyAttacking = true;
@@ -284,9 +288,9 @@ public class AttackThread extends Thread {
         // this.currentlyAttacking = true;
     }
 
-
     public void resumeAttack() {
+        LOGGER.debug("we are changing the variables inside");
         this.pauseAttack = false;
-        this.resumeAttack = true;
+        // this.resumeAttack = true;
     }
 }

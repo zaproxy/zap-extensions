@@ -425,6 +425,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                 break;
             case failed:
             case complete:
+            case paused:
             case stopped:
                 this.runningFromCmdLine = false;
                 break;
@@ -468,7 +469,11 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     }
 
     public void resumeAttack() {
+        LOGGER.info("What are we doing here.  Is attackThread null?");
+        // it is not null
+        LOGGER.info(attackThread);
         if (attackThread != null) {
+            LOGGER.info("inside the check");
             attackThread.resumeAttack();
         } 
     }
