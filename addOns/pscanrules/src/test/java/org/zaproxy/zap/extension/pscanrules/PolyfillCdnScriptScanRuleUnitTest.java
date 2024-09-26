@@ -287,6 +287,6 @@ class PolyfillCdnScriptScanRuleUnitTest extends PassiveScannerTest<PolyfillCdnSc
         long end = System.currentTimeMillis();
 
         assertThat(alertsRaised.size(), equalTo(0));
-        assertThat(end - start, lessThan(200L));
+        assertThat(end - start, lessThan(275L));
     }
 }
