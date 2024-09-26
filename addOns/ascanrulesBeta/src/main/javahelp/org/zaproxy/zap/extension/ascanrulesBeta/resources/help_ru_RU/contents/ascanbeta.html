@@ -49,6 +49,8 @@ Scans HTML based messages for the existence of Anti-CSRF tokens. <br>
 Любые FORM с именем или идентификатором, соответствующим одному из этих идентификаторов, будут игнорироваться при сканировании на предмет отсутствия токенов Anti-CSRF. 
 Используйте эту функцию только для игнорирования тех ФОРМ, которые, как вы знаете, безопасны, например, форм поиска. 
 <p>
+Note: GET requests are only evaluated at Low Threshold.
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CsrfTokenScanRule.java">CsrfTokenScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/20012/">20012</a>.
