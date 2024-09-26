@@ -31,8 +31,8 @@
 				<th:block>
 					<h1>
 						<!-- The ZAP Logo -->
-						<img th:src="${resources + '/zap32x32.png'}"
-							src="resources/zap32x32.png" alt="">
+						<img th:src="${resources + '/zap-by-checkmarx.png'}"
+							src="resources/zap-by-checkmarx.png" alt="">
 						<th th:text="${reportTitle}"></th>
 					</h1>
 				</th:block>
@@ -44,9 +44,8 @@
 				th:text="#{report.generated(${#dates.format(new java.util.Date(), 'EEE, d MMM yyyy HH:mm:ss')})}"
 				th:class="'text-right'">Date, time</em> <em
 				th:text="#{report.zapVersion(${zapVersion})}"
-				th:class="'text-right'">ZAP Version</em> <em> ZAP is supported
-				by the <a href="https://crashoverride.com/?zap=rep">Crash
-					Override Open Source Fellowship</a>
+				th:class="'text-right'">ZAP Version</em> <em> ZAP by <a
+				href="https://checkmarx.com/">Checkmarx</a>
 			</em>
 		</div>
 	</div>
