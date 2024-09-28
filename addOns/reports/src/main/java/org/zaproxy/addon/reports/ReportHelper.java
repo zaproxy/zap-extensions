@@ -129,7 +129,7 @@ public class ReportHelper {
     }
 
     /**
-     * @deprecated Use {@link getAlertInstancesForSite(AlertNode, String, String int)} instead -
+     * @deprecated Use {@link #getAlertInstancesForSite(AlertNode, String, String, int)} instead -
      *     this method can return the instances for different alerts with the same pluginId.
      */
     @Deprecated
