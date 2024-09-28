@@ -99,4 +99,24 @@ class PcapImporterUnitTest extends TestUtils {
         assertThat(importer.isSuccess(), equalTo(false));
         verify(progressPane).completed();
     }
+
+    @Test
+    void shouldDetectHttpStreamIfFirstRequestHeaderSplitOnHeaderName() throws IOException {
+        // Given
+        File file = getResourcePath("http1.1RequestHeaderSplitOnHeaderName.pcap").toFile();
+        // When
+        List<HttpMessage> messages = PcapImporter.getHttpMessages(file);
+        // Then
+        assertThat(messages.size(), is(equalTo(1)));
+    }
+
+    @Test
+    void shouldDetectHttpStreamIfFirstRequestHeaderSplitOnUrl() throws IOException {
+        // Given
+        File file = getResourcePath("http1.1GetRequestHeaderSplitOnUrl.pcap").toFile();
+        // When
+        List<HttpMessage> messages = PcapImporter.getHttpMessages(file);
+        // Then
+        assertThat(messages.size(), is(equalTo(1)));
+    }
 }
