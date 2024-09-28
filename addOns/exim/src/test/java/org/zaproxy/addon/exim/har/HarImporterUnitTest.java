@@ -228,6 +228,16 @@ class HarImporterUnitTest extends TestUtils {
         verify(listener).completed();
     }
 
+    @Test
+    void shouldCountNullMessagesTowardsTasksDone() {
+        // Given
+        ProgressPaneListener listener = mock(ProgressPaneListener.class);
+        // When
+        new HarImporter(getResourcePath("oneNullMessage.har").toFile(), listener);
+        // Then
+        verify(listener).setTasksDone(1);
+    }
+
     @ParameterizedTest
     @ValueSource(
             strings = {

@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Correctly load Automation Framework template plans.
 - Base64 decode the response body when importing HARs.
+- Count null messages as tasks done toward progress when importing HARs.
 
 ## [0.10.0] - 2024-07-22
 ### Changed
