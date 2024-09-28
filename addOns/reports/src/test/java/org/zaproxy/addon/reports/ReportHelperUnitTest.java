@@ -59,13 +59,21 @@ class ReportHelperUnitTest {
         // Given / When / Then
         assertThat(ReportHelper.getPortForSite("https://www.example.com:443"), is(443));
         assertThat(ReportHelper.getPortForSite("https://www.example.com:8443"), is(8443));
+        assertThat(
+                ReportHelper.getPortForSite("https://www.example.com:8443/some/path/"), is(8443));
         assertThat(ReportHelper.getPortForSite("https://www.example.com:8080"), is(8080));
         assertThat(ReportHelper.getPortForSite("http://www.example.com:8080"), is(8080));
+        assertThat(ReportHelper.getPortForSite("http://www.example.com:8080/some/path/"), is(8080));
         assertThat(ReportHelper.getPortForSite("https://www.example.com"), is(443));
         assertThat(ReportHelper.getPortForSite("http://www.example.com"), is(80));
+        assertThat(ReportHelper.getPortForSite("HTTPS://www.example.com"), is(443));
+        assertThat(ReportHelper.getPortForSite("HTTP://www.example.com"), is(80));
+        assertThat(ReportHelper.getPortForSite("http://www.example.com/some/path"), is(80));
         assertThat(ReportHelper.getPortForSite("www.example.com"), is(80));
         assertThat(ReportHelper.getPortForSite("https://www.example.com:bad"), is(443));
         assertThat(ReportHelper.getPortForSite("http://www.example.com:bad"), is(80));
+        assertThat(ReportHelper.getPortForSite("HTTPS://www.example.com:bad"), is(443));
+        assertThat(ReportHelper.getPortForSite("HTTP://www.example.com:bad"), is(80));
         assertThat(ReportHelper.getPortForSite(null), is(80));
     }
 

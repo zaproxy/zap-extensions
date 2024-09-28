@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Checkmarx rebrand.
 
+### Fixed
+- An issue where alert details were missing from some Risk and Confidence HTML reports (Issue 8460).
+
 ## [0.33.0] - 2024-09-02
 ### Changed
 - Maintenance changes related to Passive Scanner add-on (Issue 7959).
