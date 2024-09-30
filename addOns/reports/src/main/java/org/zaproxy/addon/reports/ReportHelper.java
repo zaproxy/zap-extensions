@@ -19,11 +19,14 @@
  */
 package org.zaproxy.addon.reports;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -73,18 +76,27 @@ public class ReportHelper {
         if (site == null) {
             return 80;
         }
-        String[] schemeHostPort = site.split(":");
-        if (schemeHostPort.length == 3) {
-            try {
-                return Integer.parseInt(schemeHostPort[2]);
-            } catch (NumberFormatException e) {
-                // Ignore
+
+        try {
+            var uri = new URI(site);
+            int port = uri.getPort();
+            if (port != -1) {
+                return port;
             }
+
+            return getPortFromScheme(site);
+
+        } catch (URISyntaxException e) {
+            return getPortFromScheme(site);
         }
-        if (schemeHostPort[0].equalsIgnoreCase("https")) {
+    }
+
+    private static int getPortFromScheme(String site) {
+        if (StringUtils.startsWithIgnoreCase(site, "https")) {
             return 443;
+        } else {
+            return 80;
         }
-        return 80;
     }
 
     public static boolean isSslSite(String site) {
@@ -129,7 +141,7 @@ public class ReportHelper {
     }
 
     /**
-     * @deprecated Use {@link getAlertInstancesForSite(AlertNode, String, String int)} instead -
+     * @deprecated Use {@link #getAlertInstancesForSite(AlertNode, String, String, int)} instead -
      *     this method can return the instances for different alerts with the same pluginId.
      */
     @Deprecated
