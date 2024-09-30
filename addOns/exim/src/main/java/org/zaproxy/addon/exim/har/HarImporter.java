@@ -133,6 +133,8 @@ public class HarImporter {
         int count = 0;
         for (HttpMessage msg : messages) {
             if (msg == null) {
+                updateProgress(
+                        ++count, Constant.messages.getString("exim.progress.invalidmessage"));
                 continue;
             }
             persistMessage(msg);
