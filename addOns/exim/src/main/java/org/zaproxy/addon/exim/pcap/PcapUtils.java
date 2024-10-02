@@ -90,18 +90,19 @@ public final class PcapUtils {
     // Checks if the given stream is an HTTP stream. For now, only detects HTTP/1.1 streams.
     private static boolean isHttpStream(TcpStream stream) {
         List<TCPPacket> packets = stream.getPackets();
-        StringBuilder payload = new StringBuilder();
+        StringBuilder payloadBuilder = new StringBuilder();
 
         for (TCPPacket packet : packets) {
 
-            if (packet.getPayload() != null && !packet.getPayload().toString().isEmpty()) {
-                payload.append(packet.getPayload().toString());
+            if (packet.getPayload() != null && !packet.getPayload().isEmpty()) {
+                String currentPayload = packet.getPayload().toString();
+                payloadBuilder.append(currentPayload);
 
-                if (payload.toString().contains(DOUBLE_CRLF)
-                        || payload.toString().getBytes().length >= MAX_HTTP_HEADER_SIZE) {
+                if (currentPayload.contains(DOUBLE_CRLF)
+                        || payloadBuilder.length() * 2 >= MAX_HTTP_HEADER_SIZE) {
 
                     try {
-                        return new HttpRequestHeader(payload.toString()).isHttp11();
+                        return new HttpRequestHeader(payloadBuilder.toString()).isHttp11();
                     } catch (HttpMalformedHeaderException e) {
                         return false;
                     }
