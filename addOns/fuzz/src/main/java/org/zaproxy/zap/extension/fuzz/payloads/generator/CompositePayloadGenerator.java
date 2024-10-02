@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.collections.iterators.IteratorChain;
+import org.zaproxy.zap.extension.fuzz.impl.Utils;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.utils.EmptyResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
@@ -48,11 +49,8 @@ public class CompositePayloadGenerator<E extends Payload> implements PayloadGene
 
     @Override
     public long getNumberOfPayloads() {
-        int size = 0;
-        for (PayloadGenerator<E> payloadGenerator : payloadGenerators) {
-            size += payloadGenerator.getNumberOfPayloads();
-        }
-        return size;
+        return Utils.sum(
+                payloadGenerators.stream().mapToLong(PayloadGenerator::getNumberOfPayloads));
     }
 
     @Override
