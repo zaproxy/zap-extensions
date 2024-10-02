@@ -51,6 +51,8 @@ public final class PcapUtils {
     private static final String DOUBLE_CRLF = HttpHeader.CRLF + HttpHeader.CRLF;
     private static final byte[] DOUBLE_CRLF_BYTES = DOUBLE_CRLF.getBytes();
 
+    private static final int MAX_HTTP_HEADER_SIZE = 65536; // 64KB
+
     private static Map<StreamId, TcpStream> extractTcpStreams(File pcapFile) throws IOException {
         TcpStreamHandler streamHandler = new TcpStreamHandler();
 
@@ -85,17 +87,25 @@ public final class PcapUtils {
         return httpMessages;
     }
 
-    // TODO: Implement robust http stream detection
-    // For now, we only detect if the first tcp segment contains a valid HttpRequestHeader
+    // Checks if the given stream is an HTTP stream. For now, only detects HTTP/1.1 streams.
     private static boolean isHttpStream(TcpStream stream) {
         List<TCPPacket> packets = stream.getPackets();
+        StringBuilder payloadBuilder = new StringBuilder();
+
         for (TCPPacket packet : packets) {
+
             if (packet.getPayload() != null && !packet.getPayload().isEmpty()) {
-                try {
-                    new HttpRequestHeader(packet.getPayload().toString());
-                    return true;
-                } catch (HttpMalformedHeaderException e) {
-                    return false;
+                String currentPayload = packet.getPayload().toString();
+                payloadBuilder.append(currentPayload);
+
+                if (currentPayload.contains(DOUBLE_CRLF)
+                        || payloadBuilder.length() * 2 >= MAX_HTTP_HEADER_SIZE) {
+
+                    try {
+                        return new HttpRequestHeader(payloadBuilder.toString()).isHttp11();
+                    } catch (HttpMalformedHeaderException e) {
+                        return false;
+                    }
                 }
             }
         }
