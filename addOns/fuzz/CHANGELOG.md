@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Replace library used for regex payload generation, to address performance and compatibility issues.
 
 ## [13.13.0] - 2024-05-07
 ### Added
