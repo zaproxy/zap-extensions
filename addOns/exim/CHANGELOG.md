@@ -4,9 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Improved HTTP 1.1 traffic detection in PCAP files
+
 ### Fixed
 - Count invalid messages as tasks done toward progress when importing HARs.
-
 
 ## [0.11.0] - 2024-09-24
 ### Changed
