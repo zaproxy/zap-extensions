@@ -107,6 +107,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertEquals("/1.2.19/angular.min.js", alertsRaised.get(0).getEvidence());
         assertEquals(
                 "https://github.com/angular/angular.js/commit/8f31f1ff43b673a24f84422d5c13d6312b2c4d94\n",
@@ -137,6 +138,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertEquals(fileName, alertsRaised.get(0).getEvidence());
         assertEquals(
                 "https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/\n",
@@ -172,6 +174,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertEquals("* Bootstrap v3.3.7", alertsRaised.get(0).getEvidence());
         assertEquals(
                 "https://github.com/twbs/bootstrap/issues/20184\n",
@@ -196,6 +199,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertEquals(
                 "CVE-XXXX-XXX2\n"
                         + "CVE-XXXX-XXX1\n"
@@ -243,6 +247,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         List<Alert> alerts = rule.getExampleAlerts();
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
+        assertThat(alerts.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
     }
 
     @Test

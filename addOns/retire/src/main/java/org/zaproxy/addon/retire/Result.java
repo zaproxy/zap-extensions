@@ -20,15 +20,12 @@
 package org.zaproxy.addon.retire;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
+import org.zaproxy.addon.retire.model.Repo.VulnerabilityData;
 
 public class Result {
-    public static final String INFO = "info";
-    public static final String CVE = "CVE";
 
-    Map<String, Set<String>> information = new HashMap<>();
+    VulnerabilityData information;
     String version;
     String filename;
     String evidence;
@@ -37,7 +34,7 @@ public class Result {
     public Result(
             final String filename,
             final String version,
-            final Map<String, Set<String>> info,
+            final VulnerabilityData info,
             String evidence) {
         this.filename = filename;
         this.version = version;
@@ -45,7 +42,7 @@ public class Result {
         this.evidence = evidence;
     }
 
-    public Map<String, Set<String>> getInformation() {
+    public VulnerabilityData getInformation() {
         return information;
     }
 
@@ -74,9 +71,9 @@ public class Result {
     }
 
     public Set<String> getCves() {
-        if (information.isEmpty() || !information.containsKey(CVE)) {
+        if (information.isEmpty() || information.getCves().isEmpty()) {
             return Collections.emptySet();
         }
-        return information.get(CVE);
+        return information.getCves();
     }
 }
