@@ -1898,8 +1898,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     /**
-     * Return all of the requests in the script ScriptWrapper is deliberately used to make it easier
-     * to call this method by reflection
+     * Return all of the requests in the script.
      *
      * @param script
      * @return
