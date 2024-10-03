@@ -40,11 +40,12 @@ import org.zaproxy.zap.extension.script.ScriptCollection;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.script.SequenceScript;
+import org.zaproxy.zap.extension.zest.ExtensionZest;
 
 public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            List.of(ExtensionScript.class);
+            List.of(ExtensionScript.class, ExtensionZest.class);
 
     private ExtensionScript extScript;
     private ExtensionActiveScan extActiveScan;
@@ -118,7 +119,7 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
                                                 .getResource("resources/icons/script-sequence.png"))
                                 : null,
                         false,
-                        new String[] {"append"});
+                        new String[] {ScriptType.CAPABILITY_APPEND});
         getExtScript().registerScriptType(scriptType);
 
         if (hasView()) {

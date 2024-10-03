@@ -19,13 +19,11 @@
  */
 package org.zaproxy.zap.extension.sequence;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -35,6 +33,7 @@ import org.zaproxy.zap.extension.ascan.CustomScanPanel;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptCollection;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.model.StructuralNode;
 import org.zaproxy.zap.model.StructuralSiteNode;
 import org.zaproxy.zap.model.Target;
@@ -86,26 +85,20 @@ public class SequenceAscanPanel implements CustomScanPanel {
                 Session session = Model.getSingleton().getSession();
                 List<StructuralNode> nodes = new ArrayList<>();
                 for (ScriptWrapper sw : selectedIncludeScripts) {
-                    Extension extZest =
+                    ExtensionZest extZest =
                             Control.getSingleton()
                                     .getExtensionLoader()
-                                    .getExtension("ExtensionZest");
-                    if (extZest != null) {
-                        Method method =
-                                extZest.getClass()
-                                        .getMethod("getAllRequestsInScript", ScriptWrapper.class);
-                        @SuppressWarnings("unchecked")
-                        List<HttpMessage> msgs = (List<HttpMessage>) method.invoke(extZest, sw);
-                        for (HttpMessage msg : msgs) {
-                            SiteNode node = session.getSiteTree().findNode(msg, false);
-                            if (node == null) {
-                                HistoryReference hr =
-                                        new HistoryReference(
-                                                session, HistoryReference.TYPE_TEMPORARY, msg);
-                                node = session.getSiteTree().addPath(hr);
-                            }
-                            nodes.add(new StructuralSiteNode(node));
+                                    .getExtension(ExtensionZest.class);
+                    List<HttpMessage> msgs = extZest.getAllRequestsInScript(sw);
+                    for (HttpMessage msg : msgs) {
+                        SiteNode node = session.getSiteTree().findNode(msg, false);
+                        if (node == null) {
+                            HistoryReference hr =
+                                    new HistoryReference(
+                                            session, HistoryReference.TYPE_TEMPORARY, msg);
+                            node = session.getSiteTree().addPath(hr);
                         }
+                        nodes.add(new StructuralSiteNode(node));
                     }
                 }
                 return new Target(nodes);

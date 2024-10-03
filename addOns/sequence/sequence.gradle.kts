@@ -13,3 +13,7 @@ zapAddOn {
         }
     }
 }
+
+dependencies {
+    zapAddOn("zest")
+}
