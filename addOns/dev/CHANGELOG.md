@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Extra protected pages to simple-json-cookie to ensure spidering really works.
+- Sequence performance test.
 
 ### Fixed
 - Issue where folder level pages without a trailing slash did not link correctly to sub pages.
