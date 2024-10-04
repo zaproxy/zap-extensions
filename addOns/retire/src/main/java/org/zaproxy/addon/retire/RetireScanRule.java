@@ -121,6 +121,14 @@ public class RetireScanRule extends PluginPassiveScanner {
         return alerts;
     }
 
+    @Override
+    public PluginPassiveScanner copy() {
+        RetireScanRule scanRule = new RetireScanRule();
+        scanRule.setRepo(this.getRepo());
+        scanRule.setConfig(this.getConfig());
+        return scanRule;
+    }
+
     private static String getAlertName() {
         return Constant.messages.getString("retire.alert.name");
     }
@@ -148,7 +156,7 @@ public class RetireScanRule extends PluginPassiveScanner {
         return ALERT_TAGS;
     }
 
-    private Repo getRepo() {
+    protected Repo getRepo() {
         if (repo == null) {
             try {
                 this.repo = new Repo(COLLECTION_PATH);
