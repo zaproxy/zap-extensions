@@ -403,7 +403,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
      * *not* in the last where clause in a SQL query so as a result, the rest of the query needs to
      * be closed off with the comment.
      */
-    private static final String[] SQL_LOGIC_AND_TRUE = {
+    public static final String[] SQL_LOGIC_AND_TRUE = {
         " AND 1=1" + SQL_ONE_LINE_COMMENT,
         "' AND '1'='1'" + SQL_ONE_LINE_COMMENT,
         "\" AND \"1\"=\"1\"" + SQL_ONE_LINE_COMMENT,
@@ -416,7 +416,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
     };
 
     /** always false statement for comparison in boolean based SQL injection check */
-    private static final String[] SQL_LOGIC_AND_FALSE = {
+    public static final String[] SQL_LOGIC_AND_FALSE = {
         " AND 1=2" + SQL_ONE_LINE_COMMENT,
         "' AND '1'='2'" + SQL_ONE_LINE_COMMENT,
         "\" AND \"1\"=\"2\"" + SQL_ONE_LINE_COMMENT,
@@ -433,7 +433,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
      * injection check Note that, if necessary, the code also tries a variant with the one-line
      * comment " -- " appended to the end.
      */
-    private static final String[] SQL_LOGIC_OR_TRUE = {
+    public static final String[] SQL_LOGIC_OR_TRUE = {
         " OR 1=1" + SQL_ONE_LINE_COMMENT,
         "' OR '1'='1'" + SQL_ONE_LINE_COMMENT,
         "\" OR \"1\"=\"1\"" + SQL_ONE_LINE_COMMENT,
@@ -573,7 +573,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             doExpressionBased = true;
             doExpressionMaxRequests = 8;
             doBooleanBased = true;
-            doBooleanMaxRequests = 6;
+            doBooleanMaxRequests = 6; // will not run all the LIKE attacks.. these are done at high
             doUnionBased = true;
             doUnionMaxRequests = 5;
             doOrderByBased = false;
@@ -588,8 +588,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             doExpressionBased = true;
             doExpressionMaxRequests = 16;
             doBooleanBased = true;
-            doBooleanMaxRequests =
-                    20; // will not run all the LIKE attacks.. these are done at insane..
+            doBooleanMaxRequests = 20;
             doUnionBased = true;
             doUnionMaxRequests = 10;
             doOrderByBased = true;
@@ -1988,7 +1987,18 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
         return result;
     }
 
-    /** Replace body by stripping off pattern strings. */
+    /**
+     * Replace body by stripping off pattern strings.
+     *
+     * <p>Stripping both the originalPattern and attackPattern prevents false negatives when the
+     * originalPattern is always part of the response.
+     *
+     * <p>For example: there is a website about cats and the response body is always "This is a page
+     * about cats. You submitted {value}". If the originalPattern is "cats", the stripped response
+     * is "This is a page about . You submitted ". When an attack payload is sent, such as "cats AND
+     * 1=1" if only the attackPattern is stripped, the stripped response becomes "This is a page
+     * about cats. You submitted ". So the original "cats" value needs to be stripped as well.
+     */
     protected String stripOffOriginalAndAttackParam(
             String body, String originalPattern, String attackPattern) {
         String result = this.stripOff(this.stripOff(body, attackPattern), originalPattern);
