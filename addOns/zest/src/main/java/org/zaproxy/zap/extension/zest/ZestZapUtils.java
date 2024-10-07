@@ -1062,15 +1062,17 @@ public class ZestZapUtils {
             HttpMessage msg, boolean replaceTokens, boolean incAllHeaders, ZestParam params)
             throws MalformedURLException, HttpMalformedHeaderException, SQLException {
         ZestRequest req = new ZestRequest();
+        var uri = msg.getRequestHeader().getURI();
+        if (uri == null) {
+            throw new HttpMalformedHeaderException("The request header does not have a URI.");
+        }
+
+        req.setUrl(new URL(uri.toString()));
         if (replaceTokens) {
-            if (msg.getRequestHeader().getURI() != null) {
-                req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
-            }
-            req.setUrlToken(correctTokens(msg.getRequestHeader().getURI().toString()));
+            req.setUrlToken(correctTokens(uri.toString()));
             req.setData(correctTokens(msg.getRequestBody().toString()));
 
         } else {
-            req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
             req.setData(msg.getRequestBody().toString());
         }
 
