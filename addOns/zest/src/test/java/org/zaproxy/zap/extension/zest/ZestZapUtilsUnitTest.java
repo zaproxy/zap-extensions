@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,21 @@ import org.zaproxy.zest.core.v1.ZestRequest;
 
 /** Unit test for {@link ZestZapUtils}. */
 class ZestZapUtilsUnitTest {
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldThrowIfNoUriWhenConvertingHttpMessageToZestRequest(boolean replaceTokens) {
+        // Given
+        HttpMessage httpMessage = new HttpMessage();
+        // When / Then
+        HttpMalformedHeaderException e =
+                assertThrows(
+                        HttpMalformedHeaderException.class,
+                        () ->
+                                ZestZapUtils.toZestRequest(
+                                        httpMessage, replaceTokens, false, createZestParam()));
+        assertThat(e.getMessage(), is(equalTo("The request header does not have a URI.")));
+    }
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
