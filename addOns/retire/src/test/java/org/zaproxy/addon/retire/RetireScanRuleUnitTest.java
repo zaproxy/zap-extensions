@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
@@ -284,6 +285,6 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanRule.setConfig(mock(HierarchicalConfiguration.class));
         RetireScanRule copiedScanRule = (RetireScanRule) scanRule.copy();
 
-        assertEquals(scanRule.getRepo(), copiedScanRule.getRepo());
+        assertSame(scanRule.getRepo(), copiedScanRule.getRepo());
     }
 }
