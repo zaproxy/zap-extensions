@@ -23,12 +23,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
@@ -273,5 +276,15 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         msg.setResponseBody(body);
 
         return msg;
+    }
+
+    @Test
+    void shouldUseSameRepoInstance() {
+        RetireScanRule scanRule = createScanner();
+
+        scanRule.setConfig(mock(HierarchicalConfiguration.class));
+        RetireScanRule copiedScanRule = (RetireScanRule) scanRule.copy();
+
+        assertSame(scanRule.getRepo(), copiedScanRule.getRepo());
     }
 }
