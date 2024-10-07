@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [22] - 2024-10-07
 ### Fixed
 - Handle deleted alerts gracefully.
 
@@ -140,6 +140,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[22]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v22
 [21]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v21
 [20]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v19

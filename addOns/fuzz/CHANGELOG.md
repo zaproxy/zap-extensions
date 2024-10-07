@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [13.14.0] - 2024-10-07
 ### Changed
 - Maintenance changes.
 - Replace library used for regex payload generation, to address performance and compatibility issues.
@@ -215,6 +215,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[13.14.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.14.0
 [13.13.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.13.0
 [13.12.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.12.0
 [13.11.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.11.0

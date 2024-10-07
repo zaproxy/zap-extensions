@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [19] - 2024-10-07
 ### Changed
 - Update ZAP API endpoint description.
 
@@ -115,6 +115,7 @@ the dialogue when other match types are selected.
 
 - First version
 
+[19]: https://github.com/zaproxy/zap-extensions/releases/replacer-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/replacer-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/replacer-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/replacer-v16

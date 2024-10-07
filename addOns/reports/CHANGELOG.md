@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.34.0] - 2024-10-07
 ### Changed
 - Checkmarx rebrand.
 
@@ -290,6 +290,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.34.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.34.0
 [0.33.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.33.0
 [0.32.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.32.0
 [0.31.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.31.0
