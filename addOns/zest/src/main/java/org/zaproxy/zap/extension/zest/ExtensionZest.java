@@ -743,18 +743,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 }
 
                 if (zsw.isIncStatusCodeAssertion()) {
-                    req.addAssertion(
-                            new ZestAssertion(
-                                    new ZestExpressionStatusCode(
-                                            msg.getResponseHeader().getStatusCode())));
+                    addStatusCodeAssertion(msg, req);
                 }
                 if (zsw.isIncLengthAssertion()) {
-                    req.addAssertion(
-                            new ZestAssertion(
-                                    new ZestExpressionLength(
-                                            ZestVariables.RESPONSE_BODY,
-                                            getResponseBodyLength(msg),
-                                            zsw.getLengthApprox())));
+                    addLengthAssertion(msg, req, zsw.getLengthApprox());
                 }
 
                 if (getExtACSRF() != null) {
@@ -814,6 +806,19 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 LOGGER.error(e.getMessage(), e);
             }
         }
+    }
+
+    private static void addLengthAssertion(HttpMessage msg, ZestRequest req, int approx) {
+        req.addAssertion(
+                new ZestAssertion(
+                        new ZestExpressionLength(
+                                ZestVariables.RESPONSE_BODY, getResponseBodyLength(msg), approx)));
+    }
+
+    private static void addStatusCodeAssertion(HttpMessage msg, ZestRequest req) {
+        req.addAssertion(
+                new ZestAssertion(
+                        new ZestExpressionStatusCode(msg.getResponseHeader().getStatusCode())));
     }
 
     private static int getResponseBodyLength(HttpMessage message) {
@@ -1895,6 +1900,61 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             optionsZestPanel = new OptionsZestPanel(this);
         }
         return optionsZestPanel;
+    }
+
+    /**
+     * Creates a script with the given name, type, and messages as {@code ZestRequest}s.
+     *
+     * @param name the name of the script.
+     * @param type the type of the script.
+     * @param messages the messages that will be added to the script.
+     * @param options the options for the script creation.
+     * @return the created script.
+     * @since 48.0.0
+     * @throws IllegalArgumentException if there are any problems with the inputs (e.g. no messages)
+     * @throws IllegalStateException if unable to create the script (e.g. duplicated script name).
+     */
+    public ScriptWrapper createScript(
+            String name, ScriptType type, List<HttpMessage> messages, CreateScriptOptions options) {
+        if (messages == null || messages.isEmpty()) {
+            throw new IllegalArgumentException("The messages should not be null nor empty.");
+        }
+
+        ZestScript sz = new ZestScript();
+        sz.setTitle(name);
+        for (var msg : messages) {
+            if (msg == null) {
+                throw new IllegalArgumentException("A message should not be null.");
+            }
+            try {
+                var request = ZestZapUtils.toZestRequest(msg, false, true, getParam());
+                if (options.isAddStatusAssertion()) {
+                    addStatusCodeAssertion(msg, request);
+                }
+                if (options.isAddLengthAssertion()) {
+                    addLengthAssertion(msg, request, options.getLengthApprox());
+                }
+                sz.add(request);
+            } catch (Exception e) {
+                throw new IllegalArgumentException(
+                        "Failed to convert message to ZestRequest: " + e.getMessage(), e);
+            }
+        }
+
+        ScriptWrapper sw = new ScriptWrapper();
+        sw.setName(sz.getTitle());
+        sw.setDescription(sz.getDescription());
+        sw.setContents(convertElementToString(sz));
+        sw.setType(type);
+        sw.setEngine(getZestEngineWrapper());
+
+        ZestScriptWrapper zsw = new ZestScriptWrapper(sw);
+        try {
+            add(zsw, false);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to add the script: " + e.getMessage(), e);
+        }
+        return zsw;
     }
 
     /**
