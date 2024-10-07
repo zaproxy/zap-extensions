@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45.7.0] - 2024-10-07
 ### Fixed
 - Reuse script cache for all passive scan threads to avoid recompilation of Passive Rules scripts.
 - Address a concurrency issue when using Graal.js Passive Rules scripts as first-class scan rules.
@@ -340,6 +340,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.7.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.7.0
 [45.6.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.6.0
 [45.5.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.5.0
 [45.4.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.4.0
