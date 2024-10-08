@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
+- Stats counter to the main toolbar button (Issue 8375).
 
 ## [0.34.0] - 2024-10-07
 ### Changed
