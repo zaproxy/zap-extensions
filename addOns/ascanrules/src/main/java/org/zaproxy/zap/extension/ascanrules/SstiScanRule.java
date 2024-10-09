@@ -414,7 +414,9 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
                                             + DELIMITER
                                             + "[\\w\\W]*";
 
-                            if (output.contains(renderResult) && output.matches(regex)) {
+                            if (output.contains(renderResult)
+                                    && output.matches(regex)
+                                    && sstiPayload.engineSpecificCheck(regex, output, renderTest)) {
 
                                 String attack = getOtherInfo(sink.getLocation(), output);
 

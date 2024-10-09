@@ -19,6 +19,9 @@
  */
 package org.zaproxy.zap.extension.ascanrules.ssti;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * This represents the code that is necessary to execute an arithmetic operation in Golang template
  * engine and the expected result of the operation.
@@ -35,5 +38,12 @@ public class GoTemplateFormat extends TemplateFormat {
     public int getExpectedResult(int number1, int number2) {
         String concatenated = String.format("%d%d", number1, number2);
         return Integer.parseInt(concatenated);
+    }
+
+    @Override
+    public boolean engineSpecificCheck(String regex, String output, String renderTest) {
+        Matcher matcher = Pattern.compile(regex).matcher(output);
+        matcher.matches();
+        return !matcher.group(0).contains(renderTest.replaceAll("[^A-Za-z0-9]+", ""));
     }
 }
