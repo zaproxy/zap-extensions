@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - The XML External Entity Attack scan rule now include example alert functionality for documentation generation purposes (Issue 6119).
 
+### Fixed
+- A situation where the Server-Side Template Injection (SSTI) scan rule might result in false positives (Issue 8622).
+
 ## [68] - 2024-09-24
 ### Changed
 - Maintenance changes.

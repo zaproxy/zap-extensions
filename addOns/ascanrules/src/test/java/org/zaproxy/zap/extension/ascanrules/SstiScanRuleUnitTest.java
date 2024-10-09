@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -47,6 +48,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.extension.ascanrules.ssti.GoTemplateFormat;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -57,6 +59,11 @@ class SstiScanRuleUnitTest extends ActiveScannerTest<SstiScanRule> {
     @Override
     protected SstiScanRule createScanner() {
         return new SstiScanRule();
+    }
+
+    @AfterEach
+    void reset() {
+        SstiScanRule.setTemplateFormats(SstiScanRule.DEFAULT_TEMPLATE_LIST);
     }
 
     @Override
@@ -237,6 +244,39 @@ class SstiScanRuleUnitTest extends ActiveScannerTest<SstiScanRule> {
     }
 
     @Test
+    void shouldReportGoBasedSsti() throws NullPointerException, IOException {
+        String test = "/shouldReportGoBasedSsti/";
+        // Given
+        nano.addHandler(createGoHandler(test, true));
+        HttpMessage msg = getHttpMessage(test + "?name=test");
+        rule.setConfig(new ZapXmlConfiguration());
+        SstiScanRule.setTemplateFormats(List.of(new GoTemplateFormat()));
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+    }
+
+    @Test
+    void shouldNotReportGoBasedSstiWhenDirectiveEchoed() throws NullPointerException, IOException {
+        String test = "/shouldNotReportGoBasedSstiWhenDirectiveEchoed/";
+        // Given
+        nano.addHandler(createGoHandler(test, false));
+        HttpMessage msg = getHttpMessage(test + "?name=test");
+        rule.setConfig(new ZapXmlConfiguration());
+        rule.setAttackStrength(Plugin.AttackStrength.MEDIUM);
+        SstiScanRule.setTemplateFormats(List.of(new GoTemplateFormat()));
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
     void shouldReturnExpectedMappings() {
         // Given / When
         int cwe = rule.getCweId();
@@ -320,5 +360,33 @@ class SstiScanRuleUnitTest extends ActiveScannerTest<SstiScanRule> {
         } else {
             throw new IllegalArgumentException("invalid template code");
         }
+    }
+
+    private NanoServerHandler createGoHandler(String path, boolean stripPrint) {
+        return new NanoServerHandler(path) {
+            @Override
+            protected Response serve(IHTTPSession session) {
+                String name = getFirstParamValue(session, "name");
+                String response;
+                if (name != null) {
+                    try {
+                        if (name.contains("print")) {
+                            name = name.replaceAll("[^A-Za-z0-9]+", "");
+                            name = stripPrint ? name.replace("print", "") : name;
+                        }
+                        name = templateRenderMock("{", "}", name);
+                        response =
+                                getHtml(
+                                        "sstiscanrule/Rendered.html",
+                                        new String[][] {{"name", name}});
+                    } catch (IllegalArgumentException e) {
+                        response = getHtml("sstiscanrule/ErrorPage.html");
+                    }
+                } else {
+                    response = getHtml("sstiscanrule/NoInput.html");
+                }
+                return newFixedLengthResponse(response);
+            }
+        };
     }
 }
