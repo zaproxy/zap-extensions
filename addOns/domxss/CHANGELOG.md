@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Include the whole HTTP message in the raised alerts.
 - Include the steps to reproduce the DOM XSS in the other info of the alert.
+- Do not request URLs explicitly excluded from the context.
 
 ### Fixed
 - Address false negatives through query parameters.

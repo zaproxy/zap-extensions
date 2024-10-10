@@ -67,6 +67,7 @@ import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Stats;
 
 public class DomXssScanRule extends AbstractAppParamPlugin {
@@ -230,7 +231,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                                 @Override
                                 public void handleMessage(
                                         HttpMessageHandlerContext ctx, HttpMessage msg) {
-                                    if (isExcluded(msg)) {
+                                    if (isExcluded(msg, getParent().getContext())) {
                                         return;
                                     }
 
@@ -255,13 +256,16 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
         return proxy;
     }
 
-    private static boolean isExcluded(HttpMessage msg) {
+    private static boolean isExcluded(HttpMessage msg, Context context) {
         String uri = msg.getRequestHeader().getURI().toString();
         List<String> exclusions = Model.getSingleton().getSession().getGlobalExcludeURLRegexs();
         for (String regex : exclusions) {
             if (Pattern.matches(regex, uri)) {
                 return true;
             }
+        }
+        if (context != null && context.isExcluded(uri)) {
+            return true;
         }
         return false;
     }
