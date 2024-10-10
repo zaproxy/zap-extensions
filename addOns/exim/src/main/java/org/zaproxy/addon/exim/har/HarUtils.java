@@ -194,10 +194,10 @@ public final class HarUtils {
                     text = requestBody.toString();
                 }
             }
-            HarPostData newPostData = new HarPostData();
-            newPostData.setMimeType(contentType);
-            newPostData.setParams(params);
-            newPostData.setText(text);
+            harPostData = new HarPostData();
+            harPostData.setMimeType(contentType);
+            harPostData.setParams(params);
+            harPostData.setText(text);
         }
 
         HttpMethod method = HttpMethod.valueOf(requestHeader.getMethod().toUpperCase(Locale.ROOT));
