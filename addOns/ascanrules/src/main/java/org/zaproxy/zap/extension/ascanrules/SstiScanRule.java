@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,23 +73,27 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
     // the first and last tag are the commentaries from twig
     // "\\\"\\<th\\:t\\=\\$\\{zj\\}\\#\\foreach"
 
-    private static final TemplateFormat[] TEMPLATE_FORMATS = {
-        new TemplateFormat(" ", " "),
-        new TemplateFormat("{", "}"),
-        new TemplateFormat("${", "}"),
-        new TemplateFormat("#{", "}"),
-        new TemplateFormat("{#", "}"),
-        new TemplateFormat("{@", "}"),
-        new TemplateFormat("{{", "}}"),
-        new TemplateFormat("{{=", "}}"),
-        new TemplateFormat("<%=", "%>"),
-        new TemplateFormat("#set($x=", ")${x}"),
-        new TemplateFormat("<p th:text=\"${", "}\"></p>"),
-        new TemplateFormat(
-                "{", "}", "{@math key=\"%d\" method=\"multiply\" operand=\"%d\"/}"), // Dustjs
-        new DjangoTemplateFormat(),
-        new GoTemplateFormat()
-    };
+    static List<TemplateFormat> DEFAULT_TEMPLATE_LIST =
+            List.of(
+                    new TemplateFormat(" ", " "),
+                    new TemplateFormat("{", "}"),
+                    new TemplateFormat("${", "}"),
+                    new TemplateFormat("#{", "}"),
+                    new TemplateFormat("{#", "}"),
+                    new TemplateFormat("{@", "}"),
+                    new TemplateFormat("{{", "}}"),
+                    new TemplateFormat("{{=", "}}"),
+                    new TemplateFormat("<%=", "%>"),
+                    new TemplateFormat("#set($x=", ")${x}"),
+                    new TemplateFormat("<p th:text=\"${", "}\"></p>"),
+                    new TemplateFormat(
+                            "{",
+                            "}",
+                            "{@math key=\"%d\" method=\"multiply\" operand=\"%d\"/}"), // Dustjs
+                    new DjangoTemplateFormat(),
+                    new GoTemplateFormat());
+
+    private static List<TemplateFormat> templateFormats = DEFAULT_TEMPLATE_LIST;
 
     private static final String[] WAYS_TO_FIX_CODE_SYNTAX = {"\"", "'", "1", ""};
 
@@ -339,7 +345,7 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
             codeFixPrefixes = WAYS_TO_FIX_CODE_SYNTAX;
         }
 
-        for (TemplateFormat sstiPayload : TEMPLATE_FORMATS) {
+        for (TemplateFormat sstiPayload : templateFormats) {
 
             if (fixSyntax) {
                 templateFixingPrefix = sstiPayload.getEndTag();
@@ -396,8 +402,12 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
                                             + ".*"
                                             + DELIMITER
                                             + "[\\w\\W]*";
+                            Matcher matcher = Pattern.compile(regex).matcher(output);
+                            String strippedTest = renderTest.replaceAll("[^A-Za-z0-9]+", "");
 
-                            if (output.contains(renderResult) && output.matches(regex)) {
+                            if (output.contains(renderResult)
+                                    && matcher.matches()
+                                    && !matcher.group(0).contains(strippedTest)) {
 
                                 String attack = getOtherInfo(sink.getLocation(), output);
 
@@ -465,5 +475,10 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    // For testing purposes only
+    static void setTemplateFormats(List<TemplateFormat> templates) {
+        SstiScanRule.templateFormats = templates;
     }
 }
