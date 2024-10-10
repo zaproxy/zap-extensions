@@ -207,7 +207,15 @@ public class HarImporter {
 
     private static HttpMessage getHttpMessage(HarEntry harEntry)
             throws HttpMalformedHeaderException {
-        HttpMessage result = HarUtils.createHttpMessage(harEntry.getRequest());
+        HttpMessage result;
+        try {
+            result = HarUtils.createHttpMessage(harEntry.getRequest());
+        } catch (HttpMalformedHeaderException headerEx) {
+            LOGGER.warn(
+                    "Failed to create HTTP Request Header for HAR entry.\n{}",
+                    headerEx.getMessage());
+            return null;
+        }
         setHttpResponse(harEntry.getResponse(), result);
         return result;
     }
