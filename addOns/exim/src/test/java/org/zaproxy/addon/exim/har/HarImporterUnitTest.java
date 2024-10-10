@@ -152,21 +152,27 @@ class HarImporterUnitTest extends TestUtils {
     @Test
     void serializedAndDeserializedShouldMatch() throws Exception {
         // Given
+        var requestHeader =
+                "POST http://example.com/path HTTP/1.1\r\nContent-Type: application/octet-stream\r\n\r\n";
+        var responseHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/plain;charset=US-ASCII\r\n\r\n";
         byte[] requestBody = {0x01, 0x02};
         byte[] responseBody = {0x30, 0x31};
         HttpMessage httpMessage =
-                new HttpMessage(
-                        "POST /path HTTP/1.1\r\nContent-Type: application/octet-stream\r\n\r\n",
-                        requestBody,
-                        "HTTP/1.1 200 OK\r\nContent-Type: text/plain;charset=US-ASCII\r\n\r\n",
-                        responseBody);
+                new HttpMessage(requestHeader, requestBody, responseHeader, responseBody);
 
         HarLog harLog = createHarLog(httpMessage);
         // When
         List<HttpMessage> deserialized = HarImporter.getHttpMessages(harLog);
         // Then
         assertThat(deserialized, hasSize(1));
-        assertThat(deserialized.get(0), equalTo(httpMessage));
+        var deserializedHttpMessage = deserialized.get(0);
+        assertThat(
+                deserializedHttpMessage.getRequestHeader().toString(), is(equalTo(requestHeader)));
+        assertThat(deserializedHttpMessage.getRequestBody().getBytes(), is(equalTo(requestBody)));
+        assertThat(
+                deserializedHttpMessage.getResponseHeader().toString(),
+                is(equalTo(responseHeader)));
+        assertThat(deserializedHttpMessage.getResponseBody().getBytes(), is(equalTo(responseBody)));
     }
 
     @Test
