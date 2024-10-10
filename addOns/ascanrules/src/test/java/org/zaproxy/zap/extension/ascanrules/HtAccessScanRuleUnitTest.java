@@ -38,6 +38,8 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePluginUnitTest;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link HtAccessScanRule}. */
@@ -99,6 +101,26 @@ class HtAccessScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAccessSca
     }
 
     @Test
+    void shouldTargetApache() throws Exception {
+        // Given
+        TechSet techSet = new TechSet(Tech.C, Tech.Apache, Tech.ASP);
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(true)));
+    }
+
+    @Test
+    void shouldNotTargetIfNotApache() throws Exception {
+        // Given
+        TechSet techSet = new TechSet(Tech.C, Tech.Db2, Tech.ASP);
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(false)));
+    }
+
+    @Test
     void shouldNotAlertIfNonHtaccessFileFoundStdThreshold() throws Exception {
         // Given
         nano.addHandler(new MiscOkResponse());
@@ -149,6 +171,110 @@ class HtAccessScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAccessSca
     }
 
     @Test
+    void shouldNotAlertIfSingleDirective() throws Exception {
+        // Given
+        nano.addHandler(new MiscOkResponse(URL, "text/plain", "Options"));
+        HttpMessage message = getHttpMessage(URL);
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldNotAlertIfInvalidDirective() throws Exception {
+        // Given
+        nano.addHandler(new MiscOkResponse(URL, "text/plain", "filestore"));
+        HttpMessage message = getHttpMessage(URL);
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldAlertHtaccessContent() throws Exception {
+        // Given
+        nano.addHandler(
+                new MiscOkResponse(
+                        URL,
+                        "text/plain",
+                        "Options +Includes\n"
+                                + "AddType text/html shtml\n"
+                                + "AddHandler server-parsed shtml"));
+        HttpMessage message = getHttpMessage(URL);
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    void shouldNotAlertHtaccessContentInImage() throws Exception {
+        // Given
+        nano.addHandler(
+                new MiscOkResponse(
+                        URL,
+                        "image/png",
+                        "Options +Includes\n"
+                                + "AddType text/html shtml\n"
+                                + "AddHandler server-parsed shtml"));
+        HttpMessage message = getHttpMessage(URL);
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldNotAlertHtmlTextContent() throws Exception {
+        // Given
+        nano.addHandler(new MiscOkResponse(URL, "text/plain", DEFAULT_BODY));
+        HttpMessage message = getHttpMessage(URL);
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldNotAlertTextNoCommonDirectivesContent() throws Exception {
+        // Given
+        nano.addHandler(
+                new MiscOkResponse(
+                        URL,
+                        "text/plain",
+                        "This is text with no common htaccess directives in it"));
+        HttpMessage message = getHttpMessage(URL);
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldNotAlertTextNoValidDirectivesContent() throws Exception {
+        // Given
+        nano.addHandler(
+                new MiscOkResponse(
+                        URL,
+                        "text/plain",
+                        "This is text with the common directives 'files' in it in an invalid location"));
+        HttpMessage message = getHttpMessage(URL);
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
     void shouldHaveExpectedExampleAlerts() {
         // Given / When
         List<Alert> alerts = rule.getExampleAlerts();
@@ -189,6 +315,11 @@ class HtAccessScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAccessSca
         public MiscOkResponse(String path, String contentType) {
             super(path);
             this.contentType = contentType;
+        }
+
+        public MiscOkResponse(String path, String contentType, String content) {
+            this(path, contentType);
+            this.content = content;
         }
 
         @Override
