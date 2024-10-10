@@ -25,22 +25,29 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentMatchers;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -56,32 +63,49 @@ import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.ascan.VariantFactory;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.SeleniumOptions;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.ActiveScannerTestUtils;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.I18N;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
 
     private static ExtensionNetwork extensionNetwork;
 
+    private static Model model;
+    private Session session;
+
     @BeforeAll
-    static void setup() {
+    static void setupAll() {
+        Constant.messages = new I18N(Locale.ROOT);
         WebDriverManager.firefoxdriver().setup();
         WebDriverManager.chromedriver().setup();
+    }
 
-        Constant.messages = new I18N(Locale.ROOT);
-        Model model = mock(Model.class);
+    @BeforeEach
+    void setupEach() {
+        model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         Model.setSingletonForTesting(model);
         given(model.getVariantFactory()).willReturn(new VariantFactory());
         given(model.getOptionsParam()).willReturn(new OptionsParam());
-        given(model.getSession()).willReturn(new Session(model));
         extensionNetwork = new ExtensionNetwork();
         extensionNetwork.initModel(model);
         Control.initSingletonForTesting(model, mock(ExtensionLoader.class));
         extensionNetwork.init();
         extensionNetwork.hook(new ExtensionHook(model, null));
 
+        model.getOptionsParam().load(new ZapXmlConfiguration());
         model.getOptionsParam().addParamSet(new SeleniumOptions());
+
+        session = new Session(model);
+        given(model.getSession()).willReturn(session);
+    }
+
+    @AfterEach
+    void tearDown() {
+        rule.setTimeFinished();
+        DomXssScanRule.proxy = null;
     }
 
     static Stream<String> testBrowsers() throws Exception {
@@ -523,6 +547,113 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
                                         + "With <PAYLOAD_1> as: %3Cimg%20src=%22random.gif%22%20onerror=alert(5397)%3E\n"
                                         + "Access: http://localhost:%PORT%/?iv=<PAYLOAD_1>\n")
                                 .replace("%PORT%", String.valueOf(nano.getListeningPort()))));
+    }
+
+    @ParameterizedTest
+    @MethodSource("testBrowsers")
+    void shouldRequestReferencedUrl(String browser) throws NullPointerException, IOException {
+        // Given
+        String test = "/";
+        final AtomicBoolean accessedImage = new AtomicBoolean(false);
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        if ("/".equals(session.getUri())) {
+                            return newFixedLengthResponse(
+                                    "<html><body><img src=\"test.png\" alt=\"Test\"/>\n</body></html>");
+                        }
+                        if ("/test.png".equals(session.getUri())) {
+                            accessedImage.set(true);
+                        }
+                        return newFixedLengthResponse("<html><body>\n" + "test" + "</body></html>");
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test);
+        this.rule.getConfig().setProperty("rules.domxss.browserid", browser);
+        this.rule.init(msg, this.parent);
+
+        // When
+        this.rule.scan();
+
+        // Then
+        assertThat(accessedImage.get(), is(equalTo(true)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("testBrowsers")
+    void shouldNotRequestReferencedUrlExcludedGlobally(String browser)
+            throws NullPointerException, IOException {
+        // Given
+        session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
+        given(model.getSession()).willReturn(session);
+        given(session.getGlobalExcludeURLRegexs()).willReturn(List.of(".*.png"));
+
+        String test = "/";
+        final AtomicBoolean accessedImage = new AtomicBoolean(false);
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        if ("/".equals(session.getUri())) {
+                            return newFixedLengthResponse(
+                                    "<html><body><img src=\"test.png\" alt=\"Test\"/>\n</body></html>");
+                        }
+                        if ("/test.png".equals(session.getUri())) {
+                            accessedImage.set(true);
+                        }
+                        return newFixedLengthResponse("<html><body>\n" + "test" + "</body></html>");
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test);
+        this.rule.getConfig().setProperty("rules.domxss.browserid", browser);
+        this.rule.init(msg, this.parent);
+
+        // When
+        this.rule.scan();
+
+        // Then
+        assertThat(accessedImage.get(), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("testBrowsers")
+    void shouldNotRequestReferencedUrlExcludedInSession(String browser)
+            throws NullPointerException, IOException {
+        // Given
+        Context context = mock(Context.class);
+        given(context.isExcluded(ArgumentMatchers.anyString())).willReturn(false);
+        given(context.isExcluded(ArgumentMatchers.matches(".*/test.png"))).willReturn(true);
+
+        String test = "/";
+        final AtomicBoolean accessedImage = new AtomicBoolean(false);
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        if ("/".equals(session.getUri())) {
+                            return newFixedLengthResponse(
+                                    "<html><body><img src=\"test.png\" alt=\"Test\"/>\n</body></html>");
+                        }
+                        if ("/test.png".equals(session.getUri())) {
+                            accessedImage.set(true);
+                        }
+                        return newFixedLengthResponse("<html><body>\n" + "test" + "</body></html>");
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test);
+        this.rule.getConfig().setProperty("rules.domxss.browserid", browser);
+        this.rule.init(msg, this.parent);
+        this.parent.setContext(context);
+
+        // When
+        this.rule.scan();
+
+        // Then
+        assertThat(accessedImage.get(), is(equalTo(false)));
     }
 
     @Test
