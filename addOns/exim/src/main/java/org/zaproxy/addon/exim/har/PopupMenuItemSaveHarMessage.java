@@ -19,14 +19,15 @@
  */
 package org.zaproxy.addon.exim.har;
 
-import edu.umass.cs.benchlab.har.HarEntries;
-import edu.umass.cs.benchlab.har.HarLog;
+import de.sstoehr.harreader.model.HarEntry;
+import de.sstoehr.harreader.model.HarLog;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
 import org.apache.logging.log4j.LogManager;
@@ -37,7 +38,6 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.addon.exim.EximFileChooser;
 import org.zaproxy.addon.exim.ExtensionExim;
-import org.zaproxy.zap.utils.HarUtils;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
@@ -91,13 +91,13 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
     private static byte[] packRequestInHarArchive(List<HttpMessage> httpMessages)
             throws IOException {
         HarLog harLog = HarUtils.createZapHarLog();
-        HarEntries entries = new HarEntries();
+        var entries = new ArrayList<HarEntry>();
         httpMessages.forEach(
                 httpMessage -> {
                     if (httpMessage.getHistoryRef() == null) {
-                        entries.addEntry(HarUtils.createHarEntry(httpMessage));
+                        entries.add(HarUtils.createHarEntry(httpMessage));
                     } else {
-                        entries.addEntry(
+                        entries.add(
                                 HarUtils.createHarEntry(
                                         httpMessage.getHistoryRef().getHistoryId(),
                                         httpMessage.getHistoryRef().getHistoryType(),
@@ -106,7 +106,7 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
                     Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_SAVE_HAR_FILE_MSG);
                 });
         harLog.setEntries(entries);
-        return HarUtils.harLogToByteArray(harLog);
+        return HarUtils.toJsonAsBytes(harLog);
     }
 
     private static File getOutputFile() {

@@ -19,8 +19,8 @@
  */
 package org.zaproxy.addon.exim;
 
-import edu.umass.cs.benchlab.har.HarEntries;
-import edu.umass.cs.benchlab.har.HarLog;
+import de.sstoehr.harreader.model.HarEntry;
+import de.sstoehr.harreader.model.HarLog;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +43,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.exim.har.HarImporter;
+import org.zaproxy.addon.exim.har.HarUtils;
 import org.zaproxy.addon.exim.log.LogsImporter;
 import org.zaproxy.addon.exim.urls.UrlsImporter;
 import org.zaproxy.zap.extension.api.API;
@@ -56,7 +57,6 @@ import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.network.HttpRedirectionValidator;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.ApiUtils;
-import org.zaproxy.zap.utils.HarUtils;
 
 /** The API for importing data from a file. */
 public class ImportExportApi extends ApiImplementor {
@@ -144,7 +144,7 @@ public class ImportExportApi extends ApiImplementor {
         if (OTHER_EXPORT_HAR_BY_ID.equals(name) || OTHER_EXPORT_HAR.equals(name)) {
             byte[] responseBody;
             try {
-                final HarEntries entries = new HarEntries();
+                var entries = new ArrayList<HarEntry>();
                 if (OTHER_EXPORT_HAR_BY_ID.equals(name)) {
                     TableHistory tableHistory = Model.getSingleton().getDb().getTableHistory();
                     for (Integer id : getIds(params)) {
@@ -162,7 +162,7 @@ public class ImportExportApi extends ApiImplementor {
                 HarLog harLog = HarUtils.createZapHarLog();
                 harLog.setEntries(entries);
 
-                responseBody = HarUtils.harLogToByteArray(harLog);
+                responseBody = HarUtils.toJsonAsBytes(harLog);
             } catch (ApiException e) {
                 responseBody =
                         e.toString(API.Format.JSON, incErrorDetails())
@@ -212,13 +212,13 @@ public class ImportExportApi extends ApiImplementor {
                 } else {
                     boolean followRedirects = getParam(params, PARAM_FOLLOW_REDIRECTS, false);
                     try {
-                        final HarEntries entries = new HarEntries();
+                        var entries = new ArrayList<HarEntry>();
                         sendRequest(
                                 request,
                                 followRedirects,
                                 httpMessage -> {
                                     HistoryReference hRef = httpMessage.getHistoryRef();
-                                    entries.addEntry(
+                                    entries.add(
                                             HarUtils.createHarEntry(
                                                     hRef.getHistoryId(),
                                                     hRef.getHistoryType(),
@@ -228,7 +228,7 @@ public class ImportExportApi extends ApiImplementor {
                         HarLog harLog = HarUtils.createZapHarLog();
                         harLog.setEntries(entries);
 
-                        responseBody = HarUtils.harLogToByteArray(harLog);
+                        responseBody = HarUtils.toJsonAsBytes(harLog);
                     } catch (ApiException e) {
                         responseBody =
                                 e.toString(API.Format.JSON, incErrorDetails())
@@ -307,8 +307,8 @@ public class ImportExportApi extends ApiImplementor {
      * @param recordHistory the history record to add, after converting to {@code HarEntry}.
      * @see HarUtils#createHarEntry(int, int, HttpMessage)
      */
-    private static void addHarEntry(HarEntries entries, RecordHistory recordHistory) {
-        entries.addEntry(
+    private static void addHarEntry(List<HarEntry> entries, RecordHistory recordHistory) {
+        entries.add(
                 HarUtils.createHarEntry(
                         recordHistory.getHistoryId(),
                         recordHistory.getHistoryType(),
