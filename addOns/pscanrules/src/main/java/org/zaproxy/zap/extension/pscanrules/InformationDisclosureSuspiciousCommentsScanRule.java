@@ -25,8 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
@@ -77,9 +79,31 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER =
             () -> DEFAULT_PAYLOADS;
 
+    // https://github.com/antlr/grammars-v4/blob/c82c128d980f4ce46fb3536f87b06b45b9619922/javascript/javascript/JavaScriptLexer.g4#L49-L50
+    private static final Pattern JS_MULTILINE_COMMENT =
+            Pattern.compile("/\\*.*?\\*/", Pattern.DOTALL);
+    private static final Pattern JS_SINGLELINE_COMMENT = Pattern.compile("//.*");
+
     private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
 
     private List<Pattern> patterns = null;
+
+    private static List<String> getJsComments(String content) {
+        List<String> results = new ArrayList<>();
+        results.addAll(
+                JS_SINGLELINE_COMMENT
+                        .matcher(content)
+                        .results()
+                        .map(MatchResult::group)
+                        .collect(Collectors.toList()));
+        results.addAll(
+                JS_MULTILINE_COMMENT
+                        .matcher(content)
+                        .results()
+                        .map(MatchResult::group)
+                        .collect(Collectors.toList()));
+        return results;
+    }
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
@@ -90,17 +114,15 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
 
             if (ResourceIdentificationUtils.isJavaScript(msg)) {
-                // Just treat as text
-                String[] lines = msg.getResponseBody().toString().split("\n");
-                for (String line : lines) {
+                for (String candidate : getJsComments(msg.getResponseBody().toString())) {
                     for (Pattern pattern : patterns) {
-                        Matcher m = pattern.matcher(line);
+                        Matcher m = pattern.matcher(candidate);
                         if (m.find()) {
                             recordAlertSummary(
                                     alertMap,
                                     new AlertSummary(
                                             pattern.toString(),
-                                            line,
+                                            candidate,
                                             Alert.CONFIDENCE_LOW,
                                             m.group()));
                             break; // Only need to record this line once
@@ -132,18 +154,19 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                 Element el;
                 int offset = 0;
                 while ((el = source.getNextElement(offset, HTMLElementName.SCRIPT)) != null) {
-                    for (Pattern pattern : patterns) {
-                        String elStr = el.toString();
-                        Matcher m = pattern.matcher(elStr);
-                        if (m.find()) {
-                            recordAlertSummary(
-                                    alertMap,
-                                    new AlertSummary(
-                                            pattern.toString(),
-                                            elStr,
-                                            Alert.CONFIDENCE_LOW,
-                                            m.group()));
-                            break; // Only need to record this script once
+                    for (String candidate : getJsComments(el.toString())) {
+                        for (Pattern pattern : patterns) {
+                            Matcher m = pattern.matcher(candidate);
+                            if (m.find()) {
+                                recordAlertSummary(
+                                        alertMap,
+                                        new AlertSummary(
+                                                pattern.toString(),
+                                                candidate,
+                                                Alert.CONFIDENCE_LOW,
+                                                m.group()));
+                                break; // Only need to record this script once
+                            }
                         }
                     }
                     offset = el.getEnd();
