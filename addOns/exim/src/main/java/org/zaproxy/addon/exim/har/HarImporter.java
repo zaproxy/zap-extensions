@@ -26,10 +26,13 @@ import de.sstoehr.harreader.model.HarEntry;
 import de.sstoehr.harreader.model.HarHeader;
 import de.sstoehr.harreader.model.HarLog;
 import de.sstoehr.harreader.model.HarResponse;
+import de.sstoehr.harreader.model.HarTiming;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
@@ -216,6 +219,10 @@ public class HarImporter {
                     headerEx.getMessage());
             return null;
         }
+        result.setTimeSentMillis(
+                Optional.ofNullable(harEntry.getStartedDateTime()).map(Date::getTime).orElse(0L));
+        result.setTimeElapsedMillis(
+                Optional.ofNullable(harEntry.getTimings()).map(HarTiming::getReceive).orElse(0));
         setHttpResponse(harEntry.getResponse(), result);
         return result;
     }
