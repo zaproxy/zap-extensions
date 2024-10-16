@@ -36,6 +36,7 @@ import static org.mockito.Mockito.withSettings;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -75,8 +76,8 @@ class AlertFilterJobUnitTest {
         assertThat(job.getParamMethodObject(), is(nullValue()));
         assertThat(job.getParamMethodName(), is(nullValue()));
         assertThat(job.getAlertFilterCount(), is(equalTo(0)));
-        assertThat(job.getData().getAlertFilters(), is(nullValue()));
-        assertThat(job.getParameters().getDeleteGlobalAlerts(), is(nullValue()));
+        assertThat(job.getData().getAlertFilters(), is(equalTo(List.of())));
+        assertThat(job.getParameters().getDeleteGlobalAlerts(), is(false));
     }
 
     @Test

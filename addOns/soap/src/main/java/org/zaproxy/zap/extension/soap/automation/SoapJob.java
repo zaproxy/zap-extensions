@@ -26,6 +26,8 @@ import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.httpclient.URI;
 import org.apache.groovy.parser.antlr4.util.StringUtils;
 import org.parosproxy.paros.CommandLine;
@@ -184,6 +186,8 @@ public class SoapJob extends AutomationJob {
         return data;
     }
 
+    @Getter
+    @Setter
     public static class Data extends JobData {
         private Parameters parameters;
 
@@ -191,34 +195,12 @@ public class SoapJob extends AutomationJob {
             super(job);
             this.parameters = parameters;
         }
-
-        public Parameters getParameters() {
-            return parameters;
-        }
-
-        public void setParameters(Parameters parameters) {
-            this.parameters = parameters;
-        }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
-        private String wsdlFile;
-        private String wsdlUrl;
-
-        public String getWsdlFile() {
-            return wsdlFile;
-        }
-
-        public void setWsdlFile(String wsdlFile) {
-            this.wsdlFile = wsdlFile;
-        }
-
-        public String getWsdlUrl() {
-            return wsdlUrl;
-        }
-
-        public void setWsdlUrl(String wsdlUrl) {
-            this.wsdlUrl = wsdlUrl;
-        }
+        private String wsdlFile = "";
+        private String wsdlUrl = "";
     }
 }

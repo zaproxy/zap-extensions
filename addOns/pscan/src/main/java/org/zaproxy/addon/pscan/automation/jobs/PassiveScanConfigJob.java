@@ -26,6 +26,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -289,45 +293,17 @@ public class PassiveScanConfigJob extends AutomationJob {
                 "pscan.automation.dialog.pscanconfig.summary", this.getData().getRules().size());
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Rule extends AutomationData {
         private int id;
-        private String name;
-        private String threshold;
-
-        public Rule() {}
-
-        public Rule(int id, String name, String threshold) {
-            this.id = id;
-            this.name = name;
-            this.threshold = threshold;
-        }
+        private String name = "";
+        private String threshold = "";
 
         public Rule copy() {
             return new Rule(id, name, threshold);
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getThreshold() {
-            return threshold;
-        }
-
-        public void setThreshold(String threshold) {
-            this.threshold = threshold;
         }
     }
 
@@ -361,53 +337,13 @@ public class PassiveScanConfigJob extends AutomationJob {
         }
     }
 
+    @Setter
+    @Getter
     public static class Parameters extends AutomationData {
-        private Integer maxAlertsPerRule;
+        private Integer maxAlertsPerRule = 0;
         private Boolean scanOnlyInScope = true;
-        private Integer maxBodySizeInBytesToScan;
+        private Integer maxBodySizeInBytesToScan = 0;
         private Boolean enableTags = false;
         private Boolean disableAllRules = false;
-
-        public Parameters() {}
-
-        public Integer getMaxAlertsPerRule() {
-            return maxAlertsPerRule;
-        }
-
-        public void setMaxAlertsPerRule(Integer maxAlertsPerRule) {
-            this.maxAlertsPerRule = maxAlertsPerRule;
-        }
-
-        public Boolean getScanOnlyInScope() {
-            return scanOnlyInScope;
-        }
-
-        public void setScanOnlyInScope(Boolean scanOnlyInScope) {
-            this.scanOnlyInScope = scanOnlyInScope;
-        }
-
-        public Integer getMaxBodySizeInBytesToScan() {
-            return maxBodySizeInBytesToScan;
-        }
-
-        public void setMaxBodySizeInBytesToScan(Integer maxBodySizeInBytesToScan) {
-            this.maxBodySizeInBytesToScan = maxBodySizeInBytesToScan;
-        }
-
-        public Boolean getEnableTags() {
-            return enableTags;
-        }
-
-        public void setEnableTags(Boolean enableTags) {
-            this.enableTags = enableTags;
-        }
-
-        public Boolean getDisableAllRules() {
-            return disableAllRules;
-        }
-
-        public void setDisableAllRules(Boolean disableAllRules) {
-            this.disableAllRules = disableAllRules;
-        }
     }
 }
