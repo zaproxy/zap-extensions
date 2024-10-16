@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Import HAR entry sent and elapsed time.
+
 ## [0.12.0] - 2024-10-07
 ### Changed
 - Improved HTTP 1.1 traffic detection in PCAP files

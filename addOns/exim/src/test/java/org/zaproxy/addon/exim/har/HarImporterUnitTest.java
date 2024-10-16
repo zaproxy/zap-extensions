@@ -159,6 +159,10 @@ class HarImporterUnitTest extends TestUtils {
         byte[] responseBody = {0x30, 0x31};
         HttpMessage httpMessage =
                 new HttpMessage(requestHeader, requestBody, responseHeader, responseBody);
+        long timeSentMillis = 1234L;
+        httpMessage.setTimeSentMillis(timeSentMillis);
+        int timeElapsedMillis = 42;
+        httpMessage.setTimeElapsedMillis(timeElapsedMillis);
 
         HarLog harLog = createHarLog(httpMessage);
         // When
@@ -173,6 +177,8 @@ class HarImporterUnitTest extends TestUtils {
                 deserializedHttpMessage.getResponseHeader().toString(),
                 is(equalTo(responseHeader)));
         assertThat(deserializedHttpMessage.getResponseBody().getBytes(), is(equalTo(responseBody)));
+        assertThat(deserializedHttpMessage.getTimeSentMillis(), is(equalTo(timeSentMillis)));
+        assertThat(deserializedHttpMessage.getTimeElapsedMillis(), is(equalTo(timeElapsedMillis)));
     }
 
     @Test
