@@ -130,6 +130,18 @@ public class AutomationPlan {
                                             "automation.error.job.data", paramsObj));
                             continue;
                         }
+
+                        Object jobEnabled = jobData.get("enabled");
+                        if (jobEnabled != null) {
+                            if (jobEnabled instanceof Boolean) {
+                                job.setEnabled((Boolean) jobEnabled);
+                            } else {
+                                progress.warn(
+                                        Constant.messages.getString(
+                                                "automation.error.job.enabled", jobEnabled));
+                            }
+                        }
+
                         job.setEnv(env);
                         job.setJobData(jobData);
                         job.verifyParameters(progress);

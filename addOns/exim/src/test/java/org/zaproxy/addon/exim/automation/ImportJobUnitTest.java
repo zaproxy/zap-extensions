@@ -72,6 +72,7 @@ class ImportJobUnitTest {
         // Then
         assertThat(job.getType(), is(equalTo("import")));
         assertThat(job.getName(), is(equalTo("import")));
+        assertThat(job.isEnabled(), is(equalTo(true)));
         assertThat(job.getOrder(), is(equalTo(AutomationJob.Order.EXPLORE)));
         assertThat(job.getTemplateDataMin(), is(not(equalTo(""))));
         assertThat(job.getTemplateDataMax(), is(not(equalTo(""))));

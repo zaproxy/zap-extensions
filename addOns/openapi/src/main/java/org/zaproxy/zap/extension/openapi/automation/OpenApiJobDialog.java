@@ -25,6 +25,7 @@ import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -35,6 +36,7 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "openapi.automation.dialog.title";
     private static final String NAME_PARAM = "openapi.automation.dialog.name";
+    private static final String ENABLED_PARAM = "openapi.automation.dialog.enabled";
     private static final String API_FILE_PARAM = "openapi.automation.dialog.apifile";
     private static final String API_URL_PARAM = "openapi.automation.dialog.apiurl";
     private static final String TARGET_URL_PARAM = "openapi.automation.dialog.targeturl";
@@ -48,6 +50,7 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
         this.job = job;
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
+        this.addCheckBoxField(ENABLED_PARAM, JobUtils.unBox(this.job.getData().isEnabled()));
         String fileName = this.job.getData().getParameters().getApiFile();
         File f = null;
         if (fileName != null && !fileName.isEmpty()) {
@@ -80,6 +83,7 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
+        this.job.getData().setEnabled(this.getBoolValue(ENABLED_PARAM));
         this.job.getParameters().setApiFile(this.getStringValue(API_FILE_PARAM));
         this.job.getParameters().setApiUrl(this.getStringValue(API_URL_PARAM));
         this.job.getParameters().setTargetUrl(this.getStringValue(TARGET_URL_PARAM));

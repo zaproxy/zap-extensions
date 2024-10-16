@@ -55,6 +55,7 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 public class ReportJobDialog extends StandardFieldsDialog {
 
     private static final String FIELD_NAME = "reports.automation.dialog.field.name";
+    private static final String FIELD_ENABLED = "reports.automation.dialog.field.enabled";
     private static final String FIELD_TITLE = "reports.dialog.field.title";
     private static final String FIELD_TEMPLATE = "reports.dialog.field.template";
     private static final String FIELD_REPORT_DIR = "reports.dialog.field.reportdir";
@@ -105,6 +106,9 @@ public class ReportJobDialog extends StandardFieldsDialog {
         Parameters params = job.getData().getParameters();
 
         this.addTextField(TAB_SCOPE, FIELD_NAME, this.job.getData().getName());
+        this.addCheckBoxField(
+                TAB_SCOPE, FIELD_ENABLED, JobUtils.unBox(this.job.getData().isEnabled()));
+
         this.addTextField(TAB_SCOPE, FIELD_TITLE, params.getReportTitle());
         this.addTextField(TAB_SCOPE, FIELD_REPORT_NAME, params.getReportFile());
 
@@ -277,6 +281,7 @@ public class ReportJobDialog extends StandardFieldsDialog {
     public void save() {
         Template template = extension.getTemplateByDisplayName(getStringValue(FIELD_TEMPLATE));
         job.getData().setName(this.getStringValue(FIELD_NAME));
+        this.job.getData().setEnabled(this.getBoolValue(FIELD_ENABLED));
         job.getData().getParameters().setTemplate(template.getConfigName());
         job.getData().getParameters().setReportTitle(this.getStringValue(FIELD_TITLE));
         job.getData().getParameters().setReportFile(this.getStringValue(FIELD_REPORT_NAME));

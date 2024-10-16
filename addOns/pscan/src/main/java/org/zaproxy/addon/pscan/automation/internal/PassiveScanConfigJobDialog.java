@@ -44,6 +44,7 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "pscan.automation.dialog.pscanconfig.title";
     private static final String NAME_PARAM = "pscan.automation.dialog.all.name";
+    private static final String ENABLED_PARAM = "pscan.automation.dialog.all.enabled";
     private static final String MAX_ALERTS_PER_RULE_PARAM =
             "pscan.automation.dialog.pscanconfig.maxalertsperrule";
     private static final String SCAN_ONLY_IN_SCOPE_PARAM =
@@ -73,6 +74,7 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
         this.job = job;
 
         this.addTextField(0, NAME_PARAM, this.job.getData().getName());
+        this.addCheckBoxField(0, ENABLED_PARAM, JobUtils.unBox(this.job.getData().isEnabled()));
         this.addNumberField(
                 0,
                 MAX_ALERTS_PER_RULE_PARAM,
@@ -108,6 +110,7 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
+        this.job.getData().setEnabled(this.getBoolValue(ENABLED_PARAM));
         this.job.getParameters().setMaxAlertsPerRule(this.getIntValue(MAX_ALERTS_PER_RULE_PARAM));
         this.job.getParameters().setScanOnlyInScope(this.getBoolValue(SCAN_ONLY_IN_SCOPE_PARAM));
         this.job.getParameters().setMaxBodySizeInBytesToScan(this.getIntValue(MAX_BODY_SIZE_PARAM));

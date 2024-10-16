@@ -25,6 +25,7 @@ import java.util.Locale;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -35,6 +36,7 @@ public class ImportJobDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "exim.automation.import.dialog.title";
     private static final String NAME_PARAM = "exim.automation.import.dialog.name";
+    private static final String ENABLED_PARAM = "exim.automation.import.dialog.enabled";
     private static final String TYPE_PARAM = "exim.automation.import.dialog.type";
     private static final String FILE_NAME_PARAM = "exim.automation.import.dialog.filename";
 
@@ -47,6 +49,8 @@ public class ImportJobDialog extends StandardFieldsDialog {
         this.job = job;
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
+
+        this.addCheckBoxField(ENABLED_PARAM, JobUtils.unBox(this.job.getData().isEnabled()));
 
         typeOptionModel = new DefaultComboBoxModel<>();
         Arrays.stream(ImportJob.TypeOption.values()).forEach(v -> typeOptionModel.addElement(v));
@@ -73,6 +77,7 @@ public class ImportJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
+        this.job.getData().setEnabled(this.getBoolValue(ENABLED_PARAM));
         ImportJob.TypeOption typeOption = (ImportJob.TypeOption) typeOptionModel.getSelectedItem();
         this.job.getParameters().setType(typeOption.name().toLowerCase(Locale.ROOT));
         this.job.getParameters().setFileName(this.getStringValue(FILE_NAME_PARAM));

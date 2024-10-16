@@ -1031,6 +1031,63 @@ class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(progress.getErrors(), contains("!automation.error.unexpected.internal!"));
     }
 
+    @Test
+    void shouldIgnoreDisabledJob() throws Exception {
+        // Given
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        String job1Name = "job1";
+
+        AutomationJobImpl job1 =
+                new AutomationJobImpl() {
+                    @Override
+                    public String getType() {
+                        return job1Name;
+                    }
+                };
+
+        String job2Name = "job2";
+        AutomationJobImpl job2 =
+                new AutomationJobImpl() {
+                    @Override
+                    public String getType() {
+                        return job2Name;
+                    }
+                };
+        String job3Name = "job3";
+        AutomationJobImpl job3 =
+                new AutomationJobImpl() {
+                    @Override
+                    public String getType() {
+                        return job3Name;
+                    }
+                };
+        Path filePath = getResourcePath("resources/testplan-withDisabledJob.yaml");
+        InMemoryStats stats = new InMemoryStats();
+        Stats.addListener(stats);
+        extAuto.registerAutomationJob(job1);
+        extAuto.registerAutomationJob(job2);
+        extAuto.registerAutomationJob(job3);
+        File f = new File(filePath.toAbsolutePath().toString());
+
+        AutomationPlan plan = new AutomationPlan(extAuto, f);
+
+        // When
+        extAuto.runPlan(plan, false);
+        AutomationProgress progress = plan.getProgress();
+
+        List<AutomationJob> runJobs = progress.getRunJobs();
+
+        // Then
+        assertThat(plan.getJob(0).getStatus(), is(equalTo(AutomationJob.Status.NOT_ENABLED)));
+        assertThat(runJobs.size(), is(equalTo(2)));
+        assertThat(runJobs.get(0).getName(), is(equalTo("Job 2")));
+        assertThat(runJobs.get(0).getStatus(), is(equalTo(AutomationJob.Status.COMPLETED)));
+        assertThat(runJobs.get(1).getName(), is(equalTo("Job 3")));
+        assertThat(runJobs.get(1).getStatus(), is(equalTo(AutomationJob.Status.COMPLETED)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
     // Methods are accessed via reflection
     @SuppressWarnings("unused")
     private static class TestParamContainer {
