@@ -157,7 +157,7 @@ public class ImportJob extends AutomationJob {
         } catch (IOException e) {
             CommandLine.error(
                     Constant.messages.getString(
-                            "exim.automation.import.error.nofile", RESOURCES_DIR + name));
+                            "exim.automation.error.noresourcefile", RESOURCES_DIR + name));
         }
         return "";
     }

@@ -21,5 +21,16 @@ The import job allows you to import HAR(HTTP Archive File), ModSecurity2 Logs, Z
       fileName:                        # String: Name of the file containing the data
 </pre>
 
+<H2>Job: export</H2>
+The export job allows you to export messages in HAR format or as URLs. I also allows to choose which messages to export with <code>source</code> of History or All, meaning the manually/proxied messages or all messages.
+<pre>
+  - type: export            # Exports data into a file
+      parameters:
+        context:            # String: Name of the context from which to export. Default: first context
+        type:               # String: One of 'har', 'url'. Default: 'har'
+        source:             # String: One of 'history', 'all'. Default: 'history'
+        fileName:           # String: Name/path to the file
+</pre>
+
 </BODY>
 </HTML>

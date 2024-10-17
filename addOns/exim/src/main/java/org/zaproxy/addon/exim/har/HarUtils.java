@@ -96,7 +96,7 @@ public final class HarUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(HarUtils.class);
 
-    private static final ObjectMapper JSON_MAPPER =
+    public static final ObjectMapper JSON_MAPPER =
             JsonMapper.builder()
                     .serializationInclusion(JsonInclude.Include.NON_DEFAULT)
                     .build()
