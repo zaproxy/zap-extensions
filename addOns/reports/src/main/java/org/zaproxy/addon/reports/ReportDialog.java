@@ -230,7 +230,8 @@ public class ReportDialog extends StandardFieldsDialog {
         this.addCustomComponent(
                 TAB_SCOPE, FIELD_SITES, getNewJScrollPane(getSitesSelector(), 400, 100));
         this.addCheckBoxField(TAB_SCOPE, FIELD_GENERATE_ANYWAY, false);
-        this.addCheckBoxField(TAB_SCOPE, FIELD_DISPLAY_REPORT, reportParam.isDisplayReport());
+        this.addCustomComponent(
+                TAB_SCOPE, FIELD_DISPLAY_REPORT, getDisplayCheckbox(reportParam.isDisplayReport()));
 
         Template defaultTemplate = extension.getTemplateByConfigName(reportParam.getTemplate());
         List<String> templates = extension.getTemplateNames();
@@ -276,6 +277,22 @@ public class ReportDialog extends StandardFieldsDialog {
         this.addPadding(TAB_FILTER);
 
         this.pack();
+    }
+
+    private static JCheckBox getDisplayCheckbox(boolean selected) {
+        JCheckBox displayCheckbox = new JCheckBox();
+        displayCheckbox.setSelected(selected);
+        if (isDocker()) {
+            displayCheckbox.setSelected(false);
+            displayCheckbox.setEnabled(false);
+        }
+        return displayCheckbox;
+    }
+
+    private static boolean isDocker() {
+        return Constant.isInContainer()
+                && !(Constant.getContainerName().equals(Constant.FLATPAK_NAME)
+                        || Constant.getContainerName().equals(Constant.SNAP_NAME));
     }
 
     private JScrollPane getSectionsScrollPane() {
