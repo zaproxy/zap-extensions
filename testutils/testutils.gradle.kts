@@ -14,6 +14,10 @@ configurations {
     }
 }
 
+tasks.withType<JavaCompile>().configureEach {
+    options.compilerArgs = options.compilerArgs + "-Xlint:-processing"
+}
+
 dependencies {
     compileOnly("org.zaproxy:zap:2.15.0")
     implementation(project(":addOns:network"))

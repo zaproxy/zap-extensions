@@ -24,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.io.IOUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
@@ -199,19 +201,18 @@ public class GraphQlJob extends AutomationJob {
         return parameters;
     }
 
+    @Getter
     public static class Data extends JobData {
-        private Parameters parameters;
+        private final Parameters parameters;
 
         public Data(AutomationJob job, Parameters parameters) {
             super(job);
             this.parameters = parameters;
         }
-
-        public Parameters getParameters() {
-            return parameters;
-        }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
         private String endpoint;
         private String schemaUrl;
@@ -228,101 +229,5 @@ public class GraphQlJob extends AutomationJob {
                 GraphQlParam.DEFAULT_QUERY_SPLIT_TYPE.toString().toLowerCase(Locale.ROOT);
         private String requestMethod =
                 GraphQlParam.DEFAULT_REQUEST_METHOD.toString().toLowerCase(Locale.ROOT);
-
-        public String getEndpoint() {
-            return endpoint;
-        }
-
-        public void setEndpoint(String endpoint) {
-            this.endpoint = endpoint;
-        }
-
-        public String getSchemaUrl() {
-            return schemaUrl;
-        }
-
-        public void setSchemaUrl(String schemaUrl) {
-            this.schemaUrl = schemaUrl;
-        }
-
-        public String getSchemaFile() {
-            return schemaFile;
-        }
-
-        public void setSchemaFile(String schemaFile) {
-            this.schemaFile = schemaFile;
-        }
-
-        public Boolean getQueryGenEnabled() {
-            return queryGenEnabled;
-        }
-
-        public void setQueryGenEnabled(Boolean queryGenEnabled) {
-            this.queryGenEnabled = queryGenEnabled;
-        }
-
-        public Integer getMaxQueryDepth() {
-            return maxQueryDepth;
-        }
-
-        public void setMaxQueryDepth(Integer maxQueryDepth) {
-            this.maxQueryDepth = maxQueryDepth;
-        }
-
-        public Boolean getLenientMaxQueryDepthEnabled() {
-            return lenientMaxQueryDepthEnabled;
-        }
-
-        public void setLenientMaxQueryDepthEnabled(Boolean lenientMaxQueryDepthEnabled) {
-            this.lenientMaxQueryDepthEnabled = lenientMaxQueryDepthEnabled;
-        }
-
-        public Integer getMaxAdditionalQueryDepth() {
-            return maxAdditionalQueryDepth;
-        }
-
-        public void setMaxAdditionalQueryDepth(Integer maxAdditionalQueryDepth) {
-            this.maxAdditionalQueryDepth = maxAdditionalQueryDepth;
-        }
-
-        public Integer getMaxArgsDepth() {
-            return maxArgsDepth;
-        }
-
-        public void setMaxArgsDepth(Integer maxArgsDepth) {
-            this.maxArgsDepth = maxArgsDepth;
-        }
-
-        public Boolean getOptionalArgsEnabled() {
-            return optionalArgsEnabled;
-        }
-
-        public void setOptionalArgsEnabled(Boolean optionalArgsEnabled) {
-            this.optionalArgsEnabled = optionalArgsEnabled;
-        }
-
-        public String getArgsType() {
-            return argsType;
-        }
-
-        public void setArgsType(String argsType) {
-            this.argsType = argsType;
-        }
-
-        public String getQuerySplitType() {
-            return querySplitType;
-        }
-
-        public void setQuerySplitType(String querySplitType) {
-            this.querySplitType = querySplitType;
-        }
-
-        public String getRequestMethod() {
-            return requestMethod;
-        }
-
-        public void setRequestMethod(String requestMethod) {
-            this.requestMethod = requestMethod;
-        }
     }
 }

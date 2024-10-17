@@ -132,7 +132,9 @@ subprojects {
 
     tasks.withType<JavaCompile>().configureEach {
         if (JavaVersion.current().getMajorVersion() >= "21") {
-            options.compilerArgs = options.compilerArgs + "-Xlint:-this-escape"
+            options.compilerArgs = options.compilerArgs + "-Xlint:-this-escape,-processing"
+        } else {
+            options.compilerArgs = options.compilerArgs + "-Xlint:-processing"
         }
     }
 
