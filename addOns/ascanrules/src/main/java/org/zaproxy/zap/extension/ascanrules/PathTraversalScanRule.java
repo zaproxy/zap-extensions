@@ -40,6 +40,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
@@ -67,6 +68,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
      */
     private static final ContentsMatcher WIN_PATTERN =
             new PatternContentsMatcher(Pattern.compile("\\[drivers\\]"));
+    private static final String WIN_DIR_EVIDENCE = "Windows";
     private static final String[] WIN_LOCAL_FILE_TARGETS = {
         // Absolute Windows file retrieval (we suppose C:\\)
         "c:/Windows/system.ini",
@@ -116,6 +118,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
     // Dot used to match 'x' or '!' (used in AIX)
     private static final ContentsMatcher NIX_PATTERN =
             new PatternContentsMatcher(Pattern.compile("root:.:0:0"));
+    private static final String NIX_DIR_EVIDENCE = "etc";
     private static final String[] NIX_LOCAL_FILE_TARGETS = {
         // Absolute file retrieval
         "/etc/passwd",
@@ -177,6 +180,8 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
      */
     private static final String[] LOCAL_FILE_RELATIVE_PREFIXES = {"", "/", "\\"};
 
+    private static final List<String> DIR_EVIDENCE_LIST =
+            List.of(NIX_DIR_EVIDENCE, WIN_DIR_EVIDENCE);
     /*
      * details of the vulnerability which we are attempting to find
      */
@@ -220,6 +225,10 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
      */
     @Override
     public void scan(HttpMessage msg, String param, String value) {
+
+        if (!isGoodCandidate(getBaseMsg())) {
+            return;
+        }
 
         try {
             // figure out how aggressively we should test
@@ -555,6 +564,18 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
         }
     }
 
+    private static boolean isGoodCandidate(HttpMessage msg) {
+        if (ResourceIdentificationUtils.isJavaScript(msg)
+                || ResourceIdentificationUtils.isCss(msg)
+                || ResourceIdentificationUtils.responseContainsControlChars(msg)) {
+
+            return false;
+        }
+        return DirNamesContentsMatcher.matchNixDirectories(msg.getResponseBody().toString()) == null
+                && DirNamesContentsMatcher.matchWinDirectories(msg.getResponseBody().toString())
+                        == null;
+    }
+
     private boolean sendAndCheckPayload(
             String param, String newValue, ContentsMatcher contentsMatcher, int check)
             throws IOException {
@@ -644,12 +665,23 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
 
     private AlertBuilder createMatchedAlert(
             String param, String attack, String evidence, int check) {
-        return newAlert()
-                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setParam(param)
-                .setAttack(attack)
-                .setEvidence(evidence)
-                .setAlertRef(getId() + "-" + check);
+        AlertBuilder builder =
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setParam(param)
+                        .setAttack(attack)
+                        .setEvidence(evidence)
+                        .setAlertRef(getId() + "-" + check);
+        if (DIR_EVIDENCE_LIST.contains(evidence)) {
+            builder.setOtherInfo(
+                    Constant.messages.getString(
+                            MESSAGE_PREFIX + "info",
+                            evidence,
+                            evidence.equals(WIN_DIR_EVIDENCE)
+                                    ? DirNamesContentsMatcher.WIN_MATCHES
+                                    : DirNamesContentsMatcher.NIX_MATCHES));
+        }
+        return builder;
     }
 
     @Override
@@ -691,6 +723,24 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
 
     private static class DirNamesContentsMatcher implements ContentsMatcher {
 
+        public static final String NIX_MATCHES =
+                String.join(", ", List.of("proc", NIX_DIR_EVIDENCE, "boot", "tmp", "home"));
+        private static final Pattern PROC_PATT =
+                Pattern.compile(
+                        "(?:^|\\W)proc(?:\\W|$)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        private static final Pattern ETC_PATT =
+                Pattern.compile(
+                        "(?:^|\\W)etc(?:\\W|$)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        private static final Pattern BOOT_PATT =
+                Pattern.compile(
+                        "(?:^|\\W)boot(?:\\W|$)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        private static final Pattern TMP_PATT =
+                Pattern.compile(
+                        "(?:^|\\W)tmp(?:\\W|$)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        private static final Pattern HOME_PATT =
+                Pattern.compile(
+                        "(?:^|\\W)home(?:\\W|$)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+
         @Override
         public String match(String contents) {
             String result = matchNixDirectories(contents);
@@ -701,36 +751,24 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
         }
 
         private static String matchNixDirectories(String contents) {
-            Pattern procPattern =
-                    Pattern.compile("(?:^|\\W)proc(?:\\W|$)", Pattern.CASE_INSENSITIVE);
-            Pattern etcPattern = Pattern.compile("(?:^|\\W)etc(?:\\W|$)", Pattern.CASE_INSENSITIVE);
-            Pattern bootPattern =
-                    Pattern.compile("(?:^|\\W)boot(?:\\W|$)", Pattern.CASE_INSENSITIVE);
-            Pattern tmpPattern = Pattern.compile("(?:^|\\W)tmp(?:\\W|$)", Pattern.CASE_INSENSITIVE);
-            Pattern homePattern =
-                    Pattern.compile("(?:^|\\W)home(?:\\W|$)", Pattern.CASE_INSENSITIVE);
-
-            Matcher procMatcher = procPattern.matcher(contents);
-            Matcher etcMatcher = etcPattern.matcher(contents);
-            Matcher bootMatcher = bootPattern.matcher(contents);
-            Matcher tmpMatcher = tmpPattern.matcher(contents);
-            Matcher homeMatcher = homePattern.matcher(contents);
-
-            if (procMatcher.find()
-                    && etcMatcher.find()
-                    && bootMatcher.find()
-                    && tmpMatcher.find()
-                    && homeMatcher.find()) {
-                return "etc";
+            if (PROC_PATT.matcher(contents).find()
+                    && ETC_PATT.matcher(contents).find()
+                    && BOOT_PATT.matcher(contents).find()
+                    && TMP_PATT.matcher(contents).find()
+                    && HOME_PATT.matcher(contents).find()) {
+                return NIX_DIR_EVIDENCE;
             }
 
             return null;
         }
 
+        public static final String WIN_MATCHES =
+                String.join(", ", List.of(WIN_DIR_EVIDENCE, "Program Files"));
+
         private static String matchWinDirectories(String contents) {
-            if (contents.contains("Windows")
+            if (contents.contains(WIN_DIR_EVIDENCE)
                     && Pattern.compile("Program\\sFiles").matcher(contents).find()) {
-                return "Windows";
+                return WIN_DIR_EVIDENCE;
             }
 
             return null;
