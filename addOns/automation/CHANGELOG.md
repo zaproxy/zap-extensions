@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update help for the "requestor" job.
+- Update help to indicate that job order is important (Issue 8675).
 
 ## [0.43.0] - 2024-10-07
 ### Fixed
