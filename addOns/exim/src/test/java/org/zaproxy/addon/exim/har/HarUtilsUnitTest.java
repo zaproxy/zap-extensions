@@ -27,6 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 import de.sstoehr.harreader.model.HarEntry;
+import de.sstoehr.harreader.model.HarResponse;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -134,6 +135,20 @@ class HarUtilsUnitTest extends TestUtils {
                 entry.getAdditional().get(HarUtils.MESSAGE_TYPE_CUSTOM_FIELD), is(equalTo(type)));
         assertThat(
                 entry.getAdditional().get(HarUtils.MESSAGE_NOTE_CUSTOM_FIELD), is(equalTo(note)));
+    }
+
+    @Test
+    void shouldCreateHarResponseWithBodyEvenIfNoContentType() throws Exception {
+        // Given
+        HttpMessage message = createHttpMessage();
+        message.getResponseBody().setBody("123");
+        // When
+        HarResponse response = HarUtils.createHarResponse(message);
+        // Then
+        assertThat(response.getBodySize(), is(equalTo(3L)));
+        assertThat(response.getContent().getMimeType(), is(equalTo("")));
+        assertThat(response.getContent().getEncoding(), is(equalTo("base64")));
+        assertThat(response.getContent().getText(), is(equalTo("MTIz")));
     }
 
     @Test
