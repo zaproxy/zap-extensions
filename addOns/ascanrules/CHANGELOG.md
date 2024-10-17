@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The External Redirect scan rule payload were slightly re-ordered to prioritize HTTPS variants.
 - For Alerts raised by the SQL Injection scan rules the Attack field values are now simply the payload, not an assembled description.
 - The Cross Site Scripting (Reflected) scan rule was updated to address potential false negatives when the injection context is a tag name and there is some filtering.
+- The Path Traversal scan rule now includes further details when directory matches are made (Issue 8379).
 
 ### Added
 - Rules (as applicable) have been tagged in relation to HIPAA and PCI DSS.
