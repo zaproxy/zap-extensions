@@ -32,6 +32,7 @@ public class PassiveScanWaitJobDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "pscan.automation.dialog.pscanwait.title";
     private static final String NAME_PARAM = "pscan.automation.dialog.all.name";
+    private static final String ENABLED_PARAM = "pscan.automation.dialog.all.enabled";
     private static final String MAX_DURATION_PARAM =
             "pscan.automation.dialog.pscanwait.maxduration";
 
@@ -42,6 +43,7 @@ public class PassiveScanWaitJobDialog extends StandardFieldsDialog {
         this.job = job;
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
+        this.addCheckBoxField(ENABLED_PARAM, JobUtils.unBox(this.job.getData().isEnabled()));
         this.addNumberField(
                 MAX_DURATION_PARAM,
                 0,
@@ -53,6 +55,7 @@ public class PassiveScanWaitJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
+        this.job.getData().setEnabled(this.getBoolValue(ENABLED_PARAM));
         this.job.getParameters().setMaxDuration(this.getIntValue(MAX_DURATION_PARAM));
         this.job.resetAndSetChanged();
     }

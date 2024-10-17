@@ -28,6 +28,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
@@ -43,6 +44,7 @@ public class RequestorJobDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "automation.dialog.requestor.title";
     private static final String NAME_PARAM = "automation.dialog.all.name";
+    private static final String ENABLED_PARAM = "automation.dialog.all.enabled";
     private static final String USER_PARAM = "automation.dialog.all.user";
 
     private RequestorJob job;
@@ -69,6 +71,8 @@ public class RequestorJobDialog extends StandardFieldsDialog {
 
         this.addTextField(0, NAME_PARAM, this.job.getData().getName());
 
+        this.addCheckBoxField(0, ENABLED_PARAM, JobUtils.unBox(this.job.getData().isEnabled()));
+
         List<String> users = job.getEnv().getAllUserNames();
         // Add blank option
         users.add(0, "");
@@ -82,6 +86,7 @@ public class RequestorJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
+        this.job.getData().setEnabled(this.getBoolValue(ENABLED_PARAM));
         this.job.getData().getParameters().setUser(this.getStringValue(USER_PARAM));
         job.getData().setRequests(this.getRulesModel().getRules());
         this.job.resetAndSetChanged();

@@ -98,6 +98,7 @@ class ReportJobUnitTest extends TestUtils {
         // Then
         assertThat(job.getType(), is(equalTo("report")));
         assertThat(job.getName(), is(equalTo("report")));
+        assertThat(job.isEnabled(), is(equalTo(true)));
         assertThat(job.getOrder(), is(equalTo(AutomationJob.Order.REPORT)));
         assertThat(job.getData().getRisks(), is(nullValue()));
         assertThat(job.getData().getConfidences(), is(nullValue()));

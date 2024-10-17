@@ -56,6 +56,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "automation.dialog.ascan.title";
     private static final String NAME_PARAM = "automation.dialog.all.name";
+    private static final String ENABLED_PARAM = "automation.dialog.all.enabled";
     private static final String CONTEXT_PARAM = "automation.dialog.ascan.context";
     private static final String USER_PARAM = "automation.dialog.all.user";
     private static final String POLICY_PARAM = "automation.dialog.ascan.policy";
@@ -94,6 +95,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
         this.job = job;
 
         this.addTextField(0, NAME_PARAM, this.job.getData().getName());
+        this.addCheckBoxField(0, ENABLED_PARAM, JobUtils.unBox(this.job.getData().isEnabled()));
         List<String> contextNames = this.job.getEnv().getContextNames();
         // Add blank option
         contextNames.add(0, "");
@@ -220,6 +222,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
+        this.job.getData().setEnabled(this.getBoolValue(ENABLED_PARAM));
         this.job.getParameters().setContext(this.getStringValue(CONTEXT_PARAM));
         this.job.getParameters().setUser(this.getStringValue(USER_PARAM));
         this.job.getParameters().setPolicy(this.getStringValue(POLICY_PARAM));

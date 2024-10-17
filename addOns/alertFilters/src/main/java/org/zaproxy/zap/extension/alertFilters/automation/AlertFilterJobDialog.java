@@ -43,6 +43,7 @@ public class AlertFilterJobDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "alertFilters.automation.dialog.title";
     private static final String NAME_PARAM = "automation.dialog.all.name";
+    private static final String ENABLED_PARAM = "automation.dialog.all.enabled";
     private static final String DELETE_GLOBAL_PARAM = "alertFilters.automation.dialog.deleteglobal";
 
     private AlertFilterJob job;
@@ -68,6 +69,7 @@ public class AlertFilterJobDialog extends StandardFieldsDialog {
         buttons.add(getRemoveButton());
 
         this.addTextField(0, NAME_PARAM, this.job.getData().getName());
+        this.addCheckBoxField(0, ENABLED_PARAM, JobUtils.unBox(this.job.getData().isEnabled()));
         this.addCheckBoxField(
                 0,
                 DELETE_GLOBAL_PARAM,
@@ -80,6 +82,7 @@ public class AlertFilterJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
+        this.job.getData().setEnabled(this.getBoolValue(ENABLED_PARAM));
         this.job
                 .getData()
                 .getParameters()

@@ -48,6 +48,7 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "graphql.automation.dialog.title";
     private static final String NAME_PARAM = "graphql.automation.dialog.name";
+    private static final String ENABLED_PARAM = "graphql.automation.dialog.enabled";
     private static final String ENDPOINT_PARAM = "graphql.automation.dialog.endpoint";
     private static final String SCHEMA_URL_PARAM = "graphql.automation.dialog.schemaurl";
     private static final String SCHEMA_FILE_PARAM = "graphql.automation.dialog.schemafile";
@@ -80,6 +81,7 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
         this.job = job;
 
         this.addTextField(0, NAME_PARAM, this.job.getData().getName());
+        this.addCheckBoxField(0, ENABLED_PARAM, JobUtils.unBox(this.job.getData().isEnabled()));
         // Cannot select the node as it might not be present in the Sites tree
         this.addNodeSelectField(0, ENDPOINT_PARAM, null, true, false);
         Component endpointField = this.getField(ENDPOINT_PARAM);
@@ -274,6 +276,7 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
+        this.job.getData().setEnabled(this.getBoolValue(ENABLED_PARAM));
         this.job.getParameters().setEndpoint(this.getStringValue(ENDPOINT_PARAM));
         this.job.getParameters().setSchemaUrl(this.getStringValue(SCHEMA_URL_PARAM));
         this.job.getParameters().setSchemaFile(this.getStringValue(SCHEMA_FILE_PARAM));

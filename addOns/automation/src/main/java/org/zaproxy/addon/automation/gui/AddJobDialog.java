@@ -74,6 +74,7 @@ public class AddJobDialog extends StandardFieldsDialog {
 
         try {
             AutomationJob job = jobTemplate.newJob();
+            job.setEnabled(true);
             this.plan.addJob(job);
             job.showDialog();
         } catch (AutomationJobException e) {
