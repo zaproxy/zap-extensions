@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
@@ -163,6 +164,13 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo("c:/")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        equalTo(
+                                "While the evidence field indicates Windows, the rule actually "
+                                        + "checked that the response contains matches for all of the "
+                                        + "following: [Windows, Program Files].")));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
@@ -181,6 +189,13 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo("/")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        equalTo(
+                                "While the evidence field indicates etc, the rule actually "
+                                        + "checked that the response contains matches for all of the "
+                                        + "following: [proc, etc, boot, tmp, home].")));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
@@ -199,6 +214,13 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo("/")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        equalTo(
+                                "While the evidence field indicates etc, the rule actually "
+                                        + "checked that the response contains matches for all of the "
+                                        + "following: [proc, etc, boot, tmp, home].")));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
@@ -272,6 +294,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         // Then
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-2")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(emptyString()));
     }
 
     @Test
@@ -288,6 +311,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         // Then
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-1")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(emptyString()));
     }
 
     @ParameterizedTest
@@ -308,6 +332,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-5")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(emptyString()));
     }
 
     @Test
