@@ -26,6 +26,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -185,35 +189,21 @@ public class PassiveScanWaitJob extends AutomationJob {
         return null;
     }
 
+    @Getter
     public static class Data extends JobData {
-        private Parameters parameters;
+        private final Parameters parameters;
 
         public Data(AutomationJob job, Parameters parameters) {
             super(job);
             this.parameters = parameters;
         }
-
-        public Parameters getParameters() {
-            return parameters;
-        }
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class Parameters extends AutomationData {
-        private Integer maxDuration;
-
-        public Parameters() {}
-
-        public Parameters(int maxDuration) {
-            super();
-            this.maxDuration = maxDuration;
-        }
-
-        public void setMaxDuration(int maxDuration) {
-            this.maxDuration = maxDuration;
-        }
-
-        public Integer getMaxDuration() {
-            return maxDuration;
-        }
+        private Integer maxDuration = 0;
     }
 }

@@ -19,98 +19,31 @@
  */
 package org.zaproxy.zap.extension.scripts.automation;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.zaproxy.addon.automation.AutomationData;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ScriptJobParameters extends AutomationData {
     private String action;
     private String type;
     private String engine;
-    private String name;
-    private String source;
-    private String target;
-    private String inline;
-
-    public ScriptJobParameters() {}
+    private String name = "";
+    private String source = "";
+    private String target = "";
+    private String inline = "";
 
     public ScriptJobParameters(String action) {
         this.action = action;
     }
 
-    public ScriptJobParameters(
-            String action,
-            String type,
-            String engine,
-            String name,
-            String source,
-            String target,
-            String inline) {
-        this.action = action;
-        this.type = type;
-        this.engine = engine;
-        this.name = name;
-        this.source = source;
-        this.target = target;
-        this.inline = inline;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getEngine() {
-        return engine;
-    }
-
-    public void setEngine(String engine) {
-        this.engine = engine;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
     // For backwards compatibility
     public void setFile(String file) {
         this.source = file;
-    }
-
-    public String getTarget() {
-        return target;
-    }
-
-    public void setTarget(String target) {
-        this.target = target;
-    }
-
-    public String getInline() {
-        return inline;
-    }
-
-    public void setInline(String inline) {
-        this.inline = inline;
     }
 }

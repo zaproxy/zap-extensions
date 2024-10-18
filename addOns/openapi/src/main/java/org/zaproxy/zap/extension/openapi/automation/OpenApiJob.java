@@ -25,6 +25,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -259,6 +261,8 @@ public class OpenApiJob extends AutomationJob {
         return data;
     }
 
+    @Getter
+    @Setter
     public static class Data extends JobData {
         private Parameters parameters;
 
@@ -266,61 +270,15 @@ public class OpenApiJob extends AutomationJob {
             super(job);
             this.parameters = parameters;
         }
-
-        public Parameters getParameters() {
-            return parameters;
-        }
-
-        public void setParameters(Parameters parameters) {
-            this.parameters = parameters;
-        }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
-        private String apiFile;
-        private String apiUrl;
-        private String targetUrl;
-        private String context;
-        private String user;
-
-        public String getApiFile() {
-            return apiFile;
-        }
-
-        public void setApiFile(String apiFile) {
-            this.apiFile = apiFile;
-        }
-
-        public String getApiUrl() {
-            return apiUrl;
-        }
-
-        public void setApiUrl(String apiUrl) {
-            this.apiUrl = apiUrl;
-        }
-
-        public String getTargetUrl() {
-            return targetUrl;
-        }
-
-        public void setTargetUrl(String targetUrl) {
-            this.targetUrl = targetUrl;
-        }
-
-        public String getContext() {
-            return context;
-        }
-
-        public void setContext(String context) {
-            this.context = context;
-        }
-
-        public String getUser() {
-            return user;
-        }
-
-        public void setUser(String user) {
-            this.user = user;
-        }
+        private String apiFile = "";
+        private String apiUrl = "";
+        private String targetUrl = "";
+        private String context = "";
+        private String user = "";
     }
 }

@@ -134,7 +134,7 @@ class ReplacerJobUnitTest extends TestUtils {
         assertThat(job.getData().getRules().get(0).getDescription(), is(nullValue()));
         assertThat(job.getData().getRules().get(0).getUrl(), is(nullValue()));
         assertThat(job.getData().getRules().get(0).getMatchType(), is(equalTo("resp_body_str")));
-        assertThat(job.getData().getRules().get(0).isMatchRegex(), is(nullValue()));
+        assertThat(job.getData().getRules().get(0).isMatchRegex(), is(false));
         assertThat(job.getData().getRules().get(0).getReplacementString(), is(nullValue()));
         assertThat(job.getData().getRules().get(0).getTokenProcessing(), is(nullValue()));
         assertThat(job.getData().getRules().get(0).getInitiators(), is(nullValue()));
