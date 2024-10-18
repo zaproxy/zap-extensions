@@ -131,7 +131,7 @@ public class AppPattern {
 
         public List<String> getVersions() {
             if (this.versions == null) {
-                versions = new ArrayList<String>();
+                versions = new ArrayList<>();
             }
             return versions;
         }

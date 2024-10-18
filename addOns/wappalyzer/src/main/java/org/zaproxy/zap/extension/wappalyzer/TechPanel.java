@@ -22,8 +22,10 @@ package org.zaproxy.zap.extension.wappalyzer;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
+import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -36,6 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellRenderer;
 import org.jdesktop.swingx.JXTable;
@@ -107,7 +110,7 @@ public class TechPanel extends AbstractPanel {
                         .getView()
                         .getMenuShortcutKeyStroke(
                                 KeyEvent.VK_T,
-                                KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
+                                InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK,
                                 false));
         this.setMnemonic(Constant.messages.getChar("wappalyzer.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
@@ -157,7 +160,7 @@ public class TechPanel extends AbstractPanel {
             panelToolbar.setFloatable(false);
             panelToolbar.setRollover(true);
             panelToolbar.setPreferredSize(new java.awt.Dimension(800, 30));
-            panelToolbar.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+            panelToolbar.setFont(new Font(Font.DIALOG, Font.PLAIN, 12));
             panelToolbar.setName("WappTechToolbar");
 
             panelToolbar.add(
@@ -176,7 +179,7 @@ public class TechPanel extends AbstractPanel {
         if (jScrollPane == null) {
             jScrollPane = new JScrollPane();
             jScrollPane.setViewportView(getTechTable());
-            jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+            jScrollPane.setFont(new Font(Font.DIALOG, Font.PLAIN, 11));
         }
         return jScrollPane;
     }
@@ -219,11 +222,11 @@ public class TechPanel extends AbstractPanel {
                                         Icon icon = ((Application) item).getIcon();
                                         return icon != null ? icon : TRANSPARENT_ICON;
                                     }),
-                            JLabel.LEADING);
+                            SwingConstants.LEADING);
             techTable.setDefaultRenderer(Application.class, renderer);
 
             techTable.setName(PANEL_NAME);
-            techTable.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
+            techTable.setFont(new Font(Font.DIALOG, Font.PLAIN, 11));
             techTable.setDoubleBuffered(true);
             techTable.addMouseListener(
                     new java.awt.event.MouseAdapter() {
