@@ -27,6 +27,7 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.MainMenuBar;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
@@ -46,6 +47,8 @@ public class ExtensionExim extends ExtensionAdaptor {
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(ExtensionCommonlib.class);
 
+    private Exporter exporter;
+
     private JMenu menuExport;
 
     private PopupMenuExportMessages popupMenuExportResponses;
@@ -57,6 +60,13 @@ public class ExtensionExim extends ExtensionAdaptor {
 
     public ExtensionExim() {
         super(NAME);
+    }
+
+    @Override
+    public void initModel(Model model) {
+        super.initModel(model);
+
+        exporter = new Exporter(model);
     }
 
     @Override
@@ -121,6 +131,16 @@ public class ExtensionExim extends ExtensionAdaptor {
             MainMenuBar menuBar = getView().getMainFrame().getMainMenuBar();
             menuBar.remove(getMenuExport());
         }
+    }
+
+    /**
+     * Gets the exporter.
+     *
+     * @return the exporter, never {@code null}.
+     * @since 0.13.0
+     */
+    public Exporter getExporter() {
+        return exporter;
     }
 
     public static void updateOutput(String messageKey, String filePath) {
