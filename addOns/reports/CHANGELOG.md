@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Stats counter to the main toolbar button (Issue 8375).
 
+### Changed
+- Update automation job help.
+
 ## [0.34.0] - 2024-10-07
 ### Changed
 - Checkmarx rebrand.
