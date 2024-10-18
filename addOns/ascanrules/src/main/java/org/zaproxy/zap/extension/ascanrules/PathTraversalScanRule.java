@@ -67,6 +67,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
      */
     private static final ContentsMatcher WIN_PATTERN =
             new PatternContentsMatcher(Pattern.compile("\\[drivers\\]"));
+    private static final String WIN_DIR_EVIDENCE = "Windows";
     private static final String[] WIN_LOCAL_FILE_TARGETS = {
         // Absolute Windows file retrieval (we suppose C:\\)
         "c:/Windows/system.ini",
@@ -116,6 +117,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
     // Dot used to match 'x' or '!' (used in AIX)
     private static final ContentsMatcher NIX_PATTERN =
             new PatternContentsMatcher(Pattern.compile("root:.:0:0"));
+    private static final String NIX_DIR_EVIDENCE = "etc";
     private static final String[] NIX_LOCAL_FILE_TARGETS = {
         // Absolute file retrieval
         "/etc/passwd",
@@ -644,12 +646,23 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
 
     private AlertBuilder createMatchedAlert(
             String param, String attack, String evidence, int check) {
-        return newAlert()
-                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setParam(param)
-                .setAttack(attack)
-                .setEvidence(evidence)
-                .setAlertRef(getId() + "-" + check);
+        AlertBuilder builder =
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setParam(param)
+                        .setAttack(attack)
+                        .setEvidence(evidence)
+                        .setAlertRef(getId() + "-" + check);
+        if (List.of(NIX_DIR_EVIDENCE, WIN_DIR_EVIDENCE).contains(evidence)) {
+            builder.setOtherInfo(
+                    Constant.messages.getString(
+                            MESSAGE_PREFIX + "info",
+                            evidence,
+                            evidence.equals(WIN_DIR_EVIDENCE)
+                                    ? DirNamesContentsMatcher.WIN_MATCHES.toString()
+                                    : DirNamesContentsMatcher.NIX_MATCHES.toString()));
+        }
+        return builder;
     }
 
     @Override
@@ -691,6 +704,9 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
 
     private static class DirNamesContentsMatcher implements ContentsMatcher {
 
+        public static final List<String> NIX_MATCHES =
+                List.of("proc", NIX_DIR_EVIDENCE, "boot", "tmp", "home");
+
         @Override
         public String match(String contents) {
             String result = matchNixDirectories(contents);
@@ -721,16 +737,18 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
                     && bootMatcher.find()
                     && tmpMatcher.find()
                     && homeMatcher.find()) {
-                return "etc";
+                return NIX_DIR_EVIDENCE;
             }
 
             return null;
         }
 
+        public static final List<String> WIN_MATCHES = List.of(WIN_DIR_EVIDENCE, "Program Files");
+
         private static String matchWinDirectories(String contents) {
-            if (contents.contains("Windows")
+            if (contents.contains(WIN_DIR_EVIDENCE)
                     && Pattern.compile("Program\\sFiles").matcher(contents).find()) {
-                return "Windows";
+                return WIN_DIR_EVIDENCE;
             }
 
             return null;
