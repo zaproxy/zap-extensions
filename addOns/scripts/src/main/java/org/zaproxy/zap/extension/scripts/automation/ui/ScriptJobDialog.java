@@ -31,6 +31,7 @@ import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJob;
@@ -48,6 +49,7 @@ public class ScriptJobDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "scripts.automation.dialog.title";
     public static final String NAME_PARAM = "scripts.automation.dialog.name";
+    public static final String ENABLED_PARAM = "automation.dialog.all.enabled";
     public static final String SCRIPT_ACTION_PARAM = "scripts.automation.dialog.action";
     public static final String SCRIPT_TYPE_PARAM = "scripts.automation.dialog.scriptType";
     public static final String SCRIPT_ENGINE_PARAM = "scripts.automation.dialog.scriptEngine";
@@ -86,6 +88,7 @@ public class ScriptJobDialog extends StandardFieldsDialog {
         this.job = job;
 
         this.addTextField(0, NAME_PARAM, this.job.getData().getName());
+        this.addCheckBoxField(0, ENABLED_PARAM, JobUtils.unBox(this.job.getData().isEnabled()));
         this.addComboField(
                 0,
                 SCRIPT_ACTION_PARAM,
@@ -234,6 +237,7 @@ public class ScriptJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
+        this.job.getData().setEnabled(this.getBoolValue(ENABLED_PARAM));
         this.job.getData().getParameters().setAction(this.getStringValue(SCRIPT_ACTION_PARAM));
         this.job.getData().getParameters().setType(this.getStringValue(SCRIPT_TYPE_PARAM));
         this.job.getData().getParameters().setEngine(this.getStringValue(SCRIPT_ENGINE_PARAM));

@@ -24,6 +24,7 @@ import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -34,6 +35,7 @@ public class PostmanJobDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "postman.automation.dialog.title";
     private static final String NAME_PARAM = "postman.automation.dialog.name";
+    private static final String ENABLED_PARAM = "postman.automation.dialog.enabled";
     private static final String COLLECTION_FILE_PARAM = "postman.automation.dialog.collectionfile";
     private static final String COLLECTION_URL_PARAM = "postman.automation.dialog.collectionurl";
     private static final String VARS_PARAM = "postman.automation.dialog.vars";
@@ -45,6 +47,7 @@ public class PostmanJobDialog extends StandardFieldsDialog {
         this.job = job;
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
+        this.addCheckBoxField(ENABLED_PARAM, JobUtils.unBox(this.job.getData().isEnabled()));
         String fileName = this.job.getData().getParameters().getCollectionFile();
         File f = null;
         if (fileName != null && !fileName.isEmpty()) {
@@ -65,6 +68,7 @@ public class PostmanJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
+        this.job.getData().setEnabled(this.getBoolValue(ENABLED_PARAM));
         this.job.getParameters().setCollectionFile((this.getStringValue(COLLECTION_FILE_PARAM)));
         this.job.getParameters().setCollectionUrl(this.getStringValue(COLLECTION_URL_PARAM));
         this.job.getParameters().setVariables(this.getStringValue(VARS_PARAM));

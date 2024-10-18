@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -121,6 +122,7 @@ class AjaxSpiderJobUnitTest {
         // Then
         assertThat(job.getType(), is(equalTo("spiderAjax")));
         assertThat(job.getName(), is(equalTo("spiderAjax")));
+        assertThat(job.isEnabled(), is(equalTo(true)));
         assertThat(job.getOrder(), is(equalTo(Order.LAST_EXPLORE)));
         assertThat(job.getParamMethodObject(), is(extAjax));
         assertThat(job.getParamMethodName(), is("getAjaxSpiderParam"));

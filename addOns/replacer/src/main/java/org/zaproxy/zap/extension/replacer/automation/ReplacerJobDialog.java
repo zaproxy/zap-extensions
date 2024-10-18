@@ -47,6 +47,7 @@ public class ReplacerJobDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "replacer.automation.dialog.title";
     private static final String NAME_PARAM = "automation.dialog.all.name";
+    private static final String ENABLED_PARAM = "automation.dialog.all.enabled";
     private static final String DELETE_ALL_RULES_PARAM = "replacer.automation.dialog.deleteall";
 
     private ReplacerJob job;
@@ -72,6 +73,7 @@ public class ReplacerJobDialog extends StandardFieldsDialog {
         buttons.add(getRemoveButton());
 
         this.addTextField(0, NAME_PARAM, this.job.getData().getName());
+        this.addCheckBoxField(0, ENABLED_PARAM, JobUtils.unBox(this.job.getData().isEnabled()));
         this.addCheckBoxField(
                 0,
                 DELETE_ALL_RULES_PARAM,
@@ -84,6 +86,7 @@ public class ReplacerJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
+        this.job.getData().setEnabled(this.getBoolValue(ENABLED_PARAM));
         this.job
                 .getData()
                 .getParameters()

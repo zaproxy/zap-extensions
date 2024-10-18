@@ -359,42 +359,52 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
 
         for (AutomationJob job : jobsToRun) {
-            job.applyParameters(progress);
-            progress.info(Constant.messages.getString("automation.info.jobstart", job.getType()));
-            job.setStatus(AutomationJob.Status.RUNNING);
-            AutomationEventPublisher.publishEvent(AutomationEventPublisher.JOB_STARTED, job, null);
-            job.setTimeStarted();
-            Timer timer = null;
-            if (View.isInitialised()) {
-                timer = new Timer(1000, e -> getAutomationPanel().updateJob(job));
-                timer.start();
-            }
-            try {
-                job.runJob(env, progress);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                progress.error(
+            if (job.isEnabled()) {
+                job.applyParameters(progress);
+                progress.info(
+                        Constant.messages.getString("automation.info.jobstart", job.getType()));
+                job.setStatus(AutomationJob.Status.RUNNING);
+                AutomationEventPublisher.publishEvent(
+                        AutomationEventPublisher.JOB_STARTED, job, null);
+                job.setTimeStarted();
+                Timer timer = null;
+                if (View.isInitialised()) {
+                    timer = new Timer(1000, e -> getAutomationPanel().updateJob(job));
+                    timer.start();
+                }
+                try {
+                    job.runJob(env, progress);
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.unexpected.internal", e.getMessage()));
+                }
+                job.setTimeFinished();
+                if (timer != null) {
+                    timer.stop();
+                }
+                Stats.incCounter(TOTAL_JOBS_RUN_STATS);
+                Stats.incCounter(JOBS_RUN_STATS_PREFIX + job.getType() + JOBS_RUN_STATS_POSTFIX);
+                job.logTestsToProgress(progress);
+                job.setStatus(AutomationJob.Status.COMPLETED);
+                AutomationEventPublisher.publishEvent(
+                        AutomationEventPublisher.JOB_FINISHED,
+                        job,
+                        job.getPlan().getProgress().getJobResults(job).toMap());
+                progress.info(
                         Constant.messages.getString(
-                                "automation.error.unexpected.internal", e.getMessage()));
-            }
-            job.setTimeFinished();
-            if (timer != null) {
-                timer.stop();
-            }
-            Stats.incCounter(TOTAL_JOBS_RUN_STATS);
-            Stats.incCounter(JOBS_RUN_STATS_PREFIX + job.getType() + JOBS_RUN_STATS_POSTFIX);
-            job.logTestsToProgress(progress);
-            job.setStatus(AutomationJob.Status.COMPLETED);
-            AutomationEventPublisher.publishEvent(
-                    AutomationEventPublisher.JOB_FINISHED,
-                    job,
-                    job.getPlan().getProgress().getJobResults(job).toMap());
-            progress.info(
-                    Constant.messages.getString(
-                            "automation.info.jobend", job.getType(), job.getFormattedTimeTaken()));
-            progress.addRunJob(job);
-            if (env.isTimeToQuit()) {
-                break;
+                                "automation.info.jobend",
+                                job.getType(),
+                                job.getFormattedTimeTaken()));
+                progress.addRunJob(job);
+                if (env.isTimeToQuit()) {
+                    break;
+                }
+            } else {
+                progress.info(
+                        Constant.messages.getString("automation.info.jobdisabled", job.getType()));
+                job.setStatus(AutomationJob.Status.NOT_ENABLED);
             }
         }
         setPlanFinished(plan);

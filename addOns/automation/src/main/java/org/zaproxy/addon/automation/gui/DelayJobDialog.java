@@ -24,6 +24,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.HhMmSs;
 import org.zaproxy.addon.automation.jobs.DelayJob;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -34,6 +35,7 @@ public class DelayJobDialog extends StandardFieldsDialog {
 
     private static final String TITLE = "automation.dialog.delay.title";
     private static final String NAME_PARAM = "automation.dialog.all.name";
+    private static final String ENABLED_PARAM = "automation.dialog.all.enabled";
     private static final String TIME_PARAM = "automation.dialog.delay.time";
     private static final String FILENAME_PARAM = "automation.dialog.delay.fileName";
 
@@ -44,6 +46,7 @@ public class DelayJobDialog extends StandardFieldsDialog {
         this.job = job;
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
+        this.addCheckBoxField(ENABLED_PARAM, JobUtils.unBox(this.job.getData().isEnabled()));
         this.addTextField(TIME_PARAM, this.job.getData().getParameters().getTime());
         this.addTextField(FILENAME_PARAM, this.job.getData().getParameters().getFileName());
         this.addPadding();
@@ -52,6 +55,7 @@ public class DelayJobDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         this.job.getData().setName(this.getStringValue(NAME_PARAM));
+        this.job.getData().setEnabled(this.getBoolValue(ENABLED_PARAM));
         this.job.getParameters().setTime(this.getStringValue(TIME_PARAM));
         this.job.getParameters().setFileName(this.getStringValue(FILENAME_PARAM));
         this.job.resetAndSetChanged();

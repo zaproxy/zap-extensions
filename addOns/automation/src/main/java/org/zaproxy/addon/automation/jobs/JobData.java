@@ -54,6 +54,14 @@ public abstract class JobData extends AutomationData {
         this.job.setName(name);
     }
 
+    public boolean isEnabled() {
+        return this.job.isEnabled();
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.job.setEnabled(enabled);
+    }
+
     public List<AutomationData> getTests() {
         List<AbstractAutomationTest> tests = this.job.getTests();
         if (tests.isEmpty()) {

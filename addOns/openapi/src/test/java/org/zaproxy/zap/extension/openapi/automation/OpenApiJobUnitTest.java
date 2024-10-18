@@ -77,6 +77,7 @@ class OpenApiJobUnitTest extends TestUtils {
         // Then
         assertThat(job.getType(), is(equalTo("openapi")));
         assertThat(job.getName(), is(equalTo("openapi")));
+        assertThat(job.isEnabled(), is(equalTo(true)));
         assertThat(job.getOrder(), is(equalTo(AutomationJob.Order.EXPLORE)));
         assertThat(job.getParamMethodObject(), is(nullValue()));
         assertThat(job.getParamMethodName(), is(nullValue()));
