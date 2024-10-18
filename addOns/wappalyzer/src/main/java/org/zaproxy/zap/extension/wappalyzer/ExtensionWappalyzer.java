@@ -75,7 +75,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     private TechPanel techPanel = null;
     private PopupMenuEvidence popupMenuEvidence = null;
 
-    private Map<String, String> categories = new HashMap<>();
     private List<Application> applications = new ArrayList<>();
 
     private ExtensionSearch extSearch = null;
@@ -91,7 +90,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             List.of(ExtensionPassiveScan.class);
 
     private TechPassiveScanner passiveScanner;
-    private TechApi api;
 
     public enum Mode {
         QUICK(Constant.messages.getString("wappalyzer.mode.quick")),
@@ -152,7 +150,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         TechData result =
                 new TechsJsonParser().parse(CATEGORIES_PATH, technologyFiles, View.isInitialised());
         this.applications = result.getApplications();
-        this.categories = result.getCategories();
 
         enabled = true;
         techDetectParam = new TechDetectParam();
@@ -188,8 +185,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             extensionHook.getHookView().addOptionPanel(new TechOptionsPanel());
         }
 
-        this.api = new TechApi(this);
-        extensionHook.addApiImplementor(this.api);
+        extensionHook.addApiImplementor(new TechApi(this));
         extensionHook.addOptionsParamSet(techDetectParam);
 
         ExtensionPassiveScan extPScan =
@@ -354,9 +350,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     }
 
     public void search(Pattern p, ExtensionSearch.Type type) {
-        ExtensionSearch extSearch = this.getExtensionSearch();
-        if (extSearch != null) {
-            extSearch.search(p.pattern(), type, true, false);
+        if (getExtensionSearch() != null) {
+            getExtensionSearch().search(p.pattern(), type, true, false);
         }
     }
 
