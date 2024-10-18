@@ -318,9 +318,13 @@ public final class HarUtils {
         String text = null;
         String encoding = null;
         String contentType = responseHeader.getHeader(HttpHeader.CONTENT_TYPE);
-        if (contentType == null) {
+        if (contentType == null || contentType.isEmpty()) {
             contentType = "";
-        } else if (!contentType.isEmpty()) {
+            if (httpMessage.getResponseBody().length() != 0) {
+                encoding = "base64";
+                text = Base64.getEncoder().encodeToString(httpMessage.getResponseBody().getBytes());
+            }
+        } else {
             String lcContentType = contentType.toLowerCase(Locale.ROOT);
             final int pos = lcContentType.indexOf(';');
             if (pos != -1) {
