@@ -256,8 +256,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         super.shouldHaveValidReferences();
     }
 
-    private HttpMessage createMessage(String url, String body) {
-        HttpMessage msg = new HttpMessage();
+    private static HttpMessage createMessage(String url, String body) {
         if (url == null) {
             url = "http://example.com/";
         }
@@ -270,7 +269,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         } catch (URIException | NullPointerException e) {
             // Nothing to do
         }
-        msg = new HttpMessage();
+        HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(requestHeader);
         try {
             msg.setResponseHeader("HTTP/1.1 200 OK\r\n");
