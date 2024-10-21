@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Update minimum ZAP version to 2.16.0.
+- Improve solution and add more references to 'Information Leakage' vulnerability (Issue 8056).
 
 ## [1.29.0] - 2024-12-23
 ### Changed
