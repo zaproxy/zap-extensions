@@ -60,6 +60,7 @@ class ExtensionOastUnitTests extends TestUtils {
 
     @BeforeEach
     void setUp() throws Exception {
+        setUpZap();
         given(model.getSession()).willReturn(session);
         ExtensionLoader extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
