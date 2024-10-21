@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.text.Normalizer;
 import org.zaproxy.addon.encoder.processors.predefined.DefaultEncodeDecodeProcessor;
 
-public class Transliterate extends DefaultEncodeDecodeProcessor {
+public class Ascify extends DefaultEncodeDecodeProcessor {
 
-    private static final Transliterate INSTANCE = new Transliterate();
+    private static final Ascify INSTANCE = new Ascify();
 
     @Override
     protected String processInternal(String value) throws IOException {
@@ -33,7 +33,7 @@ public class Transliterate extends DefaultEncodeDecodeProcessor {
         return Normalizer.normalize(value, Normalizer.Form.NFKD).replaceAll("[^\\p{ASCII}]", "");
     }
 
-    public static Transliterate getSingleton() {
+    public static Ascify getSingleton() {
         return INSTANCE;
     }
 }
