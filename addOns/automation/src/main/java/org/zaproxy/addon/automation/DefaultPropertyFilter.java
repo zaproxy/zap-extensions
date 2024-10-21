@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import java.util.Collection;
 
 public class DefaultPropertyFilter extends SimpleBeanPropertyFilter {
 
@@ -35,11 +34,8 @@ public class DefaultPropertyFilter extends SimpleBeanPropertyFilter {
             Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer)
             throws Exception {
         if (include(writer)) {
-            Object value = writer.getMember().getValue(pojo);
-            if (value == null
-                    || (value instanceof Collection && ((Collection<?>) value).isEmpty())
-                    || (pojo instanceof AutomationData
-                            && ((AutomationData) pojo).isDefaultValue(writer.getName()))) {
+            if (pojo instanceof AutomationData
+                    && ((AutomationData) pojo).isDefaultValue(writer.getName())) {
                 return;
             }
             writer.serializeAsField(pojo, jgen, provider);
