@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update help for the "requestor" job.
+- Fields with default or missing values are omitted for the following automation jobs in saved plans:
+  - `activeScan`
+  - `delay`
+  - `requestor`
 
 ## [0.43.0] - 2024-10-07
 ### Fixed

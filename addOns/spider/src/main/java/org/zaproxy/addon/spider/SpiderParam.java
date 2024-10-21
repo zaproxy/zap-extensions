@@ -148,7 +148,7 @@ public class SpiderParam extends VersionedAbstractParam {
      *
      * @see #maxParseSizeBytes
      */
-    private static final int DEFAULT_MAX_PARSE_SIZE_BYTES = 2621440; // 2.5 MiB
+    public static final int DEFAULT_MAX_PARSE_SIZE_BYTES = 2621440; // 2.5 MiB
 
     private ExtensionHttpSessions extensionHttpSessions;
 

@@ -160,7 +160,7 @@ public class TechnologyData extends AutomationData {
     public void setExclude(List<String> exclude) {
         this.exclude = exclude;
         // Exclude takes precedence.
-        this.include = null;
+        this.include = List.of();
     }
 
     private void setExclude(TechSet techSet) {

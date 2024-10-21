@@ -30,6 +30,8 @@ import java.util.Objects;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
@@ -419,7 +421,7 @@ public class AlertFilterJob extends AutomationJob {
     }
 
     public static class Data extends JobData {
-        private List<AlertFilterData> alertFilters;
+        private List<AlertFilterData> alertFilters = new ArrayList<>();
         private Parameters parameters = new Parameters();
 
         public Data(AutomationJob job) {
@@ -446,136 +448,28 @@ public class AlertFilterJob extends AutomationJob {
         }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
-        private Boolean deleteGlobalAlerts;
-
-        public Boolean getDeleteGlobalAlerts() {
-            return deleteGlobalAlerts;
-        }
-
-        public void setDeleteGlobalAlerts(Boolean deleteGlobalAlerts) {
-            this.deleteGlobalAlerts = deleteGlobalAlerts;
-        }
+        private Boolean deleteGlobalAlerts = false;
     }
 
+    @Getter
+    @Setter
     public static class AlertFilterData extends AutomationData {
         private String ruleId;
-        private String ruleName;
-        private String context;
+        private String ruleName = "";
+        private String context = "";
         private String newRisk;
-        private String parameter;
-        private Boolean parameterRegex;
-        private String url;
-        private Boolean urlRegex;
-        private String attack;
-        private Boolean attackRegex;
-        private String evidence;
-        private Boolean evidenceRegex;
-        private List<String> methods;
-
-        public AlertFilterData() {
-            methods = List.of();
-        }
-
-        public String getRuleId() {
-            return ruleId;
-        }
-
-        public void setRuleId(String ruleId) {
-            this.ruleId = ruleId;
-        }
-
-        public String getRuleName() {
-            return ruleName;
-        }
-
-        public void setRuleName(String ruleName) {
-            this.ruleName = ruleName;
-        }
-
-        public String getContext() {
-            return context;
-        }
-
-        public void setContext(String context) {
-            this.context = context;
-        }
-
-        public String getNewRisk() {
-            return newRisk;
-        }
-
-        public void setNewRisk(String newRisk) {
-            this.newRisk = newRisk;
-        }
-
-        public String getParameter() {
-            return parameter;
-        }
-
-        public void setParameter(String parameter) {
-            this.parameter = parameter;
-        }
-
-        public Boolean getParameterRegex() {
-            return parameterRegex;
-        }
-
-        public void setParameterRegex(Boolean isParameterRegex) {
-            this.parameterRegex = isParameterRegex;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-
-        public Boolean getUrlRegex() {
-            return urlRegex;
-        }
-
-        public void setUrlRegex(Boolean isUrlRegex) {
-            this.urlRegex = isUrlRegex;
-        }
-
-        public String getAttack() {
-            return attack;
-        }
-
-        public void setAttack(String attack) {
-            this.attack = attack;
-        }
-
-        public Boolean getAttackRegex() {
-            return attackRegex;
-        }
-
-        public void setAttackRegex(Boolean isAttackRegex) {
-            this.attackRegex = isAttackRegex;
-        }
-
-        public String getEvidence() {
-            return evidence;
-        }
-
-        public void setEvidence(String evidence) {
-            this.evidence = evidence;
-        }
-
-        public Boolean getEvidenceRegex() {
-            return evidenceRegex;
-        }
-
-        public void setEvidenceRegex(Boolean isEvidenceRegex) {
-            this.evidenceRegex = isEvidenceRegex;
-        }
-
-        public List<String> getMethods() {
-            return methods;
-        }
+        private String parameter = "";
+        private Boolean parameterRegex = false;
+        private String url = "";
+        private Boolean urlRegex = false;
+        private String attack = "";
+        private Boolean attackRegex = false;
+        private String evidence = "";
+        private Boolean evidenceRegex = false;
+        private List<String> methods = List.of();
 
         public void setMethods(List<String> methods) {
             this.methods = Objects.requireNonNullElse(methods, List.of());
