@@ -113,6 +113,6 @@ public final class RetireUtil {
      * This utility function determines if given input string is numeric.
      */
     static boolean isNumber(String num) {
-        return num.matches("^[0-9]+$");
+        return num.matches("^\\d+$");
     }
 }

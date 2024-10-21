@@ -131,7 +131,7 @@ public class Repo {
         return scanHash(hash);
     }
 
-    private String getCleanContent(HttpMessage msg, Source source) {
+    private static String getCleanContent(HttpMessage msg, Source source) {
         if (msg.getResponseHeader().isHtml()) {
             StringBuilder contents = new StringBuilder();
             for (Element scriptElement : source.getAllElements(HTMLElementName.SCRIPT)) {
