@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
@@ -249,40 +251,14 @@ public class SequenceImportJob extends AutomationJob {
         }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
 
-        private String name;
+        private String name = "";
         private String path;
-        private Boolean assertCode;
+        private Boolean assertCode = false;
         private Integer assertLength;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public void setPath(String path) {
-            this.path = path;
-        }
-
-        public Boolean getAssertCode() {
-            return assertCode;
-        }
-
-        public void setAssertCode(Boolean assertCode) {
-            this.assertCode = assertCode;
-        }
-
-        public Integer getAssertLength() {
-            return assertLength;
-        }
 
         public void setAssertLength(Integer assertLength) {
             this.assertLength = valueInRange(assertLength, 0, 100);

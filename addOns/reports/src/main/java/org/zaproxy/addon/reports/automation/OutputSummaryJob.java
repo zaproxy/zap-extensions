@@ -31,6 +31,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import net.sf.json.JSONObject;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -469,84 +472,31 @@ public class OutputSummaryJob extends AutomationJob {
         return parameters;
     }
 
+    @Getter
+    @Setter
     public static class Data extends JobData {
-        private Parameters parameters;
+        private final Parameters parameters;
         private List<Rule> rules = new ArrayList<>();
 
         public Data(AutomationJob job, Parameters parameters) {
             super(job);
             this.parameters = parameters;
         }
-
-        public Parameters getParameters() {
-            return parameters;
-        }
-
-        public List<Rule> getRules() {
-            return rules;
-        }
-
-        public void setRules(List<Rule> rules) {
-            this.rules = rules;
-        }
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
     public static class Rule extends AutomationData {
         private Integer id;
-        private String action;
-        private String customMessage;
-
-        public Rule(Integer id, String action, String customMessage) {
-            super();
-            this.id = id;
-            this.action = action;
-            this.customMessage = customMessage;
-        }
-
-        public Integer getId() {
-            return id;
-        }
-
-        public void setId(Integer id) {
-            this.id = id;
-        }
-
-        public String getAction() {
-            return action;
-        }
-
-        public void setAction(String action) {
-            this.action = action;
-        }
-
-        public String getCustomMessage() {
-            return customMessage;
-        }
-
-        public void setCustomMessage(String customMessage) {
-            this.customMessage = customMessage;
-        }
+        private String action = "";
+        private String customMessage = "";
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
-
         private Format format = Format.NONE;
-        private String summaryFile;
-
-        public Format getFormat() {
-            return format;
-        }
-
-        public void setFormat(Format format) {
-            this.format = format;
-        }
-
-        public String getSummaryFile() {
-            return summaryFile;
-        }
-
-        public void setSummaryFile(String summaryFile) {
-            this.summaryFile = summaryFile;
-        }
+        private String summaryFile = "";
     }
 }

@@ -22,6 +22,8 @@ package org.zaproxy.addon.exim.automation;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
@@ -214,43 +216,12 @@ public class ExportJob extends AutomationJob {
         }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
-
-        private String context;
+        private String context = "";
         private Type type = Type.HAR;
         private Source source = Source.HISTORY;
         private String fileName;
-
-        public String getContext() {
-            return context;
-        }
-
-        public void setContext(String context) {
-            this.context = context;
-        }
-
-        public Type getType() {
-            return type;
-        }
-
-        public void setType(Type type) {
-            this.type = type;
-        }
-
-        public Source getSource() {
-            return source;
-        }
-
-        public void setSource(Source source) {
-            this.source = source;
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public void setFileName(String fileName) {
-            this.fileName = fileName;
-        }
     }
 }

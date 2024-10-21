@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update help for the "requestor" job.
 - Update help to indicate that job order is important (Issue 8675).
+- Fields with default or missing values are omitted for the following automation jobs in saved plans:
+  - `activeScan`
+  - `delay`
+  - `requestor`
 
 ### Fixed
 - Templates generated with `-autogenmin` or `-autogenmax` were invalid in some cases.
