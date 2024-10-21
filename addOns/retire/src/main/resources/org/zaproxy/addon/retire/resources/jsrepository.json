@@ -81,6 +81,7 @@
         ]
       },
       {
+        "atOrAbove": "1.2.1",
         "below": "1.9.0",
         "cwe": [
           "CWE-79"
@@ -95,7 +96,8 @@
         },
         "info": [
           "https://github.com/advisories/GHSA-q4m3-2j7h-f7xw",
-          "https://nvd.nist.gov/vuln/detail/CVE-2020-7656"
+          "https://nvd.nist.gov/vuln/detail/CVE-2020-7656",
+          "https://research.insecurelabs.org/jquery/test/"
         ]
       },
       {
@@ -4435,6 +4437,30 @@
       },
       {
         "atOrAbove": "0",
+        "below": "2.5.0",
+        "cwe": [
+          "CWE-79"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "DOMpurify has a nesting-based mXSS",
+          "CVE": [
+            "CVE-2024-47875"
+          ],
+          "githubID": "GHSA-gx9m-whjm-85jf"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-gx9m-whjm-85jf",
+          "https://github.com/cure53/DOMPurify/security/advisories/GHSA-gx9m-whjm-85jf",
+          "https://nvd.nist.gov/vuln/detail/CVE-2024-47875",
+          "https://github.com/cure53/DOMPurify/commit/0ef5e537a514f904b6aa1d7ad9e749e365d7185f",
+          "https://github.com/cure53/DOMPurify/commit/6ea80cd8b47640c20f2f230c7920b1f4ce4fdf7a",
+          "https://github.com/cure53/DOMPurify",
+          "https://github.com/cure53/DOMPurify/blob/0ef5e537a514f904b6aa1d7ad9e749e365d7185f/test/test-suite.js#L2098"
+        ]
+      },
+      {
+        "atOrAbove": "0",
         "below": "2.5.4",
         "cwe": [
           "CWE-1321",
@@ -4455,6 +4481,30 @@
           "https://github.com/cure53/DOMPurify/commit/1e520262bf4c66b5efda49e2316d6d1246ca7b21",
           "https://github.com/cure53/DOMPurify/commit/26e1d69ca7f769f5c558619d644d90dd8bf26ebc",
           "https://github.com/cure53/DOMPurify"
+        ]
+      },
+      {
+        "atOrAbove": "3.0.0",
+        "below": "3.1.3",
+        "cwe": [
+          "CWE-79"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "DOMpurify has a nesting-based mXSS",
+          "CVE": [
+            "CVE-2024-47875"
+          ],
+          "githubID": "GHSA-gx9m-whjm-85jf"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-gx9m-whjm-85jf",
+          "https://github.com/cure53/DOMPurify/security/advisories/GHSA-gx9m-whjm-85jf",
+          "https://nvd.nist.gov/vuln/detail/CVE-2024-47875",
+          "https://github.com/cure53/DOMPurify/commit/0ef5e537a514f904b6aa1d7ad9e749e365d7185f",
+          "https://github.com/cure53/DOMPurify/commit/6ea80cd8b47640c20f2f230c7920b1f4ce4fdf7a",
+          "https://github.com/cure53/DOMPurify",
+          "https://github.com/cure53/DOMPurify/blob/0ef5e537a514f904b6aa1d7ad9e749e365d7185f/test/test-suite.js#L2098"
         ]
       },
       {
@@ -6831,6 +6881,28 @@
           "https://nvd.nist.gov/vuln/detail/CVE-2024-34351",
           "https://github.com/vercel/next.js/pull/62561",
           "https://github.com/vercel/next.js/commit/8f7a6ca7d21a97bc9f7a1bbe10427b5ad74b9085",
+          "https://github.com/vercel/next.js"
+        ]
+      },
+      {
+        "atOrAbove": "10.0.0",
+        "below": "14.2.7",
+        "cwe": [
+          "CWE-674"
+        ],
+        "severity": "medium",
+        "identifiers": {
+          "summary": "Denial of Service condition in Next.js image optimization",
+          "CVE": [
+            "CVE-2024-47831"
+          ],
+          "githubID": "GHSA-g77x-44xx-532m"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-g77x-44xx-532m",
+          "https://github.com/vercel/next.js/security/advisories/GHSA-g77x-44xx-532m",
+          "https://nvd.nist.gov/vuln/detail/CVE-2024-47831",
+          "https://github.com/vercel/next.js/commit/d11cbc9ff0b1aaefabcba9afe1e562e0b1fde65a",
           "https://github.com/vercel/next.js"
         ]
       },
