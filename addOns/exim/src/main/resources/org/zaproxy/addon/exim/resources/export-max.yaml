@@ -1,4 +1,4 @@
-- type: export            # Exports data into a file
+  - type: export            # Exports data into a file
     parameters:
       context:            # String: Name of the context from which to export. Default: first context
       type:               # String: One of 'har', 'url'. Default: 'har'

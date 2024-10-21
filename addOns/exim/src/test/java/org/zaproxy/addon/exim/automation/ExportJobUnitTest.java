@@ -29,6 +29,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -79,8 +80,8 @@ class ExportJobUnitTest extends TestUtils {
         assertThat(job.getType(), is(equalTo("export")));
         assertThat(job.getName(), is(equalTo("export")));
         assertThat(job.getOrder(), is(equalTo(AutomationJob.Order.AFTER_ATTACK)));
-        assertThat(job.getTemplateDataMin(), is(not(equalTo(""))));
-        assertThat(job.getTemplateDataMax(), is(not(equalTo(""))));
+        assertValidTemplate(job.getTemplateDataMin());
+        assertValidTemplate(job.getTemplateDataMax());
         assertThat(job.getParamMethodObject(), is(nullValue()));
         assertThat(job.getParamMethodName(), is(nullValue()));
     }
@@ -195,5 +196,10 @@ class ExportJobUnitTest extends TestUtils {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors(), contains("Job export Error: Error while exporting"));
+    }
+
+    private static void assertValidTemplate(String value) {
+        assertThat(value, is(not(equalTo(""))));
+        assertDoesNotThrow(() -> new Yaml().load(value));
     }
 }

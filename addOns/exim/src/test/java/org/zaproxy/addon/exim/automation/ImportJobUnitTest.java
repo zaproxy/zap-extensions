@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
@@ -73,8 +74,8 @@ class ImportJobUnitTest {
         assertThat(job.getType(), is(equalTo("import")));
         assertThat(job.getName(), is(equalTo("import")));
         assertThat(job.getOrder(), is(equalTo(AutomationJob.Order.EXPLORE)));
-        assertThat(job.getTemplateDataMin(), is(not(equalTo(""))));
-        assertThat(job.getTemplateDataMax(), is(not(equalTo(""))));
+        assertValidTemplate(job.getTemplateDataMin());
+        assertValidTemplate(job.getTemplateDataMax());
         assertThat(job.getParamMethodObject(), is(nullValue()));
         assertThat(job.getParamMethodName(), is(nullValue()));
     }
@@ -141,5 +142,10 @@ class ImportJobUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().get(0), is(equalTo("!exim.automation.import.error.file!")));
+    }
+
+    private static void assertValidTemplate(String value) {
+        assertThat(value, is(not(equalTo(""))));
+        assertDoesNotThrow(() -> new Yaml().load(value));
     }
 }

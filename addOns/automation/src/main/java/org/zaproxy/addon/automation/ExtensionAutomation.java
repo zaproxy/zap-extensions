@@ -36,9 +36,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.swing.Timer;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
@@ -287,15 +289,21 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             }
 
             jobs.values().stream()
+                    .filter(job -> job.getClass().getAnnotation(Deprecated.class) == null)
+                    .filter(Predicate.not(AutomationJob::isDataJob))
                     .sorted()
                     .forEach(
                             j -> {
                                 try {
-                                    if (incAll) {
-                                        fw.write(j.getTemplateDataMax());
-                                    } else {
-                                        fw.write(j.getTemplateDataMin());
+                                    String template =
+                                            incAll
+                                                    ? j.getTemplateDataMax()
+                                                    : j.getTemplateDataMin();
+                                    if (StringUtils.isBlank(template)) {
+                                        return;
                                     }
+                                    template = template.stripTrailing() + "\n\n";
+                                    fw.write(template);
                                 } catch (Exception e) {
                                     CommandLine.error(
                                             Constant.messages.getString(
