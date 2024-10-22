@@ -13,16 +13,17 @@ env:                                   # The environment, mandatory
     progressToStdout: true             # If set will write job progress to stdout
 
 jobs:
-
   - type: requestor                    # Used to send specific requests to targets
     parameters:
       user:                            # String: An optional user to use for authenticated requests, must be defined in the env
     requests:                          # A list of requests to make
       - url:                           # String: A mandatory URL of the request to be made
+
   - type: delay                        # Pause the plan for a set period of time or event (file created, programmatic method called, API endpoint called)
     parameters:
       time:                            # String: The time to wait, format any of ['hh:mm:ss', 'mm:ss', 'ss'], default: 0
       fileName:                        # String: Name of a file which will cause the job to end early if created, default: empty
+
   - type: activeScan                   # The active scanner - this actively attacks the target so should only be used with permission
     parameters:
       context:                         # String: Name of the context to attack, default: first context
@@ -45,3 +46,4 @@ jobs:
         risk:                                  # String: The risk of the alert, one of 'Informational', 'Low', 'Medium', 'High', optional
         otherInfo:                             # String: Addional information corresponding to the alert, optional
         onFail: 'info'                         # String: One of 'warn', 'error', 'info', mandatory
+
