@@ -21,22 +21,14 @@ package org.zaproxy.addon.exim.har;
 
 import de.sstoehr.harreader.HarReader;
 import de.sstoehr.harreader.HarReaderException;
-import de.sstoehr.harreader.model.HarContent;
 import de.sstoehr.harreader.model.HarEntry;
-import de.sstoehr.harreader.model.HarHeader;
 import de.sstoehr.harreader.model.HarLog;
-import de.sstoehr.harreader.model.HarResponse;
-import de.sstoehr.harreader.model.HarTiming;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -47,7 +39,6 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.utils.Stats;
@@ -210,79 +201,13 @@ public class HarImporter {
 
     private static HttpMessage getHttpMessage(HarEntry harEntry)
             throws HttpMalformedHeaderException {
-        HttpMessage result;
         try {
-            result = HarUtils.createHttpMessage(harEntry.getRequest());
+            return HarUtils.createHttpMessage(harEntry);
         } catch (HttpMalformedHeaderException headerEx) {
             LOGGER.warn(
-                    "Failed to create HTTP Request Header for HAR entry.\n{}",
+                    "Failed to create HTTP Request/Response Header for HAR entry.\n{}",
                     headerEx.getMessage());
             return null;
-        }
-        result.setTimeSentMillis(
-                Optional.ofNullable(harEntry.getStartedDateTime()).map(Date::getTime).orElse(0L));
-        result.setTimeElapsedMillis(
-                Optional.ofNullable(harEntry.getTimings()).map(HarTiming::getReceive).orElse(0));
-        setHttpResponse(harEntry.getResponse(), result);
-        return result;
-    }
-
-    private static void setHttpResponse(HarResponse harResponse, HttpMessage message)
-            throws HttpMalformedHeaderException {
-        StringBuilder strBuilderResHeader = new StringBuilder();
-
-        // empty responses without status code are possible
-        if (harResponse.getStatus() == 0) {
-            return;
-        }
-
-        strBuilderResHeader
-                .append(harResponse.getHttpVersion())
-                .append(' ')
-                .append(harResponse.getStatus())
-                .append(' ')
-                .append(harResponse.getStatusText())
-                .append(HttpHeader.CRLF);
-
-        for (HarHeader harHeader : harResponse.getHeaders()) {
-            String value = harHeader.getValue();
-            if (value.contains("\n") || value.contains("\r")) {
-                LOGGER.info(
-                        "{}\n\t{} value contains CR or LF and is likely invalid (though it may have been successfully set to the message):\n\t{}",
-                        message.getRequestHeader().getURI(),
-                        harHeader.getName(),
-                        StringEscapeUtils.escapeJava(value));
-            }
-            strBuilderResHeader
-                    .append(harHeader.getName())
-                    .append(": ")
-                    .append(harHeader.getValue())
-                    .append(HttpHeader.CRLF);
-        }
-        strBuilderResHeader.append(HttpHeader.CRLF);
-
-        HarContent harContent = harResponse.getContent();
-        try {
-            message.setResponseHeader(new HttpResponseHeader(strBuilderResHeader.toString()));
-        } catch (HttpMalformedHeaderException he) {
-            LOGGER.info(
-                    "Couldn't set response header for: {}", message.getRequestHeader().getURI());
-        }
-        message.setResponseFromTargetHost(true);
-        if (harContent != null) {
-            if ("base64".equals(harContent.getEncoding())) {
-                var text = harContent.getText();
-                if (text != null)
-                    try {
-                        message.setResponseBody(Base64.getDecoder().decode(text));
-                    } catch (IllegalArgumentException e) {
-                        LOGGER.debug(
-                                "Failed to base64 decode body {}. Setting as plain text.", text, e);
-                        message.setResponseBody(text);
-                    }
-            } else {
-                message.setResponseBody(harContent.getText());
-            }
         }
     }
 

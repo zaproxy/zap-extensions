@@ -45,7 +45,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -66,6 +68,8 @@ import org.zaproxy.zap.network.HttpRequestBody;
  * @see HttpMessage
  */
 public final class HarUtils {
+    private static final String BASE64_BODY_ENCODING = "base64";
+
     /**
      * The prefix for custom HAR fields produced by ZAP.
      *
@@ -169,6 +173,93 @@ public final class HarUtils {
         return new HttpMessage(
                 new HttpRequestHeader(strBuilderReqHeader.toString()),
                 new HttpRequestBody(strBuilderReqBody.toString()));
+    }
+
+    /**
+     * Creates an {@code HttpMessage} from the given HAR entry.
+     *
+     * @param harEntry the HAR entry.
+     * @return the HTTP message containing the request and response from the HAR entry.
+     * @throws HttpMalformedHeaderException if an error occurred while creating the request or
+     *     response header from the HAR entry.
+     * @since 0.13.0
+     */
+    public static HttpMessage createHttpMessage(HarEntry harEntry)
+            throws HttpMalformedHeaderException {
+        HttpMessage message = createHttpMessage(harEntry.getRequest());
+
+        message.setTimeSentMillis(
+                Optional.ofNullable(harEntry.getStartedDateTime()).map(Date::getTime).orElse(0L));
+        message.setTimeElapsedMillis(
+                Optional.ofNullable(harEntry.getTimings()).map(HarTiming::getReceive).orElse(0));
+
+        setHttpResponse(harEntry.getResponse(), message);
+
+        return message;
+    }
+
+    private static void setHttpResponse(HarResponse harResponse, HttpMessage message)
+            throws HttpMalformedHeaderException {
+        // empty responses without status code are possible
+        if (harResponse.getStatus() == 0) {
+            return;
+        }
+
+        StringBuilder strBuilderResHeader =
+                new StringBuilder()
+                        .append(harResponse.getHttpVersion())
+                        .append(' ')
+                        .append(harResponse.getStatus())
+                        .append(' ')
+                        .append(harResponse.getStatusText())
+                        .append(HttpHeader.CRLF);
+
+        boolean mixedNewlineChars = false;
+        for (HarHeader harHeader : harResponse.getHeaders()) {
+            String value = harHeader.getValue();
+            if (value.contains("\n") || value.contains("\r")) {
+                mixedNewlineChars = true;
+                LOGGER.info(
+                        "{}\n\t{} value contains CR or LF and is likely invalid (though it may have been successfully set to the message):\n\t{}",
+                        message.getRequestHeader().getURI(),
+                        harHeader.getName(),
+                        StringEscapeUtils.escapeJava(value));
+            }
+            strBuilderResHeader
+                    .append(harHeader.getName())
+                    .append(": ")
+                    .append(harHeader.getValue())
+                    .append(HttpHeader.CRLF);
+        }
+        strBuilderResHeader.append(HttpHeader.CRLF);
+
+        try {
+            message.setResponseHeader(strBuilderResHeader.toString());
+        } catch (HttpMalformedHeaderException e) {
+            if (!mixedNewlineChars) {
+                throw e;
+            }
+            LOGGER.info(
+                    "Couldn't set response header for: {}", message.getRequestHeader().getURI());
+        }
+        message.setResponseFromTargetHost(true);
+
+        HarContent harContent = harResponse.getContent();
+        if (harContent != null) {
+            if (BASE64_BODY_ENCODING.equals(harContent.getEncoding())) {
+                var text = harContent.getText();
+                if (text != null)
+                    try {
+                        message.setResponseBody(Base64.getDecoder().decode(text));
+                    } catch (IllegalArgumentException e) {
+                        LOGGER.debug(
+                                "Failed to base64 decode body {}. Setting as plain text.", text, e);
+                        message.setResponseBody(text);
+                    }
+            } else {
+                message.setResponseBody(harContent.getText());
+            }
+        }
     }
 
     /**
@@ -321,7 +412,7 @@ public final class HarUtils {
         if (contentType == null || contentType.isEmpty()) {
             contentType = "";
             if (httpMessage.getResponseBody().length() != 0) {
-                encoding = "base64";
+                encoding = BASE64_BODY_ENCODING;
                 text = Base64.getEncoder().encodeToString(httpMessage.getResponseBody().getBytes());
             }
         } else {
@@ -332,7 +423,7 @@ public final class HarUtils {
             }
 
             if (!lcContentType.startsWith("text")) {
-                encoding = "base64";
+                encoding = BASE64_BODY_ENCODING;
                 text = Base64.getEncoder().encodeToString(httpMessage.getResponseBody().getBytes());
             } else {
                 text = httpMessage.getResponseBody().toString();
