@@ -102,6 +102,68 @@ class HarUtilsUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldCreateHttpMessageFromHarEntry() throws Exception {
+        // Given
+        String entryValue =
+                "{\n"
+                        + "  \"startedDateTime\": \"1970-01-01T00:00:00.001+00:00\",\n"
+                        + "  \"request\": {\n"
+                        + "    \"method\": \"GET\",\n"
+                        + "    \"url\": \"http://www.example.org/\",\n"
+                        + "    \"httpVersion\": \"HTTP/1.1\",\n"
+                        + "    \"headers\": [\n"
+                        + "      {\n"
+                        + "        \"name\": \"host\",\n"
+                        + "        \"value\": \"www.example.org\"\n"
+                        + "      }\n"
+                        + "    ],\n"
+                        + "    \"postData\": {\n"
+                        + "      \"mimeType\": \"\",\n"
+                        + "      \"params\": [],\n"
+                        + "      \"text\": \"\"\n"
+                        + "    }\n"
+                        + "  },\n"
+                        + "  \"response\": {\n"
+                        + "    \"status\": 500,\n"
+                        + "    \"statusText\": \"Internal Server Error\",\n"
+                        + "    \"httpVersion\": \"HTTP/1.1\",\n"
+                        + "    \"cookies\": [],\n"
+                        + "    \"headers\": [\n"
+                        + "      {\n"
+                        + "        \"name\": \"Content-Type\",\n"
+                        + "        \"value\": \"text/html; charset=UTF-8\"\n"
+                        + "      }\n"
+                        + "    ],\n"
+                        + "    \"content\": {\n"
+                        + "      \"mimeType\": \"text/html; charset=UTF-8\",\n"
+                        + "      \"text\": \"Response Body\"\n"
+                        + "    }\n"
+                        + "  },\n"
+                        + "  \"timings\": {\n"
+                        + "    \"receive\": 123\n"
+                        + "  }\n"
+                        + "}";
+        HarEntry entry = HarUtils.JSON_MAPPER.readValue(entryValue, HarEntry.class);
+        // When
+        HttpMessage message = HarUtils.createHttpMessage(entry);
+        // Then
+        assertThat(
+                message.getRequestHeader().toString(),
+                is(
+                        equalTo(
+                                "GET http://www.example.org/ HTTP/1.1\r\nhost: www.example.org\r\n\r\n")));
+        assertThat(message.getRequestBody().toString(), is(equalTo("")));
+        assertThat(
+                message.getResponseHeader().toString(),
+                is(
+                        equalTo(
+                                "HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n")));
+        assertThat(message.getResponseBody().toString(), is(equalTo("Response Body")));
+        assertThat(message.getTimeSentMillis(), is(equalTo(1L)));
+        assertThat(message.getTimeElapsedMillis(), is(equalTo(123)));
+    }
+
+    @Test
     void shouldCreateHarEntryWithMessageNote() throws Exception {
         // Given
         String note = "Message Note";
