@@ -206,9 +206,14 @@ Reverses the order of the input.
 <H4>To Upper Case</H4>
 Converts the input to all upper case characters.
 
-<H4>Transliterate</H4>
+<H4>ASCify</H4>
 Converts text removing accents/diacritics/ligatures (perhaps not fully, due to operation in compatibility mode) leaving only ASCII characters.
-Ex: <code>Tĥïŝ ĩš â fůňķŷ Šťŕĭńġ: ﬁ. étrange.</code> becomes <code>This is a funky String: fi. etrange.</code>.>br>
+Examples:
+<ukl>
+  <li><code>Tĥïŝ ĩš â fůňķŷ Šťŕĭńġ: ﬁ. étrange.</code> becomes <code>This is a funky String: fi. etrange.</code>.>br></li>
+  <li><code>鸟儿</code> becomes an empty string (all characters are dropped).</li>
+<ul>
+
 See also:<br>
 <ul>
     <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/text/Normalizer.html">Normalizer JavaDoc</a>. </li>

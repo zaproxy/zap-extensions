@@ -27,11 +27,11 @@ import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 import org.zaproxy.addon.encoder.processors.predefined.ProcessorTests;
 
-class TransliterateUnitTest extends ProcessorTests<Transliterate> {
+class AscifyUnitTest extends ProcessorTests<Ascify> {
 
     @Override
-    protected Transliterate createProcessor() {
-        return Transliterate.getSingleton();
+    protected Ascify createProcessor() {
+        return Ascify.getSingleton();
     }
 
     @Test
@@ -41,5 +41,14 @@ class TransliterateUnitTest extends ProcessorTests<Transliterate> {
         // Then
         assertThat(result.hasError(), is(equalTo(false)));
         assertThat(result.getResult(), is(equalTo("This is a funky String: fi. etrange.")));
+    }
+
+    @Test
+    void mayRemoveAllChars() {
+        // Given / When
+        EncodeDecodeResult result = processor.process("鸟儿");
+        // Then
+        assertThat(result.hasError(), is(equalTo(false)));
+        assertThat(result.getResult(), is(equalTo("")));
     }
 }
