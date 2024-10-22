@@ -63,6 +63,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
 import org.zaproxy.addon.automation.gui.OptionsPanel;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
+import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
@@ -128,6 +129,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         registerAutomationJob(new RequestorJob());
         registerAutomationJob(new DelayJob());
         registerAutomationJob(new ActiveScanJob());
+        registerAutomationJob(new ActiveScanPolicyJob());
         registerAutomationJob(new ParamsJob());
     }
 

@@ -19,33 +19,22 @@
  */
 package org.zaproxy.addon.automation.gui;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob.Parameters;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
 import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.utils.DisplayUtils;
-import org.zaproxy.zap.view.StandardFieldsDialog;
 
 @SuppressWarnings("serial")
-public class ActiveScanJobDialog extends StandardFieldsDialog {
+public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
 
     private static final long serialVersionUID = 1L;
-
-    private static final Logger LOGGER = LogManager.getLogger(ActiveScanJobDialog.class);
 
     private static final String[] TAB_LABELS = {
         "automation.dialog.tab.params",
@@ -65,10 +54,6 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
             "automation.dialog.ascan.maxalertsperrule";
     private static final String FIELD_ADVANCED = "automation.dialog.ascan.advanced";
 
-    private static final String DEFAULT_THRESHOLD_PARAM =
-            "automation.dialog.ascan.defaultthreshold";
-    private static final String DEFAULT_STRENGTH_PARAM = "automation.dialog.ascan.defaultstrength";
-
     private static final String DELAY_IN_MS_PARAM = "automation.dialog.ascan.delayinms";
     private static final String THREADS_PER_HOST_PARAM = "automation.dialog.ascan.threads";
     private static final String ADD_QUERY_PARAM = "automation.dialog.ascan.addquery";
@@ -78,19 +63,8 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
 
     private ActiveScanJob job;
 
-    private JButton addButton = null;
-    private JButton modifyButton = null;
-    private JButton removeButton = null;
-
-    private JTable rulesTable = null;
-    private AscanRulesTableModel rulesModel = null;
-
     public ActiveScanJobDialog(ActiveScanJob job) {
-        super(
-                View.getSingleton().getMainFrame(),
-                TITLE,
-                DisplayUtils.getScaledDimension(500, 300),
-                TAB_LABELS);
+        super(TITLE, DisplayUtils.getScaledDimension(500, 400), TAB_LABELS);
         this.job = job;
 
         this.addTextField(0, NAME_PARAM, this.job.getData().getName());
@@ -273,128 +247,8 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
         return null;
     }
 
-    private JButton getAddButton() {
-        if (this.addButton == null) {
-            this.addButton =
-                    new JButton(Constant.messages.getString("automation.dialog.button.add"));
-            this.addButton.addActionListener(
-                    e -> {
-                        AddAscanRuleDialog dialog;
-                        try {
-                            dialog = new AddAscanRuleDialog(getRulesModel());
-                            dialog.setVisible(true);
-                        } catch (ConfigurationException e1) {
-                            LOGGER.error(e1.getMessage(), e1);
-                        }
-                    });
-        }
-        return this.addButton;
-    }
-
-    private JButton getModifyButton() {
-        if (this.modifyButton == null) {
-            this.modifyButton =
-                    new JButton(Constant.messages.getString("automation.dialog.button.modify"));
-            modifyButton.setEnabled(false);
-            this.modifyButton.addActionListener(
-                    e -> {
-                        int row = getRulesTable().getSelectedRow();
-                        try {
-                            AddAscanRuleDialog dialog =
-                                    new AddAscanRuleDialog(
-                                            getRulesModel(),
-                                            getRulesModel().getRules().get(row),
-                                            row);
-                            dialog.setVisible(true);
-                        } catch (ConfigurationException e1) {
-                            LOGGER.error(e1.getMessage(), e1);
-                        }
-                    });
-        }
-        return this.modifyButton;
-    }
-
-    private JButton getRemoveButton() {
-        if (this.removeButton == null) {
-            this.removeButton =
-                    new JButton(Constant.messages.getString("automation.dialog.button.remove"));
-            this.removeButton.setEnabled(false);
-            final ActiveScanJobDialog parent = this;
-            this.removeButton.addActionListener(
-                    e -> {
-                        if (JOptionPane.OK_OPTION
-                                == View.getSingleton()
-                                        .showConfirmDialog(
-                                                parent,
-                                                Constant.messages.getString(
-                                                        "automation.dialog.ascan.remove.confirm"))) {
-                            getRulesModel().remove(getRulesTable().getSelectedRow());
-                        }
-                    });
-        }
-        return this.removeButton;
-    }
-
-    private JTable getRulesTable() {
-        if (rulesTable == null) {
-            rulesTable = new JTable();
-            rulesTable.setModel(getRulesModel());
-            rulesTable
-                    .getColumnModel()
-                    .getColumn(0)
-                    .setPreferredWidth(DisplayUtils.getScaledSize(50));
-            rulesTable
-                    .getColumnModel()
-                    .getColumn(1)
-                    .setPreferredWidth(DisplayUtils.getScaledSize(170));
-            rulesTable
-                    .getColumnModel()
-                    .getColumn(2)
-                    .setPreferredWidth(DisplayUtils.getScaledSize(100));
-            rulesTable
-                    .getColumnModel()
-                    .getColumn(3)
-                    .setPreferredWidth(DisplayUtils.getScaledSize(100));
-            rulesTable
-                    .getSelectionModel()
-                    .addListSelectionListener(
-                            e -> {
-                                boolean singleRowSelected =
-                                        getRulesTable().getSelectedRowCount() == 1;
-                                modifyButton.setEnabled(singleRowSelected);
-                                removeButton.setEnabled(singleRowSelected);
-                            });
-            rulesTable.addMouseListener(
-                    new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent me) {
-                            if (me.getClickCount() == 2) {
-                                int row = getRulesTable().getSelectedRow();
-                                if (row == -1) {
-                                    return;
-                                }
-                                try {
-                                    AddAscanRuleDialog dialog =
-                                            new AddAscanRuleDialog(
-                                                    getRulesModel(),
-                                                    getRulesModel().getRules().get(row),
-                                                    row);
-                                    dialog.setVisible(true);
-                                } catch (ConfigurationException e1) {
-                                    LOGGER.error(e1.getMessage(), e1);
-                                }
-                            }
-                        }
-                    });
-        }
-        return rulesTable;
-    }
-
-    private AscanRulesTableModel getRulesModel() {
-        if (rulesModel == null) {
-            rulesModel = new AscanRulesTableModel();
-            rulesModel.setRules(job.getData().getPolicyDefinition().getRules());
-        }
-        return rulesModel;
+    @Override
+    protected List<Rule> getRules() {
+        return job.getData().getPolicyDefinition().getRules();
     }
 }
