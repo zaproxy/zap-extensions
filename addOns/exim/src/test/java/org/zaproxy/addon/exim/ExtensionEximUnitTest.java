@@ -57,4 +57,20 @@ class ExtensionEximUnitTest {
         assertThat(extension.getModel(), is(notNullValue()));
         assertThat(extension.getExporter(), is(notNullValue()));
     }
+
+    @Test
+    void shouldNotHaveImporterBeforeInit() {
+        // Given / When
+        Importer importer = extension.getImporter();
+        // Then
+        assertThat(importer, is(nullValue()));
+    }
+
+    @Test
+    void shouldInitImporter() {
+        // Given / When
+        extension.init();
+        // Then
+        assertThat(extension.getImporter(), is(notNullValue()));
+    }
 }

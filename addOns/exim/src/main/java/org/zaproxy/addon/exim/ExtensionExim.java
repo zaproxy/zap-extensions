@@ -48,6 +48,7 @@ public class ExtensionExim extends ExtensionAdaptor {
             List.of(ExtensionCommonlib.class);
 
     private Exporter exporter;
+    private Importer importer;
 
     private JMenu menuExport;
 
@@ -60,6 +61,13 @@ public class ExtensionExim extends ExtensionAdaptor {
 
     public ExtensionExim() {
         super(NAME);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+
+        importer = new Importer();
     }
 
     @Override
@@ -141,6 +149,16 @@ public class ExtensionExim extends ExtensionAdaptor {
      */
     public Exporter getExporter() {
         return exporter;
+    }
+
+    /**
+     * Gets the importer.
+     *
+     * @return the importer, never {@code null}.
+     * @since 0.13.0
+     */
+    public Importer getImporter() {
+        return importer;
     }
 
     public static void updateOutput(String messageKey, String filePath) {
