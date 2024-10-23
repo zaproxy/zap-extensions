@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- The Information Disclosure - Suspicious Comments scan rule should now be less false positive prone on JavaScript findings (Issues 6622 & 6736).
 
 ## [61] - 2024-09-24
 ### Changed
