@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
@@ -44,12 +45,14 @@ public class GraphQlFingerprinter {
             CommonAlertTag.toMap(CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER);
     private static final Logger LOGGER = LogManager.getLogger(GraphQlFingerprinter.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    public static final BiConsumer<URI, String> DEFAULT_APP_CONSUMER = (site, app) -> {};
 
     private final Requestor requestor;
     private final Map<String, HttpMessage> queryCache;
 
     private HttpMessage lastQueryMsg;
     private String matchedString;
+    private static BiConsumer<URI, String> appConsumer = DEFAULT_APP_CONSUMER;
 
     public GraphQlFingerprinter(URI endpointUrl) {
         requestor = new Requestor(endpointUrl, HttpSender.MANUAL_REQUEST_INITIATOR);
@@ -95,6 +98,9 @@ public class GraphQlFingerprinter {
             try {
                 if (fingerprinter.getValue().getAsBoolean()) {
                     raiseFingerprintingAlert(fingerprinter.getKey());
+
+                    appConsumer.accept(
+                            lastQueryMsg.getRequestHeader().getURI(), fingerprinter.getKey());
                     break;
                 }
             } catch (Exception e) {
@@ -575,5 +581,9 @@ public class GraphQlFingerprinter {
         } catch (Exception ignored) {
         }
         return false;
+    }
+
+    public static void setAppConsumer(BiConsumer<URI, String> consumer) {
+        appConsumer = consumer == null ? DEFAULT_APP_CONSUMER : consumer;
     }
 }
