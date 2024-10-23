@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [69] - 2024-10-23
 ### Changed
 - The XML External Entity Attack scan rule now include example alert functionality for documentation generation purposes (Issue 6119).
 
@@ -552,6 +552,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[69]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v69
 [68]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v68
 [67]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v67
 [66]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v66
