@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +43,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.addon.graphql.GraphQlFingerprinter.DiscoveredGraphQlEngine;
 import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -295,8 +297,16 @@ public class ExtensionGraphQl extends ExtensionAdaptor
 
     @Override
     public List<Alert> getExampleAlerts() {
+        URI uri = null;
+        try {
+            uri = new URI("https://example.com", false);
+        } catch (URIException | NullPointerException e) {
+            // Ignore
+        }
         return List.of(
                 GraphQlParser.createIntrospectionAlert().build(),
-                GraphQlFingerprinter.createFingerprintingAlert("example").build());
+                GraphQlFingerprinter.createFingerprintingAlert(
+                                new DiscoveredGraphQlEngine("example", uri))
+                        .build());
     }
 }

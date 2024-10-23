@@ -22,8 +22,10 @@ package org.zaproxy.addon.graphql;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BooleanSupplier;
 import org.apache.commons.httpclient.URI;
@@ -44,6 +46,8 @@ public class GraphQlFingerprinter {
             CommonAlertTag.toMap(CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER);
     private static final Logger LOGGER = LogManager.getLogger(GraphQlFingerprinter.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    private static List<DiscoveredGraphQlEngineHandler> handlers;
 
     private final Requestor requestor;
     private final Map<String, HttpMessage> queryCache;
@@ -98,7 +102,12 @@ public class GraphQlFingerprinter {
         for (var fingerprinter : fingerprinters.entrySet()) {
             try {
                 if (fingerprinter.getValue().getAsBoolean()) {
-                    raiseFingerprintingAlert(fingerprinter.getKey());
+                    DiscoveredGraphQlEngine discoveredGraphQlEngine =
+                            new DiscoveredGraphQlEngine(
+                                    fingerprinter.getKey(),
+                                    lastQueryMsg.getRequestHeader().getURI());
+                    handleDetectedEngine(discoveredGraphQlEngine);
+                    raiseFingerprintingAlert(discoveredGraphQlEngine);
                     break;
                 }
             } catch (Exception e) {
@@ -106,6 +115,16 @@ public class GraphQlFingerprinter {
             }
         }
         queryCache.clear();
+    }
+
+    private static void handleDetectedEngine(DiscoveredGraphQlEngine discoveredGraphQlEngine) {
+        for (DiscoveredGraphQlEngineHandler handler : handlers) {
+            try {
+                handler.process(discoveredGraphQlEngine);
+            } catch (Exception ex) {
+                LOGGER.error("Unable to handle: {}", discoveredGraphQlEngine.getName(), ex);
+            }
+        }
     }
 
     void sendQuery(String query) {
@@ -150,8 +169,8 @@ public class GraphQlFingerprinter {
         return false;
     }
 
-    static Alert.Builder createFingerprintingAlert(String engineId) {
-        final String enginePrefix = "graphql.engine." + engineId + ".";
+    static Alert.Builder createFingerprintingAlert(
+            DiscoveredGraphQlEngine discoveredGraphQlEngine) {
         return Alert.builder()
                 .setPluginId(ExtensionGraphQl.TOOL_ALERT_ID)
                 .setAlertRef(FINGERPRINTING_ALERT_REF)
@@ -159,9 +178,9 @@ public class GraphQlFingerprinter {
                 .setDescription(
                         Constant.messages.getString(
                                 "graphql.fingerprinting.alert.desc",
-                                Constant.messages.getString(enginePrefix + "name"),
-                                Constant.messages.getString(enginePrefix + "technologies")))
-                .setReference(Constant.messages.getString(enginePrefix + "docsUrl"))
+                                discoveredGraphQlEngine.getName(),
+                                discoveredGraphQlEngine.getTechnologies()))
+                .setReference(discoveredGraphQlEngine.getDocsUrl())
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setRisk(Alert.RISK_INFO)
                 .setCweId(205)
@@ -170,14 +189,15 @@ public class GraphQlFingerprinter {
                 .setTags(FINGERPRINTING_ALERT_TAGS);
     }
 
-    private void raiseFingerprintingAlert(String engineId) {
+    void raiseFingerprintingAlert(DiscoveredGraphQlEngine discoveredGraphQlEngine) {
         var extAlert =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
         if (extAlert == null) {
             return;
         }
+
         Alert alert =
-                createFingerprintingAlert(engineId)
+                createFingerprintingAlert(discoveredGraphQlEngine)
                         .setEvidence(matchedString)
                         .setMessage(lastQueryMsg)
                         .setUri(requestor.getEndpointUrl().toString())
@@ -617,5 +637,50 @@ public class GraphQlFingerprinter {
         } catch (Exception ignored) {
         }
         return false;
+    }
+
+    public static void addEngineHandler(DiscoveredGraphQlEngineHandler handler) {
+        if (handlers == null) {
+            handlers = new ArrayList<>();
+        }
+        handlers.add(handler);
+    }
+
+    public static void resetHandlers() {
+        handlers = null;
+    }
+
+    public static class DiscoveredGraphQlEngine {
+        private static final String PREFIX = "graphql.engine.";
+        private String enginePrefix;
+        private String name;
+        private String docsUrl;
+        private String technologies;
+        private URI uri;
+
+        public DiscoveredGraphQlEngine(String engineId, URI uri) {
+            this.enginePrefix = PREFIX + engineId + ".";
+
+            this.name = Constant.messages.getString(enginePrefix + "name");
+            this.docsUrl = Constant.messages.getString(enginePrefix + "docsUrl");
+            this.technologies = Constant.messages.getString(enginePrefix + "technologies");
+            this.uri = uri;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getDocsUrl() {
+            return docsUrl;
+        }
+
+        public String getTechnologies() {
+            return technologies;
+        }
+
+        public URI getUri() {
+            return uri;
+        }
     }
 }

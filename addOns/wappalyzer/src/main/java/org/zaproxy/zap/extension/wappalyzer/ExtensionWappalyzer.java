@@ -294,6 +294,18 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         }
     }
 
+    /**
+     * Accept an {@code URI} which will be normalized into a site string usable by the Tech
+     * Detection add-on and adds the provided {@code ApplicationMatch}
+     *
+     * @param uri The URI to be normalized and used
+     * @param applicationMatch the ApplicationMatch for the tech to be added
+     * @since 21.44.0
+     */
+    public void addApplicationsToSite(URI uri, ApplicationMatch applicationMatch) {
+        this.addApplicationsToSite(normalizeSite(uri), applicationMatch);
+    }
+
     public Application getSelectedApp() {
         if (hasView()) {
             String appName = this.getTechPanel().getSelectedApplicationName();
