@@ -13,6 +13,11 @@ env:                                   # The environment, mandatory
     progressToStdout: true             # If set will write job progress to stdout
 
 jobs:
+  - type: activeScan-policy
+    name: activeScan-policy
+    parameters:
+      name: 
+
 
   - type: requestor
     name: requestor

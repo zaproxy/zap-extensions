@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Templates generated with `-autogenmin` or `-autogenmax` were invalid in some cases.
 
 ## [0.43.0] - 2024-10-07
+### Added
+- Active scan policy job.
+
 ### Fixed
 - Handle exceptions while running jobs.
 
