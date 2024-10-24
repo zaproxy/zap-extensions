@@ -63,6 +63,23 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
     }
 
     @Override
+    public void init() {
+        super.init();
+
+        scriptType =
+                new ScriptType(
+                        TYPE_SEQUENCE,
+                        "script.type.sequence",
+                        hasView()
+                                ? new ImageIcon(
+                                        getClass()
+                                                .getResource("resources/icons/script-sequence.png"))
+                                : null,
+                        false,
+                        new String[] {ScriptType.CAPABILITY_APPEND});
+    }
+
+    @Override
     public void initView(ViewDelegate view) {
         super.initView(view);
 
@@ -108,18 +125,6 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
     public void hook(ExtensionHook extensionhook) {
         super.hook(extensionhook);
 
-        // Create a new sequence script type and register
-        scriptType =
-                new ScriptType(
-                        TYPE_SEQUENCE,
-                        "script.type.sequence",
-                        hasView()
-                                ? new ImageIcon(
-                                        getClass()
-                                                .getResource("resources/icons/script-sequence.png"))
-                                : null,
-                        false,
-                        new String[] {ScriptType.CAPABILITY_APPEND});
         getExtScript().registerScriptType(scriptType);
 
         if (hasView()) {
@@ -130,6 +135,15 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 
         // Add class as a scannerhook (implements the scannerhook interface)
         extensionhook.addScannerHook(this);
+    }
+
+    /**
+     * Gets the script type for sequences.
+     *
+     * @return the script type.
+     */
+    public ScriptType getScriptType() {
+        return scriptType;
     }
 
     @Override

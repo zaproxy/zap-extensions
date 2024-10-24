@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <TITLE>
+        Automation Framework Support
+    </TITLE>
+</HEAD>
+<BODY>
+
+<H1>Automation Framework Support</H1>
+This add-on supports the Automation Framework.
+<br><br>
+
+<H2>Job: sequence-import</H2>
+The <code>sequence-import</code> job allows you to create a Sequence from an HAR file.
+<pre>
+  - type: sequence-import      # Imports a sequence from a HAR file.
+    parameters:
+      name:                    # The name by which the seq will be known in ZAP.
+      path:                    # The full/relative path to the HAR file to import.
+      assertCode:              # Boolean, if true add status code assertion.
+      assertLength:            # Integer, if supplied then add approx len assertion (value between 0 and 100).
+</pre>
+
+</BODY>
+</HTML>
