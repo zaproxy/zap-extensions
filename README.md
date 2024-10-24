@@ -12,7 +12,7 @@ You can also import add-ons you have downloaded manually from https://github.com
 
 Please see the [wiki](https://github.com/zaproxy/zap-extensions/wiki) for more details.
 
-## Building
+## Buildingh
 
 The add-ons are built with [Gradle], each add-on has its own project which is located under the `addOns` project/directory.
 
