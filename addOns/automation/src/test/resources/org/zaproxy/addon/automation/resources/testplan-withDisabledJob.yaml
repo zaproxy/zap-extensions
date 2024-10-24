@@ -1,0 +1,24 @@
+env:
+  contexts:
+    - name: example
+      urls: 
+      - https://www.example.com/
+  parameters:
+    failOnError: false                  
+    failOnWarning: false               
+    progressToStdout: false            
+
+jobs:
+  - type: job1
+    name: "Job 1"
+    enabled: false
+    parameters:
+
+  - type: job2
+    name: "Job 2"
+    enabled: true
+    parameters:
+
+  - type: job3 # jobs are automatically enabled if the "enabled" key is missing
+    name: "Job 3"
+    parameters:

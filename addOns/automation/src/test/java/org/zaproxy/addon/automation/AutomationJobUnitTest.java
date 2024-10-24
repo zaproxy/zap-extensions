@@ -1155,6 +1155,19 @@ class AutomationJobUnitTest {
         assertThat(list.get(3), is(equalTo(lastJob)));
     }
 
+    @Test
+    void shouldBeEnabledByDefault() {
+        // Given
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job = new AutomationJobImpl(tpc);
+
+        // When
+        boolean isEnabled = job.isEnabled();
+
+        // Then
+        assertThat(isEnabled, is(equalTo(true)));
+    }
+
     // Methods are accessed via reflection
     private static class TestParamContainer {
         private TestParam testParam = new TestParam();
