@@ -105,6 +105,7 @@ class PassiveScanConfigJobUnitTest {
         // Then
         assertThat(job.getType(), is(equalTo("passiveScan-config")));
         assertThat(job.getName(), is(equalTo("passiveScan-config")));
+        assertThat(job.isEnabled(), is(equalTo(true)));
         assertThat(job.getOrder(), is(equalTo(Order.CONFIGS)));
         assertThat(job.getParamMethodObject(), is(extPscan));
         assertThat(job.getParamMethodName(), is("getPassiveScanParam"));

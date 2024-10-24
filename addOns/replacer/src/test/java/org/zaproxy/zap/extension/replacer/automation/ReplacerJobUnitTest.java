@@ -68,6 +68,7 @@ class ReplacerJobUnitTest extends TestUtils {
         // Then
         assertThat(job.getType(), is(equalTo("replacer")));
         assertThat(job.getName(), is(equalTo("replacer")));
+        assertThat(job.isEnabled(), is(equalTo(true)));
         assertThat(job.getParameters(), is(notNullValue()));
         assertThat(job.getParameters().getDeleteAllRules(), is(nullValue()));
         assertThat(job.getData(), is(notNullValue()));

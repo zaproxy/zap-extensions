@@ -87,6 +87,7 @@ class RequestorJobUnitTest {
         // Then
         assertThat(job.getType(), is(equalTo("requestor")));
         assertThat(job.getName(), is(equalTo("requestor")));
+        assertThat(job.isEnabled(), is(equalTo(true)));
         assertThat(job.getOrder(), is(equalTo(AutomationJob.Order.FIRST_EXPLORE)));
         assertThat(job.getParamMethodObject(), is(equalTo(null)));
         assertThat(job.getParamMethodName(), is(equalTo(null)));

@@ -94,6 +94,7 @@ class PassiveScanWaitJobUnitTest {
         // Then
         assertThat(job.getType(), is(equalTo("passiveScan-wait")));
         assertThat(job.getName(), is(equalTo("passiveScan-wait")));
+        assertThat(job.isEnabled(), is(equalTo(true)));
         assertThat(job.getOrder(), is(equalTo(Order.AFTER_EXPLORE)));
         assertThat(job.getParamMethodObject(), is(nullValue()));
         assertThat(job.getParamMethodName(), is(nullValue()));

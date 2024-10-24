@@ -128,6 +128,7 @@ class SpiderJobUnitTest extends TestUtils {
         // Then
         assertThat(job.getType(), is(equalTo("spider")));
         assertThat(job.getName(), is(equalTo("spider")));
+        assertThat(job.isEnabled(), is(equalTo(true)));
         assertThat(job.getOrder(), is(equalTo(Order.LAST_EXPLORE)));
         assertThat(job.getParamMethodObject(), is(extSpider));
         assertThat(job.getParamMethodName(), is("getSpiderParam"));
