@@ -133,6 +133,7 @@ class ActiveScanJobUnitTest {
         // Then
         assertThat(job.getType(), is(equalTo("activeScan")));
         assertThat(job.getName(), is(equalTo("activeScan")));
+        assertThat(job.isEnabled(), is(equalTo(true)));
         assertThat(job.getOrder(), is(equalTo(Order.ATTACK)));
         assertThat(job.getParamMethodObject(), is(extAScan));
         assertThat(job.getParamMethodName(), is("getScannerParam"));

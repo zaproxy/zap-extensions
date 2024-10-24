@@ -82,6 +82,7 @@ class ParamsJobUnitTest {
         // Then
         assertThat(job.getType(), is(equalTo("params")));
         assertThat(job.getName(), is(equalTo("params")));
+        assertThat(job.isEnabled(), is(equalTo(true)));
         assertThat(job.getOrder(), is(equalTo(Order.REPORT)));
         assertThat(job.isDataJob(), is(true));
         assertThat(job.getTemplateDataMin(), is(equalTo("")));

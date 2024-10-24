@@ -46,16 +46,18 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
     }
 
     protected static final int HIERARCHY_INDEX = 0;
-    protected static final int STATUS_INDEX = 1;
-    protected static final int TIME_INDEX = 2;
-    protected static final int TYPE_INDEX = 3;
-    protected static final int NAME_INDEX = 4;
-    protected static final int INFO_INDEX = 5;
+    protected static final int ENABLED_INDEX = 1;
+    protected static final int STATUS_INDEX = 2;
+    protected static final int TIME_INDEX = 3;
+    protected static final int TYPE_INDEX = 4;
+    protected static final int NAME_INDEX = 5;
+    protected static final int INFO_INDEX = 6;
 
     private static final String INDENT = "    ";
 
     private static final String[] COLUMN_NAMES = {
         "", // The tree control
+        Constant.messages.getString("automation.panel.table.header.enabled"),
         Constant.messages.getString("automation.panel.table.header.status"),
         Constant.messages.getString("automation.panel.table.header.time"),
         Constant.messages.getString("automation.panel.table.header.type"),
@@ -113,6 +115,8 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
             switch (columnIndex) {
                 case HIERARCHY_INDEX:
                     return "";
+                case ENABLED_INDEX:
+                    return true;
                 case STATUS_INDEX:
                     if (!env.isCreated()) {
                         return Constant.messages.getString(
@@ -143,12 +147,15 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
                     } else {
                         return env.getSummary();
                     }
+
                 default:
             }
         } else if (obj instanceof AutomationJob) {
             AutomationJob job = (AutomationJob) obj;
             JobResults jobResults = plan.getProgress().getJobResults(job);
             switch (columnIndex) {
+                case ENABLED_INDEX:
+                    return job.isEnabled();
                 case STATUS_INDEX:
                     switch (job.getStatus()) {
                         case COMPLETED:
@@ -171,6 +178,9 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
                         case RUNNING:
                             return Constant.messages.getString(
                                     "automation.panel.table.status.running");
+                        case NOT_ENABLED:
+                            return Constant.messages.getString(
+                                    "automation.panel.table.status.notenabled");
                         default:
                             break;
                     }
@@ -203,6 +213,8 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
         } else if (obj instanceof AbstractAutomationTest) {
             AbstractAutomationTest test = (AbstractAutomationTest) obj;
             switch (columnIndex) {
+                case ENABLED_INDEX:
+                    return true;
                 case STATUS_INDEX:
                     if (!test.hasRun()) {
                         return "";
@@ -248,7 +260,12 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return null;
+        switch (columnIndex) {
+            case ENABLED_INDEX:
+                return Boolean.class;
+            default:
+                return String.class;
+        }
     }
 
     @Override
@@ -258,12 +275,30 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
 
     @Override
     public boolean isCellEditable(Object node, int column) {
+        if (column == ENABLED_INDEX) {
+            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
+            if (!treeNode.isRoot()) {
+                Object obj = treeNode.getUserObject();
+                return (obj instanceof AutomationJob);
+            }
+        }
+
         return false;
     }
 
     @Override
     public void setValueAt(Object value, Object node, int column) {
-        // Not supported
+        if (column == ENABLED_INDEX) {
+            DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) node;
+            if (!treeNode.isRoot()) {
+                Object obj = treeNode.getUserObject();
+                if (obj instanceof AutomationJob) {
+                    AutomationJob job = (AutomationJob) obj;
+                    job.setEnabled(((Boolean) value).booleanValue());
+                    jobChanged(job);
+                }
+            }
+        }
     }
 
     public void envChanged() {

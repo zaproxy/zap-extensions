@@ -72,6 +72,7 @@ class SoapJobUnitTest {
         // Then
         assertThat(job.getType(), is(equalTo("soap")));
         assertThat(job.getName(), is(equalTo("soap")));
+        assertThat(job.isEnabled(), is(equalTo(true)));
         assertThat(job.getOrder(), is(equalTo(AutomationJob.Order.EXPLORE)));
         assertThat(job.getParamMethodObject(), is(nullValue()));
         assertThat(job.getParamMethodName(), is(nullValue()));

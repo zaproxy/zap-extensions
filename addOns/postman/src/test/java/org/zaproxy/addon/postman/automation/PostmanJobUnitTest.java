@@ -94,6 +94,7 @@ class PostmanJobUnitTest extends TestUtils {
         // Then
         assertThat(job.getType(), is(equalTo("postman")));
         assertThat(job.getName(), is(equalTo("postman")));
+        assertThat(job.isEnabled(), is(equalTo(true)));
         assertThat(job.getOrder(), is(equalTo(AutomationJob.Order.EXPLORE)));
         assertThat(job.getParamMethodObject(), is(nullValue()));
         assertThat(job.getParamMethodName(), is(nullValue()));

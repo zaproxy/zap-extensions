@@ -98,6 +98,7 @@ class GraphQlJobUnitTest extends TestUtils {
         // Then
         assertThat(job.getType(), is(equalTo("graphql")));
         assertThat(job.getName(), is(equalTo("graphql")));
+        assertThat(job.isEnabled(), is(equalTo(true)));
         assertThat(job.getOrder(), is(equalTo(AutomationJob.Order.EXPLORE)));
         assertThat(job.getParamMethodObject(), is(extGraphQl));
         assertThat(job.getParamMethodName(), is("getParam"));

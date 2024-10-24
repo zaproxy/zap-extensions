@@ -39,6 +39,9 @@ public abstract class JobData extends AutomationData {
         if ("name".equals(name)) {
             return getName().equals(getType());
         }
+        if ("enabled".equals(name)) {
+            return isEnabled();
+        }
         return super.isDefaultValue(name);
     }
 
@@ -52,6 +55,14 @@ public abstract class JobData extends AutomationData {
 
     public void setName(String name) {
         this.job.setName(name);
+    }
+
+    public boolean isEnabled() {
+        return this.job.isEnabled();
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.job.setEnabled(enabled);
     }
 
     public List<AutomationData> getTests() {
