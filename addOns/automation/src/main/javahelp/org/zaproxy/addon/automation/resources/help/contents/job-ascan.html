@@ -44,6 +44,10 @@ This job supports <a href="test-monitor.html">monitor</a> tests.
         threshold:                     # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
 </pre>
 
+<p>
+The policy can be one defined by a previous <a href="job-ascanpolicy.html">activeScan-policy</a> job, or by a scan policy file
+that has been put in <code>policies</code> directory under ZAP's <a href="https://www.zaproxy.org/faq/what-is-the-default-directory-that-zap-uses/">HOME directory</a> .
+
 <H2>Job Data</H2>
 The following class will be made available to add-ons that provide access to the Job Data such as the Reporting add-on.
 Note that in this case the data is from the last Active Scan, regardless of whether it was started by the Automation Framework, the UI, or the API.
