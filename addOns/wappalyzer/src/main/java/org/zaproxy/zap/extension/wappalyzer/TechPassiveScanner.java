@@ -115,7 +115,7 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
 
         long startTime = System.currentTimeMillis();
         String site = getSite(msg);
-        tracker.putIfAbsent(site, new HashSet<String>());
+        tracker.putIfAbsent(site, new HashSet<>());
         int reqCount = siteReqCount.merge(site, 1, Integer::sum);
         Stats.setHighwaterMark(site, "stats.tech.reqcount.total", reqCount);
 

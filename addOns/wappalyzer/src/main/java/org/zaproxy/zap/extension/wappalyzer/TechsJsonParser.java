@@ -506,17 +506,15 @@ public class TechsJsonParser {
 
         private final AtomicInteger threadNumber;
         private final String namePrefix;
-        private final ThreadGroup group;
 
         public JsonParserThreadFactory(String namePrefix) {
             threadNumber = new AtomicInteger(1);
             this.namePrefix = namePrefix;
-            group = Thread.currentThread().getThreadGroup();
         }
 
         @Override
         public Thread newThread(Runnable r) {
-            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+            Thread t = new Thread(null, r, namePrefix + threadNumber.getAndIncrement(), 0);
             if (t.isDaemon()) {
                 t.setDaemon(false);
             }
