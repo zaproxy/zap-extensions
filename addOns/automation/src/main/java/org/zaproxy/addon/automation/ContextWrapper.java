@@ -29,6 +29,8 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
@@ -414,88 +416,18 @@ public class ContextWrapper {
         return extUserMgmt;
     }
 
+    @Getter
+    @Setter
     public static class Data extends AutomationData {
         private String name;
         private List<String> urls = new ArrayList<>();
-        private List<String> includePaths;
-        private List<String> excludePaths;
+        private List<String> includePaths = new ArrayList<>();
+        private List<String> excludePaths = new ArrayList<>();
         private AuthenticationData authentication;
         private SessionManagementData sessionManagement;
         private TechnologyData technology;
         private StructureData structure;
-        private List<UserData> users;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public List<String> getUrls() {
-            return urls;
-        }
-
-        public void setUrls(List<String> urls) {
-            this.urls = urls;
-        }
-
-        public List<String> getIncludePaths() {
-            return includePaths;
-        }
-
-        public void setIncludePaths(List<String> includePaths) {
-            this.includePaths = includePaths;
-        }
-
-        public List<String> getExcludePaths() {
-            return excludePaths;
-        }
-
-        public void setExcludePaths(List<String> excludePaths) {
-            this.excludePaths = excludePaths;
-        }
-
-        public AuthenticationData getAuthentication() {
-            return authentication;
-        }
-
-        public void setAuthentication(AuthenticationData authentication) {
-            this.authentication = authentication;
-        }
-
-        public SessionManagementData getSessionManagement() {
-            return sessionManagement;
-        }
-
-        public void setSessionManagement(SessionManagementData sessionManagement) {
-            this.sessionManagement = sessionManagement;
-        }
-
-        public TechnologyData getTechnology() {
-            return technology;
-        }
-
-        public void setTechnology(TechnologyData technology) {
-            this.technology = technology;
-        }
-
-        public List<UserData> getUsers() {
-            return users;
-        }
-
-        public void setUsers(List<UserData> users) {
-            this.users = users;
-        }
-
-        public StructureData getStructure() {
-            return structure;
-        }
-
-        public void setStructure(StructureData structure) {
-            this.structure = structure;
-        }
+        private List<UserData> users = new ArrayList<>();
     }
 
     public static class UserData extends AutomationData {

@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
@@ -40,6 +42,7 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.addon.automation.gui.ActiveScanJobDialog;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
@@ -220,7 +223,7 @@ public class ActiveScanJob extends AutomationJob {
         getExtAScan().setPanelSwitch(false);
 
         ContextWrapper context;
-        if (this.getParameters().getContext() != null) {
+        if (StringUtils.isNotEmpty(this.getParameters().getContext())) {
             context = env.getContextWrapper(this.getParameters().getContext());
             if (context == null) {
                 progress.error(
@@ -444,6 +447,8 @@ public class ActiveScanJob extends AutomationJob {
         new ActiveScanJobDialog(this).setVisible(true);
     }
 
+    @Getter
+    @Setter
     public static class Rule extends AutomationData {
         private int id;
         private String name;
@@ -462,79 +467,26 @@ public class ActiveScanJob extends AutomationJob {
         public Rule copy() {
             return new Rule(id, name, threshold, strength);
         }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getThreshold() {
-            return threshold;
-        }
-
-        public void setThreshold(String threshold) {
-            this.threshold = threshold;
-        }
-
-        public String getStrength() {
-            return strength;
-        }
-
-        public void setStrength(String strength) {
-            this.strength = strength;
-        }
     }
 
+    @Getter
     public static class Data extends JobData {
-        private Parameters parameters;
-        private PolicyDefinition policyDefinition;
+        private final Parameters parameters;
+        private final PolicyDefinition policyDefinition;
 
         public Data(AutomationJob job, Parameters parameters, PolicyDefinition policyDefinition) {
             super(job);
             this.parameters = parameters;
             this.policyDefinition = policyDefinition;
         }
-
-        public Parameters getParameters() {
-            return parameters;
-        }
-
-        public PolicyDefinition getPolicyDefinition() {
-            return policyDefinition;
-        }
     }
 
+    @Getter
+    @Setter
     public static class PolicyDefinition extends AutomationData {
-        private String defaultStrength;
-        private String defaultThreshold;
+        private String defaultStrength = JobUtils.strengthToI18n(AttackStrength.MEDIUM.name());
+        private String defaultThreshold = JobUtils.thresholdToI18n(AlertThreshold.MEDIUM.name());
         private List<Rule> rules = new ArrayList<>();
-
-        public String getDefaultStrength() {
-            return defaultStrength;
-        }
-
-        public void setDefaultStrength(String defaultStrength) {
-            this.defaultStrength = defaultStrength;
-        }
-
-        public String getDefaultThreshold() {
-            return defaultThreshold;
-        }
-
-        public void setDefaultThreshold(String defaultThreshold) {
-            this.defaultThreshold = defaultThreshold;
-        }
 
         public List<Rule> getRules() {
             return rules.stream().map(Rule::copy).collect(Collectors.toList());
@@ -547,136 +499,31 @@ public class ActiveScanJob extends AutomationJob {
         public void removeRule(Rule rule) {
             this.rules.remove(rule);
         }
-
-        public void setRules(List<Rule> rules) {
-            this.rules = rules;
-        }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
-
-        private String context;
-        private String user;
-        private String policy;
-        private Integer maxRuleDurationInMins;
-        private Integer maxScanDurationInMins;
-        private Boolean addQueryParam;
-        private String defaultPolicy;
-        private Integer delayInMs;
-        private Boolean handleAntiCSRFTokens;
-        private Boolean injectPluginIdInHeader;
-        private Boolean scanHeadersAllRequests;
-        private Integer threadPerHost;
-        private Integer maxAlertsPerRule;
-
-        public Parameters() {}
-
-        public String getContext() {
-            return context;
-        }
-
-        public void setContext(String context) {
-            this.context = context;
-        }
-
-        public String getUser() {
-            return user;
-        }
-
-        public void setUser(String user) {
-            this.user = user;
-        }
-
-        public String getPolicy() {
-            return policy;
-        }
-
-        public void setPolicy(String policy) {
-            this.policy = policy;
-        }
-
-        public Integer getMaxRuleDurationInMins() {
-            return maxRuleDurationInMins;
-        }
-
-        public void setMaxRuleDurationInMins(Integer maxRuleDurationInMins) {
-            this.maxRuleDurationInMins = maxRuleDurationInMins;
-        }
-
-        public Integer getMaxScanDurationInMins() {
-            return maxScanDurationInMins;
-        }
-
-        public void setMaxScanDurationInMins(Integer maxScanDurationInMins) {
-            this.maxScanDurationInMins = maxScanDurationInMins;
-        }
-
-        public Boolean getAddQueryParam() {
-            return addQueryParam;
-        }
-
-        public void setAddQueryParam(Boolean addQueryParam) {
-            this.addQueryParam = addQueryParam;
-        }
-
-        public String getDefaultPolicy() {
-            return defaultPolicy;
-        }
-
-        public void setDefaultPolicy(String defaultPolicy) {
-            this.defaultPolicy = defaultPolicy;
-        }
-
-        public Integer getDelayInMs() {
-            return delayInMs;
-        }
-
-        public void setDelayInMs(Integer delayInMs) {
-            this.delayInMs = delayInMs;
-        }
-
-        public Boolean getHandleAntiCSRFTokens() {
-            return handleAntiCSRFTokens;
-        }
-
-        public void setHandleAntiCSRFTokens(Boolean handleAntiCSRFTokens) {
-            this.handleAntiCSRFTokens = handleAntiCSRFTokens;
-        }
-
-        public Boolean getInjectPluginIdInHeader() {
-            return injectPluginIdInHeader;
-        }
-
-        public void setInjectPluginIdInHeader(Boolean injectPluginIdInHeader) {
-            this.injectPluginIdInHeader = injectPluginIdInHeader;
-        }
-
-        public Boolean getScanHeadersAllRequests() {
-            return scanHeadersAllRequests;
-        }
-
-        public void setScanHeadersAllRequests(Boolean scanHeadersAllRequests) {
-            this.scanHeadersAllRequests = scanHeadersAllRequests;
-        }
+        private String context = "";
+        private String user = "";
+        private String policy = "";
+        private Integer maxRuleDurationInMins = 0;
+        private Integer maxScanDurationInMins = 0;
+        private Boolean addQueryParam = false;
+        private String defaultPolicy = "";
+        private Integer delayInMs = 0;
+        private Boolean handleAntiCSRFTokens = true;
+        private Boolean injectPluginIdInHeader = false;
+        private Boolean scanHeadersAllRequests = false;
+        private Integer threadPerHost = Constants.getDefaultThreadCount();
+        private Integer maxAlertsPerRule = 0;
 
         public Integer getThreadPerHost() {
             if (JobUtils.unBox(threadPerHost) <= 0) {
-                // Dont return zero or less - this will cause problems
+                // Don't return zero or less - this will cause problems
                 return null;
             }
             return threadPerHost;
-        }
-
-        public void setThreadPerHost(Integer threadPerHost) {
-            this.threadPerHost = threadPerHost;
-        }
-
-        public Integer getMaxAlertsPerRule() {
-            return maxAlertsPerRule;
-        }
-
-        public void setMaxAlertsPerRule(Integer maxAlertsPerRule) {
-            this.maxAlertsPerRule = maxAlertsPerRule;
         }
     }
 }

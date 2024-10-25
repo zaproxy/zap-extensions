@@ -7,6 +7,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.50.0"
     id("org.sonarqube") version "4.3.0.3225"
     id("net.ltgt.errorprone") version "3.1.0"
+    id("io.freefair.lombok") version "8.10.2"
 }
 
 apply(from = "$rootDir/gradle/ci.gradle.kts")
@@ -23,6 +24,7 @@ allprojects {
     apply(plugin = "com.diffplug.spotless")
     apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "net.ltgt.errorprone")
+    apply(plugin = "io.freefair.lombok")
 
     repositories {
         mavenCentral()

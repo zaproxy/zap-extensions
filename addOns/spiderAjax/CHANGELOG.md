@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Fields with default or missing values are omitted for the `spiderAjax` job in saved Automation Framework plans.
 
 ## [23.21.0] - 2024-09-02
 ### Changed

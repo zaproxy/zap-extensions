@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.replacer.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyArray;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -131,13 +133,13 @@ class ReplacerJobUnitTest extends TestUtils {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(job.getRuleCount(), is(equalTo(1)));
         assertThat(job.getData().getRules().size(), is(equalTo(1)));
-        assertThat(job.getData().getRules().get(0).getDescription(), is(nullValue()));
-        assertThat(job.getData().getRules().get(0).getUrl(), is(nullValue()));
+        assertThat(job.getData().getRules().get(0).getDescription(), is(emptyString()));
+        assertThat(job.getData().getRules().get(0).getUrl(), is(emptyString()));
         assertThat(job.getData().getRules().get(0).getMatchType(), is(equalTo("resp_body_str")));
-        assertThat(job.getData().getRules().get(0).isMatchRegex(), is(nullValue()));
-        assertThat(job.getData().getRules().get(0).getReplacementString(), is(nullValue()));
-        assertThat(job.getData().getRules().get(0).getTokenProcessing(), is(nullValue()));
-        assertThat(job.getData().getRules().get(0).getInitiators(), is(nullValue()));
+        assertThat(job.getData().getRules().get(0).isMatchRegex(), is(false));
+        assertThat(job.getData().getRules().get(0).getReplacementString(), is(emptyString()));
+        assertThat(job.getData().getRules().get(0).getTokenProcessing(), is(false));
+        assertThat(job.getData().getRules().get(0).getInitiators(), is(emptyArray()));
     }
 
     @Test

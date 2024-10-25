@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Typo in automation job help.
 
+### Changed
+- Fields with default or missing values are omitted for the `replacer` job in saved Automation Framework plans.
+
 ## [19] - 2024-10-07
 ### Changed
 - Update ZAP API endpoint description.

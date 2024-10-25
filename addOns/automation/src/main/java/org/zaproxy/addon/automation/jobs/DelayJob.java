@@ -23,6 +23,8 @@ import java.io.File;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.AutomationData;
@@ -161,37 +163,20 @@ public class DelayJob extends AutomationJob {
         return this.parameters;
     }
 
+    @Getter
     public static class Data extends JobData {
-        private Parameters parameters;
+        private final Parameters parameters;
 
         public Data(AutomationJob job, Parameters parameters) {
             super(job);
             this.parameters = parameters;
         }
-
-        public Parameters getParameters() {
-            return parameters;
-        }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
-        private String time;
-        private String fileName;
-
-        public String getTime() {
-            return time;
-        }
-
-        public void setTime(String time) {
-            this.time = time;
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public void setFileName(String fileName) {
-            this.fileName = fileName;
-        }
+        private String time = "0";
+        private String fileName = "";
     }
 }
