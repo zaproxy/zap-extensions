@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Active scan policy job.
+
 ### Changed
 - Update help for the "requestor" job.
 - Update help to indicate that job order is important (Issue 8675).
