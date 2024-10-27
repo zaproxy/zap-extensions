@@ -89,6 +89,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - SQL Injection - Hypersonic SQL
   - SQL Injection - MsSQL
   - SQL Injection - MySQL
+- SQL Injection will now be more tolerant to redirects (Issue 6883).
 
 ### Added
 - Help entry for the Spring Actuators scan rule (missed during previous promotion).
