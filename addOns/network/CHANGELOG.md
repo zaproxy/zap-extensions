@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Improve error handling on client's unknown CA TLS alert.
+- Report available TLS providers when failed to query the TLS/SSL protocol versions.
 
 ## [0.18.0] - 2024-09-24
 ### Added
