@@ -46,8 +46,6 @@ public class CustomPayloadsMultipleOptionsTablePanel
 
     private static final String RESET_BUTTON =
             Constant.messages.getString("custompayloads.options.button.reset");
-    private static final String RESET_ID_BUTTON =
-            Constant.messages.getString("custompayloads.options.button.resetIds");
     private static final String ADD_MISSING_DEFAULTS_BUTTON =
             Constant.messages.getString("custompayloads.options.button.addMissingDefaults");
 
@@ -67,7 +65,6 @@ public class CustomPayloadsMultipleOptionsTablePanel
             LogManager.getLogger(CustomPayloadsMultipleOptionsTablePanel.class);
 
     private JButton resetButton;
-    private JButton resetButtonId;
     private JButton addMissingDefaultsButton;
     private JButton fileButton;
     private CustomPayloadMultipleOptionsTableModel tableModel;
@@ -79,7 +76,6 @@ public class CustomPayloadsMultipleOptionsTablePanel
         addButtonSpacer();
         addMissingDefaultsButton();
         addResetButton();
-        addResetIdButton();
         addButtonSpacer();
         addPayloadFileButton();
         getTable().setHorizontalScrollEnabled(true);
@@ -89,12 +85,6 @@ public class CustomPayloadsMultipleOptionsTablePanel
         addMissingDefaultsButton = new JButton(ADD_MISSING_DEFAULTS_BUTTON);
         addMissingDefaultsButton.addActionListener(e -> tableModel.addMissingDefaultPayloads());
         addButton(addMissingDefaultsButton);
-    }
-
-    private void addResetIdButton() {
-        resetButtonId = new JButton(RESET_ID_BUTTON);
-        resetButtonId.addActionListener(e -> tableModel.resetPayloadIds());
-        addButton(resetButtonId);
     }
 
     private void addResetButton() {
@@ -107,7 +97,7 @@ public class CustomPayloadsMultipleOptionsTablePanel
         fileButton = new JButton(ADD_MULTIPLE_PAYLOADS_BUTTON);
         fileButton.addActionListener(
                 e -> {
-                    CustomPayload multiplePayloads = new CustomPayload(-1, true, "", "");
+                    CustomPayload multiplePayloads = new CustomPayload(true, "", "");
                     CustomMultiplePayloadDialog dialog =
                             new CustomMultiplePayloadDialog(
                                     View.getSingleton().getOptionsDialog(null), multiplePayloads);
@@ -161,15 +151,14 @@ public class CustomPayloadsMultipleOptionsTablePanel
 
     @Override
     public CustomPayload showAddDialogue() {
-        CustomPayload payload = new CustomPayload(-1, true, "", "");
+        CustomPayload payload = new CustomPayload(true, "", "");
         if (showDialog(payload)) {
-            tableModel.setNextIdToPayload(payload);
             return payload;
         }
         return null;
     }
 
-    private boolean showDialog(CustomPayload payload) {
+    private static boolean showDialog(CustomPayload payload) {
         CustomPayloadDialog dialog =
                 new CustomPayloadDialog(
                         View.getSingleton().getOptionsDialog(null),
