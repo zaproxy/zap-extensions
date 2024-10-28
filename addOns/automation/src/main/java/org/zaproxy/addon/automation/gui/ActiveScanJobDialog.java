@@ -28,7 +28,6 @@ import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob.Parameters;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
-import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.utils.DisplayUtils;
 
 @SuppressWarnings("serial")
@@ -84,13 +83,13 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
                 MAX_RULE_DURATION_PARAM,
                 0,
                 Integer.MAX_VALUE,
-                JobUtils.unBox(JobUtils.unBox(job.getParameters().getMaxRuleDurationInMins())));
+                JobUtils.unBox(job.getParameters().getMaxRuleDurationInMins()));
         this.addNumberField(
                 0,
                 MAX_SCAN_DURATION_PARAM,
                 0,
                 Integer.MAX_VALUE,
-                JobUtils.unBox(JobUtils.unBox(job.getParameters().getMaxScanDurationInMins())));
+                JobUtils.unBox(job.getParameters().getMaxScanDurationInMins()));
         addNumberField(
                 0,
                 MAX_ALERTS_PER_RULE_PARAM,
@@ -149,13 +148,13 @@ public class ActiveScanJobDialog extends ActiveScanPolicyDialog {
                 DELAY_IN_MS_PARAM,
                 0,
                 Integer.MAX_VALUE,
-                JobUtils.unBox(JobUtils.unBox(job.getParameters().getDelayInMs())));
+                JobUtils.unBox(job.getParameters().getDelayInMs()));
         this.addNumberField(
                 3,
                 THREADS_PER_HOST_PARAM,
-                Constants.getDefaultThreadCount(),
+                1,
                 Integer.MAX_VALUE,
-                JobUtils.unBox(JobUtils.unBox(job.getParameters().getThreadPerHost())));
+                JobUtils.unBox(job.getParameters().getThreadPerHost()));
         this.addCheckBoxField(
                 3, ADD_QUERY_PARAM, JobUtils.unBox(job.getParameters().getAddQueryParam()));
         this.addCheckBoxField(
