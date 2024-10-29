@@ -151,7 +151,7 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
         // When
         fp.fingerprint();
         // Then
-        assertThat(nano.getRequestedUris(), hasSize(23));
+        assertThat(nano.getRequestedUris(), hasSize(26));
         verifyNoInteractions(extensionAlert);
     }
 
@@ -285,8 +285,10 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
                         errorResponse(
                                 "Cannot query field \\\"zaproxy\\\" on type \\\"RootQueryType\\\".")),
                 arguments(
-                        "GraphQL.NET",
-                        errorResponse("Directive 'skip' may not be used on Query.")));
+                        "GraphQL.NET", errorResponse("Directive 'skip' may not be used on Query.")),
+                arguments("pg_graphql", errorResponse("Unknown argument to @skip: aaQuery.")),
+                arguments("tailcall", errorResponse("expected executable_definition")),
+                arguments("Hot Chocolate", errorResponse("Unexpected token: Name.")));
     }
 
     private static String errorResponse(String error) {

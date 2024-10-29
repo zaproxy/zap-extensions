@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Changed
 - Maintenance changes.
 
+### Added
+- Fingerprinting checks for the following engines:
+    - pg_graphql
+    - tailcall
+    - Hot Chocolate
+
 ## [0.25.0] - 2024-09-24
 ### Changed
 - Dependency updates.

@@ -90,6 +90,9 @@ public class GraphQlFingerprinter {
         fingerprinters.put("directus", this::checkDirectusEngine);
         fingerprinters.put("absinthe", this::checkAbsintheEngine);
         fingerprinters.put("graphql-dotnet", this::checkGraphqlDotNetEngine);
+        fingerprinters.put("pg_graphql", this::checkPgGraphqlEngine);
+        fingerprinters.put("tailcall", this::checkTailcallEngine);
+        fingerprinters.put("hotchocolate", this::checkHotchocolateEngine);
 
         for (var fingerprinter : fingerprinters.entrySet()) {
             try {
@@ -436,6 +439,16 @@ public class GraphQlFingerprinter {
         return errorContains("missing selection set for \"__Schema\"");
     }
 
+    private boolean checkHotchocolateEngine() {
+        sendQuery("queryy  {__typename}");
+        if (errorContains("Unexpected token: Name.")) {
+            return true;
+        }
+        sendQuery("query @aaa@aaa {__typename}");
+        return errorContains(
+                "The specified directive `aaa` is not supported by the current schema.");
+    }
+
     private boolean checkHyperGraphQlEngine() {
         sendQuery("queryy {__typename}");
         if (errorContains("Validation error of type InvalidSyntax: Invalid query syntax.")) {
@@ -480,6 +493,12 @@ public class GraphQlFingerprinter {
         return errorContains("expecting white space") || errorContains("offset");
     }
 
+    private boolean checkPgGraphqlEngine() {
+        sendQuery("query { __typename @skip(aa:tr");
+        // https://github.com/supabase/pg_graphql/blob/5f9c62b85293b753676b07c9b309670a77e6310e/src/parser_util.rs#L65
+        return (errorContains("Unknown argument to @skip: aa"));
+    }
+
     private boolean checkSangriaEngine() {
         try {
             sendQuery("queryy {__typename}");
@@ -512,6 +531,11 @@ public class GraphQlFingerprinter {
         } catch (JsonProcessingException ignore) {
         }
         return false;
+    }
+
+    private boolean checkTailcallEngine() {
+        sendQuery("aa {__typename}");
+        return errorContains("expected executable_definition");
     }
 
     private boolean checkTartifletteEngine() {
