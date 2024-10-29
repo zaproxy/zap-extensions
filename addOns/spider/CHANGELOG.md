@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Fields with default or missing values are omitted for the `spider` job in saved Automation Framework plans.
 
+### Removed
+- Remove non-functional option "request wait time" from the API and Automation Framework.
+
 ## [0.12.0] - 2024-09-23
 ### Added
 - Allow the parsers to obtain the context and user being used by/in the current spidering scan (Issue 8021 and 7739).
