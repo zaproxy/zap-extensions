@@ -141,6 +141,12 @@ public class SpiderJob extends AutomationJob {
                             getName(),
                             URLS_ADDED_STATS_KEY));
         }
+
+        if (getParameters().getRequestWaitTime() != null) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "spider.automation.error.requestWaitTime.deprecated", getName()));
+        }
     }
 
     @Override
@@ -456,12 +462,12 @@ public class SpiderJob extends AutomationJob {
         private Boolean parseSVNEntries = false;
         private Boolean postForm = true;
         private Boolean processForm = true;
-        private Integer requestWaitTime = 200;
         private Boolean sendRefererHeader = true;
         private Integer threadCount = 2;
         private String userAgent = "";
         // These 2 fields are deprecated
         private Boolean failIfFoundUrlsLessThan;
         private Boolean warnIfFoundUrlsLessThan;
+        private Integer requestWaitTime;
     }
 }
