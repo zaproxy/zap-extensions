@@ -473,7 +473,10 @@ public class SpiderThread implements Runnable {
 
         public AjaxSpiderBrowserBuilder(String providedBrowserId) {
             super();
-            this.providedBrowserId = providedBrowserId;
+            this.providedBrowserId =
+                    StringUtils.isEmpty(providedBrowserId)
+                            ? AjaxSpiderParam.DEFAULT_BROWSER_ID
+                            : providedBrowserId;
         }
 
         /**
