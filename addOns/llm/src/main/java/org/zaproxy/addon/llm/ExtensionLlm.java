@@ -36,6 +36,10 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.llm.ui.LlmReviewAlertMenu;
+import org.zaproxy.addon.llm.ui.settings.LlmOptionsPanel;
+import org.zaproxy.addon.llm.ui.settings.LlmOptionsParam;
+import org.zaproxy.addon.llm.ui.ImportDialog;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
@@ -66,7 +70,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
     private ZapMenuItem menuExample;
     private AbstractPanel statusPanel;
     private ImportDialog importDialog;
-    private CheckLlmMenu checkLlmMenu;
+    private LlmReviewAlertMenu llmReviewAlertMenu;
     private LlmOptionsParam llmOptionsParam;
     private LlmOptionsPanel llmOptionsPanel;
     private static final String[] ROOT = {};
@@ -135,23 +139,6 @@ public class ExtensionLlm extends ExtensionAdaptor {
         }
     }
 
-    private AbstractPanel getStatusPanel() {
-        if (statusPanel == null) {
-            statusPanel = new AbstractPanel();
-            statusPanel.setLayout(new CardLayout());
-            statusPanel.setName(Constant.messages.getString(PREFIX + ".panel.title"));
-            statusPanel.setIcon(new ImageIcon(getClass().getResource(RESOURCES + "/cake.png")));
-            JTextPane pane = new JTextPane();
-            pane.setEditable(false);
-            // Obtain (and set) a font with the size defined in the options
-            pane.setFont(FontUtils.getFont("Dialog", Font.PLAIN));
-            pane.setContentType("text/html");
-            pane.setText(Constant.messages.getString(PREFIX + ".panel.msg"));
-            statusPanel.add(pane);
-        }
-        return statusPanel;
-    }
-
     private ZapMenuItem getMenuLLM() {
         if (menuExample == null) {
             menuExample =
@@ -170,44 +157,17 @@ public class ExtensionLlm extends ExtensionAdaptor {
         }
         return menuExample;
     }
-    private void displayFile(String file) {
-        if (!View.isInitialised()) {
-            // Running in daemon mode, shouldnt have been called
-            return;
-        }
-        try {
-            File f = new File(Constant.getZapHome(), file);
-            if (!f.exists()) {
-                // This is something the user should know, so show a warning dialog
-                View.getSingleton()
-                        .showWarningDialog(
-                                Constant.messages.getString(
-                                        ExtensionLlm.PREFIX + ".error.nofile",
-                                        f.getAbsolutePath()));
-                return;
-            }
-            // Quick way to read a small text file
-            String contents = new String(Files.readAllBytes(f.toPath()));
-            // Write to the output panel
-            View.getSingleton().getOutputPanel().append(contents);
-            // Give focus to the Output tab
-            View.getSingleton().getOutputPanel().setTabFocus();
-        } catch (Exception e) {
-            // Something unexpected went wrong, write the error to the log
-            LOGGER.error(e.getMessage(), e);
-        }
-    }
 
     @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
     }
 
-    private CheckLlmMenu getCheckLlmMenu() {
-        if (checkLlmMenu == null) {
-            checkLlmMenu = new CheckLlmMenu(this);
+    private LlmReviewAlertMenu getCheckLlmMenu() {
+        if (llmReviewAlertMenu == null) {
+            llmReviewAlertMenu = new LlmReviewAlertMenu(this);
         }
-        return checkLlmMenu;
+        return llmReviewAlertMenu;
     }
 
     private LlmOptionsPanel getOptionsPanel() {

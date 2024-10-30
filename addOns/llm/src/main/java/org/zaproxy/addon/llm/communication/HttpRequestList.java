@@ -1,4 +1,4 @@
-package org.zaproxy.addon.llm;
+package org.zaproxy.addon.llm.communication;
 
 import dev.langchain4j.model.output.structured.Description;
 

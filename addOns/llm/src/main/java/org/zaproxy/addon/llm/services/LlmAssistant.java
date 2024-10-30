@@ -1,15 +1,18 @@
-package org.zaproxy.addon.llm;
+package org.zaproxy.addon.llm.services;
 
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 
 import dev.langchain4j.service.V;
-import org.zaproxy.addon.llm.HttpRequestList;
-import org.zaproxy.addon.llm.Confidence;
+import org.zaproxy.addon.llm.communication.Confidence;
+import org.zaproxy.addon.llm.communication.HttpRequestList;
 
-public interface Assistant {
+public interface LlmAssistant {
     @UserMessage("Given the following swagger generate list of chained HTTP request to simulate a real world user : {{swagger}} ")
-    org.zaproxy.addon.llm.HttpRequestList extractHttpRequests(String swagger);
+    HttpRequestList extractHttpRequests(String swagger);
+
+    @UserMessage("As software architect, and based on your previous answer, generate other potential missing endpoint that are not mentioned on the swagger file. For example, if there is GET /product/1, suggest DELETE /product/1 if it's not mentioned")
+    HttpRequestList complete();
 
     @SystemMessage("You are a web application security expert in review false positives. Answer only in JSON.")
     @UserMessage("Your task is to review the following finding from ZAP (Zed Attack Proxy).\n"
@@ -27,6 +30,5 @@ public interface Assistant {
             + "{{evidence}}\n"
             + "---\n"
             + "Provide short consistent explanation of the new score.\n")
-
     Confidence review(@V("description") String description, @V("evidence") String evidence);
 }

@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.llm;
+package org.zaproxy.addon.llm.ui.settings;
 
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
@@ -35,16 +35,18 @@ public class LlmOptionsParam extends VersionedAbstractParam {
     private static final String BASE_KEY = "llm";
 
     public static final String APIKEY_PROPERTY = BASE_KEY + ".apikey";
+    public static final String ENDPOINT_PROPERTY = BASE_KEY + ".endpoint";
+
     public static final String MODEL_NAME_PROPERTY = BASE_KEY + ".modelname";
 
     /** The API key */
     private String apiKey;
 
+    /** The Endpoint */
+    private String endpoint;
+
     /** The model name */
     private String modelName;
-
-    public LlmOptionsParam() {
-    }
 
     public String getApiKey() {
         //System.out.println("API KEY FROM attribute" + this.apiKey);
@@ -54,6 +56,15 @@ public class LlmOptionsParam extends VersionedAbstractParam {
     public void setApiKey(String apiKey) {
         this.apiKey = apiKey;
         getConfig().setProperty(APIKEY_PROPERTY, this.apiKey);
+    }
+
+    public String getEndpoint() {
+        return this.endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+        getConfig().setProperty(ENDPOINT_PROPERTY, this.endpoint);
     }
 
     public String getModelName() {
@@ -67,9 +78,8 @@ public class LlmOptionsParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        System.out.println("parseImpl APIKEY_PROPERTY = " + this.getString(APIKEY_PROPERTY, ""));
-        System.out.println("parseImpl APIKEY_PROPERTY = " + this.getString(MODEL_NAME_PROPERTY, ""));
         this.apiKey = this.getString(APIKEY_PROPERTY, "");
+        this.endpoint = this.getString(ENDPOINT_PROPERTY, "");
         this.modelName = this.getString(MODEL_NAME_PROPERTY, "");
     }
 

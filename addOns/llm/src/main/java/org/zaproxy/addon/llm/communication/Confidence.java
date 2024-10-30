@@ -1,4 +1,4 @@
-package org.zaproxy.addon.llm;
+package org.zaproxy.addon.llm.communication;
 
 import dev.langchain4j.model.output.structured.Description;
 
@@ -7,13 +7,13 @@ public class Confidence {
     @Description("The level of confidence, typically represented as a percentage or a descriptive term")
     private Integer level;
 
-    @Description("A textual justification for the assigned confidence level")
+    @Description("A textual explanation for the assigned confidence level")
     private String explanation;
 
     // Constructor
-    public Confidence(Integer level, String justification) {
+    public Confidence(Integer level, String explanation) {
         this.level = level;
-        this.explanation = justification;
+        this.explanation = explanation;
     }
 
     // Getter for level

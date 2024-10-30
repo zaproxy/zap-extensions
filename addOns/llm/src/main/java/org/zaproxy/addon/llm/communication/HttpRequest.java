@@ -1,4 +1,4 @@
-package org.zaproxy.addon.llm;
+package org.zaproxy.addon.llm.communication;
 import dev.langchain4j.model.output.structured.Description;
 
 import java.util.Map;
@@ -11,8 +11,8 @@ public class HttpRequest {
     @Description("hostname of the request")
     private String hostname;
 
-    @Description("uri of the request")
-    private String uri;
+    @Description("Full URL of the request based on the hostname and base URL fields")
+    private String url;
 
     @Description("Query parameters in key-value pairs")
     private Map<String, String> queryParams;
@@ -23,10 +23,10 @@ public class HttpRequest {
     @Description("Body of the request, typically used with POST or PUT methods")
     private String body;
 
-    public HttpRequest(String method, String hostname, String uri, Map<String, String> queryParams, Map<String, String> headers, String body) {
+    public HttpRequest(String method, String hostname, String url, Map<String, String> queryParams, Map<String, String> headers, String body) {
         this.method = method;
         this.hostname = hostname;
-        this.uri = uri;
+        this.url = url;
         this.queryParams = queryParams;
         this.headers = headers;
         this.body = body;
@@ -40,12 +40,12 @@ public class HttpRequest {
         this.method = method;
     }
 
-    public String geturi() {
-        return uri;
+    public String geturl() {
+        return url;
     }
 
-    public void seturi(String uri) {
-        this.uri = uri;
+    public void seturl(String url) {
+        this.url = url;
     }
 
     public String getHostname() {
@@ -82,6 +82,6 @@ public class HttpRequest {
 
     @Override
     public String toString() {
-        return "uri = " + this.uri;
+        return "url = " + this.url;
     }
 }

@@ -17,18 +17,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.llm;
+package org.zaproxy.addon.llm.utils;
 
-import org.zaproxy.addon.llm.HttpRequestList;
-import org.apache.commons.httpclient.URI;
+import org.zaproxy.addon.llm.communication.HttpRequest;
+import org.zaproxy.addon.llm.communication.HttpRequestList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public class Requestor {
@@ -46,26 +44,24 @@ public class Requestor {
 
     public String getResponseBody(HttpRequest httpRequest) throws IOException {
         HttpMessage httpMessage = new HttpMessage();
-        httpMessage.setRequestHeader(httpRequest.getMethod() + " " + httpRequest.geturi() + " HTTP/1.1");
+        httpMessage.setRequestHeader(httpRequest.getMethod() + " " + httpRequest.geturl() + " HTTP/1.1");
 
         sender.sendAndReceive(httpMessage, true);
 
         return httpMessage.getResponseBody().toString();
     }
 
-    public void run(org.zaproxy.addon.llm.HttpRequestList httpRequests) {
+    public void run(HttpRequestList httpRequests) {
             for (HttpRequest httpRequest : httpRequests.getRequests()) {
                 try {
 
                     HttpMessage httpMessage = new HttpMessage();
 
-                    httpMessage.setRequestHeader(httpRequest.getMethod() + " " + httpRequest.geturi() + " HTTP/1.1");
+                    httpMessage.setRequestHeader(httpRequest.getMethod() + " " + httpRequest.geturl() + " HTTP/1.1");
 
                     for (Map.Entry<String, String> header : httpRequest.getHeaders().entrySet()) {
-                        System.out.println(header.getKey() + " : " + header.getValue());
                         httpMessage.getRequestHeader().setHeader(header.getKey(), header.getValue());
-
-                    }
+                   }
 
                     httpMessage.getRequestHeader().setHeader("Host", httpRequest.getHostname());
 

@@ -1,4 +1,4 @@
-package org.zaproxy.addon.llm;
+package org.zaproxy.addon.llm.ui;
 
 import java.awt.Font;
 import java.awt.GridBagLayout;
@@ -19,44 +19,22 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.llm.ExtensionLlm;
+import org.zaproxy.addon.llm.services.LlmCommunicationService;
+import org.zaproxy.addon.llm.ui.settings.LlmOptionsParam;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapHtmlLabel;
 import org.zaproxy.zap.view.LayoutHelper;
 
-import java.awt.Font;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
-import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
-import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.extension.AbstractDialog;
-import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.utils.FontUtils;
-import org.zaproxy.zap.utils.ThreadUtils;
-import org.zaproxy.zap.utils.ZapHtmlLabel;
-import org.zaproxy.zap.view.LayoutHelper;
 
 @SuppressWarnings("serial")
 public class ImportDialog extends AbstractDialog {
@@ -69,7 +47,8 @@ public class ImportDialog extends AbstractDialog {
     private JButton buttonCancel;
     private JButton buttonImport;
     private JProgressBar progressBar;
-    private static AnswerService answerService;
+    private LlmOptionsParam llmOptionsParam;
+
 
     public ImportDialog(JFrame parent, final ExtensionLlm extLlm) {
         super(parent, true);
@@ -118,8 +97,22 @@ public class ImportDialog extends AbstractDialog {
     private boolean importSwagger() throws IOException, URISyntaxException, ApiException, DatabaseException {
 
         String swaggerLocation = getSwaggerField().getText();
-        answerService = new AnswerService();
-        if (swaggerLocation == null || swaggerLocation.isEmpty()) {
+        llmOptionsParam = extLlm.getOptionsParam();
+        Integer endpoint_count = 0;
+
+        if (StringUtils.isEmpty(llmOptionsParam.getApiKey())){
+            showWarningDialog(Constant.messages.getString("llm.options.apikey.error.undefinded"));
+            throw new RuntimeException(Constant.messages.getString("llm.options.apikey.error.undefinded"));
+        }
+
+        if (StringUtils.isEmpty(llmOptionsParam.getEndpoint())){
+            showWarningDialog(Constant.messages.getString("llm.options.endpoint.error.undefinded"));
+            throw new RuntimeException(Constant.messages.getString("llm.options.endpoint.error.undefinded"));
+        }
+
+        LlmCommunicationService llmCommunicationService = new LlmCommunicationService(llmOptionsParam.getModelName(), llmOptionsParam.getApiKey(), "");
+
+        if ( StringUtils.isEmpty(swaggerLocation)) {
             ThreadUtils.invokeAndWaitHandled(
                     () -> {
                         showWarningDialog(
@@ -128,18 +121,17 @@ public class ImportDialog extends AbstractDialog {
                     });
             return false;
         }
-        answerService.init();
 
         try {
             new URL(swaggerLocation).toURI();
             new URI(swaggerLocation, true);
             // implement logic here
-            answerService.importSwaggerFromUrl(swaggerLocation);
+            endpoint_count = llmCommunicationService.importSwaggerFromUrl(swaggerLocation);
 
             return true;
         } catch (URIException | MalformedURLException | URISyntaxException e) {
             // Not a valid URI, try to import as a file
-            answerService.importSwaggerFromFile(swaggerLocation);
+            endpoint_count = llmCommunicationService.importSwaggerFromFile(swaggerLocation);
         }
 
         var file = new File(swaggerLocation);
@@ -152,7 +144,9 @@ public class ImportDialog extends AbstractDialog {
             return false;
         }
 
-        answerService.importSwaggerFromFile(swaggerLocation);
+        endpoint_count = llmCommunicationService.importSwaggerFromFile(swaggerLocation);
+
+        showMessageDialog(Constant.messages.getString("llm.importDialog.import.success", endpoint_count));
 
         return true;
     }
@@ -188,7 +182,7 @@ public class ImportDialog extends AbstractDialog {
                                 new FileNameExtensionFilter(
                                         Constant.messages.getString(
                                                 "llm.importDialog.fileFilterDescription"),
-                                        "json");
+                                        "json","yaml");
                         fileChooser.setFileFilter(filter);
                         int state = fileChooser.showOpenDialog(this);
                         if (state == JFileChooser.APPROVE_OPTION) {
@@ -207,15 +201,6 @@ public class ImportDialog extends AbstractDialog {
         return buttonChooseFile;
     }
 
-    void showWarningDialog(String message) {
-        showProgressBar(false);
-        View.getSingleton().showWarningDialog(this, message);
-    }
-
-    private void showWarningFileNotFound(String fileLocation) {
-        showWarningDialog(
-                Constant.messages.getString("llm.importDialog.error.fileNotFound", fileLocation));
-    }
 
     private JButton getCancelButton() {
         if (buttonCancel == null) {
@@ -263,13 +248,19 @@ public class ImportDialog extends AbstractDialog {
         return buttonImport;
     }
 
-    private JProgressBar getProgressBar() {
-        if (progressBar == null) {
-            progressBar = new JProgressBar();
-            progressBar.setIndeterminate(true);
-            progressBar.setVisible(false);
-        }
-        return progressBar;
+    public void showWarningFileNotFound(String fileLocation) {
+        showWarningDialog(
+                Constant.messages.getString("llm.importDialog.error.fileNotFound", fileLocation));
+    }
+
+    public void showWarningDialog(String message) {
+        showProgressBar(false);
+        View.getSingleton().showWarningDialog(this, message);
+    }
+
+    public void showMessageDialog(String message) {
+        showProgressBar(false);
+        View.getSingleton().showMessageDialog(this, message);
     }
 
     private void showProgressBar(boolean show) {
@@ -285,7 +276,16 @@ public class ImportDialog extends AbstractDialog {
         getChooseFileButton().setEnabled(!show);
     }
 
-    void clearFields() {
+    private JProgressBar getProgressBar() {
+        if (progressBar == null) {
+            progressBar = new JProgressBar();
+            progressBar.setIndeterminate(true);
+            progressBar.setVisible(false);
+        }
+        return progressBar;
+    }
+
+    public void clearFields() {
         getSwaggerField().setText("");
     }
 }
