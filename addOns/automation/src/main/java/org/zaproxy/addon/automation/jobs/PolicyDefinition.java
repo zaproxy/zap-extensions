@@ -31,6 +31,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 
 @Getter
@@ -43,7 +44,7 @@ public class PolicyDefinition extends AutomationData {
     private String defaultThreshold = JobUtils.thresholdToI18n(AlertThreshold.MEDIUM.name());
     private List<Rule> rules = new ArrayList<>();
 
-    protected static void parsePolicyDefinition(
+    public static void parsePolicyDefinition(
             Object policyDefnObj,
             PolicyDefinition policyDefinition,
             String jobName,
@@ -114,6 +115,70 @@ public class PolicyDefinition extends AutomationData {
                             "policyDefinition",
                             policyDefnObj));
         }
+    }
+
+    public ScanPolicy getScanPolicy(String jobName, AutomationProgress progress) {
+        ScanPolicy scanPolicy = new ScanPolicy();
+
+        // Set default strength
+        AttackStrength st = JobUtils.parseAttackStrength(getDefaultStrength(), jobName, progress);
+        if (st != null) {
+            scanPolicy.setDefaultStrength(st);
+            progress.info(
+                    Constant.messages.getString(
+                            "automation.info.ascan.setdefstrength", jobName, st.name()));
+        }
+
+        // Set default threshold
+        PluginFactory pluginFactory = scanPolicy.getPluginFactory();
+        AlertThreshold th = JobUtils.parseAlertThreshold(getDefaultThreshold(), jobName, progress);
+        if (th != null) {
+            scanPolicy.setDefaultThreshold(th);
+            if (th == AlertThreshold.OFF) {
+                for (Plugin plugin : pluginFactory.getAllPlugin()) {
+                    plugin.setEnabled(false);
+                }
+            } else {
+                scanPolicy.setDefaultThreshold(th);
+            }
+            progress.info(
+                    Constant.messages.getString(
+                            "automation.info.ascan.setdefthreshold", jobName, th.name()));
+        }
+
+        // Configure any rules
+        for (Rule rule : getRules()) {
+            Plugin plugin = pluginFactory.getPlugin(rule.getId());
+            if (plugin == null) {
+                // Will have already warned about this
+                continue;
+            }
+            AttackStrength pluginSt =
+                    JobUtils.parseAttackStrength(rule.getStrength(), jobName, progress);
+            if (pluginSt != null) {
+                plugin.setAttackStrength(pluginSt);
+                plugin.setEnabled(true);
+                progress.info(
+                        Constant.messages.getString(
+                                "automation.info.ascan.rule.setstrength",
+                                jobName,
+                                rule.getId(),
+                                pluginSt.name()));
+            }
+            AlertThreshold pluginTh =
+                    JobUtils.parseAlertThreshold(rule.getThreshold(), jobName, progress);
+            if (pluginTh != null) {
+                plugin.setAlertThreshold(pluginTh);
+                plugin.setEnabled(!AlertThreshold.OFF.equals(pluginTh));
+                progress.info(
+                        Constant.messages.getString(
+                                "automation.info.ascan.rule.setthreshold",
+                                jobName,
+                                rule.getId(),
+                                pluginTh.name()));
+            }
+        }
+        return scanPolicy;
     }
 
     public void addRule(Rule rule) {
