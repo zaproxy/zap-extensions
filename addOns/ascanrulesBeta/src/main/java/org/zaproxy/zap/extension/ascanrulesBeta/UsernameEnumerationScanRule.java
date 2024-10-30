@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeSet;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -69,11 +70,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                     CommonAlertTag.WSTG_V42_IDNT_04_ACCOUNT_ENUMERATION);
 
-    private static ExtensionAuthentication extAuth =
-            (ExtensionAuthentication)
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionAuthentication.NAME);
+    private ExtensionAuthentication extAuth;
 
     @Override
     public int getId() {
@@ -108,6 +105,11 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
     @Override
     public void init() {
         LOGGER.debug("Initialising");
+
+        extAuth =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionAuthentication.class);
 
         if (!shouldContinue(extAuth.getModel().getSession().getContexts())) {
             LOGGER.info(
@@ -153,7 +155,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
                         && requestUri.getScheme().equals(loginUri.getScheme())
                         && requestUri.getHost().equals(loginUri.getHost())
                         && requestUri.getPort() == loginUri.getPort()
-                        && requestUri.getPath().equals(loginUri.getPath())) {
+                        && Objects.equals(requestUri.getPath(), loginUri.getPath())) {
                     // we got this far.. only the method (GET/POST), user details, query params,
                     // fragment, and POST params are possibly different from the login page.
                     loginUrl = true;
