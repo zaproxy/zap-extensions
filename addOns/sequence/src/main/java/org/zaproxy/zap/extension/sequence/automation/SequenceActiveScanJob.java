@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2021 The ZAP Development Team
+ * Copyright 2024 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,50 +17,69 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.automation.jobs;
+package org.zaproxy.zap.extension.sequence.automation;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
+import org.zaproxy.addon.automation.AutomationJobException;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.JobResultData;
-import org.zaproxy.addon.automation.gui.ActiveScanJobDialog;
-import org.zaproxy.addon.commonlib.Constants;
+import org.zaproxy.addon.automation.jobs.ActiveScanJobResultData;
+import org.zaproxy.addon.automation.jobs.JobData;
+import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
+import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.sequence.ExtensionSequence;
+import org.zaproxy.zap.extension.sequence.StdActiveScanRunner;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
 
-public class ActiveScanJob extends AutomationJob {
+public class SequenceActiveScanJob extends AutomationJob {
 
-    public static final String JOB_NAME = "activeScan";
-    private static final String OPTIONS_METHOD_NAME = "getScannerParam";
+    public static final String JOB_NAME = "sequence-activeScan";
+
+    private static final Logger LOGGER = LogManager.getLogger(SequenceActiveScanJob.class);
 
     private static final String PARAM_CONTEXT = "context";
     private static final String PARAM_POLICY = "policy";
+    private static final String PARAM_SEQUENCE = "sequence";
     private static final String PARAM_USER = "user";
 
-    private ExtensionActiveScan extAScan;
+    private final ExtensionActiveScan extAScan;
+    private final ExtensionScript extScript;
 
     private Parameters parameters = new Parameters();
     private PolicyDefinition policyDefinition = new PolicyDefinition();
     private Data data;
 
-    public ActiveScanJob() {
+    public SequenceActiveScanJob(ExtensionActiveScan extAScan, ExtensionScript extScript) {
+        this.extAScan = extAScan;
+        this.extScript = extScript;
         data = new Data(this, this.parameters, this.policyDefinition);
+    }
+
+    @Override
+    public AutomationJob newJob() throws AutomationJobException {
+        return new SequenceActiveScanJob(extAScan, extScript);
     }
 
     @Override
@@ -71,16 +90,6 @@ public class ActiveScanJob extends AutomationJob {
     @Override
     public String getKeyAlertTestsResultData() {
         return ActiveScanJobResultData.KEY;
-    }
-
-    private ExtensionActiveScan getExtAScan() {
-        if (extAScan == null) {
-            extAScan =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionActiveScan.class);
-        }
-        return extAScan;
     }
 
     @Override
@@ -125,7 +134,7 @@ public class ActiveScanJob extends AutomationJob {
                 this.parameters,
                 JobUtils.getJobOptions(this, progress),
                 this.getName(),
-                new String[] {PARAM_POLICY, PARAM_CONTEXT, PARAM_USER},
+                new String[] {PARAM_SEQUENCE, PARAM_POLICY, PARAM_CONTEXT, PARAM_USER},
                 progress,
                 this.getPlan().getEnv());
     }
@@ -145,85 +154,81 @@ public class ActiveScanJob extends AutomationJob {
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
-        getExtAScan().setPanelSwitch(false);
+        extAScan.setPanelSwitch(false);
+        try {
 
-        ContextWrapper context;
-        if (StringUtils.isNotEmpty(this.getParameters().getContext())) {
-            context = env.getContextWrapper(this.getParameters().getContext());
-            if (context == null) {
+            ContextWrapper context;
+            if (StringUtils.isNotEmpty(this.getParameters().getContext())) {
+                context = env.getContextWrapper(this.getParameters().getContext());
+                if (context == null) {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "sequence.automation.error.context.unknown",
+                                    this.getParameters().getContext()));
+                    return;
+                }
+            } else {
+                context = env.getDefaultContextWrapper();
+            }
+
+            Target target = new Target(context.getContext());
+            target.setRecurse(true);
+            List<Object> contextSpecificObjects = new ArrayList<>();
+            User user = this.getUser(this.getParameters().getUser(), progress);
+
+            ScanPolicy scanPolicy = null;
+            if (!StringUtils.isEmpty(this.getParameters().getPolicy())) {
+                try {
+                    scanPolicy =
+                            extAScan.getPolicyManager().getPolicy(this.getParameters().getPolicy());
+                } catch (ConfigurationException e) {
+                    // Error already raised above
+                }
+            } else {
+                scanPolicy =
+                        this.getData()
+                                .getPolicyDefinition()
+                                .getScanPolicy(this.getName(), progress);
+            }
+            if (scanPolicy != null) {
+                contextSpecificObjects.add(scanPolicy);
+            }
+
+            List<ScriptWrapper> scripts = extScript.getScripts(ExtensionSequence.TYPE_SEQUENCE);
+
+            Optional<ScriptWrapper> scriptWrapper =
+                    scripts.stream()
+                            .filter(s -> s.getName().equals(this.parameters.getSequence()))
+                            .findFirst();
+
+            if (scriptWrapper.isEmpty() || !(scriptWrapper.get() instanceof ZestScriptWrapper)) {
                 progress.error(
                         Constant.messages.getString(
-                                "automation.error.context.unknown",
-                                this.getParameters().getContext()));
+                                "sequence.automation.error.sequence.unknown",
+                                this.getParameters().getSequence()));
                 return;
             }
-        } else {
-            context = env.getDefaultContextWrapper();
-        }
 
-        Target target = new Target(context.getContext());
-        target.setRecurse(true);
-        List<Object> contextSpecificObjects = new ArrayList<>();
-        User user = this.getUser(this.getParameters().getUser(), progress);
+            StdActiveScanRunner zzr =
+                    new StdActiveScanRunner(
+                            (ZestScriptWrapper) scriptWrapper.get(), scanPolicy, user);
 
-        ScanPolicy scanPolicy = null;
-        if (!StringUtils.isEmpty(this.getParameters().getPolicy())) {
             try {
-                scanPolicy =
-                        this.getExtAScan()
-                                .getPolicyManager()
-                                .getPolicy(this.getParameters().getPolicy());
-            } catch (ConfigurationException e) {
-                // Error already raised above
+                zzr.run(null, null);
+            } catch (Exception e) {
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.unexpected.internal", e.getMessage()));
+                LOGGER.error(e.getMessage(), e);
             }
-        } else {
-            scanPolicy =
-                    this.getData().getPolicyDefinition().getScanPolicy(this.getName(), progress);
+        } finally {
+            extAScan.setPanelSwitch(true);
         }
-        if (scanPolicy != null) {
-            contextSpecificObjects.add(scanPolicy);
-        }
-
-        int scanId = this.getExtAScan().startScan(target, user, contextSpecificObjects.toArray());
-
-        long endTime = Long.MAX_VALUE;
-        if (JobUtils.unBox(this.getParameters().getMaxScanDurationInMins()) > 0) {
-            // The active scan should stop, if it doesnt we will stop it (after a few seconds
-            // leeway)
-            endTime =
-                    System.currentTimeMillis()
-                            + TimeUnit.MINUTES.toMillis(
-                                    this.getParameters().getMaxScanDurationInMins())
-                            + TimeUnit.SECONDS.toMillis(5);
-        }
-
-        // Wait for the active scan to finish
-        ActiveScan scan;
-        boolean forceStop = false;
-
-        while (true) {
-            this.sleep(500);
-            scan = this.getExtAScan().getScan(scanId);
-            if (scan.isStopped()) {
-                break;
-            }
-            if (!this.runMonitorTests(progress) || System.currentTimeMillis() > endTime) {
-                forceStop = true;
-                break;
-            }
-        }
-        if (forceStop) {
-            this.getExtAScan().stopScan(scanId);
-            progress.info(Constant.messages.getString("automation.info.jobstopped", getType()));
-        }
-        progress.addJobResultData(createJobResultData(scanId));
-
-        getExtAScan().setPanelSwitch(true);
     }
 
     @Override
     public List<JobResultData> getJobResultData() {
-        ActiveScan lastScan = this.getExtAScan().getLastScan();
+        ActiveScan lastScan = this.extAScan.getLastScan();
         if (lastScan != null) {
             return createJobResultData(lastScan.getId());
         }
@@ -232,38 +237,14 @@ public class ActiveScanJob extends AutomationJob {
 
     private List<JobResultData> createJobResultData(int scanId) {
         List<JobResultData> list = new ArrayList<>();
-        list.add(new ActiveScanJobResultData(this.getName(), this.getExtAScan().getScan(scanId)));
+        list.add(new ActiveScanJobResultData(this.getName(), this.extAScan.getScan(scanId)));
         return list;
     }
 
     @Override
-    public boolean isExcludeParam(String param) {
-        switch (param) {
-            case "allowAttackOnStart":
-            case "attackPolicy":
-            case "hostPerScan":
-            case "maxChartTimeInMins":
-            case "maxResultsToList":
-            case "maxScansInUI":
-            case "promptInAttackMode":
-            case "promptToClearFinishedScans":
-            case "rescanInAttackMode":
-            case "showAdvancedDialog":
-            case "targetParamsInjectable":
-            case "targetParamsEnabledRPC":
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    @Override
     public String getSummary() {
-        String context = this.getParameters().getContext();
-        if (StringUtils.isEmpty(context)) {
-            context = Constant.messages.getString("automation.dialog.default");
-        }
-        return Constant.messages.getString("automation.dialog.ascan.summary", context);
+        return Constant.messages.getString(
+                "sequence.automation.ascan.summary", this.getParameters().getSequence());
     }
 
     @Override
@@ -288,17 +269,17 @@ public class ActiveScanJob extends AutomationJob {
 
     @Override
     public Object getParamMethodObject() {
-        return this.getExtAScan();
+        return null;
     }
 
     @Override
     public String getParamMethodName() {
-        return OPTIONS_METHOD_NAME;
+        return null;
     }
 
     @Override
     public void showDialog() {
-        new ActiveScanJobDialog(this).setVisible(true);
+        // TODO Implement in a future PR
     }
 
     @Getter
@@ -316,26 +297,9 @@ public class ActiveScanJob extends AutomationJob {
     @Getter
     @Setter
     public static class Parameters extends AutomationData {
+        private String sequence = "";
         private String context = "";
         private String user = "";
         private String policy = "";
-        private Integer maxRuleDurationInMins = 0;
-        private Integer maxScanDurationInMins = 0;
-        private Boolean addQueryParam = false;
-        private String defaultPolicy = "";
-        private Integer delayInMs = 0;
-        private Boolean handleAntiCSRFTokens = true;
-        private Boolean injectPluginIdInHeader = false;
-        private Boolean scanHeadersAllRequests = false;
-        private Integer threadPerHost = Constants.getDefaultThreadCount();
-        private Integer maxAlertsPerRule = 0;
-
-        public Integer getThreadPerHost() {
-            if (JobUtils.unBox(threadPerHost) <= 0) {
-                // Don't return zero or less - this will cause problems
-                return null;
-            }
-            return threadPerHost;
-        }
     }
 }

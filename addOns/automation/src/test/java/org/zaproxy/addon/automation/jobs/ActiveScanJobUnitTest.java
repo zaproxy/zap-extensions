@@ -445,7 +445,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -469,7 +469,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -492,7 +492,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -528,7 +528,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -571,7 +571,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -613,7 +613,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        job.getScanPolicy(progress);
+        job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));

@@ -27,6 +27,8 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.exim.ExtensionExim;
+import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.sequence.ExtensionSequence;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 
@@ -38,6 +40,7 @@ public class ExtensionSequenceAutomation extends ExtensionAdaptor {
             List.of(ExtensionAutomation.class, ExtensionExim.class, ExtensionSequence.class);
 
     private SequenceImportJob importJob;
+    private SequenceActiveScanJob ascanJob;
 
     public ExtensionSequenceAutomation() {
         super(NAME);
@@ -58,6 +61,12 @@ public class ExtensionSequenceAutomation extends ExtensionAdaptor {
                         getExtension(ExtensionExim.class),
                         getExtension(ExtensionZest.class));
         extAuto.registerAutomationJob(importJob);
+
+        ascanJob =
+                new SequenceActiveScanJob(
+                        getExtension(ExtensionActiveScan.class),
+                        getExtension(ExtensionScript.class));
+        extAuto.registerAutomationJob(ascanJob);
     }
 
     private static <T extends Extension> T getExtension(Class<T> clazz) {
@@ -74,6 +83,7 @@ public class ExtensionSequenceAutomation extends ExtensionAdaptor {
         ExtensionAutomation extAuto = getExtension(ExtensionAutomation.class);
 
         extAuto.unregisterAutomationJob(importJob);
+        extAuto.unregisterAutomationJob(ascanJob);
     }
 
     @Override

@@ -34,6 +34,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptCollection;
@@ -45,7 +46,7 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            List.of(ExtensionScript.class, ExtensionZest.class);
+            List.of(ExtensionNetwork.class, ExtensionScript.class, ExtensionZest.class);
 
     private ExtensionScript extScript;
     private ExtensionActiveScan extActiveScan;
@@ -225,7 +226,7 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
         return extScript;
     }
 
-    private ExtensionActiveScan getExtActiveScan() {
+    protected ExtensionActiveScan getExtActiveScan() {
         if (extActiveScan == null) {
             extActiveScan =
                     Control.getSingleton()
