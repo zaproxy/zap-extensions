@@ -65,7 +65,6 @@ public class ImportDialog extends AbstractDialog {
     private JButton buttonCancel;
     private JButton buttonImport;
     private JProgressBar progressBar;
-    private LlmOptionsParam llmOptionsParam;
 
     public ImportDialog(JFrame parent, final ExtensionLlm extLlm) {
         super(parent, true);
@@ -116,7 +115,7 @@ public class ImportDialog extends AbstractDialog {
             throws IOException, URISyntaxException, ApiException, DatabaseException {
 
         String swaggerLocation = getSwaggerField().getText();
-        llmOptionsParam = extLlm.getOptionsParam();
+        LlmOptionsParam llmOptionsParam = extLlm.getOptionsParam();
         Integer endpointCount = 0;
 
         if (StringUtils.isEmpty(llmOptionsParam.getApiKey())) {
@@ -133,7 +132,7 @@ public class ImportDialog extends AbstractDialog {
 
         LlmCommunicationService llmCommunicationService =
                 new LlmCommunicationService(
-                        llmOptionsParam.getModelName(), llmOptionsParam.getApiKey(), "");
+                        llmOptionsParam.getModelName(), llmOptionsParam.getApiKey(), llmOptionsParam.getEndpoint());
 
         if (StringUtils.isEmpty(swaggerLocation)) {
             ThreadUtils.invokeAndWaitHandled(
