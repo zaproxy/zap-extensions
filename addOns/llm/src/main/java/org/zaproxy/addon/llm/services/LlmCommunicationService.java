@@ -52,8 +52,8 @@ public class LlmCommunicationService {
     private LlmOptionsParam llmOptionsParam;
 
     private static final Logger LOGGER = LogManager.getLogger(LlmCommunicationService.class);
-    private static final String AI_REVIEWD_TAG_KEY = "AI-Reviewed";
-    private static final String AI_REVIEWD_TAG_VALUE = "1";
+    private static final String AI_REVIEWED_TAG_KEY = "AI-Reviewed";
+    private static final String AI_REVIEWED_TAG_VALUE = "1";
 
     public String endpoint;
     private String apiKey;
@@ -145,7 +145,7 @@ public class LlmCommunicationService {
         Alert updatedAlert = alert;
         Alert originalAlert = updatedAlert.newInstance();
 
-        if (!alert.getTags().containsKey(AI_REVIEWD_TAG_KEY)) {
+        if (!alert.getTags().containsKey(AI_REVIEWED_TAG_KEY)) {
             Confidence conf_llm;
             LOGGER.debug("Reviewing alert :" + alert.getName());
             LOGGER.debug("Confidence level from ZAP : " + alert.getConfidence());
@@ -160,7 +160,7 @@ public class LlmCommunicationService {
                     "LLM Explanation : " + conf_llm.getExplanation() + "\n" + alert.getOtherInfo());
             Map<String, String> alertTags = alert.getTags();
 
-            alertTags.putIfAbsent(AI_REVIEWD_TAG_KEY, AI_REVIEWD_TAG_VALUE);
+            alertTags.putIfAbsent(AI_REVIEWED_TAG_KEY, AI_REVIEWED_TAG_VALUE);
             updatedAlert.setTags(alertTags);
 
             try {
