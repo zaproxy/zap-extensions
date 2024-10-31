@@ -19,34 +19,30 @@
  */
 package org.zaproxy.addon.llm.ui.settings;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Objects;
+import javax.swing.GroupLayout;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
-import org.zaproxy.addon.llm.utils.Requestor;
-
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPasswordField;
-import javax.swing.GroupLayout;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Objects;
-
 
 public class LlmOptionsPanel extends AbstractParamPanel {
 
     private static final Logger LOGGER = LogManager.getLogger(LlmOptionsPanel.class);
-
 
     private static final long serialVersionUID = -2690686914494943483L;
 
     private JTextField apiKeyTextField;
     private JTextField llmendpointTextField;
 
-    private JComboBox<String> llmModelsComboBox;  // Added JComboBox for LLM models
+    private JComboBox<String> llmModelsComboBox; // Added JComboBox for LLM models
 
     public LlmOptionsPanel() {
         super();
@@ -57,13 +53,13 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         super.setName(Constant.messages.getString("llm.options.title"));
 
         JLabel llmApiKey = new JLabel(Constant.messages.getString("llm.options.label.apikey"));
-        this.apiKeyTextField = new JPasswordField();  // Initialize as JPasswordField
+        this.apiKeyTextField = new JPasswordField(); // Initialize as JPasswordField
 
         JLabel llmendpoint = new JLabel(Constant.messages.getString("llm.options.label.endpoint"));
-        this.llmendpointTextField = new JTextField();  // Initialize as JPasswordField
+        this.llmendpointTextField = new JTextField(); // Initialize as JPasswordField
 
-        JLabel llmModelsLabel = new JLabel("Select LLM Model:");  // Label for the combo box
-        this.llmModelsComboBox = new JComboBox<>(new String[]{"gpt-4o"});  //
+        JLabel llmModelsLabel = new JLabel("Select LLM Model:"); // Label for the combo box
+        this.llmModelsComboBox = new JComboBox<>(new String[] {"gpt-4o"}); //
 
         GroupLayout layout = new GroupLayout(this);
         super.setLayout(layout);
@@ -72,27 +68,36 @@ public class LlmOptionsPanel extends AbstractParamPanel {
 
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addComponent(llmApiKey)
-                                .addComponent(this.apiKeyTextField))
-                        .addGroup(layout.createSequentialGroup()
-                                .addComponent(llmendpoint)
-                                .addComponent(this.llmendpointTextField))
-                        .addGroup(layout.createSequentialGroup()  // Add horizontal group for combo box
-                                .addComponent(llmModelsLabel)
-                                .addComponent(this.llmModelsComboBox)));
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addComponent(llmApiKey)
+                                        .addComponent(this.apiKeyTextField))
+                        .addGroup(
+                                layout.createSequentialGroup()
+                                        .addComponent(llmendpoint)
+                                        .addComponent(this.llmendpointTextField))
+                        .addGroup(
+                                layout.createSequentialGroup() // Add horizontal group for combo box
+                                        .addComponent(llmModelsLabel)
+                                        .addComponent(this.llmModelsComboBox)));
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(llmApiKey)
-                                .addComponent(this.apiKeyTextField))
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                .addComponent(llmendpoint)
-                                .addComponent(this.llmendpointTextField))
-                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)  // Add vertical group for combo box
-                                .addComponent(llmModelsLabel)
-                                .addComponent(this.llmModelsComboBox)));
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(llmApiKey)
+                                        .addComponent(this.apiKeyTextField))
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(llmendpoint)
+                                        .addComponent(this.llmendpointTextField))
+                        .addGroup(
+                                layout.createParallelGroup(
+                                                GroupLayout.Alignment
+                                                        .BASELINE) // Add vertical group for combo
+                                        // box
+                                        .addComponent(llmModelsLabel)
+                                        .addComponent(this.llmModelsComboBox)));
     }
 
     @Override
@@ -140,6 +145,5 @@ public class LlmOptionsPanel extends AbstractParamPanel {
                 connection.disconnect();
             }
         }
-
     }
 }

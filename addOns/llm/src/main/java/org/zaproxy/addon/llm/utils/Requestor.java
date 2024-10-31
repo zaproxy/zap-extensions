@@ -19,15 +19,14 @@
  */
 package org.zaproxy.addon.llm.utils;
 
-import org.zaproxy.addon.llm.communication.HttpRequest;
-import org.zaproxy.addon.llm.communication.HttpRequestList;
+import java.io.IOException;
+import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
-
-import java.io.IOException;
-import java.util.Map;
+import org.zaproxy.addon.llm.communication.HttpRequest;
+import org.zaproxy.addon.llm.communication.HttpRequestList;
 
 public class Requestor {
     private static final Logger LOGGER = LogManager.getLogger(Requestor.class);
@@ -44,7 +43,8 @@ public class Requestor {
 
     public String getResponseBody(HttpRequest httpRequest) throws IOException {
         HttpMessage httpMessage = new HttpMessage();
-        httpMessage.setRequestHeader(httpRequest.getMethod() + " " + httpRequest.geturl() + " HTTP/1.1");
+        httpMessage.setRequestHeader(
+                httpRequest.getMethod() + " " + httpRequest.geturl() + " HTTP/1.1");
 
         sender.sendAndReceive(httpMessage, true);
 
@@ -52,29 +52,30 @@ public class Requestor {
     }
 
     public void run(HttpRequestList httpRequests) {
-            for (HttpRequest httpRequest : httpRequests.getRequests()) {
-                try {
+        for (HttpRequest httpRequest : httpRequests.getRequests()) {
+            try {
 
-                    HttpMessage httpMessage = new HttpMessage();
+                HttpMessage httpMessage = new HttpMessage();
 
-                    httpMessage.setRequestHeader(httpRequest.getMethod() + " " + httpRequest.geturl() + " HTTP/1.1");
+                httpMessage.setRequestHeader(
+                        httpRequest.getMethod() + " " + httpRequest.geturl() + " HTTP/1.1");
 
-                    for (Map.Entry<String, String> header : httpRequest.getHeaders().entrySet()) {
-                        httpMessage.getRequestHeader().setHeader(header.getKey(), header.getValue());
-                   }
-
-                    httpMessage.getRequestHeader().setHeader("Host", httpRequest.getHostname());
-
-                    if (httpRequest.getBody() != null) {
-                        httpMessage.setRequestBody(httpRequest.getBody());
-                    }
-
-                    sender.sendAndReceive(httpMessage, true);
-                    listener.handleMessage(httpMessage, initiator);
-
-                } catch (IOException e) {
-                    LOGGER.debug(e.getMessage(), e);
+                for (Map.Entry<String, String> header : httpRequest.getHeaders().entrySet()) {
+                    httpMessage.getRequestHeader().setHeader(header.getKey(), header.getValue());
                 }
+
+                httpMessage.getRequestHeader().setHeader("Host", httpRequest.getHostname());
+
+                if (httpRequest.getBody() != null) {
+                    httpMessage.setRequestBody(httpRequest.getBody());
+                }
+
+                sender.sendAndReceive(httpMessage, true);
+                listener.handleMessage(httpMessage, initiator);
+
+            } catch (IOException e) {
+                LOGGER.debug(e.getMessage(), e);
             }
+        }
     }
 }

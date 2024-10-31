@@ -1,3 +1,22 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2024 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.zaproxy.addon.llm.ui;
 
 import java.awt.Font;
@@ -17,9 +36,10 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.AbstractDialog;
@@ -34,8 +54,6 @@ import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapHtmlLabel;
 import org.zaproxy.zap.view.LayoutHelper;
 
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 @SuppressWarnings("serial")
 public class ImportDialog extends AbstractDialog {
 
@@ -48,7 +66,6 @@ public class ImportDialog extends AbstractDialog {
     private JButton buttonImport;
     private JProgressBar progressBar;
     private LlmOptionsParam llmOptionsParam;
-
 
     public ImportDialog(JFrame parent, final ExtensionLlm extLlm) {
         super(parent, true);
@@ -68,7 +85,8 @@ public class ImportDialog extends AbstractDialog {
         fieldsPanel.add(
                 labelWsdl, LayoutHelper.getGBC(0, fieldsRow, 1, 0.5, new Insets(0, 0, 4, 4)));
         fieldsPanel.add(
-                getSwaggerField(), LayoutHelper.getGBC(1, fieldsRow, 1, 0.5, new Insets(0, 4, 4, 4)));
+                getSwaggerField(),
+                LayoutHelper.getGBC(1, fieldsRow, 1, 0.5, new Insets(0, 4, 4, 4)));
         fieldsPanel.add(
                 getChooseFileButton(),
                 LayoutHelper.getGBC(2, fieldsRow, 1, 0.5, new Insets(0, 4, 4, 0)));
@@ -94,29 +112,35 @@ public class ImportDialog extends AbstractDialog {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
-    private boolean importSwagger() throws IOException, URISyntaxException, ApiException, DatabaseException {
+    private boolean importSwagger()
+            throws IOException, URISyntaxException, ApiException, DatabaseException {
 
         String swaggerLocation = getSwaggerField().getText();
         llmOptionsParam = extLlm.getOptionsParam();
-        Integer endpoint_count = 0;
+        Integer endpointCount = 0;
 
-        if (StringUtils.isEmpty(llmOptionsParam.getApiKey())){
+        if (StringUtils.isEmpty(llmOptionsParam.getApiKey())) {
             showWarningDialog(Constant.messages.getString("llm.options.apikey.error.undefinded"));
-            throw new RuntimeException(Constant.messages.getString("llm.options.apikey.error.undefinded"));
+            throw new RuntimeException(
+                    Constant.messages.getString("llm.options.apikey.error.undefinded"));
         }
 
-        if (StringUtils.isEmpty(llmOptionsParam.getEndpoint())){
+        if (StringUtils.isEmpty(llmOptionsParam.getEndpoint())) {
             showWarningDialog(Constant.messages.getString("llm.options.endpoint.error.undefinded"));
-            throw new RuntimeException(Constant.messages.getString("llm.options.endpoint.error.undefinded"));
+            throw new RuntimeException(
+                    Constant.messages.getString("llm.options.endpoint.error.undefinded"));
         }
 
-        LlmCommunicationService llmCommunicationService = new LlmCommunicationService(llmOptionsParam.getModelName(), llmOptionsParam.getApiKey(), "");
+        LlmCommunicationService llmCommunicationService =
+                new LlmCommunicationService(
+                        llmOptionsParam.getModelName(), llmOptionsParam.getApiKey(), "");
 
-        if ( StringUtils.isEmpty(swaggerLocation)) {
+        if (StringUtils.isEmpty(swaggerLocation)) {
             ThreadUtils.invokeAndWaitHandled(
                     () -> {
                         showWarningDialog(
-                                Constant.messages.getString("llm.importDialog.error.missingSwagger"));
+                                Constant.messages.getString(
+                                        "llm.importDialog.error.missingSwagger"));
                         getSwaggerField().requestFocusInWindow();
                     });
             return false;
@@ -126,12 +150,12 @@ public class ImportDialog extends AbstractDialog {
             new URL(swaggerLocation).toURI();
             new URI(swaggerLocation, true);
             // implement logic here
-            endpoint_count = llmCommunicationService.importSwaggerFromUrl(swaggerLocation);
+            endpointCount = llmCommunicationService.importSwaggerFromUrl(swaggerLocation);
 
             return true;
         } catch (URIException | MalformedURLException | URISyntaxException e) {
             // Not a valid URI, try to import as a file
-            endpoint_count = llmCommunicationService.importSwaggerFromFile(swaggerLocation);
+            endpointCount = llmCommunicationService.importSwaggerFromFile(swaggerLocation);
         }
 
         var file = new File(swaggerLocation);
@@ -144,9 +168,10 @@ public class ImportDialog extends AbstractDialog {
             return false;
         }
 
-        endpoint_count = llmCommunicationService.importSwaggerFromFile(swaggerLocation);
+        endpointCount = llmCommunicationService.importSwaggerFromFile(swaggerLocation);
 
-        showMessageDialog(Constant.messages.getString("llm.importDialog.import.success", endpoint_count));
+        showMessageDialog(
+                Constant.messages.getString("llm.importDialog.import.success", endpointCount));
 
         return true;
     }
@@ -182,7 +207,8 @@ public class ImportDialog extends AbstractDialog {
                                 new FileNameExtensionFilter(
                                         Constant.messages.getString(
                                                 "llm.importDialog.fileFilterDescription"),
-                                        "json","yaml");
+                                        "json",
+                                        "yaml");
                         fileChooser.setFileFilter(filter);
                         int state = fileChooser.showOpenDialog(this);
                         if (state == JFileChooser.APPROVE_OPTION) {
@@ -200,7 +226,6 @@ public class ImportDialog extends AbstractDialog {
         }
         return buttonChooseFile;
     }
-
 
     private JButton getCancelButton() {
         if (buttonCancel == null) {
@@ -222,26 +247,26 @@ public class ImportDialog extends AbstractDialog {
                     e -> {
                         showProgressBar(true);
                         new Thread(
-                                () -> {
-                                    try {
-                                        if (importSwagger()) {
-                                            ThreadUtils.invokeAndWaitHandled(
-                                                    () -> {
-                                                        dispose();
-                                                        showProgressBar(false);
-                                                    });
-                                        }
-                                    } catch (IOException ex) {
-                                        throw new RuntimeException(ex);
-                                    } catch (URISyntaxException ex) {
-                                        throw new RuntimeException(ex);
-                                    } catch (ApiException ex) {
-                                        throw new RuntimeException(ex);
-                                    } catch (DatabaseException ex) {
-                                        throw new RuntimeException(ex);
-                                    }
-                                },
-                                "ZAP-LLM-UI-SWAGGER-Import")
+                                        () -> {
+                                            try {
+                                                if (importSwagger()) {
+                                                    ThreadUtils.invokeAndWaitHandled(
+                                                            () -> {
+                                                                dispose();
+                                                                showProgressBar(false);
+                                                            });
+                                                }
+                                            } catch (IOException ex) {
+                                                throw new RuntimeException(ex);
+                                            } catch (URISyntaxException ex) {
+                                                throw new RuntimeException(ex);
+                                            } catch (ApiException ex) {
+                                                throw new RuntimeException(ex);
+                                            } catch (DatabaseException ex) {
+                                                throw new RuntimeException(ex);
+                                            }
+                                        },
+                                        "ZAP-LLM-UI-SWAGGER-Import")
                                 .start();
                     });
         }
