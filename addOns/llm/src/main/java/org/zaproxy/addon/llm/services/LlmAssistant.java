@@ -45,7 +45,7 @@ public interface LlmAssistant {
                     + "- 3 if it's High\n"
                     + "- 4 if it's Confirmed\n"
                     + "\n"
-                    + "The alert is described as follow : {{description}}\n"
+                    + "The alert is described as follows : {{description}}\n"
                     + "\n"
                     + "As evidence, the HTTP response contains :\n"
                     + "---\n"
