@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.configuration.ConfigurationException;
@@ -46,11 +47,9 @@ import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.extension.script.ExtensionScript;
-import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.sequence.ExtensionSequence;
 import org.zaproxy.zap.extension.sequence.StdActiveScanRunner;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
 
 public class SequenceActiveScanJob extends AutomationJob {
@@ -171,8 +170,6 @@ public class SequenceActiveScanJob extends AutomationJob {
                 context = env.getDefaultContextWrapper();
             }
 
-            Target target = new Target(context.getContext());
-            target.setRecurse(true);
             List<Object> contextSpecificObjects = new ArrayList<>();
             User user = this.getUser(this.getParameters().getUser(), progress);
 
@@ -194,35 +191,52 @@ public class SequenceActiveScanJob extends AutomationJob {
                 contextSpecificObjects.add(scanPolicy);
             }
 
-            List<ScriptWrapper> scripts = extScript.getScripts(ExtensionSequence.TYPE_SEQUENCE);
+            Stream<ZestScriptWrapper> sequenceZestScripts =
+                    extScript.getScripts(ExtensionSequence.TYPE_SEQUENCE).stream()
+                            .filter(ZestScriptWrapper.class::isInstance)
+                            .map(ZestScriptWrapper.class::cast);
+            if (StringUtils.isEmpty(parameters.getSequence())) {
+                sequenceZestScripts.forEach(
+                        e -> scanSequence(e, context, user, contextSpecificObjects, progress));
+            } else {
+                Optional<ZestScriptWrapper> scriptWrapper =
+                        sequenceZestScripts
+                                .filter(s -> s.getName().equals(this.parameters.getSequence()))
+                                .findFirst();
 
-            Optional<ScriptWrapper> scriptWrapper =
-                    scripts.stream()
-                            .filter(s -> s.getName().equals(this.parameters.getSequence()))
-                            .findFirst();
+                if (scriptWrapper.isEmpty()) {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "sequence.automation.error.sequence.unknown",
+                                    this.getParameters().getSequence()));
+                    return;
+                }
 
-            if (scriptWrapper.isEmpty() || !(scriptWrapper.get() instanceof ZestScriptWrapper)) {
-                progress.error(
-                        Constant.messages.getString(
-                                "sequence.automation.error.sequence.unknown",
-                                this.getParameters().getSequence()));
-                return;
+                scanSequence(scriptWrapper.get(), context, user, contextSpecificObjects, progress);
             }
 
-            StdActiveScanRunner zzr =
-                    new StdActiveScanRunner(
-                            (ZestScriptWrapper) scriptWrapper.get(), scanPolicy, user);
-
-            try {
-                zzr.run(null, null);
-            } catch (Exception e) {
-                progress.error(
-                        Constant.messages.getString(
-                                "automation.error.unexpected.internal", e.getMessage()));
-                LOGGER.error(e.getMessage(), e);
-            }
         } finally {
             extAScan.setPanelSwitch(true);
+        }
+    }
+
+    private static void scanSequence(
+            ZestScriptWrapper script,
+            ContextWrapper contextWrapper,
+            User user,
+            List<Object> contextSpecificObjects,
+            AutomationProgress progress) {
+        StdActiveScanRunner zzr =
+                new StdActiveScanRunner(
+                        script, contextWrapper.getContext(), user, contextSpecificObjects);
+
+        try {
+            zzr.run(null, null);
+        } catch (Exception e) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.unexpected.internal", e.getMessage()));
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

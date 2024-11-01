@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.sequence;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,11 +32,11 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
-import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapRunner;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zest.core.v1.ZestActionFailException;
@@ -54,8 +55,9 @@ public class StdActiveScanRunner extends ZestZapRunner {
     private static final Logger LOGGER = LogManager.getLogger(StdActiveScanRunner.class);
 
     private ZestScriptWrapper wrapper;
-    private ScanPolicy scanPolicy;
-    private User user;
+    private final Context context;
+    private final User user;
+    private final Object[] contextSpecificObjects;
 
     private final String name;
     private final SiteNode fakeRoot;
@@ -65,15 +67,20 @@ public class StdActiveScanRunner extends ZestZapRunner {
     private final ExtensionHistory extHistory;
     private final ExtensionSequence extSeq;
 
-    public StdActiveScanRunner(ZestScriptWrapper wrapper, ScanPolicy scanPolicy, User user) {
+    public StdActiveScanRunner(
+            ZestScriptWrapper wrapper,
+            Context context,
+            User user,
+            List<Object> contextSpecificObjects) {
         super(
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionZest.class),
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionNetwork.class),
                 wrapper);
 
         this.wrapper = wrapper;
-        this.scanPolicy = scanPolicy;
+        this.context = context;
         this.user = user;
+        this.contextSpecificObjects = contextSpecificObjects.toArray(new Object[0]);
 
         this.extHistory =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
@@ -117,9 +124,10 @@ public class StdActiveScanRunner extends ZestZapRunner {
             if (node != null) {
                 fakeDirectory.add(node);
 
+                Target target = new Target(node);
+                target.setContext(context);
                 int scanId =
-                        extSeq.getExtActiveScan()
-                                .startScan(new Target(node), user, new Object[] {scanPolicy});
+                        extSeq.getExtActiveScan().startScan(target, user, contextSpecificObjects);
 
                 ActiveScan ascan = extSeq.getExtActiveScan().getScan(scanId);
                 while (ascan.isRunning()) {
