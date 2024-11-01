@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.sequence.automation;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,9 +30,11 @@ import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
@@ -55,6 +59,8 @@ import org.zaproxy.zap.users.User;
 public class SequenceActiveScanJob extends AutomationJob {
 
     public static final String JOB_NAME = "sequence-activeScan";
+
+    private static final String RESOURCES_DIR = "/org/zaproxy/zap/extension/sequence/resources/";
 
     private static final Logger LOGGER = LogManager.getLogger(SequenceActiveScanJob.class);
 
@@ -135,7 +141,7 @@ public class SequenceActiveScanJob extends AutomationJob {
                 this.getName(),
                 new String[] {PARAM_SEQUENCE, PARAM_POLICY, PARAM_CONTEXT, PARAM_USER},
                 progress,
-                this.getPlan().getEnv());
+                getEnv());
     }
 
     @Override
@@ -274,6 +280,29 @@ public class SequenceActiveScanJob extends AutomationJob {
     @Override
     public String getType() {
         return JOB_NAME;
+    }
+
+    @Override
+    public String getTemplateDataMin() {
+        return getResourceAsString(this.getType() + "-min.yaml");
+    }
+
+    @Override
+    public String getTemplateDataMax() {
+        return getResourceAsString(this.getType() + "-max.yaml");
+    }
+
+    private static String getResourceAsString(String name) {
+        try {
+            return IOUtils.toString(
+                    SequenceActiveScanJob.class.getResourceAsStream(RESOURCES_DIR + name),
+                    StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            CommandLine.error(
+                    Constant.messages.getString(
+                            "sequence.automation.error.noresourcefile", RESOURCES_DIR + name));
+        }
+        return "";
     }
 
     @Override
