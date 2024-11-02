@@ -5836,6 +5836,27 @@
         "info": [
           "https://github.com/vuejs/vue/releases/tag/v2.6.11"
         ]
+      },
+      {
+        "atOrAbove": "2.0.0-alpha.1",
+        "below": "3.0.0-alpha.0",
+        "cwe": [
+          "CWE-1333"
+        ],
+        "severity": "low",
+        "identifiers": {
+          "summary": "ReDoS vulnerability in vue package that is exploitable through inefficient regex evaluation in the parseHTML function",
+          "CVE": [
+            "CVE-2024-9506"
+          ],
+          "githubID": "GHSA-5j4c-8p2g-v4jx"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-5j4c-8p2g-v4jx",
+          "https://nvd.nist.gov/vuln/detail/CVE-2024-9506",
+          "https://github.com/vuejs/core",
+          "https://www.herodevs.com/vulnerability-directory/cve-2024-9506"
+        ]
       }
     ],
     "extractors": {
@@ -5853,7 +5874,9 @@
         "'(§§version§§)'[^\\n]{0,8000}Vue compiler",
         "\\* Original file: /npm/vue@(§§version§§)/dist/vue.(global|common).js",
         "const version[ ]*=[ ]*\"(§§version§§)\";[\\s]*/\\*\\*[\\s]*\\* SSR utils for \\\\@vue/server-renderer",
-        "\\.__vue_app__=.{0,8000}?const [a-z]+=\"(§§version§§)\","
+        "\\.__vue_app__=.{0,8000}?const [a-z]+=\"(§§version§§)\",",
+        "let [A-Za-z]+=\"(§§version§§)\",..=\"undefined\"!=typeof window&&window.trustedTypes;if\\(..\\)try\\{.=..\\.createPolicy\\(\"vue\",",
+        "isCustomElement.{1,5}?compilerOptions.{0,500}exposeProxy.{0,700}\"(§§version§§)\""
       ],
       "func": [
         "Vue.version"
