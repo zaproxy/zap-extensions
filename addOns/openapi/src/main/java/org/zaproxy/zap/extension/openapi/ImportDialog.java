@@ -39,6 +39,7 @@ import javax.swing.JTextField;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -47,7 +48,9 @@ import org.zaproxy.zap.extension.openapi.OpenApiExceptions.EmptyDefinitionExcept
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidDefinitionException;
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidUrlException;
 import org.zaproxy.zap.extension.openapi.converter.swagger.UriBuilder;
+import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapHtmlLabel;
@@ -62,6 +65,7 @@ public class ImportDialog extends AbstractDialog {
     private JTextField fieldDefinition;
     private JTextField fieldTarget;
     private JComboBox<String> contextsComboBox;
+    private JComboBox<String> usersComboBox;
     private ContextsChangedListenerImpl contextsChangedListener;
     private final ExtensionOpenApi extOpenApi;
     private JButton buttonChooseFile;
@@ -105,6 +109,15 @@ public class ImportDialog extends AbstractDialog {
         fieldsPanel.add(
                 getContextsComboBox(),
                 LayoutHelper.getGBC(1, fieldsRow, 2, 0.5, new Insets(4, 4, 0, 0)));
+        if (getExtUserMgmt() != null) {
+            fieldsRow++;
+            fieldsPanel.add(
+                    new JLabel(Constant.messages.getString(MESSAGE_PREFIX + "labelUser")),
+                    LayoutHelper.getGBC(0, fieldsRow, 1, 0.5, new Insets(4, 0, 0, 4)));
+            fieldsPanel.add(
+                    getUsersComboBox(),
+                    LayoutHelper.getGBC(1, fieldsRow, 2, 0.5, new Insets(4, 4, 0, 0)));
+        }
 
         int row = 0;
         add(fieldsPanel, LayoutHelper.getGBC(0, row, 2, 1.0, new Insets(8, 8, 4, 8)));
@@ -125,6 +138,12 @@ public class ImportDialog extends AbstractDialog {
         add(getProgressBar(), LayoutHelper.getGBC(0, row, 2, 1.0, new Insets(0, 8, 8, 8)));
         pack();
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    }
+
+    private static ExtensionUserManagement getExtUserMgmt() {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionUserManagement.class);
     }
 
     private boolean validateTargetUrl() {
@@ -174,6 +193,21 @@ public class ImportDialog extends AbstractDialog {
             return -1;
         }
         return selectedContext.getId();
+    }
+
+    private User getSelectedUser() {
+        var ext = getExtUserMgmt();
+        if (ext == null) {
+            return null;
+        }
+        String selectedUserName = usersComboBox.getSelectedItem().toString();
+        if ("".equals(selectedUserName)) {
+            return null;
+        }
+        return ext.getContextUserAuthManager(getSelectedContextId()).getUsers().stream()
+                .filter(e -> selectedUserName.equals(e.getName()))
+                .findFirst()
+                .orElse(null);
     }
 
     void showWarningDialog(String message) {
@@ -302,7 +336,11 @@ public class ImportDialog extends AbstractDialog {
             new URL(definitionLocation).toURI();
             var uri = new URI(definitionLocation, true);
             return extOpenApi.importOpenApiDefinition(
-                            uri, getTargetField().getText(), true, getSelectedContextId())
+                            uri,
+                            getTargetField().getText(),
+                            true,
+                            getSelectedContextId(),
+                            getSelectedUser())
                     == null;
         } catch (URIException | MalformedURLException | URISyntaxException ignored) {
             // Not a valid URI, try to import as a file
@@ -383,6 +421,27 @@ public class ImportDialog extends AbstractDialog {
                 .forEach(contextsComboBox::addItem);
         if (contextsComboBox.getItemCount() > 1) {
             contextsComboBox.setSelectedIndex(1);
+        }
+    }
+
+    private JComboBox<String> getUsersComboBox() {
+        if (usersComboBox == null) {
+            usersComboBox = new JComboBox<>();
+            getContextsComboBox().addItemListener(e -> refreshUsersComboBox());
+            refreshUsersComboBox();
+        }
+        return usersComboBox;
+    }
+
+    private void refreshUsersComboBox() {
+        usersComboBox.removeAllItems();
+        usersComboBox.addItem("");
+
+        int ctxId = getSelectedContextId();
+        if (ctxId != -1) {
+            getExtUserMgmt().getContextUserAuthManager(ctxId).getUsers().stream()
+                    .map(User::getName)
+                    .forEach(usersComboBox::addItem);
         }
     }
 

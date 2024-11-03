@@ -92,20 +92,20 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner
 
     private AlertBuilder buildAlert(String responseHeader, String cookieHeaderValue) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setParam(CookieUtils.getCookieName(cookieHeaderValue))
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(CookieUtils.getSetCookiePlusName(responseHeader, cookieHeaderValue))
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setCweId(1275) // CWE-1275: Sensitive Cookie with Improper SameSite Attribute
+                .setWascId(13); // WASC Id - Info leakage
     }
 
     private AlertBuilder buildMissingAlert(String responseHeader, String cookieHeaderValue) {
         return buildAlert(responseHeader, cookieHeaderValue)
                 .setName(getName())
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setAlertRef(PLUGIN_ID + "-1");
     }
 
@@ -128,38 +128,14 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner
         return PLUGIN_ID;
     }
 
-    public int getRisk() {
-        return Alert.RISK_LOW;
-    }
-
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 1275; // CWE-1275: Sensitive Cookie with Improper SameSite Attribute
-    }
-
-    public int getWascId() {
-        return 13; // WASC Id - Info leakage
     }
 
     @Override

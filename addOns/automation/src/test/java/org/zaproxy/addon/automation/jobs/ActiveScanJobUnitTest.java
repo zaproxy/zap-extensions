@@ -23,7 +23,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -240,15 +239,6 @@ class ActiveScanJobUnitTest {
         assertTrue(Integer.parseInt(params.get("threadPerHost")) > 0);
     }
 
-    @Test
-    void shouldNotNpeOnNullThreads() throws MalformedURLException {
-        // Given / When
-        ActiveScanJob.Parameters params = new ActiveScanJob.Parameters();
-
-        // Then
-        assertThat(params.getThreadPerHost(), is(nullValue()));
-    }
-
     private static class ScannerParamWrapper {
         @SuppressWarnings("unused")
         public ScannerParam getScannerParam() {
@@ -455,7 +445,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -479,7 +469,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -502,7 +492,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -538,7 +528,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -581,7 +571,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -623,7 +613,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        job.getScanPolicy(progress);
+        job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));

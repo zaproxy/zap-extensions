@@ -139,7 +139,7 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin
                 scanWithExternalOastService(param);
             }
         } catch (Exception e) {
-            LOGGER.warn("Could not perform Out of Band XSS Attack.");
+            LOGGER.warn("Could not perform Out of Band XSS Attack:", e);
         }
     }
 

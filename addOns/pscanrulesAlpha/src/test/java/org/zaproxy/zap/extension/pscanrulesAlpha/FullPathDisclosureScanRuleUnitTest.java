@@ -156,7 +156,7 @@ class FullPathDisclosureScanRuleUnitTest extends PassiveScannerTest<FullPathDisc
         return new FullPathDisclosureScanRule();
     }
 
-    private HttpMessage createMessage(String body, Integer status) throws URIException {
+    private static HttpMessage createMessage(String body, Integer status) throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));
 

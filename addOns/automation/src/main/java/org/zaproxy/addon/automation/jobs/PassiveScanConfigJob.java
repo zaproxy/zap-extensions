@@ -32,11 +32,12 @@ import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
-import org.zaproxy.addon.automation.gui.PassiveScanConfigJobDialog;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.PassiveScanParam;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
+@SuppressWarnings("removal")
+@Deprecated(forRemoval = true)
 public class PassiveScanConfigJob extends AutomationJob {
 
     public static final String JOB_NAME = "passiveScan-config";
@@ -250,11 +251,6 @@ public class PassiveScanConfigJob extends AutomationJob {
     @Override
     public String getParamMethodName() {
         return OPTIONS_METHOD_NAME;
-    }
-
-    @Override
-    public void showDialog() {
-        new PassiveScanConfigJobDialog(this).setVisible(true);
     }
 
     @Override

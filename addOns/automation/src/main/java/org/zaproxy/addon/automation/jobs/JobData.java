@@ -37,7 +37,7 @@ public abstract class JobData extends AutomationData {
     @Override
     public boolean isDefaultValue(String name) {
         if ("name".equals(name)) {
-            return name.equals(getType());
+            return getName().equals(getType());
         }
         return super.isDefaultValue(name);
     }

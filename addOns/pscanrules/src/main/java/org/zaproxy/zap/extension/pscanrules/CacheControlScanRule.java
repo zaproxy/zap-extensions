@@ -27,6 +27,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
@@ -47,6 +48,7 @@ public class CacheControlScanRule extends PluginPassiveScanner
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (msg.getRequestHeader().isSecure()
                 && msg.getResponseBody().length() > 0
+                && !HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod())
                 && !ResourceIdentificationUtils.isImage(msg)) {
 
             if (!AlertThreshold.LOW.equals(this.getAlertThreshold())
@@ -82,15 +84,15 @@ public class CacheControlScanRule extends PluginPassiveScanner
             evidence = evidence.substring(1, evidence.length() - 1);
         }
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_LOW)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setParam(CACHE_CONTROL_HEADER)
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setCweId(525)
+                .setWascId(13);
     }
 
     @Override
@@ -106,30 +108,6 @@ public class CacheControlScanRule extends PluginPassiveScanner
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getRisk() {
-        return Alert.RISK_INFO;
-    }
-
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    public int getCweId() {
-        return 525;
-    }
-
-    public int getWascId() {
-        return 13;
     }
 
     @Override

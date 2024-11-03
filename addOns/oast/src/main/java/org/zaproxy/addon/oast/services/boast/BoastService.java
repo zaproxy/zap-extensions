@@ -111,6 +111,10 @@ public class BoastService extends OastService implements OptionsChangedListener 
         return registeredServers;
     }
 
+    public void clearRegisteredServers() {
+        registeredServers.clear();
+    }
+
     public BoastServer register(String uri) throws IOException {
         getParam().setBoastUri(uri);
         return register();

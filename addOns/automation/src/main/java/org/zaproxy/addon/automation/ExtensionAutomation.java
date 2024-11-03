@@ -36,9 +36,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.swing.Timer;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
@@ -61,10 +63,9 @@ import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
 import org.zaproxy.addon.automation.gui.OptionsPanel;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
+import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.ZAP.ProcessType;
@@ -125,11 +126,10 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         super.init();
 
         registerAutomationJob(new org.zaproxy.addon.automation.jobs.AddOnJob());
-        registerAutomationJob(new PassiveScanConfigJob());
         registerAutomationJob(new RequestorJob());
-        registerAutomationJob(new PassiveScanWaitJob());
         registerAutomationJob(new DelayJob());
         registerAutomationJob(new ActiveScanJob());
+        registerAutomationJob(new ActiveScanPolicyJob());
         registerAutomationJob(new ParamsJob());
     }
 
@@ -291,15 +291,21 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             }
 
             jobs.values().stream()
+                    .filter(job -> job.getClass().getAnnotation(Deprecated.class) == null)
+                    .filter(Predicate.not(AutomationJob::isDataJob))
                     .sorted()
                     .forEach(
                             j -> {
                                 try {
-                                    if (incAll) {
-                                        fw.write(j.getTemplateDataMax());
-                                    } else {
-                                        fw.write(j.getTemplateDataMin());
+                                    String template =
+                                            incAll
+                                                    ? j.getTemplateDataMax()
+                                                    : j.getTemplateDataMin();
+                                    if (StringUtils.isBlank(template)) {
+                                        return;
                                     }
+                                    template = template.stripTrailing() + "\n\n";
+                                    fw.write(template);
                                 } catch (Exception e) {
                                     CommandLine.error(
                                             Constant.messages.getString(
@@ -373,7 +379,14 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                 timer = new Timer(1000, e -> getAutomationPanel().updateJob(job));
                 timer.start();
             }
-            job.runJob(env, progress);
+            try {
+                job.runJob(env, progress);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.unexpected.internal", e.getMessage()));
+            }
             job.setTimeFinished();
             if (timer != null) {
                 timer.stop();

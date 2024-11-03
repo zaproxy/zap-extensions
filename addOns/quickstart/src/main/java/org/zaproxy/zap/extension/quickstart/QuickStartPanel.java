@@ -67,8 +67,6 @@ public class QuickStartPanel extends AbstractPanel {
     private JPanel buttonPanel;
     private JButton learnMoreButton = null;
     private JButton exploreButton = null;
-    private JButton servicesButton = null;
-    private SupportPanel supportPanel;
     private LearnMorePanel learnMorePanel;
     private DefaultExplorePanel defaultExplorePanel;
     private QuickStartSubPanel explorePanel;
@@ -76,7 +74,7 @@ public class QuickStartPanel extends AbstractPanel {
     private JLabel topTitle;
 
     private NewsItem newsItem;
-    private static ImageIcon osfIcon;
+    private static ImageIcon zapByCxIcon;
 
     public QuickStartPanel(ExtensionQuickStart extension) {
         super();
@@ -131,7 +129,6 @@ public class QuickStartPanel extends AbstractPanel {
         buttonPanel.setBackground(panelContent.getBackground());
         buttonPanel.add(this.getAttackButton());
         buttonPanel.add(this.getExploreButton());
-        buttonPanel.add(this.getSupportButton());
         buttonPanel.add(this.getLearnMoreButton());
 
         panelContent.add(buttonPanel, LayoutHelper.getGBC(0, ++panelY, 5, 1.0D, 1.0D));
@@ -144,27 +141,28 @@ public class QuickStartPanel extends AbstractPanel {
         getLearnMorePanel();
     }
 
-    public static ImageIcon getOsfIcon() {
-        if (osfIcon == null) {
-            osfIcon =
+    public static ImageIcon getZapByCxIcon() {
+        if (zapByCxIcon == null) {
+            zapByCxIcon =
                     DisplayUtils.getScaledIcon(
                             new ImageIcon(
                                     QuickStartPanel.class.getResource(
-                                            ExtensionQuickStart.RESOURCES + "/co-logo.png")));
+                                            ExtensionQuickStart.RESOURCES
+                                                    + "/ZAP_by_Checkmarx_logo.png")));
         }
-        return osfIcon;
+        return zapByCxIcon;
     }
 
     protected static JLabel getOsfImageLabel() {
         JLabel label = new JLabel();
-        label.setIcon(getOsfIcon());
+        label.setIcon(getZapByCxIcon());
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         label.addMouseListener(
                 new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        Stats.incCounter("stats.ui.link.osf");
-                        DesktopUtils.openUrlInBrowser("https://crashoverride.com/?zap=ui");
+                        Stats.incCounter("stats.ui.link.cx");
+                        DesktopUtils.openUrlInBrowser("https://checkmarx.com/");
                     }
                 });
         return label;
@@ -215,36 +213,6 @@ public class QuickStartPanel extends AbstractPanel {
             attackButton.addActionListener(e -> jScrollPane.setViewportView(getAttackPanel()));
         }
         return attackButton;
-    }
-
-    private JButton getSupportButton() {
-        if (servicesButton == null) {
-            servicesButton = new JButton();
-            servicesButton.setText(
-                    Constant.messages.getString("quickstart.top.button.label.support"));
-            servicesButton.setIcon(
-                    DisplayUtils.getScaledIcon(
-                            new ImageIcon(
-                                    getClass()
-                                            .getResource(
-                                                    ExtensionQuickStart.RESOURCES
-                                                            + "/zap-cs64x64.png"))));
-            servicesButton.setVerticalTextPosition(AbstractButton.BOTTOM);
-            servicesButton.setHorizontalTextPosition(AbstractButton.CENTER);
-            servicesButton.setToolTipText(
-                    Constant.messages.getString("quickstart.top.button.tooltip.support"));
-            servicesButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
-
-            servicesButton.addActionListener(e -> jScrollPane.setViewportView(getSupportPanel()));
-        }
-        return servicesButton;
-    }
-
-    public SupportPanel getSupportPanel() {
-        if (supportPanel == null) {
-            supportPanel = new SupportPanel(this.extension, this);
-        }
-        return supportPanel;
     }
 
     public LearnMorePanel getLearnMorePanel() {

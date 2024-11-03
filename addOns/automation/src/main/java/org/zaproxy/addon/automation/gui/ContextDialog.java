@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.ContextWrapper;
+import org.zaproxy.addon.automation.ContextWrapper.StructureData;
 import org.zaproxy.addon.automation.TechnologyData;
 import org.zaproxy.addon.automation.TechnologyUtils;
 import org.zaproxy.addon.automation.jobs.JobUtils;
@@ -41,6 +42,7 @@ public class ContextDialog extends StandardFieldsDialog {
         "automation.dialog.context.tab.context",
         "automation.dialog.context.tab.include",
         "automation.dialog.context.tab.exclude",
+        "automation.dialog.context.tab.structure",
         "automation.dialog.context.tab.tech"
     };
 
@@ -53,6 +55,7 @@ public class ContextDialog extends StandardFieldsDialog {
     private boolean isNew = false;
     private EnvironmentDialog envDialog;
     private ContextWrapper.Data context;
+    private ContextStructurePanel structurePanel;
     private ContextTechnologyPanel technologyPanel;
 
     public ContextDialog(EnvironmentDialog owner) {
@@ -65,21 +68,33 @@ public class ContextDialog extends StandardFieldsDialog {
         if (context == null) {
             context = new ContextWrapper.Data();
             context.setTechnology(new TechnologyData());
+            context.setStructure(new StructureData());
             this.isNew = true;
         }
         this.context = context;
 
-        this.addTextField(0, NAME_PARAM, context.getName());
-        this.addMultilineField(0, URLS_PARAM, listToString(context.getUrls()));
+        int tab = 0;
+        this.addTextField(tab, NAME_PARAM, context.getName());
+        this.addMultilineField(tab, URLS_PARAM, listToString(context.getUrls()));
 
-        this.addMultilineField(1, INCLUDE_PARAM, listToString(context.getIncludePaths()));
+        tab++;
+        this.addMultilineField(tab, INCLUDE_PARAM, listToString(context.getIncludePaths()));
 
-        this.addMultilineField(2, EXCLUDE_PARAM, listToString(context.getExcludePaths()));
+        tab++;
+        this.addMultilineField(tab, EXCLUDE_PARAM, listToString(context.getExcludePaths()));
 
-        this.setCustomTabPanel(3, getTechnologyPanel());
+        tab++;
+        this.setCustomTabPanel(tab, getStructurePanel());
+
+        tab++;
+        this.setCustomTabPanel(tab, getTechnologyPanel());
 
         if (context.getTechnology() != null) {
             getTechnologyPanel().setTechSet(TechnologyUtils.getTechSet(context.getTechnology()));
+        }
+
+        if (context.getStructure() != null) {
+            getStructurePanel().setStructure(context.getStructure());
         }
     }
 
@@ -98,6 +113,13 @@ public class ContextDialog extends StandardFieldsDialog {
                 .collect(Collectors.toList());
     }
 
+    private ContextStructurePanel getStructurePanel() {
+        if (this.structurePanel == null) {
+            this.structurePanel = new ContextStructurePanel(this);
+        }
+        return this.structurePanel;
+    }
+
     private ContextTechnologyPanel getTechnologyPanel() {
         if (this.technologyPanel == null) {
             this.technologyPanel = new ContextTechnologyPanel();
@@ -111,11 +133,20 @@ public class ContextDialog extends StandardFieldsDialog {
         this.context.setUrls(stringParamToList(URLS_PARAM));
         this.context.setIncludePaths(stringParamToList(INCLUDE_PARAM));
         this.context.setExcludePaths(stringParamToList(EXCLUDE_PARAM));
-        this.context
-                .getTechnology()
-                .setExclude(
-                        TechnologyUtils.techSetToExcludeList(
-                                this.getTechnologyPanel().getTechSet()));
+
+        TechnologyData tech = this.context.getTechnology();
+        List<String> excludeTech =
+                TechnologyUtils.techSetToExcludeList(this.getTechnologyPanel().getTechSet());
+        if (tech == null && excludeTech.size() == 0) {
+            // Can ignore
+        } else {
+            if (tech == null) {
+                tech = new TechnologyData();
+            }
+            tech.setExclude(excludeTech);
+            this.context.setTechnology(tech);
+        }
+        context.setStructure(getStructurePanel().getStructure());
         if (this.isNew) {
             envDialog.addContext(context);
         }

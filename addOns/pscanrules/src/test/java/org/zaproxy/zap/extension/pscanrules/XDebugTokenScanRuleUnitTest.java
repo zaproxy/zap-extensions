@@ -41,7 +41,7 @@ class XDebugTokenScanRuleUnitTest extends PassiveScannerTest<XDebugTokenScanRule
         return new XDebugTokenScanRule();
     }
 
-    private HttpMessage createMessage() throws HttpMalformedHeaderException {
+    private static HttpMessage createMessage() throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");

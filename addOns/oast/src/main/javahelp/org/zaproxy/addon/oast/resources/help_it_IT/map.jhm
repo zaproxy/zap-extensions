@@ -6,6 +6,7 @@
 <map version="1.0">
     <mapID target="oast-icon" url="contents/images/oast.png"/>
     <mapID target="oast" url="contents/oast.html"/>
+    <mapID target="oast.api" url="contents/api.html"/>
     <mapID target="oast.tab" url="contents/tab.html"/>
     <mapID target="oast.options" url="contents/options.html"/>
     <mapID target="oast.services" url="contents/services/services.html"/>

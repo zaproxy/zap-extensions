@@ -5,7 +5,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Fixed
+- Address exception when scanning a message without path with Possible Username Enumeration scan rule.
+
+## [56] - 2024-09-24
+### Changed
+- Log exception details in Out of Band XSS scan rule.
+- Maintenance changes.
+- The Anti-CSRF Tokens Check scan rule now only considers GET requests at Low Threshold (Issue 7741).
+
+### Fixed
+- Address time-based false positives in Remote Code Execution - Shell Shock scan rule (Issue 8516).
+
+## [55] - 2024-09-02
+### Changed
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Expression Language Injection
+    - Cookie Slack Detector
+
+### Fixed
 - Potential false positives in the Source Code Disclosure - File Inclusion scan rule when responses are empty or the original message resulted in an error to start with (Issue 8517).
+- A spacing/punctuation issue in the Cookie Slack Detector scan rule, whereby the Other Info field would not have a space after colons and before lists of cookie names.
 
 ## [54] - 2024-07-22
 ### Changed
@@ -527,6 +546,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[56]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v56
+[55]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v52

@@ -1060,6 +1060,42 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     }
 
     @Test
+    void shouldReportXssInScriptSrc() throws NullPointerException, IOException {
+        String test = "/shouldReportXssInScriptSrc/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "param");
+                        String response;
+                        if (name != null) {
+                            response =
+                                    getHtml(
+                                            "InputInScriptSrc.html",
+                                            new String[][] {{"param", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?param=test");
+
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("\" src=http://badsite.com"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("param"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("\" src=http://badsite.com"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
     void shouldReportXssInReflectedUrl() throws NullPointerException, IOException {
         String test = "/shouldReportXssInReflectedUrl";
 
@@ -1310,7 +1346,7 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     @Test
     void shouldReportXssInsideDivWithFilteredAnyCaseScript()
             throws NullPointerException, IOException {
-        String test = "/shouldReportXssInBodyWithFilteredScript/";
+        String test = "/shouldReportXssInsideDivWithFilteredAnyCaseScript/";
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {
@@ -1347,6 +1383,111 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                 equalTo("</div>" + CrossSiteScriptingScanRule.GENERIC_ONERROR_ALERT + "<div>"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldNotReportXssInsideDivWithGoodFiltering() throws NullPointerException, IOException {
+        String test = "/shouldNotReportXssInsideDivWithGoodFiltering/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // Strip out <>
+                            name = name.replaceAll("<", "").replaceAll(">", "");
+                            response =
+                                    getHtml("InputInsideDiv.html", new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+
+        assertThat(httpMessagesSent, hasSize(equalTo(9)));
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldNotReportXssInsideInputAndDivWithGoodFiltering()
+            throws NullPointerException, IOException {
+        String test = "/shouldNotReportXssInsideInputAndDivWithGoodFiltering/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // name1 is in an input field, name2 in a div - escape them correctly
+                            String name2 = name.replaceAll("<", "").replaceAll(">", "");
+                            String name1 = name2.replaceAll("\"", "");
+                            response =
+                                    getHtml(
+                                            "InputInsideInputAndDiv.html",
+                                            new String[][] {{"name1", name1}, {"name2", name2}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldNotReportXssInsideInputAndScriptWithGoodFiltering()
+            throws NullPointerException, IOException {
+        String test = "/shouldNotReportXssInsideInputAndScriptWithGoodFiltering/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // name1 is in a script, name2 in an input field - escape them correctly
+                            String name1 = name.replaceAll("'", "").replace("\"", "");
+                            String name2 =
+                                    name1.replaceAll("\"", "")
+                                            .replaceAll("<", "")
+                                            .replaceAll(">", "");
+                            response =
+                                    getHtml(
+                                            "InputInsideInputAndScript.html",
+                                            new String[][] {{"name1", name1}, {"name2", name2}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test

@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 import org.apache.commons.io.IOUtils;
@@ -264,10 +265,25 @@ class InsecureJsfViewStatePassiveScanRuleUnitTest
         return output.toByteArray();
     }
 
-    private void setTextHtmlResponseHeader(HttpMessage msg) throws HttpMalformedHeaderException {
+    private static void setTextHtmlResponseHeader(HttpMessage msg)
+            throws HttpMalformedHeaderException {
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
                         + "Server: Apache-Coyote/1.1\r\n"
                         + "Content-Type: text/html;charset=UTF-8\r\n");
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

@@ -40,6 +40,7 @@ import org.zaproxy.zap.extension.quickstart.ExtensionQuickStart;
 import org.zaproxy.zap.extension.quickstart.QuickStartParam;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.Stats;
 
 public class ExtensionQuickStartLaunch extends ExtensionAdaptor
         implements AddOnInstallationStatusListener, OptionsChangedListener {
@@ -144,7 +145,11 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
             launchToolbarButton = new JButton();
             launchToolbarButton.setToolTipText(
                     Constant.messages.getString("quickstart.toolbar.button.tooltip.launch"));
-            launchToolbarButton.addActionListener(e -> launchPanel.launchBrowser());
+            launchToolbarButton.addActionListener(
+                    e -> {
+                        launchPanel.launchBrowser();
+                        Stats.incCounter("stats.ui.maintoolbar.button.quickstart.browserlaunch");
+                    });
         }
         return launchToolbarButton;
     }

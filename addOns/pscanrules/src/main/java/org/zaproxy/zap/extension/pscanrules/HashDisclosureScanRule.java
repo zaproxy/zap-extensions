@@ -115,11 +115,11 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
                 Pattern.compile("\\$NT\\$[0-9a-f]{32}"),
                 new HashAlert("NTLM", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
 
-        // Mac OS X salted SHA-1
+        // Salted SHA-1 - MacOS X, Oracle, Tiger-192, Haval-192
         // Example: 0E6A48F765D0FFFFF6247FA80D748E615F91DD0C7431E4D9
         hashPatterns.put(
                 Pattern.compile("\\b[0-9A-F]{48}\\b"),
-                new HashAlert("Mac OSX salted SHA-1", Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM));
+                new HashAlert("Salted SHA-1", Alert.RISK_LOW, Alert.CONFIDENCE_LOW));
 
         // SHA hashes occur fairly frequently in various legitimate uses, and are not necessarily
         // indicative of an issue.
@@ -201,6 +201,9 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (!msg.getResponseHeader().isText()) {
+            return;
+        }
         if (ResourceIdentificationUtils.isJavaScript(msg)
                 && !AlertThreshold.LOW.equals(this.getAlertThreshold())) {
             return;
@@ -262,9 +265,12 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
                 .setName(getName() + " - " + hashAlert.getDescription())
                 .setRisk(hashAlert.getRisk())
                 .setConfidence(hashAlert.getConfidence())
-                .setDescription(getDescription() + " - " + hashAlert.getDescription())
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setDescription(
+                        Constant.messages.getString(MESSAGE_PREFIX + "desc")
+                                + " - "
+                                + hashAlert.getDescription())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
                 .setCweId(200) // Information Exposure,
                 .setWascId(13); // Information Leakage
@@ -273,18 +279,6 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
     @Override
     public int getPluginId() {
         return 10097;
-    }
-
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     @Override

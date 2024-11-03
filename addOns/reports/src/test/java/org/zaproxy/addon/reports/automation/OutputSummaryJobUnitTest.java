@@ -56,13 +56,12 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationProgress;
-import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
-import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.automation.OutputSummaryJob.Format;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.utils.I18N;
 
+@SuppressWarnings("removal")
 class OutputSummaryJobUnitTest {
 
     private OutputSummaryJob job;
@@ -71,7 +70,7 @@ class OutputSummaryJobUnitTest {
     private ByteArrayOutputStream os;
     private AutomationEnvironment env;
     private AutomationProgress progress;
-    private PassiveScanJobResultData psJobResData;
+    private org.zaproxy.addon.automation.jobs.PassiveScanJobResultData psJobResData;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -87,7 +86,7 @@ class OutputSummaryJobUnitTest {
         extReport = mock(ExtensionReports.class);
         env = mock(AutomationEnvironment.class);
         progress = mock(AutomationProgress.class);
-        psJobResData = mock(PassiveScanJobResultData.class);
+        psJobResData = mock(org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.class);
         job = new OutputSummaryJob();
         os = new ByteArrayOutputStream();
         job.setOutput(new PrintStream(os));
@@ -146,7 +145,7 @@ class OutputSummaryJobUnitTest {
         alertCounts.put(1, 3);
         given(extReport.getAlertCountsByRule()).willReturn(alertCounts);
 
-        List<RuleData> list = Arrays.asList(new RuleData(new TestPluginPassiveScanner(1, "rule1")));
+        var list = List.of(createRuleData(new TestPluginPassiveScanner(1, "rule1")));
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
@@ -171,7 +170,7 @@ class OutputSummaryJobUnitTest {
         alertCounts.put(1, 3);
         given(extReport.getAlertCountsByRule()).willReturn(alertCounts);
 
-        List<RuleData> list = Arrays.asList(new RuleData(new TestPluginPassiveScanner(1, "rule1")));
+        var list = List.of(createRuleData(new TestPluginPassiveScanner(1, "rule1")));
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
@@ -207,7 +206,7 @@ class OutputSummaryJobUnitTest {
         alertCounts.put(1, 3);
         given(extReport.getAlertCountsByRule()).willReturn(alertCounts);
 
-        List<RuleData> list = Arrays.asList(new RuleData(new TestPluginPassiveScanner(1, "rule1")));
+        var list = List.of(createRuleData(new TestPluginPassiveScanner(1, "rule1")));
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
@@ -243,7 +242,7 @@ class OutputSummaryJobUnitTest {
         alertCounts.put(1, 3);
         given(extReport.getAlertCountsByRule()).willReturn(alertCounts);
 
-        List<RuleData> list = Arrays.asList(new RuleData(new TestPluginPassiveScanner(1, "rule1")));
+        var list = List.of(createRuleData(new TestPluginPassiveScanner(1, "rule1")));
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
@@ -282,12 +281,12 @@ class OutputSummaryJobUnitTest {
         alertCounts.put(4, 3);
         given(extReport.getAlertCountsByRule()).willReturn(alertCounts);
 
-        List<RuleData> list =
-                Arrays.asList(
-                        new RuleData(new TestPluginPassiveScanner(1, "rule1")),
-                        new RuleData(new TestPluginPassiveScanner(2, "rule2")),
-                        new RuleData(new TestPluginPassiveScanner(3, "rule3")),
-                        new RuleData(new TestPluginPassiveScanner(4, "rule4")));
+        var list =
+                List.of(
+                        createRuleData(new TestPluginPassiveScanner(1, "rule1")),
+                        createRuleData(new TestPluginPassiveScanner(2, "rule2")),
+                        createRuleData(new TestPluginPassiveScanner(3, "rule3")),
+                        createRuleData(new TestPluginPassiveScanner(4, "rule4")));
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
@@ -357,7 +356,7 @@ class OutputSummaryJobUnitTest {
                         new HttpMessage(new URI("https://www.example.com/b", true)));
         given(extReport.getHttpMessagesForRule(1, 5)).willReturn(msgList);
 
-        List<RuleData> list = Arrays.asList(new RuleData(new TestPluginPassiveScanner(1, "rule1")));
+        var list = List.of(createRuleData(new TestPluginPassiveScanner(1, "rule1")));
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
@@ -383,11 +382,11 @@ class OutputSummaryJobUnitTest {
 
         given(extReport.getAlertCountsByRule()).willReturn(new HashMap<>());
 
-        List<RuleData> list =
-                Arrays.asList(
-                        new RuleData(new TestPluginPassiveScanner(3, "rule3")),
-                        new RuleData(new TestPluginPassiveScanner(2, "rule2")),
-                        new RuleData(new TestPluginPassiveScanner(1, "rule1")));
+        var list =
+                List.of(
+                        createRuleData(new TestPluginPassiveScanner(3, "rule3")),
+                        createRuleData(new TestPluginPassiveScanner(2, "rule2")),
+                        createRuleData(new TestPluginPassiveScanner(1, "rule1")));
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
@@ -412,11 +411,11 @@ class OutputSummaryJobUnitTest {
 
         given(extReport.getAlertCountsByRule()).willReturn(new HashMap<>());
 
-        List<RuleData> list =
-                Arrays.asList(
-                        new RuleData(new TestPluginPassiveScanner(20, "rule20")),
-                        new RuleData(new TestPluginPassiveScanner(1001, "rule1001")),
-                        new RuleData(new TestPluginPassiveScanner(9, "rule9")));
+        var list =
+                List.of(
+                        createRuleData(new TestPluginPassiveScanner(20, "rule20")),
+                        createRuleData(new TestPluginPassiveScanner(1001, "rule1001")),
+                        createRuleData(new TestPluginPassiveScanner(9, "rule9")));
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
@@ -450,11 +449,11 @@ class OutputSummaryJobUnitTest {
                         new HttpMessage(new URI("https://www.example.com/b", true)));
         given(extReport.getHttpMessagesForRule(1, 5)).willReturn(msgList);
 
-        List<RuleData> list =
-                Arrays.asList(
-                        new RuleData(new TestPluginPassiveScanner(1, "rule1")),
-                        new RuleData(new TestPluginPassiveScanner(2, "rule2")),
-                        new RuleData(new TestPluginPassiveScanner(3, "rule3")));
+        var list =
+                List.of(
+                        createRuleData(new TestPluginPassiveScanner(1, "rule1")),
+                        createRuleData(new TestPluginPassiveScanner(2, "rule2")),
+                        createRuleData(new TestPluginPassiveScanner(3, "rule3")));
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
@@ -491,11 +490,11 @@ class OutputSummaryJobUnitTest {
                         new HttpMessage(new URI("https://www.example.com/b", true)));
         given(extReport.getHttpMessagesForRule(1, 5)).willReturn(msgList);
 
-        List<RuleData> list =
-                Arrays.asList(
-                        new RuleData(new TestPluginPassiveScanner(1, "rule1")),
-                        new RuleData(new TestPluginPassiveScanner(2, "rule2")),
-                        new RuleData(new TestPluginPassiveScanner(3, "rule3")));
+        var list =
+                List.of(
+                        createRuleData(new TestPluginPassiveScanner(1, "rule1")),
+                        createRuleData(new TestPluginPassiveScanner(2, "rule2")),
+                        createRuleData(new TestPluginPassiveScanner(3, "rule3")));
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
@@ -526,11 +525,11 @@ class OutputSummaryJobUnitTest {
                         new HttpMessage(new URI("https://www.example.com/b", true)));
         given(extReport.getHttpMessagesForRule(1, 5)).willReturn(msgList);
 
-        List<RuleData> list =
-                Arrays.asList(
-                        new RuleData(new TestPluginPassiveScanner(1, "rule1")),
-                        new RuleData(new TestPluginPassiveScanner(2, "rule2")),
-                        new RuleData(new TestPluginPassiveScanner(3, "rule3")));
+        var list =
+                List.of(
+                        createRuleData(new TestPluginPassiveScanner(1, "rule1")),
+                        createRuleData(new TestPluginPassiveScanner(2, "rule2")),
+                        createRuleData(new TestPluginPassiveScanner(3, "rule3")));
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
@@ -559,11 +558,11 @@ class OutputSummaryJobUnitTest {
                         new HttpMessage(new URI("https://www.example.com/b", true)));
         given(extReport.getHttpMessagesForRule(1, 5)).willReturn(msgList);
 
-        List<RuleData> list =
-                Arrays.asList(
-                        new RuleData(new TestPluginPassiveScanner(1, "rule1")),
-                        new RuleData(new TestPluginPassiveScanner(2, "rule2")),
-                        new RuleData(new TestPluginPassiveScanner(3, "rule3")));
+        var list =
+                List.of(
+                        createRuleData(new TestPluginPassiveScanner(1, "rule1")),
+                        createRuleData(new TestPluginPassiveScanner(2, "rule2")),
+                        createRuleData(new TestPluginPassiveScanner(3, "rule3")));
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
@@ -583,11 +582,11 @@ class OutputSummaryJobUnitTest {
         alertCounts.put(1, 3);
         given(extReport.getAlertCountsByRule()).willReturn(alertCounts);
 
-        List<RuleData> list =
-                Arrays.asList(
-                        new RuleData(new TestPluginPassiveScanner(1, "rule1")),
-                        new RuleData(new TestPluginPassiveScanner(2, "rule2")),
-                        new RuleData(new TestPluginPassiveScanner(3, "rule3")));
+        var list =
+                List.of(
+                        createRuleData(new TestPluginPassiveScanner(1, "rule1")),
+                        createRuleData(new TestPluginPassiveScanner(2, "rule2")),
+                        createRuleData(new TestPluginPassiveScanner(3, "rule3")));
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
@@ -613,7 +612,7 @@ class OutputSummaryJobUnitTest {
         alertCounts.put(1, 3);
         given(extReport.getAlertCountsByRule()).willReturn(alertCounts);
 
-        List<RuleData> list = Arrays.asList(new RuleData(new TestPluginPassiveScanner(1, "rule1")));
+        var list = List.of(createRuleData(new TestPluginPassiveScanner(1, "rule1")));
 
         given(psJobResData.getAllRuleData()).willReturn(list);
 
@@ -644,6 +643,11 @@ class OutputSummaryJobUnitTest {
 
     private void assertOutput(String output) {
         assertThat(os.toString(), is(output.replace("\n", System.lineSeparator())));
+    }
+
+    private static org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData
+            createRuleData(TestPluginPassiveScanner rule) {
+        return new org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData(rule);
     }
 
     class TestPluginPassiveScanner extends PluginPassiveScanner {

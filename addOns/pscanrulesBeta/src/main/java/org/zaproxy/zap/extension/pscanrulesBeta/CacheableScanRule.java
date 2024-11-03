@@ -692,7 +692,7 @@ public class CacheableScanRule extends PluginPassiveScanner implements CommonPas
         }
     }
 
-    private Long extractAgeValue(String directiveToken, int tokenLength) {
+    private static Long extractAgeValue(String directiveToken, int tokenLength) {
         int commaLocation = directiveToken.indexOf(",", tokenLength);
         return Long.parseLong(
                 directiveToken.substring(

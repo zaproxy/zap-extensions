@@ -105,33 +105,17 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    public String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    public int getRisk() {
-        return Alert.RISK_MEDIUM;
     }
 
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 200; // CWE Id 200 - Information Exposure
-    }
-
-    public int getWascId() {
-        return 13; // WASC Id - Info leakage
     }
 
     private static final Pattern PATHSESSIONIDPATTERN =
@@ -177,7 +161,6 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
                                         getName(),
                                         getDescription(),
                                         getSolution(),
-                                        getRisk(),
                                         Alert.CONFIDENCE_HIGH,
                                         param.getValue(),
                                         param.getName(),
@@ -206,7 +189,6 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
                                 getName(),
                                 getDescription(),
                                 getSolution(),
-                                getRisk(),
                                 Alert.CONFIDENCE_HIGH,
                                 jsessMatcher.group(),
                                 "",
@@ -248,17 +230,17 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
     };
 
     // The name of this sub-alert
-    private String getRefererAlert() {
+    private static String getRefererAlert() {
         return Constant.messages.getString(MESSAGE_PREFIX + "referrer.alert");
     }
 
     // The description of this sub-alert
-    private String getRefererDescription() {
+    private static String getRefererDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "referrer.desc");
     }
 
     // The solution of this sub-alert
-    private String getRefererSolution() {
+    private static String getRefererSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "referrer.soln");
     }
 
@@ -274,7 +256,6 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
      */
     private void checkSessionIDExposureTo3rdParty(HttpMessage msg, int id) throws URIException {
 
-        int risk = (msg.getRequestHeader().isSecure()) ? Alert.RISK_MEDIUM : Alert.RISK_LOW;
         String body = msg.getResponseBody().toString();
         String host = msg.getRequestHeader().getURI().getHost();
         String linkHostName;
@@ -290,11 +271,14 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
                                     getRefererAlert(),
                                     getRefererDescription(),
                                     getRefererSolution(),
-                                    risk,
                                     Alert.CONFIDENCE_MEDIUM,
                                     linkHostName,
                                     "",
                                     "-3")
+                            .setRisk(
+                                    msg.getRequestHeader().isSecure()
+                                            ? Alert.RISK_MEDIUM
+                                            : Alert.RISK_LOW)
                             .raise();
 
                     break; // Only need one
@@ -311,7 +295,6 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
                                 getName(),
                                 getDescription(),
                                 getSolution(),
-                                getRisk(),
                                 Alert.CONFIDENCE_HIGH,
                                 "1A530637289A03B07199A44E8D531427",
                                 "jsessionid",
@@ -322,7 +305,6 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
                                 getName(),
                                 getDescription(),
                                 getSolution(),
-                                getRisk(),
                                 Alert.CONFIDENCE_HIGH,
                                 "jsessionid=1A530637289A03B07199A44E8D531427",
                                 "",
@@ -333,7 +315,6 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
                                 getRefererAlert(),
                                 getRefererDescription(),
                                 getRefererSolution(),
-                                Alert.RISK_MEDIUM,
                                 Alert.CONFIDENCE_MEDIUM,
                                 "www.example.org",
                                 "",
@@ -346,22 +327,21 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
             String name,
             String desc,
             String soln,
-            int risk,
             int confidence,
             String evidence,
             String param,
             String alertRef) {
         return newAlert()
                 .setName(name)
-                .setRisk(risk)
+                .setRisk(Alert.RISK_MEDIUM)
                 .setConfidence(confidence)
                 .setDescription(desc)
                 .setSolution(soln)
-                .setReference(getReference())
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setParam(param)
                 .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId())
+                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setWascId(13) // WASC Id - Info leakage
                 .setAlertRef(getPluginId() + alertRef);
     }
 }

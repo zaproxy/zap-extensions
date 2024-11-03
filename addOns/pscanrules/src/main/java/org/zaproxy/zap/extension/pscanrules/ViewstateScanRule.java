@@ -82,68 +82,64 @@ public class ViewstateScanRule extends PluginPassiveScanner implements CommonPas
         if (v.isSplit()) alertSplitViewstate().raise();
     }
 
-    private AlertBuilder alertViewstateAnalyzerResult(ViewstateAnalyzerResult var) {
+    private AlertBuilder baseAlert() {
         return newAlert()
+                .setCweId(642) // CWE-642: External Control of Critical State Data)
+                .setWascId(14); // WASC-14 - Server Misconfiguration
+    }
+
+    private AlertBuilder alertViewstateAnalyzerResult(ViewstateAnalyzerResult var) {
+        return baseAlert()
                 .setName(var.pattern.getAlertHeader())
                 .setRisk(Alert.RISK_MEDIUM)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(var.pattern.getAlertDescription())
                 .setOtherInfo(var.getResultExtract().toString())
-                .setSolution(getSolution())
-                .setCweId(getCweId())
-                .setWascId(getWascId())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setAlertRef(PLUGIN_ID + "-" + var.getAlertRef());
     }
 
     private AlertBuilder alertOldAspVersion() {
-        return newAlert()
+        return baseAlert()
                 .setName(Constant.messages.getString(MESSAGE_PREFIX + "oldver.name"))
                 .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "oldver.desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "oldver.soln"))
-                .setCweId(getCweId())
-                .setWascId(getWascId())
                 .setAlertRef(PLUGIN_ID + "-3");
     }
 
     // TODO: see if this alert triggers too often, as the detection rule is far from being robust
     // for the moment
     private AlertBuilder alertNoMACUnsure() {
-        return newAlert()
+        return baseAlert()
                 .setName(Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.name"))
                 .setRisk(Alert.RISK_HIGH)
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "nomac.unsure.refs"))
-                .setCweId(getCweId())
-                .setWascId(getWascId())
                 .setAlertRef(PLUGIN_ID + "-4");
     }
 
     private AlertBuilder alertNoMACforSure() {
-        return newAlert()
+        return baseAlert()
                 .setName(Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.name"))
                 .setRisk(Alert.RISK_HIGH)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "nomac.sure.refs"))
-                .setCweId(getCweId())
-                .setWascId(getWascId())
                 .setAlertRef(PLUGIN_ID + "-5");
     }
 
     private AlertBuilder alertSplitViewstate() {
-        return newAlert()
+        return baseAlert()
                 .setName(Constant.messages.getString(MESSAGE_PREFIX + "split.name"))
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "split.desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "split.soln"))
-                .setCweId(getCweId())
-                .setWascId(getWascId())
                 .setAlertRef(PLUGIN_ID + "-6");
     }
 
@@ -185,24 +181,12 @@ public class ViewstateScanRule extends PluginPassiveScanner implements CommonPas
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
-        return 642; // CWE-642: External Control of Critical State Data
-    }
-
-    public int getWascId() {
-        return 14; // WASC-14 - Server Misconfiguration
-    }
-
-    private Map<String, StartTag> getHiddenFields(Source source) {
+    private static Map<String, StartTag> getHiddenFields(Source source) {
         List<StartTag> result = source.getAllStartTags("input");
 
         // Searching for name only tags only makes sense for Asp.Net 1.1 websites

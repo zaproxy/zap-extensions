@@ -79,6 +79,7 @@ public class AuthUtils {
     public static final String AUTH_NO_PASSWORD_FIELD_STATS = "stats.auth.browser.nopasswordfield";
     public static final String AUTH_FOUND_FIELDS_STATS = "stats.auth.browser.foundfields";
     public static final String AUTH_SESSION_TOKEN_STATS_PREFIX = "stats.auth.sessiontoken.";
+    public static final String AUTH_SESSION_TOKENS_MAX = "stats.auth.sessiontokens.max";
     public static final String AUTH_BROWSER_PASSED_STATS = "stats.auth.browser.passed";
     public static final String AUTH_BROWSER_FAILED_STATS = "stats.auth.browser.failed";
 
@@ -656,6 +657,7 @@ public class AuthUtils {
 
     public static void recordSessionToken(SessionToken token) {
         knownTokenMap.put(token.getValue(), token);
+        Stats.setHighwaterMark(AUTH_SESSION_TOKENS_MAX, knownTokenMap.size());
     }
 
     public static SessionToken getSessionToken(String value) {

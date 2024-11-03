@@ -30,6 +30,21 @@
     ],
     "website": "https://www.jetecommerce.com.br"
   },
+  "NProgress": {
+    "cats": [
+      59
+    ],
+    "description": "NProgress is a JavaScript library that displays a nanoscopic progress bar at the top of websites or web applications. It includes trickle animations to indicate loading activity, enhancing user experience by showing that content is being loaded.",
+    "icon": "NProgress.svg",
+    "js": {
+      "NProgress.version": "([\\d.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "scriptSrc": [
+      "/nprogress\\.min\\.js"
+    ],
+    "website": "https://ricostacruz.com/nprogress/"
+  },
   "NSW Design System": {
     "cats": [
       66
@@ -192,6 +207,41 @@
     ],
     "website": "https://www.najva.com"
   },
+  "NamelessMC": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:namelessmc:nameless:*:*:*:*:*:*:*:*",
+    "description": "NamelessMC is an open-source website software geared towards gaming communities, offering features such as forums and user profiles for managing online presence.",
+    "dom": [
+      "span.item > a[href*='//namelessmc.com']"
+    ],
+    "icon": "NamelessMC.png",
+    "implies": [
+      "PHP",
+      "Laravel",
+      "MySQL"
+    ],
+    "oss": true,
+    "website": "https://namelessmc.com"
+  },
+  "Napps": {
+    "cats": [
+      6,
+      26
+    ],
+    "description": "Napps is a platform that allows businesses to convert their Shopify and WooCommerce online stores into mobile apps without any coding.",
+    "icon": "Napps.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "//napps-storage\\.b-cdn\\.net/scripts/smartbanner\\.js\\?napps=1"
+    ],
+    "website": "https://napps.io"
+  },
   "Narrativ": {
     "cats": [
       71
@@ -265,6 +315,24 @@
       "\\.postrelease\\.com/"
     ],
     "website": "https://www.nativo.com"
+  },
+  "Natural Intelligence": {
+    "cats": [
+      96
+    ],
+    "description": "Natural Intelligence is a platform facilitating product discovery.",
+    "icon": "NaturalIntelligence.svg",
+    "js": {
+      "naturalint_tag": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.naturalint\\.com/"
+    ],
+    "website": "https://www.naturalint.com/"
   },
   "Navegg": {
     "cats": [
@@ -349,6 +417,21 @@
     ],
     "website": "https://navidiumapp.com"
   },
+  "Naviga": {
+    "cats": [
+      1
+    ],
+    "description": "Naviga is a content creation and management tool, formerly known as Infomaker, designed for media and publishing companies.",
+    "dom": [
+      "link[href*='.infomaker.io/']"
+    ],
+    "icon": "Naviga.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.infomaker\\.io/"
+    ],
+    "website": "https://www.navigaglobal.com/"
+  },
   "Neat A/B testing": {
     "cats": [
       74,
@@ -368,6 +451,29 @@
       "cdn\\.neatab\\.com/"
     ],
     "website": "https://neatab.com"
+  },
+  "Nelio Testing": {
+    "cats": [
+      74
+    ],
+    "cookies": {
+      "nabUniqueViews": ""
+    },
+    "cpe": "cpe:2.3:a:neliosoftware:nelio_ab_testing:*:*:*:*:*:*:*:*",
+    "description": "Nelio Testing is a plugin that allows testing everything on a WordPress site.",
+    "icon": "NelioTesting.svg",
+    "js": {
+      "nabSettings": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "website": "https://neliosoftware.com/testing"
   },
   "Neon CRM": {
     "cats": [
@@ -408,7 +514,10 @@
     "url": [
       "/neos/"
     ],
-    "website": "https://neos.io"
+    "website": "https://neos.io",
+    "scriptSrc": [
+      "/Neos\\.Neos/"
+    ]
   },
   "Neos Flow": {
     "cats": [
@@ -456,10 +565,16 @@
       6
     ],
     "cookies": {
-      "NS_VER": ""
+      "NS_VER": "^([\\d\\.]+)$\\;version:\\1"
     },
-    "icon": "NetSuite.png",
-    "website": "https://netsuite.com"
+    "icon": "NetSuite.svg",
+    "website": "https://netsuite.com",
+    "description": "NetSuite is a cloud-based enterprise resource planning (ERP) software suite that provides a comprehensive set of business management applications, including financial management, CRM, ecommerce, and more.",
+    "saas": true,
+    "pricing": [
+      "onetime",
+      "high"
+    ]
   },
   "Netcore Cloud": {
     "cats": [
@@ -495,6 +610,24 @@
     "saas": true,
     "website": "https://www.netdeal.com.br"
   },
+  "Nethouse Website Builder": {
+    "cats": [
+      1,
+      6
+    ],
+    "description": "Nethouse Website Builder is a platform enabling individuals to craft websites, online stores, or landing pages independently, without the need for programmers or designers.",
+    "icon": "Nethouse.svg",
+    "js": {
+      "Nethouse": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://nethouse.ru"
+  },
   "Netlify": {
     "cats": [
       62,
@@ -520,6 +653,39 @@
       "cdn\\.netlify\\.com"
     ]
   },
+  "Netlify Create": {
+    "cats": [
+      51
+    ],
+    "description": "Netlify Create (formerly Stackbit) is a visual experience platform for building decoupled websites.",
+    "dom": {
+      "[data-sb-object-id]": {
+        "exists": ""
+      },
+      "header[data-sb-field-path]": {
+        "attributes": {
+          "data-sb-field-path": ""
+        }
+      },
+      "script#__NEXT_DATA__": {
+        "text": "stackbit"
+      }
+    },
+    "icon": "Netlify.svg",
+    "js": {
+      "__NEXT_DATA__.props.pageProps.withStackbit": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.stackbit\\.com"
+    ],
+    "website": "https://www.stackbit.com"
+  },
   "Netlify Forms": {
     "cats": [
       110
@@ -536,7 +702,8 @@
   },
   "Neto": {
     "cats": [
-      6
+      6,
+      41
     ],
     "description": "Neto is the only Australian B2B and multi-channel ecommerce platform that provides an all-in-one solution for ecommerce, POS, inventory management, order management, and shipping labelling.",
     "icon": "Neto.svg",
@@ -571,7 +738,10 @@
       "Nette": "",
       "Nette.version": "^(.+)$\\;version:\\1"
     },
-    "website": "https://nette.org"
+    "website": "https://nette.org",
+    "dom": [
+      "input[data-nette-rules], div[id^='snippet-'], input[id^='frm-']"
+    ]
   },
   "Network for Good": {
     "cats": [
@@ -606,7 +776,7 @@
         }
       }
     },
-    "icon": "ThemeIsle.png",
+    "icon": "ThemeIsle.svg",
     "requires": [
       "WordPress"
     ],
@@ -686,6 +856,41 @@
     ],
     "website": "https://newspack.pub/"
   },
+  "Newt": {
+    "cats": [
+      1
+    ],
+    "description": "Newt is a headless CMS that allows you to create and manage structured content and distribute it to a variety of channels.",
+    "icon": "Newt.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa",
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://www.newt.so",
+    "xhr": [
+      "\\.newt\\.so"
+    ]
+  },
+  "NexMind": {
+    "cats": [
+      10
+    ],
+    "description": "NexMind is a platform offering advanced analytics tools for businesses to make informed decisions and foster growth.",
+    "icon": "NexMind.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.nexmind\\.ai/"
+    ],
+    "website": "https://www.nexmind.ai"
+  },
   "Nexcess": {
     "cats": [
       62,
@@ -711,6 +916,22 @@
       "\\bNexive\\b"
     ],
     "website": "https://www.nexive.it"
+  },
+  "Next Basket": {
+    "cats": [
+      6
+    ],
+    "description": "Next Basket is an AI-based software platform designed to create online stores and warehouses for products.",
+    "icon": "NextBasket.svg",
+    "meta": {
+      "generator": "^NextBasket.com$"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://nextbasket.com"
   },
   "Next Total": {
     "cats": [
@@ -807,7 +1028,10 @@
       "Stitches"
     ],
     "oss": true,
-    "website": "https://nextui.org/"
+    "website": "https://nextui.org/",
+    "dom": [
+      "link[href*='nextui.org'][rel='canonical']"
+    ]
   },
   "Nextcloud": {
     "cats": [
@@ -971,6 +1195,22 @@
     "saas": true,
     "website": "https://nicepage.com"
   },
+  "Nidux": {
+    "cats": [
+      6
+    ],
+    "description": "Nidux is an ecommerce platform catering to small and medium businesses.",
+    "icon": "Nidux.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "assets\\.nidux\\.net/"
+    ],
+    "website": "https://nidux.com"
+  },
   "Nift": {
     "cats": [
       84
@@ -1043,6 +1283,30 @@
     ],
     "website": "https://www.nofraud.com"
   },
+  "Nocodelytics": {
+    "cats": [
+      10
+    ],
+    "description": "Nocodelytics is a tool for tracking clicks, searches, CMS items, and more on your Webflow site. It allows you to monitor user activity and important metrics without any coding required.",
+    "icon": "Nocodelytics.svg",
+    "js": {
+      "__NOCODELYTICS_SITE_ID__": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "requires": [
+      "Webflow"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "tracker\\.nocodelytics\\.com/"
+    ],
+    "website": "https://www.nocodelytics.com"
+  },
   "Noddus": {
     "cats": [
       10,
@@ -1066,7 +1330,10 @@
     "cpe": "cpe:2.3:a:nodejs:node.js:*:*:*:*:*:*:*:*",
     "description": "Node.js is an open-source, cross-platform, JavaScript runtime environment that executes JavaScript code outside a web browser.",
     "icon": "Node.js.svg",
-    "website": "https://nodejs.org"
+    "website": "https://nodejs.org",
+    "dom": [
+      "div.appVersion i.icon-nodejs"
+    ]
   },
   "NodeBB": {
     "cats": [
@@ -1145,6 +1412,97 @@
     "saas": true,
     "website": "https://noibu.com"
   },
+  "Nootiz": {
+    "cats": [
+      13
+    ],
+    "description": "Nootiz is a visual feedback tool designed to streamline the process of collecting and managing user feedback on websites.",
+    "icon": "Nootiz.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "load\\.nootiz\\.com/"
+    ],
+    "website": "https://www.nootiz.com"
+  },
+  "Norby": {
+    "cats": [
+      52
+    ],
+    "description": "Norby is an AI-powered chat solution catering to ecommerce, healthcare, crypto, and fintech industries.",
+    "icon": "NorbyAI.svg",
+    "js": {
+      "norbyChat": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "chat\\.norby\\.io/"
+    ],
+    "website": "https://norby.io"
+  },
+  "Norce": {
+    "cats": [
+      6
+    ],
+    "description": "Norce is a headless SaaS platform for digital commerce, designed to support companies with advanced needs.",
+    "dom": [
+      "link[href*='.jetshop.io']"
+    ],
+    "html": [
+      "<(?:div|aside) id=\"jetshop-branding\">"
+    ],
+    "icon": "Norce.svg",
+    "js": {
+      "JetshopData": ""
+    },
+    "website": "https://www.norce.io/"
+  },
+  "Normi": {
+    "cats": [
+      67
+    ],
+    "description": "Normi is a Compliance Management Platform designed to ensure adherence to Quebec's C-25 regulation.",
+    "icon": "Normi.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.normi\\.ca/"
+    ],
+    "website": "https://normi.ca"
+  },
+  "Northbeam": {
+    "cats": [
+      10
+    ],
+    "description": "Northbeam is a platform for marketing measurement that uses machine learning for DTC and ecommerce brands.",
+    "dom": [
+      "script[data-src*='.northbeam.io/']"
+    ],
+    "icon": "Northbeam.svg",
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.northbeam\\.io/"
+    ],
+    "website": "https://www.northbeam.io"
+  },
   "Norton Shopping Guarantee": {
     "cats": [
       16
@@ -1211,6 +1569,34 @@
     ],
     "website": "https://www.nosto.com/products/visual-ugc/"
   },
+  "Notie": {
+    "cats": [
+      59
+    ],
+    "description": "Notie is a notification, input, and selection suite for javascript, with no dependencies.",
+    "js": {
+      "notie": ""
+    },
+    "oss": true,
+    "website": "https://github.com/jaredreich/notie"
+  },
+  "Notifly": {
+    "cats": [
+      32
+    ],
+    "description": "Notifly is a marketing automation tool designed to streamline the process of running multi-channel campaigns.",
+    "icon": "Notifly.svg",
+    "js": {
+      "NotiflyWebMessageRenderer": "",
+      "__notiflyCafe24Config": "",
+      "notifly": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://notifly.tech"
+  },
   "Notion": {
     "cats": [
       51
@@ -1229,6 +1615,62 @@
     ],
     "saas": true,
     "website": "https://notion.so"
+  },
+  "Notix": {
+    "cats": [
+      77
+    ],
+    "description": "Notix is a web push notifications service for audience re-engagement.",
+    "icon": "Notix.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "notix\\.io/ent"
+    ],
+    "website": "https://notix.co"
+  },
+  "Nrdevo": {
+    "cats": [
+      1
+    ],
+    "description": "Nrdevo is a subscription-based software that allows anyone to set up a website, online store, and more.",
+    "icon": "Nrdevo.svg",
+    "meta": {
+      "generator": "^Nrdevo(?: ([0-9.]+))?$\\;version:\\1"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://nrdevo.com/"
+  },
+  "Nucleus CMS": {
+    "cats": [
+      1
+    ],
+    "description": "Nucleus CMS is a free, open-source web application framework and content management system.",
+    "icon": "NucleusCMS.svg",
+    "meta": {
+      "generator": "^Nucleus(?: CMS)?\\s+v?(\\d+\\.\\d+(?:\\.\\d+)?)\\;version:\\1"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "nucleuscms\\.er\\.cz/"
+    ],
+    "website": "https://www.nucleus-cms.com"
   },
   "Nudgify": {
     "cats": [
@@ -1313,7 +1755,6 @@
     "cats": [
       12,
       18,
-      22,
       57
     ],
     "description": "Nuxt is a Vue framework for developing modern web applications.",
@@ -1328,12 +1769,16 @@
     ],
     "js": {
       "$nuxt": "",
+      "__NUXT__": "",
       "useNuxtApp": ""
     },
     "scriptSrc": [
       "/_nuxt/"
     ],
-    "website": "https://nuxt.com"
+    "website": "https://nuxt.com",
+    "dom": [
+      "div[id^='__nuxt']"
+    ]
   },
   "nghttpx - HTTP/2 proxy": {
     "cats": [
@@ -1351,7 +1796,7 @@
     "cookies": {
       "Nop.customer": ""
     },
-    "description": "nopCommerce is an open-source ecommerce solution based on Microsoft's ASP.NET Core framework and MS SQL Server 2012 (or higher) backend database.",
+    "description": "nopCommerce is an open-source ecommerce solution based on Microsoft's ASP​.NET Core framework and MS SQL Server 2012 (or higher) backend database.",
     "html": [
       "(?:<!--Powered by nopCommerce|Powered by: <a[^>]+nopcommerce)"
     ],

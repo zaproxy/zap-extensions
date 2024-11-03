@@ -121,11 +121,16 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin
     public void scan() {
         try {
 
-            if (!getBaseMsg().getResponseHeader().isText()) {
+            if (!getBaseMsg().getResponseHeader().isText()
+                    || ResourceIdentificationUtils.responseContainsControlChars(getBaseMsg())) {
                 return; // Ignore images, pdfs, etc.
             }
             if (getAlertThreshold() != AlertThreshold.LOW
                     && ResourceIdentificationUtils.isJavaScript(getBaseMsg())) {
+                return;
+            }
+
+            if (isEvidenceInOriginalResponse()) {
                 return;
             }
             // at Low or Medium strength, do not attack URLs which returned "Not Found"
@@ -179,6 +184,13 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin
                     e.getMessage(),
                     e);
         }
+    }
+
+    private boolean isEvidenceInOriginalResponse() {
+        var response = getBaseMsg().getResponseBody().toString();
+        String responseBodyDecoded = new Source(response).getRenderer().toString();
+        return PHP_PATTERN1.matcher(responseBodyDecoded).matches()
+                || PHP_PATTERN2.matcher(responseBodyDecoded).matches();
     }
 
     private AlertBuilder buildAlert(String otherInfo) {

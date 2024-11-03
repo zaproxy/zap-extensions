@@ -41,36 +41,42 @@ public class ScriptsPassiveScanner extends PassiveScriptHelper {
     private int currentHistoryType;
 
     public ScriptsPassiveScanner() {
+        this(createScriptsCache());
+    }
+
+    private static ScriptsCache<PassiveScript> createScriptsCache() {
         ExtensionScript extension =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-        scripts =
-                extension != null
-                        ? extension.createScriptsCache(
-                                Configuration.<PassiveScript>builder()
-                                        .setScriptType(ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE)
-                                        .setTargetInterface(PassiveScript.class)
-                                        .setInterfaceProvider(
-                                                (scriptWrapper, targetInterface) -> {
-                                                    if (ScriptSynchronizerUtils.providesMetadata(
-                                                            scriptWrapper)) {
-                                                        return null;
-                                                    }
-                                                    var s =
-                                                            extension.getInterface(
-                                                                    scriptWrapper,
-                                                                    PassiveScript.class);
-                                                    if (s != null) {
-                                                        return s;
-                                                    }
-                                                    extension.handleFailedScriptInterface(
-                                                            scriptWrapper,
-                                                            Constant.messages.getString(
-                                                                    "scripts.scanRules.pscan.interfaceError",
-                                                                    scriptWrapper.getName()));
-                                                    return null;
-                                                })
-                                        .build())
-                        : null;
+        if (extension == null) {
+            return null;
+        }
+        return extension.createScriptsCache(
+                Configuration.<PassiveScript>builder()
+                        .setScriptType(ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE)
+                        .setTargetInterface(PassiveScript.class)
+                        .setInterfaceProvider(
+                                (scriptWrapper, targetInterface) -> {
+                                    if (ScriptSynchronizerUtils.providesMetadata(scriptWrapper)) {
+                                        return null;
+                                    }
+                                    var s =
+                                            extension.getInterface(
+                                                    scriptWrapper, PassiveScript.class);
+                                    if (s != null) {
+                                        return s;
+                                    }
+                                    extension.handleFailedScriptInterface(
+                                            scriptWrapper,
+                                            Constant.messages.getString(
+                                                    "scripts.scanRules.pscan.interfaceError",
+                                                    scriptWrapper.getName()));
+                                    return null;
+                                })
+                        .build());
+    }
+
+    private ScriptsPassiveScanner(ScriptsCache<PassiveScript> scripts) {
+        this.scripts = scripts;
     }
 
     @Override
@@ -99,7 +105,7 @@ public class ScriptsPassiveScanner extends PassiveScriptHelper {
 
     @Override
     public ScriptsPassiveScanner copy() {
-        ScriptsPassiveScanner copy = new ScriptsPassiveScanner();
+        ScriptsPassiveScanner copy = new ScriptsPassiveScanner(scripts);
         copy.currentHistoryType = currentHistoryType;
         return copy;
     }

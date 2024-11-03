@@ -19,11 +19,13 @@
  */
 package org.zaproxy.addon.automation;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -52,6 +54,17 @@ public class AutomationPlan {
     private Date finished;
 
     private static final Logger LOGGER = LogManager.getLogger(AutomationPlan.class);
+    private static final ObjectMapper YAML_OBJECT_MAPPER;
+
+    static {
+        YAML_OBJECT_MAPPER =
+                YAMLMapper.builder()
+                        .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+                        .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                        .serializationInclusion(JsonInclude.Include.NON_DEFAULT)
+                        .build();
+        YAML_OBJECT_MAPPER.findAndRegisterModules();
+    }
 
     public AutomationPlan() {
         super();
@@ -274,7 +287,6 @@ public class AutomationPlan {
             return false;
         }
         LOGGER.debug("Writing plan to {}", file.getAbsolutePath());
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         try (PrintWriter writer = new PrintWriter(file)) {
             Data data = new Data();
             data.setEnv(this.env.getData());
@@ -284,8 +296,9 @@ public class AutomationPlan {
 
             FilterProvider filters =
                     new SimpleFilterProvider()
-                            .addFilter("ignoreDefaultFilter", new DefaultPropertyFilter());
-            writer.println(objectMapper.writer(filters).writeValueAsString(data));
+                            .addFilter(
+                                    DefaultPropertyFilter.FILTER_ID, new DefaultPropertyFilter());
+            writer.println(YAML_OBJECT_MAPPER.writer(filters).writeValueAsString(data));
         }
         this.changed = false;
         AutomationEventPublisher.publishEvent(AutomationEventPublisher.PLAN_SAVED, this, null);

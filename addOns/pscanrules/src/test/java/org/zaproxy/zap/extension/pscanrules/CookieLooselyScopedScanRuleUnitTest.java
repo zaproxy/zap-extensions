@@ -62,7 +62,7 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
         return rule;
     }
 
-    private HttpMessage createBasicMessage() throws HttpMalformedHeaderException {
+    private static HttpMessage createBasicMessage() throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");
 
@@ -72,12 +72,8 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(565)));
-        assertThat(wasc, is(equalTo(15)));
         assertThat(tags.size(), is(equalTo(3)));
         assertAlertTags(tags);
     }

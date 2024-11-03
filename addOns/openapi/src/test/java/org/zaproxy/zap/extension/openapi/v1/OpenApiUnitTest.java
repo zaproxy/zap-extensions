@@ -84,7 +84,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkPetStore2dot0Requests(accessedUrls, "localhost:" + nano.getListeningPort());
     }

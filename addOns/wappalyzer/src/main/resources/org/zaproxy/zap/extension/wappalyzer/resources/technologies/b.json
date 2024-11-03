@@ -13,6 +13,28 @@
     ],
     "website": "https://www.b2ceurope.eu/"
   },
+  "BDOW": {
+    "cats": [
+      5,
+      32
+    ],
+    "description": "BDOW is a plugin offering set of marketing tools to automate a website's growth. These tools help drive extra traffic, engage visitors, increase email subscribers and build community.",
+    "icon": "Bdow.svg",
+    "js": {
+      "sumo": "",
+      "sumome": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.sumo(?:me)?\\.com/"
+    ],
+    "website": "https://bdow.com/"
+  },
   "BEM": {
     "cats": [
       12
@@ -21,7 +43,7 @@
     "html": [
       "<[^>]+data-bem"
     ],
-    "icon": "BEM.png",
+    "icon": "BEM.svg",
     "oss": true,
     "website": "https://en.bem.info"
   },
@@ -101,7 +123,7 @@
       "bsmartstate": ""
     },
     "description": "BSmart is an ecommerce platform, programmed by Microline.",
-    "icon": "BSmart.png",
+    "icon": "BSmart.svg",
     "js": {
       "BSmartConfirmWindow": "",
       "bsGetBSmartStock": "",
@@ -129,11 +151,16 @@
       89
     ],
     "description": "Bablic is a localisation solution to translate your website.",
-    "icon": "bablic.png",
+    "icon": "bablic.svg",
     "js": {
       "bablic": ""
     },
-    "website": "https://www.bablic.com/"
+    "website": "https://www.bablic.com",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ]
   },
   "Babylist": {
     "cats": [
@@ -166,7 +193,7 @@
       100
     ],
     "description": "Back In Stock lets your customers choose restock alerts for specific variant combinations, including size, colour or style.",
-    "icon": "Back In Stock.png",
+    "icon": "Back In Stock.svg",
     "pricing": [
       "freemium",
       "low",
@@ -181,13 +208,28 @@
     ],
     "website": "https://backinstock.org"
   },
+  "Backbase": {
+    "cats": [
+      53
+    ],
+    "description": "Backbase is an engagement banking platform, facilitating the modernization of core customer interactions and the restructuring of business operations with a customer-centric approach.",
+    "icon": "Backbase.svg",
+    "js": {
+      "backbase_com_2013_aurora": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.backbase.com"
+  },
   "Backbone.js": {
     "cats": [
       12
     ],
     "cpe": "cpe:2.3:a:backbone_project:backbone:*:*:*:*:*:*:*:*",
     "description": "BackboneJS is a JavaScript library that allows to develop and structure the client side applications that run in a web browser.",
-    "icon": "Backbone.js.png",
+    "icon": "Backbone.js.svg",
     "implies": [
       "Underscore.js"
     ],
@@ -198,7 +240,8 @@
     "scriptSrc": [
       "backbone.*\\.js"
     ],
-    "website": "https://backbonejs.org"
+    "website": "https://backbonejs.org",
+    "oss": true
   },
   "Backdrop": {
     "cats": [
@@ -226,6 +269,24 @@
     },
     "oss": true,
     "website": "https://backdropcms.org"
+  },
+  "BackerKit": {
+    "cats": [
+      111
+    ],
+    "cookies": {
+      "_backerkit_sessionv2": ""
+    },
+    "description": "Backerkit is a crowdfunding shipping fulfillment software solution.",
+    "icon": "BackerKit.svg",
+    "js": {
+      "BackerKitPreorders": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.backerkit\\.com/"
+    ],
+    "website": "https://www.backerkit.com"
   },
   "Backstretch": {
     "cats": [
@@ -255,12 +316,24 @@
       35
     ],
     "description": "Baidu Maps is a desktop and mobile web mapping service application and technology provided by Baidu, offering satellite imagery, street maps, street view and indoor view perspectives, as well as functions such as a route planner for traveling by foot, car, or with public transportation.",
-    "icon": "Baidu Maps.png",
+    "icon": "Baidu Maps.svg",
     "js": {
       "BMAP_API_VERSION": "(.+)\\;version:\\1",
       "bmap.version": "(.+)\\;version:\\1"
     },
     "website": "https://map.baidu.com"
+  },
+  "Baidu Search Box": {
+    "cats": [
+      29
+    ],
+    "description": "Baidu Search Box is a feature integrated within web pages enabling users to conduct searches directly on the site.",
+    "dom": [
+      "input[value='baidu'][name='tn']"
+    ],
+    "icon": "BaiduSearchBox.svg",
+    "saas": true,
+    "website": "https://www.baidu.com/search/sug/sugcode.html"
   },
   "BambooHR": {
     "cats": [
@@ -292,7 +365,7 @@
       103
     ],
     "description": "Bambuser is a SaaS company based in Stockholm that provides live video shopping technology.",
-    "icon": "Bambuser.png",
+    "icon": "Bambuser.svg",
     "js": {
       "BambuserLiveShopping": "",
       "_bambuser": ""
@@ -311,11 +384,28 @@
       5
     ],
     "description": "Bandsintown Events Widget is a free widget which makes it simple to embed your event listings and allow fans to buy tickets, RSVP, follow you and join your Email & SMS lists.",
-    "icon": "BandsInTown.png",
+    "icon": "BandsInTown.svg",
     "scriptSrc": [
       "widget\\.bandsintown\\.com/"
     ],
     "website": "https://artists.bandsintown.com/support/events-widget"
+  },
+  "BannerBoo": {
+    "cats": [
+      20
+    ],
+    "description": "BannerBoo is a graphic design software that enables users to create display banners in various sizes.",
+    "icon": "BannerBoo.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.bannerboo\\.com/"
+    ],
+    "website": "https://bannerboo.com"
   },
   "Banshee": {
     "cats": [
@@ -340,12 +430,29 @@
       59
     ],
     "description": "Barba.js is a small and easy-to-use javascript library that helps you creating fluid and smooth transitions between your website's pages.",
-    "icon": "Barba.js.png",
+    "icon": "Barba.js.svg",
     "js": {
       "barba.version": "^([\\d\\.]+)$\\;version:\\1"
     },
     "oss": true,
     "website": "https://barba.js.org"
+  },
+  "Baremetrics": {
+    "cats": [
+      10
+    ],
+    "description": "Baremetrics is a subscription analytics platform offering insights for payment providers like Stripe, Braintree, and others.",
+    "icon": "Baremetrics.svg",
+    "pricing": [
+      "payg",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.baremetrics\\.com/"
+    ],
+    "website": "https://baremetrics.com"
   },
   "Barilliance": {
     "cats": [
@@ -353,7 +460,7 @@
       98
     ],
     "description": "Barilliance is an ecommerce personalisation tools including cart abandonment emails, personalised product recommendations, onsite personalisation, and live notifications.",
-    "icon": "Barilliance.png",
+    "icon": "Barilliance.svg",
     "pricing": [
       "poa"
     ],
@@ -362,6 +469,25 @@
       "\\.barilliance\\.net/"
     ],
     "website": "https://www.barilliance.com"
+  },
+  "Barion": {
+    "cats": [
+      41
+    ],
+    "description": "Barion is a payment gateway and card acceptance system facilitating secure online transactions for businesses and consumers.",
+    "icon": "Barion.svg",
+    "js": {
+      "BarionAnalyticsObject": "",
+      "barion_pixel_id": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "pixel\\.barion\\.com/"
+    ],
+    "website": "https://www.barion.com"
   },
   "Base": {
     "cats": [
@@ -380,7 +506,31 @@
     "scriptSrc": [
       "thebase\\.in/js"
     ],
-    "website": "https://thebase.in"
+    "website": "https://thebase.com",
+    "saas": true,
+    "dom": [
+      "link[href*='.thebase.in/']"
+    ],
+    "pricing": [
+      "recurring",
+      "payg",
+      "mid"
+    ]
+  },
+  "BaseKit": {
+    "cats": [
+      51
+    ],
+    "description": "BaseKit is a platform offering website-building solutions for small businesses and individuals. It enables users to create websites easily with drag-and-drop tools and customizable templates, without the need to write code.",
+    "icon": "BaseKit.svg",
+    "js": {
+      "BaseKit": ""
+    },
+    "meta": {
+      "generator": "^BaseKit$"
+    },
+    "saas": true,
+    "website": "https://www.basekit.com/"
   },
   "Basic": {
     "cats": [
@@ -403,12 +553,35 @@
     "icon": "basilcss.svg",
     "website": "https://basilcss.com"
   },
+  "Basin": {
+    "cats": [
+      110
+    ],
+    "description": "Basin is a plug-and-play form backend for designers and developers, allowing users to collect submissions and track conversions without coding.",
+    "dom": [
+      "form[action*='usebasin.com/']"
+    ],
+    "icon": "Basin.svg",
+    "js": {
+      "onloadBasinCallback": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "js\\.usebasin\\.com/v([\\d\\.]+)\\.min\\.js\\;version:\\1"
+    ],
+    "website": "https://usebasin.com"
+  },
   "Basis Technologies": {
     "cats": [
       36
     ],
     "description": "Basis Technologies, formerly ‘Centro,’ provides cloud-based workflow automation and business intelligence software for marketing.",
-    "icon": "Basis.png",
+    "icon": "Basis.svg",
     "scriptSrc": [
       "cdn01\\.basis\\.net"
     ],
@@ -435,7 +608,7 @@
       96
     ],
     "description": "Bazaarvoice Curation is a content curation service Bazaarvoice provides post it's acquisition of Curalate.",
-    "icon": "Bazaarvoice.png",
+    "icon": "Bazaarvoice.svg",
     "pricing": [
       "high",
       "recurring"
@@ -452,7 +625,7 @@
       90
     ],
     "description": "Bazaarvoice is a provider of user-generated content solutions like ratings and reviews and Q&A.",
-    "icon": "Bazaarvoice.png",
+    "icon": "Bazaarvoice.svg",
     "js": {
       "BV.api": ""
     },
@@ -465,6 +638,45 @@
       "apps\\.bazaarvoice\\.com"
     ],
     "website": "https://www.bazaarvoice.com/products/ratings-and-reviews/"
+  },
+  "Bazo": {
+    "cats": [
+      10
+    ],
+    "description": "Bazo is a tool that identifies the company or organisation that visited your website and tracks its activities.",
+    "icon": "BazoIO.svg",
+    "js": {
+      "_bazoq": "",
+      "_bazou": "\\.bazo\\.io/",
+      "_bazov": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.bazo\\.io/"
+    ],
+    "website": "https://bazo.io"
+  },
+  "BeTheme": {
+    "cats": [
+      80
+    ],
+    "description": "BeTheme is a collection of WordPress themes developed by Muffin Group.",
+    "icon": "BeTheme.svg",
+    "pricing": [
+      "onetime"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/betheme/js/scripts(?:\\.min)?\\.js\\?ver=([\\d.]+)\\;version:\\1"
+    ],
+    "website": "https://www.betheme.com"
   },
   "Beam AfterSell": {
     "cats": [
@@ -547,6 +759,40 @@
     ],
     "website": "https://www.trybeans.com/"
   },
+  "Beaver Builder": {
+    "cats": [
+      87
+    ],
+    "description": "Beaver Builder is a drag-and-drop page builder for WordPress.",
+    "dom": [
+      "link[href*='/wp-content/uploads/bb-plugin/']"
+    ],
+    "icon": "BeaverBuilder.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "website": "https://www.wpbeaverbuilder.com/"
+  },
+  "Beddy": {
+    "cats": [
+      53
+    ],
+    "description": "Beddy is a hospitality management software designed to streamline operations, enhance guest experiences, and improve efficiency in hotels and other hospitality establishments.",
+    "icon": "Beddy.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.beddy\\.io/"
+    ],
+    "website": "https://www.beddy.io"
+  },
   "Beehiiv": {
     "cats": [
       11
@@ -607,11 +853,26 @@
       36
     ],
     "description": "Beeswax offers Bidder-as-a-Service solution.",
-    "icon": "Beeswax.png",
+    "icon": "Beeswax.svg",
     "scriptSrc": [
       "segment\\.prod\\.bidr\\.io"
     ],
     "website": "https://www.beeswax.com/"
+  },
+  "Bench": {
+    "cats": [
+      32
+    ],
+    "description": "Bench is a provider of omnichannel programmatic media and performance marketing solutions.",
+    "icon": "Bench.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "tag\\.benchplatform\\.com/"
+    ],
+    "website": "https://benchmedia.com"
   },
   "Bentobox": {
     "cats": [
@@ -631,6 +892,23 @@
       "\\.getbento\\.com/"
     ],
     "website": "https://getbento.com"
+  },
+  "Better Cart": {
+    "cats": [
+      6
+    ],
+    "description": "Better Cart is an ecommerce checkout powered by AI and predictive machine learning models.",
+    "icon": "BetterCart.svg",
+    "js": {
+      "betterCart$": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.getbettercart.com/"
   },
   "Better Click To Tweet": {
     "cats": [
@@ -673,6 +951,41 @@
     ],
     "website": "https://apps.shopify.com/better-price"
   },
+  "Better Replay": {
+    "cats": [
+      10
+    ],
+    "description": "Better Replay is a platform for session recording and replay, designed to capture and review content efficiently.",
+    "icon": "BetterReplay.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      ".api\\.better-replay\\.com/"
+    ],
+    "website": "https://www.better-replay.com"
+  },
+  "Better Search": {
+    "cats": [
+      87
+    ],
+    "description": "Better Search is a WordPress plugin designed to enhance your search experience.",
+    "dom": [
+      "link[href*='/wp-content/plugins/better-search/']"
+    ],
+    "icon": "BetterSearch.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "website": "https://webberzone.com/plugins/better-search/"
+  },
   "Better Stack": {
     "cats": [
       13
@@ -690,12 +1003,27 @@
     ],
     "website": "https://betterstack.com/uptime"
   },
+  "BetterBot": {
+    "cats": [
+      52
+    ],
+    "description": "BetterBot is a conversational leasing tool tailored for real estate.",
+    "icon": "BetterBot.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "(?:dashboard\\.betterbot\\.ai|\\.betterbot\\.com)"
+    ],
+    "website": "https://betterbot.com"
+  },
   "BetterDocs": {
     "cats": [
       4
     ],
     "description": "BetterDocs is an advanced documentation and knowledge base plugin for WordPress and Shopify.",
-    "icon": "BetterDocs.png",
+    "icon": "BetterDocs.svg",
     "js": {
       "betterdocs.FEEDBACK": "",
       "betterdocs_pro.FEEDBACK": "",
@@ -711,7 +1039,7 @@
       87
     ],
     "description": "BetterDocs plugin is an advanced documentation and knowledge base plugin for WordPress.",
-    "icon": "BetterDocs.png",
+    "icon": "BetterDocs.svg",
     "implies": [
       "BetterDocs"
     ],
@@ -745,6 +1073,26 @@
     "saas": true,
     "website": "https://www.bettyblocks.com"
   },
+  "Beusable": {
+    "cats": [
+      10
+    ],
+    "description": "Beusable is a tool that visualises site visitors' behaviour, offering insights through graphical data representations.",
+    "icon": "Beusable.svg",
+    "js": {
+      "__beusablerumclient__": ""
+    },
+    "pricing": [
+      "freemium",
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.beusable\\.net/"
+    ],
+    "website": "https://www.beusable.net"
+  },
   "Beyable": {
     "cats": [
       76
@@ -754,7 +1102,7 @@
       "beyable-cartd": ""
     },
     "description": "Beyable is a suite of tools that analyze website traffic to understand visitors' behaviors in real-time, through multi-channel in order to optimise conversion rate.",
-    "icon": "Beyable.png",
+    "icon": "Beyable.svg",
     "js": {
       "BEYABLE": "",
       "beYableDomain": "",
@@ -775,7 +1123,7 @@
       93
     ],
     "description": "BeyondMenu is an online food ordering service.",
-    "icon": "BeyondMenu.png",
+    "icon": "BeyondMenu.svg",
     "pricing": [
       "payg"
     ],
@@ -784,6 +1132,42 @@
       "static\\.beyondmenu\\.com/"
     ],
     "website": "https://www.beyondmenu.com/contactus.aspx"
+  },
+  "Biano": {
+    "cats": [
+      10
+    ],
+    "description": "Biano is a furnisher store tracking pixel designed to gather data on user interactions with furniture items for analytical purposes.",
+    "icon": "Biano.svg",
+    "js": {
+      "bianoTrack": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "pixel\\.biano\\.ro/"
+    ],
+    "website": "https://www.biano.ro"
+  },
+  "Bidmatic": {
+    "cats": [
+      36
+    ],
+    "description": "Bidmatic is a platform providing publisher-centric monetisation solutions, enabling publishers to manage their ad stack and maximise revenue through high-quality demand sources and advanced optimisation technology.",
+    "icon": "Bidmatic.svg",
+    "js": {
+      "nobidVersion": "([\\d.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.bidmatic\\.io/"
+    ],
+    "website": "https://bidmatic.io"
   },
   "Big Cartel": {
     "cats": [
@@ -823,7 +1207,10 @@
     "url": [
       "mybigcommerce\\.com"
     ],
-    "website": "https://www.bigcommerce.com"
+    "website": "https://www.bigcommerce.com",
+    "meta": {
+      "platform": "^bigcommerce"
+    }
   },
   "BigCommerce B2B Edition": {
     "cats": [
@@ -871,6 +1258,24 @@
       "api\\.bigdatacloud\\.net"
     ]
   },
+  "BigPoint": {
+    "cats": [
+      38
+    ],
+    "description": "BigPoint is a browser game portal that offers a collection of free online games.",
+    "dom": [
+      "form[action*='/Authentication/Bigpoint']"
+    ],
+    "icon": "BigPoint.svg",
+    "meta": {
+      "author": "Bigpoint GmbH"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.bigpoint.net"
+  },
   "BigTree CMS": {
     "cats": [
       1
@@ -895,7 +1300,7 @@
       53
     ],
     "description": "Bigin is a cloud-based customer relationship management (CRM) software.",
-    "icon": "Bigin.png",
+    "icon": "Bigin.svg",
     "js": {
       "BIGIN_SDK_API": "",
       "bigin._checkDataSize": "",
@@ -956,14 +1361,18 @@
       99
     ],
     "description": "Billbee is an order processing and inventory management solution.",
-    "icon": "Billbee.png",
+    "icon": "Billbee.svg",
     "requiresCategory": [
       6
     ],
     "text": [
       "\\bBillbee\\b"
     ],
-    "website": "https://www.billbee.io/"
+    "website": "https://www.billbee.io",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ]
   },
   "Binance Pay": {
     "cats": [
@@ -978,6 +1387,25 @@
       "freemium"
     ],
     "website": "https://pay.binance.com"
+  },
+  "BinderPOS": {
+    "cats": [
+      6
+    ],
+    "description": "Binder POS is an ecommerce platform designed for local game stores to manage inventories, automate pricing, and integrate with online marketplaces.",
+    "icon": "BinderPOS.svg",
+    "js": {
+      "binderPOSBuylist": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.binderpos\\.com/"
+    ],
+    "website": "https://www.binderpos.com"
   },
   "Birdeye": {
     "cats": [
@@ -1018,7 +1446,7 @@
       98
     ],
     "description": "BiteSpeed is an all-in-one Shopify marketing app which helps ecommerce brands recover revenue.",
-    "icon": "BiteSpeed.png",
+    "icon": "BiteSpeed.svg",
     "pricing": [
       "freemium",
       "low",
@@ -1088,7 +1516,7 @@
       111
     ],
     "description": "Blackbaud CRM gathers fundraising, online applications, actionable prospect research and analytics, and multichannel direct marketing into one platform.",
-    "icon": "Blackbaud.png",
+    "icon": "Blackbaud.svg",
     "js": {
       "BLACKBAUD": "",
       "don_premium_map": ""
@@ -1114,7 +1542,7 @@
     "headers": {
       "X-Powered-By": "blade-([\\w.]+)?\\;version:\\1"
     },
-    "icon": "Blade.png",
+    "icon": "Blade.svg",
     "implies": [
       "Java"
     ],
@@ -1133,7 +1561,24 @@
       "blazor\\.host\\.min\\.js",
       "blazor\\.webassembly\\.js"
     ],
-    "website": "https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor"
+    "website": "https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor",
+    "js": {
+      "Blazor": ""
+    }
+  },
+  "Bleckmann": {
+    "cats": [
+      99,
+      107
+    ],
+    "description": "Bleckmann is a logistics provider offering services to fashion and lifestyle brands, ensuring they meet customer delivery promises.",
+    "icon": "Bleckmann.svg",
+    "js": {
+      "API_BASE_URL_FE": "\\.bleckmann\\.com",
+      "apiCall": "\\.bleckmann\\.com"
+    },
+    "saas": true,
+    "website": "https://www.bleckmann.com"
   },
   "Blessing Skin": {
     "cats": [
@@ -1151,13 +1596,42 @@
   },
   "Blesta": {
     "cats": [
-      6
+      85
     ],
     "cookies": {
       "blesta_sid": ""
     },
-    "icon": "Blesta.png",
-    "website": "https://www.blesta.com"
+    "icon": "Blesta.svg",
+    "website": "https://www.blesta.com",
+    "description": "Blesta is a billing platform tailored for web hosting providers, featuring client management, automated billing, and support systems.",
+    "saas": true,
+    "pricing": [
+      "onetime",
+      "low",
+      "recurring"
+    ]
+  },
+  "Blinger": {
+    "cats": [
+      52,
+      53
+    ],
+    "cpe": "cpe:2.3:a:blinger:blinger:*:*:*:*:*:*:*:*",
+    "description": "Blinger is an omnichannel customer support and sales platform that aggregates messaging apps and live chat into a single helpdesk interface.",
+    "icon": "Blinger.svg",
+    "js": {
+      "Blinger": "",
+      "blingerInit": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.blinger\\.io/"
+    ],
+    "website": "https://blinger.io"
   },
   "Blitz": {
     "cats": [
@@ -1313,7 +1787,7 @@
       80
     ],
     "description": "Blossom Travel is a free WordPress theme which allows you to create various types of feminine blogs such as travel blog, personal blog, fashion blog, beauty blog, and many more.",
-    "icon": "Blossom.png",
+    "icon": "Blossom.svg",
     "js": {
       "blossom_travel_data": "",
       "blossom_travel_pro_data": ""
@@ -1374,7 +1848,7 @@
       78
     ],
     "description": "Blue Triangle is a connected view of marketing, web performance, and third-party tag analytics while constantly monitoring website code for security vulnerabilities.",
-    "icon": "Blue Triangle.png",
+    "icon": "Blue Triangle.svg",
     "js": {
       "_bttUtil.version": "([\\d.]+)\\;version:\\1"
     },
@@ -1467,7 +1941,7 @@
       76
     ],
     "description": "Blueknow is a ecommerce personalisation software designed to serve enterprises, SMEs.",
-    "icon": "Blueknow.png",
+    "icon": "Blueknow.svg",
     "js": {
       "Blueknow": "",
       "BlueknowTracker": ""
@@ -1486,11 +1960,15 @@
       10
     ],
     "description": "Blueshift offers the SmartHub CDP, which helps brands deliver relevant and connected experiences across every customer interaction.",
-    "icon": "Blueshift.png",
+    "icon": "Blueshift.svg",
     "scriptSrc": [
       "cdn.getblueshift.com/"
     ],
-    "website": "https://blueshift.com/"
+    "website": "https://blueshift.com",
+    "saas": true,
+    "pricing": [
+      "poa"
+    ]
   },
   "Bluestone PIM": {
     "cats": [
@@ -1507,6 +1985,23 @@
     "saas": true,
     "website": "https://www.bluestonepim.com"
   },
+  "Bnovo": {
+    "cats": [
+      53
+    ],
+    "description": "Bnovo is a hotel industry management system.",
+    "icon": "Bnovo.svg",
+    "js": {
+      "Bnovo_Widget": "",
+      "_bnovo_widget": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://bnovo.ru"
+  },
   "Boats Group": {
     "cats": [
       51
@@ -1515,7 +2010,7 @@
     "dom": [
       "a[href*='.boatsgroup.com/'][target='_blank']"
     ],
-    "icon": "Boats Group.png",
+    "icon": "Boats Group.svg",
     "pricing": [
       "poa"
     ],
@@ -1537,6 +2032,37 @@
     ],
     "website": "https://boba.space150.com"
   },
+  "Bobonus": {
+    "cats": [
+      93,
+      6
+    ],
+    "description": "Bobonus is an ecommerce platform for restaurants.",
+    "headers": {
+      "X-Powered-By": "https\\://bobonus\\.com"
+    },
+    "icon": "Bobonus.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://bobonus.com"
+  },
+  "Bodygram": {
+    "cats": [
+      6
+    ],
+    "description": "Bodygram is a tool for obtaining body measurements, allowing businesses to tailor products and services to customers at scale.",
+    "icon": "Bodygram.svg",
+    "js": {
+      "Body2FitWidget": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.bodygram\\.com/"
+    ],
+    "website": "https://bodygram.com"
+  },
   "BoidCMS": {
     "cats": [
       1
@@ -1556,7 +2082,7 @@
     "cats": [
       25
     ],
-    "icon": "bokeh.png",
+    "icon": "Bokeh.svg",
     "implies": [
       "Python"
     ],
@@ -1578,13 +2104,17 @@
     "icon": "Bokun.svg",
     "js": {
       "BokunWidgetEmbedder": "",
+      "BokunWidgets": "",
+      "__BokunWidgetsLoader": "",
       "__bokunWidgets": "",
       "bokunBookingChannelUUID": "",
+      "bokunPolyfillReady": "",
       "bokunSessionId": ""
     },
     "pricing": [
       "freemium",
-      "payg"
+      "payg",
+      "recurring"
     ],
     "saas": true,
     "website": "https://www.bokun.io"
@@ -1781,7 +2311,7 @@
       80
     ],
     "description": "Bold Themes is a powerful and easy to use premium WordPress themes.",
-    "icon": "Bold Themes.png",
+    "icon": "Bold Themes.svg",
     "implies": [
       "WordPress"
     ],
@@ -1843,14 +2373,16 @@
       1
     ],
     "cpe": "cpe:2.3:a:bolt:bolt:*:*:*:*:*:*:*:*",
-    "icon": "Bolt CMS.png",
+    "icon": "Bolt CMS.svg",
     "implies": [
       "PHP"
     ],
     "meta": {
       "generator": "Bolt"
     },
-    "website": "https://bolt.cm"
+    "website": "https://bolt.cm",
+    "oss": true,
+    "description": "Bolt is an open-source content management system (CMS) focused on simplicity and flexibility for developers building and managing websites and web applications."
   },
   "Bolt Payments": {
     "cats": [
@@ -1896,6 +2428,22 @@
     ],
     "website": "https://cibonfire.com"
   },
+  "Bontii": {
+    "cats": [
+      41
+    ],
+    "description": "Bontii is a subscription module facilitating integration between webshop and payment solutions.",
+    "icon": "Bontii.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.bontii\\.dk/"
+    ],
+    "website": "https://bontii.dk"
+  },
   "BookDinners": {
     "cats": [
       93
@@ -1906,6 +2454,24 @@
       "bookdinners\\.nl/widget\\.js"
     ],
     "website": "https://www.bookdinners.nl"
+  },
+  "BookManager": {
+    "cats": [
+      6
+    ],
+    "description": "BookManager is a software solution for booksellers and vendors.",
+    "icon": "BookManager.svg",
+    "js": {
+      "webpackJsonpbookmanager": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.bookmanager\\.com/"
+    ],
+    "website": "https://bookmanager.com"
   },
   "BookStack": {
     "cats": [
@@ -1931,7 +2497,7 @@
       72
     ],
     "description": "BookThatApp is a Shopify appointment booking, product rental and class booking app.",
-    "icon": "BookThatApp.png",
+    "icon": "BookThatApp.svg",
     "implies": [
       "Shopify"
     ],
@@ -1952,7 +2518,7 @@
       72
     ],
     "description": "BookVisit is an IT services and IT consulting, recreation, and hotel company located in Goteborg,Sweden.",
-    "icon": "BookVisit.png",
+    "icon": "BookVisit.svg",
     "pricing": [
       "poa"
     ],
@@ -1961,6 +2527,24 @@
       "online\\.bookvisit\\.com/"
     ],
     "website": "https://bookvisit.com"
+  },
+  "Bookafy": {
+    "cats": [
+      72
+    ],
+    "description": "Bookafy is a service that offers appointment scheduling and booking solutions for businesses and professionals.",
+    "icon": "Bookafy.svg",
+    "js": {
+      "bookafyPopup": "",
+      "openBookafyPopup": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://bookafy.com"
   },
   "Bookatable": {
     "cats": [
@@ -2065,7 +2649,7 @@
       87
     ],
     "description": "Bookly is a WordPress scheduling plugin that allows you to accept online reservations on your website and automate your booking system.",
-    "icon": "bookly.png",
+    "icon": "bookly.svg",
     "js": {
       "BooklyL10n.daysShort": "",
       "bookly": "",
@@ -2082,6 +2666,25 @@
       "/wp-content/plugins/bookly-responsive-appointment-booking-tool/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
     ],
     "website": "https://www.booking-wp-plugin.com"
+  },
+  "Bookster": {
+    "cats": [
+      53
+    ],
+    "description": "Bookster is a property management software designed for holiday rental owners and managers.",
+    "icon": "Bookster.svg",
+    "js": {
+      "bookster": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.booksterhq\\.com/"
+    ],
+    "website": "https://www.booksterhq.com"
   },
   "Booksy": {
     "cats": [
@@ -2123,7 +2726,7 @@
       100
     ],
     "description": "Boost Commerce provides beautiful and advanced product filter and smart site search for Shopify stores to boost sales.",
-    "icon": "Boost Commerce.png",
+    "icon": "Boost Commerce.svg",
     "js": {
       "bcSfFilterConfig.api.filterUrl": "services\\.mybcapps\\.com/",
       "boostPFSAppConfig.api.filterUrl": "services\\.mybcapps\\.com/"
@@ -2137,6 +2740,26 @@
     ],
     "saas": true,
     "website": "https://boostcommerce.net"
+  },
+  "Boost.ai": {
+    "cats": [
+      52,
+      53
+    ],
+    "description": "Boost.ai is a conversational AI platform designed to increase self-service rates and elevate customer satisfaction levels through end-to-end solutions.",
+    "dom": [
+      "link[href*='.boost.ai']"
+    ],
+    "icon": "BoostAI.svg",
+    "js": {
+      "boost": "",
+      "boostChatPanel": "",
+      "boostInit": ""
+    },
+    "scriptSrc": [
+      "\\.boost\\.ai/chatPanel/"
+    ],
+    "website": "https://boost.ai"
   },
   "Booster Page Speed Optimizer": {
     "cats": [
@@ -2178,7 +2801,7 @@
       "Bootic.assetsHost": "assets\\.btcdn\\.co"
     },
     "meta": {
-      "autor": "^Bootic$"
+      "author": "^Bootic$"
     },
     "pricing": [
       "mid",
@@ -2205,7 +2828,17 @@
     "scriptSrc": [
       "bootstrap(?:[^>]*?([0-9a-fA-F]{7,40}|[\\d]+(?:.[\\d]+(?:.[\\d]+)?)?)|)[^>]*?(?:\\.min)?\\.js\\;version:\\1"
     ],
-    "website": "https://getbootstrap.com"
+    "website": "https://getbootstrap.com",
+    "dom": {
+      "body[data-bs-theme]": {
+        "attributes": {
+          "data-bs-theme": "^(.*)$"
+        }
+      },
+      "style": {
+        "text": "--bs-(?:gutter|emphasis|space-x|tertiary-bg|secondary-color)"
+      }
+    }
   },
   "Bootstrap Icons": {
     "cats": [
@@ -2284,7 +2917,7 @@
       "bfx.logLevel": "^\\w+$"
     },
     "description": "Borderfree is an cross-border ecommerce solutions provider.",
-    "icon": "Borderfree.png",
+    "icon": "Borderfree.svg",
     "js": {
       "bfx._apiKey": "",
       "bfx._brand": ""
@@ -2322,6 +2955,45 @@
     ],
     "website": "https://borlabs.io/borlabs-cookie/"
   },
+  "BotPenguin": {
+    "cats": [
+      52
+    ],
+    "description": "BotPenguin is an AI chatbot creator for websites, WhatsApp, Facebook, and Telegram.",
+    "icon": "BotPenguin.svg",
+    "js": {
+      "BotPenguin": "",
+      "BotPenguinWindow": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.botpenguin\\.com/"
+    ],
+    "website": "https://botpenguin.com"
+  },
+  "BotUp": {
+    "cats": [
+      52
+    ],
+    "description": "BotUp is a chatbot software that helps build your chatbot without coding.",
+    "icon": "BotUp.svg",
+    "js": {
+      "_Botup": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://botup.com"
+  },
   "Botble CMS": {
     "cats": [
       1,
@@ -2333,11 +3005,70 @@
     "headers": {
       "CMS-Version": "^(.+)$\\;version:\\1\\;confidence:0"
     },
-    "icon": "Botble-CMS.png",
+    "icon": "BotbleCMS.svg",
     "implies": [
       "Laravel"
     ],
     "website": "https://botble.com"
+  },
+  "Botmind": {
+    "cats": [
+      52
+    ],
+    "description": "Botmind is a software that automates responses to frequently asked questions.",
+    "icon": "Botmind.svg",
+    "js": {
+      "botmindWidget": ""
+    },
+    "pricing": [
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.botmind\\.io/"
+    ],
+    "website": "https://www.botmind.io"
+  },
+  "Bottle": {
+    "cats": [
+      93
+    ],
+    "description": "Bottle is an all-in-one software for meal delivery businesses, enhancing operational efficiency and customer management.",
+    "icon": "Bottle.svg",
+    "implies": [
+      "Vue.js",
+      "Stripe"
+    ],
+    "js": {
+      "webpackChunkbottle_merchant_vue": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://bottle.com"
+  },
+  "Boulevard": {
+    "cats": [
+      72
+    ],
+    "description": "Boulevard is a business management platform tailored to streamline appointment-based operations, specifically designed for the wellness industry.",
+    "dom": [
+      "iframe[src*='.boulevard.io']"
+    ],
+    "icon": "Boulevard.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.joinboulevard\\.com/"
+    ],
+    "website": "https://www.joinblvd.com"
   },
   "Boutiq": {
     "cats": [
@@ -2359,6 +3090,23 @@
     "saas": true,
     "website": "https://www.getboutiq.com"
   },
+  "Boutir": {
+    "cats": [
+      6
+    ],
+    "description": "Boutir is a platform offering a minimalist shop interface and design system.",
+    "icon": "Boutir.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.boutir\\.com/"
+    ],
+    "website": "https://www.boutir.com"
+  },
   "BowNow": {
     "cats": [
       32
@@ -2370,7 +3118,7 @@
       "bownow_mbid": ""
     },
     "description": "BowNow is a marketing automation tool with business card management, sales support, analysis, and email magazine functions.",
-    "icon": "BowNow.png",
+    "icon": "BowNow.svg",
     "js": {
       "_bownow_ts": ""
     },
@@ -2381,6 +3129,24 @@
     ],
     "saas": true,
     "website": "https://bow-now.jp"
+  },
+  "Bowtie": {
+    "cats": [
+      53
+    ],
+    "description": "Bowtie is an AI-powered messaging platform for businesses that lets customers book appointments, buy products, and ask questions.",
+    "dom": [
+      "div#bowtie-widget-container"
+    ],
+    "icon": "Bowtie.png",
+    "js": {
+      "bowtieDataToken": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.bowtie.ai"
   },
   "Boxtal": {
     "cats": [
@@ -2453,7 +3219,7 @@
       10
     ],
     "description": "Branch is a mobile deep linking system to increase engagement and retention.",
-    "icon": "Branch.png",
+    "icon": "Branch.svg",
     "js": {
       "branch.setBranchViewData": "",
       "branch_callback__0": ""
@@ -2496,7 +3262,9 @@
     "icon": "Braze.svg",
     "js": {
       "appboy": "",
-      "appboyQueue": ""
+      "appboyQueue": "",
+      "braze.BrazeSdkMetadata": "",
+      "brazeQueue": ""
     },
     "pricing": [
       "poa"
@@ -2582,6 +3350,24 @@
     "saas": true,
     "website": "https://home.breinify.ai"
   },
+  "Brevo": {
+    "cats": [
+      52
+    ],
+    "description": "Brevo is a live chat system designed for customer support and engagement on websites.",
+    "icon": "Brevo.svg",
+    "js": {
+      "BrevoConversations": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.brevo.com"
+  },
   "Bricks": {
     "cats": [
       51,
@@ -2621,12 +3407,30 @@
     "saas": true,
     "website": "https://bricksite.io"
   },
+  "Bridgetown": {
+    "cats": [
+      57
+    ],
+    "description": "Bridgetown is an open-source static site generator built with Ruby, facilitating the creation of fast and efficient websites by generating static HTML and CSS files.",
+    "dom": [
+      "link[href^='/_bridgetown/static/']"
+    ],
+    "icon": "Bridgetown.svg",
+    "implies": [
+      "Ruby"
+    ],
+    "oss": true,
+    "scriptSrc": [
+      "^/_bridgetown/static/.+\\.js$"
+    ],
+    "website": "https://www.bridgetownrb.com"
+  },
   "BrightEdge": {
     "cats": [
       54
     ],
     "description": "BrightEdge is an SEO solution and content performance marketing platform.",
-    "icon": "BrightEdge.png",
+    "icon": "BrightEdge.svg",
     "js": {
       "BEJSSDK.CLIENT_VERSION": "([\\d\\.]+)\\;version:\\1",
       "_bright3.VERSION": "([\\d\\.]+)\\;version:\\1",
@@ -2663,6 +3467,23 @@
     ],
     "website": "https://www.brightinfo.com"
   },
+  "BrightLocal": {
+    "cats": [
+      54
+    ],
+    "description": "BrightLocal is an all-in-one local SEO dashboard for websites.",
+    "icon": "BrightLocal.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.brightlocal\\.com/"
+    ],
+    "website": "https://www.brightlocal.com"
+  },
   "Brightcove": {
     "cats": [
       14
@@ -2671,7 +3492,7 @@
     "dom": [
       "iframe[src*='players.brightcove.'], link[href*='players.brightcove.']"
     ],
-    "icon": "Brightcove.png",
+    "icon": "Brightcove.svg",
     "pricing": [
       "mid",
       "recurring"
@@ -2835,7 +3656,7 @@
       "_bsalemarket_session": ""
     },
     "description": "Bsale is an store management solution for retail businesses that sell both in store and online.",
-    "icon": "Bsale.png",
+    "icon": "Bsale.svg",
     "implies": [
       "Nginx"
     ],
@@ -2864,7 +3685,7 @@
       "x-bubble-capacity-used": "",
       "x-bubble-perf": ""
     },
-    "icon": "bubble.png",
+    "icon": "Bubble.svg",
     "implies": [
       "Node.js"
     ],
@@ -2966,6 +3787,26 @@
     "icon": "Bugcrowd.svg",
     "website": "https://www.bugcrowd.com"
   },
+  "Buglog": {
+    "cats": [
+      13
+    ],
+    "description": "Buglog is a tool for creating and sharing bug reports in real-time directly from the browser.",
+    "icon": "Buglog.svg",
+    "js": {
+      "buglog": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.buglog\\.io/"
+    ],
+    "website": "https://buglog.com"
+  },
   "Bugzilla": {
     "cats": [
       13
@@ -2980,7 +3821,7 @@
       "<a href=\"https?://www\\.bugzilla\\.org/docs/([0-9.]+)/[^>]+>Help<\\;version:\\1",
       "<span id=\"information\" class=\"header_addl_info\">version ([\\d.]+)<\\;version:\\1"
     ],
-    "icon": "Bugzilla.png",
+    "icon": "Bugzilla.svg",
     "implies": [
       "Perl"
     ],
@@ -3026,6 +3867,27 @@
     ],
     "saas": true,
     "website": "https://buildertrend.com"
+  },
+  "Bullseye": {
+    "cats": [
+      79
+    ],
+    "description": "Bullseye is a store locator software designed for location marketers, providing tools to help customers find nearby stores easily.",
+    "headers": {
+      "content-security-policy": "\\.bullseyelocations\\.com"
+    },
+    "icon": "Bullseye.svg",
+    "js": {
+      "bullseyeTracking": "",
+      "bullseyelistener": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.bullseyelocations.com"
   },
   "Bulma": {
     "cats": [
@@ -3191,6 +4053,26 @@
     ],
     "website": "https://buywithprime.amazon.com"
   },
+  "BuySafe": {
+    "cats": [
+      16
+    ],
+    "description": "BuySafe is a website seal that signifies adherence to stringent safety standards, ensuring secure online transactions and safeguarding user data.",
+    "icon": "BuySafe.svg",
+    "js": {
+      "buySAFE": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "seal\\.buysafe\\.com/"
+    ],
+    "website": "https://www.buysafe.com"
+  },
   "BuySellAds": {
     "cats": [
       36
@@ -3226,6 +4108,41 @@
       "cdn\\.co-buying\\.com/"
     ],
     "website": "https://www.buyapowa.com"
+  },
+  "Buz Club": {
+    "cats": [
+      53
+    ],
+    "description": "Buz Club is a provider of private club management software featuring real-time integration.",
+    "icon": "BuzClub.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "secure\\.buzclubsoftware\\.com"
+    ],
+    "website": "https://buzsoftware.com"
+  },
+  "BuzzBuilder": {
+    "cats": [
+      32
+    ],
+    "description": "BuzzBuilder is an automated sales platform that generates qualified leads through email campaigns, LinkedIn engagement, and follow-up calls.",
+    "icon": "BuzzBuilder.svg",
+    "js": {
+      "buzzbuilder": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.buzzbuilderpro\\.com/"
+    ],
+    "website": "https://buzzbuilderpro.com"
   },
   "BySide": {
     "cats": [
@@ -3267,6 +4184,24 @@
     ],
     "saas": true,
     "website": "https://www.bynder.com"
+  },
+  "Byscuit": {
+    "cats": [
+      67
+    ],
+    "description": "Byscuit is a tool for managing cookies on websites, allowing users to control and customise their cookie preferences for enhanced privacy and browsing experience.",
+    "icon": "Byscuit.svg",
+    "js": {
+      "onloadByscuit": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.byscuit\\.com/"
+    ],
+    "website": "https://www.byscuit.com"
   },
   "bSecure": {
     "cats": [

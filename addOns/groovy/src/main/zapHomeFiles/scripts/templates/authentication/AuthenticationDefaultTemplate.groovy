@@ -34,10 +34,6 @@ HttpMessage authenticate(AuthenticationHelper helper, Map<String, String> params
     // Set the number of maximum redirects followed to 5 (default is 100). Main purpose is to prevent infinite loops.
     helper.getHttpSender().setMaxRedirects(5)
 
-    // Allow circular redirects (default is not allow). Circular redirects happen when a request
-    // redirects to itself, or when a same request was already accessed in a chain of redirects.
-    helper.getHttpSender().setAllowCircularRedirects(true)
-
     helper.sendAndReceive(msg)
 
     return msg

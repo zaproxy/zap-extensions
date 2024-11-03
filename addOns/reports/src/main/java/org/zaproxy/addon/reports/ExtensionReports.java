@@ -150,6 +150,7 @@ public class ExtensionReports extends ExtensionAdaptor {
                     e -> {
                         getReportDialog().init();
                         getReportDialog().setVisible(true);
+                        Stats.incCounter("stats.ui.maintoolbar.button.reports");
                     });
         }
         return reportButton;

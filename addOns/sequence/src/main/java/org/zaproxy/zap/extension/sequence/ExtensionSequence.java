@@ -34,17 +34,19 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptCollection;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.script.SequenceScript;
+import org.zaproxy.zap.extension.zest.ExtensionZest;
 
 public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            List.of(ExtensionScript.class);
+            List.of(ExtensionNetwork.class, ExtensionScript.class, ExtensionZest.class);
 
     private ExtensionScript extScript;
     private ExtensionActiveScan extActiveScan;
@@ -59,6 +61,23 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
     public ExtensionSequence() {
         super("ExtensionSequence");
         this.setOrder(29);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+
+        scriptType =
+                new ScriptType(
+                        TYPE_SEQUENCE,
+                        "script.type.sequence",
+                        hasView()
+                                ? new ImageIcon(
+                                        getClass()
+                                                .getResource("resources/icons/script-sequence.png"))
+                                : null,
+                        false,
+                        new String[] {ScriptType.CAPABILITY_APPEND});
     }
 
     @Override
@@ -107,18 +126,6 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
     public void hook(ExtensionHook extensionhook) {
         super.hook(extensionhook);
 
-        // Create a new sequence script type and register
-        scriptType =
-                new ScriptType(
-                        TYPE_SEQUENCE,
-                        "script.type.sequence",
-                        hasView()
-                                ? new ImageIcon(
-                                        getClass()
-                                                .getResource("resources/icons/script-sequence.png"))
-                                : null,
-                        false,
-                        new String[] {"append"});
         getExtScript().registerScriptType(scriptType);
 
         if (hasView()) {
@@ -129,6 +136,15 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 
         // Add class as a scannerhook (implements the scannerhook interface)
         extensionhook.addScannerHook(this);
+    }
+
+    /**
+     * Gets the script type for sequences.
+     *
+     * @return the script type.
+     */
+    public ScriptType getScriptType() {
+        return scriptType;
     }
 
     @Override
@@ -210,7 +226,7 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
         return extScript;
     }
 
-    private ExtensionActiveScan getExtActiveScan() {
+    protected ExtensionActiveScan getExtActiveScan() {
         if (extActiveScan == null) {
             extActiveScan =
                     Control.getSingleton()

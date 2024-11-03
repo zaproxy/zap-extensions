@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [69] - 2024-10-23
+### Changed
+- The XML External Entity Attack scan rule now include example alert functionality for documentation generation purposes (Issue 6119).
+
+### Fixed
+- Added more checks for valid .htaccess files to reduce false positives (Issue 7632).
+
+## [68] - 2024-09-24
+### Changed
+- Maintenance changes.
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Spring Actuator
+    - XSLT Injection
+    - XPath Injection
+
+### Fixed
+- Address false positives with Source Code Disclosure - CVE-2012-1823 scan rule, by not scanning binary responses and responses that already contain PHP source (Issue 8638).
+- Cross Site Scripting Rule false positives at medium threshold by matching the expected context (Issue 8640).
+
 ## [67] - 2024-07-22
 
 ### Changed
@@ -536,6 +555,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[69]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v69
+[68]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v68
 [67]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v67
 [66]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v66
 [65]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v65

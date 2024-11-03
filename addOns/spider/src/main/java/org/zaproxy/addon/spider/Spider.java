@@ -651,6 +651,16 @@ public class Spider {
     }
 
     /**
+     * Gets the context that will be used in the scanning.
+     *
+     * @return the context
+     * @since 0.12.0
+     */
+    protected Context getScanContext() {
+        return scanContext;
+    }
+
+    /**
      * Sets the spider so it will scan from the point of view of a user.
      *
      * @param user the user to be scanned as

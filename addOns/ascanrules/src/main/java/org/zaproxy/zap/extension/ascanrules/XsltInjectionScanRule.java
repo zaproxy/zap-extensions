@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import org.apache.commons.httpclient.URIException;
@@ -184,12 +185,9 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin
                         }
 
                         if (raiseAlert) {
-                            raiseAlert(
-                                    msg,
-                                    param,
-                                    payload,
-                                    evidence,
-                                    checkType.getResourceIdentifier());
+                            createAlert(param, payload, evidence, checkType.getResourceIdentifier())
+                                    .setMessage(msg)
+                                    .raise();
                             return true;
                         }
                     }
@@ -242,20 +240,14 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin
                 MESSAGE_PREFIX + resourceIdentifier + ".otherinfo", param);
     }
 
-    private void raiseAlert(
-            HttpMessage msg,
-            String param,
-            String attack,
-            String evidence,
-            String resourceIdentifier) {
-        newAlert()
+    private AlertBuilder createAlert(
+            String param, String attack, String evidence, String resourceIdentifier) {
+        return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setParam(param)
                 .setAttack(attack)
                 .setOtherInfo(getOtherInfo(resourceIdentifier, evidence))
-                .setEvidence(evidence)
-                .setMessage(msg)
-                .raise();
+                .setEvidence(evidence);
     }
 
     @Override
@@ -306,5 +298,16 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin
     @Override
     public int getRisk() {
         return Alert.RISK_MEDIUM;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert(
+                                "foo",
+                                XSLTInjectionType.ERROR.getPayloads(null)[0],
+                                XSLTInjectionType.ERROR.getEvidences()[1],
+                                XSLTInjectionType.ERROR.getResourceIdentifier())
+                        .build());
     }
 }

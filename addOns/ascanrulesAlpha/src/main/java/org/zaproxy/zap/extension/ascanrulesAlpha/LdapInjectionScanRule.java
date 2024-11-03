@@ -193,6 +193,14 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
     }
 
     @Override
+    public void scan() {
+        if (isClientError(getBaseMsg()) || isServerError(getBaseMsg())) {
+            return;
+        }
+        super.scan();
+    }
+
+    @Override
     public void scan(HttpMessage msg, NameValuePair originalParam) {
         /*
          * Scan everything _except_ URL path parameters.
@@ -210,7 +218,6 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
      */
     @Override
     public void scan(HttpMessage originalmsg, String paramname, String paramvalue) {
-
         // for the purposes of our logic, we can handle a NULL parameter as an empty string. Saves
         // on NPEs.
         if (paramvalue == null) paramvalue = "";

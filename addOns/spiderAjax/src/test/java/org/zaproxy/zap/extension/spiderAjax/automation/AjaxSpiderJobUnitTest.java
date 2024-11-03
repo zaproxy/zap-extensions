@@ -581,11 +581,11 @@ class AjaxSpiderJobUnitTest {
                 Files.readString(planFile),
                 containsString(
                         "    excludedElements:\n"
-                                + "    - description: \"Description\"\n"
-                                + "      element: \"Element\"\n"
-                                + "      xpath: \"XPath\"\n"
-                                + "      text: \"Text\"\n"
-                                + "      attributeName: \"Attribute Name\"\n"
-                                + "      attributeValue: \"Attribute Value\""));
+                                + "    - description: Description\n"
+                                + "      element: Element\n"
+                                + "      xpath: XPath\n"
+                                + "      text: Text\n"
+                                + "      attributeName: Attribute Name\n"
+                                + "      attributeValue: Attribute Value"));
     }
 }

@@ -213,7 +213,13 @@ Any FORMs with a name or ID that matches one of these identifiers will be ignore
 Only use this feature to ignore FORMs that you know are safe, for example search forms.
 Form element names are sorted and de-duplicated when they are printed in the ZAP Report.
 <br>
-Note: The rule also takes into account the Partial match setting within the Anti-CSRF Options.
+Note:
+<ul>
+    <li>The rule also takes into account the Partial match setting within the Anti-CSRF Options.</li>
+    <li>GET requests are only evaluated at Low Threshold.</li>
+</ul>
+
+<p>]
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CsrfCountermeasuresScanRule.java">CsrfCountermeasuresScanRule.java</a>
 <br>
@@ -228,9 +234,14 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10033/">10033</a>.
 
 <h2 id="id-10097">Hash Disclosure</h2>
 Passively scans for password hashes disclosed by the web server. <br>
-Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes.
+Various formats are included, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes.
 <br>
-<strong>Note:</strong> This scan rule will only analyze JavaScript responses on LOW Threshold. 
+<strong>Note:</strong>
+<ul>
+    <li>This scan rule will only analyze text responses, and only analyze JavaScript responses on LOW Threshold.<li>
+    <li>The selection of Hash patterns which are evaluated is tied to the Confidence we have in the pattern and the Threshold set for the scan rule.
+        In other words: Low confidence patterns will only be included for evaluation at Low Threshold, etc.</li>
+</ul> 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/HashDisclosureScanRule.java">HashDisclosureScanRule.java</a>
 <br>
@@ -377,6 +388,8 @@ such as vp09.02.51.10.01.09.16, where the latter 4 octets appear to be a RFC 191
 After review an analyst can mark such alerts as False Positives in ZAP. For handling during 
 repeated scans the "Context Alert Filters" add-on could be leveraged.
 <p>
+This scan rule will only analyze text responses. 
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InfoPrivateAddressDisclosureScanRule.java">InfoPrivateAddressDisclosureScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/2/">2</a>.
@@ -497,6 +510,8 @@ If any context contains defined users this scan rule checks all responses for th
 They will also be hashed and searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the 
 amount of time needed to passively scan. (The default payloads are "Admin" and "admin".)<br>
 <p>Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact.
+<p>
+This scan rule will only analyze text responses. 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UsernameIdorScanRule.java">UsernameIdorScanRule.java</a>
 <br>

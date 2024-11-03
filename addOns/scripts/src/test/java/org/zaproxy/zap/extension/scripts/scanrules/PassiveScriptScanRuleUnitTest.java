@@ -41,6 +41,7 @@ import org.zaproxy.addon.commonlib.scanrules.Risk;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata;
 import org.zaproxy.zap.extension.pscan.PassiveScanData;
 import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.testutils.TestUtils;
 
@@ -105,6 +106,24 @@ public class PassiveScriptScanRuleUnitTest extends TestUtils {
         Alert alert = scanRule.newAlert().build();
         // Then
         assertThat(alert.getReference(), is(equalTo("")));
+    }
+
+    @Test
+    void shouldHonourScriptEngineThreadedPropertyOnAppliesToHistoryType() throws Exception {
+        // Given
+        PassiveScript scriptInterface = mock(PassiveScript.class);
+        ScriptWrapper script = createScriptWrapper(scriptInterface, PassiveScript.class);
+        var engine = mock(ScriptEngineWrapper.class);
+        given(engine.isSingleThreaded()).willReturn(true);
+        given(script.getEngine()).willReturn(engine);
+        int historyType = 1;
+        var scanRule = new PassiveScriptScanRule(script, null);
+        // When
+        scanRule.appliesToHistoryType(historyType);
+        scanRule.appliesToHistoryType(historyType);
+        // Then
+        verify(engine, times(2)).isSingleThreaded();
+        verify(scriptInterface, times(2)).appliesToHistoryType(historyType);
     }
 
     private <T> ScriptWrapper createScriptWrapper(T scriptInterface, Class<T> scriptClass)

@@ -21,11 +21,10 @@ package org.zaproxy.zap.extension.openapi.automation;
 
 import java.awt.Component;
 import java.io.File;
+import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -40,11 +39,12 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
     private static final String API_URL_PARAM = "openapi.automation.dialog.apiurl";
     private static final String TARGET_URL_PARAM = "openapi.automation.dialog.targeturl";
     private static final String CONTEXT_PARAM = "openapi.automation.dialog.context";
+    private static final String USER_PARAM = "automation.dialog.all.user";
 
     private OpenApiJob job;
 
     public OpenApiJobDialog(OpenApiJob job) {
-        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 250));
+        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(500, 300));
         this.job = job;
 
         this.addTextField(NAME_PARAM, this.job.getData().getName());
@@ -66,11 +66,14 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
         if (targetUrlField instanceof JTextField) {
             ((JTextField) targetUrlField).setText(this.job.getParameters().getTargetUrl());
         }
-        this.addContextSelectField(
-                CONTEXT_PARAM,
-                Model.getSingleton()
-                        .getSession()
-                        .getContext(this.job.getParameters().getContext()));
+
+        List<String> contextNames = job.getEnv().getContextNames();
+        contextNames.add(0, "");
+        this.addComboField(CONTEXT_PARAM, contextNames, job.getParameters().getContext());
+
+        List<String> users = job.getEnv().getAllUserNames();
+        users.add(0, "");
+        addComboField(USER_PARAM, users, job.getData().getParameters().getUser());
         this.addPadding();
     }
 
@@ -80,8 +83,8 @@ public class OpenApiJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setApiFile(this.getStringValue(API_FILE_PARAM));
         this.job.getParameters().setApiUrl(this.getStringValue(API_URL_PARAM));
         this.job.getParameters().setTargetUrl(this.getStringValue(TARGET_URL_PARAM));
-        Context context = this.getContextValue(CONTEXT_PARAM);
-        this.job.getParameters().setContext(context != null ? context.getName() : null);
+        this.job.getParameters().setContext(getStringValue(CONTEXT_PARAM));
+        this.job.getParameters().setUser(getStringValue(USER_PARAM));
         this.job.resetAndSetChanged();
     }
 

@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.dev;
 
+import org.parosproxy.paros.network.HtmlParameter;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 
 public abstract class TestPage implements HttpMessageHandler {
@@ -46,5 +48,13 @@ public abstract class TestPage implements HttpMessageHandler {
 
     public TestProxyServer getServer() {
         return server;
+    }
+
+    public String getFormParameter(HttpMessage msg, String name) {
+        return msg.getFormParams().stream()
+                .filter(p -> p.getName().equals(name))
+                .findFirst()
+                .map(HtmlParameter::getValue)
+                .orElse(null);
     }
 }

@@ -21,11 +21,14 @@ package org.zaproxy.addon.network.internal;
 
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Provider;
+import java.security.Security;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.net.ssl.SSLContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,6 +49,7 @@ public final class TlsUtils {
     private static final Logger LOGGER = LogManager.getLogger(TlsUtils.class);
 
     private static final String PROTOCOL_TLS = "TLS";
+    private static final String FILTER_TLS = "SSLContext.TLS";
 
     /**
      * Try to use something if not able to read the supported protocols.
@@ -58,12 +62,20 @@ public final class TlsUtils {
      */
     private static final List<String> FALLBACK_TLS_PROTOCOLS = Arrays.asList(TLS_V1_2);
 
-    private static final List<String> SUPPORTED_TLS_PROTOCOLS;
+    private static final List<String> SUPPORTED_TLS_PROTOCOLS = readSupportedTlsProtocols();
 
     private static final List<String> SUPPORTED_APPLICATION_PROTOCOLS =
             List.of(APPLICATION_PROTOCOL_HTTP_1_1, APPLICATION_PROTOCOL_HTTP_2);
 
-    static {
+    private static List<String> readSupportedTlsProtocols() {
+        Provider[] tlsProviders = Security.getProviders(FILTER_TLS);
+        if (tlsProviders == null) {
+            LOGGER.warn(
+                    "No security providers for {}, ZAP will not be able to establish TLS/SSL connections.",
+                    FILTER_TLS);
+            return List.of();
+        }
+
         LOGGER.debug("Reading supported SSL/TLS protocols...");
         List<String> tempSupportedProtocols;
         try {
@@ -73,14 +85,15 @@ public final class TlsUtils {
                     Arrays.asList(sslContext.getDefaultSSLParameters().getProtocols());
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             LOGGER.error(
-                    "Failed to read the SSL/TLS supported protocols. Using fallback protocol versions: {}",
+                    "Failed to read the SSL/TLS supported protocols (Available Providers: {}). Using fallback protocol versions: {}",
+                    Stream.of(tlsProviders).map(Provider::getName).collect(Collectors.joining(",")),
                     FALLBACK_TLS_PROTOCOLS,
                     e);
             tempSupportedProtocols = FALLBACK_TLS_PROTOCOLS;
         }
         Collections.sort(tempSupportedProtocols);
-        SUPPORTED_TLS_PROTOCOLS = Collections.unmodifiableList(tempSupportedProtocols);
-        LOGGER.info("Using supported SSL/TLS protocols: {}", SUPPORTED_TLS_PROTOCOLS);
+        LOGGER.info("Using supported SSL/TLS protocols: {}", tempSupportedProtocols);
+        return Collections.unmodifiableList(tempSupportedProtocols);
     }
 
     private TlsUtils() {}

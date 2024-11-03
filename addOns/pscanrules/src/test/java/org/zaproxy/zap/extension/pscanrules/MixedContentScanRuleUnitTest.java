@@ -46,12 +46,8 @@ class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedContentScanRu
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(311)));
-        assertThat(wasc, is(equalTo(4)));
         assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),

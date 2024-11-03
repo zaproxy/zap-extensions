@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
@@ -140,7 +141,9 @@ public class SpringActuatorScanRule extends AbstractHostPlugin implements Common
                             CONTENT_TYPE.matcher(contentType).find()
                                     && JSON_PAYLOAD.matcher(responseBody).find();
                     if (matches) {
-                        raiseAlert(testMsg, Alert.CONFIDENCE_MEDIUM, getRisk());
+                        createAlert(testMsg.getResponseBody().toString())
+                                .setMessage(testMsg)
+                                .raise();
                         break;
                     }
                 }
@@ -196,15 +199,17 @@ public class SpringActuatorScanRule extends AbstractHostPlugin implements Common
         return null;
     }
 
-    private void raiseAlert(HttpMessage msg, int confidence, int risk) {
-        newAlert()
-                .setRisk(risk)
-                .setConfidence(confidence)
+    private AlertBuilder createAlert(String evidence) {
+        return newAlert()
+                .setRisk(getRisk())
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setName(getAlertName())
-                .setEvidence(msg.getResponseHeader().getPrimeHeader())
                 .setReference(getReference())
-                .setMessage(msg)
-                .setEvidence(StringUtils.left(msg.getResponseBody().toString(), 100))
-                .raise();
+                .setEvidence(StringUtils.left(evidence, 100));
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("{\"status\" : \"UP\"}").build());
     }
 }

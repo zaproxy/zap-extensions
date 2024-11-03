@@ -26,6 +26,9 @@ import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 
 public class DefaultPropertyFilter extends SimpleBeanPropertyFilter {
+
+    static final String FILTER_ID = "ignoreDefaultFilter";
+
     @Override
     public void serializeAsField(
             Object pojo, JsonGenerator jgen, SerializerProvider provider, PropertyWriter writer)

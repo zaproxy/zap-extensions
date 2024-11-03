@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -162,5 +163,22 @@ class XsltInjectionScanRuleUnitTest extends ActiveScannerTest<XsltInjectionScanR
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A01_INJECTION.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts, hasSize(1));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getAlertRef(), is(equalTo("90017")));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

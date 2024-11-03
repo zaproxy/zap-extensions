@@ -4,7 +4,15 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Typo in automation job help.
 
+### Changed
+- Fields with default or missing values are omitted for the `replacer` job in saved Automation Framework plans.
+
+## [19] - 2024-10-07
+### Changed
+- Update ZAP API endpoint description.
 
 ## [18] - 2024-05-08
 ### Added
@@ -114,6 +122,7 @@ the dialogue when other match types are selected.
 
 - First version
 
+[19]: https://github.com/zaproxy/zap-extensions/releases/replacer-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/replacer-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/replacer-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/replacer-v16

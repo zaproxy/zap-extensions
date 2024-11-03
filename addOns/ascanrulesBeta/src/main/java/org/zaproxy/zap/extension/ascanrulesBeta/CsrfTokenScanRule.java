@@ -41,6 +41,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
@@ -124,6 +125,11 @@ public class CsrfTokenScanRule extends AbstractAppPlugin implements CommonActive
     public void scan() {
         if ((AlertThreshold.HIGH.equals(getAlertThreshold()) && !getBaseMsg().isInScope())
                 || !getBaseMsg().getResponseHeader().isHtml()) {
+            return;
+        }
+
+        if (!AlertThreshold.LOW.equals(getAlertThreshold())
+                && HttpRequestHeader.GET.equals(getBaseMsg().getRequestHeader().getMethod())) {
             return;
         }
 

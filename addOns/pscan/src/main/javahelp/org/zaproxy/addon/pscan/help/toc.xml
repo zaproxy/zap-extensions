@@ -6,7 +6,12 @@
 <toc version="2.0">
     <tocitem text="ZAP User Guide" tocid="toplevelitem">
         <tocitem text="Add Ons" tocid="addons">
-            <tocitem text="Passive Scanner" image="addon.pscan.icon" target="addon.pscan" />
+            <tocitem text="Passive Scanner" image="addon.pscan.icon" target="addon.pscan">
+                <tocitem text="Automation Framework" target="addon.pscan.automation">
+                    <tocitem text="Job: passiveScanConfig" target="addon.pscan.automation.pscanconf" />
+                    <tocitem text="Job: passiveScanWait" target="addon.pscan.automation.pscanwait" />
+                </tocitem>
+            </tocitem>
         </tocitem>
     </tocitem>
 </toc>

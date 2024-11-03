@@ -30,6 +30,7 @@ public class OastParam extends VersionedAbstractParam {
             PARAM_BASE_KEY + ".activeScanService";
     private static final String PARAM_USE_PERMANENT_DATABASE =
             PARAM_BASE_KEY + ".usePermanentDatabase";
+    private static final String PARAM_DAYS_TO_KEEP_RECORDS = PARAM_BASE_KEY + ".daysToKeepRecords";
 
     public static final String NO_ACTIVE_SCAN_SERVICE_SELECTED_OPTION = "None";
 
@@ -41,6 +42,7 @@ public class OastParam extends VersionedAbstractParam {
 
     private String activeScanServiceName;
     private boolean usePermanentDatabase;
+    private int daysToKeepRecords;
 
     public OastParam() {}
 
@@ -62,11 +64,21 @@ public class OastParam extends VersionedAbstractParam {
         getConfig().setProperty(PARAM_USE_PERMANENT_DATABASE, usePermanentDatabase);
     }
 
+    public int getDaysToKeepRecords() {
+        return daysToKeepRecords;
+    }
+
+    public void setDaysToKeepRecords(int daysToKeepRecords) {
+        this.daysToKeepRecords = daysToKeepRecords;
+        getConfig().setProperty(PARAM_DAYS_TO_KEEP_RECORDS, daysToKeepRecords);
+    }
+
     @Override
     protected void parseImpl() {
         activeScanServiceName =
                 getString(PARAM_ACTIVE_SCAN_SERVICE_NAME, NO_ACTIVE_SCAN_SERVICE_SELECTED_OPTION);
         usePermanentDatabase = getBoolean(PARAM_USE_PERMANENT_DATABASE, true);
+        daysToKeepRecords = getInteger(PARAM_DAYS_TO_KEEP_RECORDS, 45);
     }
 
     @Override

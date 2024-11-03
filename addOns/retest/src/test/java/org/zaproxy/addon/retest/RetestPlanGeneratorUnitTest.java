@@ -26,8 +26,10 @@ import static org.hamcrest.Matchers.is;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -36,13 +38,14 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationAlertTest;
+import org.zaproxy.addon.pscan.automation.jobs.PassiveScanConfigJob;
+import org.zaproxy.addon.pscan.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.utils.I18N;
 
 class RetestPlanGeneratorUnitTest extends TestUtils {
 
@@ -50,6 +53,8 @@ class RetestPlanGeneratorUnitTest extends TestUtils {
 
     @BeforeAll
     static void init() {
+        Constant.messages = new I18N(Locale.ENGLISH);
+
         List<AlertData> alertData = new ArrayList<>();
         HttpMessage msgOne = new HttpMessage();
         msgOne.getRequestHeader().setVersion(HttpHeader.HTTP11);

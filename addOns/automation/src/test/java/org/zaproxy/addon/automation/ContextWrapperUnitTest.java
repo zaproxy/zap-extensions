@@ -20,18 +20,24 @@
 package org.zaproxy.addon.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,6 +54,7 @@ import org.parosproxy.paros.model.Session;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.ContextWrapper.UserData;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.model.StandardParameterParser;
 import org.zaproxy.zap.session.HttpAuthSessionManagementMethodType.HttpAuthSessionManagementMethod;
 import org.zaproxy.zap.utils.I18N;
 
@@ -1306,6 +1313,180 @@ class ContextWrapperUnitTest {
         assertThat(
                 progress.getErrors().get(4),
                 is(equalTo("!automation.error.env.verification.logoutregex.bad!")));
+    }
+
+    @Test
+    void shouldLoadStructureData() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      structure:\n"
+                        + "        structuralParameters:\n"
+                        + "        - A\n"
+                        + "        - B\n"
+                        + "        - ${VAR}\n"
+                        + "";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.getWarnings(), is(empty()));
+        assertThat(progress.getErrors(), is(empty()));
+        assertThat(env.getContextWrappers(), hasSize(1));
+        var structure = env.getContextWrappers().get(0).getData().getStructure();
+        assertNotNull(structure);
+        assertThat(structure.getStructuralParameters(), contains("A", "B", "${VAR}"));
+    }
+
+    @Test
+    void shouldInitContextFromDefaultStructure() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        var env = mock(AutomationEnvironment.class);
+        given(env.replaceVars(any())).willAnswer(invocation -> invocation.getArgument(0));
+        var structure = new ContextWrapper.StructureData();
+        var context = new Context(session, 0);
+
+        // When
+        structure.initContext(context, env, progress);
+
+        // Then
+        assertThat(progress.getWarnings(), is(empty()));
+        assertThat(progress.getErrors(), is(empty()));
+        assertThat(context.getUrlParamParser(), is(instanceOf(StandardParameterParser.class)));
+        var urlParamParser = (StandardParameterParser) context.getUrlParamParser();
+        assertThat(urlParamParser.getStructuralParameters(), is(empty()));
+    }
+
+    @Test
+    void shouldInitContextFromStructureWithData() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        var env = mock(AutomationEnvironment.class);
+        given(env.replaceVars(any())).willAnswer(invocation -> invocation.getArgument(0));
+        var structure = new ContextWrapper.StructureData();
+        structure.setStructuralParameters(List.of("A", "B"));
+        var context = new Context(session, 0);
+
+        // When
+        structure.initContext(context, env, progress);
+
+        // Then
+        assertThat(progress.getWarnings(), is(empty()));
+        assertThat(progress.getErrors(), is(empty()));
+        assertThat(context.getUrlParamParser(), is(instanceOf(StandardParameterParser.class)));
+        var urlParamParser = (StandardParameterParser) context.getUrlParamParser();
+        assertThat(urlParamParser.getStructuralParameters(), contains("A", "B"));
+        verify(env).replaceVars("A");
+        verify(env).replaceVars("B");
+    }
+
+    @Test
+    void shouldInitContextFromStructureWithDataAndErrorOnInvalidStructuralParameter() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        var env = mock(AutomationEnvironment.class);
+        given(env.replaceVars(any())).willAnswer(invocation -> invocation.getArgument(0));
+        var structure = new ContextWrapper.StructureData();
+        structure.setStructuralParameters(List.of("A", "$", "B"));
+        var context = new Context(session, 0);
+
+        // When
+        structure.initContext(context, env, progress);
+
+        // Then
+        assertThat(progress.getWarnings(), is(empty()));
+        assertThat(
+                progress.getErrors(),
+                contains("!automation.error.context.badstructuralparametername!"));
+        assertThat(context.getUrlParamParser(), is(instanceOf(StandardParameterParser.class)));
+        var urlParamParser = (StandardParameterParser) context.getUrlParamParser();
+        assertThat(urlParamParser.getStructuralParameters(), contains("A", "B"));
+        verify(env).replaceVars("A");
+        verify(env).replaceVars("$");
+        verify(env).replaceVars("B");
+    }
+
+    @Test
+    void shouldErrorOnBadStructure() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      structure: []\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.getWarnings(), is(empty()));
+        assertThat(progress.getErrors(), contains("!automation.error.context.badstructure!"));
+    }
+
+    @Test
+    void shouldErrorOnBadStructuralParameters() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      structure:\n"
+                        + "        structuralParameters: {}\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.getWarnings(), is(empty()));
+        assertThat(
+                progress.getErrors(),
+                contains("!automation.error.context.badstructuralparameterslist!"));
+    }
+
+    @Test
+    void shouldErrorOnUnknownStructureField() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      structure:\n"
+                        + "        unknown: []";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.getWarnings(), contains("!automation.error.options.unknown!"));
+        assertThat(progress.getErrors(), is(empty()));
     }
 
     private static void assertFile(String path, File file) {

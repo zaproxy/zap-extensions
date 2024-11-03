@@ -31,9 +31,10 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.JobResultData;
-import org.zaproxy.addon.automation.gui.PassiveScanWaitJobDialog;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 
+@SuppressWarnings("removal")
+@Deprecated(forRemoval = true)
 public class PassiveScanWaitJob extends AutomationJob {
 
     public static final String JOB_NAME = "passiveScan-wait";
@@ -127,11 +128,6 @@ public class PassiveScanWaitJob extends AutomationJob {
     @Override
     public Parameters getParameters() {
         return parameters;
-    }
-
-    @Override
-    public void showDialog() {
-        new PassiveScanWaitJobDialog(this).setVisible(true);
     }
 
     @Override

@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Sequence Scanner" image="sequence-icon" target="sequence"/>
+			<tocitem text="Sequence Scanner" image="addon.sequence-icon" target="addon.sequence">
+				<tocitem text="Automation" target="addon.sequence.automation" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

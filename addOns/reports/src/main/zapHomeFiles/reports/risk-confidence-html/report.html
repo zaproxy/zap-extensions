@@ -29,7 +29,7 @@
 		<p data-th-text="#{report.zapVersion(${zapVersion})}">ZAP Version
 		</p>
 		<p>
-			ZAP is supported by the <a href="https://crashoverride.com/?zap=rep">Crash Override Open Source Fellowship</a>
+			ZAP by <a href="https://checkmarx.com/">Checkmarx</a>
 		</p>
 	</header>
 
@@ -512,7 +512,7 @@
 								<td
 									data-th-with="sourceMsg=#{${'report.template.alertType.' + userObject.source.getI18nKey()}}">
 									<th-block
-										data-th-with="sourceStr=${userObject.source.toString()}, scanData=${#{'ACTIVE': 'activeScanData', 'PASSIVE': 'passiveScanData'}.get(sourceStr)}, scanJobResultData=${reportData.reportObjects.get(scanData)}">
+										data-th-with="sourceStr=${userObject.source.toString()}, scanData=${#{'ACTIVE': 'activeScanData', 'PASSIVE': 'passiveScanData2'}.get(sourceStr)}, scanJobResultData=${reportData.reportObjects.get(scanData)}">
 									<th-block data-th-switch="${scanJobResultData}"> <th-block
 										data-th-case="${null}"> <th-block
 										data-th-switch="${userObject.pluginId}"> <th-block

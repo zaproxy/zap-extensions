@@ -140,13 +140,17 @@ public class BoastOptionsPanelTab extends OastOptionsPanelTab {
         }
     }
 
+    public void resetBoastServers() {
+        boastServersTableModel = null;
+        getBoastServersTable().setModel(getBoastServersTableModel());
+    }
+
     @Override
     public void initParam(OptionsParam options) {
         final BoastParam param = options.getParamSet(BoastParam.class);
         getBoastUri().setText(param.getBoastUri());
         getPollingFrequencySpinner().setValue(param.getPollingFrequency());
-        boastServersTableModel = null;
-        getBoastServersTable().setModel(getBoastServersTableModel());
+        resetBoastServers();
     }
 
     @Override

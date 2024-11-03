@@ -42,6 +42,7 @@ import org.zaproxy.addon.dev.auth.simpleJsonBearer.SimpleJsonBearerDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerCookie.SimpleJsonBearerCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerJsCookie.SimpleJsonBearerJsCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonCookie.SimpleJsonCookieDir;
+import org.zaproxy.addon.dev.seq.performance.PerformanceDir;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
@@ -94,9 +95,13 @@ public class TestProxyServer {
         htmlDir.addDirectory(locStoreDir);
         htmlDir.addDirectory(sessStoreDir);
 
+        TestDirectory seqDir = new TestDirectory(this, "seq");
+        seqDir.addDirectory(new PerformanceDir(this, "performance"));
+
         root.addDirectory(authDir);
         root.addDirectory(apiDir);
         root.addDirectory(htmlDir);
+        root.addDirectory(seqDir);
     }
 
     private Server getServer() {

@@ -144,8 +144,8 @@ public class AntiClickjackingScanRule extends PluginPassiveScanner
                 .setSolution(getAlertElement(currentVT, "soln"))
                 .setReference(getAlertElement(currentVT, "refs"))
                 .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId())
+                .setCweId(1021) // CWE-1021: Improper Restriction of Rendered UI Layers or Frames
+                .setWascId(15) // WASC-15: Application Misconfiguration
                 .setAlertRef(PLUGIN_ID + "-" + currentVT.getRef());
     }
 
@@ -164,15 +164,7 @@ public class AntiClickjackingScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
-        return 1021; //  CWE-1021: Improper Restriction of Rendered UI Layers or Frames
-    }
-
-    public int getWascId() {
-        return 15; // WASC-15: Application Misconfiguration
-    }
-
-    private String getAlertElement(VulnType currentVT, String element) {
+    private static String getAlertElement(VulnType currentVT, String element) {
         switch (currentVT) {
             case XFO_MISSING:
                 return Constant.messages.getString(MESSAGE_PREFIX + "missing." + element);
@@ -197,7 +189,7 @@ public class AntiClickjackingScanRule extends PluginPassiveScanner
      *     {@code null}.
      * @see <a href="https://tools.ietf.org/html/rfc7034#section-4">RFC 7034 Section 4</a>
      */
-    private String getMetaXFOEvidence(Source source) {
+    private static String getMetaXFOEvidence(Source source) {
         List<Element> metaElements = source.getAllElements(HTMLElementName.META);
         String httpEquiv;
 

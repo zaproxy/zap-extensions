@@ -263,6 +263,7 @@ public class AttackPanel extends QuickStartSubPanel {
             case safe:
             case protect:
                 this.getUrlField().setEnabled(false);
+                this.getUrlField().setModel(new DefaultComboBoxModel<>());
                 this.getUrlField()
                         .setSelectedItem(
                                 Constant.messages.getString("quickstart.field.url.disabled.mode"));
@@ -272,6 +273,7 @@ public class AttackPanel extends QuickStartSubPanel {
             case standard:
             case attack:
                 this.getUrlField().setEnabled(true);
+                this.getUrlField().setModel(getUrlModel());
                 this.getUrlField().setSelectedItem(DEFAULT_VALUE_URL_FIELD);
                 this.selectButton.setEnabled(true);
                 this.getAttackButton().setEnabled(true);

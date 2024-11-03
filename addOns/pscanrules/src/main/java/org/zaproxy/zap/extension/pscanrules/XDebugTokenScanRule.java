@@ -70,12 +70,12 @@ public class XDebugTokenScanRule extends PluginPassiveScanner implements CommonP
 
     private AlertBuilder buildAlert(String evidence) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_HIGH)
-                .setDescription(getDescription())
-                .setOtherInfo(getOtherInfo())
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
                 .setCweId(getCweId())
                 .setWascId(getWascId());
@@ -88,7 +88,7 @@ public class XDebugTokenScanRule extends PluginPassiveScanner implements CommonP
      * @param header the name of the header field being looked for
      * @return boolean status of existence
      */
-    private boolean responseHasHeader(HttpMessage msg, String header) {
+    private static boolean responseHasHeader(HttpMessage msg, String header) {
         return !msg.getResponseHeader().getHeaderValues(header).isEmpty();
     }
 
@@ -99,7 +99,7 @@ public class XDebugTokenScanRule extends PluginPassiveScanner implements CommonP
      * @param header the name of the header field(s) to be collected
      * @return list of the matched headers
      */
-    private List<String> getHeaders(HttpMessage msg, String header) {
+    private static List<String> getHeaders(HttpMessage msg, String header) {
         List<String> matchedHeaders = new ArrayList<>();
         String headers = msg.getResponseHeader().toString();
         String[] headerElements = headers.split("\\r\\n");
@@ -119,29 +119,9 @@ public class XDebugTokenScanRule extends PluginPassiveScanner implements CommonP
         return PLUGIN_ID;
     }
 
-    public int getRisk() {
-        return Alert.RISK_LOW;
-    }
-
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
-    }
-
-    public String getOtherInfo() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo");
-    }
-
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     @Override

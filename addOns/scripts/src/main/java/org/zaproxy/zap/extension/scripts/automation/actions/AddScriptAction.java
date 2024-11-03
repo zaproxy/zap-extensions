@@ -172,7 +172,7 @@ public class AddScriptAction extends ScriptAction {
             se = extScript.getEngineWrapper(this.parameters.getEngine());
         } catch (Exception e) {
             String filename = params.getSource();
-            if (filename != null && filename.contains(".")) {
+            if (StringUtils.isNotEmpty(filename) && filename.contains(".")) {
                 try {
                     se =
                             extScript.getEngineWrapper(
@@ -190,7 +190,7 @@ public class AddScriptAction extends ScriptAction {
     private ScriptWrapper getScriptWrapper(AutomationPlan plan) {
         ScriptWrapper sw = new ScriptWrapper();
         sw.setName(this.parameters.getName());
-        if (this.parameters.getSource() != null) {
+        if (StringUtils.isNotEmpty(parameters.getSource())) {
             File f = JobUtils.getFile(this.parameters.getSource(), plan);
             sw.setFile(f);
             if (StringUtils.isEmpty(sw.getName())) {

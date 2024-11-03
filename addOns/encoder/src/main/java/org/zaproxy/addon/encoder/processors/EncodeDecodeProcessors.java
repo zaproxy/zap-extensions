@@ -52,6 +52,7 @@ import org.zaproxy.addon.encoder.processors.predefined.UnicodeDecoder;
 import org.zaproxy.addon.encoder.processors.predefined.UnicodeEncoder;
 import org.zaproxy.addon.encoder.processors.predefined.UrlDecoder;
 import org.zaproxy.addon.encoder.processors.predefined.UrlEncoder;
+import org.zaproxy.addon.encoder.processors.predefined.utility.Ascify;
 import org.zaproxy.addon.encoder.processors.predefined.utility.LowerCase;
 import org.zaproxy.addon.encoder.processors.predefined.utility.RemoveWhitespace;
 import org.zaproxy.addon.encoder.processors.predefined.utility.Reverse;
@@ -103,6 +104,7 @@ public class EncodeDecodeProcessors {
         addPredefined("lowercase", LowerCase.getSingleton());
         addPredefined("uppercase", UpperCase.getSingleton());
         addPredefined("powershellencode", PowerShellEncoder.getSingleton());
+        addPredefined("ascify", Ascify.getSingleton());
     }
 
     private Map<String, EncodeDecodeProcessorItem> scriptProcessors = new HashMap<>();

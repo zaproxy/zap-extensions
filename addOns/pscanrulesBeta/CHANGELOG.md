@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Fixed
+- Fix typo in log message.
+
+### Changed
+- Maintenance changes.
+
+## [41] - 2024-09-02
+### Fixed
 - A possible false positive condition with the Dangerous JS Functions scan rule with substrings in certain circumstances (Issue 8553).
 
 ## [40] - 2024-07-24
@@ -336,6 +343,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[41]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v38

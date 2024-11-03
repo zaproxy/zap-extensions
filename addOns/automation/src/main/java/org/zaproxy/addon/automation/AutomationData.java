@@ -20,23 +20,15 @@
 package org.zaproxy.addon.automation;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
-import java.lang.reflect.Method;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonFilter("ignoreDefaultFilter")
+@JsonFilter(DefaultPropertyFilter.FILTER_ID)
+@JsonPropertyOrder({"name", "type"})
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class AutomationData {
 
-    private static final Logger LOGGER = LogManager.getLogger(AutomationData.class);
-
     public boolean isDefaultValue(String name) {
-        String getter = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
-        try {
-            Method method = this.getClass().getMethod(getter);
-            return method.invoke(this) == null;
-        } catch (Exception e) {
-            LOGGER.debug("Class {} no getter {}", this.getClass().getCanonicalName(), getter);
-        }
         return false;
     }
 }

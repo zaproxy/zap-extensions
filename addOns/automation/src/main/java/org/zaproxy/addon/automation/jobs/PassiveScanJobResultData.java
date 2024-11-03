@@ -38,6 +38,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 
+@Deprecated(forRemoval = true)
 public class PassiveScanJobResultData extends JobResultData {
 
     private static final Logger LOGGER = LogManager.getLogger(PassiveScanJobResultData.class);

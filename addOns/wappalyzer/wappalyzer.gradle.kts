@@ -33,7 +33,7 @@ zapAddOn {
     }
 
     apiClientGen {
-        api.set("org.zaproxy.zap.extension.wappalyzer.WappalyzerAPI")
+        api.set("org.zaproxy.zap.extension.wappalyzer.TechApi")
         messages.set(file("src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/Messages.properties"))
     }
 }

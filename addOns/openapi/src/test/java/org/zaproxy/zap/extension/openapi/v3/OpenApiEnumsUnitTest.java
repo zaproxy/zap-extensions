@@ -58,7 +58,7 @@ class OpenApiEnumsUnitTest extends AbstractServerTest {
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         requestor.addListener(listener);
         // When
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
         // Then
         HttpMessage message = accessedMessages.get(0);
         assertThat(message.getRequestHeader().getURI().getEscapedQuery(), is(equalTo("Name=123")));

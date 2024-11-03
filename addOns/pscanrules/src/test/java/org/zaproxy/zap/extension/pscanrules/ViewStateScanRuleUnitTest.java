@@ -61,12 +61,8 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(642)));
-        assertThat(wasc, is(equalTo(14)));
         assertThat(tags.size(), is(equalTo(2)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
@@ -253,7 +249,7 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
      * @param inject the string to inject
      * @return a base64 encoded string with the inject value injected at byte 40.
      */
-    private String getViewstateWithText(String inject) {
+    private static String getViewstateWithText(String inject) {
         String base =
                 "/wEPDwUJODczNjQ5OTk0D2QWAgIDD2QWAgIFDw8WAh4EVGV4dAUWSSBMb3ZlIERvdG5ldEN1cnJ5LmNvbWRkZMHbBY9JqBTvB5/6kXnY15AUSAwa";
         byte[] decoded;

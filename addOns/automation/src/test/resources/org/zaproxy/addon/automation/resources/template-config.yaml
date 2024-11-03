@@ -13,10 +13,11 @@ env:                                   # The environment, mandatory
     progressToStdout: true             # If set will write job progress to stdout
 
 jobs:
-
-  - type: passiveScan-config
-    name: passiveScan-config
+  - type: activeScan-policy
+    name: activeScan-policy
     parameters:
+      name: 
+
 
   - type: requestor
     name: requestor
@@ -28,11 +29,6 @@ jobs:
   - type: delay
     name: delay
     parameters:
-
-  - type: passiveScan-wait
-    name: passiveScan-wait
-    parameters:
-      maxDuration: 0
 
   - type: activeScan
     name: activeScan

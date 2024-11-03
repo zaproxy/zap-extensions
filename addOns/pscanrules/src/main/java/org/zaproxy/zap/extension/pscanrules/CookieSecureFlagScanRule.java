@@ -89,17 +89,18 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner
 
     private AlertBuilder buildAlert(HttpMessage msg, String headerValue) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setParam(CookieUtils.getCookieName(headerValue))
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(
                         CookieUtils.getSetCookiePlusName(
                                 msg.getResponseHeader().toString(), headerValue))
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setCweId(614) // CWE-614: Sensitive Cookie in HTTPS Session Without 'Secure'
+                // Attribute
+                .setWascId(13); // WASC-13: Info leakage;
     }
 
     @Override
@@ -107,38 +108,14 @@ public class CookieSecureFlagScanRule extends PluginPassiveScanner
         return PLUGIN_ID;
     }
 
-    public int getRisk() {
-        return Alert.RISK_LOW;
-    }
-
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 614; // CWE-614: Sensitive Cookie in HTTPS Session Without 'Secure' Attribute
-    }
-
-    public int getWascId() {
-        return 13; // WASC-13: Info leakage
     }
 
     private Model getModel() {

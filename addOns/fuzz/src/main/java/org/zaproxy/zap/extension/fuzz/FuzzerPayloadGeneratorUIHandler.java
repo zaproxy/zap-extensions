@@ -56,6 +56,7 @@ import org.jdesktop.swingx.search.SearchFactory;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.ExtensionFuzz.FuzzersDirChangeListener;
 import org.zaproxy.zap.extension.fuzz.FuzzerPayloadGeneratorUIHandler.FuzzerPayloadGeneratorUI;
+import org.zaproxy.zap.extension.fuzz.impl.Utils;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.FileStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.PayloadGenerator;
@@ -105,7 +106,7 @@ public class FuzzerPayloadGeneratorUIHandler
             implements PayloadGeneratorUI<DefaultPayload, FuzzerPayloadGenerator> {
 
         private final List<FuzzerPayloadSource> selectedFuzzers;
-        private int numberOfPayloads;
+        private long numberOfPayloads;
 
         private Path file;
         private String description;
@@ -173,10 +174,11 @@ public class FuzzerPayloadGeneratorUIHandler
         @Override
         public long getNumberOfPayloads() {
             if (numberOfPayloads == -1) {
-                numberOfPayloads = 0;
-                for (FuzzerPayloadSource selectedFuzzer : selectedFuzzers) {
-                    numberOfPayloads += selectedFuzzer.getPayloadGenerator().getNumberOfPayloads();
-                }
+                numberOfPayloads =
+                        Utils.sum(
+                                selectedFuzzers.stream()
+                                        .map(FuzzerPayloadSource::getPayloadGenerator)
+                                        .mapToLong(PayloadGenerator::getNumberOfPayloads));
             }
             return numberOfPayloads;
         }

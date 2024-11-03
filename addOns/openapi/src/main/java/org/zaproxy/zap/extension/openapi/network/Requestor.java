@@ -31,6 +31,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.network.HttpRedirectionValidator;
 import org.zaproxy.zap.network.HttpRequestConfig;
+import org.zaproxy.zap.users.User;
 
 public class Requestor {
 
@@ -48,6 +49,10 @@ public class Requestor {
     }
 
     public List<String> run(List<RequestModel> requestsModel) {
+        return run(null, requestsModel);
+    }
+
+    public List<String> run(User user, List<RequestModel> requestsModel) {
         List<String> errors = new ArrayList<>();
         try {
             for (RequestModel requestModel : requestsModel) {
@@ -61,6 +66,8 @@ public class Requestor {
                 httpRequest
                         .getRequestHeader()
                         .setContentLength(httpRequest.getRequestBody().length());
+
+                httpRequest.setRequestingUser(user);
 
                 try {
 
@@ -102,6 +109,10 @@ public class Requestor {
 
     public void removeListener(RequesterListener listener) {
         this.listeners.remove(listener);
+    }
+
+    public void setUser(User user) {
+        sender.setUser(user);
     }
 
     /** Notifies the {@link #listeners} of the messages sent. */

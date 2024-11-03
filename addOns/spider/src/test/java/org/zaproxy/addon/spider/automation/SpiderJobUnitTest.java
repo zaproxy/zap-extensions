@@ -21,6 +21,7 @@ package org.zaproxy.addon.spider.automation;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -157,7 +158,7 @@ class SpiderJobUnitTest extends TestUtils {
                 job.getConfigParameters(new SpiderParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(19)));
+        assertThat(params.size(), is(equalTo(18)));
         assertThat(params.containsKey("maxDuration"), is(equalTo(true)));
         assertThat(params.containsKey("maxDepth"), is(equalTo(true)));
         assertThat(params.containsKey("maxChildren"), is(equalTo(true)));
@@ -173,7 +174,6 @@ class SpiderJobUnitTest extends TestUtils {
         assertThat(params.containsKey("parseSVNEntries"), is(equalTo(true)));
         assertThat(params.containsKey("postForm"), is(equalTo(true)));
         assertThat(params.containsKey("processForm"), is(equalTo(true)));
-        assertThat(params.containsKey("requestWaitTime"), is(equalTo(true)));
         assertThat(params.containsKey("sendRefererHeader"), is(equalTo(true)));
         assertThat(params.containsKey("threadCount"), is(equalTo(true)));
         assertThat(params.containsKey("userAgent"), is(equalTo(true)));
@@ -661,7 +661,6 @@ class SpiderJobUnitTest extends TestUtils {
                         + "  parseSVNEntries: true\n"
                         + "  postForm: true\n"
                         + "  processForm: true\n"
-                        + "  requestWaitTime: 2\n"
                         + "  sendRefererHeader: true\n"
                         + "  threadCount: 2\n"
                         + "  userAgent: ua2";
@@ -698,7 +697,6 @@ class SpiderJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getParseSVNEntries(), is(equalTo(true)));
         assertThat(job.getParameters().getPostForm(), is(equalTo(true)));
         assertThat(job.getParameters().getProcessForm(), is(equalTo(true)));
-        assertThat(job.getParameters().getRequestWaitTime(), is(equalTo(2)));
         assertThat(job.getParameters().getSendRefererHeader(), is(equalTo(true)));
         assertThat(job.getParameters().getThreadCount(), is(equalTo(2)));
         assertThat(job.getParameters().getUserAgent(), is(equalTo("ua2")));
@@ -746,6 +744,29 @@ class SpiderJobUnitTest extends TestUtils {
                 is(equalTo("!spider.automation.error.failIfUrlsLessThan.deprecated!")));
         assertThat(job.getParameters().getFailIfFoundUrlsLessThan(), is(equalTo(true)));
         assertThat(job.getParameters().getWarnIfFoundUrlsLessThan(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldWarnOnDeprecatedRequestWaitTimeField() {
+        String yamlStr = "parameters:\n  context: context1\n  requestWaitTime: 200";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        SpiderJob job = new SpiderJob();
+
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(
+                progress.getWarnings(),
+                contains("!spider.automation.error.requestWaitTime.deprecated!"));
+        assertThat(job.getParameters().getRequestWaitTime(), is(equalTo(200)));
     }
 
     @Test

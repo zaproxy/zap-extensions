@@ -230,7 +230,7 @@ public class HtmlContext {
         if (context == null) {
             return false;
         }
-        if ((ignoreFlags ^ IGNORE_TAG) > 0) {
+        if ((ignoreFlags & IGNORE_TAG) == 0) {
             // check the tag
             if (this.tagAttribute != null) {
                 if (!this.tagAttribute.equals(context.getTagAttribute())) {
@@ -242,7 +242,7 @@ public class HtmlContext {
                 }
             }
         }
-        if ((ignoreFlags ^ IGNORE_QUOTES) > 0) {
+        if ((ignoreFlags & IGNORE_QUOTES) == 0) {
             // check the quotes
             if (this.surroundingQuote != null) {
                 if (!this.surroundingQuote.equals(context.getSurroundingQuote())) {
@@ -254,7 +254,7 @@ public class HtmlContext {
                 }
             }
         }
-        if ((ignoreFlags ^ IGNORE_PARENT) > 0) {
+        if ((ignoreFlags & IGNORE_PARENT) == 0) {
             // check the parents
             if (this.getParentTag() != null) {
                 if (!this.getParentTag().equals(context.getParentTag())) {
@@ -266,22 +266,22 @@ public class HtmlContext {
                 }
             }
         }
-        if ((ignoreFlags ^ IGNORE_IN_SCRIPT) > 0
+        if ((ignoreFlags & IGNORE_IN_SCRIPT) == 0
                 && this.inScriptAttribute != context.isInScriptAttribute()) {
             return false;
         }
-        if ((ignoreFlags ^ IGNORE_IN_SAFE) > 0
+        if ((ignoreFlags & IGNORE_IN_SAFE) == 0
                 && this.isInSafeParentTag() != context.isInSafeParentTag()) {
             return false;
         }
-        if ((ignoreFlags ^ IGNORE_WITH_SRC) > 0 && this.inTagWithSrc != context.isInTagWithSrc()) {
+        if ((ignoreFlags & IGNORE_WITH_SRC) == 0 && this.inTagWithSrc != context.isInTagWithSrc()) {
             return false;
         }
-        if ((ignoreFlags ^ IGNORE_IN_URL) > 0
+        if ((ignoreFlags & IGNORE_IN_URL) == 0
                 && this.inUrlAttribute != context.isInUrlAttribute()) {
             return false;
         }
-        if ((ignoreFlags ^ IGNORE_HTML_COMMENT) > 0
+        if ((ignoreFlags & IGNORE_HTML_COMMENT) == 0
                 && this.htmlComment != context.isHtmlComment()) {
             return false;
         }

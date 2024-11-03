@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +40,8 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author psiinon
  */
-public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin {
+public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     // wasc_10 is Denial of Service - well, its just an example ;)
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_10");
@@ -59,8 +61,7 @@ public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-        // Strip off the "Example Active Scan Rule: " part if implementing a real one ;)
-        return "Example Active Scan Rule: " + VULN.getName();
+        return Constant.messages.getString("ascanalpha.examplesimple.name");
     }
 
     @Override
@@ -118,18 +119,17 @@ public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin {
             // For this example we're just going to raise the alert at random!
 
             if (rnd.nextInt(10) == 0) {
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setParam(param)
-                        .setAttack(value)
-                        .setMessage(testMsg)
-                        .raise();
+                createAlert(param, attack).setMessage(testMsg).raise();
                 return;
             }
 
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private AlertBuilder createAlert(String param, String attack) {
+        return newAlert().setConfidence(Alert.CONFIDENCE_MEDIUM).setParam(param).setAttack(attack);
     }
 
     @Override
@@ -147,5 +147,10 @@ public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin {
     public int getWascId() {
         // The WASC ID
         return 0;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("foo", "attack").build());
     }
 }

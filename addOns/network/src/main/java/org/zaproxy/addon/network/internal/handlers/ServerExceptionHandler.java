@@ -25,6 +25,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.DecoderException;
 import io.netty.handler.timeout.ReadTimeoutException;
 import java.io.IOException;
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -91,10 +92,11 @@ public class ServerExceptionHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        if (nestedCause instanceof SSLHandshakeException) {
+        if (nestedCause instanceof SSLHandshakeException
+                || (nestedCause instanceof SSLException && isUnknownCa(nestedCause))) {
             Level level = Level.WARN;
             String causeMessage = nestedCause.getMessage();
-            if (causeMessage != null && causeMessage.contains("unknown_ca")) {
+            if (isUnknownCa(nestedCause)) {
                 causeMessage = "the client does not trust ZAP's Root CA Certificate.";
                 level = Level.DEBUG;
             }
@@ -110,5 +112,10 @@ public class ServerExceptionHandler extends ChannelInboundHandlerAdapter {
         }
 
         LOGGER.error(nestedCause, nestedCause);
+    }
+
+    private static boolean isUnknownCa(Throwable nestedCause) {
+        String causeMessage = nestedCause.getMessage();
+        return causeMessage != null && causeMessage.contains("unknown_ca");
     }
 }

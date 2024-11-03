@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,10 +30,10 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
+import org.zaproxy.addon.commonlib.timing.TimingUtils;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 
 /**
@@ -60,10 +61,22 @@ public class ShellShockScanRule extends AbstractAppParamPlugin implements Common
 
     private static final String ATTACK_1 =
             "() { :;}; echo '" + ATTACK_HEADER + ": " + EVIDENCE + "'";
-    // Will have sleep value concatenated on the end
-    private static final String ATTACK_2 = "() { :;}; /bin/sleep ";
 
-    private int sleep = 5;
+    private static final String SLEEP_TOKEN = "<<<<SLEEP>>>>";
+    private static final String ATTACK_2 = "() { :;}; /bin/sleep " + SLEEP_TOKEN;
+
+    /** The default number of seconds used in time-based attacks (i.e. sleep commands). */
+    private static final int DEFAULT_SLEEP_TIME = 5;
+
+    // limit the maximum number of requests sent for time-based attack detection
+    private static final int BLIND_REQUESTS_LIMIT = 4;
+
+    // error range allowable for statistical time-based blind attacks (0-1.0)
+    private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
+    private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
+
+    /** The number of seconds used in time-based attacks (i.e. sleep commands). */
+    private int timeSleepSeconds = DEFAULT_SLEEP_TIME;
 
     @Override
     public int getId() {
@@ -99,13 +112,15 @@ public class ShellShockScanRule extends AbstractAppParamPlugin implements Common
     public void init() {
         // Read the sleep value from the configs
         try {
-            this.sleep = this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 5);
+            this.timeSleepSeconds =
+                    this.getConfig()
+                            .getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, DEFAULT_SLEEP_TIME);
         } catch (ConversionException e) {
             LOGGER.debug(
                     "Invalid value for 'rules.common.sleep': {}",
                     this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
-        LOGGER.debug("Sleep set to {} seconds", sleep);
+        LOGGER.debug("Sleep set to {} seconds", timeSleepSeconds);
     }
 
     @Override
@@ -131,36 +146,46 @@ public class ShellShockScanRule extends AbstractAppParamPlugin implements Common
             // Then a timing attack
             // With PHP, the evidence will come out in the body (this will be caught by the timing
             // based attack)
-            boolean vulnerable = false;
-            HttpMessage msg2 = getNewMsg();
-            String attack = ATTACK_2 + sleep;
+            AtomicReference<HttpMessage> message = new AtomicReference<>();
+            AtomicReference<String> attack = new AtomicReference<>();
+            TimingUtils.RequestSender requestSender =
+                    x -> {
+                        HttpMessage msg = getNewMsg();
+                        message.compareAndSet(null, msg);
 
-            setParameter(msg2, paramName, attack);
-            sendAndReceive(msg2, false); // do not follow redirects
-            long attackElapsedTime = msg2.getTimeElapsedMillis();
+                        String finalPayload =
+                                ATTACK_2.replace(SLEEP_TOKEN, Integer.toString((int) x));
 
-            if (attackElapsedTime > TimeUnit.SECONDS.toMillis(sleep)) {
-                vulnerable = true;
-                if (!Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())
-                        && attackElapsedTime > TimeUnit.SECONDS.toMillis(6L)) {
-                    // Could be that the server is overloaded, try a safe request
-                    HttpMessage safeMsg = getNewMsg();
-                    sendAndReceive(safeMsg, false); // do not follow redirects
-                    if (safeMsg.getTimeElapsedMillis() > TimeUnit.SECONDS.toMillis(sleep)
-                            && (safeMsg.getTimeElapsedMillis() - attackElapsedTime)
-                                    < TimeUnit.SECONDS.toMillis(sleep)) {
-                        // Looks like the server is just overloaded
-                        vulnerable = false;
-                    }
-                }
-            }
+                        setParameter(msg, paramName, finalPayload);
+                        LOGGER.debug("Testing [{}] = [{}]", paramName, finalPayload);
+                        attack.compareAndSet(null, finalPayload);
+
+                        sendAndReceive(msg, false);
+                        return msg.getTimeElapsedMillis() / 1000.0;
+                    };
+
+            boolean vulnerable =
+                    TimingUtils.checkTimingDependence(
+                            BLIND_REQUESTS_LIMIT,
+                            timeSleepSeconds,
+                            requestSender,
+                            TIME_CORRELATION_ERROR_RANGE,
+                            TIME_SLOPE_ERROR_RANGE);
+
             if (vulnerable) {
-                buildTimingAlert(paramName, attack, attackElapsedTime).setMessage(msg2).raise();
+                var msg = message.get();
+                buildTimingAlert(paramName, attack.get(), msg.getTimeElapsedMillis())
+                        .setMessage(msg)
+                        .raise();
             }
 
         } catch (Exception e) {
             LOGGER.error("Error scanning a Host for ShellShock: {}", e.getMessage(), e);
         }
+    }
+
+    void setTimeSleepSeconds(int timeSleepSeconds) {
+        this.timeSleepSeconds = timeSleepSeconds;
     }
 
     private AlertBuilder createAlert() {

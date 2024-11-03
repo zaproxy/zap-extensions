@@ -33,7 +33,7 @@ public abstract class TestData extends AutomationData {
     @Override
     public boolean isDefaultValue(String name) {
         if ("name".equals(name)) {
-            return name.equals(getType());
+            return getName().equals(getType());
         }
         return super.isDefaultValue(name);
     }

@@ -19,10 +19,18 @@
  */
 package org.zaproxy.addon.network.internal.client.apachev5;
 
+import java.io.IOException;
+import java.io.InterruptedIOException;
+import java.net.ConnectException;
+import java.net.NoRouteToHostException;
+import java.net.UnknownHostException;
+import java.util.List;
+import javax.net.ssl.SSLException;
 import org.apache.hc.client5.http.HttpRequestRetryStrategy;
 import org.apache.hc.client5.http.cookie.BasicCookieStore;
 import org.apache.hc.client5.http.cookie.CookieStore;
 import org.apache.hc.client5.http.impl.DefaultHttpRequestRetryStrategy;
+import org.apache.hc.core5.http.ConnectionClosedException;
 import org.apache.hc.core5.http.HttpRequest;
 import org.apache.hc.core5.util.TimeValue;
 import org.parosproxy.paros.network.HttpSender;
@@ -39,6 +47,17 @@ public class HttpSenderContextApache extends BaseHttpSenderContext {
 
     private static final TimeValue RETRY_INTERVAL = TimeValue.ofSeconds(0L);
 
+    private static final List<Class<? extends IOException>> NON_RETRIABLE_EXCEPTIONS =
+            List.of(
+                    InterruptedIOException.class,
+                    UnknownHostException.class,
+                    ConnectException.class,
+                    ConnectionClosedException.class,
+                    NoRouteToHostException.class,
+                    SSLException.class);
+
+    private static final List<Integer> RETRIABLE_CODES = List.of();
+
     private HttpRequestRetryStrategy requestRetryStrategy;
     private CookieUsage cookieUsage;
     private CookieStore localCookieStore;
@@ -52,7 +71,8 @@ public class HttpSenderContextApache extends BaseHttpSenderContext {
         super.setMaxRetriesOnIoError(max);
 
         requestRetryStrategy =
-                new DefaultHttpRequestRetryStrategy(max, RETRY_INTERVAL) {
+                new DefaultHttpRequestRetryStrategy(
+                        max, RETRY_INTERVAL, NON_RETRIABLE_EXCEPTIONS, RETRIABLE_CODES) {
                     @Override
                     protected boolean handleAsIdempotent(HttpRequest request) {
                         return true;

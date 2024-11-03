@@ -85,7 +85,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private String getError(char c) {
+    private static String getError(char c) {
         return Constant.messages.getString(MESSAGE_PREFIX + "error" + c);
     }
 
@@ -145,7 +145,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
         return ALERT_TAGS;
     }
 
-    private String randomIntegerString(int length) {
+    private static String randomIntegerString(int length) {
 
         int numbercounter = 0;
         int character = 0;
@@ -169,7 +169,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
         return sb1.toString();
     }
 
-    private String singleString(int length, char c) // Single Character String
+    private static String singleString(int length, char c) // Single Character String
             {
 
         int numbercounter = 0;
@@ -241,7 +241,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
                 .setUri(url)
                 .setParam(param)
                 .setAttack(attack)
-                .setOtherInfo(this.getError(type))
+                .setOtherInfo(getError(type))
                 .setEvidence(evidence);
     }
 }

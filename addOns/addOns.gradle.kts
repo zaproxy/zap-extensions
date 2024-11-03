@@ -131,9 +131,11 @@ subprojects {
     }
 
     tasks.withType<JavaCompile>().configureEach {
+        val lintFlags = mutableListOf("-processing")
         if (JavaVersion.current().getMajorVersion() >= "21") {
-            options.compilerArgs = options.compilerArgs + "-Xlint:-this-escape"
+            lintFlags.add("-this-escape")
         }
+        options.compilerArgs = options.compilerArgs + "-Xlint:${lintFlags.joinToString(",")}"
     }
 
     tasks.named<JacocoReport>("jacocoTestReport") {

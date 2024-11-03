@@ -53,7 +53,7 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
                     + "ZWN1cml0eUNvbnRleHQgd2l0aCBhbiBhbm9ueW1vdXMgVG9rZW4iLCJ1bmtub"
                     + "3duIiwiaW5mbyJdXSwicmVxdWVzdF91cmkiOiJcL2xvZ2luIn0=";
 
-    private HttpMessage createMessage() throws URIException {
+    private static HttpMessage createMessage() throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));
 

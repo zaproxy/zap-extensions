@@ -2,13 +2,14 @@
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN" "http://java.sun.com/products/javahelp/index_2_0.dtd">
 <index version="2.0">
     <indexitem text="oast" target="oast"/>
-    <indexitem text="oast вкладка" target="oast.tab"/>
-    <indexitem text="oast опции " target="oast.options"/>
-    <indexitem text="oast службы" target="oast.services"/>
+    <indexitem text="oast api" target="oast.api"/>
+    <indexitem text="oast tab" target="oast.tab"/>
+    <indexitem text="oast options" target="oast.options"/>
+    <indexitem text="oast services" target="oast.services"/>
     <indexitem text="oast boast" target="oast.boast"/>
-    <indexitem text="oast boast опции" target="oast.boast.options"/>
-    <indexitem text="oast обратные вызовы " target="oast.callbacks"/>
-    <indexitem text="параметры обратного вызова oast " target="oast.callbacks.options"/>
+    <indexitem text="oast boast options" target="oast.boast.options"/>
+    <indexitem text="oast callbacks" target="oast.callbacks"/>
+    <indexitem text="oast callbacks options" target="oast.callbacks.options"/>
     <indexitem text="oast interactsh" target="oast.interactsh"/>
-    <indexitem text="oast interactsh опции" target="oast.interactsh.options"/>
+    <indexitem text="oast interactsh options" target="oast.interactsh.options"/>
 </index>

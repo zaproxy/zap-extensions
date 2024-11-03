@@ -201,6 +201,16 @@ class ScriptsPassiveScannerUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldReuseScriptsCacheWhenCopying() {
+        // Given
+        var scriptsPassiveScanner = new ScriptsPassiveScanner();
+        // When
+        scriptsPassiveScanner.copy();
+        // Then
+        verify(extensionScript).createScriptsCache(any());
+    }
+
+    @Test
     void shouldScanWithCopy() throws Exception {
         // Given
         PassiveScript script = Mockito.mock(TARGET_INTERFACE);

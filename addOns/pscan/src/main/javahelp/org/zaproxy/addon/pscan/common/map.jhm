@@ -6,4 +6,7 @@
 <map version="1.0">
     <mapID target="addon.pscan.icon" url="images/pscan.png" />
     <mapID target="addon.pscan" url="../help/contents/pscan.html" />
+    <mapID target="addon.pscan.automation" url="../help/contents/automation.html" />
+    <mapID target="addon.pscan.automation.pscanconf" url="../help/contents/job-pscanconf.html" />
+    <mapID target="addon.pscan.automation.pscanwait" url="../help/contents/job-pscanwait.html" />
 </map>

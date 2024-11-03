@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -314,7 +315,21 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
 
-    private NanoServerHandler createNanoHandler(
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts, hasSize(1));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
+    private static NanoServerHandler createNanoHandler(
             String path, NanoHTTPD.Response.IStatus status, String responseBody) {
         return new NanoServerHandler(path) {
             @Override

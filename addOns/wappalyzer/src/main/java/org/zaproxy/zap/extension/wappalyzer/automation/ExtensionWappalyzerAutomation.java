@@ -32,7 +32,7 @@ public class ExtensionWappalyzerAutomation extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionWappalyzerAutomation";
 
-    private WappalyzerJob job;
+    private TechJob job;
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(ExtensionWappalyzer.class, ExtensionAutomation.class);
@@ -51,7 +51,7 @@ public class ExtensionWappalyzerAutomation extends ExtensionAdaptor {
         super.hook(extensionHook);
         ExtensionAutomation extAuto =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
-        job = new WappalyzerJob();
+        job = new TechJob();
         extAuto.registerAutomationJob(job);
     }
 

@@ -4,7 +4,7 @@
       6
     ],
     "description": " X-Cart is an open source PHP shopping cart ecommerce software platform.",
-    "icon": "X-Cart.png",
+    "icon": "X-Cart.svg",
     "implies": [
       "PHP"
     ],
@@ -23,7 +23,7 @@
       72
     ],
     "description": "X.ai is a scheduling tool that organizes meeting times and improves lead conversion by adding embedded booking buttons to websites or within live chat applications.",
-    "icon": "X.ai.png",
+    "icon": "X.ai.svg",
     "js": {
       "xdotaiAction": "",
       "xdotaiButton": ""
@@ -122,7 +122,7 @@
     "html": [
       "<xsl[^>]* version=\"(.+)\"\\;version:\\1"
     ],
-    "icon": "W3C.png",
+    "icon": "W3C.svg",
     "website": "https://www.w3.org/TR/xslt-10"
   },
   "XWiki": {
@@ -137,7 +137,7 @@
     "html": [
       "<html[^>]data-xwiki-[^>]>"
     ],
-    "icon": "xwiki.png",
+    "icon": "xwiki.svg",
     "implies": [
       "Java\\;confidence:99"
     ],
@@ -145,6 +145,18 @@
       "wiki": "xwiki"
     },
     "website": "https://www.xwiki.org"
+  },
+  "XYZScripts": {
+    "cats": [
+      87
+    ],
+    "description": "XYZScripts is a provider of PHP clone scripts and WordPress plugins. It offers top-quality PHP and MySQL scripts to help build online businesses, with ready-to-deploy solutions that enable website setup.",
+    "dom": [
+      "a[href*='xyzscripts.com/'] + a[href*='www.xyzscripts.com']"
+    ],
+    "icon": "XYZScripts.svg",
+    "saas": true,
+    "website": "https://xyzscripts.com"
   },
   "Xajax": {
     "cats": [
@@ -161,11 +173,31 @@
     "cats": [
       6
     ],
-    "icon": "Xanario.png",
+    "icon": "Xanario.svg",
     "meta": {
       "generator": "xanario shopsoftware"
     },
-    "website": "https://xanario.de"
+    "website": "https://xanario.de",
+    "description": "Xanario is an ecommerce platform that offers a comprehensive system for online shop solutions, including CMS, CRM, shop management, blog integration, POS system, and warehouse management."
+  },
+  "Xano": {
+    "cats": [
+      3
+    ],
+    "description": "Xano is a no-code backend development platform that allows users to build and manage databases, APIs, and server-side logic without writing code.",
+    "icon": "Xano.svg",
+    "js": {
+      "XanoBaseStorage": "",
+      "XanoClient": "",
+      "XanoCookieStorage": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.xano.com"
   },
   "XenForo": {
     "cats": [
@@ -181,7 +213,7 @@
       "(?:jQuery\\.extend\\(true, XenForo|<a[^>]+>Forum software by XenForo™|<!--XF:branding|<html[^>]+id=\"XenForo\")",
       "<html id=\"XF\" "
     ],
-    "icon": "XenForo.png",
+    "icon": "XenForo.svg",
     "implies": [
       "PHP",
       "MySQL"
@@ -222,6 +254,23 @@
     "icon": "Xitami.png",
     "website": "https://xitami.com"
   },
+  "Xiuno BBS": {
+    "cats": [
+      1,
+      2
+    ],
+    "cpe": "cpe:2.3:a:xiuno:xiunobbs:*:*:*:*:*:*:*:*",
+    "description": "Xiunobbs is an open-source, lightweight forum software designed for easy community management and customization.",
+    "icon": "Xiuno BBS.svg",
+    "implies": [
+      "PHP"
+    ],
+    "meta": {
+      "author": "XiunoBBS\\s([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://xiunobbs.cn"
+  },
   "Xonic": {
     "cats": [
       6
@@ -243,11 +292,13 @@
       1
     ],
     "cpe": "cpe:2.3:a:xpressengine:xpressengine:*:*:*:*:*:*:*:*",
-    "icon": "XpressEngine.png",
+    "icon": "XpressEngine.svg",
     "meta": {
       "generator": "XpressEngine"
     },
-    "website": "https://www.xpressengine.com/"
+    "website": "https://www.xpressengine.com/",
+    "oss": true,
+    "description": "XpressEngine (XE) is an open-source content management system (CMS) designed for building and managing websites, blogs, and online communities."
   },
   "Xpresslane": {
     "cats": [
@@ -261,7 +312,7 @@
         }
       }
     },
-    "icon": "Xpresslane.png",
+    "icon": "Xpresslane.svg",
     "pricing": [
       "payg"
     ],
@@ -276,7 +327,7 @@
       6
     ],
     "description": "Xretail is a subscription based product that enables the omni-channel ecommerce approach to its customers.",
-    "icon": "Xretail.png",
+    "icon": "Xretail.svg",
     "meta": {
       "author": "^Xretail team$"
     },
@@ -294,12 +345,32 @@
     "dns": {
       "SOA": "\\.xserver\\.jp"
     },
-    "icon": "Xserver.png",
+    "icon": "Xserver.svg",
     "pricing": [
       "low",
       "recurring"
     ],
     "website": "https://www.xserver.ne.jp"
+  },
+  "Xtime": {
+    "cats": [
+      72
+    ],
+    "description": "Xtime is a company that provides automotive service scheduling and management solutions primarily for car dealerships and automotive service centers.",
+    "dom": [
+      "a[data-modified-by='xtime']"
+    ],
+    "icon": "Xtime.svg",
+    "js": {
+      "xtime": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "scriptSrc": [
+      "\\.xtime\\.com/scheduling"
+    ],
+    "website": "https://xtime.com"
   },
   "Xtra": {
     "cats": [
@@ -313,7 +384,7 @@
         }
       }
     },
-    "icon": "Xtra.png",
+    "icon": "Xtra.svg",
     "pricing": [
       "low",
       "onetime"
@@ -336,6 +407,25 @@
       "xtremepush": ""
     },
     "website": "https://xtremepush.com"
+  },
+  "Xzero Analytics": {
+    "cats": [
+      10
+    ],
+    "description": "Xzero Analytics is a tool for monitoring user journeys, analysing visitor sessions, gathering heatmaps, and more, enabling the observation and evolution of site traffic.",
+    "icon": "XZeroAnalytics.png",
+    "js": {
+      "xzero-analytics": ""
+    },
+    "pricing": [
+      "low",
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "analytics\\.xzero\\.co\\.uk"
+    ],
+    "website": "https://analytics.xzero.co.uk"
   },
   "xCharts": {
     "cats": [
@@ -362,10 +452,11 @@
     "html": [
       "<div class=\"copyright\">[^<]+<a[^>]+>xt:Commerce"
     ],
-    "icon": "xtCommerce.png",
+    "icon": "xtCommerce.svg",
     "meta": {
       "generator": "xt:Commerce"
     },
-    "website": "https://www.xt-commerce.com"
+    "website": "https://www.xt-commerce.com",
+    "description": "xtCommerce is an ecommerce platform offering a complete solution for online shop management, including SEO, mobile optimization, and integrated payment systems."
   }
 }

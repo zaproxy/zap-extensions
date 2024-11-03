@@ -818,7 +818,11 @@ public class ConsolePanel extends AbstractPanel {
                 }
                 // Yes, its deprecated, but there are no alternatives, and we have to be able to
                 // stop scripts
-                stop();
+                try {
+                    stop();
+                } catch (UnsupportedOperationException e) {
+                    LOGGER.warn("Unable to force stop the script.");
+                }
             }
         }
     }

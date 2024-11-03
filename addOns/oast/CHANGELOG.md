@@ -6,7 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Maintenance changes.
 
+
+## [0.20.0] - 2024-09-17
+### Added 
+- API support.
+- Raise alerts for OAST interactions that happened in other sessions.
+- Options to trim the OAST permanent database.
+
+### Changed
+- Depend on newer version of Database add-on.
+
+### Fixed
+- Address warnings when using BOAST payloads.
 
 ## [0.19.0] - 2024-07-18
 ### Changed
@@ -168,6 +182,7 @@ Button is disabled in that case.
 
 ## [0.1.0] - 2021-08-04
 
+[0.20.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.19.0
 [0.18.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.18.0
 [0.17.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.17.0

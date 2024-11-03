@@ -222,8 +222,8 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin implements CommonA
      * Check if the given payloadFormat causes an time delay in the server
      *
      * @param paramName the name of the parameter where to search for or injection
-     * @param payloadFormat format string that when formated with 1 argument makes a string that may
-     *     cause a delay equal to the number of second inserted by the format
+     * @param payloadFormat format string that when formatted with 1 argument makes a string that
+     *     may cause a delay equal to the number of second inserted by the format
      */
     private boolean checkIfCausesTimeDelay(String paramName, String payloadFormat) {
         AtomicReference<HttpMessage> message = new AtomicReference<>();

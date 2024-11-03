@@ -139,7 +139,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     public static final int DEFAULT_RELOAD_WAIT_TIME = 1000;
 
-    private static final String DEFAULT_BROWSER_ID = Browser.FIREFOX_HEADLESS.getId();
+    static final String DEFAULT_BROWSER_ID = Browser.FIREFOX_HEADLESS.getId();
 
     public static final boolean DEFAULT_CLICK_DEFAULT_ELEMS = true;
 

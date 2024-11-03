@@ -22,12 +22,14 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -343,6 +345,10 @@ class SpringActuatorScanRuleUnitTest extends ActiveScannerTest<SpringActuatorSca
         assertThat(cwe, is(equalTo(215)));
         assertThat(wasc, is(equalTo(13)));
         assertThat(tags.size(), is(equalTo(3)));
+        assertBaseTags(tags);
+    }
+
+    private static void assertBaseTags(Map<String, String> tags) {
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
@@ -361,5 +367,22 @@ class SpringActuatorScanRuleUnitTest extends ActiveScannerTest<SpringActuatorSca
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE.getValue())));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+
+        Alert alert = alerts.get(0);
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        Map<String, String> tags = alert.getTags();
+        assertThat(tags.size(), is(equalTo(4)));
+        assertBaseTags(tags);
+        assertThat(tags, hasKey("CWE-215"));
     }
 }

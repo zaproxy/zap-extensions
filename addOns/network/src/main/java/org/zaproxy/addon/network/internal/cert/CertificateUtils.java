@@ -340,7 +340,7 @@ public final class CertificateUtils {
      * @throws NoSuchAlgorithmException if no provider supports the used algorithms.
      */
     private static KeyPair generateKeyPair() throws NoSuchAlgorithmException {
-        SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+        SecureRandom random = new SecureRandom();
         random.setSeed(Long.toString(System.currentTimeMillis()).getBytes());
         KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
         keyGenerator.initialize(2048, random);

@@ -1,10 +1,20 @@
 # Changelog
 All notable changes to this add-on will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Allow other add-ons to create a Zest script from a list of messages.
 
+### Changed
+- Use Semantic Version.
+- Maintenance changes.
+
+## [47] - 2024-09-24
+### Fixed
+- Correctly handle added scripts with no engine name.
 
 ## [46] - 2024-06-28
 ### Added
@@ -338,6 +348,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[47]: https://github.com/zaproxy/zap-extensions/releases/zest-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/zest-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/zest-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/zest-v44

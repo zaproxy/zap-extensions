@@ -36,6 +36,7 @@ public class ExtensionEximAutomation extends ExtensionAdaptor {
             List.of(ExtensionExim.class, ExtensionAutomation.class);
 
     private ImportJob importJob;
+    private ExportJob exportJob;
 
     public ExtensionEximAutomation() {
         super(NAME);
@@ -49,10 +50,15 @@ public class ExtensionEximAutomation extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        ExtensionAutomation extAuto =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
+        ExtensionAutomation extAuto = getExtension(ExtensionAutomation.class);
         importJob = new ImportJob();
         extAuto.registerAutomationJob(importJob);
+        exportJob = new ExportJob(getExtension(ExtensionExim.class));
+        extAuto.registerAutomationJob(exportJob);
+    }
+
+    private static <T extends Extension> T getExtension(Class<T> clazz) {
+        return Control.getSingleton().getExtensionLoader().getExtension(clazz);
     }
 
     @Override
@@ -62,10 +68,10 @@ public class ExtensionEximAutomation extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        ExtensionAutomation extAuto =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
+        ExtensionAutomation extAuto = getExtension(ExtensionAutomation.class);
 
         extAuto.unregisterAutomationJob(importJob);
+        extAuto.unregisterAutomationJob(exportJob);
     }
 
     @Override

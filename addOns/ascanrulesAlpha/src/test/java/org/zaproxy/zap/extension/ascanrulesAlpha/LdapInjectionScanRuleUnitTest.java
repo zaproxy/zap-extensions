@@ -19,17 +19,35 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
+import fi.iki.elonen.NanoHTTPD;
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
+import java.io.IOException;
 import java.util.Map;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.core.scanner.ScannerParam;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.TechSet;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link LdapInjectionScanRule}. */
 class LdapInjectionScanRuleUnitTest extends ActiveScannerTest<LdapInjectionScanRule> {
+
+    private static final String DEFAULT_RESPONSE_STRING = "<html><body></body></html>";
 
     @Override
     protected LdapInjectionScanRule createScanner() {
@@ -75,5 +93,96 @@ class LdapInjectionScanRuleUnitTest extends ActiveScannerTest<LdapInjectionScanR
         // Then
         assertThat(rule.targets(allButLdap), is(equalTo(false)));
         assertThat(rule.targets(justLdap), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldSkipUrlParams() {
+        // Given
+        HttpMessage msg = createMessage("/param/test/");
+        rule.init(msg, parent);
+        scannerParam.setTargetParamsInjectable(ScannerParam.TARGET_URLPATH);
+        // When
+        rule.scan();
+        // Then
+        assertThat(countMessagesSent, is(equalTo(0)));
+    }
+
+    @Test
+    void shouldNotAlertIfRandomBodyIsEmpty() throws IOException {
+        // Given
+        String path = "/shouldNotAlertIfRandomBodyIsEmpty";
+        nano.addHandler(new LdapiHandler(path, Response.Status.OK, ""));
+        HttpMessage msg = getHttpMessage(path + "?find=bar");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, is(empty()));
+        assertThat(httpMessagesSent, is(not(empty())));
+    }
+
+    @ParameterizedTest(name = "With Status {arguments}")
+    @ValueSource(ints = {403, 404, 405, 500, 503})
+    void shouldNotContinueIfOriginalMessageWasAnError(int status) throws IOException {
+        // Given
+        String path = "/shouldNotContinueIfOriginalMessageWasAnError";
+        nano.addHandler(new LdapiHandler(path, Response.Status.OK, "different"));
+        HttpMessage msg = this.getHttpMessage("GET", path + "?find=bar", DEFAULT_RESPONSE_STRING);
+        msg.getResponseHeader().setStatusCode(status);
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, is(empty()));
+        assertThat(httpMessagesSent, is(empty()));
+    }
+
+    @Test
+    void shouldNotContinueIfPlaceboBodyIsTooSimilar() throws IOException {
+        // Given
+        String path = "/shouldNotContinueIfPlaceboBodyIsTooSimilar";
+        nano.addHandler(new LdapiHandler(path, Response.Status.OK, DEFAULT_RESPONSE_STRING));
+        HttpMessage msg = this.getHttpMessage("GET", path + "?find=bar", DEFAULT_RESPONSE_STRING);
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, is(empty()));
+        assertThat(httpMessagesSent, is(not(empty())));
+    }
+
+    private static HttpMessage createMessage(String path) {
+        try {
+
+            HttpMessage msg = new HttpMessage(new URI("https://example.com" + path, true));
+            msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
+            return msg;
+        } catch (URIException | HttpMalformedHeaderException | NullPointerException e) {
+            // Ignore
+        }
+        return null;
+    }
+
+    private static class LdapiHandler extends NanoServerHandler {
+        private final Response.IStatus status;
+        private final String randBody;
+
+        public LdapiHandler(String path, Response.IStatus status, String randBody) {
+            super(path);
+            this.status = status;
+            this.randBody = randBody;
+        }
+
+        @Override
+        protected Response serve(IHTTPSession session) {
+            String pValue = getFirstParamValue(session, "find");
+
+            if (pValue.length() == 21) {
+                return newFixedLengthResponse(status, NanoHTTPD.MIME_HTML, randBody);
+            }
+
+            return newFixedLengthResponse(
+                    NanoHTTPD.Response.Status.OK, NanoHTTPD.MIME_HTML, DEFAULT_RESPONSE_STRING);
+        }
     }
 }

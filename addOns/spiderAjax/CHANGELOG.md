@@ -4,7 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Fields with default or missing values are omitted for the `spiderAjax` job in saved Automation Framework plans.
 
+## [23.21.0] - 2024-09-02
+### Changed
+- Maintenance changes related to Passive Scanner add-on (Issue 7959).
 
 ## [23.20.0] - 2024-07-22
 ### Fixed
@@ -320,6 +325,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.21.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.21.0
 [23.20.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.20.0
 [23.19.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.19.0
 [23.18.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.18.0

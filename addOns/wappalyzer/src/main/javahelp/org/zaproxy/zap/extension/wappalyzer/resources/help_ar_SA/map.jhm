@@ -8,4 +8,5 @@
 
 	<mapID target="addon.wappalyzer" url="contents/wappalyzer.html" />
 	<mapID target="addon.wappalyzer.api" url="contents/api.html" />
+	<mapID target="addon.wappalyzer.options" url="contents/options.html" />
 </map>

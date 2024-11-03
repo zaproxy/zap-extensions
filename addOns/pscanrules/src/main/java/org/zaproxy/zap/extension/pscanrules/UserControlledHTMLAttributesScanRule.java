@@ -232,7 +232,7 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner
 
     // TODO: these methods have been extracted from CharsetMismatchScanner
     // I think we should create helper methods for them
-    private boolean isResponseHTML(HttpMessage message, Source source) {
+    private static boolean isResponseHTML(HttpMessage message, Source source) {
         String contentType = message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
         if (contentType == null) {
             return false;
@@ -252,13 +252,19 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner
         return newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_LOW)
-                .setDescription(getDescriptionMessage())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setParam(param.getName())
                 .setOtherInfo(
-                        getExtraInfoMessage(
-                                url, htmlElement, htmlAttribute, param, userControlledValue))
-                .setSolution(getSolutionMessage())
-                .setReference(getReferenceMessage())
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "extrainfo",
+                                url,
+                                htmlElement,
+                                htmlAttribute,
+                                param.getName(),
+                                param.getValue(),
+                                userControlledValue))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setCweId(20) // CWE-20: Improper Input Validation
                 .setWascId(20); // WASC-20: Improper Input Handling
     }
@@ -271,34 +277,6 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    /*
-     * Rule-associated messages
-     */
-
-    private String getDescriptionMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolutionMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReferenceMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    private String getExtraInfoMessage(
-            String url, String tag, String attr, HtmlParameter param, String userControlledValue) {
-        return Constant.messages.getString(
-                MESSAGE_PREFIX + "extrainfo",
-                url,
-                tag,
-                attr,
-                param.getName(),
-                param.getValue(),
-                userControlledValue);
     }
 
     @Override

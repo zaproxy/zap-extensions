@@ -78,7 +78,6 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
@@ -667,12 +666,14 @@ class ExtensionReportsUnitTest extends TestUtils {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html-plus"})
+    @SuppressWarnings("removal")
     void shouldIncludePassingRulesSectionInReport(String reportName) throws Exception {
         // Given
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportData();
-        PassiveScanJobResultData pscanData =
-                new PassiveScanJobResultData("test", new ArrayList<>());
+        var pscanData =
+                new org.zaproxy.addon.automation.jobs.PassiveScanJobResultData(
+                        "test", new ArrayList<>());
         reportData.addReportObjects(pscanData.getKey(), pscanData);
         File f = File.createTempFile("zap.reports.test", "x");
         Template template = getTemplateFromYamlFile(reportName);
@@ -737,6 +738,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         return node;
     }
 
+    @SuppressWarnings("removal")
     private static ReportData getTestReportDataWithAlerts()
             throws URIException, HttpMalformedHeaderException {
         ReportData reportData = new ReportData();
@@ -745,7 +747,9 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setIncludeAllConfidences(true);
         reportData.setIncludeAllRisks(true);
         List<PluginPassiveScanner> list = new ArrayList<>();
-        PassiveScanJobResultData pscanData = new PassiveScanJobResultData("passiveScan-wait", list);
+        var pscanData =
+                new org.zaproxy.addon.automation.jobs.PassiveScanJobResultData(
+                        "passiveScan-wait", list);
         reportData.addReportObjects(pscanData.getKey(), pscanData);
 
         AlertNode root = new AlertNode(0, "Test");
@@ -780,7 +784,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         return str.replaceFirst("generated=\".*\"", "generated=\"DATE\"")
                 .replaceFirst("@generated\": \".*\"", "@generated\": \"DATE\"")
                 .replaceAll("basic-.*/", "dir")
-                .replaceAll("[\\n\\r\\t]", "");
+                .replaceAll("[\\n\\r\\t ]+", " ");
     }
 
     @ParameterizedTest
@@ -1291,8 +1295,10 @@ class ExtensionReportsUnitTest extends TestUtils {
 
             generateTestFile("high-level-report");
             generateTestFile("traditional-json");
+            generateTestFile("traditional-json-plus");
             generateTestFile("traditional-md");
             generateTestFile("traditional-xml");
+            generateTestFile("traditional-xml-plus");
             generateTestFile("traditional-html");
             generateTestFile("traditional-html-plus");
 

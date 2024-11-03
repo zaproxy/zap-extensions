@@ -64,8 +64,12 @@ import javax.swing.JPanel;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.hc.client5.http.cookie.BasicCookieStore;
 import org.apache.hc.client5.http.cookie.CookieStore;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
@@ -208,6 +212,14 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         // Let the servers start after everything has been initialised.
         setOrder(Integer.MAX_VALUE);
 
+        // Prevent verbose INFO logging from Bouncy Castle JSSE provider.
+        setLogLevel(
+                List.of(
+                        "org.bouncycastle.jsse.provider.PropertyUtils",
+                        "org.bouncycastle.jsse.provider.ProvTlsClient",
+                        "org.bouncycastle.jsse.provider.ProvTlsServer"),
+                Level.WARN);
+
         // Force initialisation.
         TlsUtils.getSupportedTlsProtocols();
 
@@ -237,6 +249,30 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             HttpSender.setImpl(httpSenderNetwork);
         } catch (Exception e) {
             LOGGER.error("An error occurred while creating the sender:", e);
+        }
+    }
+
+    private static void setLogLevel(List<String> classnames, Level level) {
+        boolean updateLoggers = false;
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration configuration = ctx.getConfiguration();
+        for (String classname : classnames) {
+            LoggerConfig loggerConfig = configuration.getLoggerConfig(classname);
+            if (!classname.equals(loggerConfig.getName())) {
+                configuration.addLogger(
+                        classname,
+                        LoggerConfig.newBuilder()
+                                .withLoggerName(classname)
+                                .withLevel(level)
+                                .withConfig(configuration)
+                                .build());
+                updateLoggers = true;
+            }
+        }
+
+        System.err.println(updateLoggers);
+        if (updateLoggers) {
+            ctx.updateLoggers();
         }
     }
 
