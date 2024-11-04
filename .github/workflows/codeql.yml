@@ -31,7 +31,7 @@ jobs:
         uses: github/codeql-action/autobuild@v3
 
       - if: matrix.language == 'java'
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: true
           gradle-home-cache-includes: |
