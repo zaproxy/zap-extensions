@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Stats counter to the main toolbar button (Issue 8375).
+- Sequence data to JSON reports.
 
 ### Changed
 - Update automation job help.

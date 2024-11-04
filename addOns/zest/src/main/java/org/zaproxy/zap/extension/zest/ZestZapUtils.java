@@ -1009,10 +1009,14 @@ public class ZestZapUtils {
 
     public static HttpMessage toHttpMessage(ZestRequest request, ZestResponse response)
             throws URIException, HttpMalformedHeaderException {
-        if (request == null || request.getUrl() == null) {
+        if (request == null) {
             return null;
         }
-        HttpMessage msg = new HttpMessage(new URI(request.getUrl().toString(), false));
+        String url = request.getUrl() != null ? request.getUrl().toString() : request.getUrlToken();
+        if (url == null) {
+            return null;
+        }
+        HttpMessage msg = new HttpMessage(new URI(url, false));
         msg.setTimeSentMillis(request.getTimestamp());
         if (request.getHeaders() != null) {
             try {

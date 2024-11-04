@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.net.URL;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -35,6 +36,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestResponse;
 
 /** Unit test for {@link ZestZapUtils}. */
 class ZestZapUtilsUnitTest {
@@ -152,6 +154,81 @@ class ZestZapUtilsUnitTest {
         ZestRequest zestRequest = ZestZapUtils.toZestRequest(httpMessage, false, false, zestParam);
         // Then
         assertThat(zestRequest.getResponse(), is(nullValue()));
+    }
+
+    @Test
+    void shouldCreateStdHttpMessage() throws Exception {
+        // Given
+        String urlStr = "https://www.example.com";
+        ZestRequest req = new ZestRequest();
+        req.setUrl(new URL(urlStr));
+        req.setMethod("GET");
+        req.setHeaders("example-req-header: example-value");
+        ZestResponse resp =
+                new ZestResponse(
+                        new URL(urlStr),
+                        "HTTP/1.1 200 OK\r\nexample-resp-header: example-value",
+                        "The body",
+                        200,
+                        1234);
+
+        // When
+        HttpMessage msg = ZestZapUtils.toHttpMessage(req, resp);
+
+        // Then
+        assertThat(msg, is(not(nullValue())));
+        assertThat(msg.getRequestHeader(), is(not(nullValue())));
+        assertThat(msg.getRequestHeader().getURI().toString(), is(urlStr));
+        assertThat(msg.getRequestHeader().getHeaders().size(), is(2));
+        assertThat(msg.getRequestHeader().getHeaders().get(0).getName(), is("example-req-header"));
+        assertThat(msg.getRequestHeader().getHeaders().get(0).getValue(), is("example-value"));
+        assertThat(msg.getRequestHeader().getHeaders().get(1).getName(), is("content-length"));
+        assertThat(msg.getRequestHeader().getHeaders().get(1).getValue(), is("0"));
+        assertThat(msg.getRequestBody(), is(not(nullValue())));
+        assertThat(msg.getRequestBody().toString().length(), is(0));
+        assertThat(msg.getResponseHeader(), is(not(nullValue())));
+        assertThat(msg.getTimeElapsedMillis(), is(1234));
+        assertThat(msg.getResponseHeader().getStatusCode(), is(200));
+        assertThat(msg.getResponseHeader().getHeaders().size(), is(1));
+        assertThat(
+                msg.getResponseHeader().getHeaders().get(0).getName(), is("example-resp-header"));
+        assertThat(msg.getResponseHeader().getHeaders().get(0).getValue(), is("example-value"));
+        assertThat(msg.getResponseBody(), is(not(nullValue())));
+        assertThat(msg.getResponseBody().toString(), is("The body"));
+    }
+
+    @Test
+    void shouldCreateHttpMessageWithTokenInUrl() throws Exception {
+        // Given
+        String urlStr = "https://www.example.com";
+        ZestRequest req = new ZestRequest();
+        req.setUrlToken(urlStr + "/{{token}}");
+        req.setMethod("GET");
+        req.setHeaders("example-req-header: example-value");
+        ZestResponse resp =
+                new ZestResponse(
+                        new URL(urlStr),
+                        "HTTP/1.1 200 OK\r\nexample-resp-header: example-value",
+                        "The body",
+                        200,
+                        1234);
+
+        // When
+        HttpMessage msg = ZestZapUtils.toHttpMessage(req, resp);
+
+        // Then
+        assertThat(msg, is(not(nullValue())));
+        assertThat(msg.getRequestHeader(), is(not(nullValue())));
+        assertThat(msg.getRequestHeader().getURI().toString(), is(urlStr + "/%7B%7Btoken%7D%7D"));
+        assertThat(msg.getRequestHeader().getHeaders().size(), is(2));
+        assertThat(msg.getRequestBody(), is(not(nullValue())));
+        assertThat(msg.getRequestBody().toString().length(), is(0));
+        assertThat(msg.getResponseHeader(), is(not(nullValue())));
+        assertThat(msg.getTimeElapsedMillis(), is(1234));
+        assertThat(msg.getResponseHeader().getStatusCode(), is(200));
+        assertThat(msg.getResponseHeader().getHeaders().size(), is(1));
+        assertThat(msg.getResponseBody(), is(not(nullValue())));
+        assertThat(msg.getResponseBody().toString(), is("The body"));
     }
 
     private static ZestParam createZestParam() {

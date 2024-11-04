@@ -64,6 +64,7 @@ dependencies {
         exclude(group = "org.apache.logging.log4j")
     }
 
+    testImplementation(project(":addOns:sequence"))
     testImplementation(project(":testutils"))
     testImplementation(libs.log4j.core)
 }

@@ -20,8 +20,10 @@
 package org.zaproxy.zap.extension.sequence;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -41,6 +43,7 @@ import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zest.core.v1.ZestActionFailException;
 import org.zaproxy.zest.core.v1.ZestAssertFailException;
+import org.zaproxy.zest.core.v1.ZestAssertion;
 import org.zaproxy.zest.core.v1.ZestAssignFailException;
 import org.zaproxy.zest.core.v1.ZestClientFailException;
 import org.zaproxy.zest.core.v1.ZestInvalidCommonTestException;
@@ -66,6 +69,8 @@ public class StdActiveScanRunner extends ZestZapRunner {
 
     private final ExtensionHistory extHistory;
     private final ExtensionSequence extSeq;
+
+    @Getter private List<SequenceStepData> steps = new ArrayList<>();
 
     public StdActiveScanRunner(
             ZestScriptWrapper wrapper,
@@ -137,6 +142,25 @@ public class StdActiveScanRunner extends ZestZapRunner {
                         // Ignore
                     }
                 }
+
+                ZestRequest req = (ZestRequest) stmt;
+                boolean passed = true;
+                String result = Constant.messages.getString("sequence.automation.step.pass");
+                for (ZestAssertion za : req.getAssertions()) {
+                    if (!za.isValid(this)) {
+                        passed = false;
+                        result = ZestZapUtils.toUiFailureString(za, this);
+                    }
+                }
+
+                steps.add(
+                        new SequenceStepData(
+                                step,
+                                passed,
+                                result,
+                                ascan.getAlertsIds(),
+                                ZestZapUtils.toHttpMessage(req, req.getResponse()),
+                                msg));
             }
         }
 
@@ -171,5 +195,30 @@ public class StdActiveScanRunner extends ZestZapRunner {
                     e);
         }
         return temp;
+    }
+
+    @Getter
+    public static class SequenceStepData {
+        private int step;
+        private boolean pass;
+        private String result;
+        private List<Integer> alertIds;
+        private HttpMessage originalMsg;
+        private HttpMessage replayMsg;
+
+        public SequenceStepData(
+                int step,
+                boolean pass,
+                String result,
+                List<Integer> alertIds,
+                HttpMessage originalMsg,
+                HttpMessage replayMsg) {
+            this.step = step;
+            this.pass = pass;
+            this.result = result;
+            this.alertIds = alertIds;
+            this.originalMsg = originalMsg;
+            this.replayMsg = replayMsg;
+        }
     }
 }
