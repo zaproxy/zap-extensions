@@ -12,6 +12,7 @@
 				<tocitem text="Environment" target="automation.env"/>
 				<tocitem text="Authentication" target="automation.auth"/>
 				<tocitem text="Job: addOns" target="automation.addons"/>
+				<tocitem text="Job: activeScan-config" target="automation.ascanconfig"/>
 				<tocitem text="Job: activeScan-policy" target="automation.ascanpolicy"/>
 				<tocitem text="Job: activeScan" target="automation.ascan"/>
 				<tocitem text="Job: delay" target="automation.delay"/>

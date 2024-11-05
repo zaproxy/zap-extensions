@@ -11,6 +11,7 @@
     <indexitem text="automation - environment" target="automation.env" />
     <indexitem text="automation - authentication" target="automation.auth" />
     <indexitem text="automation - addOns job" target="automation.addons" />
+    <indexitem text="automation - activeScan-config job" target="automation.ascanconfig" />
     <indexitem text="automation - activeScan-policy job" target="automation.ascanpolicy" />
     <indexitem text="automation - activeScan job" target="automation.ascan" />
     <indexitem text="automation - delay job" target="automation.delay" />
