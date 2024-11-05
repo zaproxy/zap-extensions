@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fields with default or missing values are omitted for the following automation jobs in saved Automation Framework plans:
     - `passiveScan-config`
     - `passiveScan-wait`
+### Fixed
+- Fixed passiveScan-wait alert tests.
 
 ## [0.0.1] - 2024-09-02
 ### Added

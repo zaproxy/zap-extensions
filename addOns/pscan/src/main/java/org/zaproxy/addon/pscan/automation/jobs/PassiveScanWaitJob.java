@@ -62,6 +62,11 @@ public class PassiveScanWaitJob extends AutomationJob {
     }
 
     @Override
+    public String getKeyAlertTestsResultData() {
+        return PassiveScanJobResultData.KEY;
+    }
+
+    @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         ExtensionPassiveScan extPScan = getExtPassiveScan();
 
