@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Active scan policy job.
+- Add job to configure the active scanner, `activeScan-config`.
 
 ### Changed
 - Update help for the "requestor" job.

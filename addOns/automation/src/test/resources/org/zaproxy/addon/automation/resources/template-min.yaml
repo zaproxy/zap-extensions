@@ -13,6 +13,13 @@ env:                                   # The environment, mandatory
     progressToStdout: true             # If set will write job progress to stdout
 
 jobs:
+  - type: activeScan-config                # Configures the settings of the active scanner.
+    parameters:
+      maxRuleDurationInMins:               # Int: The max time in minutes any individual rule will be allowed to run for, default: 0 unlimited
+      maxScanDurationInMins:               # Int: The max time in minutes the active scanner will be allowed to run for, default: 0 unlimited
+      maxAlertsPerRule:                    # Int: Maximum number of alerts to raise per rule, default: 0 unlimited
+      defaultPolicy:                       # String: The name of the default scan policy to use, default: Default Policy
+
   - type: activeScan-policy            # Defines a new active scan policy which can be used by later activeScan related jobs
     parameters:
       name:                            # String: Name of the policy, mandatory

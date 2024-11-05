@@ -55,6 +55,7 @@ import org.parosproxy.paros.db.TableContext;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.automation.jobs.ActiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
@@ -118,12 +119,13 @@ class ExtentionAutomationUnitTest extends TestUtils {
         Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
 
         // Then
-        assertThat(jobs.size(), is(equalTo(6)));
+        assertThat(jobs.size(), is(equalTo(7)));
         assertThat(
                 jobs.containsKey(org.zaproxy.addon.automation.jobs.AddOnJob.JOB_NAME),
                 is(equalTo(true)));
         assertThat(jobs.containsKey(DelayJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(ActiveScanJob.JOB_NAME), is(equalTo(true)));
+        assertThat(jobs.containsKey(ActiveScanConfigJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(ActiveScanPolicyJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(ParamsJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(RequestorJob.JOB_NAME), is(equalTo(true)));

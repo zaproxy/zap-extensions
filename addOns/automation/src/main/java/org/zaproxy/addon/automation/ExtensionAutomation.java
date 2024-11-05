@@ -62,6 +62,7 @@ import org.parosproxy.paros.view.View;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
 import org.zaproxy.addon.automation.gui.OptionsPanel;
+import org.zaproxy.addon.automation.jobs.ActiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
@@ -70,6 +71,7 @@ import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.ZAP.ProcessType;
 import org.zaproxy.zap.eventBus.Event;
+import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ScriptVars;
 import org.zaproxy.zap.utils.Stats;
 
@@ -128,6 +130,11 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         registerAutomationJob(new org.zaproxy.addon.automation.jobs.AddOnJob());
         registerAutomationJob(new RequestorJob());
         registerAutomationJob(new DelayJob());
+        registerAutomationJob(
+                new ActiveScanConfigJob(
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionActiveScan.class)));
         registerAutomationJob(new ActiveScanJob());
         registerAutomationJob(new ActiveScanPolicyJob());
         registerAutomationJob(new ParamsJob());
