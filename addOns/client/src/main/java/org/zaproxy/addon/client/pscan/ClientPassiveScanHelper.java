@@ -53,7 +53,7 @@ public class ClientPassiveScanHelper {
         LOGGER.debug("Searching for history reference for {}", url);
         for (int i = lastId; i >= limit; i--) {
             HistoryReference hr = extHistory.getHistoryReference(i);
-            if (url.equals(hr.getURI().toString())) {
+            if (hr != null && url.equals(hr.getURI().toString())) {
                 LOGGER.debug("Found history reference {} for {}", hr.getHistoryId(), url);
                 Stats.incCounter("stats.client.pscan.href.found");
                 return hr;
