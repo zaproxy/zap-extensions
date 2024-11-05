@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
@@ -78,8 +79,11 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.sequence.StdActiveScanRunner.SequenceStepData;
+import org.zaproxy.zap.extension.sequence.automation.SequenceAScanJobResultData;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
@@ -914,6 +918,468 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(json.getString("@generated").length(), is(greaterThan(20)));
         assertThat(site.size(), is(equalTo(1)));
         checkAlert(site.getJSONObject(0));
+    }
+
+    private static File generateReportWithSequence(Template template, File f)
+            throws IOException, DocumentException {
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = new ReportData();
+        reportData.setTitle("Test Title");
+        reportData.setDescription("Test Description");
+        reportData.setIncludeAllConfidences(true);
+        reportData.setIncludeAllRisks(true);
+
+        AlertNode root = new AlertNode(0, "Test");
+        reportData.setAlertTreeRootNode(root);
+
+        List<JobResultData> list = new ArrayList<>();
+        SequenceAScanJobResultData seqData = new SequenceAScanJobResultData("Test Job");
+        List<SequenceStepData> steps = new ArrayList<>();
+        steps.add(
+                new SequenceStepData(
+                        1,
+                        true,
+                        "Pass",
+                        new ArrayList<Integer>(),
+                        newMsg("https://www.example.com/step1"),
+                        newMsg("https://www.example.com/step1")));
+        steps.add(
+                new SequenceStepData(
+                        2,
+                        false,
+                        "Fail",
+                        Arrays.asList(2, 4),
+                        newMsg("https://www.example.com/step2"),
+                        newMsg("https://www.example.com/step2")));
+        seqData.addSequenceData("Seq name", steps);
+        list.add(seqData);
+        reportData.addReportObjects(seqData.getKey(), seqData);
+
+        return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+    }
+
+    @Test
+    void shouldGenerateValidSequenceJsonReport() throws Exception {
+        // Given
+        Template template = getTemplateFromYamlFile("traditional-json");
+        String fileName = "basic-traditional-json";
+        File f = File.createTempFile(fileName, template.getExtension());
+
+        // When
+        File r = generateReportWithSequence(template, f);
+        String report = new String(Files.readAllBytes(r.toPath()));
+        JSONObject json = JSONObject.fromObject(report);
+        JSONArray site = json.getJSONArray("site");
+        JSONArray sequences = json.getJSONArray("sequences");
+
+        // Then
+        assertThat(json.getString("@version"), is(equalTo("Dev Build")));
+        assertThat(json.getString("@generated").length(), is(greaterThan(20)));
+        assertThat(site.size(), is(equalTo(0)));
+        assertThat(sequences.size(), is(equalTo(1)));
+        assertThat(sequences.getJSONObject(0).getString("name"), is(equalTo("Seq name")));
+        assertThat(sequences.getJSONObject(0).getJSONArray("steps").size(), is(equalTo(2)));
+
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(0).getString("step"),
+                is(equalTo("1")));
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(0).getString("pass"),
+                is(equalTo("true")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getString("resultDetails"),
+                is(equalTo("Pass")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONArray("alertIds")
+                        .size(),
+                is(equalTo(0)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("original")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step1")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("original")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step1")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .containsKey("request-header"),
+                is(false));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .containsKey("request-body"),
+                is(false));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .containsKey("response-header"),
+                is(false));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .containsKey("response-body"),
+                is(false));
+
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(1).getString("step"),
+                is(equalTo("2")));
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(1).getString("pass"),
+                is(equalTo("false")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getString("resultDetails"),
+                is(equalTo("Fail")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONArray("alertIds")
+                        .size(),
+                is(equalTo(2)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONArray("alertIds")
+                        .getInt(0),
+                is(equalTo(2)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONArray("alertIds")
+                        .getInt(1),
+                is(equalTo(4)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("original")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step2")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("original")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step2")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .containsKey("request-header"),
+                is(false));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .containsKey("request-body"),
+                is(false));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .containsKey("response-header"),
+                is(false));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .containsKey("response-body"),
+                is(false));
+    }
+
+    @Test
+    void shouldGenerateValidSequenceJsonPlusReport() throws Exception {
+        // Given
+        Template template = getTemplateFromYamlFile("traditional-json-plus");
+        String fileName = "basic-traditional-json-plus";
+        File f = File.createTempFile(fileName, template.getExtension());
+
+        // When
+        File r = generateReportWithSequence(template, f);
+
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        JSONObject json = JSONObject.fromObject(report);
+        JSONArray site = json.getJSONArray("site");
+        JSONArray sequences = json.getJSONArray("sequences");
+
+        // Then
+        assertThat(json.getString("@version"), is(equalTo("Dev Build")));
+        assertThat(json.getString("@generated").length(), is(greaterThan(20)));
+        assertThat(site.size(), is(equalTo(0)));
+        assertThat(sequences.size(), is(equalTo(1)));
+        assertThat(sequences.getJSONObject(0).getString("name"), is(equalTo("Seq name")));
+        assertThat(sequences.getJSONObject(0).getJSONArray("steps").size(), is(equalTo(2)));
+
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(0).getString("step"),
+                is(equalTo("1")));
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(0).getString("pass"),
+                is(equalTo("true")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getString("resultDetails"),
+                is(equalTo("Pass")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONArray("alertIds")
+                        .size(),
+                is(equalTo(0)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("original")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step1")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("original")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step1")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("request-header"),
+                is(not(nullValue())));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("request-body"),
+                is(not(nullValue())));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("response-header"),
+                is(not(nullValue())));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("response-body"),
+                is(not(nullValue())));
+
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(1).getString("step"),
+                is(equalTo("2")));
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(1).getString("pass"),
+                is(equalTo("false")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getString("resultDetails"),
+                is(equalTo("Fail")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONArray("alertIds")
+                        .size(),
+                is(equalTo(2)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONArray("alertIds")
+                        .getInt(0),
+                is(equalTo(2)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONArray("alertIds")
+                        .getInt(1),
+                is(equalTo(4)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("original")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step2")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("original")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step2")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("request-header"),
+                is(not(nullValue())));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("request-body"),
+                is(not(nullValue())));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("response-header"),
+                is(not(nullValue())));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("response-body"),
+                is(not(nullValue())));
     }
 
     @Test
