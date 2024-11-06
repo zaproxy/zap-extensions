@@ -71,7 +71,6 @@ public class QuickStartPanel extends AbstractPanel {
     private DefaultExplorePanel defaultExplorePanel;
     private QuickStartSubPanel explorePanel;
     private JXPanel newsPanel;
-    private JLabel topTitle;
 
     private NewsItem newsItem;
     private static ImageIcon zapByCxIcon;
@@ -174,7 +173,6 @@ public class QuickStartPanel extends AbstractPanel {
         if (panelContent != null) {
             SwingUtilities.updateComponentTreeUI(panelContent);
             Color color = QuickStartBackgroundPanel.getBackgroundColor(true);
-            topTitle.setBackground(color);
             buttonPanel.setBackground(color);
 
             SwingUtilities.updateComponentTreeUI(attackPanel);
