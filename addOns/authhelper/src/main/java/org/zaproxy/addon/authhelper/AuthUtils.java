@@ -22,6 +22,7 @@ package org.zaproxy.addon.authhelper;
 import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -109,7 +110,8 @@ public class AuthUtils {
      * These are session tokens that have been seen in responses but not yet seen in use. When they
      * are seen in use then they are removed.
      */
-    private static Map<String, SessionToken> knownTokenMap = new HashMap<>();
+    private static Map<String, SessionToken> knownTokenMap =
+            Collections.synchronizedMap(new HashMap<>());
 
     /**
      * The best verification request we have found for a context. There will only be a verification
@@ -665,24 +667,21 @@ public class AuthUtils {
     }
 
     public static SessionToken containsSessionToken(String value) {
-        Optional<Entry<String, SessionToken>> entry =
-                knownTokenMap.entrySet().stream()
-                        .filter(m -> value.contains(m.getKey()))
-                        .findFirst();
+        Optional<Entry<String, SessionToken>> entry;
+        synchronized (knownTokenMap) {
+            entry =
+                    knownTokenMap.entrySet().stream()
+                            .filter(m -> value.contains(m.getKey()))
+                            .findFirst();
+        }
         if (entry.isPresent()) {
             return entry.get().getValue();
         }
         return null;
     }
 
-    public static void removeSessionToken(SessionToken token) {
-        Optional<Entry<String, SessionToken>> entry =
-                knownTokenMap.entrySet().stream()
-                        .filter(m -> m.getValue().equals(token))
-                        .findFirst();
-        if (entry.isPresent()) {
-            knownTokenMap.remove(token.getValue());
-        }
+    static void removeSessionToken(SessionToken token) {
+        knownTokenMap.remove(token.getValue());
     }
 
     public static void clean() {
