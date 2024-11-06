@@ -97,6 +97,7 @@ class PassiveScanWaitJobUnitTest {
         assertThat(job.getOrder(), is(equalTo(Order.AFTER_EXPLORE)));
         assertThat(job.getParamMethodObject(), is(nullValue()));
         assertThat(job.getParamMethodName(), is(nullValue()));
+        assertThat(job.getKeyAlertTestsResultData(), is("passiveScanData2"));
     }
 
     @Test
