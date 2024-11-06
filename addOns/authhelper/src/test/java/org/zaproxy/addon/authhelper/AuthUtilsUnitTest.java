@@ -30,6 +30,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,6 +63,36 @@ class AuthUtilsUnitTest extends TestUtils {
 
         mockMessages(new ExtensionAuthhelper());
         AuthUtils.clean();
+    }
+
+    @Test
+    void shouldCheckContainsSessionTokenWhileAddingAndRemoving() throws Exception {
+        // Given
+        AtomicBoolean concurrentModification = new AtomicBoolean();
+        CountDownLatch cdl = new CountDownLatch(2500);
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
+        SessionToken token = new SessionToken("source", "key", "value");
+        executor.scheduleAtFixedRate(
+                () -> AuthUtils.recordSessionToken(token), 0, 1, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(
+                () -> AuthUtils.removeSessionToken(token), 0, 1, TimeUnit.MILLISECONDS);
+        // When
+        executor.scheduleAtFixedRate(
+                () -> {
+                    try {
+                        AuthUtils.containsSessionToken(token.getValue());
+                    } catch (Exception e) {
+                        concurrentModification.set(true);
+                    }
+                    cdl.countDown();
+                },
+                0,
+                1,
+                TimeUnit.MILLISECONDS);
+        // Then
+        cdl.await(5000, TimeUnit.SECONDS);
+        executor.shutdownNow();
+        assertThat(concurrentModification.get(), is(equalTo(false)));
     }
 
     @Test
