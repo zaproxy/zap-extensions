@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Updated automation framework documentation and templates for `spider` job to reflect changes to the default value of threadCount parameter
 - Fields with default or missing values are omitted for the `spider` job in saved Automation Framework plans.
 
 ### Removed

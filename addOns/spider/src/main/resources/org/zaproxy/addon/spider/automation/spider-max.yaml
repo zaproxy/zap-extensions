@@ -19,7 +19,7 @@
       postForm:                        # Bool: Whether the spider will submit POST forms, default: true
       processForm:                     # Bool: Whether the spider will process forms, default: true
       sendRefererHeader:               # Bool: Whether the spider will send the referer header, default: true
-      threadCount:                     # Int: The number of spider threads, default: 2
+      threadCount:                     # Int: The number of spider threads, default: 2 * Number of available processor cores
       userAgent:                       # String: The user agent to use in requests, default: '' - use the default ZAP one
     tests:
       - name: 'At least X URLs found'                   # String: Name of the test, default: statistic + operator + value

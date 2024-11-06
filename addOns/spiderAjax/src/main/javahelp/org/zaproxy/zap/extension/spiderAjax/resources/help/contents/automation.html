@@ -25,7 +25,7 @@ This job supports monitor tests.
       url:                             # String: Url to start spidering from, default: first context URL
       maxDuration:                     # Int: The max time in minutes the ajax spider will be allowed to run for, default: 0 unlimited
       maxCrawlDepth:                   # Int: The max depth that the crawler can reach, default: 10, 0 is unlimited
-      numberOfBrowsers:                # Int: The number of browsers the spider will use, more will be faster but will use up more memory, default: 1
+      numberOfBrowsers:                # Int: The number of browsers the spider will use, more will be faster but will use up more memory, default: 2 * Number of available processor cores
       runOnlyIfModern:                 # Boolean: If true then the spider will only run if a "modern app" alert is raised, default: false
       inScopeOnly:                     # Boolean: If true then any URLs requested which are out of scope will be ignored, default: true
       browserId:                       # String: Browser Id to use, default: firefox-headless
