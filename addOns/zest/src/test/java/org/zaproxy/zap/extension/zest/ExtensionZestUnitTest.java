@@ -39,6 +39,7 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,10 +49,12 @@ import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link ExtensionZest}. */
 class ExtensionZestUnitTest {
@@ -85,6 +88,7 @@ class ExtensionZestUnitTest {
             name = "Script Name";
             type = mock(ScriptType.class);
             options = mock(CreateScriptOptions.class);
+            includeResponsesAs(CreateScriptOptions.IncludeResponses.GLOBAL_OPTION);
             extensionScript = mock(ExtensionScript.class);
 
             var extLoader = mock(ExtensionLoader.class);
@@ -92,6 +96,10 @@ class ExtensionZestUnitTest {
 
             given(extLoader.getExtension(ExtensionScript.NAME)).willReturn(extensionScript);
             given(extLoader.getExtension(ExtensionZest.NAME)).willReturn(extension);
+        }
+
+        private void includeResponsesAs(CreateScriptOptions.IncludeResponses value) {
+            given(options.getIncludeResponses()).willReturn(value);
         }
 
         @ParameterizedTest
@@ -205,6 +213,66 @@ class ExtensionZestUnitTest {
                             () -> extension.createScript(name, type, messages, options));
             assertThat(e.getMessage(), is(equalTo("Failed to add the script: Some Reason")));
             assertThat(e.getCause(), is(sameInstance(cause)));
+        }
+
+        @Test
+        void shouldIncludeResponsesWithIncludeResponsesAlways() throws Exception {
+            // Given
+            includeResponsesAs(CreateScriptOptions.IncludeResponses.ALWAYS);
+            List<HttpMessage> messages = List.of(messageWithResponse());
+            // When
+            var sw = extension.createScript(name, type, messages, options);
+            // Then
+            assertThat(sw.getContents(), containsString("HTTP/1.1 200 OK"));
+        }
+
+        @Test
+        void shouldNotIncludeResponsesWithIncludeResponsesNever() throws Exception {
+            // Given
+            includeResponsesAs(CreateScriptOptions.IncludeResponses.NEVER);
+            List<HttpMessage> messages = List.of(messageWithResponse());
+            // When
+            var sw = extension.createScript(name, type, messages, options);
+            // Then
+            assertThat(sw.getContents(), not(containsString("HTTP/1.1 200 OK")));
+        }
+
+        @Test
+        void shouldIncludeResponsesWithIncludeResponsesGlobalOptionIfGlobalIncludes()
+                throws Exception {
+            // Given
+            includeResponsesAs(CreateScriptOptions.IncludeResponses.GLOBAL_OPTION);
+            globalOptionIncludeResponsesAs(true);
+            List<HttpMessage> messages = List.of(messageWithResponse());
+            // When
+            var sw = extension.createScript(name, type, messages, options);
+            // Then
+            assertThat(sw.getContents(), containsString("HTTP/1.1 200 OK"));
+        }
+
+        @Test
+        void shouldNotIncludeResponsesWithIncludeResponsesGlobalOptionIfGlobalDoesNotInclude()
+                throws Exception {
+            // Given
+            includeResponsesAs(CreateScriptOptions.IncludeResponses.GLOBAL_OPTION);
+            globalOptionIncludeResponsesAs(false);
+            List<HttpMessage> messages = List.of(messageWithResponse());
+            // When
+            var sw = extension.createScript(name, type, messages, options);
+            // Then
+            assertThat(sw.getContents(), not(containsString("HTTP/1.1 200 OK")));
+        }
+
+        private HttpMessage messageWithResponse()
+                throws HttpMalformedHeaderException, URIException {
+            HttpMessage msg = new HttpMessage(new URI("http://example.com", true));
+            msg.setResponseHeader("HTTP/1.1 200 OK");
+            return msg;
+        }
+
+        private void globalOptionIncludeResponsesAs(boolean value) {
+            extension.getParam().load(new ZapXmlConfiguration());
+            extension.getParam().setIncludeResponses(value);
         }
     }
 }

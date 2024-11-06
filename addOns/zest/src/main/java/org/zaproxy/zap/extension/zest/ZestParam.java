@@ -101,6 +101,13 @@ public class ZestParam extends AbstractParam {
     /** Instantiates a new Zest param. */
     public ZestParam() {}
 
+    public ZestParam(ZestParam param) {
+        allHeaders.addAll(param.allHeaders);
+        ignoredHeaders.addAll(param.ignoredHeaders);
+        includeResponses = param.includeResponses;
+        scriptFormat = param.scriptFormat;
+    }
+
     @Override
     protected void parse() {
         this.includeResponses = getBoolean(INCLUDE_RESPONSES_KEY, true);
