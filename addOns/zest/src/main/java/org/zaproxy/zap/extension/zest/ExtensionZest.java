@@ -74,6 +74,7 @@ import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.ZestResultsTableModel.ZestResultsTableEntry;
 import org.zaproxy.zap.extension.zest.dialogs.ZestDialogManager;
 import org.zaproxy.zap.extension.zest.menu.ZestMenuManager;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.ZapToggleButton;
 import org.zaproxy.zest.core.v1.ZestActionFail;
 import org.zaproxy.zest.core.v1.ZestAssertion;
@@ -1920,6 +1921,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             throw new IllegalArgumentException("The messages should not be null nor empty.");
         }
 
+        ZestParam conversionOptions = getParam(options);
         ZestScript sz = new ZestScript();
         sz.setTitle(name);
         for (var msg : messages) {
@@ -1927,7 +1929,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 throw new IllegalArgumentException("A message should not be null.");
             }
             try {
-                var request = ZestZapUtils.toZestRequest(msg, false, true, getParam());
+                var request = ZestZapUtils.toZestRequest(msg, false, true, conversionOptions);
                 if (options.isAddStatusAssertion()) {
                     addStatusCodeAssertion(msg, request);
                 }
@@ -1955,6 +1957,22 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             throw new IllegalStateException("Failed to add the script: " + e.getMessage(), e);
         }
         return zsw;
+    }
+
+    private ZestParam getParam(CreateScriptOptions options) {
+        switch (options.getIncludeResponses()) {
+            case ALWAYS:
+            case NEVER:
+                ZestParam copy = new ZestParam(getParam());
+                copy.load(new ZapXmlConfiguration());
+                copy.setIncludeResponses(
+                        options.getIncludeResponses()
+                                == CreateScriptOptions.IncludeResponses.ALWAYS);
+                return copy;
+
+            default:
+                return getParam();
+        }
     }
 
     /**

@@ -159,6 +159,7 @@ public class SequenceImportJob extends AutomationJob {
     private static CreateScriptOptions createScriptOptions(Parameters parameters) {
         CreateScriptOptions.Builder builder =
                 CreateScriptOptions.builder()
+                        .setIncludeResponses(CreateScriptOptions.IncludeResponses.ALWAYS)
                         .setAddStatusAssertion(JobUtils.unBox(parameters.getAssertCode()));
         Integer assertLengthValue = parameters.getAssertLength();
         if (assertLengthValue != null) {

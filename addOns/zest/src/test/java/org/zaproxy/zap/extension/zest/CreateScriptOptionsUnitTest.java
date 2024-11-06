@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 /** Unit test for {@link CreateScriptOptions}. */
@@ -39,6 +40,9 @@ class CreateScriptOptionsUnitTest {
         assertThat(options.isAddStatusAssertion(), is(equalTo(false)));
         assertThat(options.isAddLengthAssertion(), is(equalTo(false)));
         assertThat(options.getLengthApprox(), is(equalTo(1)));
+        assertThat(
+                options.getIncludeResponses(),
+                is(equalTo(CreateScriptOptions.IncludeResponses.GLOBAL_OPTION)));
     }
 
     @ParameterizedTest
@@ -84,5 +88,28 @@ class CreateScriptOptionsUnitTest {
                 assertThrows(IllegalArgumentException.class, () -> builder.setLengthApprox(value));
         // Then
         assertThat(ex.getMessage(), is(equalTo("The length must be zero or greater.")));
+    }
+
+    @ParameterizedTest
+    @EnumSource(CreateScriptOptions.IncludeResponses.class)
+    void shouldSetIncludeResponses(CreateScriptOptions.IncludeResponses value) {
+        // Given
+        var builder = CreateScriptOptions.builder();
+        // When
+        builder.setIncludeResponses(value);
+        // Then
+        assertThat(builder.build().getIncludeResponses(), is(equalTo(value)));
+    }
+
+    @Test
+    void shouldThrowSettingNullIncludeResponses() {
+        // Given
+        var builder = CreateScriptOptions.builder();
+        // When
+        Exception ex =
+                assertThrows(
+                        IllegalArgumentException.class, () -> builder.setIncludeResponses(null));
+        // Then
+        assertThat(ex.getMessage(), is(equalTo("The include responses must not be null.")));
     }
 }

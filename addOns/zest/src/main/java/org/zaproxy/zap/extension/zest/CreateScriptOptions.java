@@ -31,16 +31,33 @@ public class CreateScriptOptions {
     /** The default options. */
     public static final CreateScriptOptions DEFAULT = builder().build();
 
+    /** When should the responses be included in the corresponding Zest requests. */
+    public enum IncludeResponses {
+        NEVER,
+        ALWAYS,
+        /**
+         * Uses the value defined in the global option.
+         *
+         * @see ZestParam#isIncludeResponses()
+         */
+        GLOBAL_OPTION,
+    }
+
     private final boolean addStatusAssertion;
     private final boolean addLengthAssertion;
     private final int lengthApprox;
+    private final IncludeResponses includeResponses;
 
     private CreateScriptOptions(
-            boolean addStatusAssertion, boolean addLengthAssertion, int lengthApprox) {
+            boolean addStatusAssertion,
+            boolean addLengthAssertion,
+            int lengthApprox,
+            IncludeResponses includeResponses) {
 
         this.addStatusAssertion = addStatusAssertion;
         this.addLengthAssertion = addLengthAssertion;
         this.lengthApprox = lengthApprox;
+        this.includeResponses = includeResponses;
     }
 
     public boolean isAddStatusAssertion() {
@@ -53,6 +70,10 @@ public class CreateScriptOptions {
 
     public int getLengthApprox() {
         return lengthApprox;
+    }
+
+    public IncludeResponses getIncludeResponses() {
+        return includeResponses;
     }
 
     /**
@@ -74,6 +95,7 @@ public class CreateScriptOptions {
         private boolean addStatusAssertion;
         private boolean addLengthAssertion;
         private int lengthApprox = 1;
+        private IncludeResponses includeResponses = IncludeResponses.GLOBAL_OPTION;
 
         private Builder() {}
 
@@ -124,12 +146,30 @@ public class CreateScriptOptions {
         }
 
         /**
+         * Sets the include responses option.
+         *
+         * <p>Default value: {@code GLOBAL_OPTION}.
+         *
+         * @param includeResponses the include responses option.
+         * @return the builder for chaining.
+         * @throws IllegalArgumentException if the given value is null.
+         */
+        public Builder setIncludeResponses(IncludeResponses includeResponses) {
+            if (includeResponses == null) {
+                throw new IllegalArgumentException("The include responses must not be null.");
+            }
+            this.includeResponses = includeResponses;
+            return this;
+        }
+
+        /**
          * Builds the options from the specified data.
          *
          * @return the options with specified data.
          */
         public final CreateScriptOptions build() {
-            return new CreateScriptOptions(addStatusAssertion, addLengthAssertion, lengthApprox);
+            return new CreateScriptOptions(
+                    addStatusAssertion, addLengthAssertion, lengthApprox, includeResponses);
         }
     }
 }
