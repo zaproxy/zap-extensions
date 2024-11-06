@@ -48,6 +48,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentMatcher;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -435,7 +437,7 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
-    void shouldReturnScanPolicyForDefaultData() throws MalformedURLException {
+    void shouldReturnNullScanPolicyForEmptyData() {
         // Given
         ActiveScanJob job = new ActiveScanJob();
         AutomationProgress progress = new AutomationProgress();
@@ -448,9 +450,61 @@ class ActiveScanJobUnitTest {
         ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
+        assertThat(policy, is(equalTo(null)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = AttackStrength.class,
+            mode = EnumSource.Mode.EXCLUDE,
+            names = {"DEFAULT"})
+    void shouldReturnScanPolicyIfOnlyDefaultStrength(AttackStrength attackStrength) {
+        // Given
+        ActiveScanJob job = new ActiveScanJob();
+        AutomationProgress progress = new AutomationProgress();
+        LinkedHashMap<String, LinkedHashMap<?, ?>> data = new LinkedHashMap<>();
+        LinkedHashMap<String, String> policyDefn = new LinkedHashMap<>();
+        policyDefn.put("defaultStrength", attackStrength.name());
+        data.put("policyDefinition", policyDefn);
+
+        // When
+        job.setJobData(data);
+        job.verifyParameters(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
+
+        // Then
+        assertThat(policy, is(notNullValue()));
+        assertThat(policy.getDefaultStrength(), is(attackStrength));
+        assertThat(policy.getDefaultThreshold(), is(AlertThreshold.MEDIUM));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = AlertThreshold.class,
+            mode = EnumSource.Mode.EXCLUDE,
+            names = {"DEFAULT"})
+    void shouldReturnScanPolicyIfOnlyDefaultThreshold(AlertThreshold alertThreshold) {
+        // Given
+        ActiveScanJob job = new ActiveScanJob();
+        AutomationProgress progress = new AutomationProgress();
+        LinkedHashMap<String, LinkedHashMap<?, ?>> data = new LinkedHashMap<>();
+        LinkedHashMap<String, String> policyDefn = new LinkedHashMap<>();
+        policyDefn.put("defaultThreshold", alertThreshold.name());
+        data.put("policyDefinition", policyDefn);
+
+        // When
+        job.setJobData(data);
+        job.verifyParameters(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
+
+        // Then
         assertThat(policy, is(notNullValue()));
         assertThat(policy.getDefaultStrength(), is(AttackStrength.MEDIUM));
-        assertThat(policy.getDefaultThreshold(), is(AlertThreshold.MEDIUM));
+        assertThat(policy.getDefaultThreshold(), is(alertThreshold));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }

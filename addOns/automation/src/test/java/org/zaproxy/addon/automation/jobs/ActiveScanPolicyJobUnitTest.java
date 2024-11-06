@@ -65,7 +65,7 @@ import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-class ActiveScanPolicyJobPolicyUnitTest {
+class ActiveScanPolicyJobUnitTest {
 
     private static MockedStatic<CommandLine> mockedCmdLine;
     private ExtensionActiveScan extAScan;

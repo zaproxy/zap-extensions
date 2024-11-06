@@ -31,7 +31,6 @@ import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationProgress;
-import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 
 @Getter
@@ -53,6 +52,11 @@ public class PolicyDefinition extends AutomationData {
         if (policyDefnObj instanceof LinkedHashMap<?, ?>) {
             LinkedHashMap<?, ?> policyDefnData = (LinkedHashMap<?, ?>) policyDefnObj;
 
+            if (policyDefnData.isEmpty()) {
+                policyDefinition.setDefaultStrength(null);
+                return;
+            }
+
             JobUtils.applyParamsToObject(
                     policyDefnData,
                     policyDefinition,
@@ -65,6 +69,7 @@ public class PolicyDefinition extends AutomationData {
             PluginFactory pluginFactory = scanPolicy.getPluginFactory();
 
             Object o = policyDefnData.get(RULES_ELEMENT_NAME);
+
             if (o instanceof ArrayList<?>) {
                 ArrayList<?> ruleData = (ArrayList<?>) o;
                 for (Object ruleObj : ruleData) {
@@ -118,6 +123,11 @@ public class PolicyDefinition extends AutomationData {
     }
 
     public ScanPolicy getScanPolicy(String jobName, AutomationProgress progress) {
+        if (getDefaultStrength() == null) {
+            // Nothing defined
+            return null;
+        }
+
         ScanPolicy scanPolicy = new ScanPolicy();
 
         // Set default strength

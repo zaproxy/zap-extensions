@@ -44,6 +44,8 @@ This job supports <a href="test-monitor.html">monitor</a> tests.
         threshold:                     # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
 </pre>
 
+<strong>Note</strong>: Unless the <code>defaultThreshold</code> of the <code>policyDefinition</code> is <code>OFF</code> all rules will be enabled to start with.
+
 <p>
 The policy can be one defined by a previous <a href="job-ascanpolicy.html">activeScan-policy</a> job, or by a scan policy file
 that has been put in <code>policies</code> directory under ZAP's <a href="https://www.zaproxy.org/faq/what-is-the-default-directory-that-zap-uses/">HOME directory</a> .
