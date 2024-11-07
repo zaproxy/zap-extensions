@@ -22,6 +22,7 @@ package org.zaproxy.addon.automation.jobs;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import org.parosproxy.paros.Constant;
@@ -37,39 +38,47 @@ import org.zaproxy.zap.extension.ascan.ScanPolicy;
 @Setter
 public class PolicyDefinition extends AutomationData {
 
+    private static final String DEFAULT_STRENGTH_KEY = "defaultStrength";
+    private static final String DEFAULT_THRESHOLD_KEY = "defaultThreshold";
+
     protected static final String RULES_ELEMENT_NAME = "rules";
 
     private String defaultStrength = JobUtils.strengthToI18n(AttackStrength.MEDIUM.name());
     private String defaultThreshold = JobUtils.thresholdToI18n(AlertThreshold.MEDIUM.name());
     private List<Rule> rules = new ArrayList<>();
 
-    public static void parsePolicyDefinition(
-            Object policyDefnObj,
-            PolicyDefinition policyDefinition,
-            String jobName,
-            AutomationProgress progress) {
+    public void parsePolicyDefinition(
+            Object policyDefnObj, String jobName, AutomationProgress progress) {
 
+        if (policyDefnObj == null) {
+            this.defaultStrength = null;
+            return;
+        }
         if (policyDefnObj instanceof LinkedHashMap<?, ?>) {
-            LinkedHashMap<?, ?> policyDefnData = (LinkedHashMap<?, ?>) policyDefnObj;
+            @SuppressWarnings("unchecked")
+            LinkedHashMap<Object, Object> policyDefnData =
+                    (LinkedHashMap<Object, Object>) policyDefnObj;
 
-            if (policyDefnData.isEmpty()) {
-                policyDefinition.setDefaultStrength(null);
+            checkAndSetDefault(policyDefnData, DEFAULT_STRENGTH_KEY, AttackStrength.MEDIUM.name());
+            checkAndSetDefault(policyDefnData, DEFAULT_THRESHOLD_KEY, AlertThreshold.MEDIUM.name());
+
+            if (policyDefnData.isEmpty() || undefinedDefinition(policyDefnData)) {
+                this.defaultStrength = null;
                 return;
             }
 
             JobUtils.applyParamsToObject(
                     policyDefnData,
-                    policyDefinition,
+                    this,
                     jobName,
                     new String[] {PolicyDefinition.RULES_ELEMENT_NAME},
                     progress);
 
-            List<Rule> rules = new ArrayList<>();
+            this.rules = new ArrayList<>();
             ScanPolicy scanPolicy = new ScanPolicy();
             PluginFactory pluginFactory = scanPolicy.getPluginFactory();
 
             Object o = policyDefnData.get(RULES_ELEMENT_NAME);
-
             if (o instanceof ArrayList<?>) {
                 ArrayList<?> ruleData = (ArrayList<?>) o;
                 for (Object ruleObj : ruleData) {
@@ -94,7 +103,7 @@ public class PolicyDefinition extends AutomationData {
                             if (strength != null) {
                                 rule.setStrength(strength.name().toLowerCase());
                             }
-                            rules.add(rule);
+                            this.rules.add(rule);
 
                         } else {
                             progress.warn(
@@ -103,7 +112,6 @@ public class PolicyDefinition extends AutomationData {
                         }
                     }
                 }
-                policyDefinition.setRules(rules);
             } else if (o != null) {
                 progress.warn(
                         Constant.messages.getString(
@@ -120,6 +128,26 @@ public class PolicyDefinition extends AutomationData {
                             "policyDefinition",
                             policyDefnObj));
         }
+    }
+
+    private static void checkAndSetDefault(
+            LinkedHashMap<Object, Object> policyDefnData, String key, String value) {
+        if (policyDefnData.containsKey(key) && policyDefnData.get(key) == null) {
+            policyDefnData.put(key, value);
+        }
+    }
+
+    private static boolean undefinedDefinition(Map<?, ?> policyDefnData) {
+        Object rules = policyDefnData.get(RULES_ELEMENT_NAME);
+        boolean rulesInvalid = false;
+        if (rules instanceof List<?>) {
+            rulesInvalid = ((List<?>) rules).isEmpty();
+        } else if ((String) rules == null) {
+            rulesInvalid = true;
+        }
+        return (String) policyDefnData.get(DEFAULT_STRENGTH_KEY) == null
+                && (String) policyDefnData.get(DEFAULT_THRESHOLD_KEY) == null
+                && rulesInvalid;
     }
 
     public ScanPolicy getScanPolicy(String jobName, AutomationProgress progress) {

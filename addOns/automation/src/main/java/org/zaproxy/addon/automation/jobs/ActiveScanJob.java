@@ -98,10 +98,6 @@ public class ActiveScanJob extends AutomationJob {
                             params, this.parameters, this.getName(), null, progress);
                     break;
                 case "policyDefinition":
-                    // Parse the policy defn
-                    PolicyDefinition.parsePolicyDefinition(
-                            jobData.get(key), policyDefinition, this.getName(), progress);
-                    break;
                 case "name":
                 case "tests":
                 case "type":
@@ -115,7 +111,8 @@ public class ActiveScanJob extends AutomationJob {
                     break;
             }
         }
-
+        policyDefinition.parsePolicyDefinition(
+                jobData.get("policyDefinition"), this.getName(), progress);
         this.verifyUser(this.getParameters().getUser(), progress);
     }
 
