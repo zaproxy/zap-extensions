@@ -200,10 +200,7 @@ public class SequenceActiveScanJob extends AutomationJob {
                 contextSpecificObjects.add(scanPolicy);
             }
 
-            Stream<ZestScriptWrapper> sequenceZestScripts =
-                    extScript.getScripts(ExtensionSequence.TYPE_SEQUENCE).stream()
-                            .filter(ZestScriptWrapper.class::isInstance)
-                            .map(ZestScriptWrapper.class::cast);
+            Stream<ZestScriptWrapper> sequenceZestScripts = getSequenceScripts();
             if (StringUtils.isEmpty(parameters.getSequence())) {
                 sequenceZestScripts.forEach(
                         e -> scanSequence(e, context, user, contextSpecificObjects, progress));
@@ -226,6 +223,12 @@ public class SequenceActiveScanJob extends AutomationJob {
         } finally {
             extAScan.setPanelSwitch(true);
         }
+    }
+
+    private Stream<ZestScriptWrapper> getSequenceScripts() {
+        return extScript.getScripts(ExtensionSequence.TYPE_SEQUENCE).stream()
+                .filter(ZestScriptWrapper.class::isInstance)
+                .map(ZestScriptWrapper.class::cast);
     }
 
     private static void scanSequence(
@@ -320,7 +323,11 @@ public class SequenceActiveScanJob extends AutomationJob {
 
     @Override
     public void showDialog() {
-        // TODO Implement in a future PR
+        List<String> sequences = new ArrayList<>();
+        sequences.add("");
+        getSequenceScripts().map(ZestScriptWrapper::getName).forEach(sequences::add);
+
+        new SequenceActiveScanJobDialog(this, sequences).setVisible(true);
     }
 
     @Getter
