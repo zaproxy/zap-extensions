@@ -12,6 +12,7 @@
     <mapID target="automation.auth" url="contents/authentication.html" />
     <mapID target="automation.addons" url="contents/job-addons.html" />
     <mapID target="automation.ascan" url="contents/job-ascan.html" />
+    <mapID target="automation.ascanconfig" url="contents/job-ascanconfig.html" />
     <mapID target="automation.ascanpolicy" url="contents/job-ascanpolicy.html" />
     <mapID target="automation.delay" url="contents/job-delay.html" />
     <mapID target="automation.requestor" url="contents/job-requestor.html" />
