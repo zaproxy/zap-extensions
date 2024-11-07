@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add job to configure the active scanner, `activeScan-config`.
 
 ### Changed
+- Updated automation framework documentation and templates for `activeScan` job to reflect changes to the default value of threadPerHost parameter
 - Update help for the "requestor" job.
 - Update help to indicate that job order is important (Issue 8675).
 - Fields with default or missing values are omitted for the following automation jobs in saved plans:

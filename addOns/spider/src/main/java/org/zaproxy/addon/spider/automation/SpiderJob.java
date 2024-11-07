@@ -50,6 +50,7 @@ import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.spider.ExtensionSpider2;
 import org.zaproxy.addon.spider.SpiderParam;
@@ -463,7 +464,7 @@ public class SpiderJob extends AutomationJob {
         private Boolean postForm = true;
         private Boolean processForm = true;
         private Boolean sendRefererHeader = true;
-        private Integer threadCount = 2;
+        private Integer threadCount = Constants.getDefaultThreadCount();
         private String userAgent = "";
         // These 2 fields are deprecated
         private Boolean failIfFoundUrlsLessThan;

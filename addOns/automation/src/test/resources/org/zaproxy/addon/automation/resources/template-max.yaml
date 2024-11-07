@@ -64,7 +64,7 @@ jobs:
       defaultPolicy:                       # String: The name of the default scan policy to use, default: Default Policy
       handleAntiCSRFTokens:                # Bool: If set then automatically handle anti CSRF tokens, default: false
       injectPluginIdInHeader:              # Bool: If set then the relevant rule ID will be injected into the X-ZAP-Scan-ID header of each request, default: false
-      threadPerHost:                       # Int: The max number of threads per host, default: 2
+      threadPerHost:                       # Int: The max number of threads per host, default: 2 * Number of available processor cores
     inputVectors:                          # The input vectors used during the active scan.
       urlQueryStringAndDataDrivenNodes:    # Configures the scanning of query parameters and DDNs.
          enabled:                          # Bool: If query parameters and DDNs scanning should be enabled. Default: true
@@ -131,7 +131,7 @@ jobs:
       handleAntiCSRFTokens:            # Bool: If set then automatically handle anti CSRF tokens, default: false
       injectPluginIdInHeader:          # Bool: If set then the relevant rule Id will be injected into the X-ZAP-Scan-ID header of each request, default: false
       scanHeadersAllRequests:          # Bool: If set then the headers of requests that do not include any parameters will be scanned, default: false
-      threadPerHost:                   # Int: The max number of threads per host, default: 2
+      threadPerHost:                   # Int: The max number of threads per host, default: 2 * Number of available processor cores
       maxAlertsPerRule:                # Int: Maximum number of alerts to raise per rule, default: 0 unlimited
     policyDefinition:                  # The policy definition - only used if the 'policy' is not set
       defaultStrength:                 # String: The default Attack Strength for all rules, one of Low, Medium, High, Insane (not recommended), default: Medium
