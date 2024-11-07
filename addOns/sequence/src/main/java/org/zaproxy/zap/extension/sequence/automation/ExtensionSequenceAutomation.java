@@ -22,9 +22,12 @@ package org.zaproxy.zap.extension.sequence.automation;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
@@ -67,6 +70,8 @@ public class ExtensionSequenceAutomation extends ExtensionAdaptor {
                         getExtension(ExtensionActiveScan.class),
                         getExtension(ExtensionScript.class));
         extAuto.registerAutomationJob(ascanJob);
+
+        extensionHook.addSessionListener(new SessionChangedListenerImpl());
     }
 
     private static <T extends Extension> T getExtension(Class<T> clazz) {
@@ -99,5 +104,28 @@ public class ExtensionSequenceAutomation extends ExtensionAdaptor {
     @Override
     public String getUIName() {
         return Constant.messages.getString("sequence.automation.name");
+    }
+
+    private static class SessionChangedListenerImpl implements SessionChangedListener {
+
+        @Override
+        public void sessionScopeChanged(Session session) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void sessionModeChanged(Mode mode) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void sessionChanged(Session session) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void sessionAboutToChange(Session session) {
+            SequenceActiveScanJob.clearJobResultData();
+        }
     }
 }

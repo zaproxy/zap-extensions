@@ -262,6 +262,10 @@ public class SequenceActiveScanJob extends AutomationJob {
         return list;
     }
 
+    static void clearJobResultData() {
+        ascans.clear();
+    }
+
     @Override
     public String getSummary() {
         return Constant.messages.getString(
