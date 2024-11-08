@@ -65,14 +65,14 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("spider")
 
-    implementation("io.swagger.parser.v3:swagger-parser:2.1.22") {
+    implementation("io.swagger.parser.v3:swagger-parser:2.1.23") {
         // Provided by commonlib add-on:
         exclude(group = "com.fasterxml.jackson")
         exclude(group = "com.fasterxml.jackson.core")
         exclude(group = "com.fasterxml.jackson.dataformat")
         exclude(group = "com.fasterxml.jackson.datatype")
     }
-    implementation("io.swagger:swagger-compat-spec-parser:1.0.70") {
+    implementation("io.swagger:swagger-compat-spec-parser:1.0.71") {
         // Provided by commonlib add-on:
         exclude(group = "com.fasterxml.jackson")
         exclude(group = "com.fasterxml.jackson.core")
