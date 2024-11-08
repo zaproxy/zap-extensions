@@ -37,7 +37,7 @@ public class SequencePage extends TestPage {
     private static final Logger LOGGER = LogManager.getLogger(SequencePage.class);
     private TestProxyServer server;
 
-    private static int numberOfSteps = 3;
+    private static int numberOfSteps = 5;
     private static int numberOfFields = 3;
     private static boolean checkSequence = true;
 
@@ -84,6 +84,7 @@ public class SequencePage extends TestPage {
 
         UUID seqUuid = null;
         int seqStep = 0;
+        boolean stepBack = super.getFormParameter(msg, "back") != null;
 
         if (HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod())) {
             String seqId = super.getFormParameter(msg, "seqId");
@@ -107,6 +108,7 @@ public class SequencePage extends TestPage {
             // Its the start of a new sequence
             seqUuid = UUID.randomUUID();
             if (checkSequence) {
+                LOGGER.debug("New Sequence {}", seqUuid);
                 seqMap.put(seqUuid, seqStep);
             }
         }
@@ -125,8 +127,8 @@ public class SequencePage extends TestPage {
                 sb.append("<p>\n");
 
                 responseStatus = TestProxyServer.STATUS_FORBIDDEN;
-                seqMap.remove(seqUuid);
-            } else if (checkSequence && seqStep != expectedStep) {
+
+            } else if (checkSequence && seqStep > expectedStep) {
                 // Out of sequence
                 sb.append("Out of sequence step!\n");
                 sb.append("Got ");
@@ -138,30 +140,39 @@ public class SequencePage extends TestPage {
                 sb.append("<p>\n");
 
                 responseStatus = TestProxyServer.STATUS_FORBIDDEN;
-                seqMap.remove(seqUuid);
 
             } else if (seqStep >= numberOfSteps) {
                 // All done, just need to output the vulnerable value..
                 sb.append("You got to the end of the sequence!\n");
                 sb.append("<p>\n");
-                sb.append("The final value supplied was ");
-                sb.append(super.getFormParameter(msg, "vuln"));
-                sb.append("<p>\n");
                 sb.append("<a href=\"seq\">Start Again</a>");
                 sb.append("<p>\n");
 
                 if (checkSequence) {
+                    LOGGER.debug("Finished Sequence {}", seqUuid);
                     seqMap.remove(seqUuid);
                 }
             } else {
-                seqStep++;
-                if (checkSequence) {
-                    seqMap.put(seqUuid, seqStep);
+                if (stepBack) {
+                    seqStep--;
+                } else {
+                    seqStep++;
+                    if (checkSequence && seqStep > seqMap.get(seqUuid)) {
+                        LOGGER.debug("Sequence step {} {} ", seqUuid, seqStep);
+                        seqMap.put(seqUuid, seqStep);
+                    }
                 }
 
                 sb.append("<H3>Step ");
                 sb.append(seqStep);
                 sb.append("</H3>\n");
+
+                if (seqStep == numberOfSteps) {
+                    sb.append("The vulnerable value supplied was ");
+                    sb.append(super.getFormParameter(msg, "vuln"));
+                    sb.append("<p>\n");
+                }
+
                 sb.append("<form method=\"POST\">\n");
                 appendInput(sb, "hidden", "step" + seqStep, Integer.toString(seqStep));
                 appendInput(sb, "hidden", "seqId", seqUuid.toString());
@@ -171,13 +182,17 @@ public class SequencePage extends TestPage {
                 IntStream.range(0, numberOfFields)
                         .forEach(i -> appendParam(sb, "Field " + i, "text", "field" + i, ""));
 
-                if (seqStep == numberOfSteps) {
+                if (seqStep == numberOfSteps - 1) {
                     appendParam(sb, "Vulnerable Param", "text", "vuln", "Not Safe!");
                 }
 
                 sb.append("<tr>\n");
-                sb.append("\t<td></td>\n");
-                sb.append("\t<td><button>Next</button></td>\n");
+                if (seqStep == 1) {
+                    sb.append("\t<td></td>\n");
+                } else {
+                    sb.append("\t<td><button name=\"back\">Back</button></td>\n");
+                }
+                sb.append("\t<td><button name=\"next\">Next</button></td>\n");
                 sb.append("</tr>\n");
                 sb.append("</table>\n");
                 sb.append("</form>\n");
