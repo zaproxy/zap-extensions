@@ -3,6 +3,7 @@
     "cats": [
       18
     ],
+    "description": "ZK is a framework for building rich, interactive web applications using Java, providing a set of tools and components to create dynamic user interfaces.",
     "html": [
       "<!-- ZK [.\\d\\s]+-->"
     ],
@@ -10,12 +11,11 @@
     "implies": [
       "Java"
     ],
+    "oss": true,
     "scriptSrc": [
       "zkau/"
     ],
-    "website": "https://zkoss.org",
-    "oss": true,
-    "description": "ZK is a framework for building rich, interactive web applications using Java, providing a set of tools and components to create dynamic user interfaces."
+    "website": "https://zkoss.org"
   },
   "ZURB Foundation": {
     "cats": [
@@ -37,6 +37,7 @@
       19
     ],
     "cpe": "cpe:2.3:a:zabbix:zabbix:*:*:*:*:*:*:*:*",
+    "description": "Zabbix is an open-source monitoring tool that provides real-time monitoring, alerting, and reporting for IT infrastructure, including networks, servers, and applications.",
     "html": [
       "<body[^>]+zbxCallPostScripts"
     ],
@@ -50,12 +51,11 @@
     "meta": {
       "Author": "ZABBIX SIA\\;confidence:70"
     },
+    "oss": true,
     "url": [
       "\\/zabbix\\/\\;confidence:30"
     ],
-    "website": "https://zabbix.com",
-    "oss": true,
-    "description": "Zabbix is an open-source monitoring tool that provides real-time monitoring, alerting, and reporting for IT infrastructure, including networks, servers, and applications."
+    "website": "https://zabbix.com"
   },
   "Zakeke": {
     "cats": [
@@ -148,6 +148,21 @@
       "/wp-content/themes/zakra/"
     ],
     "website": "https://zakratheme.com"
+  },
+  "Zammit": {
+    "cats": [
+      6
+    ],
+    "description": "Zammit is an ecommerce platform based in Egypt.",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "merchants\\.zammit\\.shop/"
+    ],
+    "website": "https://www.zammit.shop"
   },
   "Zanox": {
     "cats": [
@@ -282,12 +297,12 @@
       "ZENDSERVERSESSID": ""
     },
     "cpe": "cpe:2.3:a:zend:zend_server:*:*:*:*:*:*:*:*",
+    "description": "Zend is a company that provides PHP development tools and solutions, including frameworks, servers, and development environments, to help developers build, deploy, and manage PHP applications.",
     "headers": {
       "X-Powered-By": "Zend(?:Server)?(?:[\\s/]?([0-9.]+))?\\;version:\\1"
     },
     "icon": "Zend.svg",
-    "website": "https://zend.com",
-    "description": "Zend is a company that provides PHP development tools and solutions, including frameworks, servers, and development environments, to help developers build, deploy, and manage PHP applications."
+    "website": "https://zend.com"
   },
   "Zendesk": {
     "cats": [
@@ -368,6 +383,35 @@
     },
     "website": "https://zenfolio.com"
   },
+  "Zenrez": {
+    "cats": [
+      32
+    ],
+    "description": "Zenrez is a provider of sales and marketing software designed for boutique fitness studios, with a focus on revenue management.",
+    "icon": "Zenrez.svg",
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.zenrez\\.com/"
+    ],
+    "website": "https://zenrez.com"
+  },
+  "Zentap": {
+    "cats": [
+      10
+    ],
+    "description": "Zentap is a real estate marketing platform designed to create and manage marketing campaigns, track leads, and measure results.",
+    "icon": "Zentap.svg",
+    "meta": {
+      "generator": "Zentap"
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://zentap.com"
+  },
   "Zeotap": {
     "cats": [
       97
@@ -432,6 +476,43 @@
     "saas": true,
     "website": "https://www.zeustechnology.com"
   },
+  "Zevi": {
+    "cats": [
+      29
+    ],
+    "cookies": {
+      "zevi-_zldt": ""
+    },
+    "description": "Zevi is an AI-powered site search and discovery platform designed to enhance product discovery.",
+    "icon": "Zevi.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.zevi\\.ai/"
+    ],
+    "website": "https://www.zevi.ai"
+  },
+  "Ziadah": {
+    "cats": [
+      6,
+      32
+    ],
+    "description": "Ziadah is a specialist in enhancing ecommerce sales by increasing Average Order Value (AOV) through strategic inbound marketing, focusing on cross-selling and upselling techniques.",
+    "icon": "Ziadah.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.ziadah\\.app/"
+    ],
+    "website": "https://www.ziadah.app"
+  },
   "Zid": {
     "cats": [
       6
@@ -476,13 +557,13 @@
       "ZM_TEST": "true"
     },
     "cpe": "cpe:2.3:a:zimbra:zimbra:*:*:*:*:*:*:*:*",
+    "description": "Zimbra is a provider of open-source email and collaboration software, offering solutions for email, calendar, contacts, and collaboration for both individual and enterprise use.",
     "icon": "Zimbra.svg",
     "implies": [
       "Java"
     ],
-    "website": "https://www.zimbra.com/",
     "oss": true,
-    "description": "Zimbra is a provider of open-source email and collaboration software, offering solutions for email, calendar, contacts, and collaboration for both individual and enterprise use."
+    "website": "https://www.zimbra.com/"
   },
   "ZingChart": {
     "cats": [
@@ -827,6 +908,7 @@
     "cats": [
       91
     ],
+    "description": "ZoodPay is a financial technology company that provides payment and financing solutions, including buy-now-pay-later (BNPL) services and point-of-sale financing, to facilitate transactions for consumers and businesses.",
     "dom": [
       "img[src*='zoodpay']"
     ],
@@ -838,8 +920,7 @@
     "scriptSrc": [
       "wp-content/plugins/zoodpay/(?:.+\\?ver=([\\d\\.]+))?\\;version:\\1"
     ],
-    "website": "https://www.zoodpay.com",
-    "description": "ZoodPay is a financial technology company that provides payment and financing solutions, including buy-now-pay-later (BNPL) services and point-of-sale financing, to facilitate transactions for consumers and businesses."
+    "website": "https://www.zoodpay.com"
   },
   "Zoominfo": {
     "cats": [
@@ -911,16 +992,16 @@
       22
     ],
     "cpe": "cpe:2.3:a:zope:zope:*:*:*:*:*:*:*:*",
+    "description": "Zope is an open-source web application server and content management framework that helps developers build and manage complex web applications with features like object-oriented programming and scalable architecture.",
     "headers": {
       "Server": "^Zope/"
     },
     "icon": "Zope.svg",
-    "website": "https://zope.org",
-    "oss": true,
-    "description": "Zope is an open-source web application server and content management framework that helps developers build and manage complex web applications with features like object-oriented programming and scalable architecture.",
     "implies": [
       "Python"
-    ]
+    ],
+    "oss": true,
+    "website": "https://zope.org"
   },
   "Zotabox": {
     "cats": [

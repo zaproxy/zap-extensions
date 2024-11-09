@@ -175,15 +175,15 @@
       "gsap.version": "([\\d.]+)\\;version:\\1",
       "gsapVersions": ""
     },
-    "scriptSrc": [
-      "TweenMax(?:\\.min)?\\.js"
-    ],
-    "website": "https://greensock.com/gsap",
     "pricing": [
       "freemium",
       "low",
       "recurring"
-    ]
+    ],
+    "scriptSrc": [
+      "TweenMax(?:\\.min)?\\.js"
+    ],
+    "website": "https://greensock.com/gsap"
   },
   "GTranslate": {
     "cats": [
@@ -378,12 +378,12 @@
     "cookies": {
       "_gauges_": ""
     },
+    "description": "Gauges is a real-time web analytics tool that provides live traffic updates and essential metrics for websites.",
     "icon": "Gauges.svg",
     "js": {
       "_gauges": ""
     },
-    "website": "https://get.gaug.es",
-    "description": "Gauges is a real-time web analytics tool that provides live traffic updates and essential metrics for websites."
+    "website": "https://get.gaug.es"
   },
   "Gcore": {
     "cats": [
@@ -1030,10 +1030,10 @@
       "recurring",
       "poa"
     ],
-    "website": "https://getgist.com/live-chat",
     "scriptSrc": [
       "\\.getgist\\.com"
-    ]
+    ],
+    "website": "https://getgist.com/live-chat"
   },
   "Gist Giftship": {
     "cats": [
@@ -1059,6 +1059,7 @@
     "cats": [
       4
     ],
+    "cpe": "cpe:2.3:a:gitbook:gitbook:*:*:*:*:*:*:*:*",
     "description": "GitBook is a command-line tool for creating documentation using Git and Markdown.",
     "icon": "GitBook.svg",
     "js": {
@@ -1074,7 +1075,6 @@
       "low",
       "recurring"
     ],
-    "cpe": "cpe:2.3:a:gitbook:gitbook:*:*:*:*:*:*:*:*",
     "saas": true,
     "url": [
       "^https?://[^/]+\\.gitbook\\.com/"
@@ -1678,10 +1678,10 @@
       27
     ],
     "cpe": "cpe:2.3:a:golang:go:*:*:*:*:*:*:*:*",
+    "description": "Go is an open source high-level programming language.",
     "icon": "Go.svg",
-    "website": "https://go.dev",
     "oss": true,
-    "description": "Go is an open source high-level programming language."
+    "website": "https://go.dev"
   },
   "Go Instore": {
     "cats": [
@@ -2205,10 +2205,10 @@
       36
     ],
     "description": "Google AdSense is a program run by Google through which website publishers serve advertisements that are targeted to the site content and audience.",
-    "icon": "Google AdSense.svg",
     "dom": [
       "amp-ad[type='adsense']"
     ],
+    "icon": "Google AdSense.svg",
     "js": {
       "Goog_AdSense_": "",
       "Goog_AdSense_OsdAdapter": "",
@@ -2565,6 +2565,9 @@
       "iframe[src*='accounts.google.com/o/oauth2'], a[href*='accounts.google.com/o/oauth2']"
     ],
     "icon": "Google.svg",
+    "js": {
+      "googleSignInClientId": ""
+    },
     "meta": {
       "google-signin-client_id": "",
       "google-signin-scope": ""
@@ -2572,10 +2575,7 @@
     "scriptSrc": [
       "accounts\\.google\\.com/gsi/client"
     ],
-    "website": "https://developers.google.com/identity/sign-in/web",
-    "js": {
-      "googleSignInClientId": ""
-    }
+    "website": "https://developers.google.com/identity/sign-in/web"
   },
   "Google Sites": {
     "cats": [
@@ -2946,6 +2946,22 @@
     ],
     "website": "https://www.graphene-theme.com/graphene-theme"
   },
+  "Graphly": {
+    "cats": [
+      10
+    ],
+    "description": "Graphly is a visual reporting and business intelligence platform.",
+    "icon": "Graphly.svg",
+    "js": {
+      "GraphlyTracking": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://graphly.io"
+  },
   "Grasp": {
     "cats": [
       52
@@ -2968,6 +2984,8 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:getgrav:grav:*:*:*:*:*:*:*:*",
+    "description": "Grav is a modern, open-source flat-file CMS designed for speed and flexibility, enabling easy website creation and management without needing a database.",
     "icon": "Grav.svg",
     "implies": [
       "PHP"
@@ -2975,10 +2993,8 @@
     "meta": {
       "generator": "GravCMS(?:\\s([\\d.]+))?\\;version:\\1"
     },
-    "cpe": "cpe:2.3:a:getgrav:grav:*:*:*:*:*:*:*:*",
-    "website": "https://getgrav.org",
     "oss": true,
-    "description": "Grav is a modern, open-source flat-file CMS designed for speed and flexibility, enabling easy website creation and management without needing a database."
+    "website": "https://getgrav.org"
   },
   "Gravatar": {
     "cats": [
@@ -3161,6 +3177,7 @@
     "cats": [
       32
     ],
+    "cpe": "cpe:2.3:a:grin:grin:*:*:*:*:*:*:*:*",
     "description": "Grin is a influence marketing platform.",
     "icon": "Grin.svg",
     "js": {
@@ -3170,7 +3187,6 @@
     "scriptSrc": [
       "grin-sdk\\.js"
     ],
-    "cpe": "cpe:2.3:a:grin:grin:*:*:*:*:*:*:*:*",
     "website": "https://grin.co/"
   },
   "GrocerKey": {
@@ -3477,6 +3493,22 @@
       "/wp-content/plugins/gutenberg/"
     ],
     "website": "https://github.com/WordPress/gutenberg"
+  },
+  "Guuru": {
+    "cats": [
+      94
+    ],
+    "description": "Guuru is a platform that connects shoppers with customers who share their enthusiasm for specific products or services.",
+    "icon": "Guuru.svg",
+    "js": {
+      "Guuru": "",
+      "guuru.init": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.guuru.com"
   },
   "genezio": {
     "cats": [

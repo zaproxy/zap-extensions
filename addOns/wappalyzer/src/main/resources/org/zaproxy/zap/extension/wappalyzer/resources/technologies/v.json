@@ -30,6 +30,23 @@
     ],
     "website": "https://en.vaptcha.com"
   },
+  "VB Media": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "_vbm_session": ""
+    },
+    "description": "VB Media is an ecommerce platform designed for selling print products online.",
+    "icon": "VBMedia.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://vb.media"
+  },
   "VDX.tv": {
     "cats": [
       36
@@ -199,6 +216,7 @@
     "cats": [
       18
     ],
+    "cpe": "cpe:2.3:a:vaadin:vaadin:*:*:*:*:*:*:*:*",
     "description": "Vaadin is an open-source framework for building user interfaces and single-page applications using Java and TypeScript.",
     "icon": "Vaadin.svg",
     "implies": [
@@ -210,7 +228,6 @@
     "scriptSrc": [
       "vaadinBootstrap\\.js(?:\\?v=([\\d.]+))?\\;version:\\1"
     ],
-    "cpe": "cpe:2.3:a:vaadin:vaadin:*:*:*:*:*:*:*:*",
     "website": "https://vaadin.com"
   },
   "ValueCommerce": {
@@ -441,6 +458,21 @@
     ],
     "website": "https://www.vello.fi"
   },
+  "Vendaecia": {
+    "cats": [
+      6
+    ],
+    "description": "Vendaecia is a platform designed for setting up online stores or selling products through various marketplaces, providing tools to manage the entire sales process.",
+    "dom": [
+      "base[href*='.vendaeciaexpress.com.br']"
+    ],
+    "icon": "Vendaecia.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.vendaecia\\.com/"
+    ],
+    "website": "https://www.vendaecia.com.br"
+  },
   "Vendio": {
     "cats": [
       6
@@ -506,6 +538,23 @@
     ],
     "icon": "Venmo.svg",
     "website": "https://venmo.com"
+  },
+  "VentasxMayor": {
+    "cats": [
+      6
+    ],
+    "description": "VentasxMayor is an ecommerce platform designed for wholesalers, brands, distributors, and importers to streamline and increase wholesale sales.",
+    "icon": "VentasxMayor.svg",
+    "pricing": [
+      "onetime",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "bunny-cdn\\.ventasxmayor\\.com/"
+    ],
+    "website": "https://ventasxmayor.com"
   },
   "VentraIP": {
     "cats": [
@@ -575,6 +624,18 @@
       "\\.venyoo\\.ru/"
     ],
     "website": "https://venew.io"
+  },
+  "Veonr": {
+    "cats": [
+      10
+    ],
+    "description": "Veonr is an analytics and tracking suite designed for business websites, offering tools to monitor site activities and optimize conversions.",
+    "icon": "Veonr.svg",
+    "saas": true,
+    "scripts": [
+      "\\.fsb\\.veonr\\.com"
+    ],
+    "website": "https://veonr.com"
   },
   "Veoxa": {
     "cats": [
@@ -754,11 +815,11 @@
     "js": {
       "Verloop": ""
     },
-    "saas": true,
-    "website": "https://verloop.io/",
     "pricing": [
       "poa"
-    ]
+    ],
+    "saas": true,
+    "website": "https://verloop.io/"
   },
   "Vero": {
     "cats": [
@@ -987,6 +1048,17 @@
     ],
     "website": "https://viafoura.com"
   },
+  "Vicomi": {
+    "cats": [
+      10
+    ],
+    "description": "Vicomi is a tool that provides insights into audience reactions to content.",
+    "saas": true,
+    "scriptSrc": [
+      "assets-prod\\.vicomi\\.com/"
+    ],
+    "website": "https://www.vicomi.com/emotion-analytics-for-brands-and-agencies"
+  },
   "Vidazoo": {
     "cats": [
       36
@@ -1082,6 +1154,25 @@
     ],
     "website": "https://videoly.co"
   },
+  "Vidjet": {
+    "cats": [
+      14
+    ],
+    "description": "Vidjet is a shoppable-video platform designed for modern ecommerce stores, allowing videos to be embedded on websites and triggered based on visitor actions.",
+    "icon": "Vidjet.svg",
+    "js": {
+      "Vidjet.init": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app-api\\.vidjet\\.io"
+    ],
+    "website": "https://www.vidjet.com"
+  },
   "Vidora": {
     "cats": [
       10
@@ -1107,23 +1198,23 @@
     "cookies": {
       "_gphw_mode": ""
     },
+    "description": "Vigbo is a platform for building and managing websites and web applications with a focus on user-friendly design and minimal coding.",
+    "dom": [
+      "link[href*='.vigbo.com'], link[href*='.gophotoweb.com']"
+    ],
     "html": [
       "<link[^>]* href=[^>]+(?:\\.vigbo\\.com|\\.gophotoweb\\.com)"
     ],
     "icon": "vigbo.svg",
-    "scriptSrc": [
-      "\\.(?:vigbo|gophotoweb)\\.com/"
-    ],
-    "website": "https://vigbo.com",
-    "saas": true,
-    "dom": [
-      "link[href*='.vigbo.com'], link[href*='.gophotoweb.com']"
-    ],
-    "description": "Vigbo is a platform for building and managing websites and web applications with a focus on user-friendly design and minimal coding.",
     "pricing": [
       "low",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.(?:vigbo|gophotoweb)\\.com/"
+    ],
+    "website": "https://vigbo.com"
   },
   "Vigil": {
     "cats": [
@@ -1210,6 +1301,21 @@
     "xhr": [
       "api\\.vhx\\.tv"
     ]
+  },
+  "Vincere": {
+    "cats": [
+      101
+    ],
+    "description": "Vincere is an all-in-one software for recruitment agencies.",
+    "dom": [
+      "link[href*='static.vincere-digital.io/']"
+    ],
+    "icon": "Vincere.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.vincere.io"
   },
   "Vintcer": {
     "cats": [
@@ -1370,6 +1476,10 @@
       6
     ],
     "cpe": "cpe:2.3:a:virtuemart:virtuemart:*:*:*:*:*:joomla\\!:*:*",
+    "description": "VirtueMart is an open-source ecommerce solution designed as an extension for Joomla, allowing users to build and manage online stores with features for product management, payment processing, and order fulfillment.",
+    "dom": [
+      "div#vmMainPage"
+    ],
     "html": [
       "<div id=\"vmMainPage"
     ],
@@ -1377,15 +1487,11 @@
     "implies": [
       "Joomla"
     ],
-    "website": "https://virtuemart.net",
     "oss": true,
     "requires": [
       "Joomla"
     ],
-    "description": "VirtueMart is an open-source ecommerce solution designed as an extension for Joomla, allowing users to build and manage online stores with features for product management, payment processing, and order fulfillment.",
-    "dom": [
-      "div#vmMainPage"
-    ]
+    "website": "https://virtuemart.net"
   },
   "Virtuoso": {
     "cats": [
@@ -1756,6 +1862,23 @@
     "saas": true,
     "website": "https://www.vntana.com"
   },
+  "VocalReferences": {
+    "cats": [
+      90
+    ],
+    "description": "VocalReferences is a platform offering testimonial, review, and rating tools designed to help online businesses collect and display customer feedback.",
+    "icon": "VocalReferences.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "widgets\\.vocalreferences\\.com"
+    ],
+    "website": "https://www.vocalreferences.com"
+  },
   "Voltn": {
     "cats": [
       32
@@ -1871,6 +1994,23 @@
     ],
     "saas": true,
     "website": "https://www.voracio.co.uk"
+  },
+  "Vouched": {
+    "cats": [
+      69
+    ],
+    "description": "Vouched is a platform designed to support identity verification across various industries.",
+    "icon": "Vouched.svg",
+    "js": {
+      "Vouched": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.vouched.id"
   },
   "Vouchley": {
     "cats": [
@@ -2124,6 +2264,9 @@
       16
     ],
     "description": "Checkpoint is a product of v4Guard that verifies website users and prevents fraudulent access to sensitive areas, by checking for any use of anonymisation services with a captcha-like widget.",
+    "dom": [
+      "iframe[src*='.v4guard.io/checkpoint/']"
+    ],
     "icon": "v4Guard.svg",
     "pricing": [
       "poa",
@@ -2133,10 +2276,7 @@
     "scriptSrc": [
       "\\.v4guard\\.io/checkpoint"
     ],
-    "website": "https://v4guard.io",
-    "dom": [
-      "iframe[src*='.v4guard.io/checkpoint/']"
-    ]
+    "website": "https://v4guard.io"
   },
   "vBulletin": {
     "cats": [
@@ -2205,6 +2345,21 @@
       "generator": "vibecommerce"
     },
     "website": "https://vibecommerce.com.br"
+  },
+  "vinSUITE": {
+    "cats": [
+      6
+    ],
+    "description": "vinSUITE is a DTC software platform designed specifically for wineries, enabling streamlined management of customer relationships, inventory, sales, and marketing operations in one centralized system.",
+    "icon": "vinSUITE.svg",
+    "meta": {
+      "author": "^vinSUITE$"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://vinsuite.com"
   },
   "vxe-table": {
     "cats": [

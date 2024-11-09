@@ -494,6 +494,9 @@
     "cats": [
       6
     ],
+    "cookies": {
+      "_ec_force_session": ""
+    },
     "description": "EcForce is an all-in-one ecommerce platform with all the functions necessary for ecommerce, from landing-page creation to order and customer data management analysis.",
     "icon": "EcForce.svg",
     "implies": [
@@ -509,10 +512,7 @@
       "poa"
     ],
     "saas": true,
-    "website": "https://ec-force.com",
-    "cookies": {
-      "_ec_force_session": ""
-    }
+    "website": "https://ec-force.com"
   },
   "EcomArtists": {
     "cats": [
@@ -813,6 +813,7 @@
     "cats": [
       87
     ],
+    "cpe": "cpe:2.3:a:10up:elasticpress:*:*:*:*:*:wordpress:*:*",
     "description": "ElasticPress is a hosting service that connects your WordPress site to search hosting.",
     "headers": {
       "x-elasticpress-query": ""
@@ -826,7 +827,6 @@
       "freemium",
       "mid"
     ],
-    "cpe": "cpe:2.3:a:10up:elasticpress:*:*:*:*:*:wordpress:*:*",
     "saas": true,
     "website": "https://www.elasticpress.io/"
   },
@@ -1072,6 +1072,22 @@
     ],
     "website": "https://wpmet.com/plugin/elementskit"
   },
+  "Elenore": {
+    "cats": [
+      53
+    ],
+    "description": "Elenore is an all-in-one business management software platform designed to streamline operations and support business growth.",
+    "icon": "Elenore.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.elenore\\.io"
+    ],
+    "website": "https://elenore.io"
+  },
   "Elevar": {
     "cats": [
       10
@@ -1124,6 +1140,7 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:elgg:elgg:*:*:*:*:*:*:*:*",
     "description": "Elgg is a social networking engine, delivering the building blocks for creating social networks and applications.",
     "icon": "Elgg.svg",
     "js": {
@@ -1133,7 +1150,6 @@
     "scriptSrc": [
       "elgg(?:_dataTables)?(?:\\/Ajax)?(?:\\/Plugin)?(?:\\/require_config)?(?:\\/spinner)?(?:\\/dev)?(?:\\.\\w{0,10})?\\.js"
     ],
-    "cpe": "cpe:2.3:a:elgg:elgg:*:*:*:*:*:*:*:*",
     "website": "https://elgg.org/"
   },
   "EliseAI": {
@@ -1502,6 +1518,9 @@
       5
     ],
     "description": "Embedly is a service that allows developers to convert URLs into rich previews and embeddable content.",
+    "dom": [
+      "div.w-embed > iframe.embedly-embed"
+    ],
     "icon": "Embedly.svg",
     "js": {
       "embedly": ""
@@ -1514,16 +1533,14 @@
     "scriptSrc": [
       "cdn\\.embedly\\.com/"
     ],
-    "website": "https://embed.ly",
-    "dom": [
-      "div.w-embed > iframe.embedly-embed"
-    ]
+    "website": "https://embed.ly"
   },
   "Ember.js": {
     "cats": [
       12
     ],
     "cpe": "cpe:2.3:a:emberjs:ember.js:*:*:*:*:*:*:*:*",
+    "description": "Ember.js is a comprehensive JavaScript framework that simplifies the development of modern web applications by providing a powerful CLI, a built-in router, and a fast rendering engine.",
     "icon": "Ember.js.svg",
     "js": {
       "Ember": "",
@@ -1533,8 +1550,7 @@
     "scripts": [
       "@overview\\s+Ember -[\\s\\S]+@version\\s+(.+)\\;version:\\1"
     ],
-    "website": "https://emberjs.com",
-    "description": "Ember.js is a comprehensive JavaScript framework that simplifies the development of modern web applications by providing a powerful CLI, a built-in router, and a fast rendering engine."
+    "website": "https://emberjs.com"
   },
   "Emotion": {
     "cats": [
@@ -1546,8 +1562,8 @@
       "style[data-emotion], style[data-emotion-css]"
     ],
     "icon": "Emotion.svg",
-    "website": "https://emotion.sh",
-    "oss": true
+    "oss": true,
+    "website": "https://emotion.sh"
   },
   "Emotive": {
     "cats": [
@@ -1663,10 +1679,10 @@
       1
     ],
     "description": "Essential software for changemakers. Facilitate, centralize, and analyze two-way conversations between you and your community.",
-    "icon": "EngagementHQ.svg",
     "dom": [
       "link[href*='ehq-production-']"
     ],
+    "icon": "EngagementHQ.svg",
     "website": "https://granicus.com/solution/govdelivery/engagementhq/"
   },
   "Engagio": {
@@ -1747,6 +1763,26 @@
       "\\.enjin\\.com/"
     ],
     "website": "https://www.enjin.com"
+  },
+  "Enjore": {
+    "cats": [
+      1
+    ],
+    "description": "Enjore is an online sports administration system designed to manage schedules, results, statistics, and news for all leagues and tournaments.",
+    "dom": [
+      "link[href*='cdn.enjore.com/']"
+    ],
+    "icon": "Enjore.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "PHP",
+      "AddToAny"
+    ],
+    "saas": true,
+    "website": "https://www.enjore.com"
   },
   "Enkod": {
     "cats": [
@@ -1943,6 +1979,23 @@
     ],
     "website": "https://envothemes.com/free-envo-ecommerce/"
   },
+  "Envoke": {
+    "cats": [
+      75
+    ],
+    "description": "Envoke is a CASL-compliant email marketing software designed for communications professionals in business, education, and the public sector, with a focus on security and compliance.",
+    "icon": "Envoke.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.envoke\\.com/"
+    ],
+    "website": "https://envoke.com/"
+  },
   "Envoy": {
     "cats": [
       64
@@ -2138,28 +2191,28 @@
     "cats": [
       53
     ],
+    "cpe": "cpe:2.3:a:espocrm:espocrm:*:*:*:*:*:*:*:*",
     "description": "EspoCRM is an open-source CRM software solution designed for businesses of all sizes.",
     "dom": [
       "meta[content*='EspoCRM'], link[href*='/espo/']"
     ],
     "icon": "EspoCRM.svg",
-    "oss": true,
-    "pricing": [
-      "freemium"
-    ],
-    "scriptSrc": [
-      "espo(?:\\.min)?\\.js"
-    ],
-    "cpe": "cpe:2.3:a:espocrm:espocrm:*:*:*:*:*:*:*:*",
-    "website": "https://www.espocrm.com",
     "implies": [
       "Handlebars",
       "Backbone.js"
     ],
-    "saas": true,
     "js": {
       "Espo": ""
-    }
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "espo(?:\\.min)?\\.js"
+    ],
+    "website": "https://www.espocrm.com"
   },
   "Essent SiteBuilder Pro": {
     "cats": [
@@ -2464,6 +2517,19 @@
     "saas": true,
     "website": "https://www.evolok.com"
   },
+  "Evolve Media": {
+    "cats": [
+      1
+    ],
+    "description": "Evolve Media is a publishing platform that offers contextual environments for partners to connect and engage with millions of loyal readers through passionate writing and artful storytelling.",
+    "icon": "EvolveMedia.svg",
+    "js": {
+      "EvolveGtagId": "",
+      "EvolveMediaMainSettings": ""
+    },
+    "saas": true,
+    "website": "https://www.evolvemediallc.com"
+  },
   "Evvnt": {
     "cats": [
       72,
@@ -2582,6 +2648,23 @@
     ],
     "website": "https://exitintelligence.com"
   },
+  "Exo Platform": {
+    "cats": [
+      19
+    ],
+    "description": "Exo Platform is a social-collaboration software designed for enterprises.",
+    "icon": "ExoPlatform.svg",
+    "js": {
+      "eXo.core": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.exoplatform.com"
+  },
   "ExoClick": {
     "cats": [
       36
@@ -2699,20 +2782,20 @@
       12
     ],
     "cpe": "cpe:2.3:a:sencha:ext_js:*:*:*:*:*:*:*:*",
+    "description": "ExtJS is a JavaScript framework developed by Sencha, designed for creating feature-rich, cross-platform web applications with a comprehensive set of UI components and tools.",
     "icon": "ExtJS.svg",
     "js": {
       "Ext": "",
       "Ext.version": "^(.+)$\\;version:\\1",
       "Ext.versions.extjs.version": "^(.+)$\\;version:\\1"
     },
+    "pricing": [
+      "poa"
+    ],
     "scriptSrc": [
       "ext-base\\.js"
     ],
-    "website": "https://www.sencha.com",
-    "description": "ExtJS is a JavaScript framework developed by Sencha, designed for creating feature-rich, cross-platform web applications with a comprehensive set of UI components and tools.",
-    "pricing": [
-      "poa"
-    ]
+    "website": "https://www.sencha.com"
   },
   "Extend": {
     "cats": [
@@ -2976,10 +3059,10 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:2.3:a:e107:e107:*:*:*:*:*:*:*:*",
     "cookies": {
       "e107_tz": ""
     },
+    "cpe": "cpe:2.3:a:e107:e107:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Powered-By": "e107"
     },
@@ -3118,6 +3201,21 @@
     ],
     "saas": true,
     "website": "https://www.epages.com/"
+  },
+  "ePublishing": {
+    "cats": [
+      54,
+      96
+    ],
+    "description": "ePublishing is a media tech stack that enhances revenue, productivity, and engagement through AI-powered solutions, SEO dominance, and audience integration.",
+    "icon": "ePublishing.svg",
+    "js": {
+      "Ellington.Admin": "",
+      "EllingtonMap": "",
+      "EllingtonPlateLoader.cache": ""
+    },
+    "saas": true,
+    "website": "https://www.epublishing.com"
   },
   "eRate": {
     "cats": [

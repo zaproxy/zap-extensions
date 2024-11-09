@@ -4,6 +4,7 @@
       1
     ],
     "cpe": "cpe:2.3:a:lepton-cms:lepton:*:*:*:*:*:*:*:*",
+    "description": "LEPTON is a PHP-based content management system with support for MySQL/MariaDB, WYSIWYG editing, multi-language capability, and secure backend features.",
     "icon": "LEPTON.svg",
     "implies": [
       "PHP"
@@ -11,9 +12,8 @@
     "meta": {
       "generator": "LEPTON"
     },
-    "website": "https://www.lepton-cms.org",
     "oss": true,
-    "description": "LEPTON is a PHP-based content management system with support for MySQL/MariaDB, WYSIWYG editing, multi-language capability, and secure backend features."
+    "website": "https://www.lepton-cms.org"
   },
   "LGC": {
     "cats": [
@@ -76,6 +76,21 @@
       "cdn\\.louassist\\.com*"
     ],
     "website": "https://www.louassist.com"
+  },
+  "LTheme": {
+    "cats": [
+      80
+    ],
+    "description": "LTheme is a provider of Joomla and WordPress themes.",
+    "dom": [
+      "script[id*='ltheme-custom-js']"
+    ],
+    "icon": "LTheme.svg",
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "website": "https://ltheme.com"
   },
   "Ladipage": {
     "cats": [
@@ -407,13 +422,13 @@
     "cats": [
       66
     ],
+    "cpe": "cpe:2.3:a:layui:layui:*:*:*:*:*:*:*:*",
     "description": "Layui is an open-source modular front-end UI component library.",
     "icon": "Layui.svg",
     "js": {
       "layui.v": "([\\d\\.]+)\\;version:\\1"
     },
     "oss": true,
-    "cpe": "cpe:2.3:a:layui:layui:*:*:*:*:*:*:*:*",
     "website": "https://layui.gitee.io"
   },
   "Lazada": {
@@ -756,6 +771,25 @@
     ],
     "website": "https://join.leaflet.co"
   },
+  "LeanData": {
+    "cats": [
+      53
+    ],
+    "description": "LeanData is a platform that enhances demand management by providing lead-to-account matching and intelligent lead routing.",
+    "icon": "LeanData.svg",
+    "js": {
+      "LDBookItPopup": "",
+      "LDBookItV2": "",
+      "LDCalendaring": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.leandata.com"
+  },
   "Leanplum": {
     "cats": [
       32,
@@ -781,7 +815,6 @@
       87
     ],
     "description": "LearnDash is a WordPress plugin that enables the creation and management of online courses, quizzes, and educational content within a website.",
-    "icon": "LearnDash.svg",
     "dom": {
       "link[href*='/wp-content/plugins/sfwd-lms/']": {
         "attributes": {
@@ -789,15 +822,31 @@
         }
       }
     },
-    "requires": [
-      "WordPress"
-    ],
+    "icon": "LearnDash.svg",
     "pricing": [
       "low",
       "onetime",
       "recurring"
     ],
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://www.learndash.com"
+  },
+  "LearnUpon": {
+    "cats": [
+      21
+    ],
+    "cookies": {
+      "_LearnUpon_session": ""
+    },
+    "description": "LearnUpon is a learning management system (LMS) that helps businesses enhance employee development by streamlining the delivery, management, and tracking of training programs.",
+    "icon": "LearnUpon.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.learnupon.com/"
   },
   "LearnWorlds": {
     "cats": [
@@ -818,6 +867,25 @@
       "cdn\\.mycourse\\.app/v([\\d\\.]+)/\\;version:\\1"
     ],
     "website": "https://www.learnworlds.com"
+  },
+  "LearnyBox": {
+    "cats": [
+      21
+    ],
+    "description": "LearnyBox is an all-in-one platform that enables users to launch, manage, and sell training courses.",
+    "icon": "LearnyBox.svg",
+    "js": {
+      "ExecuteActionLearnyMail": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "learnybox\\.com"
+    ],
+    "website": "https://learnybox.com"
   },
   "Leaseweb": {
     "cats": [
@@ -950,16 +1018,16 @@
     "cats": [
       19
     ],
+    "description": "Less is a CSS preprocessor, providing a set of extensions and features to traditional Cascading Style Sheets (CSS) for improved maintainability and ease of styling in web development.",
+    "dom": [
+      "link[rel='stylesheet/less']"
+    ],
     "html": [
       "<link[^>]+ rel=\"stylesheet/less\""
     ],
     "icon": "Less.svg",
-    "website": "https://lesscss.org",
     "oss": true,
-    "description": "Less is a CSS preprocessor, providing a set of extensions and features to traditional Cascading Style Sheets (CSS) for improved maintainability and ease of styling in web development.",
-    "dom": [
-      "link[rel='stylesheet/less']"
-    ]
+    "website": "https://lesscss.org"
   },
   "Let's Encrypt": {
     "cats": [
@@ -1152,6 +1220,7 @@
       18
     ],
     "cpe": "cpe:2.3:a:liftweb:lift:*:*:*:*:*:*:*:*",
+    "description": "Lift is a secure, scalable web framework written in Scala, designed for high performance and modularity, supporting AJAX and Comet for interactive applications.",
     "headers": {
       "X-Lift-Version": "(.+)\\;version:\\1"
     },
@@ -1159,9 +1228,8 @@
     "implies": [
       "Scala"
     ],
-    "website": "https://liftweb.net",
     "oss": true,
-    "description": "Lift is a secure, scalable web framework written in Scala, designed for high performance and modularity, supporting AJAX and Comet for interactive applications."
+    "website": "https://liftweb.net"
   },
   "LiftIgniter": {
     "cats": [
@@ -1290,6 +1358,38 @@
     ],
     "website": "https://www.lightspeedhq.com/products/ecommerce/"
   },
+  "Liine": {
+    "cats": [
+      53
+    ],
+    "description": "Liine is an all-in-one platform for monitoring, optimizing, and incentivizing the management of new patient calls.",
+    "icon": "Liine.svg",
+    "js": {
+      "Liine.addURLChangeListener": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.liine.com"
+  },
+  "Lily": {
+    "cats": [
+      84
+    ],
+    "description": "Lily is a BigCommerce app that rewards customers with loyalty points for making purchases, signing up, following or sharing on social media, and more.",
+    "icon": "Lily.svg",
+    "js": {
+      "lilyCustomerId": "",
+      "lilyHash": "",
+      "lilyPl": ""
+    },
+    "requires": [
+      "BigCommerce"
+    ],
+    "saas": true,
+    "website": "https://www.getlily.io"
+  },
   "Lime Talk": {
     "cats": [
       52
@@ -1401,6 +1501,23 @@
       "WordPress"
     ],
     "website": "https://www.limitloginattempts.com"
+  },
+  "Linda": {
+    "cats": [
+      32
+    ],
+    "description": "Linda is a provider of local marketing software designed for businesses to enhance online marketing, generate leads, and increase revenue.",
+    "icon": "Linda.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "gb-widget\\.linda\\.co"
+    ],
+    "website": "https://linda.co"
   },
   "Linen": {
     "cats": [
@@ -1601,17 +1718,17 @@
     "cats": [
       59
     ],
+    "description": "List.js is a small, fast JavaScript library that adds search, sort, and filter functionalities to plain HTML lists, tables, or other elements without requiring any dependencies.",
     "icon": "List.js.svg",
     "js": {
       "List": "\\;confidence:50"
     },
+    "oss": true,
     "scriptSrc": [
       "list\\.js/\\;confidence:50",
       "@([\\d.]+)/(?:/dist)?list\\.(?:min\\.)?js\\;version:\\1"
     ],
-    "website": "https://listjs.com",
-    "oss": true,
-    "description": "List.js is a small, fast JavaScript library that adds search, sort, and filter functionalities to plain HTML lists, tables, or other elements without requiring any dependencies."
+    "website": "https://listjs.com"
   },
   "Listrak": {
     "cats": [
@@ -1781,18 +1898,18 @@
       1,
       51
     ],
+    "description": "Live Story is a platform designed for creating interactive, visual stories and presentations, offering tools for integrating multimedia content and data to build engaging narratives for professional use.",
     "icon": "LiveStory.svg",
     "js": {
       "LSHelpers": "",
       "LiveStory": ""
     },
-    "website": "https://www.livestory.nyc",
-    "description": "Live Story is a platform designed for creating interactive, visual stories and presentations, offering tools for integrating multimedia content and data to build engaging narratives for professional use.",
-    "saas": true,
     "pricing": [
       "mid",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "website": "https://www.livestory.nyc"
   },
   "LiveAgent": {
     "cats": [
@@ -1808,6 +1925,18 @@
     ],
     "saas": true,
     "website": "https://www.liveagent.com"
+  },
+  "LiveBy": {
+    "cats": [
+      10
+    ],
+    "description": "LiveBy is a home discovery system designed to provide users with detailed insights into properties, neighborhoods, and local amenities, enabling informed decision-making when selecting a new residence.",
+    "icon": "LiveBy.svg",
+    "js": {
+      "liveby.autoInitialize": ""
+    },
+    "saas": true,
+    "website": "https://liveby.com"
   },
   "LiveCanvas": {
     "cats": [
@@ -1998,6 +2127,26 @@
     },
     "website": "https://livestreetcms.com"
   },
+  "LiveTex": {
+    "cats": [
+      52
+    ],
+    "description": "LiveTex is a universal chat platform that provides digital communication solutions, allowing businesses to interact with clients across various digital channels.",
+    "icon": "LiveTex.svg",
+    "js": {
+      "liveTex": "",
+      "liveTexID": "",
+      "liveTex_object": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://livetex.ru"
+  },
   "LiveZilla": {
     "cats": [
       52
@@ -2044,6 +2193,10 @@
     "cats": [
       10
     ],
+    "description": "LiveInternet is a website analytics service that provides traffic statistics and performance rankings for various websites.",
+    "dom": [
+      "a[href*='/www.liveinternet.ru/click'][target='_blank']"
+    ],
     "html": [
       "<script [^>]*>[\\s\\S]*//counter\\.yadro\\.ru/hit",
       "<!--LiveInternet counter-->",
@@ -2051,11 +2204,7 @@
       "<a href=\"http://www\\.liveinternet\\.ru/click\""
     ],
     "icon": "Liveinternet.svg",
-    "website": "https://liveinternet.ru/rating/",
-    "description": "LiveInternet is a website analytics service that provides traffic statistics and performance rankings for various websites.",
-    "dom": [
-      "a[href*='/www.liveinternet.ru/click'][target='_blank']"
-    ]
+    "website": "https://liveinternet.ru/rating/"
   },
   "Livescale": {
     "cats": [
@@ -2166,6 +2315,10 @@
     "cats": [
       25
     ],
+    "description": "LocalFocus is a data visualization platform that allows users to create interactive maps, charts, and infographics from various data sources.",
+    "dom": [
+      "iframe[src*='//localfocus2.appspot.com/']"
+    ],
     "html": [
       "<iframe[^>]+\\blocalfocus\\b"
     ],
@@ -2174,19 +2327,15 @@
       "Angular",
       "D3"
     ],
-    "website": "https://www.localfocus.nl/en/",
-    "saas": true,
-    "dom": [
-      "iframe[src*='//localfocus2.appspot.com/']"
-    ],
     "js": {
       "LFlegacyManipulate": ""
     },
-    "description": "LocalFocus is a data visualization platform that allows users to create interactive maps, charts, and infographics from various data sources.",
     "pricing": [
       "mid",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "website": "https://www.localfocus.nl/en/"
   },
   "Localised": {
     "cats": [
@@ -2256,6 +2405,7 @@
     "cats": [
       1
     ],
+    "description": "LocomotiveCMS is a Ruby on Rails-based content management system (CMS) known for its flexibility and developer-friendly approach to building and managing websites.",
     "html": [
       "<link[^>]*/sites/[a-z\\d]{24}/theme/stylesheets"
     ],
@@ -2264,9 +2414,8 @@
       "Ruby on Rails",
       "MongoDB"
     ],
-    "website": "https://www.locomotivecms.com",
     "oss": true,
-    "description": "LocomotiveCMS is a Ruby on Rails-based content management system (CMS) known for its flexibility and developer-friendly approach to building and managing websites."
+    "website": "https://www.locomotivecms.com"
   },
   "Lodash": {
     "cats": [
@@ -2422,13 +2571,13 @@
     "description": "Loglib is a Open Source and Privacy-First web analytics that aims to provide simple yet can be powerful based on your needs.",
     "icon": "Loglib.svg",
     "js": {
-      "lli": "",
-      "llc": ""
+      "llc": "",
+      "lli": ""
     },
+    "oss": true,
     "pricing": [
       "freemium"
     ],
-    "oss": true,
     "saas": true,
     "website": "https://www.loglib.io"
   },
@@ -2450,6 +2599,7 @@
     "cats": [
       6
     ],
+    "description": "Loja Integrada is an all-in-one platform for building and managing online stores, tailored for the Brazilian market.",
     "headers": {
       "X-Powered-By": "vtex-integrated-store"
     },
@@ -2457,14 +2607,13 @@
     "js": {
       "LOJA_ID": ""
     },
-    "website": "https://lojaintegrada.com.br",
-    "saas": true,
-    "description": "Loja Integrada is an all-in-one platform for building and managing online stores, tailored for the Brazilian market.",
     "pricing": [
       "freemium",
       "low",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "website": "https://lojaintegrada.com.br"
   },
   "Loja Mestre": {
     "cats": [
@@ -2814,8 +2963,8 @@
     "implies": [
       "Java"
     ],
-    "website": "https://lucene.apache.org/core/",
-    "oss": true
+    "oss": true,
+    "website": "https://lucene.apache.org/core/"
   },
   "Lucide": {
     "cats": [

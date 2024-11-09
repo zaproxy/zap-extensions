@@ -80,6 +80,7 @@
     "cats": [
       1
     ],
+    "description": "UMI.CMS is a content management system (CMS) that provides tools for creating and managing websites, including features for design customization, content management, and site optimization.",
     "headers": {
       "X-Generated-By": "UMI\\.CMS"
     },
@@ -87,13 +88,12 @@
     "implies": [
       "PHP"
     ],
-    "website": "https://www.umi-cms.ru",
-    "saas": true,
-    "description": "UMI.CMS is a content management system (CMS) that provides tools for creating and managing websites, including features for design customization, content management, and site optimization.",
     "pricing": [
       "onetime",
       "high"
-    ]
+    ],
+    "saas": true,
+    "website": "https://www.umi-cms.ru"
   },
   "UNA CMS": {
     "cats": [
@@ -373,6 +373,10 @@
     "cats": [
       6
     ],
+    "description": "UltraCart is an ecommerce platform offering shopping cart and payment processing solutions for online stores.",
+    "dom": [
+      "a[href*='/cgi-bin/UCEditor?merchantId']"
+    ],
     "html": [
       "<form [^>]*action=\"[^\"]*\\/cgi-bin\\/UCEditor\\?(?:[^\"]*&)?merchantId=[^\"]"
     ],
@@ -381,22 +385,18 @@
       "ucCatalog": "",
       "ultracart": ""
     },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
     "scriptSrc": [
       "cgi-bin\\/UCJavaScript\\?"
     ],
     "url": [
       "/cgi-bin/UCEditor\\?"
     ],
-    "website": "https://ultracart.com",
-    "saas": true,
-    "dom": [
-      "a[href*='/cgi-bin/UCEditor?merchantId']"
-    ],
-    "description": "UltraCart is an ecommerce platform offering shopping cart and payment processing solutions for online stores.",
-    "pricing": [
-      "low",
-      "recurring"
-    ]
+    "website": "https://ultracart.com"
   },
   "Umami": {
     "cats": [
@@ -417,10 +417,10 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:2.3:a:umbraco:umbraco:*:*:*:*:*:*:*:*",
     "cookies": {
       "merchello": "\\;version:7"
     },
+    "cpe": "cpe:2.3:a:umbraco:umbraco:*:*:*:*:*:*:*:*",
     "description": "Umbraco is an open-source Microsoft ASP.NET based content management system.",
     "dom": [
       "script[src*='/UmbracoForms/']",
@@ -653,17 +653,17 @@
     "cats": [
       67
     ],
-    "icon": "Uniconsent.svg",
-    "scriptSrc": [
-      "cmp\\.uniconsent\\.mgr\\.consensu\\.org/"
-    ],
-    "website": "https://www.uniconsent.com/",
     "description": "Uniconsent is a Consent Management Platform.",
-    "saas": true,
+    "icon": "Uniconsent.svg",
     "pricing": [
       "low",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cmp\\.uniconsent\\.mgr\\.consensu\\.org/"
+    ],
+    "website": "https://www.uniconsent.com/"
   },
   "Unicorn Platform": {
     "cats": [
@@ -682,6 +682,20 @@
     ],
     "saas": true,
     "website": "https://unicornplatform.com"
+  },
+  "Unilog": {
+    "cats": [
+      6
+    ],
+    "description": "Unilog is a cloud-based ecommerce platform, designed specifically for B2B businesses.",
+    "js": {
+      "Unilog": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.unilogcorp\\.com/"
+    ],
+    "website": "https://unilogcorp.com"
   },
   "Unless": {
     "cats": [
@@ -789,6 +803,21 @@
       "cdn\\.unstack\\.com/"
     ],
     "website": "https://www.unstack.com"
+  },
+  "UpScale Systems": {
+    "cats": [
+      32
+    ],
+    "description": "UpScale Systems is an all-in-one platform to enhance local businesses.",
+    "icon": "UpScale.svg",
+    "meta": {
+      "title": "^UpScale$"
+    },
+    "saas": true,
+    "scripts": [
+      "app\\.upscale-systems\\.com"
+    ],
+    "website": "https://upscale-systems.com"
   },
   "UpSellit": {
     "cats": [
@@ -950,6 +979,25 @@
     ],
     "website": "https://upscope.com"
   },
+  "UpsellPlus": {
+    "cats": [
+      6
+    ],
+    "description": "Upsell is an app that provides checkout upsells, post-purchase pages, and customization options to improve sales and customer experience.",
+    "icon": "UpsellPlus.svg",
+    "js": {
+      "upsellplusapp": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.upsellplus\\.com"
+    ],
+    "website": "https://www.upsellplus.com"
+  },
   "Upserve": {
     "cats": [
       93
@@ -967,6 +1015,28 @@
       "app\\.upserve\\.com/"
     ],
     "website": "https://onlineordering.upserve.com"
+  },
+  "Upsy": {
+    "cats": [
+      76
+    ],
+    "description": "Upsy is a platform that provides personalized product recommendations for ecommerce stores.",
+    "icon": "Upsy.svg",
+    "js": {
+      "_upsyAbTest": "",
+      "parseUpsyQuery": "",
+      "upsy_sdk.getCookie": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "requiresCategory": [
+      6
+    ],
+    "saas": true,
+    "website": "https://upsyshopping.com"
   },
   "Uptain": {
     "cats": [
@@ -1040,6 +1110,7 @@
     "cats": [
       85
     ],
+    "description": "Upvoty is a platform for collecting and managing user feedback and feature requests.",
     "dom": {
       "div.upvotyContainer": {
         "text": ""
@@ -1057,8 +1128,7 @@
       "recurring"
     ],
     "saas": true,
-    "website": "https://upvoty.com",
-    "description": "Upvoty is a platform for collecting and managing user feedback and feature requests."
+    "website": "https://upvoty.com"
   },
   "UsableNet": {
     "cats": [
@@ -1388,6 +1458,8 @@
     "cats": [
       22
     ],
+    "cpe": "cpe:2.3:a:encode:uvicorn:*:*:*:*:*:*:*:*",
+    "description": "Uvicorn is an ASGI server implementation for Python web applications, commonly used with frameworks like FastAPI to enable asynchronous and high-performance handling of web requests.",
     "headers": {
       "Server": "uvicorn"
     },
@@ -1396,9 +1468,7 @@
       "Python"
     ],
     "oss": true,
-    "website": "https://www.uvicorn.org",
-    "description": "Uvicorn is an ASGI server implementation for Python web applications, commonly used with frameworks like FastAPI to enable asynchronous and high-performance handling of web requests.",
-    "cpe": "cpe:2.3:a:encode:uvicorn:*:*:*:*:*:*:*:*"
+    "website": "https://www.uvicorn.org"
   },
   "Uvodo": {
     "cats": [
@@ -1446,6 +1516,7 @@
       50,
       101
     ],
+    "description": "uKnowva is a mobile-enabled HRMS software.",
     "headers": {
       "X-Content-Encoded-By": "uKnowva ([\\d.]+)\\;version:\\1"
     },
@@ -1462,8 +1533,7 @@
     "scriptSrc": [
       "/media/conv/js/jquery\\.js"
     ],
-    "website": "https://uknowva.com",
-    "description": "uKnowva is a mobile-enabled HRMS software."
+    "website": "https://uknowva.com"
   },
   "uLogin": {
     "cats": [

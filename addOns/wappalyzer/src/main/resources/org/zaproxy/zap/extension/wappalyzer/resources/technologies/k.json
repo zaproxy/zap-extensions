@@ -18,6 +18,7 @@
     "cats": [
       19
     ],
+    "description": "K2 is a content management extension for Joomla, developed by JoomlaWorks, that enhances Joomla's capabilities by providing features like rich content forms, nested categories, tags, comments, and more.",
     "html": [
       "<!--(?: JoomlaWorks \"K2\"| Start K2)"
     ],
@@ -28,8 +29,7 @@
     "js": {
       "K2RatingURL": ""
     },
-    "website": "https://getk2.org",
-    "description": "K2 is a content management extension for Joomla, developed by JoomlaWorks, that enhances Joomla's capabilities by providing features like rich content forms, nested categories, tags, comments, and more."
+    "website": "https://getk2.org"
   },
   "KAMAR": {
     "cats": [
@@ -409,6 +409,22 @@
     ],
     "website": "https://karma-runner.github.io"
   },
+  "Karoo Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Karoo Chat is a platform that combines human and automated customer service, offering online live chat for customer support.",
+    "js": {
+      "_kwp.host": "widget\\.karoo\\.com\\.br"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://karoo.com.br"
+  },
   "Karte": {
     "cats": [
       74,
@@ -540,19 +556,26 @@
       18,
       22
     ],
+    "description": "Kemal is a fast and efficient web framework for the Crystal programming language.",
     "headers": {
       "X-Powered-By": "Kemal"
     },
     "icon": "kemalcr.svg",
-    "website": "https://kemalcr.com",
     "oss": true,
-    "description": "Kemal is a fast and efficient web framework for the Crystal programming language."
+    "website": "https://kemalcr.com"
   },
   "Kendo UI": {
     "cats": [
       66
     ],
     "description": "Kendo UI is a HTML5 user interface framework for building interactive and high-performance websites and applications.",
+    "dom": {
+      "link[href*=kendo]": {
+        "attributes": {
+          "href": "/([\\d\\.]+).*/kendo\\.common\\.min\\.css\\;version:\\1"
+        }
+      }
+    },
     "html": [
       "<link[^>]*\\s+href=[^>]*styles/kendo\\.common(?:\\.min)?\\.css[^>]*/>"
     ],
@@ -564,18 +587,23 @@
       "kendo": "",
       "kendo.version": "^(.+)$\\;version:\\1"
     },
-    "website": "https://www.telerik.com/kendo-ui",
     "oss": true,
     "scriptSrc": [
       "/kendo/.*-([\\d]{4})%20([\\d\\.]{6})\\;version:\\1.\\2"
     ],
-    "dom": {
-      "link[href*=kendo]": {
-        "attributes": {
-          "href": "/([\\d\\.]+).*/kendo\\.common\\.min\\.css\\;version:\\1"
-        }
-      }
-    }
+    "website": "https://www.telerik.com/kendo-ui"
+  },
+  "Kenlo": {
+    "cats": [
+      6
+    ],
+    "description": "Kenlo is a real estate system from Brazil offering houses, apartments, and more for sale.",
+    "dom": [
+      "div[class*='logo-kenlo__default'] > span[class*='logo-kenlo__text'] "
+    ],
+    "icon": "Kenlo.svg",
+    "saas": true,
+    "website": "https://www.kenlo.com.br"
   },
   "Kentico CMS": {
     "cats": [
@@ -587,6 +615,9 @@
     },
     "cpe": "cpe:2.3:a:kentico:kentico_cms:*:*:*:*:*:*:*:*",
     "description": "Kentico CMS is a web content management system for building websites, online stores, intranets, and Web 2.0 community sites.",
+    "dom": [
+      "link[href*='/kentico/bundles/pageComponents/']"
+    ],
     "icon": "Kentico CMS.svg",
     "js": {
       "CMS.Application": ""
@@ -604,10 +635,7 @@
       "/CMSPages/GetResource\\.ashx",
       "/kentico\\.resource"
     ],
-    "website": "https://www.kentico.com",
-    "dom": [
-      "link[href*='/kentico/bundles/pageComponents/']"
-    ]
+    "website": "https://www.kentico.com"
   },
   "Keptify": {
     "cats": [
@@ -805,14 +833,14 @@
     "cats": [
       53
     ],
-    "description": "Kicksite is a gym and martial arts member management software with attendance tracking, automated billing, free texting, lead capture forms and more.",
-    "icon": "Kicksite.svg",
     "cookies": {
       "_kicksite_session": ""
     },
+    "description": "Kicksite is a gym and martial arts member management software with attendance tracking, automated billing, free texting, lead capture forms and more.",
     "dom": [
       "iframe[src*='.kicksite.net/']"
     ],
+    "icon": "Kicksite.svg",
     "pricing": [
       "mid",
       "recurring"
@@ -892,6 +920,7 @@
       62,
       88
     ],
+    "description": "Kinsta is a managed WordPress hosting provider leveraging the Google Cloud Platform to offer high-performance, secure, and user-friendly hosting solutions for WordPress websites.",
     "headers": {
       "x-kinsta-cache": ""
     },
@@ -899,13 +928,12 @@
     "implies": [
       "WordPress"
     ],
-    "website": "https://kinsta.com",
-    "description": "Kinsta is a managed WordPress hosting provider leveraging the Google Cloud Platform to offer high-performance, secure, and user-friendly hosting solutions for WordPress websites.",
     "pricing": [
       "freemium",
       "low",
       "recurring"
-    ]
+    ],
+    "website": "https://kinsta.com"
   },
   "Kintone": {
     "cats": [
@@ -971,6 +999,9 @@
     "cats": [
       6
     ],
+    "cookies": {
+      "kitcart_session": ""
+    },
     "description": "KitCart is a cloud-based solution that helps businesses build ecommerce stores, manage inventory, and more.",
     "dom": [
       "form[action*='usekitcart.com/'], form[action*='kitcart.net/']"
@@ -985,10 +1016,7 @@
       "recurring"
     ],
     "saas": true,
-    "website": "https://kitcart.net",
-    "cookies": {
-      "kitcart_session": ""
-    }
+    "website": "https://kitcart.net"
   },
   "Kiwi Sizing": {
     "cats": [
@@ -1157,15 +1185,15 @@
       "KlaviyoSubscribe": "",
       "klaviyo": ""
     },
-    "scriptSrc": [
-      "klaviyo\\.com"
-    ],
-    "website": "https://www.klaviyo.com/",
-    "saas": true,
     "pricing": [
       "mid",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "klaviyo\\.com"
+    ],
+    "website": "https://www.klaviyo.com/"
   },
   "Klaviyo Reviews": {
     "cats": [
@@ -1200,6 +1228,18 @@
     ],
     "saas": true,
     "website": "https://kleeja.net"
+  },
+  "Kleer": {
+    "cats": [
+      1
+    ],
+    "description": "Kleer is a cloud-based platform that allows dentists to design and manage their own membership plans, offering them directly to uninsured patients.",
+    "icon": "Kleer.svg",
+    "saas": true,
+    "scriptSrc": [
+      "member\\.kleer\\.com/"
+    ],
+    "website": "https://www.kleer.com"
   },
   "Klevu": {
     "cats": [
@@ -1279,6 +1319,18 @@
       "analytics\\.klickly\\.com/pixel\\.js\\?v=([\\d\\.]+)\\;version:\\1"
     ],
     "website": "https://www.klickly.com"
+  },
+  "Klip": {
+    "cats": [
+      100
+    ],
+    "description": "Klip is a tool for creating product page coupons designed to enhance customer engagement, boost conversions, and improve retention.",
+    "icon": "Klip.svg",
+    "js": {
+      "KLIP_APP_DATA.ATCPath": ""
+    },
+    "saas": true,
+    "website": "https://klipcoupons.com"
   },
   "Klook": {
     "cats": [
@@ -1440,6 +1492,8 @@
       1,
       18
     ],
+    "cpe": "cpe:2.3:a:koala-framework:koala_framework:*:*:*:*:*:*:*:*",
+    "description": "Koala Framework is an open-source PHP web application framework designed for scalable and modular development, emphasizing MVC architecture and component-based design.",
     "html": [
       "<!--[^>]+This website is powered by Koala Web Framework CMS"
     ],
@@ -1450,10 +1504,8 @@
     "meta": {
       "generator": "^Koala Web Framework CMS"
     },
-    "website": "https://koala-framework.org",
     "oss": true,
-    "description": "Koala Framework is an open-source PHP web application framework designed for scalable and modular development, emphasizing MVC architecture and component-based design.",
-    "cpe": "cpe:2.3:a:koala-framework:koala_framework:*:*:*:*:*:*:*:*"
+    "website": "https://koala-framework.org"
   },
   "Kobalte": {
     "cats": [
@@ -1477,6 +1529,7 @@
     "cats": [
       6
     ],
+    "description": "KobiMaster is an ecommerce platform from Turkey.",
     "icon": "Kobimaster.svg",
     "implies": [
       "Microsoft ASP.NET"
@@ -1485,13 +1538,12 @@
       "kmGetSession": "",
       "kmPageInfo": ""
     },
-    "website": "https://www.kobimaster.com.tr",
-    "saas": true,
-    "description": "KobiMaster is an ecommerce platform from Turkey.",
     "pricing": [
       "low",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "website": "https://www.kobimaster.com.tr"
   },
   "Koha": {
     "cats": [
@@ -1499,6 +1551,9 @@
     ],
     "cpe": "cpe:2.3:a:koha:koha:*:*:*:*:*:*:*:*",
     "description": "Koha is an open-source Integrated Library System (ILS).",
+    "dom": [
+      "input[name*='koha_login_context'][type='hidden'], a[href*='/cgi-bin/koha/']"
+    ],
     "html": [
       "<input name=\"koha_login_context\" value=\"intranet\" type=\"hidden\">",
       "<a href=\"/cgi-bin/koha/"
@@ -1513,10 +1568,7 @@
     "meta": {
       "generator": "^Koha ([\\d.]+)$\\;version:\\1"
     },
-    "website": "https://koha-community.org/",
-    "dom": [
-      "input[name*='koha_login_context'][type='hidden'], a[href*='/cgi-bin/koha/']"
-    ]
+    "website": "https://koha-community.org/"
   },
   "Kohana": {
     "cats": [
@@ -1526,6 +1578,7 @@
       "kohanasession": ""
     },
     "cpe": "cpe:2.3:a:kohanaframework:kohana:*:*:*:*:*:*:*:*",
+    "description": "Kohana is an open-source PHP web framework designed for building web applications, following the Model-View-Controller (MVC) architectural pattern.",
     "headers": {
       "X-Powered-By": "Kohana Framework ([\\d.]+)\\;version:\\1"
     },
@@ -1533,8 +1586,7 @@
     "implies": [
       "PHP"
     ],
-    "website": "https://kohanaframework.org",
-    "description": "Kohana is an open-source PHP web framework designed for building web applications, following the Model-View-Controller (MVC) architectural pattern."
+    "website": "https://kohanaframework.org"
   },
   "Koishi.js": {
     "cats": [
@@ -1558,6 +1610,10 @@
     "cookies": {
       "koken_referrer": ""
     },
+    "description": "Koken is a free web site publishing system developed for photographers, designers, artists and creative DIYs.",
+    "dom": [
+      "html[lang='en'][class*='k-source-essays']"
+    ],
     "html": [
       "<!--\\s+KOKEN DEBUGGING"
     ],
@@ -1572,11 +1628,7 @@
     "scriptSrc": [
       "koken(?:\\.js\\?([\\d.]+)|/storage)\\;version:\\1"
     ],
-    "website": "https://koken.me",
-    "dom": [
-      "html[lang='en'][class*='k-source-essays']"
-    ],
-    "description": "Koken is a free web site publishing system developed for photographers, designers, artists and creative DIYs."
+    "website": "https://koken.me"
   },
   "Kommi": {
     "cats": [
@@ -1713,6 +1765,8 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:kooboo:kooboo_cms:*:*:*:*:*:*:*:*",
+    "description": "Kooboo is a content management system (CMS) and web development framework used for building and managing websites and web applications.",
     "headers": {
       "X-KoobooCMS-Version": "^(.+)$\\;version:\\1"
     },
@@ -1720,13 +1774,11 @@
     "implies": [
       "Microsoft ASP.NET"
     ],
+    "oss": true,
     "scriptSrc": [
       "/Kooboo"
     ],
-    "website": "https://kooboo.com",
-    "oss": true,
-    "description": "Kooboo is a content management system (CMS) and web development framework used for building and managing websites and web applications.",
-    "cpe": "cpe:2.3:a:kooboo:kooboo_cms:*:*:*:*:*:*:*:*"
+    "website": "https://kooboo.com"
   },
   "Kooomo": {
     "cats": [
@@ -1774,17 +1826,17 @@
     "cats": [
       1
     ],
-    "icon": "Kotisivukone.svg",
-    "scriptSrc": [
-      "kotisivukone(?:\\.min)?\\.js"
-    ],
-    "website": "https://www.kotisivukone.fi",
     "description": "Kotisivukone is a Finnish website builder platform.",
-    "saas": true,
+    "icon": "Kotisivukone.svg",
     "pricing": [
       "low",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "kotisivukone(?:\\.min)?\\.js"
+    ],
+    "website": "https://www.kotisivukone.fi"
   },
   "Kotlin": {
     "cats": [

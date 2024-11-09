@@ -338,7 +338,7 @@
     "cats": [
       10
     ],
-    "icon": "Navegg.png",
+    "icon": "Navegg.svg",
     "scriptSrc": [
       "tag\\.navdmp\\.com"
     ],
@@ -452,6 +452,23 @@
     ],
     "website": "https://neatab.com"
   },
+  "Neexa": {
+    "cats": [
+      52
+    ],
+    "description": "Neexa is an AI-powered inquiry and sales agent designed to handle customer queries.",
+    "icon": "NeexaAI.svg",
+    "js": {
+      "neexa_xgmx_cc_wpq_ms": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://neexa.ai"
+  },
   "Nelio Testing": {
     "cats": [
       74
@@ -511,13 +528,13 @@
     "implies": [
       "Neos Flow"
     ],
+    "scriptSrc": [
+      "/Neos\\.Neos/"
+    ],
     "url": [
       "/neos/"
     ],
-    "website": "https://neos.io",
-    "scriptSrc": [
-      "/Neos\\.Neos/"
-    ]
+    "website": "https://neos.io"
   },
   "Neos Flow": {
     "cats": [
@@ -567,14 +584,14 @@
     "cookies": {
       "NS_VER": "^([\\d\\.]+)$\\;version:\\1"
     },
-    "icon": "NetSuite.svg",
-    "website": "https://netsuite.com",
     "description": "NetSuite is a cloud-based enterprise resource planning (ERP) software suite that provides a comprehensive set of business management applications, including financial management, CRM, ecommerce, and more.",
-    "saas": true,
+    "icon": "NetSuite.svg",
     "pricing": [
       "onetime",
       "high"
-    ]
+    ],
+    "saas": true,
+    "website": "https://netsuite.com"
   },
   "Netcore Cloud": {
     "cats": [
@@ -722,6 +739,9 @@
     "cookies": {
       "nette-browser": ""
     },
+    "dom": [
+      "input[data-nette-rules], div[id^='snippet-'], input[id^='frm-']"
+    ],
     "headers": {
       "X-Powered-By": "^Nette Framework"
     },
@@ -738,10 +758,7 @@
       "Nette": "",
       "Nette.version": "^(.+)$\\;version:\\1"
     },
-    "website": "https://nette.org",
-    "dom": [
-      "input[data-nette-rules], div[id^='snippet-'], input[id^='frm-']"
-    ]
+    "website": "https://nette.org"
   },
   "Network for Good": {
     "cats": [
@@ -1022,16 +1039,16 @@
       "--nextui-(?:colors-accents1|colors-text|space-0|fonts-sans|fonts-mono)"
     ],
     "description": "NextUI allows you to make beautiful, modern, and fast websites/applications regardless of your design experience, created with React.js and Stitches, based on React Aria and inspired by Vuesax.",
+    "dom": [
+      "link[href*='nextui.org'][rel='canonical']"
+    ],
     "icon": "NextUI.svg",
     "implies": [
       "React",
       "Stitches"
     ],
     "oss": true,
-    "website": "https://nextui.org/",
-    "dom": [
-      "link[href*='nextui.org'][rel='canonical']"
-    ]
+    "website": "https://nextui.org/"
   },
   "Nextcloud": {
     "cats": [
@@ -1139,6 +1156,21 @@
     },
     "icon": "NexusPIPE.png",
     "website": "https://nexuspipe.com"
+  },
+  "Nexxt": {
+    "cats": [
+      101
+    ],
+    "description": "Nexxt is a job finder-based system designed to help users search for employment opportunities by matching skills and preferences with job listings across various industries.",
+    "icon": "Nexxt.svg",
+    "js": {
+      "_bydWto.host": "\\.nexxt\\.com"
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.nexxt\\.com/"
+    ],
+    "website": "https://www.nexxt.com"
   },
   "Nginx": {
     "cats": [
@@ -1329,11 +1361,11 @@
     ],
     "cpe": "cpe:2.3:a:nodejs:node.js:*:*:*:*:*:*:*:*",
     "description": "Node.js is an open-source, cross-platform, JavaScript runtime environment that executes JavaScript code outside a web browser.",
-    "icon": "Node.js.svg",
-    "website": "https://nodejs.org",
     "dom": [
       "div.appVersion i.icon-nodejs"
-    ]
+    ],
+    "icon": "Node.js.svg",
+    "website": "https://nodejs.org"
   },
   "NodeBB": {
     "cats": [
@@ -1634,6 +1666,26 @@
     ],
     "website": "https://notix.co"
   },
+  "Novel": {
+    "cats": [
+      6
+    ],
+    "description": "Novel is a platform that allows users to drop NFTs and set up token-gated products, content, and discounts within minutes.",
+    "icon": "Novel.svg",
+    "js": {
+      "__NOVEL_STOREFRONT_SCRIPT_HAS_RUN__": "",
+      "__novel_cache__": "",
+      "fetchNovelSession": "",
+      "fetchNovelStorefrontData": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.novel.com"
+  },
   "Nrdevo": {
     "cats": [
       1
@@ -1731,6 +1783,18 @@
     ],
     "website": "https://www.nuqlium.com"
   },
+  "Nurture Boss": {
+    "cats": [
+      32
+    ],
+    "description": "Nurture Boss is an AI platform for engaging with prospects and residents, automating the leasing process from lead to renewal.",
+    "icon": "NurtureBoss.svg",
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.nurtureboss\\.io/"
+    ],
+    "website": "https://nurtureboss.io"
+  },
   "Nuvemshop": {
     "cats": [
       6
@@ -1758,6 +1822,9 @@
       57
     ],
     "description": "Nuxt is a Vue framework for developing modern web applications.",
+    "dom": [
+      "div[id^='__nuxt']"
+    ],
     "html": [
       "<div [^>]*id=\"__nuxt\"",
       "<script [^>]*>window\\.__NUXT__"
@@ -1775,10 +1842,7 @@
     "scriptSrc": [
       "/_nuxt/"
     ],
-    "website": "https://nuxt.com",
-    "dom": [
-      "div[id^='__nuxt']"
-    ]
+    "website": "https://nuxt.com"
   },
   "nghttpx - HTTP/2 proxy": {
     "cats": [
@@ -1796,6 +1860,7 @@
     "cookies": {
       "Nop.customer": ""
     },
+    "cpe": "cpe:2.3:a:nopcommerce:nopcommerce:*:*:*:*:*:*:*:*",
     "description": "nopCommerce is an open-source ecommerce solution based on Microsoft's ASP​.NET Core framework and MS SQL Server 2012 (or higher) backend database.",
     "html": [
       "(?:<!--Powered by nopCommerce|Powered by: <a[^>]+nopcommerce)"
@@ -1807,7 +1872,6 @@
     "meta": {
       "generator": "^nopCommerce$"
     },
-    "cpe": "cpe:2.3:a:nopcommerce:nopcommerce:*:*:*:*:*:*:*:*",
     "oss": true,
     "website": "https://www.nopcommerce.com"
   },
