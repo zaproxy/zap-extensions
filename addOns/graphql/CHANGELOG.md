@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
     - pg_graphql
     - tailcall
     - Hot Chocolate
+- Support for importing an introspection query response from a file (Issue 8569).
 
 ## [0.25.0] - 2024-09-24
 ### Changed
