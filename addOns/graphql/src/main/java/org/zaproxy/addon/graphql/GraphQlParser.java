@@ -62,6 +62,7 @@ public class GraphQlParser {
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG);
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final Requestor requestor;
     private final ExtensionGraphQl extensionGraphQl;
@@ -101,30 +102,12 @@ public class GraphQlParser {
         if (importMessage == null) {
             throw new IOException(Constant.messages.getString("graphql.error.introspection"));
         }
-        try {
-            Map<String, Object> result =
-                    new ObjectMapper()
-                            .readValue(
-                                    importMessage.getResponseBody().toString(),
-                                    new TypeReference<Map<String, Object>>() {});
-            if (result == null) {
-                throw new IOException("The response was empty.");
-            }
-            @SuppressWarnings("unchecked")
-            Map<String, Object> data = (Map<String, Object>) result.get("data");
-            if (data == null) {
-                throw new IOException(
-                        "The \"data\" object in the introspection response was null.");
-            }
-            Document schema = new IntrospectionResultToSchema().createSchemaDefinition(data);
-            if (raiseAlert) {
-                raiseIntrospectionAlert(importMessage);
-            }
-            String schemaSdl = new SchemaPrinter().print(schema);
-            parse(schemaSdl);
-        } catch (JacksonException e) {
-            throw new IOException("The response was not valid JSON.");
+        String schemaSdl =
+                getSchemaFromIntrospectionResponse(importMessage.getResponseBody().toString());
+        if (raiseAlert) {
+            raiseIntrospectionAlert(importMessage);
         }
+        parse(schemaSdl);
     }
 
     public void importUrl(String schemaUrlStr) throws IOException {
@@ -146,8 +129,29 @@ public class GraphQlParser {
         if (!file.canRead() || !file.isFile()) {
             throw new IOException(Constant.messages.getString("graphql.error.importfile"));
         }
-        String schemaSdl = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        parse(schemaSdl);
+        String schema = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        if (schema.stripLeading().startsWith("{")) {
+            schema = getSchemaFromIntrospectionResponse(schema);
+        }
+        parse(schema);
+    }
+
+    private static String getSchemaFromIntrospectionResponse(String response) throws IOException {
+        try {
+            Map<String, Object> result = MAPPER.readValue(response, new TypeReference<>() {});
+            if (result == null) {
+                throw new IOException(Constant.messages.getString("graphql.error.emptySchema"));
+            }
+            Map<String, Object> data =
+                    MAPPER.convertValue(result.get("data"), new TypeReference<>() {});
+            if (data == null) {
+                throw new IOException(Constant.messages.getString("graphql.error.nullData"));
+            }
+            Document schema = new IntrospectionResultToSchema().createSchemaDefinition(data);
+            return new SchemaPrinter().print(schema);
+        } catch (JacksonException e) {
+            throw new IOException(Constant.messages.getString("graphql.error.invalidJson"));
+        }
     }
 
     public void parse(String schema) {
