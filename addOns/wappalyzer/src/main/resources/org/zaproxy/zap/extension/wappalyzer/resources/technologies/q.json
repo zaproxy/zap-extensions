@@ -1,4 +1,16 @@
 {
+  "Q1Media": {
+    "cats": [
+      36
+    ],
+    "description": "Q1Media is a platform that facilitates the creation, demand, and supply of digital advertising.",
+    "icon": "Q1Media.svg",
+    "saas": true,
+    "scriptSrc": [
+      "//q1mediahydraplatform\\.com/"
+    ],
+    "website": "https://www.q1media.com"
+  },
   "Q4": {
     "cats": [
       53
@@ -225,6 +237,18 @@
     ],
     "website": "https://www.qualtrics.com"
   },
+  "Quant": {
+    "cats": [
+      1
+    ],
+    "description": "Quant is a Japanese content and creator management system designed to organize, manage, and distribute digital content.",
+    "icon": "Quant.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.quant\\.jp/"
+    ],
+    "website": "https://pf.quant.page"
+  },
   "Quanta": {
     "cats": [
       78,
@@ -298,6 +322,23 @@
     ],
     "website": "https://www.quantummetric.com/"
   },
+  "Quarto": {
+    "cats": [
+      57
+    ],
+    "description": "Quarto is an open-source technical publishing system.",
+    "icon": "Quarto.svg",
+    "js": {
+      "quartoOpenSearch": "",
+      "quartoToggleHeadroom": "",
+      "quartoToggleReader": ""
+    },
+    "meta": {
+      "generator": "^quarto-([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://quarto.org"
+  },
   "Quasar": {
     "cats": [
       12
@@ -322,14 +363,14 @@
       }
     },
     "icon": "Quasar.svg",
+    "implies": [
+      "Vue.js"
+    ],
     "oss": true,
     "requires": [
       "Vue.js"
     ],
-    "website": "https://quasar.dev",
-    "implies": [
-      "Vue.js"
-    ]
+    "website": "https://quasar.dev"
   },
   "Qubit": {
     "cats": [
@@ -450,6 +491,27 @@
       "generator": "Quick\\.Cart(?: v([\\d.]+))?\\;version:\\1"
     },
     "website": "https://opensolution.org"
+  },
+  "QuickCEP": {
+    "cats": [
+      52
+    ],
+    "description": "QuickCEP is an AI-powered chatbot solution to improve business conversions, sales, and customer satisfaction through automated interactions.",
+    "icon": "QuickCEP.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.quickcep\\.com/"
+    ],
+    "scripts": [
+      "\\.quickcep\\.com"
+    ],
+    "website": "https://www.quickcep.com"
   },
   "QuickSell": {
     "cats": [
@@ -669,6 +731,21 @@
     ],
     "website": "https://quoli.io"
   },
+  "Quon": {
+    "cats": [
+      36
+    ],
+    "description": "Quon is a platform that provides control over website advertising and sales, integrating an end-to-end analytics system to optimize advertising management.",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "counter\\.quon\\.ru/"
+    ],
+    "website": "https://www.quon.ru"
+  },
   "Quora Pixel": {
     "cats": [
       10
@@ -682,6 +759,18 @@
       "\\.quora\\.com/"
     ],
     "website": "https://quoraadsupport.zendesk.com/hc/en-us/categories/115001573928-Pixels-Tracking"
+  },
+  "Quotemedia": {
+    "cats": [
+      10
+    ],
+    "description": "Quotemedia is a provider of stock market data and research solutions for online brokerages, clearing firms, banks, media portals, public companies, and financial service corporations.",
+    "icon": "QuoteMedia.svg",
+    "saas": true,
+    "scriptSrc": [
+      "qmod\\.quotemedia\\.com/"
+    ],
+    "website": "https://quotemedia.com"
   },
   "Qwik": {
     "cats": [

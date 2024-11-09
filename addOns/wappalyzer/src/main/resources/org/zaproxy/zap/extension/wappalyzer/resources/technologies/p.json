@@ -95,6 +95,7 @@
       1
     ],
     "cpe": "cpe:2.3:a:phpnuke:php-nuke:*:*:*:*:*:*:*:*",
+    "description": "PHP-Nuke is a free, web-based content management system for creating community portals and managing news, originally developed by Francisco Burzi using PHP and MySQL​.",
     "html": [
       "<[^>]+Powered by PHP-Nuke"
     ],
@@ -106,9 +107,8 @@
     "meta": {
       "generator": "PHP-Nuke"
     },
-    "website": "https://phpnuke.org",
     "oss": true,
-    "description": "PHP-Nuke is a free, web-based content management system for creating community portals and managing news, originally developed by Francisco Burzi using PHP and MySQL​."
+    "website": "https://phpnuke.org"
   },
   "PHPBoost": {
     "cats": [
@@ -144,6 +144,7 @@
       1
     ],
     "cpe": "cpe:2.3:a:phpfusion:phpfusion:*:*:*:*:*:*:*:*",
+    "description": "PHPFusion is an open-source content management system (CMS) and web application framework written in PHP.",
     "headers": {
       "X-PHPFusion": "(.+)$\\;version:\\1",
       "X-Powered-By": "PHP(?:-)?Fusion (.+)$\\;version:\\1"
@@ -157,15 +158,17 @@
       "PHP",
       "MySQL"
     ],
-    "website": "https://phpfusion.com",
     "oss": true,
-    "description": "PHPFusion is an open-source content management system (CMS) and web application framework written in PHP."
+    "website": "https://phpfusion.com"
   },
   "PIXIjs": {
     "cats": [
       25
     ],
     "description": "PIXIjs is a free open-source 2D engine used to make animated websites and HTML5 games.",
+    "dom": [
+      "div[class*='pixi-hitbox']"
+    ],
     "icon": "PIXIjs.svg",
     "js": {
       "PIXI": "",
@@ -179,10 +182,7 @@
     "url": [
       ".+\\.pixijs\\.com"
     ],
-    "website": "https://www.pixijs.com",
-    "dom": [
-      "div[class*='pixi-hitbox']"
-    ]
+    "website": "https://www.pixijs.com"
   },
   "POLi Payment": {
     "cats": [
@@ -569,6 +569,7 @@
     "cats": [
       51
     ],
+    "description": "Pagevamp is a website builder that allows users to create and customize websites quickly by pulling content from their existing Facebook pages or Instagram profiles, offering an easy way to set up a professional online presence.",
     "headers": {
       "X-ServedBy": "pagevamp"
     },
@@ -576,8 +577,7 @@
     "js": {
       "Pagevamp": ""
     },
-    "website": "https://www.pagevamp.com",
-    "description": "Pagevamp is a website builder that allows users to create and customize websites quickly by pulling content from their existing Facebook pages or Instagram profiles, offering an easy way to set up a professional online presence."
+    "website": "https://www.pagevamp.com"
   },
   "Pagolight": {
     "cats": [
@@ -725,15 +725,15 @@
     ],
     "description": "Paper.js is an open-source vector graphics scripting framework that operates on the HTML5 Canvas.",
     "icon": "PaperJS.svg",
+    "js": {
+      "paper": "",
+      "paper.PaperScope": ""
+    },
     "oss": true,
     "scriptSrc": [
       "(?:((?:\\d+\\.)+\\d+)\\/)?paper(?:-full)?(?:-core)?(?:\\.min)?(?:-[\\d\\w]{0,64})?\\.js\\;version:\\1"
     ],
-    "website": "https://paperjs.org",
-    "js": {
-      "paper": "",
-      "paper.PaperScope": ""
-    }
+    "website": "https://paperjs.org"
   },
   "Papirfly": {
     "cats": [
@@ -1406,6 +1406,20 @@
     ],
     "website": "https://www.paysera.com"
   },
+  "Pear Commerce": {
+    "cats": [
+      6
+    ],
+    "description": "Pear Commerce is a next-gen retail ecommerce platform connecting CPGs to retailers by transforming shoppable tools into actionable marketing insights.",
+    "icon": "PearCommerce.svg",
+    "js": {
+      "PEAR_WIDGET_CONFIG": "",
+      "PEAR_WIDGET_CONFIG.version": "^([\\d\\.]+)$\\;version:\\1",
+      "PEAR_WIDGET_CONFIGS.default": ""
+    },
+    "saas": true,
+    "website": "https://www.pearcommerce.com"
+  },
   "PebblePost": {
     "cats": [
       77
@@ -1437,6 +1451,18 @@
       "js\\.peek\\.\\w+"
     ],
     "website": "https://www.peek.com/"
+  },
+  "Peel": {
+    "cats": [
+      6
+    ],
+    "description": "Peel is an open source shopping cart system.",
+    "icon": "Peel.svg",
+    "meta": {
+      "generator": "www\\.peel-shopping\\.com"
+    },
+    "saas": true,
+    "website": "https://www.peel.fr"
   },
   "PeerBoard": {
     "cats": [
@@ -1510,6 +1536,7 @@
     "cats": [
       57
     ],
+    "description": "Pelican is a static site generator written in Python.",
     "html": [
       "(?:powered|built|generated)\\s(?:by|with).*?<a\\s+href(?:\\s)?=(?:\\s)?\"[^\"]*(?:getpelican\\.com|pelican-bootstrap3|pelican-pure|notmyidea\\.org)[^\"]*\".*?>"
     ],
@@ -1517,9 +1544,8 @@
     "implies": [
       "Python"
     ],
-    "website": "https://getpelican.com",
     "oss": true,
-    "description": "Pelican is a static site generator written in Python."
+    "website": "https://getpelican.com"
   },
   "PencilBlue": {
     "cats": [
@@ -1661,6 +1687,9 @@
       53
     ],
     "description": "Perfex CRM is self hosted customer relationship management software that is a great fit for almost any company, freelancer or many other uses.",
+    "dom": [
+      "link[href*='perfexcrm.com/']"
+    ],
     "icon": "Perfex CRM.svg",
     "pricing": [
       "onetime",
@@ -1670,10 +1699,7 @@
     "scriptSrc": [
       "/assets/themes/perfex/js/global\\.min\\.js(?:\\?v=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
     ],
-    "website": "https://www.perfexcrm.com",
-    "dom": [
-      "link[href*='perfexcrm.com/']"
-    ]
+    "website": "https://www.perfexcrm.com"
   },
   "Perfmatters": {
     "cats": [
@@ -2201,6 +2227,22 @@
     "icon": "Phusion Passenger.svg",
     "website": "https://phusionpassenger.com"
   },
+  "PiAds": {
+    "cats": [
+      32
+    ],
+    "description": "PiAds is a marketing system designed to enhance the efficiency of advertising campaigns through targeted strategies and data-driven insights.",
+    "icon": "PiAds.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.piads\\.vn/"
+    ],
+    "website": "https://piads.vn"
+  },
   "Piano": {
     "cats": [
       76
@@ -2575,6 +2617,7 @@
     "cats": [
       7
     ],
+    "cpe": "cpe:2.3:a:piwigo:piwigo:*:*:*:*:*:*:*:*",
     "description": "Piwigo is an open-source photo management software designed for creating and managing online photo galleries.",
     "icon": "Piwigo.svg",
     "implies": [
@@ -2589,7 +2632,6 @@
       "low",
       "recurring"
     ],
-    "cpe": "cpe:2.3:a:piwigo:piwigo:*:*:*:*:*:*:*:*",
     "saas": true,
     "website": "https://piwigo.com"
   },
@@ -2843,6 +2885,21 @@
     ],
     "website": "https://plannit.io"
   },
+  "Planzer": {
+    "cats": [
+      107
+    ],
+    "description": "Planzer is a provider of transport and warehouse logistics services, specializing in efficient and reliable solutions for supply chain management across various industries.",
+    "icon": "Planzer.svg",
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/wp-content/plugins/planzer-jobs/"
+    ],
+    "website": "https://www.planzer.ch"
+  },
   "Plasmic": {
     "cats": [
       51
@@ -2902,6 +2959,23 @@
       "\\.lpcdn\\.site/"
     ],
     "website": "https://platformalp.ru"
+  },
+  "Platformly": {
+    "cats": [
+      32
+    ],
+    "description": "Platformly is a tool that provides intelligent marketing automation for online businesses.",
+    "icon": "Platformly.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.platform\\.ly/"
+    ],
+    "website": "https://www.platformly.com"
   },
   "PlatinMarket": {
     "cats": [
@@ -3089,6 +3163,7 @@
     "cats": [
       25
     ],
+    "description": "Plotly is a data visualization library and platform that enables the creation of interactive, high-quality charts, graphs, and dashboards for web applications and data analysis using languages like JavaScript, Python, and R.",
     "icon": "Plotly.svg",
     "implies": [
       "D3"
@@ -3096,12 +3171,11 @@
     "js": {
       "Plotly.version": "([\\d.])\\;version:\\1"
     },
+    "oss": true,
     "scriptSrc": [
       "https?://cdn\\.plot\\.ly/plotly"
     ],
-    "website": "https://plot.ly/javascript/",
-    "oss": true,
-    "description": "Plotly is a data visualization library and platform that enables the creation of interactive, high-quality charts, graphs, and dashboards for web applications and data analysis using languages like JavaScript, Python, and R."
+    "website": "https://plot.ly/javascript/"
   },
   "Plug&Pay": {
     "cats": [
@@ -3304,6 +3378,18 @@
     },
     "website": "https://pojo.me/plugins/accessibility/"
   },
+  "Poll Maker": {
+    "cats": [
+      90
+    ],
+    "description": "Poll Maker is a system designed to create and manage online polls, allowing users to gather opinions, feedback, or votes.",
+    "icon": "PollMaker.svg",
+    "saas": true,
+    "scriptSrc": [
+      "scripts\\.poll-maker\\.com/"
+    ],
+    "website": "https://www.poll-maker.com"
+  },
   "Poloriz": {
     "cats": [
       76
@@ -3451,6 +3537,23 @@
     ],
     "website": "https://popper.js.org"
   },
+  "Poppins": {
+    "cats": [
+      32
+    ],
+    "description": "Poppins is a tool that enables notifications on websites, ranging from video alerts to informational popups.",
+    "icon": "Poppins.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "//poppins\\.so/"
+    ],
+    "website": "https://poppins.so"
+  },
   "PopularFX": {
     "cats": [
       80
@@ -3593,6 +3696,18 @@
     ],
     "website": "https://postnl.post"
   },
+  "Postach": {
+    "cats": [
+      11
+    ],
+    "description": "Postach is a blogging platform integrated with Evernote, allowing users to create and manage blog posts directly from their Evernote account.",
+    "icon": "Postach.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.postach\\.io/"
+    ],
+    "website": "https://postach.io"
+  },
   "Poste Italiane": {
     "cats": [
       99
@@ -3628,8 +3743,8 @@
     "cpe": "cpe:2.3:a:postgresql:postgresql:*:*:*:*:*:*:*:*",
     "description": "PostgreSQL, also known as Postgres, is a free and open-source relational database management system emphasizing extensibility and SQL compliance.",
     "icon": "PostgreSQL.svg",
-    "website": "https://www.postgresql.org/",
-    "oss": true
+    "oss": true,
+    "website": "https://www.postgresql.org/"
   },
   "Postie": {
     "cats": [
@@ -3725,6 +3840,21 @@
       "\\.get-potions\\.com/"
     ],
     "website": "https://get-potions.com"
+  },
+  "Powa": {
+    "cats": [
+      31
+    ],
+    "description": "Powa is a site speed plugin for WordPress that operates its own Content Delivery Network (CDN) to enhance website performance and reduce loading times.",
+    "icon": "Powa.svg",
+    "js": {
+      "powaHealthCheck": "",
+      "powaInitAssets": "",
+      "powaOnLoadJs": "",
+      "powaSyncLoadScripts": ""
+    },
+    "saas": true,
+    "website": "https://powa.com"
   },
   "PowerReviews": {
     "cats": [
@@ -3830,6 +3960,22 @@
     ],
     "website": "https://powster.com"
   },
+  "Practo": {
+    "cats": [
+      72
+    ],
+    "description": "Practo is an appointment system designed for health practitioners to manage and schedule patient appointments.",
+    "icon": "Practo.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.practo\\.com/"
+    ],
+    "website": "https://www.practo.com"
+  },
   "Praedium": {
     "cats": [
       53
@@ -3910,16 +4056,16 @@
     "cats": [
       59
     ],
+    "description": "Prefix-Free is a JavaScript library that automatically removes browser vendor prefixes from CSS properties, enabling developers to use standard CSS without worrying about cross-browser compatibility issues.",
     "icon": "Prefix-Free.svg",
     "js": {
       "PrefixFree": ""
     },
+    "oss": true,
     "scriptSrc": [
       "prefixfree\\.js"
     ],
-    "website": "https://leaverou.github.io/prefixfree/",
-    "oss": true,
-    "description": "Prefix-Free is a JavaScript library that automatically removes browser vendor prefixes from CSS properties, enabling developers to use standard CSS without worrying about cross-browser compatibility issues."
+    "website": "https://leaverou.github.io/prefixfree/"
   },
   "Preline UI": {
     "cats": [
@@ -3971,6 +4117,9 @@
       "img[src*='.prepr.io/']"
     ],
     "icon": "Prepr.svg",
+    "js": {
+      "prepr": ""
+    },
     "meta": {
       "prepr:id": ""
     },
@@ -3986,10 +4135,7 @@
     "scriptSrc": [
       "\\.prepr\\.io/"
     ],
-    "website": "https://prepr.io",
-    "js": {
-      "prepr": ""
-    }
+    "website": "https://prepr.io"
   },
   "Press Customizr": {
     "cats": [
@@ -4071,6 +4217,21 @@
       "WordPress"
     ],
     "website": "https://pressable.com"
+  },
+  "Pressero": {
+    "cats": [
+      6
+    ],
+    "description": "Pressero is a web-to-print storefront platform that allows businesses to offer customizable print products, manage orders, and streamline the printing process through an online interface.",
+    "icon": "Pressero.svg",
+    "meta": {
+      "generator": "^Pressero$"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.aleyant.com/pressero"
   },
   "PrestaShop": {
     "cats": [
@@ -4233,6 +4394,9 @@
       "\\.p-(?:toast|calendar|dialog-mask|menuitem-text|sidebar)(?:-content)?\\{"
     ],
     "description": "PrimeVue is a rich set of open-source UI Components for Vue.js.",
+    "dom": [
+      "style[data-primevue-style-id]"
+    ],
     "icon": "PrimeVue.svg",
     "oss": true,
     "pricing": [
@@ -4241,10 +4405,7 @@
     "requires": [
       "Vue.js"
     ],
-    "website": "https://primevue.org",
-    "dom": [
-      "style[data-primevue-style-id]"
-    ]
+    "website": "https://primevue.org"
   },
   "Primeleads": {
     "cats": [
@@ -4441,6 +4602,7 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:processwire:processwire:*:*:*:*:*:*:*:*",
     "description": "ProcessWire is an open source content management system (CMS) and framework (CMF).",
     "headers": {
       "X-Powered-By": "ProcessWire CMS"
@@ -4452,7 +4614,6 @@
     "js": {
       "ProcessWire": ""
     },
-    "cpe": "cpe:2.3:a:processwire:processwire:*:*:*:*:*:*:*:*",
     "oss": true,
     "website": "https://processwire.com/"
   },
@@ -4531,10 +4692,10 @@
     "cats": [
       87
     ],
-    "cpe": "cpe:2.3:a:profilepress:profilepress:*:*:*:*:*:wordpress:*:*",
     "cookies": {
       "ppwp_wp_session": ""
     },
+    "cpe": "cpe:2.3:a:profilepress:profilepress:*:*:*:*:*:wordpress:*:*",
     "description": "ProfilePress is a WordPress registration plugin that lets you create login forms, registration forms, user profiles, and more.",
     "dom": [
       "link[href*='/wp-content/plugins/wp-user-avatar/']"
@@ -4683,16 +4844,16 @@
     "cats": [
       6
     ],
+    "description": "Projesoft is a Turkish software development company that provides custom IT solutions, including ecommerce platforms, ERP systems, and digital transformation services.",
     "icon": "projesoft.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
     "scriptSrc": [
       "projesoft\\.js"
     ],
-    "website": "https://www.projesoft.com.tr",
-    "description": "Projesoft is a Turkish software development company that provides custom IT solutions, including ecommerce platforms, ERP systems, and digital transformation services.",
-    "saas": true,
-    "pricing": [
-      "poa"
-    ]
+    "website": "https://www.projesoft.com.tr"
   },
   "Prommt": {
     "cats": [
@@ -4991,6 +5152,27 @@
       "\\.pubmatic\\.com"
     ]
   },
+  "PubNub": {
+    "cats": [
+      60
+    ],
+    "description": "PubNub is a platform that operates the Data Stream Network, enabling the connection, delivery, and control of data and logic to support real-time applications at a global scale.",
+    "icon": "PubNub.svg",
+    "js": {
+      "PubNub": "",
+      "PubNubCenter": "",
+      "PubNubOccupancy": "",
+      "PubNubPayload": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.pubnub.com"
+  },
   "PubSubJS": {
     "cats": [
       59
@@ -5004,6 +5186,29 @@
     "oss": true,
     "website": "https://github.com/mroderick/PubSubJS"
   },
+  "Pubble": {
+    "cats": [
+      52
+    ],
+    "description": "Pubble is a messaging platform that simplifies how teams interact with their customers.",
+    "icon": "Pubble.svg",
+    "js": {
+      "Pubble.Pubble": "",
+      "pubble_proActiveChat": "",
+      "pubblebot": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.pubble\\.io/"
+    ],
+    "website": "https://www.pubble.io"
+  },
   "Public CMS": {
     "cats": [
       1
@@ -5011,6 +5216,7 @@
     "cookies": {
       "PUBLICCMS_USER": ""
     },
+    "description": "Public CMS is a content management system (CMS) designed to help users create, manage, and maintain websites with features for content editing, template customization, and user management.",
     "headers": {
       "X-Powered-PublicCMS": "^(.+)$\\;version:\\1"
     },
@@ -5018,8 +5224,7 @@
     "implies": [
       "Java"
     ],
-    "website": "https://www.publiccms.com",
-    "description": "Public CMS is a content management system (CMS) designed to help users create, manage, and maintain websites with features for content editing, template customization, and user management."
+    "website": "https://www.publiccms.com"
   },
   "Publii": {
     "cats": [
@@ -5099,6 +5304,26 @@
       "\\.pubstack\\.io/"
     ],
     "website": "https://www.pubstack.io"
+  },
+  "Pulse CMS": {
+    "cats": [
+      1
+    ],
+    "description": "Pulse CMS is a content management system built with PHP that uses flat files instead of a database, offering a platform for managing web content without requiring extensive server resources or technical expertise.",
+    "icon": "Pulse.svg",
+    "implies": [
+      "PHP"
+    ],
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/PulseCMS/.*?/tracker\\.php"
+    ],
+    "website": "https://pulsecms.com"
   },
   "Pulse Secure": {
     "cats": [
@@ -5200,6 +5425,26 @@
       "\\.push-ad\\.com/"
     ],
     "website": "https://push-ad.com/en/home-page"
+  },
+  "PushAlert": {
+    "cats": [
+      32
+    ],
+    "description": "PushAlert is a multi-channel platform that offers push notifications and onsite messaging to enhance customer engagement.",
+    "icon": "PushAlert.svg",
+    "js": {
+      "pushalert_manifest_file": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.pushalert\\.co/"
+    ],
+    "website": "https://pushalert.co"
   },
   "PushDaddy Whatsapp Chat": {
     "cats": [
@@ -5305,6 +5550,22 @@
     ],
     "website": "https://pushpushgo.com"
   },
+  "PushWoosh": {
+    "cats": [
+      2
+    ],
+    "description": "PushWoosh is a messaging system that supports push notifications and in-app messages.",
+    "icon": "PushWoosh.svg",
+    "js": {
+      "Pushwoosh": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.pushwoosh.com"
+  },
   "Pushify": {
     "cats": [
       32
@@ -5406,20 +5667,20 @@
     "cats": [
       19
     ],
+    "cookies": {
+      "_mkto_trk": ""
+    },
     "cpe": "cpe:2.3:a:pyscript:pyscript:*:*:*:*:*:*:*:*",
     "description": "PyScript is a python script that can be run in the browser using a mix of Python and standard HTML.",
     "dom": [
       "py-script"
     ],
     "icon": "PyScript.svg",
-    "oss": true,
-    "website": "https://pyscript.net",
     "implies": [
       "Python"
     ],
-    "cookies": {
-      "_mkto_trk": ""
-    }
+    "oss": true,
+    "website": "https://pyscript.net"
   },
   "Pygments": {
     "cats": [
@@ -5439,6 +5700,8 @@
     "cookies": {
       "pyrocms": ""
     },
+    "cpe": "cpe:2.3:a:pyrocms:pyrocms:*:*:*:*:*:*:*:*",
+    "description": "PyroCMS is an open-source content management system (CMS) built on the Laravel framework, designed for creating and managing websites with a focus on flexibility, modularity, and ease of use.",
     "headers": {
       "X-Streams-Distribution": "PyroCMS"
     },
@@ -5446,10 +5709,8 @@
     "implies": [
       "Laravel"
     ],
-    "cpe": "cpe:2.3:a:pyrocms:pyrocms:*:*:*:*:*:*:*:*",
-    "website": "https://pyrocms.com",
     "oss": true,
-    "description": "PyroCMS is an open-source content management system (CMS) built on the Laravel framework, designed for creating and managing websites with a focus on flexibility, modularity, and ease of use."
+    "website": "https://pyrocms.com"
   },
   "Python": {
     "cats": [
@@ -5533,6 +5794,8 @@
     "cats": [
       19
     ],
+    "cpe": "cpe:2.3:a:parceljs:parcel:*:*:*:*:*:*:*:*",
+    "description": "Parcel is an open-source web application bundler known for its zero-config approach, simplifying the process of building and bundling web projects.",
     "icon": "Parcel.svg",
     "implies": [
       "SWC"
@@ -5540,10 +5803,8 @@
     "js": {
       "parcelRequire": ""
     },
-    "website": "https://parceljs.org",
     "oss": true,
-    "description": "Parcel is an open-source web application bundler known for its zero-config approach, simplifying the process of building and bundling web projects.",
-    "cpe": "cpe:2.3:a:parceljs:parcel:*:*:*:*:*:*:*:*"
+    "website": "https://parceljs.org"
   },
   "particles.js": {
     "cats": [
@@ -5688,6 +5949,7 @@
       3
     ],
     "cpe": "cpe:2.3:a:phppgadmin_project:phppgadmin:*:*:*:*:*:*:*:*",
+    "description": "phpPgAdmin is a web-based administration tool for managing PostgreSQL databases.",
     "html": [
       "(?:<title>phpPgAdmin</title>|<span class=\"appname\">phpPgAdmin)"
     ],
@@ -5695,9 +5957,8 @@
     "implies": [
       "PHP"
     ],
-    "website": "https://phppgadmin.sourceforge.net",
     "oss": true,
-    "description": "phpPgAdmin is a web-based administration tool for managing PostgreSQL databases."
+    "website": "https://phppgadmin.sourceforge.net"
   },
   "phpRS": {
     "cats": [
@@ -5776,6 +6037,7 @@
     "cookies": {
       "pinoox_session": ""
     },
+    "description": "Pinoox is a software development company that provides custom solutions for web, mobile, and software applications.",
     "icon": "pinoox.svg",
     "implies": [
       "PHP"
@@ -5783,8 +6045,7 @@
     "js": {
       "pinoox": ""
     },
-    "website": "https://pinoox.com",
-    "description": "Pinoox is a software development company that provides custom solutions for web, mobile, and software applications."
+    "website": "https://pinoox.com"
   },
   "pirobase CMS": {
     "cats": [
@@ -5858,7 +6119,7 @@
     "html": [
       "Powered by <a href=\"[^>]+punbb"
     ],
-    "icon": "punBB.png",
+    "icon": "punBB.svg",
     "implies": [
       "PHP"
     ],

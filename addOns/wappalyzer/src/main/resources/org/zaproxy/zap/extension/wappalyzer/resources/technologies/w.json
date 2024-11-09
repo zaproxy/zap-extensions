@@ -33,18 +33,18 @@
     "cats": [
       10
     ],
-    "icon": "W3Counter.svg",
-    "scriptSrc": [
-      "w3counter\\.com/tracker\\.js"
-    ],
-    "website": "https://www.w3counter.com",
     "description": "W3Counter is a web analytics service that provides free and paid tools for tracking visitor statistics and offers customizable website widgets to enhance user engagement.",
-    "saas": true,
+    "icon": "W3Counter.svg",
     "pricing": [
       "freemium",
       "low",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "w3counter\\.com/tracker\\.js"
+    ],
+    "website": "https://www.w3counter.com"
   },
   "WEBDEV": {
     "cats": [
@@ -154,11 +154,11 @@
       25
     ],
     "description": "Reveal CSS animation as you scroll down a page.",
+    "oss": true,
     "pricing": [
       "low",
       "onetime"
     ],
-    "oss": true,
     "scriptSrc": [
       "wow(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
     ],
@@ -288,6 +288,9 @@
     ],
     "description": "WP Google Map Plugin allows you to create google maps shortcodes to display responsive google maps on pages, widgets and custom templates.",
     "icon": "WP Google Map Plugin.png",
+    "implies": [
+      "Google Maps"
+    ],
     "js": {
       "wpgmp_local": ""
     },
@@ -301,10 +304,7 @@
     "scriptSrc": [
       "/wp-content/plugins/wp-google-map-plugin/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
     ],
-    "website": "https://www.wpmapspro.com",
-    "implies": [
-      "Google Maps"
-    ]
+    "website": "https://www.wpmapspro.com"
   },
   "WP Grid Builder": {
     "cats": [
@@ -607,10 +607,10 @@
       87,
       89
     ],
-    "cpe": "cpe:2.3:a:wpml:wpml:*:*:*:*:*:wordpress:*:*",
     "cookies": {
       "wp-wpml_current_language": ""
     },
+    "cpe": "cpe:2.3:a:wpml:wpml:*:*:*:*:*:wordpress:*:*",
     "description": "WPML plugin makes it possible to build and run fully multilingual WordPress sites.",
     "icon": "WPML.svg",
     "meta": {
@@ -1198,6 +1198,7 @@
     "cats": [
       18
     ],
+    "cpe": "cpe:2.3:a:web2py:web2py:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Powered-By": "web2py"
     },
@@ -1212,7 +1213,6 @@
     "scriptSrc": [
       "web2py\\.js"
     ],
-    "cpe": "cpe:2.3:a:web2py:web2py:*:*:*:*:*:*:*:*",
     "website": "https://web2py.com"
   },
   "Web3Forms": {
@@ -1395,12 +1395,12 @@
     "meta": {
       "generator": "Incomedia WebSite X5 (\\w+ [\\d.]+)\\;version:\\1"
     },
-    "website": "https://websitex5.com",
-    "saas": true,
     "pricing": [
       "low",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "website": "https://websitex5.com"
   },
   "WebSocket": {
     "cats": [
@@ -1661,19 +1661,19 @@
     "cats": [
       12
     ],
+    "description": "Webix is a JavaScript UI library that offers over 100 customizable UI components for creating web applications, supporting integration with frameworks like Angular, React, and Vue.js.",
     "icon": "Webix.svg",
     "js": {
       "webix": ""
     },
+    "oss": true,
+    "pricing": [
+      "onetime"
+    ],
     "scriptSrc": [
       "\\bwebix\\.js"
     ],
-    "website": "https://webix.com",
-    "oss": true,
-    "description": "Webix is a JavaScript UI library that offers over 100 customizable UI components for creating web applications, supporting integration with frameworks like Angular, React, and Vue.js.",
-    "pricing": [
-      "onetime"
-    ]
+    "website": "https://webix.com"
   },
   "Weblication": {
     "cats": [
@@ -1797,8 +1797,8 @@
       "webpackChunk": "",
       "webpackJsonp": ""
     },
-    "website": "https://webpack.js.org/",
-    "oss": true
+    "oss": true,
+    "website": "https://webpack.js.org/"
   },
   "Webpushr": {
     "cats": [
@@ -1878,6 +1878,7 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:websitebaker:websitebaker:*:*:*:*:*:*:*:*",
     "icon": "WebsiteBaker.png",
     "implies": [
       "PHP",
@@ -1886,7 +1887,6 @@
     "meta": {
       "generator": "WebsiteBaker"
     },
-    "cpe": "cpe:2.3:a:websitebaker:websitebaker:*:*:*:*:*:*:*:*",
     "website": "https://websitebaker2.org/en/home.php"
   },
   "WebsiteBuilder": {
@@ -2014,22 +2014,22 @@
     "cats": [
       89
     ],
+    "description": "Weglot is a website translation solution facilitating automatic and manual multilingual content management for website owners and developers.",
     "headers": {
       "Weglot-Translated": ""
     },
     "icon": "Weglot.svg",
-    "scriptSrc": [
-      "cdn\\.weglot\\.com",
-      "wp-content/plugins/weglot"
-    ],
-    "website": "https://www.weglot.com",
-    "saas": true,
-    "description": "Weglot is a website translation solution facilitating automatic and manual multilingual content management for website owners and developers.",
     "pricing": [
       "freemium",
       "recurring",
       "low"
-    ]
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.weglot\\.com",
+      "wp-content/plugins/weglot"
+    ],
+    "website": "https://www.weglot.com"
   },
   "Welcart": {
     "cats": [
@@ -2140,10 +2140,10 @@
       "a[href*='api.whatsapp.com/send'], a[href*='web.whatsapp.com/send'], div[class*='wptwa-container'], a[href*='wa.link'][target='_blank'], link[href*='plugins/creame-whatsapp-me']"
     ],
     "icon": "WhatsApp.svg",
-    "website": "https://www.whatsapp.com/business",
     "scriptSrc": [
       "/plugins/creame-whatsapp-me.*joinchat\\.min\\.js"
-    ]
+    ],
+    "website": "https://www.whatsapp.com/business"
   },
   "Wheelio": {
     "cats": [
@@ -2310,17 +2310,17 @@
     "cats": [
       6
     ],
+    "description": "Wikinggruppen is a Swedish company specializing in ecommerce solutions, offering custom platform development, CMS integration, and technical support.",
     "html": [
       "<!-- WIKINGGRUPPEN\\s([\\d\\.]+)\\;version:\\1"
     ],
     "icon": "wikinggruppen.svg",
-    "website": "https://wikinggruppen.se",
-    "description": "Wikinggruppen is a Swedish company specializing in ecommerce solutions, offering custom platform development, CMS integration, and technical support.",
-    "saas": true,
     "pricing": [
       "mid",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "website": "https://wikinggruppen.se"
   },
   "WikkaWiki": {
     "cats": [
@@ -2727,6 +2727,7 @@
     "cats": [
       1
     ],
+    "description": "Wolf CMS is an open-source, lightweight content management system written in PHP.",
     "html": [
       "(?:<a href=\"[^>]+wolfcms\\.org[^>]+>Wolf CMS(?:</a>)? inside|Thank you for using <a[^>]+>Wolf CMS)"
     ],
@@ -2734,9 +2735,8 @@
     "implies": [
       "PHP"
     ],
-    "website": "https://github.com/wolfcms/wolfcms",
     "oss": true,
-    "description": "Wolf CMS is an open-source, lightweight content management system written in PHP."
+    "website": "https://github.com/wolfcms/wolfcms"
   },
   "Wolfeo": {
     "cats": [
@@ -2771,6 +2771,7 @@
     "cats": [
       1
     ],
+    "description": "WoltLab Community Framework is a modular and extensible software platform designed for building and managing online communities with features like forums, blogs, and galleries.",
     "icon": "Woltlab Community Framework.svg",
     "implies": [
       "PHP"
@@ -2778,8 +2779,7 @@
     "scriptSrc": [
       "WCF\\..*\\.js"
     ],
-    "website": "https://www.woltlab.com",
-    "description": "WoltLab Community Framework is a modular and extensible software platform designed for building and managing online communities with features like forums, blogs, and galleries."
+    "website": "https://www.woltlab.com"
   },
   "Wonder": {
     "cats": [
@@ -3010,18 +3010,18 @@
     "cats": [
       10
     ],
-    "icon": "Woopra.svg",
-    "scriptSrc": [
-      "static\\.woopra\\.com"
-    ],
-    "website": "https://www.woopra.com",
     "description": "Woopra is a customer journey and product analytics software tool that helps businesses track user behavior and analyze customer interactions in real-time.",
-    "saas": true,
+    "icon": "Woopra.svg",
     "pricing": [
       "freemium",
       "high",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.woopra\\.com"
+    ],
+    "website": "https://www.woopra.com"
   },
   "Woostify": {
     "cats": [
@@ -3048,6 +3048,24 @@
       "/wp-content/themes/woostify/"
     ],
     "website": "https://woostify.com"
+  },
+  "Wootric": {
+    "cats": [
+      97
+    ],
+    "description": "Wootric is a customer feedback platform designed to enhance customer experience management for digital applications and B2B SaaS.",
+    "icon": "Wootric.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.wootric\\.com"
+    ],
+    "scripts": [
+      "\\.wootric\\.com"
+    ],
+    "website": "https://www.wootric.com"
   },
   "WoowUp": {
     "cats": [

@@ -533,12 +533,12 @@
     "cats": [
       36
     ],
+    "description": "Yieldlab is a German company that provides programmatic advertising technology solutions to optimize ad performance and maximize digital ad spend returns.",
     "icon": "Yieldlab.svg",
     "scriptSrc": [
       "^https?://(?:[^/]+\\.)?yieldlab\\.net/"
     ],
-    "website": "https://yieldlab.de",
-    "description": "Yieldlab is a German company that provides programmatic advertising technology solutions to optimize ad performance and maximize digital ad spend returns."
+    "website": "https://yieldlab.de"
   },
   "Yii": {
     "cats": [
@@ -547,7 +547,11 @@
     "cookies": {
       "YII_CSRF_TOKEN": ""
     },
+    "cpe": "cpe:2.3:a:yiiframework:yii:*:*:*:*:*:*:*:*",
     "description": "Yii is an open-source, object-oriented, component-based MVC PHP web application framework.",
+    "dom": [
+      "input[name='YII_CSRF_TOKEN'][type='hidden'], a[href*='//www.yiiframework.com/'][rel='external']"
+    ],
     "html": [
       "Powered by <a href=\"http://www\\.yiiframework\\.com/\" rel=\"external\">Yii Framework</a>",
       "<input type=\"hidden\" value=\"[a-zA-Z0-9]{40}\" name=\"YII_CSRF_TOKEN\" \\/>",
@@ -557,16 +561,12 @@
     "implies": [
       "PHP"
     ],
+    "oss": true,
     "scriptSrc": [
       "/assets/[a-zA-Z0-9]{8}\\/yii\\.js$",
       "yii(?:\\.|)?(?:validation|activeform)\\.js"
     ],
-    "website": "https://www.yiiframework.com",
-    "oss": true,
-    "dom": [
-      "input[name='YII_CSRF_TOKEN'][type='hidden'], a[href*='//www.yiiframework.com/'][rel='external']"
-    ],
-    "cpe": "cpe:2.3:a:yiiframework:yii:*:*:*:*:*:*:*:*"
+    "website": "https://www.yiiframework.com"
   },
   "Yoast Duplicate Post": {
     "cats": [
@@ -976,6 +976,21 @@
       "/ynh_portal\\.js"
     ],
     "website": "https://yunohost.org"
+  },
+  "Yupop": {
+    "cats": [
+      6
+    ],
+    "description": "Yupop is a platform that enables users to create an online store, requiring no monthly subscription and only charging fees when sales are made.",
+    "icon": "Yupop.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.yupopstorecdn\\.com"
+    ],
+    "website": "https://yupop.com"
   },
   "yellow.ai": {
     "cats": [

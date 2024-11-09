@@ -40,14 +40,14 @@
       "NS": "\\d+\\.ovh\\.net",
       "SOA": "\\d+\\.ovh\\.net"
     },
+    "headers": {
+      "x-iplb-request-id": ""
+    },
     "icon": "OVHcloud.svg",
     "pricing": [
       "payg"
     ],
-    "website": "https://www.ovhcloud.com",
-    "headers": {
-      "x-iplb-request-id": ""
-    }
+    "website": "https://www.ovhcloud.com"
   },
   "OWL Carousel": {
     "cats": [
@@ -143,6 +143,17 @@
       "onetime"
     ],
     "website": "https://exchange.oxid-esales.com/OXID-Products/OXID-eShop/OXID-eShop-Professional-Edition-6-Professional-Edition-6-Stable-PE-6-0-x.html"
+  },
+  "Oat++": {
+    "cats": [
+      18
+    ],
+    "description": "Oat++ is an open source C++ Web Framework.",
+    "headers": {
+      "Server": "^oatpp/?([\\d.]+)?\\;version:\\1"
+    },
+    "icon": "Oat.svg",
+    "website": "https://oatpp.io"
   },
   "Obsidian Incentivize": {
     "cats": [
@@ -451,6 +462,22 @@
     ],
     "website": "https://oculizm.com"
   },
+  "Oddcast": {
+    "cats": [
+      32
+    ],
+    "description": "Oddcast is a platform that develops customized video and avatar-based marketing products tailored for small and medium-sized businesses and consumers.",
+    "icon": "Oddcast.svg",
+    "js": {
+      "ODDCAST_HTTP_SERVER": "",
+      "OddcastDomain": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.oddcast\\.com/"
+    ],
+    "website": "https://oddcast.com"
+  },
   "Oddle": {
     "cats": [
       93
@@ -653,6 +680,19 @@
     ],
     "website": "https://www.olark.com/"
   },
+  "Omeda": {
+    "cats": [
+      86,
+      97
+    ],
+    "description": "Omeda is a platform that enables the creation of new products by starting with accurate audience segmentation and targeting.",
+    "icon": "Omeda.svg",
+    "saas": true,
+    "scriptSrc": [
+      "olytics\\.omeda\\.com/"
+    ],
+    "website": "https://www.omeda.com"
+  },
   "Omeka": {
     "cats": [
       1
@@ -749,6 +789,22 @@
       "cdn\\.omniconvert\\.com"
     ],
     "website": "https://www.omniconvert.com"
+  },
+  "Omnikick": {
+    "cats": [
+      32
+    ],
+    "description": "Omnikick is a platform designed to help businesses engage, convert, and grow their customer base through targeted digital marketing strategies.",
+    "icon": "Omnikick.svg",
+    "js": {
+      "omniKick.ready": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.omnikick.com"
   },
   "Omnisend": {
     "cats": [
@@ -894,16 +950,16 @@
     "cats": [
       92
     ],
+    "description": "OneAPM is a platform providing end-to-end application performance management solutions, including real-time monitoring, anomaly detection, and data analysis for optimizing IT operations.",
     "icon": "OneAPM.svg",
     "js": {
       "BWEUM": ""
     },
-    "website": "https://www.oneapm.com",
-    "description": "OneAPM is a platform providing end-to-end application performance management solutions, including real-time monitoring, anomaly detection, and data analysis for optimizing IT operations.",
-    "saas": true,
     "pricing": [
       "poa"
-    ]
+    ],
+    "saas": true,
+    "website": "https://www.oneapm.com"
   },
   "OneAll": {
     "cats": [
@@ -1222,6 +1278,7 @@
       10
     ],
     "cpe": "cpe:2.3:a:openwebanalytics:open_web_analytics:*:*:*:*:*:*:*:*",
+    "description": "Open Web Analytics is an open-source web analytics tool that provides self-hosted, customizable tracking and reporting of website traffic and user behavior.",
     "html": [
       "<!-- (?:Start|End) Open Web Analytics Tracker -->"
     ],
@@ -1231,9 +1288,8 @@
       "owa_baseUrl": "",
       "owa_cmds": ""
     },
-    "website": "https://www.openwebanalytics.com",
     "oss": true,
-    "description": "Open Web Analytics is an open-source web analytics tool that provides self-hosted, customizable tracking and reporting of website traffic and user behavior."
+    "website": "https://www.openwebanalytics.com"
   },
   "Open eShop": {
     "cats": [
@@ -1357,10 +1413,10 @@
     "js": {
       "OpenCities": ""
     },
-    "website": "https://granicus.com/solution/govaccess/opencities/",
     "meta": {
       "generator": "^Seamless\\.?CMS"
-    }
+    },
+    "website": "https://granicus.com/solution/govaccess/opencities/"
   },
   "OpenCms": {
     "cats": [
@@ -1461,6 +1517,26 @@
     },
     "website": "https://www.opennemas.com"
   },
+  "OpenPanel": {
+    "cats": [
+      10
+    ],
+    "description": "OpenPanel is an open-source analytics library that enables developers to track and analyze user behavior, providing real-time insights and data visualization for improved decision-making across various platforms.",
+    "icon": "OpenPanel.svg",
+    "js": {
+      "openpanel.api": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "//openpanel\\.dev/"
+    ],
+    "website": "https://openpanel.dev"
+  },
   "OpenPay": {
     "cats": [
       41,
@@ -1477,6 +1553,7 @@
     "cats": [
       22
     ],
+    "cpe": "cpe:2.3:a:openresty:openresty:*:*:*:*:*:*:*:*",
     "description": "OpenResty is a web platform based on nginx which can run Lua scripts using its LuaJIT engine.",
     "headers": {
       "Server": "openresty(?:/([\\d.]+))?\\;version:\\1"
@@ -1485,7 +1562,6 @@
     "implies": [
       "Nginx"
     ],
-    "cpe": "cpe:2.3:a:openresty:openresty:*:*:*:*:*:*:*:*",
     "website": "https://openresty.org"
   },
   "OpenSSL": {
@@ -1597,22 +1673,22 @@
       12,
       66
     ],
-    "icon": "OpenUI5.svg",
-    "js": {
-      "sap.ui.version": "^(.+)$\\;version:\\1"
-    },
-    "scriptSrc": [
-      "sap-ui-core\\.js"
-    ],
-    "website": "https://openui5.org",
-    "oss": true,
     "cookies": {
       "sap-usercontext": "sap-client"
     },
     "description": "OpenUI5 is a JavaScript UI Framework released by SAP under the Apache 2.0 license.",
+    "icon": "OpenUI5.svg",
+    "js": {
+      "sap.ui.version": "^(.+)$\\;version:\\1"
+    },
     "meta": {
       "sap-ui-fesr": ""
-    }
+    },
+    "oss": true,
+    "scriptSrc": [
+      "sap-ui-core\\.js"
+    ],
+    "website": "https://openui5.org"
   },
   "OpenWeb": {
     "cats": [
@@ -2386,6 +2462,9 @@
     "cats": [
       6
     ],
+    "dom": [
+      "script[data-requiremodule^='oro/'], script[data-requiremodule^='oroui/']"
+    ],
     "html": [
       "<script [^>]+data-requiremodule=\"oro/",
       "<script [^>]+data-requiremodule=\"oroui/"
@@ -2398,10 +2477,7 @@
     "scriptSrc": [
       "oro\\.min\\.js\\?version=([\\d.]+)\\;version:\\1"
     ],
-    "website": "https://oroinc.com",
-    "dom": [
-      "script[data-requiremodule^='oro/'], script[data-requiremodule^='oroui/']"
-    ]
+    "website": "https://oroinc.com"
   },
   "Ortto": {
     "cats": [
@@ -2457,10 +2533,30 @@
     ],
     "website": "https://www.post.at"
   },
+  "OtterText": {
+    "cats": [
+      32
+    ],
+    "cookies": {
+      "otter_text_session": ""
+    },
+    "description": "OtterText is a platform offering SMS marketing and automation solutions designed to enhance communication and streamline marketing campaigns.",
+    "icon": "OtterText.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.ottertext\\.com"
+    ],
+    "website": "https://ottertext.com"
+  },
   "OutSystems": {
     "cats": [
       47
     ],
+    "cpe": "cpe:2.3:a:outsystems:outsystems:*:*:*:*:*:*:*:*",
     "description": "OutSystems is a low-code platform which provides tools for companies to develop, deploy and manage omnichannel enterprise applications.",
     "icon": "OutSystems.svg",
     "implies": [
@@ -2475,7 +2571,6 @@
       "high",
       "recurring"
     ],
-    "cpe": "cpe:2.3:a:outsystems:outsystems:*:*:*:*:*:*:*:*",
     "saas": true,
     "scriptSrc": [
       "scripts/OutSystems(?:[\\w]+)?\\.js"
@@ -2548,6 +2643,36 @@
       "/owa/auth/log(?:on|off)\\.aspx"
     ],
     "website": "https://help.outlook.com"
+  },
+  "Ova": {
+    "cats": [
+      51
+    ],
+    "description": "Ova is a website builder platform from Australia.",
+    "icon": "Ova.svg",
+    "js": {
+      "cffOptions.placeholder": "\\.ova\\.net\\.au/",
+      "cffOptions.resized_url": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://ova.net.au"
+  },
+  "Overblog": {
+    "cats": [
+      11
+    ],
+    "description": "Overblog is a French blog platform that enables users to create and share content.",
+    "icon": "OverBlog.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.over-blog-kiwi\\.com/"
+    ],
+    "website": "https://www.over-blog.com"
   },
   "Ownpage": {
     "cats": [
@@ -2651,6 +2776,7 @@
     "cookies": {
       "osCsid": ""
     },
+    "cpe": "cpe:2.3:a:oscommerce:oscommerce:*:*:*:*:*:*:*:*",
     "description": "OsCommerce is an open-source ecommerce and online store-management software program.",
     "html": [
       "<br />Powered by <a href=\"https?://www\\.oscommerce\\.com",
@@ -2662,7 +2788,6 @@
       "PHP",
       "MySQL"
     ],
-    "cpe": "cpe:2.3:a:oscommerce:oscommerce:*:*:*:*:*:*:*:*",
     "oss": true,
     "website": "https://www.oscommerce.com"
   },
@@ -2673,15 +2798,15 @@
     "cookies": {
       "OSTSESSID": ""
     },
+    "cpe": "cpe:2.3:a:enhancesoft:osticket:*:*:*:*:*:*:*:*",
+    "description": "osTicket is an open-source support ticket system that allows businesses to manage and streamline customer support requests through a centralized platform, including features for ticket tracking, automation, and reporting.",
     "icon": "osTicket.svg",
     "implies": [
       "PHP",
       "MySQL"
     ],
-    "cpe": "cpe:2.3:a:enhancesoft:osticket:*:*:*:*:*:*:*:*",
-    "website": "https://osticket.com",
     "oss": true,
-    "description": "osTicket is an open-source support ticket system that allows businesses to manage and streamline customer support requests through a centralized platform, including features for ticket tracking, automation, and reporting."
+    "website": "https://osticket.com"
   },
   "otrs": {
     "cats": [
@@ -2715,12 +2840,12 @@
     "implies": [
       "PHP"
     ],
+    "js": {
+      "oc_defaults": ""
+    },
     "meta": {
       "apple-itunes-app": "app-id=543672169"
     },
-    "website": "https://owncloud.org",
-    "js": {
-      "oc_defaults": ""
-    }
+    "website": "https://owncloud.org"
   }
 }

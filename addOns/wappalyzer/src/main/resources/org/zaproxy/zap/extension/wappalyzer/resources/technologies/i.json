@@ -289,6 +289,27 @@
     "icon": "IconScout.svg",
     "website": "https://iconscout.com"
   },
+  "Iconosquare": {
+    "cats": [
+      10
+    ],
+    "description": "Iconosquare is an all-in-one social media management platform that facilitates the lives of SMMs with multiple profiles to manage.",
+    "dom": [
+      "iframe[src*='iconosquare.com/']"
+    ],
+    "icon": "Iconosquare.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.iconosquare\\.com"
+    ],
+    "website": "https://www.iconosquare.com"
+  },
   "Ideasoft": {
     "cats": [
       6
@@ -387,6 +408,25 @@
     ],
     "website": "https://www.iluria.com.br"
   },
+  "ImBox": {
+    "cats": [
+      52
+    ],
+    "description": "Imbox is a live chat platform that includes co-browsing features.",
+    "icon": "Imbox.svg",
+    "js": {
+      "__IMBOX_GLOBAL__": "",
+      "__IMBOX_INITIALIZED__": "",
+      "_imbox": "",
+      "imboxBuilt": "",
+      "imboxManager": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://imbox.se"
+  },
   "Image Relay": {
     "cats": [
       95
@@ -424,6 +464,23 @@
     ],
     "saas": true,
     "website": "https://imageengine.io"
+  },
+  "Imagekit": {
+    "cats": [
+      7
+    ],
+    "description": "ImageKit is an image optimisation and transformation server for web and mobile app developers.",
+    "dom": [
+      "link[href*='ik.imagekit.io/']"
+    ],
+    "icon": "ImageKit.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "website": "https://imagekit.io/"
   },
   "Imagely NextGEN Gallery": {
     "cats": [
@@ -473,6 +530,7 @@
       31,
       95
     ],
+    "cpe": "cpe:2.3:a:imgix:imgix:*:*:*:*:*:*:*:*",
     "description": "Imgix is a visual media platform for managing, processing, rendering, optimising and delivering your existing images.",
     "dns": {
       "SOA": "\\.imgix\\.net"
@@ -486,24 +544,41 @@
       "mid",
       "recurring"
     ],
-    "cpe": "cpe:2.3:a:imgix:imgix:*:*:*:*:*:*:*:*",
     "website": "https://imgix.com/"
+  },
+  "Immerss": {
+    "cats": [
+      6
+    ],
+    "description": "Immerss is a platform that offers 1-to-1 Digital Clienteling, allowing customers to connect with businesses in real time via dynamic video, chat, and messaging for a personalized shopping experience.",
+    "icon": "Immerss.svg",
+    "js": {
+      "Immerss.service_id": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.immerss\\.live/"
+    ],
+    "website": "https://www.immerss.live"
   },
   "Immutable.js": {
     "cats": [
       59
     ],
+    "description": "Immutable.js is a JavaScript library developed by Facebook that provides immutable data structures for more predictable state management in applications.",
     "icon": "Immutable.js.svg",
     "js": {
       "Immutable": "",
       "Immutable.version": "^(.+)$\\;version:\\1"
     },
+    "oss": true,
     "scriptSrc": [
       "^immutable\\.(?:min\\.)?js$"
     ],
-    "website": "https://facebook.github.io/immutable-js/",
-    "oss": true,
-    "description": "Immutable.js is a JavaScript library developed by Facebook that provides immutable data structures for more predictable state management in applications."
+    "website": "https://facebook.github.io/immutable-js/"
   },
   "Impact": {
     "cats": [
@@ -577,6 +652,7 @@
       "ImpressCMS": ""
     },
     "cpe": "cpe:2.3:a:impresscms:impresscms:*:*:*:*:*:*:*:*",
+    "description": "ImpressCMS is an open-source content management system (CMS) designed for creating and managing dynamic websites.",
     "icon": "ImpressCMS.svg",
     "implies": [
       "PHP"
@@ -584,18 +660,18 @@
     "meta": {
       "generator": "ImpressCMS"
     },
+    "oss": true,
     "scriptSrc": [
       "include/linkexternal\\.js"
     ],
-    "website": "https://www.impresscms.org",
-    "description": "ImpressCMS is an open-source content management system (CMS) designed for creating and managing dynamic websites.",
-    "oss": true
+    "website": "https://www.impresscms.org"
   },
   "ImpressPages": {
     "cats": [
       1
     ],
     "cpe": "cpe:2.3:a:impresspages:impresspages_cms:*:*:*:*:*:*:*:*",
+    "description": "ImpressPages is an open-source content management system (CMS) that enables users to create and manage websites easily, featuring a user-friendly interface and customizable templates.",
     "icon": "ImpressPages.svg",
     "implies": [
       "PHP"
@@ -603,9 +679,8 @@
     "meta": {
       "generator": "ImpressPages(?: CMS)?( [\\d.]*)?\\;version:\\1"
     },
-    "website": "https://impresspages.org",
-    "description": "ImpressPages is an open-source content management system (CMS) that enables users to create and manage websites easily, featuring a user-friendly interface and customizable templates.",
-    "oss": true
+    "oss": true,
+    "website": "https://impresspages.org"
   },
   "Imunify360": {
     "cats": [
@@ -810,13 +885,13 @@
     "cookies": {
       "MAKACSESSION": ""
     },
+    "description": "Indico is an open-source event management system designed for organizing scientific conferences and workshops.",
     "html": [
       "Powered by\\s+(?:CERN )?<a href=\"http://(?:cdsware\\.cern\\.ch/indico/|indico-software\\.org|cern\\.ch/indico)\">(?:CDS )?Indico( [\\d\\.]+)?\\;version:\\1"
     ],
     "icon": "Indico.svg",
-    "website": "https://getindico.io",
     "oss": true,
-    "description": "Indico is an open-source event management system designed for organizing scientific conferences and workshops."
+    "website": "https://getindico.io"
   },
   "Indy": {
     "cats": [
@@ -851,14 +926,14 @@
     "cats": [
       12
     ],
+    "description": "InfernoJS is a JavaScript library designed for building user interfaces, known for its high performance and similarity to React.js in terms of API and structure.",
     "icon": "InfernoJS.svg",
     "js": {
       "Inferno": "",
       "Inferno.version": "^(.+)$\\;version:\\1"
     },
-    "website": "https://infernojs.org",
     "oss": true,
-    "description": "InfernoJS is a JavaScript library designed for building user interfaces, known for its high performance and similarity to React.js in terms of API and structure."
+    "website": "https://infernojs.org"
   },
   "Infinite Scroll": {
     "cats": [
@@ -1620,6 +1695,24 @@
     ],
     "website": "https://intershop.com"
   },
+  "Intice": {
+    "cats": [
+      32
+    ],
+    "description": "Intice is a lead conversion tool designed for the automotive industry, streamlining customer engagement and improving the conversion process from inquiries to sales.",
+    "icon": "Intice.svg",
+    "js": {
+      "intice": "",
+      "inticeAllEvents": "",
+      "inticeIMP": "",
+      "inticeLeadmakerAnalytics": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "tools\\.inticeinc\\.com"
+    ],
+    "website": "https://intice.com"
+  },
   "Invenio": {
     "cats": [
       50
@@ -1632,8 +1725,8 @@
       "(?:Powered by|System)\\s+(?:CERN )?<a (?:class=\"footer\" )?href=\"http://(?:cdsware\\.cern\\.ch(?:/invenio)?|invenio-software\\.org|cern\\.ch/invenio)(?:/)?\">(?:CDS )?Invenio</a>\\s*v?([\\d\\.]+)?\\;version:\\1"
     ],
     "icon": "Invenio.svg",
-    "website": "https://invenio-software.org",
-    "oss": true
+    "oss": true,
+    "website": "https://invenio-software.org"
   },
   "Inventrue": {
     "cats": [
@@ -1670,6 +1763,23 @@
       "Scripts/_app/Inv(?:\\w+)\\.js\\?v=(.+)$\\;version:\\1"
     ],
     "website": "https://www.inveon.com"
+  },
+  "Invision Community": {
+    "cats": [
+      1
+    ],
+    "description": "Invision Community is a scalable and customizable platform designed to build and grow online communities.",
+    "icon": "InvisionCommunity.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.invisioncic\\.com/"
+    ],
+    "website": "https://invisioncommunity.com"
   },
   "Invision Power Board": {
     "cats": [
@@ -1811,12 +1921,12 @@
       15
     ],
     "description": "Isso is a lightweight commenting server written in Python and JavaScript, referred to as \"Ich schrei sonst\" in German.",
-    "js": {
-      "Isso.fetchComments": ""
-    },
     "implies": [
       "Python"
     ],
+    "js": {
+      "Isso.fetchComments": ""
+    },
     "oss": true,
     "website": "https://github.com/posativ/isso/"
   },
@@ -2010,6 +2120,18 @@
       "\\.iadvize\\.com/"
     ],
     "website": "https://www.iadvize.com"
+  },
+  "iCIMS": {
+    "cats": [
+      101
+    ],
+    "description": "iCIMS is a talent acquisition and internal mobility platform that delivers solutions to build, retain, and scale your workforce.",
+    "icon": "iCIMS.svg",
+    "saas": true,
+    "scripts": [
+      "icims\\.com"
+    ],
+    "website": "https://www.icims.com"
   },
   "iEXExchanger": {
     "cats": [
