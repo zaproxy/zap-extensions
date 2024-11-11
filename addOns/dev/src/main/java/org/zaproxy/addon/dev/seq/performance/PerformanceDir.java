@@ -19,11 +19,11 @@
  */
 package org.zaproxy.addon.dev.seq.performance;
 
-import org.zaproxy.addon.dev.TestAuthDirectory;
+import org.zaproxy.addon.dev.TestDirectory;
 import org.zaproxy.addon.dev.TestProxyServer;
 
 /** A sequence of forms which must be accessed in order. */
-public class PerformanceDir extends TestAuthDirectory {
+public class PerformanceDir extends TestDirectory {
 
     public PerformanceDir(TestProxyServer server, String name) {
         super(server, name);
