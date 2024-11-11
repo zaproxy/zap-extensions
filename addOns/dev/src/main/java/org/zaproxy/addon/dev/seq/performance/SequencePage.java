@@ -35,6 +35,8 @@ import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 public class SequencePage extends TestPage {
 
     private static final Logger LOGGER = LogManager.getLogger(SequencePage.class);
+    private static final String PARA = "<p>\n";
+    private static final String HIDDEN = "hidden";
     private TestProxyServer server;
 
     private static int numberOfSteps = 5;
@@ -69,7 +71,7 @@ public class SequencePage extends TestPage {
     }
 
     /**
-     * If true then the sequence ordering will be enforces, if false then the steps can be submitted
+     * If true then the sequence ordering will be enforced, if false then the steps can be submitted
      * in any order.
      *
      * @param checkSequence
@@ -120,82 +122,13 @@ public class SequencePage extends TestPage {
             Integer expectedStep = seqMap.get(seqUuid);
 
             if (checkSequence && expectedStep == null) {
-                // Unknown sequence
-                sb.append("Unregistered sequence!\n");
-                sb.append("<p>\n");
-                sb.append("Sorry, but you have to <a href=\"seq\">Start Again</a>");
-                sb.append("<p>\n");
-
-                responseStatus = TestProxyServer.STATUS_FORBIDDEN;
-
+                responseStatus = handledUnknownSequence(sb);
             } else if (checkSequence && seqStep > expectedStep) {
-                // Out of sequence
-                sb.append("Out of sequence step!\n");
-                sb.append("Got ");
-                sb.append(seqStep);
-                sb.append(" but expected ");
-                sb.append(seqMap.get(seqUuid));
-                sb.append("<p>\n");
-                sb.append("Sorry, but you have to <a href=\"seq\">Start Again</a>");
-                sb.append("<p>\n");
-
-                responseStatus = TestProxyServer.STATUS_FORBIDDEN;
-
+                responseStatus = handleOutOfSequenceStep(seqUuid, seqStep, sb);
             } else if (seqStep >= numberOfSteps) {
-                // All done, just need to output the vulnerable value..
-                sb.append("You got to the end of the sequence!\n");
-                sb.append("<p>\n");
-                sb.append("<a href=\"seq\">Start Again</a>");
-                sb.append("<p>\n");
-
-                if (checkSequence) {
-                    LOGGER.debug("Finished Sequence {}", seqUuid);
-                    seqMap.remove(seqUuid);
-                }
+                handleFinalStep(seqUuid, sb);
             } else {
-                if (stepBack) {
-                    seqStep--;
-                } else {
-                    seqStep++;
-                    if (checkSequence && seqStep > seqMap.get(seqUuid)) {
-                        LOGGER.debug("Sequence step {} {} ", seqUuid, seqStep);
-                        seqMap.put(seqUuid, seqStep);
-                    }
-                }
-
-                sb.append("<H3>Step ");
-                sb.append(seqStep);
-                sb.append("</H3>\n");
-
-                if (seqStep == numberOfSteps) {
-                    sb.append("The vulnerable value supplied was ");
-                    sb.append(super.getFormParameter(msg, "vuln"));
-                    sb.append("<p>\n");
-                }
-
-                sb.append("<form method=\"POST\">\n");
-                appendInput(sb, "hidden", "step" + seqStep, Integer.toString(seqStep));
-                appendInput(sb, "hidden", "seqId", seqUuid.toString());
-                appendInput(sb, "hidden", "seqStep", Integer.toString(seqStep));
-
-                sb.append("<table style=\"border: none;\">\n");
-                IntStream.range(0, numberOfFields)
-                        .forEach(i -> appendParam(sb, "Field " + i, "text", "field" + i, ""));
-
-                if (seqStep == numberOfSteps - 1) {
-                    appendParam(sb, "Vulnerable Param", "text", "vuln", "Not Safe!");
-                }
-
-                sb.append("<tr>\n");
-                if (seqStep == 1) {
-                    sb.append("\t<td></td>\n");
-                } else {
-                    sb.append("\t<td><button name=\"back\">Back</button></td>\n");
-                }
-                sb.append("\t<td><button name=\"next\">Next</button></td>\n");
-                sb.append("</tr>\n");
-                sb.append("</table>\n");
-                sb.append("</form>\n");
+                handleIntermediateStep(msg, seqUuid, seqStep, stepBack, sb);
             }
             body = body.replace("<!-- CONTENT -->", sb.toString());
 
@@ -206,6 +139,87 @@ public class SequencePage extends TestPage {
         } catch (HttpMalformedHeaderException e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private void handleIntermediateStep(
+            HttpMessage msg, UUID seqUuid, int seqStep, boolean stepBack, StringBuilder sb) {
+        if (stepBack) {
+            seqStep--;
+        } else {
+            seqStep++;
+            if (checkSequence && seqStep > seqMap.get(seqUuid)) {
+                LOGGER.debug("Sequence step {} {} ", seqUuid, seqStep);
+                seqMap.put(seqUuid, seqStep);
+            }
+        }
+
+        sb.append("<H3>Step ");
+        sb.append(seqStep);
+        sb.append("</H3>\n");
+
+        if (seqStep == numberOfSteps) {
+            sb.append("The vulnerable value supplied was ");
+            sb.append(super.getFormParameter(msg, "vuln"));
+            sb.append(PARA);
+        }
+
+        sb.append("<form method=\"POST\">\n");
+        appendInput(sb, HIDDEN, "step" + seqStep, Integer.toString(seqStep));
+        appendInput(sb, HIDDEN, "seqId", seqUuid.toString());
+        appendInput(sb, HIDDEN, "seqStep", Integer.toString(seqStep));
+
+        sb.append("<table style=\"border: none;\">\n");
+        IntStream.range(0, numberOfFields)
+                .forEach(i -> appendParam(sb, "Field " + i, "text", "field" + i, ""));
+
+        if (seqStep == numberOfSteps - 1) {
+            appendParam(sb, "Vulnerable Param", "text", "vuln", "Not Safe!");
+        }
+
+        sb.append("<tr>\n");
+        if (seqStep == 1) {
+            sb.append("\t<td></td>\n");
+        } else {
+            sb.append("\t<td><button name=\"back\">Back</button></td>\n");
+        }
+        sb.append("\t<td><button name=\"next\">Next</button></td>\n");
+        sb.append("</tr>\n");
+        sb.append("</table>\n");
+        sb.append("</form>\n");
+    }
+
+    private void handleFinalStep(UUID seqUuid, StringBuilder sb) {
+        sb.append("You got to the end of the sequence!\n");
+        sb.append(PARA);
+        sb.append("<a href=\"seq\">Start Again</a>");
+        sb.append(PARA);
+
+        if (checkSequence) {
+            LOGGER.debug("Finished Sequence {}", seqUuid);
+            seqMap.remove(seqUuid);
+        }
+    }
+
+    private String handleOutOfSequenceStep(UUID seqUuid, int seqStep, StringBuilder sb) {
+        sb.append("Out of sequence step!\n");
+        sb.append("Got ");
+        sb.append(seqStep);
+        sb.append(" but expected ");
+        sb.append(seqMap.get(seqUuid));
+        sb.append(PARA);
+        sb.append("Sorry, but you have to <a href=\"seq\">Start Again</a>");
+        sb.append(PARA);
+
+        return TestProxyServer.STATUS_FORBIDDEN;
+    }
+
+    private static String handledUnknownSequence(StringBuilder sb) {
+        sb.append("Unregistered sequence!\n");
+        sb.append(PARA);
+        sb.append("Sorry, but you have to <a href=\"seq\">Start Again</a>");
+        sb.append(PARA);
+
+        return TestProxyServer.STATUS_FORBIDDEN;
     }
 
     private static void appendParam(
@@ -230,10 +244,5 @@ public class SequencePage extends TestPage {
         sb.append("\" value=\"");
         sb.append(value);
         sb.append("\">\n");
-    }
-
-    @Override
-    public PerformanceDir getParent() {
-        return (PerformanceDir) super.getParent();
     }
 }

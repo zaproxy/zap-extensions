@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Sequence performance test to make it actually possible to test it using automation.
+- CSS and JS responses are now set cache enabled.
 
 ## [0.7.0] - 2024-10-07
 ### Added

@@ -139,14 +139,17 @@ public class TestDirectory implements HttpMessageHandler {
                     body = body.replace("<!-- SUBDIRS -->", sb.toString());
                 }
 
+                boolean allowCache = false;
                 msg.setResponseBody(body);
                 String contentType = "text/plain"; // Fallback
                 if (name.endsWith(".html")) {
                     contentType = "text/html";
                 } else if (name.endsWith(".css")) {
                     contentType = "text/css";
+                    allowCache = true;
                 } else if (name.endsWith(".js")) {
                     contentType = "text/javascript";
+                    allowCache = true;
                 } else if (name.endsWith(".json")) {
                     contentType = "application/json";
                 } else if (name.endsWith(".yaml")) {
@@ -156,7 +159,7 @@ public class TestDirectory implements HttpMessageHandler {
                 }
                 msg.setResponseHeader(
                         TestProxyServer.getDefaultResponseHeader(
-                                contentType, msg.getResponseBody().length()));
+                                contentType, msg.getResponseBody().length(), allowCache));
             }
         } catch (HttpMalformedHeaderException e) {
             LOGGER.error(e.getMessage(), e);
