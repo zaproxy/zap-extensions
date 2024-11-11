@@ -46,6 +46,7 @@ import org.zaproxy.addon.exim.ImporterResult;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.zest.CreateScriptOptions;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.utils.Stats;
 
 public class SequenceImportJob extends AutomationJob {
 
@@ -129,16 +130,18 @@ public class SequenceImportJob extends AutomationJob {
 
         result.getErrors()
                 .forEach(
-                        error ->
-                                progress.error(
-                                        Constant.messages.getString(
-                                                "sequence.automation.import.error",
-                                                getName(),
-                                                error)));
+                        error -> {
+                            progress.error(
+                                    Constant.messages.getString(
+                                            "sequence.automation.import.error", getName(), error));
+                            Stats.incCounter(
+                                    ExtensionSequenceAutomation.STATS_PREFIX + "import.error");
+                        });
         if (result.getCount() == 0) {
             progress.warn(
                     Constant.messages.getString(
                             "sequence.automation.import.nomessages", getName(), result.getCount()));
+            Stats.incCounter(ExtensionSequenceAutomation.STATS_PREFIX + "import.nomessages");
             return;
         }
 
@@ -149,10 +152,15 @@ public class SequenceImportJob extends AutomationJob {
                             "sequence.automation.import.sequencecreated",
                             getName(),
                             result.getCount()));
+            Stats.incCounter(ExtensionSequenceAutomation.STATS_PREFIX + "import");
+            Stats.incCounter(
+                    ExtensionSequenceAutomation.STATS_PREFIX + "import.messages",
+                    result.getCount());
         } catch (Exception e) {
             progress.error(
                     Constant.messages.getString(
                             "sequence.automation.import.script.error", getName(), e.getMessage()));
+            Stats.incCounter(ExtensionSequenceAutomation.STATS_PREFIX + "import.script.error");
         }
     }
 

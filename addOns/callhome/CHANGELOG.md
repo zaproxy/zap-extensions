@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Network stats to telemetry.
+- Sequence stats to telemetry.
 
 ## [0.13.0] - 2024-09-02
 ### Added

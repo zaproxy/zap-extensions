@@ -38,6 +38,7 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 public class ExtensionSequenceAutomation extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionSequenceAutomation";
+    public static final String STATS_PREFIX = "stats.sequence.automation.";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(ExtensionAutomation.class, ExtensionExim.class, ExtensionSequence.class);

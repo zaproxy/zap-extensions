@@ -55,6 +55,7 @@ import org.zaproxy.zap.extension.sequence.StdActiveScanRunner;
 import org.zaproxy.zap.extension.sequence.StdActiveScanRunner.SequenceStepData;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.Stats;
 
 public class SequenceActiveScanJob extends AutomationJob {
 
@@ -255,6 +256,8 @@ public class SequenceActiveScanJob extends AutomationJob {
                 new StdActiveScanRunner(
                         script, contextWrapper.getContext(), user, contextSpecificObjects);
 
+        Stats.incCounter(ExtensionSequenceAutomation.STATS_PREFIX + "ascan.scan");
+
         try {
             zzr.run(null, null);
             ascans.put(script.getName(), zzr.getSteps());
@@ -264,6 +267,7 @@ public class SequenceActiveScanJob extends AutomationJob {
                     Constant.messages.getString(
                             "automation.error.unexpected.internal", e.getMessage()));
             LOGGER.error(e.getMessage(), e);
+            Stats.incCounter(ExtensionSequenceAutomation.STATS_PREFIX + "ascan.exception");
         }
         return List.of();
     }
