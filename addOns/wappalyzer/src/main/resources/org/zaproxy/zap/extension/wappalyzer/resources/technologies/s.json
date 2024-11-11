@@ -7121,7 +7121,7 @@
       "<link href=\"/css/sonar\\.css\\?v=([\\d.]+)\\;version:\\1",
       "<title>SonarQube</title>"
     ],
-    "icon": "sonar.svg",
+    "icon": "SonarQube.svg",
     "implies": [
       "Java"
     ],
