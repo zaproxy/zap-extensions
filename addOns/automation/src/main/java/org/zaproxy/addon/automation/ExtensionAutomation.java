@@ -376,6 +376,14 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
 
         for (AutomationJob job : jobsToRun) {
+
+            if (!job.isEnabled()) {
+                progress.info(
+                        Constant.messages.getString("automation.info.jobdisabled", job.getType()));
+                job.setStatus(AutomationJob.Status.NOT_ENABLED);
+                continue;
+            }
+
             job.applyParameters(progress);
             progress.info(Constant.messages.getString("automation.info.jobstart", job.getType()));
             job.setStatus(AutomationJob.Status.RUNNING);
