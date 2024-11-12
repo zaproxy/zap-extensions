@@ -43,6 +43,7 @@ class CreateScriptOptionsUnitTest {
         assertThat(
                 options.getIncludeResponses(),
                 is(equalTo(CreateScriptOptions.IncludeResponses.GLOBAL_OPTION)));
+        assertThat(options.isReplaceRequestValues(), is(equalTo(true)));
     }
 
     @ParameterizedTest
@@ -111,5 +112,16 @@ class CreateScriptOptionsUnitTest {
                         IllegalArgumentException.class, () -> builder.setIncludeResponses(null));
         // Then
         assertThat(ex.getMessage(), is(equalTo("The include responses must not be null.")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldSetReplaceRequestValues(boolean value) {
+        // Given
+        var builder = CreateScriptOptions.builder();
+        // When
+        builder.setReplaceRequestValues(value);
+        // Then
+        assertThat(builder.build().isReplaceRequestValues(), is(equalTo(value)));
     }
 }
