@@ -96,6 +96,7 @@ var addOns =
         "reveal",
         "revisit",
         "saml",
+        "scanpolicies",
         "scripts",
         "selenium",
         "sequence",
