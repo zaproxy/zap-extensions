@@ -27,7 +27,7 @@ import org.zaproxy.addon.llm.communication.HttpRequestList;
 
 public interface LlmAssistant {
     @UserMessage(
-            "Given the following swagger generate list of chained HTTP request to simulate a real world user : {{swagger}} ")
+            "GGiven the following OpenAPI definition, generate a list of chained HTTP requests to simulate a real world user : {{swagger}} ")
     HttpRequestList extractHttpRequests(String swagger);
 
     @UserMessage(
@@ -35,7 +35,7 @@ public interface LlmAssistant {
     HttpRequestList complete();
 
     @SystemMessage(
-            "You are a web application security expert in review false positives. Answer only in JSON.")
+            "You are a web application security expert reviewing false positives. Answer only in JSON.")
     @UserMessage(
             "Your task is to review the following finding from ZAP (Zed Attack Proxy).\n"
                     + "The confidence level is a pull down field which allows you to specify how confident you are in the validity of the finding : \n"
@@ -43,7 +43,6 @@ public interface LlmAssistant {
                     + "- 1 if it's Low\n"
                     + "- 2 if it's Medium\n"
                     + "- 3 if it's High\n"
-                    + "- 4 if it's Confirmed\n"
                     + "\n"
                     + "The alert is described as follows : {{description}}\n"
                     + "\n"

@@ -72,7 +72,6 @@ public class ExtensionLlm extends ExtensionAdaptor {
             extensionHook.getHookMenu().addImportMenuItem(getMenuLLM());
             extensionHook.getHookMenu().addPopupMenuItem(getCheckLlmMenu());
             extensionHook.addOptionsParamSet(getOptionsParam());
-            // change to a message
             getView().getOptionsDialog().addParamPanel(ROOT, getOptionsPanel(), true);
 
             extensionHook.addSessionListener(
@@ -114,10 +113,10 @@ public class ExtensionLlm extends ExtensionAdaptor {
         if (menuLLM == null) {
             menuLLM =
                     new ZapMenuItem(
-                            "llm.topmenu.import.importSwagger",
+                            "llm.topmenu.import.importOpenAPI",
                             getView().getMenuShortcutKeyStroke(KeyEvent.VK_J, 0, false));
             menuLLM.setToolTipText(
-                    Constant.messages.getString("llm.topmenu.import.importSwagger.tooltip"));
+                    Constant.messages.getString("llm.topmenu.import.importOpenAPI.tooltip"));
             menuLLM.addActionListener(
                     e -> {
                         if (importDialog == null) {

@@ -42,7 +42,7 @@ public class LlmOptionsPanel extends AbstractParamPanel {
     private JTextField apiKeyTextField;
     private JTextField llmendpointTextField;
 
-    private JComboBox<String> llmModelsComboBox; // Added JComboBox for LLM models
+    private JComboBox<String> llmModelsComboBox;
 
     public LlmOptionsPanel() {
         super();
@@ -53,13 +53,13 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         super.setName(Constant.messages.getString("llm.options.title"));
 
         JLabel llmApiKey = new JLabel(Constant.messages.getString("llm.options.label.apikey"));
-        this.apiKeyTextField = new JPasswordField(); // Initialize as JPasswordField
+        this.apiKeyTextField = new JPasswordField();
 
         JLabel llmendpoint = new JLabel(Constant.messages.getString("llm.options.label.endpoint"));
-        this.llmendpointTextField = new JTextField(); // Initialize as JPasswordField
+        this.llmendpointTextField = new JTextField();
 
-        JLabel llmModelsLabel = new JLabel("Select LLM Model:"); // Label for the combo box
-        this.llmModelsComboBox = new JComboBox<>(new String[] {"gpt-4o"}); //
+        JLabel llmModelsLabel = new JLabel("Select LLM Model:");
+        this.llmModelsComboBox = new JComboBox<>(new String[] {"gpt-4o"});
 
         GroupLayout layout = new GroupLayout(this);
         super.setLayout(layout);
@@ -77,7 +77,7 @@ public class LlmOptionsPanel extends AbstractParamPanel {
                                         .addComponent(llmendpoint)
                                         .addComponent(this.llmendpointTextField))
                         .addGroup(
-                                layout.createSequentialGroup() // Add horizontal group for combo box
+                                layout.createSequentialGroup()
                                         .addComponent(llmModelsLabel)
                                         .addComponent(this.llmModelsComboBox)));
 
@@ -94,8 +94,7 @@ public class LlmOptionsPanel extends AbstractParamPanel {
                         .addGroup(
                                 layout.createParallelGroup(
                                                 GroupLayout.Alignment
-                                                        .BASELINE) // Add vertical group for combo
-                                        // box
+                                                        .BASELINE)
                                         .addComponent(llmModelsLabel)
                                         .addComponent(this.llmModelsComboBox)));
     }

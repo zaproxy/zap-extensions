@@ -60,11 +60,12 @@ public class ImportDialog extends AbstractDialog {
     private static final long serialVersionUID = -7074394202143400215L;
 
     private final ExtensionLlm extLlm;
-    private JTextField fieldSwagger;
+    private JTextField fieldOpenapi;
     private JButton buttonChooseFile;
     private JButton buttonCancel;
     private JButton buttonImport;
     private JProgressBar progressBar;
+    private LlmOptionsParam llmOptionsParam;
 
     public ImportDialog(JFrame parent, final ExtensionLlm extLlm) {
         super(parent, true);
@@ -79,12 +80,12 @@ public class ImportDialog extends AbstractDialog {
         var labelWsdl =
                 new ZapHtmlLabel(
                         "<html>"
-                                + Constant.messages.getString("llm.importDialog.labelSwagger")
+                                + Constant.messages.getString("llm.importDialog.labelOpenAPI")
                                 + "<font color=red>*</font></html>");
         fieldsPanel.add(
                 labelWsdl, LayoutHelper.getGBC(0, fieldsRow, 1, 0.5, new Insets(0, 0, 4, 4)));
         fieldsPanel.add(
-                getSwaggerField(),
+                getOpenapiField(),
                 LayoutHelper.getGBC(1, fieldsRow, 1, 0.5, new Insets(0, 4, 4, 4)));
         fieldsPanel.add(
                 getChooseFileButton(),
@@ -111,11 +112,11 @@ public class ImportDialog extends AbstractDialog {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
-    private boolean importSwagger()
+    private boolean importOpenapi()
             throws IOException, URISyntaxException, ApiException, DatabaseException {
 
-        String swaggerLocation = getSwaggerField().getText();
-        LlmOptionsParam llmOptionsParam = extLlm.getOptionsParam();
+        String openapiLocation = getOpenapiField().getText();
+        llmOptionsParam = extLlm.getOptionsParam();
         Integer endpointCount = 0;
 
         if (StringUtils.isEmpty(llmOptionsParam.getApiKey())) {
@@ -134,40 +135,39 @@ public class ImportDialog extends AbstractDialog {
                 new LlmCommunicationService(
                         llmOptionsParam.getModelName(), llmOptionsParam.getApiKey(), llmOptionsParam.getEndpoint());
 
-        if (StringUtils.isEmpty(swaggerLocation)) {
+        if (StringUtils.isEmpty(openapiLocation)) {
             ThreadUtils.invokeAndWaitHandled(
                     () -> {
                         showWarningDialog(
                                 Constant.messages.getString(
-                                        "llm.importDialog.error.missingSwagger"));
-                        getSwaggerField().requestFocusInWindow();
+                                        "llm.importDialog.error.missingOpenapi"));
+                        getOpenapiField().requestFocusInWindow();
                     });
             return false;
         }
 
         try {
-            new URL(swaggerLocation).toURI();
-            new URI(swaggerLocation, true);
-            // implement logic here
-            endpointCount = llmCommunicationService.importSwaggerFromUrl(swaggerLocation);
+            new URL(openapiLocation).toURI();
+            new URI(openapiLocation, true);
+            endpointCount = llmCommunicationService.importOpenapiFromUrl(openapiLocation);
 
             return true;
         } catch (URIException | MalformedURLException | URISyntaxException e) {
             // Not a valid URI, try to import as a file
-            endpointCount = llmCommunicationService.importSwaggerFromFile(swaggerLocation);
+            endpointCount = llmCommunicationService.importOpenapiFromFile(openapiLocation);
         }
 
-        var file = new File(swaggerLocation);
+        var file = new File(openapiLocation);
         if (!file.canRead()) {
             ThreadUtils.invokeAndWaitHandled(
                     () -> {
-                        showWarningFileNotFound(swaggerLocation);
-                        getSwaggerField().requestFocusInWindow();
+                        showWarningFileNotFound(openapiLocation);
+                        getOpenapiField().requestFocusInWindow();
                     });
             return false;
         }
 
-        endpointCount = llmCommunicationService.importSwaggerFromFile(swaggerLocation);
+        endpointCount = llmCommunicationService.importOpenapiFromFile(openapiLocation);
 
         showMessageDialog(
                 Constant.messages.getString("llm.importDialog.import.success", endpointCount));
@@ -185,12 +185,12 @@ public class ImportDialog extends AbstractDialog {
         field.setComponentPopupMenu(jPopupMenu);
     }
 
-    private JTextField getSwaggerField() {
-        if (fieldSwagger == null) {
-            fieldSwagger = new JTextField(25);
-            setContextMenu(fieldSwagger);
+    private JTextField getOpenapiField() {
+        if (fieldOpenapi == null) {
+            fieldOpenapi = new JTextField(25);
+            setContextMenu(fieldOpenapi);
         }
-        return fieldSwagger;
+        return fieldOpenapi;
     }
 
     private JButton getChooseFileButton() {
@@ -213,7 +213,7 @@ public class ImportDialog extends AbstractDialog {
                         if (state == JFileChooser.APPROVE_OPTION) {
                             String filename = fileChooser.getSelectedFile().getAbsolutePath();
                             try {
-                                getSwaggerField().setText(filename);
+                                getOpenapiField().setText(filename);
                                 Model.getSingleton()
                                         .getOptionsParam()
                                         .setUserDirectory(fileChooser.getCurrentDirectory());
@@ -248,20 +248,14 @@ public class ImportDialog extends AbstractDialog {
                         new Thread(
                                         () -> {
                                             try {
-                                                if (importSwagger()) {
+                                                if (importOpenapi()) {
                                                     ThreadUtils.invokeAndWaitHandled(
                                                             () -> {
                                                                 dispose();
                                                                 showProgressBar(false);
                                                             });
                                                 }
-                                            } catch (IOException ex) {
-                                                throw new RuntimeException(ex);
-                                            } catch (URISyntaxException ex) {
-                                                throw new RuntimeException(ex);
-                                            } catch (ApiException ex) {
-                                                throw new RuntimeException(ex);
-                                            } catch (DatabaseException ex) {
+                                            } catch (Exception ex) {
                                                 throw new RuntimeException(ex);
                                             }
                                         },
@@ -296,7 +290,7 @@ public class ImportDialog extends AbstractDialog {
         getProgressBar().setVisible(show);
 
         getImportButton().setEnabled(!show);
-        getSwaggerField().setEnabled(!show);
+        getOpenapiField().setEnabled(!show);
         getChooseFileButton().setEnabled(!show);
     }
 
@@ -310,6 +304,6 @@ public class ImportDialog extends AbstractDialog {
     }
 
     public void clearFields() {
-        getSwaggerField().setText("");
+        getOpenapiField().setText("");
     }
 }
