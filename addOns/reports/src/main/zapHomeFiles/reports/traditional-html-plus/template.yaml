@@ -10,6 +10,7 @@ sections:
  - alertdetails
  - statistics
  - params
+ - sequencedetails
 themes:
  - light
  - dark
