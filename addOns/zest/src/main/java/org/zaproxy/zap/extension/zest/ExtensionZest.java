@@ -73,6 +73,9 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.ZestResultsTableModel.ZestResultsTableEntry;
 import org.zaproxy.zap.extension.zest.dialogs.ZestDialogManager;
+import org.zaproxy.zap.extension.zest.internal.DefaultRequestValueReplacer;
+import org.zaproxy.zap.extension.zest.internal.NoopRequestValueReplacer;
+import org.zaproxy.zap.extension.zest.internal.RequestValueReplacer;
 import org.zaproxy.zap.extension.zest.menu.ZestMenuManager;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.ZapToggleButton;
@@ -1924,12 +1927,16 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         ZestParam conversionOptions = getParam(options);
         ZestScript sz = new ZestScript();
         sz.setTitle(name);
+        RequestValueReplacer requestValueReplacer =
+                options.isReplaceRequestValues()
+                        ? new DefaultRequestValueReplacer(getModel().getSession())
+                        : NoopRequestValueReplacer.getInstance();
         for (var msg : messages) {
             if (msg == null) {
                 throw new IllegalArgumentException("A message should not be null.");
             }
             try {
-                var request = ZestZapUtils.toZestRequest(msg, false, true, conversionOptions);
+                ZestRequest request = requestValueReplacer.process(sz, msg, conversionOptions);
                 if (options.isAddStatusAssertion()) {
                     addStatusCodeAssertion(msg, request);
                 }

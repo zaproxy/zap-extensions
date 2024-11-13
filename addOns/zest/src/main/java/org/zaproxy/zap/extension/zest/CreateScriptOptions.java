@@ -47,17 +47,20 @@ public class CreateScriptOptions {
     private final boolean addLengthAssertion;
     private final int lengthApprox;
     private final IncludeResponses includeResponses;
+    private final boolean replaceRequestValues;
 
     private CreateScriptOptions(
             boolean addStatusAssertion,
             boolean addLengthAssertion,
             int lengthApprox,
-            IncludeResponses includeResponses) {
+            IncludeResponses includeResponses,
+            boolean replaceRequestValues) {
 
         this.addStatusAssertion = addStatusAssertion;
         this.addLengthAssertion = addLengthAssertion;
         this.lengthApprox = lengthApprox;
         this.includeResponses = includeResponses;
+        this.replaceRequestValues = replaceRequestValues;
     }
 
     public boolean isAddStatusAssertion() {
@@ -74,6 +77,10 @@ public class CreateScriptOptions {
 
     public IncludeResponses getIncludeResponses() {
         return includeResponses;
+    }
+
+    public boolean isReplaceRequestValues() {
+        return replaceRequestValues;
     }
 
     /**
@@ -96,6 +103,7 @@ public class CreateScriptOptions {
         private boolean addLengthAssertion;
         private int lengthApprox = 1;
         private IncludeResponses includeResponses = IncludeResponses.GLOBAL_OPTION;
+        private boolean replaceRequestValues = true;
 
         private Builder() {}
 
@@ -163,13 +171,34 @@ public class CreateScriptOptions {
         }
 
         /**
+         * Sets whether or not the request values should be automatically replaced.
+         *
+         * <p>Values present in later requests that are found in earlier responses are automatically
+         * replaced (e.g. anti-CSRF token).
+         *
+         * <p>Default value: {@code true}.
+         *
+         * @param replaceRequestValues {@code true} if the values should be replaced, {@code false}
+         *     otherwise.
+         * @return the builder for chaining.
+         */
+        public Builder setReplaceRequestValues(boolean replaceRequestValues) {
+            this.replaceRequestValues = replaceRequestValues;
+            return this;
+        }
+
+        /**
          * Builds the options from the specified data.
          *
          * @return the options with specified data.
          */
         public final CreateScriptOptions build() {
             return new CreateScriptOptions(
-                    addStatusAssertion, addLengthAssertion, lengthApprox, includeResponses);
+                    addStatusAssertion,
+                    addLengthAssertion,
+                    lengthApprox,
+                    includeResponses,
+                    replaceRequestValues);
         }
     }
 }
