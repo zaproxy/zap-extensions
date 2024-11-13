@@ -138,7 +138,7 @@ public final class HarUtils {
         StringBuilder strBuilderReqHeader = new StringBuilder();
 
         strBuilderReqHeader
-                .append(harRequest.getMethod())
+                .append(harRequest.getRawMethod())
                 .append(' ')
                 .append(harRequest.getUrl())
                 .append(' ')
@@ -201,7 +201,7 @@ public final class HarUtils {
     private static void setHttpResponse(HarResponse harResponse, HttpMessage message)
             throws HttpMalformedHeaderException {
         // empty responses without status code are possible
-        if (harResponse.getStatus() == 0) {
+        if (harResponse.getRawStatus() == 0) {
             return;
         }
 
@@ -209,7 +209,7 @@ public final class HarUtils {
                 new StringBuilder()
                         .append(harResponse.getHttpVersion())
                         .append(' ')
-                        .append(harResponse.getStatus())
+                        .append(harResponse.getRawStatus())
                         .append(' ')
                         .append(harResponse.getStatusText())
                         .append(HttpHeader.CRLF);
