@@ -5,4 +5,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-- First version, just with the Default Policy
+- First version, just with the Default Policy.
+- Initial help.
