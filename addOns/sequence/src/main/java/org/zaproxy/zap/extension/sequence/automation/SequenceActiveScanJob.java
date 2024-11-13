@@ -44,7 +44,6 @@ import org.zaproxy.addon.automation.AutomationJobException;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.JobResultData;
-import org.zaproxy.addon.automation.jobs.ActiveScanJobResultData;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.jobs.PolicyDefinition;
@@ -97,7 +96,7 @@ public class SequenceActiveScanJob extends AutomationJob {
 
     @Override
     public String getKeyAlertTestsResultData() {
-        return ActiveScanJobResultData.KEY;
+        return SequenceAScanJobResultData.KEY;
     }
 
     @Override
@@ -200,10 +199,20 @@ public class SequenceActiveScanJob extends AutomationJob {
                 contextSpecificObjects.add(scanPolicy);
             }
 
+            Map<String, List<SequenceStepData>> result = new HashMap<>();
             Stream<ZestScriptWrapper> sequenceZestScripts = getSequenceScripts();
             if (StringUtils.isEmpty(parameters.getSequence())) {
                 sequenceZestScripts.forEach(
-                        e -> scanSequence(e, context, user, contextSpecificObjects, progress));
+                        e ->
+                                result.put(
+                                        e.getName(),
+                                        scanSequence(
+                                                e,
+                                                context,
+                                                user,
+                                                contextSpecificObjects,
+                                                progress)));
+
             } else {
                 Optional<ZestScriptWrapper> scriptWrapper =
                         sequenceZestScripts
@@ -218,8 +227,13 @@ public class SequenceActiveScanJob extends AutomationJob {
                     return;
                 }
 
-                scanSequence(scriptWrapper.get(), context, user, contextSpecificObjects, progress);
+                ZestScriptWrapper sw = scriptWrapper.get();
+                result.put(
+                        sw.getName(),
+                        scanSequence(sw, context, user, contextSpecificObjects, progress));
             }
+
+            progress.addJobResultData(createJobResultData(result));
         } finally {
             extAScan.setPanelSwitch(true);
         }
@@ -231,7 +245,7 @@ public class SequenceActiveScanJob extends AutomationJob {
                 .map(ZestScriptWrapper.class::cast);
     }
 
-    private static void scanSequence(
+    private static List<SequenceStepData> scanSequence(
             ZestScriptWrapper script,
             ContextWrapper contextWrapper,
             User user,
@@ -244,19 +258,25 @@ public class SequenceActiveScanJob extends AutomationJob {
         try {
             zzr.run(null, null);
             ascans.put(script.getName(), zzr.getSteps());
+            return zzr.getSteps();
         } catch (Exception e) {
             progress.error(
                     Constant.messages.getString(
                             "automation.error.unexpected.internal", e.getMessage()));
             LOGGER.error(e.getMessage(), e);
         }
+        return List.of();
     }
 
     @Override
     public List<JobResultData> getJobResultData() {
+        return createJobResultData(ascans);
+    }
+
+    private List<JobResultData> createJobResultData(Map<String, List<SequenceStepData>> result) {
         List<JobResultData> list = new ArrayList<>();
         SequenceAScanJobResultData data = new SequenceAScanJobResultData(this.getName());
-        ascans.entrySet().stream()
+        result.entrySet().stream()
                 .forEach(entry -> data.addSequenceData(entry.getKey(), entry.getValue()));
         list.add(data);
         return list;
