@@ -57,7 +57,7 @@ class HarUtilsUnitTest extends TestUtils {
         var request =
                 "{"
                         + "  \"request\" : {\n"
-                        + "    \"method\" : \"POST\",\n"
+                        + "    \"method\" : \"SOMEMETHOD\",\n"
                         + "    \"url\" : \"http://www.example.org/path?a=b&c=d\",\n"
                         + "    \"httpVersion\" : \"HTTP/1.1\",\n"
                         + "    \"cookies\" : [ ],\n"
@@ -94,7 +94,7 @@ class HarUtilsUnitTest extends TestUtils {
                 message.getRequestHeader().toString(),
                 is(
                         equalTo(
-                                "POST http://www.example.org/path?a=b&c=d HTTP/1.1\r\n"
+                                "SOMEMETHOD http://www.example.org/path?a=b&c=d HTTP/1.1\r\n"
                                         + "content-type: application/json\r\n"
                                         + "content-length: 16\r\n"
                                         + "host: www.example.org\r\n\r\n")));
@@ -124,7 +124,7 @@ class HarUtilsUnitTest extends TestUtils {
                         + "    }\n"
                         + "  },\n"
                         + "  \"response\": {\n"
-                        + "    \"status\": 500,\n"
+                        + "    \"status\": 555,\n"
                         + "    \"statusText\": \"Internal Server Error\",\n"
                         + "    \"httpVersion\": \"HTTP/1.1\",\n"
                         + "    \"cookies\": [],\n"
@@ -157,7 +157,7 @@ class HarUtilsUnitTest extends TestUtils {
                 message.getResponseHeader().toString(),
                 is(
                         equalTo(
-                                "HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n")));
+                                "HTTP/1.1 555 Internal Server Error\r\nContent-Type: text/html; charset=UTF-8\r\n\r\n")));
         assertThat(message.getResponseBody().toString(), is(equalTo("Response Body")));
         assertThat(message.getTimeSentMillis(), is(equalTo(1L)));
         assertThat(message.getTimeElapsedMillis(), is(equalTo(123)));

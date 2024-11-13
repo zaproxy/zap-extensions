@@ -55,7 +55,7 @@ dependencies {
     zapAddOn("commonlib")
 
     implementation(files("lib/org.jwall.web.audit-0.2.15.jar"))
-    implementation("de.sstoehr:har-reader:2.3.0") {
+    implementation("de.sstoehr:har-reader:2.4.0") {
         // Provided by commonlib add-on:
         exclude(group = "com.fasterxml.jackson.core")
     }
