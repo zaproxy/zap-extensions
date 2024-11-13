@@ -32,21 +32,21 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.spider.parser.ParseContext;
 import org.zaproxy.zap.extension.openapi.AbstractServerTest;
-import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link OpenApiSpider}. */
 class OpenApiSpiderUnitTest extends AbstractServerTest {
 
-    private ValueGenerator valueGenerator;
+    private ValueProvider valueProvider;
     private OpenApiSpider spider;
 
     @BeforeEach
     void setupSpider() {
-        valueGenerator = mock(ValueGenerator.class);
-        spider = new OpenApiSpider(() -> valueGenerator);
+        valueProvider = mock(ValueProvider.class);
+        spider = new OpenApiSpider(() -> valueProvider);
     }
 
     @Test

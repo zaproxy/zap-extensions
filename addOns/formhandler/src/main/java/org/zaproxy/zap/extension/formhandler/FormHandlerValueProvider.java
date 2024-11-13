@@ -22,16 +22,16 @@ package org.zaproxy.zap.extension.formhandler;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
-import org.zaproxy.zap.model.DefaultValueGenerator;
-import org.zaproxy.zap.model.ValueGenerator;
+import org.zaproxy.addon.commonlib.DefaultValueProvider;
+import org.zaproxy.addon.commonlib.ValueProvider;
 
-public class FormHandlerValueGenerator implements ValueGenerator {
+public class FormHandlerValueProvider implements ValueProvider {
 
     private FormHandlerParam param;
 
-    private DefaultValueGenerator defaultValueGenerator = new DefaultValueGenerator();
+    private DefaultValueProvider defaultValueProvider = new DefaultValueProvider();
 
-    public FormHandlerValueGenerator(FormHandlerParam param) {
+    public FormHandlerValueProvider(FormHandlerParam param) {
         this.param = param;
     }
 
@@ -58,8 +58,7 @@ public class FormHandlerValueGenerator implements ValueGenerator {
             return value;
         }
 
-        // In all other cases pass the field to the defaultValueGenerator
-        return defaultValueGenerator.getValue(
+        return defaultValueProvider.getValue(
                 uri, url, fieldId, defaultValue, definedValues, envAttributes, fieldAttributes);
     }
 }

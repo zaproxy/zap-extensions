@@ -50,7 +50,7 @@ public class ExtensionOpenApiSpider extends ExtensionAdaptor {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider2.class);
         ExtensionOpenApi extOpenApi =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionOpenApi.class);
-        customSpider = new OpenApiSpider(extOpenApi::getValueGenerator);
+        customSpider = new OpenApiSpider(extOpenApi::getValueProvider);
         spider.addCustomParser(customSpider);
         LOGGER.debug("Added custom Open API spider.");
     }

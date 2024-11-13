@@ -40,9 +40,9 @@ import org.mockito.stubbing.Answer;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.DefaultValueProvider;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.spider.SpiderParam;
-import org.zaproxy.zap.model.DefaultValueGenerator;
-import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /**
@@ -66,8 +66,8 @@ abstract class SpiderParserTestUtils<T extends SpiderParser> extends TestUtils {
         spiderOptions = mock(SpiderParam.class, withSettings().strictness(Strictness.LENIENT));
         given(ctx.getSpiderParam()).willReturn(spiderOptions);
 
-        ValueGenerator valueGenerator = new DefaultValueGenerator();
-        given(ctx.getValueGenerator()).willReturn(valueGenerator);
+        ValueProvider valueProvider = new DefaultValueProvider();
+        given(ctx.getValueProvider()).willReturn(valueProvider);
 
         msg = new HttpMessage();
         given(ctx.getHttpMessage()).willReturn(msg);

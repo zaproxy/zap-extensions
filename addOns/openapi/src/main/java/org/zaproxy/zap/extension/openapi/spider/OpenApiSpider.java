@@ -27,22 +27,22 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.spider.parser.ParseContext;
 import org.zaproxy.addon.spider.parser.SpiderParser;
 import org.zaproxy.zap.extension.openapi.HistoryPersister;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
-import org.zaproxy.zap.model.ValueGenerator;
 
 public class OpenApiSpider extends SpiderParser {
 
     private static final Logger LOGGER = LogManager.getLogger(OpenApiSpider.class);
     private Requestor requestor;
-    private Supplier<ValueGenerator> valGenSupplier;
+    private Supplier<ValueProvider> valSupplier;
 
-    public OpenApiSpider(Supplier<ValueGenerator> valueGeneratorSupplier) {
-        valGenSupplier = valueGeneratorSupplier;
+    public OpenApiSpider(Supplier<ValueProvider> valueProviderSupplier) {
+        valSupplier = valueProviderSupplier;
         requestor = new Requestor(HttpSender.SPIDER_INITIATOR);
         requestor.addListener(new HistoryPersister());
     }
@@ -56,7 +56,7 @@ public class OpenApiSpider extends SpiderParser {
                             null,
                             message.getRequestHeader().getURI().toString(),
                             message.getResponseBody().toString(),
-                            valGenSupplier.get());
+                            valSupplier.get());
             requestor.run(ctx.getUser(), converter.getRequestModels(ctx.getContext()));
         } catch (Exception e) {
             LOGGER.debug(e.getMessage(), e);

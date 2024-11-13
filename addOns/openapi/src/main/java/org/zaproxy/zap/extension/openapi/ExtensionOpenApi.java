@@ -61,6 +61,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.commonlib.ui.ProgressPane;
 import org.zaproxy.addon.commonlib.ui.ProgressPanel;
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidDefinitionException;
@@ -73,7 +74,6 @@ import org.zaproxy.zap.extension.openapi.network.RequestModel;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.SessionStructure;
-import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -106,11 +106,11 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
         super(NAME);
     }
 
-    public ValueGenerator getValueGenerator() {
+    public ValueProvider getValueProvider() {
         return Control.getSingleton()
                 .getExtensionLoader()
                 .getExtension(ExtensionCommonlib.class)
-                .getValueGenerator();
+                .getValueProvider();
     }
 
     @Override
@@ -415,7 +415,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
         final List<String> errors = new ArrayList<>();
         SwaggerConverter converter =
-                new SwaggerConverter(targetUrl, definitionUrl, defn, getValueGenerator());
+                new SwaggerConverter(targetUrl, definitionUrl, defn, getValueProvider());
         Thread t =
                 new Thread(THREAD_PREFIX + threadId++) {
 

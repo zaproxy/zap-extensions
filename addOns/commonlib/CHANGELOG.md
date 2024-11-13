@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Dependency updates.
+- Let the Value Generator add-on provide the custom values through this add-on (Issue 8016).
 
 ## [1.28.0] - 2024-09-24
 ### Changed

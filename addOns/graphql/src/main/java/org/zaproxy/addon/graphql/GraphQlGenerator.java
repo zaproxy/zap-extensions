@@ -46,8 +46,8 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.graphql.GraphQlParam.RequestMethodOption;
-import org.zaproxy.zap.model.ValueGenerator;
 
 public class GraphQlGenerator {
 
@@ -63,11 +63,11 @@ public class GraphQlGenerator {
         SUBSCRIPTION
     }
 
-    private final ValueGenerator valueGenerator;
+    private final ValueProvider valueProvider;
 
     public GraphQlGenerator(
-            ValueGenerator valueGenerator, String sdl, Requestor requestor, GraphQlParam param) {
-        this.valueGenerator = valueGenerator;
+            ValueProvider valueProvider, String sdl, Requestor requestor, GraphQlParam param) {
+        this.valueProvider = valueProvider;
         schema = UnExecutableSchemaGenerator.makeUnExecutableSchema(new SchemaParser().parse(sdl));
         this.requestor = requestor;
         this.param = param;
@@ -565,7 +565,7 @@ public class GraphQlGenerator {
         fieldAttributes.put("Control Type", "TEXT");
         fieldAttributes.put("type", argName);
         String value =
-                valueGenerator.getValue(
+                valueProvider.getValue(
                         null,
                         null,
                         argName,
