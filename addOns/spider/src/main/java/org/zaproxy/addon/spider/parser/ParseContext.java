@@ -19,9 +19,13 @@
  */
 package org.zaproxy.addon.spider.parser;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.httpclient.URI;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.spider.SpiderParam;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ValueGenerator;
@@ -35,7 +39,7 @@ import org.zaproxy.zap.users.User;
 public class ParseContext {
 
     private final SpiderParam spiderParam;
-    private final ValueGenerator valueGenerator;
+    private final ValueProvider valueProvider;
     private final HttpMessage httpMessage;
     private final String path;
     private final Context context;
@@ -57,7 +61,7 @@ public class ParseContext {
      */
     public ParseContext(
             SpiderParam spiderParam,
-            ValueGenerator valueGenerator,
+            ValueProvider valueGenerator,
             HttpMessage httpMessage,
             String path,
             int depth) {
@@ -80,14 +84,14 @@ public class ParseContext {
      */
     public ParseContext(
             SpiderParam spiderParam,
-            ValueGenerator valueGenerator,
+            ValueProvider valueGenerator,
             Context context,
             User user,
             HttpMessage httpMessage,
             String path,
             int depth) {
         this.spiderParam = Objects.requireNonNull(spiderParam);
-        this.valueGenerator = Objects.requireNonNull(valueGenerator);
+        this.valueProvider = Objects.requireNonNull(valueGenerator);
         this.context = context;
         this.user = user;
         this.httpMessage = Objects.requireNonNull(httpMessage);
@@ -108,9 +112,41 @@ public class ParseContext {
      * Gets the value generator.
      *
      * @return the value generator, never {@code null}.
+     * @deprecated (0.13.0) Use {@link #getValueProvider()} instead.
      */
+    @Deprecated(since = "0.13.0", forRemoval = true)
     public ValueGenerator getValueGenerator() {
-        return valueGenerator;
+        return new ValueGenerator() {
+
+            @Override
+            public String getValue(
+                    URI uri,
+                    String url,
+                    String fieldId,
+                    String defaultValue,
+                    List<String> definedValues,
+                    Map<String, String> envAttributes,
+                    Map<String, String> fieldAttributes) {
+                return valueProvider.getValue(
+                        uri,
+                        url,
+                        fieldId,
+                        defaultValue,
+                        definedValues,
+                        envAttributes,
+                        fieldAttributes);
+            }
+        };
+    }
+
+    /**
+     * Gets the value provider.
+     *
+     * @return the value provider, never {@code null}.
+     * @since 0.13.0
+     */
+    public ValueProvider getValueProvider() {
+        return valueProvider;
     }
 
     /**

@@ -37,13 +37,13 @@ import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.openapi.AbstractServerTest;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerException;
 import org.zaproxy.zap.extension.openapi.network.RequesterListener;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
-import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class OpenApiUnitTest extends AbstractServerTest {
@@ -329,8 +329,8 @@ class OpenApiUnitTest extends AbstractServerTest {
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         HttpMessage defnMsg = this.getHttpMessage(test + defnName);
 
-        ValueGenerator vg =
-                new ValueGenerator() {
+        ValueProvider valueProvider =
+                new ValueProvider() {
                     @Override
                     public String getValue(
                             URI uri,
@@ -368,7 +368,8 @@ class OpenApiUnitTest extends AbstractServerTest {
 
         Converter converter =
                 new SwaggerConverter(
-                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), vg);
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
+                        valueProvider);
         final Map<String, String> accessedUrls = new HashMap<>();
         RequesterListener listener =
                 new RequesterListener() {

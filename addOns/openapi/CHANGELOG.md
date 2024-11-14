@@ -4,6 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Depend on newer version of Common Library add-on (Issue 8016).
 - Fields with default or missing values are omitted for the `openapi` job in saved Automation Framework plans.
 
 ## [43] - 2024-09-23

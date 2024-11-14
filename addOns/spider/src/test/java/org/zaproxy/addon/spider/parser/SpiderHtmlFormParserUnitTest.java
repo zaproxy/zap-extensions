@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
-import org.zaproxy.zap.model.DefaultValueGenerator;
-import org.zaproxy.zap.model.ValueGenerator;
+import org.zaproxy.addon.commonlib.DefaultValueProvider;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.utils.Pair;
 
 /** Unit test for {@link SpiderHtmlFormParser}. */
@@ -893,11 +893,9 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
 
     @Test
     void shouldSetValuesToFieldsWithNoValueWhenParsingGetForm() {
-        // Given
-        DefaultValueGenerator valueGenerator = new DefaultValueGenerator();
-        given(ctx.getValueGenerator()).willReturn(valueGenerator);
+        DefaultValueProvider valueProvider = mockValueProvider();
         Date date = new Date(1474370354555L);
-        valueGenerator.setDefaultDate(date);
+        valueProvider.setDefaultDate(date);
         messageWith("GET", "FormNoDefaultValues.html");
         // When
         boolean completelyParsed = parser.parseResource(ctx);
@@ -932,10 +930,9 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
     @Test
     void shouldSetValuesToFieldsWithNoValueWhenParsingPostForm() {
         // Given
-        DefaultValueGenerator valueGenerator = new DefaultValueGenerator();
-        given(ctx.getValueGenerator()).willReturn(valueGenerator);
+        DefaultValueProvider valueProvider = mockValueProvider();
         Date date = new Date(1474370354555L);
-        valueGenerator.setDefaultDate(date);
+        valueProvider.setDefaultDate(date);
         messageWith("POST", "FormNoDefaultValues.html");
         // When
         boolean completelyParsed = parser.parseResource(ctx);
@@ -995,19 +992,25 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                                         param("submit", "Submit")))));
     }
 
+    private DefaultValueProvider mockValueProvider() {
+        DefaultValueProvider valueProvider = new DefaultValueProvider();
+        given(ctx.getValueProvider()).willReturn(valueProvider);
+        return valueProvider;
+    }
+
     @Test
-    void shouldProvidedCorrectFormDataToValueGenerator() {
+    void shouldProvidedCorrectFormDataToValueProvider() {
         // Given
-        TestValueGenerator valueGenerator = new TestValueGenerator();
-        given(ctx.getValueGenerator()).willReturn(valueGenerator);
-        messageWith("FormsForValueGenerator.html");
+        TestValueProvider valueProvider = new TestValueProvider();
+        given(ctx.getValueProvider()).willReturn(valueProvider);
+        messageWith("FormsForValueProvider.html");
         int fieldIndex = 0;
         // When
         parser.parseResource(ctx);
         // Then
-        assertThat(valueGenerator.getFields(), hasSize(9));
+        assertThat(valueProvider.getFields(), hasSize(9));
         assertThat(
-                valueGenerator.getFields().get(fieldIndex),
+                valueProvider.getFields().get(fieldIndex),
                 is(
                         equalTo(
                                 formField(
@@ -1028,7 +1031,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                                                 attribute("atta", "valueA"))))));
         fieldIndex++;
         assertThat(
-                valueGenerator.getFields().get(fieldIndex),
+                valueProvider.getFields().get(fieldIndex),
                 is(
                         equalTo(
                                 formField(
@@ -1049,7 +1052,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                                                 attribute("atta", "valueA"))))));
         fieldIndex++;
         assertThat(
-                valueGenerator.getFields().get(fieldIndex),
+                valueProvider.getFields().get(fieldIndex),
                 is(
                         equalTo(
                                 formField(
@@ -1069,7 +1072,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                                                 attribute("atta", "valueA"))))));
         fieldIndex++;
         assertThat(
-                valueGenerator.getFields().get(fieldIndex),
+                valueProvider.getFields().get(fieldIndex),
                 is(
                         equalTo(
                                 formField(
@@ -1090,7 +1093,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                                                 attribute("atta", "valueA"))))));
         fieldIndex++;
         assertThat(
-                valueGenerator.getFields().get(fieldIndex),
+                valueProvider.getFields().get(fieldIndex),
                 is(
                         equalTo(
                                 formField(
@@ -1110,7 +1113,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                                                 attribute("atta", "valueA"))))));
         fieldIndex++;
         assertThat(
-                valueGenerator.getFields().get(fieldIndex),
+                valueProvider.getFields().get(fieldIndex),
                 is(
                         equalTo(
                                 formField(
@@ -1131,7 +1134,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                                                 attribute("att2", "value2"))))));
         fieldIndex++;
         assertThat(
-                valueGenerator.getFields().get(fieldIndex),
+                valueProvider.getFields().get(fieldIndex),
                 is(
                         equalTo(
                                 formField(
@@ -1152,7 +1155,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                                                 attribute("att2", "value2"))))));
         fieldIndex++;
         assertThat(
-                valueGenerator.getFields().get(fieldIndex),
+                valueProvider.getFields().get(fieldIndex),
                 is(
                         equalTo(
                                 formField(
@@ -1172,7 +1175,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                                                 attribute("att2", "value2"))))));
         fieldIndex++;
         assertThat(
-                valueGenerator.getFields().get(fieldIndex),
+                valueProvider.getFields().get(fieldIndex),
                 is(
                         equalTo(
                                 formField(
@@ -1285,11 +1288,11 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         }
     }
 
-    private static class TestValueGenerator implements ValueGenerator {
+    private static class TestValueProvider implements ValueProvider {
 
         private final List<FormField> fields;
 
-        TestValueGenerator() {
+        TestValueProvider() {
             fields = new ArrayList<>();
         }
 

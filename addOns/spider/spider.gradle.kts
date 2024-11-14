@@ -18,7 +18,7 @@ zapAddOn {
                     version.set(">=0.3.0")
                 }
                 register("commonlib") {
-                    version.set(">= 1.23.0 & < 2.0.0")
+                    version.set(">= 1.29.0 & < 2.0.0")
                 }
             }
         }
@@ -71,6 +71,8 @@ val japicmp by tasks.existing(JapicmpTask::class) {
             "org.zaproxy.addon.spider.PopupMenuItemSpiderDialog#getParentMenuIndex()",
             "org.zaproxy.addon.spider.SpiderParam#getRequestWaitTime()",
             "org.zaproxy.addon.spider.SpiderParam#setRequestWaitTime(int)",
+            "org.zaproxy.addon.spider.parser.ParseContext#ParseContext(org.zaproxy.addon.spider.SpiderParam," +
+                "org.zaproxy.zap.model.ValueGenerator,org.parosproxy.paros.network.HttpMessage,java.lang.String,int)",
         )
 }
 

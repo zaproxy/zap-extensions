@@ -41,9 +41,9 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.script.ExtensionScript;
-import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionGraphQl extends ExtensionAdaptor
@@ -76,11 +76,11 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         return DEPENDENCIES;
     }
 
-    ValueGenerator getValueGenerator() {
+    ValueProvider getValueGenerator() {
         return Control.getSingleton()
                 .getExtensionLoader()
                 .getExtension(ExtensionCommonlib.class)
-                .getValueGenerator();
+                .getValueProvider();
     }
 
     @Override
