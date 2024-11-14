@@ -5,8 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-- Add `sequence-import` Automation Framework job.
-- Initial sequence-activeScan implementation.
+- Add Automation Framework jobs:
+  - `sequence-import` to import HARs as sequences.
+  - `sequence-activeScan` to active scan sequences.
 - Data for reporting.
 - Sequence active scan policy.
 
