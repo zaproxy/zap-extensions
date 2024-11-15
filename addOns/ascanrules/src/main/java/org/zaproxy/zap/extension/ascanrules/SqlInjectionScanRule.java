@@ -92,14 +92,12 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
     private boolean doUnionBased = false;
     private boolean doExpressionBased = false;
     private boolean doOrderByBased = false;
-    // private boolean doStackedBased = false;  //TODO: use in the stacked based implementation
     // how many requests can we fire for each method? will be set depending on the attack strength
     private int doErrorMaxRequests = 0;
     private int doBooleanMaxRequests = 0;
     private int doUnionMaxRequests = 0;
     private int doExpressionMaxRequests = 0;
     private int doOrderByMaxRequests = 0;
-    // private int doStackedMaxRequests = 0;	//TODO: use in the stacked based implementation
     // how many requests have we fired up?
     private int countErrorBasedRequests = 0;
     private int countExpressionBasedRequests = 0;
@@ -107,8 +105,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
     private int countUnionBasedRequests = 0;
     private int countOrderByBasedRequests = 0;
 
-    // private int countStackedBasedRequests = 0;  //TODO: use in the stacked based queries
-    // implementation
     /**
      * generic one-line comment. Various RDBMS Documentation suggests that this syntax works with
      * almost every single RDBMS considered here
@@ -458,10 +454,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
         "\") UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
     };
 
-    /** for logging. */
     private static final Logger LOGGER = LogManager.getLogger(SqlInjectionScanRule.class);
 
-    /** determines if we should output Debug level logging */
     private boolean debugEnabled = LOGGER.isDebugEnabled();
 
     @Override
@@ -547,10 +541,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
     public void init() {
         LOGGER.debug("Initialising");
 
-        // DEBUG only
-        // this.debugEnabled=true;
-        // this.setAttackStrength(AttackStrength.LOW);
-
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
             // do error based (if Threshold allows), and some expression based
@@ -563,8 +553,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             doUnionMaxRequests = 0;
             doOrderByBased = false;
             doOrderByMaxRequests = 0;
-            // doStackedBased = false;
-            // doStackedMaxRequests = 0;
 
         } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
             // do some more error based (if Threshold allows), some more expression based, some
@@ -578,8 +566,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             doUnionMaxRequests = 5;
             doOrderByBased = false;
             doOrderByMaxRequests = 0;
-            // doStackedBased = false;
-            // doStackedMaxRequests = 5;
 
         } else if (this.getAttackStrength() == AttackStrength.HIGH) {
             // do some more error based (if Threshold allows), some more expression based, some more
@@ -594,8 +580,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             doUnionMaxRequests = 10;
             doOrderByBased = true;
             doOrderByMaxRequests = 5;
-            // doStackedBased = false;
-            // doStackedMaxRequests = 10;
 
         } else if (this.getAttackStrength() == AttackStrength.INSANE) {
             // do some more error based (if Threshold allows), some more expression based, some more
@@ -609,8 +593,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             doUnionMaxRequests = 100;
             doOrderByBased = true;
             doOrderByMaxRequests = 100;
-            // doStackedBased = false;
-            // doStackedMaxRequests = 100;
         }
 
         // if a high threshold is in place, turn off the error based, which are more prone to false
@@ -684,7 +666,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 // some cases
                 String[] prefixStrings;
                 if (origParamValue != null) {
-                    // ZAP: Removed getURLDecode()
                     prefixStrings = new String[] {"", origParamValue};
                 } else {
                     prefixStrings = new String[] {""};
@@ -703,9 +684,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                     String sqlErrValue =
                             prefixStrings[prefixIndex] + SQL_CHECK_ERR[sqlErrorStringIndex];
                     setParameter(msg1, param, sqlErrValue);
-
-                    // System.out.println("Attacking [" + msg + "], parameter [" + param + "] with
-                    // value ["+ sqlErrValue + "]");
 
                     // send the message with the modified parameters
                     try {
@@ -740,7 +718,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                             sqlInjectionAttack = sqlErrValue;
                             break;
                         }
-                    } // end of the loop to check for RDBMS specific error messages
+                    }
 
                     if (this.doGenericErrorBased && !sqlInjectionFoundForUrl) {
                         Iterator<Pattern> errorPatternIterator =
@@ -791,9 +769,9 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                 sqlInjectionFoundForUrl = true;
                                 continue;
                             }
-                        } // end of the loop to check for RDBMS specific error messages
+                        }
                     }
-                } // for each of the SQL_CHECK_ERR values (SQL metacharacters)
+                }
             }
 
             // ###############################
@@ -825,7 +803,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 return; // Something went wrong, no point continuing
             }
 
-            // String mResBodyNormal = getBaseMsg().getResponseBody().toString();
             mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
             mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
 
@@ -836,9 +813,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 // first figure out the type of the parameter..
                 try {
                     // is it an integer type?
-                    // ZAP: removed URLDecoding because on Variants
-                    // int paramAsInt =
-                    // Integer.parseInt(SqlInjectionScanRule.getURLDecode(origParamValue));
                     int paramAsInt = Integer.parseInt(origParamValue);
 
                     LOGGER.debug("The parameter value [{}] is of type Integer", origParamValue);
@@ -971,11 +945,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 return; // Something went wrong, no point continuing
             }
 
-            // String mResBodyNormal = getBaseMsg().getResponseBody().toString();
             mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
             mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
-
-            // boolean booleanBasedSqlInjectionFoundForParam = false;
 
             // try each of the AND syntax values in turn.
             // Which one is successful will depend on the column type of the table/view column into
@@ -993,7 +964,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
 
                 // needs a new message for each type of AND to be issued
                 HttpMessage msg2 = getNewMsg();
-                // ZAP: Removed getURLDecode()
                 String sqlBooleanAndTrueValue = origParamValue + SQL_LOGIC_AND_TRUE[i];
                 String sqlBooleanAndFalseValue = origParamValue + SQL_LOGIC_AND_FALSE[i];
 
@@ -1013,7 +983,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 }
                 countBooleanBasedRequests++;
 
-                // String resBodyAND = msg2.getResponseBody().toString();
                 String resBodyANDTrueUnstripped = msg2.getResponseBody().toString();
                 String resBodyANDTrueStripped =
                         stripOffOriginalAndAttackParam(
@@ -1064,10 +1033,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                         }
                         countBooleanBasedRequests++;
 
-                        // String resBodyANDFalse =
-                        // stripOff(msg2_and_false.getResponseBody().toString(),
-                        // SQL_LOGIC_AND_FALSE[i]);
-                        // String resBodyANDFalse = msg2_and_false.getResponseBody().toString();
                         String resBodyANDFalseUnstripped =
                                 msg2_and_false.getResponseBody().toString();
                         String resBodyANDFalseStripped =
@@ -1176,9 +1141,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                             }
                             countBooleanBasedRequests++;
 
-                            // String resBodyORTrue =
-                            // stripOff(msg2_or_true.getResponseBody().toString(), orValue);
-                            // String resBodyORTrue = msg2_or_true.getResponseBody().toString();
                             String resBodyORTrueUnstripped =
                                     msg2_or_true.getResponseBody().toString();
                             String resBodyORTrueStripped =
@@ -1245,13 +1207,12 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                 // vuln for a given param, since the database column is of only 1
                                 // type
 
-                                break; // No further need to loop
+                                break;
                             }
                         }
                     } // if the results of the "AND 1=1" match the original query, we may be onto
                     // something.
                     else {
-                        // andTrueBodyOutput[booleanStrippedUnstrippedIndex].compareTo(normalBodyOutput[booleanStrippedUnstrippedIndex])
                         // the results of the "AND 1=1" do NOT match the original query, for
                         // whatever reason (no sql injection, or the web page is not stable)
                         if (this.debugEnabled) {
@@ -1274,8 +1235,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                                             andTrueBodyOutput[
                                                                     booleanStrippedUnstrippedIndex]
                                                                     .split("\\n"))));
-
-                            // int numberofDifferences = diffpatch.getDeltas().size();
 
                             // and convert the list of patches to a String, joining using a newline
                             StringBuilder tempDiff = new StringBuilder(250);
@@ -1304,9 +1263,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                             LOGGER.debug("DIFFS: {}", tempDiff);
                         }
                     }
-                } // end of boolean logic output index (unstripped + stripped)
+                }
             }
-            // end of check 2
 
             // check 2a: boolean based logic, where the original query returned *no* data. Here we
             // append " OR 1=1" in an attempt to extract *more* data
@@ -1424,11 +1382,10 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
 
                         sqlInjectionFoundForUrl = true;
 
-                        break; // No further need to loop
+                        break;
                     }
                 }
             }
-            // end of check 2a
 
             // Check 3: UNION based
             // for each SQL UNION combination to try
@@ -1486,9 +1443,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                         sqlInjectionAttack = sqlUnionValue;
                         break;
                     }
-                } // end of the loop to check for RDBMS specific UNION error messages
-            } //// for each SQL UNION combination to try
-            // end of check 3
+                }
+            }
 
             // ###############################
 
@@ -1527,7 +1483,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 return; // Something went wrong, no point continuing
             }
 
-            // String mResBodyNormal = getBaseMsg().getResponseBody().toString();
             mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
             mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
 
@@ -1535,7 +1490,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                     && doOrderByBased
                     && countOrderByBasedRequests < doOrderByMaxRequests) {
 
-                // ZAP: Removed getURLDecode()
                 String modifiedParamValue = origParamValue + " ASC " + SQL_ONE_LINE_COMMENT;
 
                 HttpMessage msg5 = getNewMsg();
@@ -1592,7 +1546,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                         // minimise false positives
 
                         // use the descending order this time
-                        // ZAP: Removed getURLDecode()
                         String modifiedParamValueConfirm =
                                 origParamValue + " DESC " + SQL_ONE_LINE_COMMENT;
 
@@ -1662,7 +1615,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                     .raise();
 
                             sqlInjectionFoundForUrl = true;
-                            break; // No further need to loop
+                            break;
                         }
                     }
                 }
@@ -1675,7 +1628,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             // alert in addition to the alerts already raised
             if (sqlInjectionFoundForUrl) {
                 boolean loginUrl = false;
-                // LOGGER.debug("### A SQL Injection may lead to auth bypass..");
 
                 // are we dealing with a login url in any of the contexts?
                 ExtensionAuthentication extAuth =
@@ -1704,20 +1656,12 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                 // params, fragment, and POST params
                                 // are possibly different from the login page.
                                 loginUrl = true;
-                                // DEBUG only
-                                // LOGGER.debug("##### The right login page was found");
                                 break;
-                            } else {
-                                // LOGGER.debug("#### This is not the login page you're looking
-                                // for");
                             }
-                        } else {
-                            // LOGGER.debug("### This context has no login page set");
                         }
                     }
                 }
                 if (loginUrl) {
-                    // LOGGER.debug("##### Raising auth bypass");
                     // raise the alert, using the custom name and description
                     String vulnname =
                             Constant.messages.getString(MESSAGE_PREFIX + "authbypass.name");
@@ -1816,8 +1760,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             boolean patternInOrig = matcherOrig.find();
             boolean patternInSQLUnion = matcherSQLUnion.find();
 
-            // if (! matchBodyPattern(getBaseMsg(), errorPattern, null) && matchBodyPattern(msg,
-            // errorPattern, sb)) {
             if (!patternInOrig && patternInSQLUnion) {
                 // Likely a UNION Based SQL Injection (by error message). Raise it
                 String extraInfo =
@@ -1938,7 +1880,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                             .setOtherInfo(extraInfo)
                             .setMessage(msg)
                             .raise();
-                    // SQL Injection has been found
                     sqlInjectionFoundForUrl = true;
                     return;
                 }
