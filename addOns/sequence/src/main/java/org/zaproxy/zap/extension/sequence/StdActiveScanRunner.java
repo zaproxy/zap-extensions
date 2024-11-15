@@ -41,6 +41,7 @@ import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zest.core.v1.ZestActionFailException;
 import org.zaproxy.zest.core.v1.ZestAssertFailException;
 import org.zaproxy.zest.core.v1.ZestAssertion;
@@ -56,6 +57,7 @@ public class StdActiveScanRunner extends ZestZapRunner {
 
     private static final int SEQUENCE_HISTORY_TYPE = HistoryReference.TYPE_SEQUENCE_TEMPORARY;
     private static final Logger LOGGER = LogManager.getLogger(StdActiveScanRunner.class);
+    private static final String STATS_PREFIX = "stats.sequence.activescan.";
 
     private ZestScriptWrapper wrapper;
     private final Context context;
@@ -107,6 +109,7 @@ public class StdActiveScanRunner extends ZestZapRunner {
                     ZestInvalidCommonTestException,
                     ZestAssignFailException,
                     ZestClientFailException {
+        Stats.incCounter(STATS_PREFIX + "scan");
         return super.run(this.wrapper.getZestScript(), params);
     }
 
@@ -153,18 +156,30 @@ public class StdActiveScanRunner extends ZestZapRunner {
                     }
                 }
 
-                steps.add(
+                SequenceStepData stepData =
                         new SequenceStepData(
                                 step,
                                 passed,
                                 result,
                                 ascan.getAlertsIds(),
                                 ZestZapUtils.toHttpMessage(req, req.getResponse()),
-                                msg));
+                                msg);
+                steps.add(stepData);
+                countStepStats(stepData);
             }
         }
 
         return resp;
+    }
+
+    private static void countStepStats(SequenceStepData step) {
+        String ascanStep = STATS_PREFIX + "step" + step.getStep();
+        if (step.isPass()) {
+            Stats.incCounter(ascanStep + ".pass");
+        } else {
+            Stats.incCounter(ascanStep + ".fail");
+        }
+        Stats.incCounter(ascanStep + ".alerts", step.getAlertIds().size());
     }
 
     private SiteNode messageToSiteNode(HttpMessage msg, int step) {

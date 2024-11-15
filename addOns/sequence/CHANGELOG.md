@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `sequence-activeScan` to active scan sequences.
 - Data for reporting.
 - Sequence active scan policy.
+- Stats for import automation and active scan.
 
 ### Changed
 - Update minimum ZAP version to 2.15.0.
