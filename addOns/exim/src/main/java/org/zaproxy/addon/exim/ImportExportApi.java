@@ -26,7 +26,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
@@ -45,6 +47,8 @@ import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.exim.har.HarImporter;
 import org.zaproxy.addon.exim.har.HarUtils;
 import org.zaproxy.addon.exim.log.LogsImporter;
+import org.zaproxy.addon.exim.sites.PruneSiteResult;
+import org.zaproxy.addon.exim.sites.SitesTreeHandler;
 import org.zaproxy.addon.exim.urls.UrlsImporter;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiAction;
@@ -54,6 +58,7 @@ import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiOther;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
+import org.zaproxy.zap.extension.api.ApiResponseSet;
 import org.zaproxy.zap.network.HttpRedirectionValidator;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.ApiUtils;
@@ -76,6 +81,8 @@ public class ImportExportApi extends ApiImplementor {
     private static final String ACTION_IMPORT_URLS = "importUrls";
     private static final String ACTION_IMPORT_ZAP_LOGS = "importZapLogs";
     private static final String ACTION_IMPORT_MODSEC2_LOGS = "importModsec2Logs";
+    private static final String ACTION_EXPORT_SITES = "exportSitesTree";
+    private static final String ACTION_PRUNE_SITES = "pruneSitesTree";
 
     private static final String OTHER_EXPORT_HAR = "exportHar";
     private static final String OTHER_EXPORT_HAR_BY_ID = "exportHarById";
@@ -90,6 +97,8 @@ public class ImportExportApi extends ApiImplementor {
         this.addApiAction(new ApiAction(ACTION_IMPORT_ZAP_LOGS, new String[] {PARAM_FILE_PATH}));
         this.addApiAction(
                 new ApiAction(ACTION_IMPORT_MODSEC2_LOGS, new String[] {PARAM_FILE_PATH}));
+        this.addApiAction(new ApiAction(ACTION_EXPORT_SITES, new String[] {PARAM_FILE_PATH}));
+        this.addApiAction(new ApiAction(ACTION_PRUNE_SITES, new String[] {PARAM_FILE_PATH}));
 
         this.addApiOthers(
                 new ApiOther(
@@ -133,6 +142,24 @@ public class ImportExportApi extends ApiImplementor {
                 LogsImporter logsImporter =
                         new LogsImporter(file, LogsImporter.LogType.MOD_SECURITY_2);
                 return handleFileImportResponse(logsImporter.isSuccess(), file);
+            case ACTION_EXPORT_SITES:
+                file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
+                try {
+                    SitesTreeHandler.exportSitesTree(file, new ExporterResult());
+                    return handleFileExportResponse(true, file);
+                } catch (IOException e) {
+                    LOGGER.error(e.getMessage(), e);
+                    return handleFileExportResponse(false, file);
+                }
+            case ACTION_PRUNE_SITES:
+                file = new File(ApiUtils.getNonEmptyStringParam(params, PARAM_FILE_PATH));
+                PruneSiteResult res = SitesTreeHandler.pruneSiteNodes(file);
+
+                Map<String, String> map = new HashMap<>();
+                map.put("readNodes", Integer.toString(res.getReadNodes()));
+                map.put("deletedNodes", Integer.toString(res.getDeletedNodes()));
+                map.put("error", res.getError() == null ? "" : res.getError());
+                return new ApiResponseSet<>(name, map);
             default:
                 throw new ApiException(Type.BAD_ACTION);
         }
@@ -267,6 +294,14 @@ public class ImportExportApi extends ApiImplementor {
             return ApiResponseElement.OK;
         }
         throw new ApiException(Type.BAD_EXTERNAL_DATA, file.getAbsolutePath());
+    }
+
+    private ApiResponseElement handleFileExportResponse(boolean success, File file)
+            throws ApiException {
+        if (success) {
+            return ApiResponseElement.OK;
+        }
+        throw new ApiException(Type.DOES_NOT_EXIST, file.getAbsolutePath());
     }
 
     private RecordHistory getRecordHistory(TableHistory tableHistory, Integer id)

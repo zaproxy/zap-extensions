@@ -20,6 +20,7 @@
 package org.zaproxy.addon.exim.automation;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.Getter;
@@ -79,6 +80,23 @@ public class ExportJob extends AutomationJob {
                 this.getName(),
                 null,
                 progress);
+
+        // Check for invalid combinations
+        if (Source.SITESTREE.equals(this.parameters.getSource())
+                && !Type.YAML.equals(this.parameters.getType())) {
+            progress.error(
+                    Constant.messages.getString(
+                            "exim.automation.export.error.sitestree.type",
+                            this.getName(),
+                            this.parameters.getType()));
+        } else if (!Source.SITESTREE.equals(this.parameters.getSource())
+                && Type.YAML.equals(this.parameters.getType())) {
+            progress.error(
+                    Constant.messages.getString(
+                            "exim.automation.export.error.messages.type",
+                            this.getName(),
+                            this.parameters.getSource()));
+        }
     }
 
     @Override
@@ -112,10 +130,12 @@ public class ExportJob extends AutomationJob {
             return;
         }
 
+        Path path = JobUtils.getFile(fileName, getPlan()).toPath();
+
         ExporterOptions options =
                 ExporterOptions.builder()
                         .setContext(contextWrapper.getContext())
-                        .setOutputFile(JobUtils.getFile(fileName, getPlan()).toPath())
+                        .setOutputFile(path)
                         .setType(getParameters().getType())
                         .setSource(getParameters().getSource())
                         .build();
@@ -123,7 +143,10 @@ public class ExportJob extends AutomationJob {
         ExporterResult result = extension.getExporter().export(options);
         progress.info(
                 Constant.messages.getString(
-                        "exim.automation.export.exportcount", getName(), result.getCount()));
+                        "exim.automation.export.exportcount",
+                        getName(),
+                        result.getCount(),
+                        path.toAbsolutePath()));
         result.getErrors()
                 .forEach(
                         error ->
