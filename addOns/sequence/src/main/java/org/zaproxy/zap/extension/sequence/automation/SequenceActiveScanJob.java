@@ -70,6 +70,8 @@ public class SequenceActiveScanJob extends AutomationJob {
     private static final String PARAM_SEQUENCE = "sequence";
     private static final String PARAM_USER = "user";
 
+    private static final String DEFAULT_SEQ_POLICY = "Sequence";
+
     private final ExtensionActiveScan extAScan;
     private final ExtensionScript extScript;
 
@@ -115,10 +117,6 @@ public class SequenceActiveScanJob extends AutomationJob {
                             params, this.parameters, this.getName(), null, progress);
                     break;
                 case "policyDefinition":
-                    // Parse the policy defn
-                    PolicyDefinition.parsePolicyDefinition(
-                            jobData.get(key), policyDefinition, this.getName(), progress);
-                    break;
                 case "name":
                 case "tests":
                 case "type":
@@ -132,6 +130,8 @@ public class SequenceActiveScanJob extends AutomationJob {
                     break;
             }
         }
+        policyDefinition.parsePolicyDefinition(
+                jobData.get("policyDefinition"), this.getName(), progress);
 
         this.verifyUser(this.getParameters().getUser(), progress);
     }
@@ -376,6 +376,6 @@ public class SequenceActiveScanJob extends AutomationJob {
         private String sequence = "";
         private String context = "";
         private String user = "";
-        private String policy = "";
+        private String policy = DEFAULT_SEQ_POLICY;
     }
 }

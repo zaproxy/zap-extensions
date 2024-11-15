@@ -86,8 +86,8 @@ public class ActiveScanPolicyJob extends AutomationJob {
                     break;
                 case "policyDefinition":
                     // Parse the policy defn
-                    PolicyDefinition.parsePolicyDefinition(
-                            jobData.get(key), policyDefinition, this.getName(), progress);
+                    policyDefinition.parsePolicyDefinition(
+                            jobData.get(key), this.getName(), progress);
                     break;
                 case "name":
                 case "tests":

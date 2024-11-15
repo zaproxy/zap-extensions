@@ -22,6 +22,8 @@ package org.zaproxy.addon.automation.jobs;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,17 +35,23 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
+import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.parosproxy.paros.core.scanner.PluginFactoryTestHelper;
 import org.parosproxy.paros.core.scanner.PluginTestHelper;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
+import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.utils.I18N;
 
 class PolicyDefinitionUnitTest {
@@ -189,7 +197,7 @@ class PolicyDefinitionUnitTest {
         Object data = yaml.load(yamlStr);
 
         // When
-        PolicyDefinition.parsePolicyDefinition(data, policyDefinition, "test", progress);
+        policyDefinition.parsePolicyDefinition(data, "test", progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -223,7 +231,7 @@ class PolicyDefinitionUnitTest {
         Object data = yaml.load(yamlStr);
 
         // When
-        PolicyDefinition.parsePolicyDefinition(data, policyDefinition, "test", progress);
+        policyDefinition.parsePolicyDefinition(data, "test", progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -250,7 +258,7 @@ class PolicyDefinitionUnitTest {
         Object data = yaml.load(yamlStr);
 
         // When
-        PolicyDefinition.parsePolicyDefinition(data, policyDefinition, "test", progress);
+        policyDefinition.parsePolicyDefinition(data, "test", progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -270,7 +278,7 @@ class PolicyDefinitionUnitTest {
         Object data = yaml.load(yamlStr);
 
         // When
-        PolicyDefinition.parsePolicyDefinition(data, policyDefinition, "test", progress);
+        policyDefinition.parsePolicyDefinition(data, "test", progress);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
@@ -278,5 +286,67 @@ class PolicyDefinitionUnitTest {
         assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(
                 progress.getWarnings().get(0), is(equalTo("!automation.error.options.badlist!")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "  defaultStrength: \n" + "  defaultThreshold: \n" + "  rules: ",
+                "defaultStrength:",
+                "defaultThreshold:"
+            })
+    void shouldReturnPolicyWithDefaultsIfDefinitionYamlContainsUndefinedStrengthThreshold(
+            String defnYamlStr) {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(defnYamlStr);
+
+        // When
+        policyDefinition.parsePolicyDefinition(data, "test", progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        ScanPolicy policy = policyDefinition.getScanPolicy("test", progress);
+        assertThat(policy, is(notNullValue()));
+        assertThat(policy.getDefaultStrength(), is(equalTo(AttackStrength.MEDIUM)));
+        assertThat(policy.getDefaultThreshold(), is(equalTo(AlertThreshold.MEDIUM)));
+        List<Plugin> rules = policy.getPluginFactory().getAllPlugin();
+        assertValueAppliedToRules(
+                rules.get(0),
+                rules.get(rules.size() - 1),
+                AttackStrength.MEDIUM,
+                AlertThreshold.MEDIUM);
+    }
+
+    private static void assertValueAppliedToRules(
+            Plugin first, Plugin last, AttackStrength expectedStr, AlertThreshold expectedThold) {
+        assertThat(first.getAttackStrength(), is(equalTo(expectedStr)));
+        assertThat(last.getAttackStrength(), is(equalTo(expectedStr)));
+        assertThat(first.getAlertThreshold(), is(equalTo(expectedThold)));
+        assertThat(last.getAlertThreshold(), is(equalTo(expectedThold)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "{}",
+                "",
+                "rules: \n",
+            })
+    void shouldReturnNullPolicyIfDefinitionYamlIsEmptyOrNullObject(String defnYamlStr) {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(defnYamlStr);
+
+        // When
+        policyDefinition.parsePolicyDefinition(data, "test", progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(policyDefinition.getScanPolicy("test", progress), is(nullValue()));
     }
 }
