@@ -23,6 +23,8 @@ The <code>sequence-import</code> job allows you to create a Sequence from an HAR
       assertLength:            # Integer, if supplied then add approx len assertion (value between 0 and 100).
 </pre>
 
+This job will automatically detect any HTTP Form parameters that are used in future requests and add Zest assignments to handle them.
+
 <H2>Job: sequence-activeScan</H2>
 The <code>sequence-activeScan</code> job allows you to active scan sequences.
 <pre>
