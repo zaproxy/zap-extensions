@@ -1,6 +1,11 @@
+import net.ltgt.gradle.errorprone.errorprone
 import org.zaproxy.gradle.addon.AddOnStatus
 
 description = "The release status Active Scanner rules"
+
+plugins {
+    antlr
+}
 
 zapAddOn {
     addOnName.set("Active scanner rules")
@@ -51,11 +56,30 @@ dependencies {
     zapAddOn("network")
     zapAddOn("oast")
 
+    val antlrVersion = "4.13.0"
+    antlr("org.antlr:antlr4:$antlrVersion")
+    implementation("org.antlr:antlr4-runtime:$antlrVersion")
+
     implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
     implementation("org.bitbucket.mstrobel:procyon-compilertools:0.6.0")
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(project(":testutils"))
+}
+
+val jsParserPkg = "org.zaproxy.zap.extension.ascanrules.parserapi.impl"
+val jsParserDir = jsParserPkg.replace('.', '/')
+val generateGrammarSource by tasks.existing(AntlrTask::class) {
+    val libDir = "$outputDirectory/$jsParserDir"
+    arguments = arguments + listOf("-package", jsParserPkg, "-lib", libDir)
+
+    doFirst {
+        mkdir(libDir)
+    }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.errorprone.excludedPaths.set(".*/(generated-src|$jsParserDir)/.*")
 }
 
 spotless {
@@ -69,5 +93,6 @@ spotless {
             "src/**/ParameterTamperScanRule.java",
             "src/**/ServerSideIncludeScanRule.java",
         ),
+        listOf("src/**/$jsParserDir/*.java"),
     )
 }
