@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Predicate;
@@ -257,6 +258,19 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     public void unregisterAutomationJob(AutomationJob job) {
         this.jobs.remove(job.getType());
         this.sortedJobs.remove(job);
+
+        Set<Integer> keys = plans.keySet();
+        for (Integer key : keys) {
+            AutomationPlan plan = plans.get(key);
+
+            List<AutomationJob> jobs = plan.getJobs();
+            for (int index = 0; index < jobs.size(); index++) {
+                AutomationJob planJob = jobs.get(index);
+                if (planJob.getName() == job.getName()) {
+                    plan.removeJob(planJob);
+                }
+            }
+        }
     }
 
     public void generateConfigFile(String filename) {
