@@ -17,7 +17,7 @@
     与这个插件相关的两个主要概念解释如下： <b>访问规则</b>和<b>测试过程</b>.
 </p>
 
-<h2>Access Rules</h2>
+<h2>访问规则</h2>
 
 <p>
     为了确定潜在的访问控制问题，ZAP需要知道Web应用程序的哪些部分应该由哪个用户访问。 在 ZAP 中，这些规则的名称是： <i>访问规则</i>，通常具有以下含义： “<i>PageA应该/不应该由UserX访问</i>”。
@@ -36,7 +36,7 @@
     在分析规则时，如果没有定义特定的规则，推理算法将根据URL中的父节点检测每个节点的匹配规则。 这意味着，在配置访问规则时，只需要为整个子树显式设置一个规则，而对于其它节点规则则可以进行推断得出 有关详细信息，请参阅访问控制<a href="contextOptions.html">上下文选项</a>帮助页面。</td>
 </p>
 
-<h2>Testing procedure</h2>
+<h2>测试过程</h2>
 
 <p> 作为一个整体，为了充分执行Web应用程序的访问控制测试，请您遵循如下所示的步骤：</p>
 <ul>
@@ -52,22 +52,18 @@
     <li>在相应的“状态”选项卡中，显示结果，显示哪些用户成功访问哪些页面，并标记未遵循访问规则的情况。
     </li>
 </ul>
-<strong>Note:</strong> Access control testing is not allowed in <code>Safe</code> mode nor <code>Protected</code> if the context is not in scope.
+<strong>备注：</strong> 访问控制测试不被允许在 <code>安全</code> 模式或 <code>受保护</code> 模式下执行，如果上下文不在范围内的话。
 
-<h2 id="alerts">Alerts</h2>
+<h2 id="alerts">警告</h2>
 
-The following Alerts may be raised by the add-on:
+下列警告可能会由插件引起：
 
-<h3 id="id-10101">Access Control Issue - Improper Authentication</h3>
+<h3 id="id-10101">访问控制-非法认证</h3>
 
-    Insufficient Authentication occurs when a web site permits an attacker to access sensitive content or functionality without 
-    having to properly authenticate. Web-based administration tools are a good example of web sites providing access to sensitive functionality. 
-    Depending on the specific online resource, these web applications should not be directly accessible without requiring the user to properly verify 
-    their identity.
+    当一个 Web 站点允许攻击者访问敏感内容或功能而无需正确验证时，判定为身份验证不足。 基于Web的管理工具是Web站点提供对敏感功能访问能力的很好的例子。 
+    考虑到具体的网络资源，这些Web应用不应被用户在没有正确验证身份的情况下直接访问。
     <p>
-    Latest Code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/accessControl/src/main/java/org/zaproxy/zap/extension/accessControl/AccessControlScannerThread.java">AccessControlScannerThread.java</a>
-    <br>
-    Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10101/">10101</a>.
+    
 
 <h3 id="id-10102">Access Control Issue - Improper Authorization</h3>
 
