@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [69] - 2024-10-23
 ### Changed
 - The XML External Entity Attack scan rule now include example alert functionality for documentation generation purposes (Issue 6119).
+- The Path Traversal scan rule now includes further details when directory matches are made and pre-checks the original message to reduce false positives (Issue 8379).
 
 ### Fixed
 - Added more checks for valid .htaccess files to reduce false positives (Issue 7632).
