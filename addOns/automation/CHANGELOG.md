@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Templates generated with `-autogenmin` or `-autogenmax` were invalid in some cases.
 - Allow to choose one thread for the `activeScan` job through the GUI.
 - Active Scan jobs will once again use the default policy if neither a policy nor a policyDefinition has been set.
+- Bug in job alert tests related to alert matching.
 
 ## [0.43.0] - 2024-10-07
 ### Fixed
