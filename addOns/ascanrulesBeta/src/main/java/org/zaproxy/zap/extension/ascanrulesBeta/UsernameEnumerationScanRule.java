@@ -745,7 +745,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
 
     @Override
     public int getCweId() {
-        return 200; // CWE-200: Information Exposure
+        return 204; // CWE-204: Observable Response Discrepancy
     }
 
     @Override

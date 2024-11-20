@@ -85,7 +85,7 @@ class UsernameEnumerationScanRuleUnitTest extends ActiveScannerTest<UsernameEnum
         int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(200)));
+        assertThat(cwe, is(equalTo(204)));
         assertThat(wasc, is(equalTo(13)));
         assertThat(tags.size(), is(equalTo(3)));
         assertThat(

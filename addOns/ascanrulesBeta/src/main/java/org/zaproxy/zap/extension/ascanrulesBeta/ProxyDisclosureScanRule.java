@@ -784,7 +784,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
 
     @Override
     public int getCweId() {
-        return 200; // Information Exposure (primarily via TRACE / OPTIONS / TRACK)
+        return 204; // Observable Response Discrepancy
     }
 
     @Override

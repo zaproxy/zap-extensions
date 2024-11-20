@@ -4,6 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- The following scan rules now use more specific CWE IDs:
+    - Proxy Disclosure (Issue 8713)
+    - Possible Username Enumeration (Issue 8715)
+
 ### Fixed
 - Address exception when scanning a message without path with Possible Username Enumeration scan rule.
 
