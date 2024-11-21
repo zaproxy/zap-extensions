@@ -40,6 +40,7 @@ public class SeleniumAPI extends ApiImplementor {
     private static final String API_PREFIX = "selenium";
 
     private static final String ACTION_ADD_BROWSER_ARGUMENT = "addBrowserArgument";
+    private static final String ACTION_LAUNCH_BROWSER = "launchBrowser";
     private static final String ACTION_REMOVE_BROWSER_ARGUMENT = "removeBrowserArgument";
     private static final String ACTION_SET_BROWSER_ARGUMENT_ENABLED = "setBrowserArgumentEnabled";
 
@@ -50,19 +51,22 @@ public class SeleniumAPI extends ApiImplementor {
     private static final String PARAM_ARGUMENT = "argument";
 
     private final SeleniumOptions options;
+    private final ExtensionSelenium extension;
 
     /** Provided only for API client generator usage. */
     public SeleniumAPI() {
-        this(new SeleniumOptions());
+        this(new SeleniumOptions(), null);
     }
 
     /**
      * Constructs a {@code SeleniumAPI} with the given {@code options} exposed through the API.
      *
      * @param options the options that will be exposed through the API
+     * @param extension the extension.
      */
-    public SeleniumAPI(SeleniumOptions options) {
+    public SeleniumAPI(SeleniumOptions options, ExtensionSelenium extension) {
         this.options = options;
+        this.extension = extension;
         addApiOptions(options);
 
         addApiAction(
@@ -70,6 +74,7 @@ public class SeleniumAPI extends ApiImplementor {
                         ACTION_ADD_BROWSER_ARGUMENT,
                         List.of(PARAM_BROWSER, PARAM_ARGUMENT),
                         List.of(PARAM_ENABLED)));
+        addApiAction(new ApiAction(ACTION_LAUNCH_BROWSER, List.of(PARAM_BROWSER)));
         addApiAction(
                 new ApiAction(
                         ACTION_REMOVE_BROWSER_ARGUMENT, List.of(PARAM_BROWSER, PARAM_ARGUMENT)));
@@ -96,6 +101,19 @@ public class SeleniumAPI extends ApiImplementor {
                     boolean enabled = getParam(params, PARAM_ENABLED, true);
                     BrowserArgument browserArgument = new BrowserArgument(argument, enabled);
                     options.addBrowserArgument(browser, browserArgument);
+                    return ApiResponseElement.OK;
+                }
+
+            case ACTION_LAUNCH_BROWSER:
+                {
+                    String browserName = getBrowser(params);
+                    try {
+                        extension.getProxiedBrowser(browserName);
+                    } catch (Exception e1) {
+                        throw new ApiException(
+                                ApiException.Type.BAD_STATE,
+                                extension.getWarnMessageFailedToStart(browserName, e1));
+                    }
                     return ApiResponseElement.OK;
                 }
 
