@@ -176,7 +176,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public void init() {
         super.init();
 
-        seleniumApi = new SeleniumAPI(getOptions());
+        seleniumApi = new SeleniumAPI(getOptions(), this);
         addonFilesChangedListener = new AddonFilesChangedListenerImpl();
         webDriverProviders = Collections.synchronizedMap(new HashMap<>());
         providedBrowsers = Collections.synchronizedMap(new HashMap<>());
