@@ -109,16 +109,16 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
                                         PassiveScanner scanner = (PassiveScanner) args[0];
                                         try {
                                             boolean added = scanRuleManager.add(scanner);
-                                            if (added
-                                                    && hasView()
-                                                    && scanner instanceof PluginPassiveScanner) {
+                                            if (added && scanner instanceof PluginPassiveScanner) {
                                                 PluginPassiveScanner pps =
                                                         (PluginPassiveScanner) scanner;
                                                 pps.setConfig(
                                                         getModel().getOptionsParam().getConfig());
-                                                getPolicyPanel()
-                                                        .getPassiveScanTableModel()
-                                                        .addScanner(pps);
+                                                if (hasView()) {
+                                                    getPolicyPanel()
+                                                            .getPassiveScanTableModel()
+                                                            .addScanner(pps);
+                                                }
                                             }
                                             return added;
 
