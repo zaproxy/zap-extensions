@@ -5,5 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-- First version, just with the Default Policy.
-- Initial help.
+- A set of standardized active scan policies:
+    - Default Policy
+    - Developer CI/CD
+    - Developer Standard
+    - Developer Full

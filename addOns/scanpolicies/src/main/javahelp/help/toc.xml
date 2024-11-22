@@ -8,6 +8,9 @@
         <tocitem text="Add Ons" tocid="addons">
             <tocitem text="Scan Policies" image="addon.scanpolicies-icon" target="addon.scanpolicies">
                 <tocitem text="Default Policy" target="addon.policy-default"/>
+                <tocitem text="Developer CI/CD Policy" target="addon.policy-dev-cicd"/>
+                <tocitem text="Developer Standard Policy" target="addon.policy-dev-std"/>
+                <tocitem text="Developer Full Policy" target="addon.policy-dev-full"/>
             </tocitem>
         </tocitem>
     </tocitem>

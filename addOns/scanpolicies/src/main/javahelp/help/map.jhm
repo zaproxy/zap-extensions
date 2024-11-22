@@ -6,5 +6,8 @@
 <map version="1.0">
     <mapID target="addon.scanpolicies" url="contents/scanpolicies.html" />
     <mapID target="addon.policy-default" url="contents/policy-default.html" />
+    <mapID target="addon.policy-dev-cicd" url="contents/policy-dev-cicd.html" />
+    <mapID target="addon.policy-dev-std" url="contents/policy-dev-std.html" />
+    <mapID target="addon.policy-dev-full" url="contents/policy-dev-full.html" />
     <mapID target="addon.scanpolicies-icon" url="contents/images/equalizer.png" />
 </map>
