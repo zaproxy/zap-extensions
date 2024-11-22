@@ -10,6 +10,9 @@ zapAddOn {
         url.set("https://www.zaproxy.org/docs/desktop/addons/sequence-scanner/")
         dependencies {
             addOns {
+                register("exim") {
+                    version.set(">= 0.13")
+                }
                 register("network")
                 register("zest") {
                     version.set("48.*")
@@ -25,9 +28,6 @@ zapAddOn {
                     addOns {
                         register("automation") {
                             version.set(">= 0.44")
-                        }
-                        register("exim") {
-                            version.set(">= 0.13")
                         }
                     }
                 }
