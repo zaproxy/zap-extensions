@@ -8,7 +8,7 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
-        url.set("https://www.zaproxy.org/docs/desktop/addons/scanpolicies/")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/scan-policies/")
 
         helpSet {
             baseName.set("help%LC%.helpset")
