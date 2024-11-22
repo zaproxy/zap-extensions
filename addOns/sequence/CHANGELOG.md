@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.15.0.
 - Maintenance changes.
 - To use new sequence scan from the desktop.
+- Promoted to beta.
 
 ## [7] - 2023-10-23
 ### Changed

@@ -1,7 +1,9 @@
+import org.zaproxy.gradle.addon.AddOnStatus
 description = "Gives the possibility of defining a sequence of requests to be scanned."
 
 zapAddOn {
     addOnName.set("Sequence")
+    addOnStatus.set(AddOnStatus.BETA)
 
     manifest {
         author.set("ZAP Dev Team")
