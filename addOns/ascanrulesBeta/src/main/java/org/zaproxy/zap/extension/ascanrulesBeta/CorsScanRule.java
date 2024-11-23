@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -36,6 +38,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 /**
@@ -47,11 +50,19 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 public class CorsScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
     private static final Logger LOGGER = LogManager.getLogger(CorsScanRule.class);
     private static final String RANDOM_NAME = RandomStringUtils.random(8, true, true);
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
-                    CommonAlertTag.WSTG_V42_CLNT_07_CORS);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                                CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
+                                CommonAlertTag.WSTG_V42_CLNT_07_CORS));
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public void scan() {

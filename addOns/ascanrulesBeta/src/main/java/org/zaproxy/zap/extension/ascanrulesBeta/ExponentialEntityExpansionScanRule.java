@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 public class ExponentialEntityExpansionScanRule extends AbstractAppPlugin
         implements CommonActiveScanRuleInfo {
@@ -40,6 +42,20 @@ public class ExponentialEntityExpansionScanRule extends AbstractAppPlugin
     private static final Logger LOGGER =
             LogManager.getLogger(ExponentialEntityExpansionScanRule.class);
     private static final String PREFIX = "ascanbeta.entityExpansion.";
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                                CommonAlertTag.WSTG_V42_BUSL_09_UPLOAD_MALICIOUS_FILES));
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.API.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
+
     private static final long MIN_TIME_ELAPSED_MILLIS = TimeUnit.SECONDS.toMillis(10);
     static final String XML_PAYLOAD =
             "<?xml version=\"1.0\"?>\n"
@@ -105,9 +121,7 @@ public class ExponentialEntityExpansionScanRule extends AbstractAppPlugin
 
     @Override
     public Map<String, String> getAlertTags() {
-        return CommonAlertTag.toMap(
-                CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
-                CommonAlertTag.WSTG_V42_BUSL_09_UPLOAD_MALICIOUS_FILES);
+        return ALERT_TAGS;
     }
 
     @Override
