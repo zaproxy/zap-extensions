@@ -59,6 +59,7 @@ import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.addon.network.ExtensionNetwork;
@@ -125,11 +126,22 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     private static final String RULE_BROWSER_ID = "rules.domxss.browserid";
 
     private static final Browser DEFAULT_BROWSER = Browser.FIREFOX_HEADLESS;
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A07_XSS,
-                    CommonAlertTag.WSTG_V42_CLNT_01_DOM_XSS);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A07_XSS,
+                                CommonAlertTag.WSTG_V42_CLNT_01_DOM_XSS));
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
+
     private static Map<Browser, Stack<WebDriverWrapper>> freeDrivers = new HashMap<>();
     private static List<WebDriverWrapper> takenDrivers = new ArrayList<>();
 
