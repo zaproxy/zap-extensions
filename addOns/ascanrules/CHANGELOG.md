@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated help with specific Category identifiers for use with the Custom Payloads add-on for rules:
     - Hidden File Finder
     - User Agent Fuzzer
+- Now depends on minimum Common Library version 1.29.0.
+
+### Added
+- Standardized Scan Policy related alert tags on the rule.
 
 ## [69] - 2024-10-23
 ### Changed

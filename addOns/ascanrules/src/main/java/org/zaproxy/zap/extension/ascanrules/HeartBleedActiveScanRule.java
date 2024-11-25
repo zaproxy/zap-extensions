@@ -26,6 +26,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 /**
  * A class to actively check if the web server is vulnerable to the HeartBleed OpenSSL vulnerability
@@ -58,15 +60,18 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin
     private static final String MESSAGE_PREFIX = "ascanrules.heartbleed.";
 
     private static final String CVE = "CVE-2014-0160";
-    private static final Map<String, String> ALERT_TAGS = new HashMap<>();
+    private static final Map<String, String> ALERT_TAGS;
 
     static {
-        ALERT_TAGS.putAll(
-                CommonAlertTag.toMap(
-                        CommonAlertTag.OWASP_2021_A06_VULN_COMP,
-                        CommonAlertTag.OWASP_2017_A09_VULN_COMP,
-                        CommonAlertTag.WSTG_V42_CRYP_01_TLS));
-        CommonAlertTag.putCve(ALERT_TAGS, CVE);
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                                CommonAlertTag.OWASP_2017_A09_VULN_COMP,
+                                CommonAlertTag.WSTG_V42_CRYP_01_TLS));
+        CommonAlertTag.putCve(alertTags, CVE);
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
     static final byte handShakeClientHello = 0x01;

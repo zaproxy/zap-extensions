@@ -36,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePluginUnitTest;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 /** Unit test for {@link TraceAxdScanRule}. */
 class TraceAxdScanRuleUnitTest extends AbstractAppFilePluginUnitTest<TraceAxdScanRule> {
@@ -120,9 +121,14 @@ class TraceAxdScanRuleUnitTest extends AbstractAppFilePluginUnitTest<TraceAxdSca
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
         Map<String, String> tags = ((TraceAxdScanRule) rule).getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(cwe, is(equalTo(215)));
+        assertThat(wasc, is(equalTo(13)));
+        // Then
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -132,6 +138,7 @@ class TraceAxdScanRuleUnitTest extends AbstractAppFilePluginUnitTest<TraceAxdSca
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));

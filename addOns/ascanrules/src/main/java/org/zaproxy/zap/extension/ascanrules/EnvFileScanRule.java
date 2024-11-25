@@ -19,11 +19,14 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePlugin;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 public class EnvFileScanRule extends AbstractAppFilePlugin implements CommonActiveScanRuleInfo {
 
@@ -35,11 +38,18 @@ public class EnvFileScanRule extends AbstractAppFilePlugin implements CommonActi
     private static final Pattern COMMENT_PATTERN =
             Pattern.compile("^#\\s{0,10}\\w+", Pattern.MULTILINE);
     private static final Pattern KEYVAL_PATTERN = Pattern.compile("^\\w+=\\w+", Pattern.MULTILINE);
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                    CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                                CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE));
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     public EnvFileScanRule() {
         super(".env", MESSAGE_PREFIX);
