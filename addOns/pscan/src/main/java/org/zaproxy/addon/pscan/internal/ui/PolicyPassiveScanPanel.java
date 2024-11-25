@@ -247,6 +247,6 @@ public class PolicyPassiveScanPanel extends AbstractParamPanel {
 
     @Override
     public String getHelpIndex() {
-        return "ui.dialogs.options.pscanrules";
+        return "addon.pscan.options.rules";
     }
 }
