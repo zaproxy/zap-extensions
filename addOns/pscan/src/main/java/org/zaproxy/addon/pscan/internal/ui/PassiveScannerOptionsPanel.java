@@ -114,6 +114,6 @@ public class PassiveScannerOptionsPanel extends AbstractParamPanel {
 
     @Override
     public String getHelpIndex() {
-        return "ui.dialogs.options.pscan.main";
+        return "addon.pscan.options.scanner";
     }
 }
