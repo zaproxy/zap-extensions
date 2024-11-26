@@ -31,7 +31,6 @@ import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
-import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.sequence.ExtensionSequence;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 
@@ -59,17 +58,15 @@ public class ExtensionSequenceAutomation extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         ExtensionAutomation extAuto = getExtension(ExtensionAutomation.class);
+        ExtensionSequence extSeq = getExtension(ExtensionSequence.class);
         importJob =
                 new SequenceImportJob(
-                        getExtension(ExtensionSequence.class).getScriptType(),
+                        extSeq.getScriptType(),
                         getExtension(ExtensionExim.class),
                         getExtension(ExtensionZest.class));
         extAuto.registerAutomationJob(importJob);
 
-        ascanJob =
-                new SequenceActiveScanJob(
-                        getExtension(ExtensionActiveScan.class),
-                        getExtension(ExtensionScript.class));
+        ascanJob = new SequenceActiveScanJob(extSeq, getExtension(ExtensionActiveScan.class));
         extAuto.registerAutomationJob(ascanJob);
 
         extensionHook.addSessionListener(new SessionChangedListenerImpl());

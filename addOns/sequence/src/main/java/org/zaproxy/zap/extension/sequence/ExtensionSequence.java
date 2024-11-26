@@ -21,22 +21,20 @@ package org.zaproxy.zap.extension.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.ImageIcon;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
-import org.parosproxy.paros.core.scanner.AbstractPlugin;
-import org.parosproxy.paros.core.scanner.Scanner;
-import org.parosproxy.paros.core.scanner.ScannerHook;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
-import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
@@ -47,8 +45,9 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.sequence.internal.ImportHarMenuItem;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
+import org.zaproxy.zap.view.ZapMenuItem;
 
-public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
+public class ExtensionSequence extends ExtensionAdaptor {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(
@@ -65,11 +64,10 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
     private ImportHarMenuItem importHarMenuItem;
 
     private List<ScriptWrapper> directScripts = null;
-    private SequenceAscanPanel sequencePanel;
+    private ZapMenuItem activeScanMenu;
+    private SequenceAscanDialog ascanDialog;
 
     private ScriptType scriptType;
-
-    private boolean scanning = false;
 
     public ExtensionSequence() {
         super("ExtensionSequence");
@@ -94,23 +92,6 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
     }
 
     @Override
-    public void initView(ViewDelegate view) {
-        super.initView(view);
-
-        ExtensionActiveScan extAscan = getExtActiveScan();
-        if (extAscan != null) {
-            sequencePanel = new SequenceAscanPanel(getExtScript());
-        }
-    }
-
-    @Override
-    public void postInit() {
-        if (sequencePanel != null) {
-            getExtActiveScan().addCustomScanPanel(sequencePanel);
-        }
-    }
-
-    @Override
     public List<Class<? extends Extension>> getDependencies() {
         return DEPENDENCIES;
     }
@@ -123,11 +104,10 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
     @Override
     public void unload() {
         super.unload();
-        if (sequencePanel != null) {
-            getExtActiveScan().removeCustomScanPanel(sequencePanel);
-        }
         getExtScript().removeScriptType(scriptType);
-
+        if (ascanDialog != null) {
+            ascanDialog.dispose();
+        }
         if (importHarMenuItem != null) {
             importHarMenuItem.unload();
         }
@@ -138,37 +118,36 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
         return getExtActiveScan().getPolicyManager().getPolicy("Sequence");
     }
 
-    @Override
-    public void scannerComplete() {
-        if (!scanning && sequencePanel != null) {
-            // Active scan all of the selected sequences
-            // Need this bool otherwise we will infinitely recurse!
-            scanning = true;
-            List<ScriptWrapper> scripts = sequencePanel.getPanel(false).getSelectedIncludeScripts();
+    public Stream<ZestScriptWrapper> getSequences() {
+        return extScript.getScripts(ExtensionSequence.TYPE_SEQUENCE).stream()
+                .filter(ZestScriptWrapper.class::isInstance)
+                .map(ZestScriptWrapper.class::cast);
+    }
 
-            List<Object> contextSpecificObjects = new ArrayList<>();
-            try {
-                contextSpecificObjects.add(getDefaultScanPolicy());
-            } catch (ConfigurationException e4) {
-                // Ignore
+    public List<String> getSequenceNames() {
+        return getSequences().map(ScriptWrapper::getName).collect(Collectors.toList());
+    }
+
+    public void activeScanSequences(String policy, List<String> sequences) {
+        List<Object> contextSpecificObjects = new ArrayList<>();
+        try {
+            contextSpecificObjects.add(getExtActiveScan().getPolicyManager().getPolicy(policy));
+        } catch (ConfigurationException e4) {
+            // Ignore
+        }
+
+        for (String seq : sequences) {
+            ScriptWrapper script = getExtScript().getScript(seq);
+            if (script instanceof ZestScriptWrapper) {
+                StdActiveScanRunner zzr =
+                        new StdActiveScanRunner(
+                                (ZestScriptWrapper) script, null, null, contextSpecificObjects);
+                try {
+                    zzr.run(null, null);
+                } catch (Exception e1) {
+                    LOGGER.error(e1.getMessage(), e1);
+                }
             }
-            scripts.forEach(
-                    s -> {
-                        if (s instanceof ZestScriptWrapper) {
-                            StdActiveScanRunner zzr =
-                                    new StdActiveScanRunner(
-                                            (ZestScriptWrapper) s,
-                                            null,
-                                            null,
-                                            contextSpecificObjects);
-                            try {
-                                zzr.run(null, null);
-                            } catch (Exception e1) {
-                                LOGGER.error(e1.getMessage(), e1);
-                            }
-                        }
-                    });
-            scanning = false;
         }
     }
 
@@ -188,11 +167,9 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
             extensionhook
                     .getHookMenu()
                     .addPopupMenuItem(new SequencePopupMenuItem(this, getExtScript()));
+            extensionhook.getHookMenu().addToolsMenuItem(getActiveScanMenu());
             extensionhook.addSessionListener(new SessionChangedListenerImpl());
         }
-
-        // Add class as a scannerhook (implements the scannerhook interface)
-        extensionhook.addScannerHook(this);
     }
 
     /**
@@ -203,12 +180,6 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
     public ScriptType getScriptType() {
         return scriptType;
     }
-
-    @Override
-    public void beforeScan(HttpMessage msg, AbstractPlugin plugin, Scanner scanner) {}
-
-    @Override
-    public void afterScan(HttpMessage msg, AbstractPlugin plugin, Scanner scanner) {}
 
     public void setDirectScanScript(ScriptWrapper script) {
         directScripts = new ArrayList<>();
@@ -231,6 +202,21 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
             extActiveScan = getExtension(ExtensionActiveScan.class);
         }
         return extActiveScan;
+    }
+
+    private SequenceAscanDialog getAscanDialog() {
+        if (ascanDialog == null) {
+            ascanDialog = new SequenceAscanDialog(this, View.getSingleton().getMainFrame());
+        }
+        return ascanDialog;
+    }
+
+    private ZapMenuItem getActiveScanMenu() {
+        if (activeScanMenu == null) {
+            activeScanMenu = new ZapMenuItem("sequence.tools.menu.ascan");
+            activeScanMenu.addActionListener(e -> getAscanDialog().setVisible(true));
+        }
+        return activeScanMenu;
     }
 
     private class SessionChangedListenerImpl implements SessionChangedListener {
@@ -256,7 +242,6 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
         @Override
         public void sessionModeChanged(Mode mode) {
             // Nothing to do.
-
         }
     }
 }
