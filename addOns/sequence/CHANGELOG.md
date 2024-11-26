@@ -11,8 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Data for reporting.
 - Stats for import automation and active scan.
 - Sequence active scan policy which will be used if neither a policy nor policyDefinition are set.
+- Add Import top level menu item to import HAR as sequence.
 
 ### Changed
+- Depend on Import/Export add-on to allow to import HARs as sequences.
 - Update minimum ZAP version to 2.15.0.
 - Maintenance changes.
 - To use new sequence scan from the desktop.

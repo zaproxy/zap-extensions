@@ -26,32 +26,43 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.core.scanner.Scanner;
 import org.parosproxy.paros.core.scanner.ScannerHook;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.ViewDelegate;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.sequence.internal.ImportHarMenuItem;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 
 public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            List.of(ExtensionNetwork.class, ExtensionScript.class, ExtensionZest.class);
+            List.of(
+                    ExtensionExim.class,
+                    ExtensionNetwork.class,
+                    ExtensionScript.class,
+                    ExtensionZest.class);
 
     private ExtensionScript extScript;
     private ExtensionActiveScan extActiveScan;
     private static final Logger LOGGER = LogManager.getLogger(ExtensionSequence.class);
     public static final String TYPE_SEQUENCE = "sequence";
+
+    private ImportHarMenuItem importHarMenuItem;
 
     private List<ScriptWrapper> directScripts = null;
     private SequenceAscanPanel sequencePanel;
@@ -116,6 +127,10 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
             getExtActiveScan().removeCustomScanPanel(sequencePanel);
         }
         getExtScript().removeScriptType(scriptType);
+
+        if (importHarMenuItem != null) {
+            importHarMenuItem.unload();
+        }
     }
 
     public ScanPolicy getDefaultScanPolicy() throws ConfigurationException {
@@ -164,9 +179,16 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
         getExtScript().registerScriptType(scriptType);
 
         if (hasView()) {
+            importHarMenuItem =
+                    new ImportHarMenuItem(
+                            scriptType,
+                            getExtension(ExtensionExim.class),
+                            getExtension(ExtensionZest.class));
+            extensionhook.getHookMenu().addImportMenuItem(importHarMenuItem);
             extensionhook
                     .getHookMenu()
                     .addPopupMenuItem(new SequencePopupMenuItem(this, getExtScript()));
+            extensionhook.addSessionListener(new SessionChangedListenerImpl());
         }
 
         // Add class as a scannerhook (implements the scannerhook interface)
@@ -195,19 +217,46 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 
     private ExtensionScript getExtScript() {
         if (extScript == null) {
-            extScript =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+            extScript = getExtension(ExtensionScript.class);
         }
         return extScript;
     }
 
+    private <T extends Extension> T getExtension(Class<T> clazz) {
+        return Control.getSingleton().getExtensionLoader().getExtension(clazz);
+    }
+
     protected ExtensionActiveScan getExtActiveScan() {
         if (extActiveScan == null) {
-            extActiveScan =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionActiveScan.class);
+            extActiveScan = getExtension(ExtensionActiveScan.class);
         }
         return extActiveScan;
+    }
+
+    private class SessionChangedListenerImpl implements SessionChangedListener {
+
+        @Override
+        public void sessionChanged(Session session) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void sessionAboutToChange(Session session) {
+            if (importHarMenuItem != null) {
+                importHarMenuItem.clear();
+            }
+        }
+
+        @Override
+        public void sessionScopeChanged(Session session) {
+            // Nothing to do.
+
+        }
+
+        @Override
+        public void sessionModeChanged(Mode mode) {
+            // Nothing to do.
+
+        }
     }
 }

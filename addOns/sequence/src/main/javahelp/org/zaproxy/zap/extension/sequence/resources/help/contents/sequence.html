@@ -19,14 +19,21 @@ This add-on supports the <a href="automation.html">Automation Framework</a>.
 <p>
 One sequence script should be created for each multi-step operation in the application/site being tested.
 </p>
-There are three options for creating sequences:
+There are several options for creating sequences:
 <br><br>
 <ol>
 <li>Use the Automation Framework <a href="automation.html">sequence-import</a> job.
+<li>Use the Import menu item Import HAR as Sequence.
 <li>In either the Sites tree or History tab select the requests you wish to have included, right click, and 
 use "Add To Zest Script" (either choosing to create a new script or adding to an existing Sequence script).</li>
 <li>From the main tool bar, use the "Record a New Zest Script..." button, selecting "Sequence" as the type.</li>
 </ol>
+<h3>Assertions</h3>
+When importing the sequences it is possible to choose to create assertions for each HTTP message of the sequence:
+<ul>
+<li>Assert Status Code - asserts that the replayed HTTP message has the same status code.
+<li>Assert Length - asserts that the replayed HTTP message has the same response body length, within the margin (percentage) specified.
+</ul>
 
 <H2>Scanning</H2>
 
