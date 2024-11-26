@@ -287,7 +287,9 @@ class ExporterUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Type.class)
+    @EnumSource(
+            value = Type.class,
+            names = {"HAR", "URL"})
     void shouldIncludeMessageInContext(Type type) throws Exception {
         // Given
         optionsWithType(type);
@@ -306,7 +308,9 @@ class ExporterUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
-    @EnumSource(value = Type.class)
+    @EnumSource(
+            value = Type.class,
+            names = {"HAR", "URL"})
     void shouldNotIncludeMessageNotInContext(Type type) throws Exception {
         // Given
         optionsWithType(type);
@@ -322,5 +326,43 @@ class ExporterUnitTest extends TestUtils {
         assertThat(result.getCause(), is(nullValue()));
         assertThat(Files.readString(outputFile), not(containsString("http://example.com/1")));
         verify(context).isInContext(any(HistoryReference.class));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = Type.class,
+            names = {"HAR", "URL"})
+    void shouldFailSiteTreeExportWithNonYamlFormat(Type type) throws Exception {
+        // Given
+        optionsWithType(type);
+        optionsWithSource(Source.SITESTREE);
+        // When
+        ExporterResult result = exporter.export(options);
+        // Then
+        assertCount(result, 0);
+        assertThat(result.getErrors().size(), is(1));
+        assertThat(
+                result.getErrors().get(0),
+                is("Invalid type for SitesTree, only YAML is supported: " + type));
+        assertThat(result.getCause(), is(nullValue()));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = Source.class,
+            names = {"HISTORY", "ALL"})
+    void shouldFailNonSitesTreeExportWithYamlFormat(Source source) throws Exception {
+        // Given
+        optionsWithType(Type.YAML);
+        optionsWithSource(source);
+        // When
+        ExporterResult result = exporter.export(options);
+        // Then
+        assertCount(result, 0);
+        assertThat(result.getErrors().size(), is(1));
+        assertThat(
+                result.getErrors().get(0),
+                is("Invalid type for " + source + ", YAML is not supported"));
+        assertThat(result.getCause(), is(nullValue()));
     }
 }

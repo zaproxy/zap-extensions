@@ -37,6 +37,8 @@ import org.zaproxy.addon.exim.har.MenuImportHar;
 import org.zaproxy.addon.exim.har.PopupMenuItemSaveHarMessage;
 import org.zaproxy.addon.exim.log.MenuItemImportLogs;
 import org.zaproxy.addon.exim.pcap.MenuItemImportPcap;
+import org.zaproxy.addon.exim.sites.MenuPruneSites;
+import org.zaproxy.addon.exim.sites.MenuSaveSites;
 import org.zaproxy.addon.exim.urls.MenuItemImportUrls;
 
 public class ExtensionExim extends ExtensionAdaptor {
@@ -109,6 +111,9 @@ public class ExtensionExim extends ExtensionAdaptor {
 
             MainMenuBar menuBar = getView().getMainFrame().getMainMenuBar();
             menuBar.add(getMenuExport(), menuBar.getMenuCount() - 2); // Before Online and Help
+
+            getMenuExport().add(new MenuSaveSites());
+            extensionHook.getHookMenu().addToolsMenuItem(new MenuPruneSites());
 
             extensionHook.getHookMenu().addImportMenuItem(new MenuImportHar());
             extensionHook.getHookMenu().addImportMenuItem(new MenuItemImportUrls());

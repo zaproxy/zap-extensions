@@ -37,6 +37,7 @@ public class ExtensionEximAutomation extends ExtensionAdaptor {
 
     private ImportJob importJob;
     private ExportJob exportJob;
+    private PruneJob pruneJob;
 
     public ExtensionEximAutomation() {
         super(NAME);
@@ -55,6 +56,8 @@ public class ExtensionEximAutomation extends ExtensionAdaptor {
         extAuto.registerAutomationJob(importJob);
         exportJob = new ExportJob(getExtension(ExtensionExim.class));
         extAuto.registerAutomationJob(exportJob);
+        pruneJob = new PruneJob();
+        extAuto.registerAutomationJob(pruneJob);
     }
 
     private static <T extends Extension> T getExtension(Class<T> clazz) {
@@ -72,6 +75,7 @@ public class ExtensionEximAutomation extends ExtensionAdaptor {
 
         extAuto.unregisterAutomationJob(importJob);
         extAuto.unregisterAutomationJob(exportJob);
+        extAuto.unregisterAutomationJob(pruneJob);
     }
 
     @Override
