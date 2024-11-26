@@ -23,6 +23,8 @@ import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHA
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URIException;
@@ -38,6 +40,7 @@ import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
@@ -50,11 +53,23 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.crosssitescripting.";
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A07_XSS,
-                    CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A07_XSS,
+                                CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS));
+        alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     protected static final String GENERIC_SCRIPT_ALERT = "<scrIpt>alert(1);</scRipt>";
     protected static final String GENERIC_ONERROR_ALERT = "<img src=x onerror=prompt()>";

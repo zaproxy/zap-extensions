@@ -39,6 +39,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePluginUnitTest;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 /** Unit test for {@link EnvFileScanRule}. */
 class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFileScanRule> {
@@ -227,7 +228,7 @@ class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFileScanR
         // Given / When
         Map<String, String> tags = ((EnvFileScanRule) rule).getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -237,6 +238,7 @@ class EnvFileScanRuleUnitTest extends AbstractAppFilePluginUnitTest<EnvFileScanR
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));

@@ -23,6 +23,8 @@ import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHA
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -42,6 +44,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.timing.TimingUtils;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
@@ -87,11 +90,24 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
     private static final Map<String, Pattern> WIN_OS_PAYLOADS = new LinkedHashMap<>();
     private static final Map<String, Pattern> PS_PAYLOADS = new LinkedHashMap<>();
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION,
-                    CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION,
+                                CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ));
+        alertTags.put(PolicyTag.API.getTag(), "");
+        alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     static {
         // No quote payloads

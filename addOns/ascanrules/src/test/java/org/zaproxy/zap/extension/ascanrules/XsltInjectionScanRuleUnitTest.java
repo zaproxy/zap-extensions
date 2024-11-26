@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.testutils.StaticContentServerHandler;
 
 /** Unit test for {@link XsltInjectionScanRule}. */
@@ -150,13 +151,19 @@ class XsltInjectionScanRuleUnitTest extends ActiveScannerTest<XsltInjectionScanR
         // Then
         assertThat(cwe, is(equalTo(91)));
         assertThat(wasc, is(equalTo(23)));
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(9)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.SEQUENCE.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));

@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -43,6 +45,24 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin implements CommonA
     private static final String PREFIX = "ascanrules.log4shell.";
     private static final String PREFIX_CVE44228 = PREFIX + "cve44228.";
     private static final String PREFIX_CVE45046 = PREFIX + "cve45046.";
+    protected static final String CVE_44228 = "CVE-2021-44228";
+    protected static final String CVE_45046 = "CVE-2021-45046";
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                                CommonAlertTag.OWASP_2017_A09_VULN_COMP,
+                                CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ));
+        alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
+        CommonAlertTag.putCve(alertTags, CVE_44228);
+        CommonAlertTag.putCve(alertTags, CVE_45046);
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
+
     private static final String[] ATTACK_PATTERNS_CVE44228 = {
         "${jndi:ldap://{0}/abc}",
         "${${::-j}${::-n}${::-d}${::-i}:${::-r}${::-m}${::-i}://{0}/abc}",
@@ -62,8 +82,6 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin implements CommonA
     };
     protected static final int ATTACK_PATTERN_COUNT =
             ATTACK_PATTERNS_CVE44228.length + ATTACK_PATTERNS_CVE45046.length;
-    private static final String CVE_44228 = "CVE-2021-44228";
-    private static final String CVE_45046 = "CVE-2021-45046";
 
     @Override
     public int getId() {
@@ -107,16 +125,7 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin implements CommonA
 
     @Override
     public Map<String, String> getAlertTags() {
-        Map<String, String> alertTags =
-                new HashMap<>(
-                        CommonAlertTag.toMap(
-                                CommonAlertTag.OWASP_2021_A06_VULN_COMP,
-                                CommonAlertTag.OWASP_2017_A09_VULN_COMP,
-                                CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ));
-        alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
-        CommonAlertTag.putCve(alertTags, CVE_44228);
-        CommonAlertTag.putCve(alertTags, CVE_45046);
-        return alertTags;
+        return ALERT_TAGS;
     }
 
     @Override
@@ -169,6 +178,7 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin implements CommonA
     }
 
     private AlertBuilder newCustomAlert(String alertPrefix) {
+        Map<String, String> alertTags = new HashMap<>(getAlertTags());
         return newAlert()
                 .setName(Constant.messages.getString(alertPrefix + "name"))
                 .setDescription(Constant.messages.getString(alertPrefix + "desc"))
@@ -176,7 +186,7 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin implements CommonA
                 .setReference(Constant.messages.getString(alertPrefix + "refs"))
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setAlertRef(PREFIX_CVE44228.equals(alertPrefix) ? getId() + "-1" : getId() + "-2")
-                .setTags(getAlertTags())
+                .setTags(alertTags)
                 .removeTag(PREFIX_CVE44228.equals(alertPrefix) ? CVE_45046 : CVE_44228);
     }
 
