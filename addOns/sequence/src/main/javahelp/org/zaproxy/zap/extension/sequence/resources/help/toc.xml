@@ -8,6 +8,7 @@
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Sequence Scanner" image="addon.sequence-icon" target="addon.sequence">
 				<tocitem text="Automation" target="addon.sequence.automation" />
+				<tocitem text="Sequence Policy" target="addon.sequence.policy" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

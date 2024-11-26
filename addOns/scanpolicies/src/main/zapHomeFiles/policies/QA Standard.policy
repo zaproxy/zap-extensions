@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <configuration>
-    <policy>Sequence</policy>
+    <policy>QA Standard</policy>
     <scanner>
         <level>OFF</level>
         <strength>MEDIUM</strength>
     </scanner>
     <plugins>
+        <p0>
+            <name>Directory Browsing</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p0>
         <p6>
             <name>Path Traversal</name>
             <enabled>true</enabled>
@@ -16,21 +21,46 @@
             <enabled>true</enabled>
             <level>MEDIUM</level>
         </p7>
+        <p10058>
+            <name>GET for POST</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p10058>
+        <p20012>
+            <name>Anti-CSRF Tokens Check</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p20012>
         <p20019>
             <name>External Redirect</name>
             <enabled>true</enabled>
             <level>MEDIUM</level>
         </p20019>
-        <p40003>
-            <name>CRLF Injection</name>
+        <p40009>
+            <name>Server Side Include</name>
             <enabled>true</enabled>
             <level>MEDIUM</level>
-        </p40003>
+        </p40009>
         <p40012>
             <name>Cross Site Scripting (Reflected)</name>
             <enabled>true</enabled>
             <level>MEDIUM</level>
         </p40012>
+        <p40014>
+            <name>Cross Site Scripting (Persistent)</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40014>
+        <p40016>
+            <name>Cross Site Scripting (Persistent) - Prime</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40016>
+        <p40017>
+            <name>Cross Site Scripting (Persistent) - Spider</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40017>
         <p40018>
             <name>SQL Injection</name>
             <enabled>true</enabled>
@@ -66,21 +96,16 @@
             <enabled>true</enabled>
             <level>MEDIUM</level>
         </p40027>
-        <p40031>
-            <name>Out of Band XSS</name>
+        <p40040>
+            <name>CORS Header</name>
             <enabled>true</enabled>
             <level>MEDIUM</level>
-        </p40031>
-        <p40046>
-            <name>Server Side Request Forgery</name>
+        </p40040>
+        <p40044>
+            <name>Exponential Entity Expansion (Billion Laughs Attack)</name>
             <enabled>true</enabled>
             <level>MEDIUM</level>
-        </p40046>
-        <p40047>
-            <name>Text4shell (CVE-2022-42889)</name>
-            <enabled>true</enabled>
-            <level>MEDIUM</level>
-        </p40047>
+        </p40044>
         <p50000>
             <name>Script Active Scan Rules</name>
             <enabled>true</enabled>
@@ -111,6 +136,11 @@
             <enabled>true</enabled>
             <level>MEDIUM</level>
         </p90023>
+        <p90025>
+            <name>Expression Language Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90025>
         <p90026>
             <name>SOAP Action Spoofing</name>
             <enabled>true</enabled>
@@ -126,10 +156,5 @@
             <enabled>true</enabled>
             <level>MEDIUM</level>
         </p90035>
-        <p90036>
-            <name>Server Side Template Injection (Blind)</name>
-            <enabled>true</enabled>
-            <level>MEDIUM</level>
-        </p90036>
     </plugins>
 </configuration>
