@@ -42,7 +42,6 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n");
-        given(passiveScanData.isPage200(any())).willReturn(true);
 
         // When
         scanHttpResponseReceive(msg);
@@ -106,22 +105,6 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                         + "Cross-Origin-Embedder-Policy: require-corp\r\n"
                         + "Cross-Origin-Opener-Policy: same-origin\r\n");
         given(passiveScanData.isPage200(any())).willReturn(true);
-
-        // When
-        scanHttpResponseReceive(msg);
-
-        // Then
-        assertThat(alertsRaised, hasSize(0));
-    }
-
-    @Test
-    void shouldNotRaiseAlertGivenSiteIsNotIsolatedWhenFailureIdentifiedByCustomPage()
-            throws Exception {
-        // Given
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET / HTTP/1.1");
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Content-Type: text/html");
-        given(passiveScanData.isPage200(any())).willReturn(false);
 
         // When
         scanHttpResponseReceive(msg);
