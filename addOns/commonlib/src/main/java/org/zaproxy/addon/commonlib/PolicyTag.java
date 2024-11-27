@@ -19,6 +19,10 @@
  */
 package org.zaproxy.addon.commonlib;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * Tags to be associated with standardized scan policies which will be distributed as an add-on.
  *
@@ -42,5 +46,9 @@ public enum PolicyTag {
 
     public String getTag() {
         return this.tag;
+    }
+
+    public static List<String> getAllTags() {
+        return Stream.of(PolicyTag.values()).map(PolicyTag::getTag).collect(Collectors.toList());
     }
 }

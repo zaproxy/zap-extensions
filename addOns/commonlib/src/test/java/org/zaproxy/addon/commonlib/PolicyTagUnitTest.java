@@ -20,11 +20,14 @@
 package org.zaproxy.addon.commonlib;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.DescribedAs.describedAs;
 
+import java.util.List;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
@@ -43,5 +46,13 @@ class PolicyTagUnitTest {
                 describedAs(
                         "Enum element name should not start with prefix",
                         not(startsWith(PolicyTag.PREFIX))));
+    }
+
+    @Test
+    void shouldHaveCompleteListWhenGettingAllTags() {
+        // Given / When
+        List<String> tags = PolicyTag.getAllTags();
+        // Then
+        assertThat(PolicyTag.values().length, is(equalTo(tags.size())));
     }
 }
