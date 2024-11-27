@@ -83,17 +83,13 @@ public class SiteIsolationScanRule extends PluginPassiveScanner
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-
-        // Specs don't state that errors pages should be excluded
-        // However, successful responses are associated to a resource
-        // that should be protected.
-        // Only consider HTTP Status code 2XX to avoid a False Positive
-        if (!HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode())
+        // Specs don't state that errors pages should be excluded. However, successful responses are
+        // associated to a resource that should be protected, while error pages are not. Therefore,
+        // only consider HTTP Status code 2XX to avoid a False Positive
+        if (HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode())
                 || getHelper().isPage200(msg)) {
-            return;
+            rules.forEach(s -> s.build(msg.getResponseHeader()).forEach(AlertBuilder::raise));
         }
-
-        rules.forEach(s -> s.build(msg.getResponseHeader()).forEach(AlertBuilder::raise));
     }
 
     @Override
