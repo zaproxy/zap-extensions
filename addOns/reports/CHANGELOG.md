@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update automation job help.
 - Fields with default or missing values are omitted for the `report` job in saved Automation Framework plans.
+- Fixed ReportJobDialog not resolving correct directory when relative path is used on ReportDir
 
 ## [0.34.0] - 2024-10-07
 ### Changed

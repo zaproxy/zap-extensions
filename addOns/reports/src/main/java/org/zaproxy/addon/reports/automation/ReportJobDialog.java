@@ -109,11 +109,8 @@ public class ReportJobDialog extends StandardFieldsDialog {
         this.addTextField(TAB_SCOPE, FIELD_REPORT_NAME, params.getReportFile());
 
         String dirName = params.getReportDir();
-        File dir = null;
+        File dir = job.resolveReportDirAsFile(dirName, params.getReportFile());
 
-        if (!StringUtils.isEmpty(dirName)) {
-            dir = new File(dirName);
-        }
         this.addFileSelectField(
                 TAB_SCOPE, FIELD_REPORT_DIR, dir, JFileChooser.DIRECTORIES_ONLY, null);
         if (!StringUtils.isEmpty(dirName) && JobUtils.containsVars(dirName)) {

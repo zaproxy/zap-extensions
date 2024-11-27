@@ -182,12 +182,9 @@ public class ReportJob extends AutomationJob {
 
         File file;
         String reportDir = getParameters().getReportDir();
-        if (reportDir != null && reportDir.length() > 0) {
-            File dir = JobUtils.getFile(reportDir, getPlan());
-            file = new File(dir, fileName);
-        } else {
-            file = JobUtils.getFile(fileName, getPlan());
-        }
+        File dir = resolveReportDirAsFile(reportDir, fileName);
+        file = new File(dir, fileName);
+
         reportData.setTitle(this.getParameters().getReportTitle());
         reportData.setDescription(this.getParameters().getReportDescription());
         reportData.setContexts(env.getContexts());
@@ -272,6 +269,16 @@ public class ReportJob extends AutomationJob {
             progress.error(
                     Constant.messages.getString(
                             "reports.automation.error.generate", this.getName(), e.getMessage()));
+        }
+    }
+
+    // Resolves the report directory (can be relative or absolute) as a File.
+    // defaults to reportfile´s directory when reportDir parameter is empty
+    public File resolveReportDirAsFile(String reportDir, String fileName) {
+        if (reportDir != null && reportDir.length() > 0) {
+            return JobUtils.getFile(reportDir, getPlan());
+        } else {
+            return JobUtils.getFile(fileName, getPlan()).getParentFile();
         }
     }
 
