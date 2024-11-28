@@ -79,22 +79,22 @@
 
 该插件提供以下API端点：
 
-<h3>行为</h3>
-	<h4>扫描</h4>
+<h3>API 操作</h3>
+	<h4>scan</h4>
 	启动一个访问控制扫描，用给定的上下文ID和用户ID（可以使逗号分隔的ID列表）。 
 	(可选参数：boolean 是否包含未验证用户(默认: false), boolean 是否发出警报(默认: true), 警报的风险级别(默认: High))<strong>备注：</strong>前提是之前已通过 ZAP gui 建立了访问控制规则，并导出/导入了必要的上下文。
 
 	<h4>writeHTMLreport</h4>
-	Generates an Access Control report for the given context ID and saves it based on the provided filename (path).
+	为给定的上下文 ID 生成访问控制报告，并根据提供的文件名（路径）保存报告。
 
-<h3>Views</h3>
+<h3>API 查看</h3>
 	<h4>getScanProgress</h4>
-	Gets the Access Control scan progress (percentage integer) for the given context ID.
+	获取给定上下文 ID 的访问控制扫描进度（百分比整数）。
 
 	<h4>getScanStatus</h4>
-	Gets the Access Control scan status (description string) for the given context ID.
+	获取给定上下文 ID 的访问控制扫描状态（描述字符串）。
 
-<h2>See also</h2>
+<h2>参阅：</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
