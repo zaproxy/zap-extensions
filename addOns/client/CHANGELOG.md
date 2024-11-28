@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.15.0.
+- Updated Chrome and Firefox extensions to v0.0.9.
 
 ### Added
 - Support for menu weights (Issue 8369).
