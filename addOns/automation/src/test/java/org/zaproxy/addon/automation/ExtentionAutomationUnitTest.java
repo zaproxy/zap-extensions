@@ -24,7 +24,6 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
@@ -61,7 +60,6 @@ import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
@@ -207,14 +205,6 @@ class ExtentionAutomationUnitTest extends TestUtils {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader =
-                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
-
-        ExtensionPassiveScan extPscan =
-                mock(ExtensionPassiveScan.class, withSettings().strictness(Strictness.LENIENT));
-        given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
-
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
 
         ExtensionAutomation extAuto = new ExtensionAutomation();
