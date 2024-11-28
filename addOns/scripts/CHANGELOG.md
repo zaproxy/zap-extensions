@@ -6,9 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Report indirect script errors while the Automation Framework plans are running (Issue 8586).
+- Standardized Policy Tags to the base Scripts Active Scanner.
 
 ### Changed
 - Fields with default or missing values are omitted for the `script` job in saved Automation Framework plans.
+- Depends on an updated version of the Common Library add-on.
 
 ## [45.7.0] - 2024-10-07
 ### Fixed
