@@ -29,23 +29,43 @@ import java.util.stream.Stream;
  * @since 1.29.0
  */
 public enum PolicyTag {
-    DEV_CICD,
-    DEV_STD,
-    DEV_FULL,
-    QA_STD,
-    QA_FULL,
-    SEQUENCE,
-    API;
+    DEV_CICD("Dev CICD.policy", "Developer CI/CD", "scanpolicies"),
+    DEV_STD("Dev Standard.policy", "Developer Standard", "scanpolicies"),
+    DEV_FULL("Dev Full.policy", "Developer Full", "scanpolicies"),
+    QA_STD("QA Standard.policy", "QA Standard", "scanpolicies"),
+    QA_FULL("QA Full.policy", "QA Full", "scanpolicies"),
+    API("API.policy", "API", "scanpolicies"),
+
+    SEQUENCE("Sequence.policy", "Sequence", "sequence");
 
     protected static final String PREFIX = "POLICY_";
-    private final String tag;
 
-    private PolicyTag() {
+    private final String tag;
+    private final String fileName;
+    private final String policyName;
+    private final String addonId;
+
+    private PolicyTag(String fileName, String policyName, String addonId) {
         this.tag = PREFIX + this.name();
+        this.fileName = fileName;
+        this.policyName = policyName;
+        this.addonId = addonId;
     }
 
     public String getTag() {
         return this.tag;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public String getPolicyName() {
+        return policyName;
+    }
+
+    public String getAddonId() {
+        return addonId;
     }
 
     public static List<String> getAllTags() {
