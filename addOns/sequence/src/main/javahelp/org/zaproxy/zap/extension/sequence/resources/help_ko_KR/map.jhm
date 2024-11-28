@@ -7,4 +7,5 @@
     <mapID target="addon.sequence-icon" url="contents/images/script-sequence.png" />
     <mapID target="addon.sequence" url="contents/sequence.html" />
     <mapID target="addon.sequence.automation" url="contents/automation.html" />
+    <mapID target="addon.sequence.policy" url="contents/policy-sequence.html" />
 </map>
