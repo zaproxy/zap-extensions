@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Added more checks for valid .htaccess files to reduce false positives (Issue 7632).
+- A situation where the Server-Side Template Injection (SSTI) scan rule might result in false positives related to the Go payloads (Issue 8622).
 
 ## [68] - 2024-09-24
 ### Changed

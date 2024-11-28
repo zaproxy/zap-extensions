@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -412,8 +414,11 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
                                             + ".*"
                                             + DELIMITER
                                             + "[\\w\\W]*";
+                            Matcher matcher = Pattern.compile(regex).matcher(output);
 
-                            if (output.contains(renderResult) && output.matches(regex)) {
+                            if (output.contains(renderResult)
+                                    && matcher.matches()
+                                    && not(matcher.group(0), renderTest)) {
 
                                 String attack = getOtherInfo(sink.getLocation(), output);
 
@@ -438,6 +443,10 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
                 }
             }
         }
+    }
+
+    private static boolean not(String group0, String renderTest) {
+        return !group0.contains(renderTest.replaceAll("[^A-Za-z0-9]+", ""));
     }
 
     private AlertBuilder createAlert(String url, String param, String attack, String otherInfo) {
