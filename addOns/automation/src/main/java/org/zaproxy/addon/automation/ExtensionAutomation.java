@@ -114,6 +114,8 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
     private AutomationPanel automationPanel;
 
+    private Integer exitOverride;
+
     public ExtensionAutomation() {
         super(NAME);
         setI18nPrefix(PREFIX);
@@ -696,11 +698,21 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
 
         AutomationProgress progress = runAutomationFile(source);
-        if (progress == null || progress.hasErrors()) {
+        if (exitOverride != null) {
+            setExitStatus(exitOverride, "set by user", false);
+        } else if (progress == null || progress.hasErrors()) {
             setExitStatus(1, "plan errors", false);
         } else if (progress.hasWarnings()) {
             setExitStatus(2, "plan warnings", false);
         }
+    }
+
+    public Integer getExitOverride() {
+        return exitOverride;
+    }
+
+    public void setExitOverride(Integer exitOverride) {
+        this.exitOverride = exitOverride;
     }
 
     private static URI createUri(String source) {
