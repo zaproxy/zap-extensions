@@ -274,7 +274,7 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
         if (org.zaproxy.zap.extension.pscan.PassiveScanAPI.class.getAnnotation(Deprecated.class)
                 != null) {
-            extensionHook.addApiImplementor(new PassiveScanApi(getExtPscan()));
+            extensionHook.addApiImplementor(new PassiveScanApi(getExtPscan(), scanRuleManager));
         }
 
         if (loadScanRules) {
