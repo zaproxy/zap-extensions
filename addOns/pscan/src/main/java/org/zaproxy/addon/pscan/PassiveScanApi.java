@@ -28,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Plugin;
+import org.zaproxy.addon.pscan.internal.ScanRuleManager;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
@@ -76,14 +77,16 @@ public class PassiveScanApi extends ApiImplementor {
     private static final String PARAM_MAX_ALERTS = "maxAlerts";
 
     private ExtensionPassiveScan extension;
+    private final ScanRuleManager scanRuleManager;
     private Method setPassiveScanEnabledMethod;
 
     public PassiveScanApi() {
-        this(null);
+        this(null, null);
     }
 
-    public PassiveScanApi(ExtensionPassiveScan extension) {
+    public PassiveScanApi(ExtensionPassiveScan extension, ScanRuleManager scanRuleManager) {
         this.extension = extension;
+        this.scanRuleManager = scanRuleManager;
 
         this.addApiAction(new ApiAction(ACTION_SET_ENABLED, new String[] {PARAM_ENABLED}));
         this.addApiAction(
@@ -226,7 +229,14 @@ public class PassiveScanApi extends ApiImplementor {
      * @return {@code true} if the scanner exist, {@code false} otherwise.
      */
     private boolean hasPluginPassiveScanner(int pluginId) {
-        return extension.getPluginPassiveScanner(pluginId) != null;
+        return getScanRule(pluginId) != null;
+    }
+
+    private PluginPassiveScanner getScanRule(int pluginId) {
+        if (scanRuleManager != null) {
+            return (PluginPassiveScanner) scanRuleManager.getScanRule(pluginId);
+        }
+        return extension.getPluginPassiveScanner(pluginId);
     }
 
     /**
@@ -235,10 +245,17 @@ public class PassiveScanApi extends ApiImplementor {
      * @param enabled {@code true} if the scanners should be enabled, {@code false} otherwise
      */
     private void setAllPluginPassiveScannersEnabled(boolean enabled) {
-        for (PluginPassiveScanner scanner : extension.getPluginPassiveScanners()) {
+        for (PluginPassiveScanner scanner : getPluginScanRules()) {
             scanner.setEnabled(enabled);
             scanner.save();
         }
+    }
+
+    private List<PluginPassiveScanner> getPluginScanRules() {
+        if (scanRuleManager != null) {
+            return scanRuleManager.getPluginScanRules();
+        }
+        return extension.getPluginPassiveScanners();
     }
 
     /**
@@ -249,7 +266,7 @@ public class PassiveScanApi extends ApiImplementor {
      * @param enabled {@code true} if the scanner should be enabled, {@code false} otherwise
      */
     private void setPluginPassiveScannerEnabled(int pluginId, boolean enabled) {
-        PluginPassiveScanner scanner = extension.getPluginPassiveScanner(pluginId);
+        PluginPassiveScanner scanner = getScanRule(pluginId);
         if (scanner != null) {
             scanner.setEnabled(enabled);
             scanner.save();
@@ -280,7 +297,7 @@ public class PassiveScanApi extends ApiImplementor {
      */
     private void setPluginPassiveScannerAlertThreshold(
             int pluginId, Plugin.AlertThreshold alertThreshold) {
-        PluginPassiveScanner scanner = extension.getPluginPassiveScanner(pluginId);
+        PluginPassiveScanner scanner = getScanRule(pluginId);
         if (scanner != null) {
             scanner.setAlertThreshold(alertThreshold);
             scanner.setEnabled(!Plugin.AlertThreshold.OFF.equals(alertThreshold));
@@ -302,7 +319,7 @@ public class PassiveScanApi extends ApiImplementor {
                 result = new ApiResponseElement(name, String.valueOf(extension.getRecordsToScan()));
                 break;
             case VIEW_SCANNERS:
-                List<PluginPassiveScanner> scanners = extension.getPluginPassiveScanners();
+                List<PluginPassiveScanner> scanners = getPluginScanRules();
 
                 ApiResponseList resultList = new ApiResponseList(name);
                 for (PluginPassiveScanner scanner : scanners) {

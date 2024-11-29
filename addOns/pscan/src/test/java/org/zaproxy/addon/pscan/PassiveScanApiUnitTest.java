@@ -40,6 +40,7 @@ import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.pscan.internal.ScanRuleManager;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.API.RequestType;
 import org.zaproxy.zap.extension.api.ApiElement;
@@ -53,12 +54,13 @@ import org.zaproxy.zap.testutils.TestUtils;
 class PassiveScanApiUnitTest extends TestUtils {
 
     private PassiveScanApi pscanApi;
+    private ScanRuleManager scanRuleManager;
     private ExtensionPassiveScan extension;
 
     @BeforeEach
     void setUp() {
         mockMessages(new ExtensionPassiveScan2());
-        pscanApi = new PassiveScanApi(extension);
+        pscanApi = new PassiveScanApi(extension, scanRuleManager);
     }
 
     @AfterAll
@@ -77,7 +79,7 @@ class PassiveScanApiUnitTest extends TestUtils {
     @Test
     void shouldAddApiElements() {
         // Given / When
-        pscanApi = new PassiveScanApi(extension);
+        pscanApi = new PassiveScanApi(extension, scanRuleManager);
         // Then
         assertThat(pscanApi.getApiActions(), hasSize(11));
         assertThat(pscanApi.getApiViews(), hasSize(6));
@@ -140,7 +142,7 @@ class PassiveScanApiUnitTest extends TestUtils {
 
     @Test
     void shouldHaveDescriptionsForAllApiElements() {
-        pscanApi = new PassiveScanApi(extension);
+        pscanApi = new PassiveScanApi(extension, scanRuleManager);
         List<String> issues = new ArrayList<>();
         checkKey(pscanApi.getDescriptionKey(), issues);
         checkApiElements(pscanApi, pscanApi.getApiActions(), API.RequestType.action, issues);
