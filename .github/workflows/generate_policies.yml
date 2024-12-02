@@ -34,12 +34,12 @@ jobs:
         export GITHUB_USER=zapbot
         git config --global user.email "12745184+zapbot@users.noreply.github.com"
         git config --global user.name $GITHUB_USER
+        export GITHUB_TOKEN=${{ secrets.ZAPBOT_TOKEN }}
         BRANCH=scan-policies-updt
         cd zap-extensions
-        git remote add upstream https://github.com/zaproxy/zap-extensions.git
         SRC_BASE="zaproxy/zap-extensions@"$(git log -1 --format=format:%h)
-        export GITHUB_TOKEN=${{ secrets.ZAPBOT_TOKEN }}
         git checkout -b $BRANCH
+        git remote add upstream https://github.com/zaproxy/zap-extensions.git
         # Update the index to be sure git is aware of changes
         git update-index -q --refresh
         git add .
@@ -50,5 +50,5 @@ jobs:
           git add .
           git commit -m "Update scan policies based on Tags" -m "Updates based on $SRC_BASE" --signoff
           git push --set-upstream origin $BRANCH --force
-          gh pr create -R zaproxy/zap-extensions --fill
+          gh pr create --fill
         fi
