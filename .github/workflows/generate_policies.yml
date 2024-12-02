@@ -1,5 +1,5 @@
 name: Generate Scan Policies from Policy Tags
-on: 
+on:
   schedule: # The start of every Friday
     - cron: '0 0 * * 5'
   workflow_dispatch:
@@ -40,6 +40,7 @@ jobs:
         SRC_BASE="zaproxy/zap-extensions@"$(git log -1 --format=format:%h)
         git checkout -b $BRANCH
         git remote add upstream https://github.com/zaproxy/zap-extensions.git
+        git fetch upstream
         # Update the index to be sure git is aware of changes
         git update-index -q --refresh
         git add .
