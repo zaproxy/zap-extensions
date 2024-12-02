@@ -19,9 +19,6 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
-import difflib.Delta;
-import difflib.DiffUtils;
-import difflib.Patch;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.URLDecoder;
@@ -30,7 +27,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -47,6 +43,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
+import org.zaproxy.addon.commonlib.http.ComparableResponse;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Tech;
@@ -911,8 +908,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             return; // Something went wrong, no point continuing
         }
 
-        mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
-        mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
+        final ComparableResponse normalResponse =
+                new ComparableResponse(refreshedmessage, origParamValue);
 
         if (!sqlInjectionFoundForUrl
                 && doExpressionBased
@@ -939,6 +936,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                     String modifiedParamValueConfirmForAdd = String.valueOf(paramPlusThree) + "-2";
                     // Do the attack for ADD variant
                     expressionBasedAttack(
+                            normalResponse,
                             param,
                             origParamValue,
                             modifiedParamValueForAdd,
@@ -964,6 +962,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                 String.valueOf(paramMultFour) + "/2";
                         // Do the attack for MULT variant
                         expressionBasedAttack(
+                                normalResponse,
                                 param,
                                 origParamValue,
                                 modifiedParamValueForMult,
@@ -1055,8 +1054,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             return; // Something went wrong, no point continuing
         }
 
-        mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
-        mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
+        final ComparableResponse normalResponse =
+                new ComparableResponse(refreshedmessage, origParamValue);
 
         // try each of the AND syntax values in turn.
         // Which one is successful will depend on the column type of the table/view column into
@@ -1093,113 +1092,138 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             }
             countBooleanBasedRequests++;
 
-            String resBodyANDTrueUnstripped = msg2.getResponseBody().toString();
-            String resBodyANDTrueStripped =
-                    stripOffOriginalAndAttackParam(
-                            resBodyANDTrueUnstripped, origParamValue, sqlBooleanAndTrueValue);
+            final ComparableResponse andTrueResponse =
+                    new ComparableResponse(msg2, sqlBooleanAndTrueValue);
 
-            // set up two little arrays to ease the work of checking the unstripped output, and
-            // then the stripped output
-            String normalBodyOutput[] = {mResBodyNormalUnstripped, mResBodyNormalStripped};
-            String andTrueBodyOutput[] = {resBodyANDTrueUnstripped, resBodyANDTrueStripped};
-            boolean strippedOutput[] = {false, true};
+            if (isStop()) {
+                LOGGER.debug("Stopping the scan due to a user request");
+                return;
+            }
 
-            for (int booleanStrippedUnstrippedIndex = 0;
-                    booleanStrippedUnstrippedIndex < 2;
-                    booleanStrippedUnstrippedIndex++) {
-                if (isStop()) {
-                    LOGGER.debug("Stopping the scan due to a user request");
-                    return;
-                }
+            // if the results of the "AND 1=1" match the original query, we may be onto something.
+            if (compareResponses(normalResponse, andTrueResponse) == 1) {
+                LOGGER.debug(
+                        "Check 2, response for AND TRUE condition [{}] matched (refreshed) original results for {}",
+                        sqlBooleanAndTrueValue,
+                        refreshedmessage.getRequestHeader().getURI());
+                // so they match. Was it a fluke? See if we get the same result by tacking on "AND 1
+                // = 2" to the original
+                HttpMessage msg2_and_false = getNewMsg();
 
-                // if the results of the "AND 1=1" match the original query (using either the
-                // stripped or unstripped versions), we may be onto something.
-                if (andTrueBodyOutput[booleanStrippedUnstrippedIndex].compareTo(
-                                normalBodyOutput[booleanStrippedUnstrippedIndex])
-                        == 0) {
+                setParameter(msg2_and_false, param, sqlBooleanAndFalseValue);
+
+                try {
+                    sendAndReceive(msg2_and_false, false); // do not follow redirects
+                } catch (SocketException ex) {
                     LOGGER.debug(
-                            "Check 2, {} html output for AND TRUE condition [{}] matched (refreshed) original results for {}",
-                            (strippedOutput[booleanStrippedUnstrippedIndex]
-                                    ? "STRIPPED"
-                                    : "UNSTRIPPED"),
-                            sqlBooleanAndTrueValue,
+                            "Caught {} {} when accessing: {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msg2_and_false.getRequestHeader().getURI());
+                    continue; // Something went wrong, continue on to the next item in the
+                    // loop
+                }
+                countBooleanBasedRequests++;
+
+                final ComparableResponse andFalseResponse =
+                        new ComparableResponse(msg2_and_false, sqlBooleanAndFalseValue);
+
+                if (compareResponses(normalResponse, andFalseResponse) < 1) {
+                    LOGGER.debug(
+                            "Check 2, response output for AND FALSE condition [{}] differed from (refreshed) original results for {}",
+                            sqlBooleanAndFalseValue,
                             refreshedmessage.getRequestHeader().getURI());
-                    // so they match. Was it a fluke? See if we get the same result by tacking
-                    // on "AND 1 = 2" to the original
-                    HttpMessage msg2_and_false = getNewMsg();
 
-                    setParameter(msg2_and_false, param, sqlBooleanAndFalseValue);
+                    // it's different (suggesting that the "AND 1 = 2" appended on gave
+                    // different results because it restricted the data set to nothing
+                    // Likely a SQL Injection. Raise it
+                    String extraInfo =
+                            Constant.messages.getString(
+                                            MESSAGE_PREFIX + "alert.booleanbased.extrainfo",
+                                            sqlBooleanAndTrueValue,
+                                            sqlBooleanAndFalseValue)
+                                    + "\n"
+                                    + Constant.messages.getString(
+                                            MESSAGE_PREFIX
+                                                    + "alert.booleanbased.extrainfo.dataexists");
 
+                    // raise the alert, and save the attack string for the "Authentication
+                    // Bypass" alert, if necessary
+                    sqlInjectionAttack = sqlBooleanAndTrueValue;
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setParam(param)
+                            .setAttack(sqlInjectionAttack)
+                            .setOtherInfo(extraInfo)
+                            .setMessage(msg2)
+                            .raise();
+
+                    sqlInjectionFoundForUrl = true;
+
+                    break; // No further need to loop through SQL_AND
+
+                } else {
+                    // the results of the always false condition are the same as for the
+                    // original unmodified parameter
+                    // this could be because there was *no* data returned for the original
+                    // unmodified parameter
+                    // so consider the effect of adding comments to both the always true
+                    // condition, and the always false condition
+                    // the first value to try..
+                    // ZAP: Removed getURLDecode()
+                    String orValue = origParamValue + SQL_LOGIC_OR_TRUE[i];
+
+                    // this is where that comment comes in handy: if the RDBMS supports
+                    // one-line comments, add one in to attempt to ensure that the
+                    // condition becomes one that is effectively always true, returning ALL
+                    // data (or as much as possible), allowing us to pinpoint the SQL
+                    // Injection
+                    LOGGER.debug(
+                            "Check 2 , response for AND FALSE condition [{}] SAME as (refreshed) original results for {} ### (forcing OR TRUE check)",
+                            sqlBooleanAndFalseValue,
+                            refreshedmessage.getRequestHeader().getURI());
+                    HttpMessage msg2_or_true = getNewMsg();
+                    setParameter(msg2_or_true, param, orValue);
                     try {
-                        sendAndReceive(msg2_and_false, false); // do not follow redirects
+                        sendAndReceive(msg2_or_true, false); // do not follow redirects
                     } catch (SocketException ex) {
                         LOGGER.debug(
                                 "Caught {} {} when accessing: {}",
                                 ex.getClass().getName(),
                                 ex.getMessage(),
-                                msg2_and_false.getRequestHeader().getURI());
-                        continue; // Something went wrong, continue on to the next item in the
-                        // loop
+                                msg2_or_true.getRequestHeader().getURI());
+                        continue; // Something went wrong, continue on to the next item in
+                        // the loop
                     }
                     countBooleanBasedRequests++;
 
-                    String resBodyANDFalseUnstripped = msg2_and_false.getResponseBody().toString();
-                    String resBodyANDFalseStripped =
-                            stripOffOriginalAndAttackParam(
-                                    resBodyANDFalseUnstripped,
-                                    origParamValue,
-                                    sqlBooleanAndFalseValue);
+                    final ComparableResponse orTrueResponse =
+                            new ComparableResponse(msg2_or_true, orValue);
 
-                    String andFalseBodyOutput[] = {
-                        resBodyANDFalseUnstripped, resBodyANDFalseStripped
-                    };
-
-                    // which AND False output should we compare? the stripped or the unstripped
-                    // version?
-                    // depends on which one we used to get to here.. use the same as that..
-
-                    // build an always false AND query.  Result should be different to prove the
-                    // SQL works.
-                    if (andFalseBodyOutput[booleanStrippedUnstrippedIndex].compareTo(
-                                    normalBodyOutput[booleanStrippedUnstrippedIndex])
-                            != 0) {
+                    if (compareResponses(normalResponse, orTrueResponse) < 1) {
                         LOGGER.debug(
-                                "Check 2, {} html output for AND FALSE condition [{}] differed from (refreshed) original results for {}",
-                                (strippedOutput[booleanStrippedUnstrippedIndex]
-                                        ? "STRIPPED"
-                                        : "UNSTRIPPED"),
-                                sqlBooleanAndFalseValue,
+                                "Check 2, response for OR TRUE condition [{}] different to (refreshed) original results for {}",
+                                orValue,
                                 refreshedmessage.getRequestHeader().getURI());
 
-                        // it's different (suggesting that the "AND 1 = 2" appended on gave
-                        // different results because it restricted the data set to nothing
+                        // it's different (suggesting that the "OR 1 = 1" appended on gave
+                        // different results because it broadened the data set from nothing
+                        // to something
                         // Likely a SQL Injection. Raise it
-                        String extraInfo = null;
-                        if (strippedOutput[booleanStrippedUnstrippedIndex]) {
-                            extraInfo =
-                                    Constant.messages.getString(
-                                            MESSAGE_PREFIX + "alert.booleanbased.extrainfo",
-                                            sqlBooleanAndTrueValue,
-                                            sqlBooleanAndFalseValue,
-                                            "");
-                        } else {
-                            extraInfo =
-                                    Constant.messages.getString(
-                                            MESSAGE_PREFIX + "alert.booleanbased.extrainfo",
-                                            sqlBooleanAndTrueValue,
-                                            sqlBooleanAndFalseValue,
-                                            "NOT ");
-                        }
-                        extraInfo =
-                                extraInfo
+                        String extraInfo =
+                                Constant.messages.getString(
+                                                MESSAGE_PREFIX + "alert.booleanbased.extrainfo",
+                                                sqlBooleanAndTrueValue,
+                                                orValue,
+                                                "")
                                         + "\n"
                                         + Constant.messages.getString(
                                                 MESSAGE_PREFIX
-                                                        + "alert.booleanbased.extrainfo.dataexists");
+                                                        + "alert.booleanbased.extrainfo.datanotexists");
 
-                        // raise the alert, and save the attack string for the "Authentication
-                        // Bypass" alert, if necessary
-                        sqlInjectionAttack = sqlBooleanAndTrueValue;
+                        // raise the alert, and save the attack string for the
+                        // "Authentication Bypass" alert, if necessary
+                        sqlInjectionAttack = orValue;
                         newAlert()
                                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                                 .setParam(param)
@@ -1209,167 +1233,24 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                 .raise();
 
                         sqlInjectionFoundForUrl = true;
+                        // booleanBasedSqlInjectionFoundForParam = true;  //causes us to
+                        // skip past the other entries in SQL_AND.  Only one will expose a
+                        // vuln for a given param, since the database column is of only 1
+                        // type
 
-                        break; // No further need to loop through SQL_AND
-
-                    } else {
-                        // the results of the always false condition are the same as for the
-                        // original unmodified parameter
-                        // this could be because there was *no* data returned for the original
-                        // unmodified parameter
-                        // so consider the effect of adding comments to both the always true
-                        // condition, and the always false condition
-                        // the first value to try..
-                        // ZAP: Removed getURLDecode()
-                        String orValue = origParamValue + SQL_LOGIC_OR_TRUE[i];
-
-                        // this is where that comment comes in handy: if the RDBMS supports
-                        // one-line comments, add one in to attempt to ensure that the
-                        // condition becomes one that is effectively always true, returning ALL
-                        // data (or as much as possible), allowing us to pinpoint the SQL
-                        // Injection
-                        LOGGER.debug(
-                                "Check 2 , {} html output for AND FALSE condition [{}] SAME as (refreshed) original results for {} ### (forcing OR TRUE check)",
-                                (strippedOutput[booleanStrippedUnstrippedIndex]
-                                        ? "STRIPPED"
-                                        : "UNSTRIPPED"),
-                                sqlBooleanAndFalseValue,
-                                refreshedmessage.getRequestHeader().getURI());
-                        HttpMessage msg2_or_true = getNewMsg();
-                        setParameter(msg2_or_true, param, orValue);
-                        try {
-                            sendAndReceive(msg2_or_true, false); // do not follow redirects
-                        } catch (SocketException ex) {
-                            LOGGER.debug(
-                                    "Caught {} {} when accessing: {}",
-                                    ex.getClass().getName(),
-                                    ex.getMessage(),
-                                    msg2_or_true.getRequestHeader().getURI());
-                            continue; // Something went wrong, continue on to the next item in
-                            // the loop
-                        }
-                        countBooleanBasedRequests++;
-
-                        String resBodyORTrueUnstripped = msg2_or_true.getResponseBody().toString();
-                        String resBodyORTrueStripped =
-                                stripOffOriginalAndAttackParam(
-                                        resBodyORTrueUnstripped, origParamValue, orValue);
-
-                        String orTrueBodyOutput[] = {
-                            resBodyORTrueUnstripped, resBodyORTrueStripped
-                        };
-
-                        int compareOrToOriginal =
-                                orTrueBodyOutput[booleanStrippedUnstrippedIndex].compareTo(
-                                        normalBodyOutput[booleanStrippedUnstrippedIndex]);
-                        if (compareOrToOriginal != 0) {
-                            LOGGER.debug(
-                                    "Check 2, {} html output for OR TRUE condition [{}] different to (refreshed) original results for {}",
-                                    (strippedOutput[booleanStrippedUnstrippedIndex]
-                                            ? "STRIPPED"
-                                            : "UNSTRIPPED"),
-                                    orValue,
-                                    refreshedmessage.getRequestHeader().getURI());
-
-                            // it's different (suggesting that the "OR 1 = 1" appended on gave
-                            // different results because it broadened the data set from nothing
-                            // to something
-                            // Likely a SQL Injection. Raise it
-                            String extraInfo = null;
-                            if (strippedOutput[booleanStrippedUnstrippedIndex]) {
-                                extraInfo =
-                                        Constant.messages.getString(
-                                                MESSAGE_PREFIX + "alert.booleanbased.extrainfo",
-                                                sqlBooleanAndTrueValue,
-                                                orValue,
-                                                "");
-                            } else {
-                                extraInfo =
-                                        Constant.messages.getString(
-                                                MESSAGE_PREFIX + "alert.booleanbased.extrainfo",
-                                                sqlBooleanAndTrueValue,
-                                                orValue,
-                                                "NOT ");
-                            }
-                            extraInfo =
-                                    extraInfo
-                                            + "\n"
-                                            + Constant.messages.getString(
-                                                    MESSAGE_PREFIX
-                                                            + "alert.booleanbased.extrainfo.datanotexists");
-
-                            // raise the alert, and save the attack string for the
-                            // "Authentication Bypass" alert, if necessary
-                            sqlInjectionAttack = orValue;
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setParam(param)
-                                    .setAttack(sqlInjectionAttack)
-                                    .setOtherInfo(extraInfo)
-                                    .setMessage(msg2)
-                                    .raise();
-
-                            sqlInjectionFoundForUrl = true;
-                            // booleanBasedSqlInjectionFoundForParam = true;  //causes us to
-                            // skip past the other entries in SQL_AND.  Only one will expose a
-                            // vuln for a given param, since the database column is of only 1
-                            // type
-
-                            break;
-                        }
+                        break;
                     }
-                } // if the results of the "AND 1=1" match the original query, we may be onto
-                // something.
-                else {
-                    // the results of the "AND 1=1" do NOT match the original query, for
-                    // whatever reason (no sql injection, or the web page is not stable)
-                    if (this.debugEnabled) {
-                        LOGGER.debug(
-                                "Check 2, {} html output for AND condition [{}] does NOT match the (refreshed) original results for {}",
-                                (strippedOutput[booleanStrippedUnstrippedIndex]
-                                        ? "STRIPPED"
-                                        : "UNSTRIPPED"),
-                                sqlBooleanAndTrueValue,
-                                refreshedmessage.getRequestHeader().getURI());
-                        Patch<String> diffpatch =
-                                DiffUtils.diff(
-                                        new LinkedList<>(
-                                                Arrays.asList(
-                                                        normalBodyOutput[
-                                                                booleanStrippedUnstrippedIndex]
-                                                                .split("\\n"))),
-                                        new LinkedList<>(
-                                                Arrays.asList(
-                                                        andTrueBodyOutput[
-                                                                booleanStrippedUnstrippedIndex]
-                                                                .split("\\n"))));
-
-                        // and convert the list of patches to a String, joining using a newline
-                        StringBuilder tempDiff = new StringBuilder(250);
-                        for (Delta<String> delta : diffpatch.getDeltas()) {
-                            String changeType = null;
-                            if (delta.getType() == Delta.TYPE.CHANGE) {
-                                changeType = "Changed Text";
-                            } else if (delta.getType() == Delta.TYPE.DELETE) {
-                                changeType = "Deleted Text";
-                            } else if (delta.getType() == Delta.TYPE.INSERT) {
-                                changeType = "Inserted text";
-                            } else {
-                                changeType = "Unknown change type [" + delta.getType() + "]";
-                            }
-
-                            tempDiff.append("\n(" + changeType + ")\n"); // blank line before
-                            tempDiff.append(
-                                    "Output for Unmodified parameter: "
-                                            + delta.getOriginal()
-                                            + "\n");
-                            tempDiff.append(
-                                    "Output for   modified parameter: "
-                                            + delta.getRevised()
-                                            + "\n");
-                        }
-                        LOGGER.debug("DIFFS: {}", tempDiff);
-                    }
+                }
+            } // if the results of the "AND 1=1" match the original query, we may be onto
+            // something.
+            else {
+                // the results of the "AND 1=1" do NOT match the original query, for
+                // whatever reason (no sql injection, or the web page is not stable)
+                if (this.debugEnabled) {
+                    LOGGER.debug(
+                            "Check 2, response for AND condition [{}] does NOT match the (refreshed) original results for {}",
+                            sqlBooleanAndTrueValue,
+                            refreshedmessage.getRequestHeader().getURI());
                 }
             }
         }
@@ -1834,6 +1715,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
     }
 
     private void expressionBasedAttack(
+            ComparableResponse normalResponse,
             String param,
             String originalParam,
             String modifiedParamValue,
@@ -1856,19 +1738,16 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
         }
         countExpressionBasedRequests++;
 
-        String modifiedExpressionOutputUnstripped = msg.getResponseBody().toString();
-        String modifiedExpressionOutputStripped =
-                stripOffOriginalAndAttackParam(
-                        modifiedExpressionOutputUnstripped, originalParam, modifiedParamValue);
-        String normalBodyOutputStripped = stripOff(mResBodyNormalStripped, modifiedParamValue);
+        final ComparableResponse modifiedExpressionResponse =
+                new ComparableResponse(msg, modifiedParamValue);
 
         if (!sqlInjectionFoundForUrl && countExpressionBasedRequests < doExpressionMaxRequests) {
             // if the results of the modified request match the original query, we may be onto
             // something.
 
-            if (modifiedExpressionOutputStripped.compareTo(normalBodyOutputStripped) == 0) {
+            if (compareResponses(normalResponse, modifiedExpressionResponse) == 1) {
                 LOGGER.debug(
-                        "Check 4, STRIPPED html output for modified expression parameter [{}] matched (refreshed) original results for {}",
+                        "Check 4, response for modified expression parameter [{}] matched (refreshed) original results for {}",
                         modifiedParamValue,
                         refreshedmessage.getRequestHeader().getURI());
                 // confirm that a different parameter value generates different output, to minimise
@@ -1892,17 +1771,10 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 }
                 countExpressionBasedRequests++;
 
-                String confirmExpressionOutputUnstripped = msgConfirm.getResponseBody().toString();
-                String confirmExpressionOutputStripped =
-                        stripOffOriginalAndAttackParam(
-                                confirmExpressionOutputUnstripped,
-                                originalParam,
-                                modifiedParamValueConfirm);
+                final ComparableResponse confirmExpressionResponse =
+                        new ComparableResponse(msgConfirm, modifiedParamValueConfirm);
 
-                normalBodyOutputStripped =
-                        stripOff(mResBodyNormalStripped, modifiedParamValueConfirm);
-
-                if (confirmExpressionOutputStripped.compareTo(normalBodyOutputStripped) != 0) {
+                if (compareResponses(normalResponse, confirmExpressionResponse) < 1) {
                     // the confirm query did not return the same results.  This means that arbitrary
                     // queries are not all producing the same page output.
                     // this means the fact we earlier reproduced the original page output with a
@@ -1934,6 +1806,33 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 return;
             }
         }
+    }
+
+    /**
+     * 0 means very different and 1 very similar. Note that this is the opposite from most compareTo
+     * implementations but it matches the behavior of the compareWith function and heuristics in
+     * {@code ComparableResponse}
+     */
+    private float compareResponses(ComparableResponse one, ComparableResponse two) {
+        return responseBodyHeuristic(one, two);
+    }
+
+    /**
+     * Checks the response bodies of two requests for an exact match after stripping off the input
+     * parameters from both requests
+     */
+    private float responseBodyHeuristic(ComparableResponse one, ComparableResponse two) {
+        final String stripped1 =
+                stripOffOriginalAndAttackParam(
+                        one.getBody(), one.getValueSent(), two.getValueSent());
+        final String stripped2 =
+                stripOffOriginalAndAttackParam(
+                        two.getBody(), one.getValueSent(), two.getValueSent());
+        if (stripped1.compareTo(stripped2) == 0) {
+            return 1;
+        }
+
+        return 0;
     }
 
     @Override
