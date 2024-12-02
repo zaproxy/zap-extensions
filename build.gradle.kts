@@ -49,7 +49,7 @@ allprojects {
         }
 
         java {
-            val javaVersion = JavaVersion.VERSION_11
+            val javaVersion = JavaVersion.VERSION_17
             sourceCompatibility = javaVersion
             targetCompatibility = javaVersion
         }
