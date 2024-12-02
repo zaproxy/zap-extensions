@@ -6,60 +6,60 @@
         <strength>MEDIUM</strength>
     </scanner>
     <plugins>
-       <p20019>
-          <name>External Redirect</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p20019>
-       <p40012>
-          <name>Cross Site Scripting (Reflected)</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40012>
-       <p40018>
-          <name>SQL Injection</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40018>
-       <p50000>
-          <name>Script Active Scan Rules</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p50000>
-       <p90017>
-          <name>XSLT Injection</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90017>
-       <p90020>
-          <name>Remote OS Command Injection</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90020>
-       <p90021>
-          <name>XPath Injection</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90021>
-       <p90023>
-          <name>XML External Entity Attack</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90023>
-       <p90026>
-          <name>SOAP Action Spoofing</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90026>
-       <p90029>
-          <name>SOAP XML Injection</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90029>
-       <p90035>
-          <name>Server Side Template Injection</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90035>
+        <p20019>
+            <name>External Redirect</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p20019>
+        <p40012>
+            <name>Cross Site Scripting (Reflected)</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40012>
+        <p40018>
+            <name>SQL Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40018>
+        <p50000>
+            <name>Script Active Scan Rules</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p50000>
+        <p90017>
+            <name>XSLT Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90017>
+        <p90020>
+            <name>Remote OS Command Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90020>
+        <p90021>
+            <name>XPath Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90021>
+        <p90023>
+            <name>XML External Entity Attack</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90023>
+        <p90026>
+            <name>SOAP Action Spoofing</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90026>
+        <p90029>
+            <name>SOAP XML Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90029>
+        <p90035>
+            <name>Server Side Template Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90035>
     </plugins>
 </configuration>
