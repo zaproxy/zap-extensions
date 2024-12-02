@@ -6,160 +6,160 @@
         <strength>MEDIUM</strength>
     </scanner>
     <plugins>
-       <p6>
-          <name>Path Traversal</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p6>
-       <p7>
-          <name>Remote File Inclusion</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p7>
-       <p20019>
-          <name>External Redirect</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p20019>
-       <p40003>
-          <name>CRLF Injection</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40003>
-       <p40008>
-          <name>Parameter Tampering</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40008>
-       <p40009>
-          <name>Server Side Include</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40009>
-       <p40012>
-          <name>Cross Site Scripting (Reflected)</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40012>
-       <p40014>
-          <name>Cross Site Scripting (Persistent)</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40014>
-       <p40016>
-          <name>Cross Site Scripting (Persistent) - Prime</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40016>
-       <p40017>
-          <name>Cross Site Scripting (Persistent) - Spider</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40017>
-       <p40018>
-          <name>SQL Injection</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40018>
-       <p40019>
-          <name>SQL Injection - MySQL</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40019>
-       <p40020>
-          <name>SQL Injection - Hypersonic SQL</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40020>
-       <p40021>
-          <name>SQL Injection - Oracle</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40021>
-       <p40022>
-          <name>SQL Injection - PostgreSQL</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40022>
-       <p40026>
-          <name>Cross Site Scripting (DOM Based)</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40026>
-       <p40027>
-          <name>SQL Injection - MsSQL</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40027>
-       <p40031>
-          <name>Out of Band XSS</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40031>
-       <p40046>
-          <name>Server Side Request Forgery</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40046>
-       <p40047>
-          <name>Text4shell (CVE-2022-42889)</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p40047>
-       <p50000>
-          <name>Script Active Scan Rules</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p50000>
-       <p90017>
-          <name>XSLT Injection</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90017>
-       <p90019>
-          <name>Server Side Code Injection</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90019>
-       <p90020>
-          <name>Remote OS Command Injection</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90020>
-       <p90021>
-          <name>XPath Injection</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90021>
-       <p90023>
-          <name>XML External Entity Attack</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90023>
-       <p90026>
-          <name>SOAP Action Spoofing</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90026>
-       <p90028>
-          <name>Insecure HTTP Method</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90028>
-       <p90029>
-          <name>SOAP XML Injection</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90029>
-       <p90035>
-          <name>Server Side Template Injection</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90035>
-       <p90036>
-          <name>Server Side Template Injection (Blind)</name>
-          <level>MEDIUM</level>
-          <enabled>true</enabled>
-       </p90036>
+        <p6>
+            <name>Path Traversal</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p6>
+        <p7>
+            <name>Remote File Inclusion</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p7>
+        <p20019>
+            <name>External Redirect</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p20019>
+        <p40003>
+            <name>CRLF Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40003>
+        <p40008>
+            <name>Parameter Tampering</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40008>
+        <p40009>
+            <name>Server Side Include</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40009>
+        <p40012>
+            <name>Cross Site Scripting (Reflected)</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40012>
+        <p40014>
+            <name>Cross Site Scripting (Persistent)</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40014>
+        <p40016>
+            <name>Cross Site Scripting (Persistent) - Prime</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40016>
+        <p40017>
+            <name>Cross Site Scripting (Persistent) - Spider</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40017>
+        <p40018>
+            <name>SQL Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40018>
+        <p40019>
+            <name>SQL Injection - MySQL</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40019>
+        <p40020>
+            <name>SQL Injection - Hypersonic SQL</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40020>
+        <p40021>
+            <name>SQL Injection - Oracle</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40021>
+        <p40022>
+            <name>SQL Injection - PostgreSQL</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40022>
+        <p40026>
+            <name>Cross Site Scripting (DOM Based)</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40026>
+        <p40027>
+            <name>SQL Injection - MsSQL</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40027>
+        <p40031>
+            <name>Out of Band XSS</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40031>
+        <p40046>
+            <name>Server Side Request Forgery</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40046>
+        <p40047>
+            <name>Text4shell (CVE-2022-42889)</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p40047>
+        <p50000>
+            <name>Script Active Scan Rules</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p50000>
+        <p90017>
+            <name>XSLT Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90017>
+        <p90019>
+            <name>Server Side Code Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90019>
+        <p90020>
+            <name>Remote OS Command Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90020>
+        <p90021>
+            <name>XPath Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90021>
+        <p90023>
+            <name>XML External Entity Attack</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90023>
+        <p90026>
+            <name>SOAP Action Spoofing</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90026>
+        <p90028>
+            <name>Insecure HTTP Method</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90028>
+        <p90029>
+            <name>SOAP XML Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90029>
+        <p90035>
+            <name>Server Side Template Injection</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90035>
+        <p90036>
+            <name>Server Side Template Injection (Blind)</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p90036>
     </plugins>
 </configuration>
