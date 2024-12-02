@@ -93,8 +93,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
 
     private String sqlInjectionAttack = null;
     private HttpMessage refreshedmessage = null;
-    private String mResBodyNormalUnstripped = null;
-    private String mResBodyNormalStripped = null;
     // what do we do at each attack strength?
     // (some SQL Injection vulns would be picked up by multiple types of checks, and we skip out
     // after the first alert for a URL)
@@ -128,7 +126,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
      * maximise SQL errors Note that we do separate runs for each family of characters, in case one
      * family are filtered out, the others might still get past
      */
-    private static final String[] SQL_CHECK_ERR = {"'", "\"", ";", "'(", ")", "(", "NULL", "'\""};
+    static final String[] SQL_CHECK_ERR = {"'", "\"", ";", "'(", ")", "(", "NULL", "'\""};
 
     /**
      * A collection of RDBMS with its error message fragments and {@code Tech}.
@@ -457,7 +455,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
      * generic UNION statements. Hoping these will cause a specific error message that we will
      * recognise
      */
-    private static String[] SQL_UNION_APPENDAGES = {
+    static String[] SQL_UNION_APPENDAGES = {
         " UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
         "' UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
         "\" UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
@@ -650,8 +648,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
         sqlInjectionFoundForUrl = false;
         sqlInjectionAttack = null;
         refreshedmessage = null;
-        mResBodyNormalUnstripped = null;
-        mResBodyNormalStripped = null;
 
         try {
             // reinitialise the count for each type of request, for each parameter.  We will be
@@ -1293,6 +1289,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             countBooleanBasedRequests++;
 
             String resBodyORTrueUnstripped = msg2.getResponseBody().toString();
+            String mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
+            String mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
 
             // if the results of the "OR 1=1" exceed the original query (unstripped, by more
             // than a 20% size difference, say), we may be onto something.
@@ -1408,6 +1406,9 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             }
             countUnionBasedRequests++;
 
+            String mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
+            String mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
+
             // now check the results.. look first for UNION specific error messages in the
             // output that were not there in the original output
             // and failing that, look for generic RDBMS specific error messages
@@ -1476,8 +1477,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             return; // Something went wrong, no point continuing
         }
 
-        mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
-        mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
+        String mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
+        String mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
 
         if (!sqlInjectionFoundForUrl
                 && doOrderByBased
