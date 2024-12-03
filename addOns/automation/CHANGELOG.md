@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Method to allow the user to set the exit code via a script.
 
 ### Changed
+- Maintenance changes.
 - Updated automation framework documentation and templates for `activeScan` job to reflect changes to the default value of threadPerHost parameter
 - Update help for the "requestor" job.
 - Update help to indicate that job order is important (Issue 8675).
