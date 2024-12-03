@@ -19,6 +19,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `delay`
   - `requestor`
 
+### Removed
+- Remove job implementations that were previously migrated to the Passive Scanner add-on (Issue 7959).
+
 ### Fixed
 - Templates generated with `-autogenmin` or `-autogenmax` were invalid in some cases.
 - Allow to choose one thread for the `activeScan` job through the GUI.
