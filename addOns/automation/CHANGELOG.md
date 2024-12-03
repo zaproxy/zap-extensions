@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add job to configure the active scanner, `activeScan-config`.
 - Allow to enable/disable jobs (Issue 5845).
 - Method to allow the user to set the exit code via a script.
+- Add exitStatus job (Issue #6928)
 
 ### Changed
 - Updated automation framework documentation and templates for `activeScan` job to reflect changes to the default value of threadPerHost parameter

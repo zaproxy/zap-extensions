@@ -66,3 +66,8 @@ jobs:
         otherInfo:                             # String: Addional information corresponding to the alert, optional
         onFail: 'info'                         # String: One of 'warn', 'error', 'info', mandatory
 
+  - type: exitStatus                   # Sets the exit code based on scan results
+    parameters:
+      errorLevel:                      # String: Informational, Low, Medium, High, default: not set
+      warnLevel:                       # String: Informational, Low, Medium, High, default: not set
+

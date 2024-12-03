@@ -39,3 +39,7 @@ jobs:
     parameters:
       context: 
 
+  - type: exitStatus
+    name: exitStatus
+    parameters:
+

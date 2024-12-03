@@ -66,6 +66,7 @@ import org.zaproxy.addon.automation.jobs.ActiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
+import org.zaproxy.addon.automation.jobs.ExitStatusJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.zap.ZAP;
@@ -84,6 +85,9 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     public static final String PREFIX = "automation";
 
     public static final String RESOURCES_DIR = "/org/zaproxy/addon/automation/resources/";
+    public static final int OK_EXIT_VALUE = 0;
+    public static final int ERROR_EXIT_VALUE = 1;
+    public static final int WARN_EXIT_VALUE = 2;
 
     protected static final String PLANS_RUN_STATS = "stats.auto.plans.run";
     protected static final String TOTAL_JOBS_RUN_STATS = "stats.auto.jobs.run";
@@ -114,7 +118,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
     private AutomationPanel automationPanel;
 
-    private Integer exitOverride;
+    private static Integer exitOverride;
 
     public ExtensionAutomation() {
         super(NAME);
@@ -132,6 +136,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         registerAutomationJob(new org.zaproxy.addon.automation.jobs.AddOnJob());
         registerAutomationJob(new RequestorJob());
         registerAutomationJob(new DelayJob());
+        registerAutomationJob(new ExitStatusJob());
         registerAutomationJob(
                 new ActiveScanConfigJob(
                         Control.getSingleton()
@@ -701,18 +706,18 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         if (exitOverride != null) {
             setExitStatus(exitOverride, "set by user", false);
         } else if (progress == null || progress.hasErrors()) {
-            setExitStatus(1, "plan errors", false);
+            setExitStatus(ERROR_EXIT_VALUE, "plan errors", false);
         } else if (progress.hasWarnings()) {
-            setExitStatus(2, "plan warnings", false);
+            setExitStatus(WARN_EXIT_VALUE, "plan warnings", false);
         }
     }
 
-    public Integer getExitOverride() {
+    public static Integer getExitOverride() {
         return exitOverride;
     }
 
-    public void setExitOverride(Integer exitOverride) {
-        this.exitOverride = exitOverride;
+    public static void setExitOverride(Integer exitOverride) {
+        ExtensionAutomation.exitOverride = exitOverride;
     }
 
     private static URI createUri(String source) {
