@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Fix typo in log message.
+- Fix Insufficient Site Isolation scan rule check that filters responses based on whether a response is a success or not.
 
 ### Changed
 - Maintenance changes.
