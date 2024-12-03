@@ -366,7 +366,6 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         assertThat(alertsRaised, hasSize(0));
     }
 
-    // False positive cases - https://github.com/zaproxy/zaproxy/issues/8652, https://github.com/zaproxy/zaproxy/issues/8653
     @Test
     void shouldNotAlertIfConfirmationIsDifferentStatusCode() throws Exception {
         // Given
@@ -776,7 +775,6 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             assertThat(actual.getAttack(), is(equalTo(attackPayload)));
         }
 
-        // False positive cases - https://github.com/zaproxy/zaproxy/issues/8652, https://github.com/zaproxy/zaproxy/issues/8653
         @Test
         void shouldNotAlertForChangedStatusCode() throws Exception {
             // Given
