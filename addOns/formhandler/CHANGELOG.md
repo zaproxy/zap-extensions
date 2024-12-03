@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Depend on Common Library add-on, to provide the default/custom values to the other add-ons (Issue 8016).
 
+### Fixed
+- Fixed an issue in the help which may cause images to be displayed inline impacting the flow of the text.
+
 ## [6.6.0] - 2024-05-07
 ### Changed
 - Update minimum ZAP version to 2.15.0.
