@@ -1123,7 +1123,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 final ComparableResponse andFalseResponse =
                         new ComparableResponse(msg2_and_false, sqlBooleanAndFalseValue);
 
-                if (compareResponses(normalResponse, andFalseResponse) < 1) {
+                if (isResponseDifferentWithSameStatusCode(normalResponse, andFalseResponse)) {
                     LOGGER.debug(
                             "Check 2, response output for AND FALSE condition [{}] differed from (refreshed) original results for {}",
                             sqlBooleanAndFalseValue,
@@ -1195,7 +1195,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                     final ComparableResponse orTrueResponse =
                             new ComparableResponse(msg2_or_true, orValue);
 
-                    if (compareResponses(normalResponse, orTrueResponse) < 1) {
+                    if (isResponseDifferentWithSameStatusCode(normalResponse, orTrueResponse)) {
                         LOGGER.debug(
                                 "Check 2, response for OR TRUE condition [{}] different to (refreshed) original results for {}",
                                 orValue,
@@ -1774,7 +1774,8 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 final ComparableResponse confirmExpressionResponse =
                         new ComparableResponse(msgConfirm, modifiedParamValueConfirm);
 
-                if (compareResponses(normalResponse, confirmExpressionResponse) < 1) {
+                if (isResponseDifferentWithSameStatusCode(
+                        normalResponse, confirmExpressionResponse)) {
                     // the confirm query did not return the same results.  This means that arbitrary
                     // queries are not all producing the same page output.
                     // this means the fact we earlier reproduced the original page output with a
@@ -1808,13 +1809,25 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
         }
     }
 
+    private static final float HEURISTIC_WEIGHT =
+            .99f; // At this time the sqli tests just look for 0, 1, or anything in between, so the
+
+    // exact value here doesn't matter. Anything between 0 and 1 works.
+
     /**
      * 0 means very different and 1 very similar. Note that this is the opposite from most compareTo
      * implementations but it matches the behavior of the compareWith function and heuristics in
      * {@code ComparableResponse}
      */
     private float compareResponses(ComparableResponse one, ComparableResponse two) {
-        return responseBodyHeuristic(one, two);
+        if (ComparableResponse.statusCodeHeuristic(one, two) < 1) {
+            return 0;
+        }
+
+        float total = 1f;
+        total *= responseBodyHeuristic(one, two) * HEURISTIC_WEIGHT + (1 - HEURISTIC_WEIGHT);
+
+        return total;
     }
 
     /**
@@ -1833,6 +1846,18 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
         }
 
         return 0;
+    }
+
+    /**
+     * Helper for checking if an attack confirmation request returned a different response from the
+     * normal payload. The response needs to be different, but still have the same status code
+     * because a different a status code could happen for many reasons that are almost always not
+     * sql injection. e.g. 404, 403, 429
+     */
+    private boolean isResponseDifferentWithSameStatusCode(
+            ComparableResponse one, ComparableResponse two) {
+        final float compareResult = compareResponses(one, two);
+        return compareResult > 0 && compareResult < 1;
     }
 
     @Override

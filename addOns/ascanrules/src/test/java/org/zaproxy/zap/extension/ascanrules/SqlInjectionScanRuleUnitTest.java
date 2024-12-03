@@ -30,10 +30,14 @@ import static org.hamcrest.Matchers.is;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import fi.iki.elonen.NanoHTTPD.Response.Status;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -357,6 +361,50 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
                 parent);
         // When
         rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(1)));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    // False positive cases - https://github.com/zaproxy/zaproxy/issues/8652, https://github.com/zaproxy/zaproxy/issues/8653
+    @Test
+    void shouldNotAlertIfConfirmationIsDifferentStatusCode() throws Exception {
+        // Given
+        final String param = "id";
+        final String normalValue = "1";
+        final String modifiedValue = "3-2";
+        final String confirmValue = "4-2";
+
+        Map<String, Supplier<Response>> paramValueToResponseMap = new HashMap<>();
+        paramValueToResponseMap.put(
+                normalValue,
+                () -> {
+                    final Response response =
+                            newFixedLengthResponse(
+                                    Status.OK, NanoHTTPD.MIME_HTML, "Some content: ");
+                    return response;
+                });
+        paramValueToResponseMap.put(
+                modifiedValue,
+                () -> {
+                    final Response response =
+                            newFixedLengthResponse(
+                                    Status.OK, NanoHTTPD.MIME_HTML, "Some content: ");
+                    return response;
+                });
+        paramValueToResponseMap.put(
+                confirmValue,
+                () ->
+                        newFixedLengthResponse(
+                                Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found"));
+        ControlledStatusCodeHandler handler =
+                new ControlledStatusCodeHandler(param, paramValueToResponseMap);
+        nano.addHandler(handler);
+        rule.init(getHttpMessage("/?" + param + "=" + normalValue), parent);
+
+        // When
+        rule.scan();
+
         // Then
         assertThat(httpMessagesSent, hasSize(greaterThan(1)));
         assertThat(alertsRaised, hasSize(0));
@@ -727,6 +775,47 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             assertThat(actual.getParam(), is(equalTo(param)));
             assertThat(actual.getAttack(), is(equalTo(attackPayload)));
         }
+
+        // False positive cases - https://github.com/zaproxy/zaproxy/issues/8652, https://github.com/zaproxy/zaproxy/issues/8653
+        @Test
+        void shouldNotAlertForChangedStatusCode() throws Exception {
+            // Given
+            String param = "test";
+            String normalPayload = "foo";
+            String attackPayload = "foo' AND '1'='1' -- ";
+            String verificationPayload = "foo' AND '1'='2' -- ";
+            String orTruePayload = "foo' OR '1'='1' -- ";
+            Map<String, Supplier<Response>> paramValueToResponseMap = new HashMap<>();
+            paramValueToResponseMap.put(
+                    normalPayload,
+                    () -> newFixedLengthResponse(Status.OK, NanoHTTPD.MIME_HTML, "normal"));
+            paramValueToResponseMap.put(
+                    attackPayload,
+                    () -> newFixedLengthResponse(Status.OK, NanoHTTPD.MIME_HTML, "normal"));
+            paramValueToResponseMap.put(
+                    verificationPayload,
+                    () ->
+                            newFixedLengthResponse(
+                                    Status.TOO_MANY_REQUESTS,
+                                    NanoHTTPD.MIME_HTML,
+                                    "too many requests"));
+            paramValueToResponseMap.put(
+                    orTruePayload,
+                    () ->
+                            newFixedLengthResponse(
+                                    Status.TOO_MANY_REQUESTS,
+                                    NanoHTTPD.MIME_HTML,
+                                    "too many requests"));
+            ControlledStatusCodeHandler handler =
+                    new ControlledStatusCodeHandler(param, paramValueToResponseMap);
+            nano.addHandler(handler);
+            rule.init(getHttpMessage("/?" + param + "=" + normalPayload), parent);
+
+            // When
+            rule.scan();
+
+            assertThat(alertsRaised, hasSize(0));
+        }
     }
 
     @Nested
@@ -955,12 +1044,12 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         }
 
         public ExpressionBasedHandler(
-                String parth,
+                String path,
                 String param,
                 Expression expression,
                 boolean confirmationFails,
                 String contentAddition) {
-            this(parth, param, expression, confirmationFails);
+            this(path, param, expression, confirmationFails);
             this.contentAddition = contentAddition;
         }
 
@@ -972,7 +1061,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
                         Response.Status.OK, NanoHTTPD.MIME_HTML, getContent(value));
             }
             return newFixedLengthResponse(
-                    Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "404 Not Found");
+                    Response.Status.OK, NanoHTTPD.MIME_HTML, "This is different content");
         }
 
         private boolean isValidValue(String value) {
@@ -984,6 +1073,38 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
 
         protected String getContent(String value) {
             return "Some Content " + contentAddition;
+        }
+    }
+
+    /**
+     * A test server that can respond with different status codes depending on the request payload
+     */
+    private static class ControlledStatusCodeHandler extends NanoServerHandler {
+        private final String targetParam;
+        private final Map<String, Supplier<Response>>
+                paramValueToResponseMap; // Supplier function because the test may send the same
+        // payload multiple times
+        private final Supplier<Response> fallbackResponse =
+                () -> newFixedLengthResponse(Status.OK, NanoHTTPD.MIME_HTML, "");
+
+        public ControlledStatusCodeHandler(
+                String targetParam, Map<String, Supplier<Response>> paramValueToResponseMap) {
+            super("/");
+            this.targetParam = targetParam;
+            this.paramValueToResponseMap = paramValueToResponseMap;
+        }
+
+        @Override
+        protected Response serve(IHTTPSession session) {
+            String actualParamValue = getFirstParamValue(session, targetParam);
+
+            @SuppressWarnings("unchecked")
+            final Supplier<Response> responseFn =
+                    (Supplier<Response>)
+                            MapUtils.getObject(
+                                    paramValueToResponseMap, actualParamValue, fallbackResponse);
+            final Response response = responseFn.get();
+            return response;
         }
     }
 }
