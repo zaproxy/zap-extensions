@@ -22,7 +22,7 @@ package org.zaproxy.addon.pscan.internal.ui;
 import java.util.ArrayList;
 import java.util.List;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.pscan.scanner.RegexAutoTagScanner;
+import org.zaproxy.addon.pscan.internal.RegexAutoTagScanner;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
 @SuppressWarnings("serial")

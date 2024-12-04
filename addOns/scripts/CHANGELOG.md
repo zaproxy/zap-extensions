@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Fields with default or missing values are omitted for the `script` job in saved Automation Framework plans.
 - Depends on an updated version of the Common Library add-on.
+- Depend on Passive Scanner add-on (Issue 7959).
+
+### Fixed
+- Correct auto-complete suggestions for parameters of Passive Rules.
 
 ## [45.7.0] - 2024-10-07
 ### Fixed

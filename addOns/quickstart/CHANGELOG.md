@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Stats counter to the main toolbar button (Issue 8375).
 
+### Changed
+- Depend on Passive Scanner add-on (Issue 7959).
+
 ### Fixed
 - An exception that prevented the look and feel from changing completely.
 

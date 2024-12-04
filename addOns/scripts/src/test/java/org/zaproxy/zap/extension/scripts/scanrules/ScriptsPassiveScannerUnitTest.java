@@ -51,7 +51,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.pscan.PassiveScanData;
 import org.zaproxy.zap.extension.pscan.PassiveScanTaskHelper;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -65,7 +65,7 @@ import org.zaproxy.zap.testutils.TestUtils;
 /** Unit test for {@link ScriptsPassiveScanner}. */
 class ScriptsPassiveScannerUnitTest extends TestUtils {
 
-    private static final String SCRIPT_TYPE = ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE;
+    private static final String SCRIPT_TYPE = ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE;
     private static final Class<PassiveScript> TARGET_INTERFACE = PassiveScript.class;
 
     private ExtensionLoader extensionLoader;

@@ -43,12 +43,12 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType.AutoDetectSessionManagementMethod;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
 import org.zaproxy.zap.authentication.AuthenticationMethodType;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.selenium.BrowserUI;
 import org.zaproxy.zap.extension.selenium.BrowsersComboBoxModel;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
@@ -344,10 +344,10 @@ public class AuthTestDialog extends StandardFieldsDialog {
                 }
             }
             context = session.getContext(contextName);
-            ExtensionPassiveScan extPscan =
+            ExtensionPassiveScan2 extPscan =
                     Control.getSingleton()
                             .getExtensionLoader()
-                            .getExtension(ExtensionPassiveScan.class);
+                            .getExtension(ExtensionPassiveScan2.class);
 
             int count = 0;
             int score = 0;

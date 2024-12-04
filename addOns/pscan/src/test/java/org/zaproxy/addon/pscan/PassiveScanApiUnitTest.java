@@ -40,27 +40,25 @@ import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.pscan.internal.ScanRuleManager;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.API.RequestType;
 import org.zaproxy.zap.extension.api.ApiElement;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiParameter;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link PassiveScanApi}. */
 class PassiveScanApiUnitTest extends TestUtils {
 
     private PassiveScanApi pscanApi;
-    private ScanRuleManager scanRuleManager;
-    private ExtensionPassiveScan extension;
+    private PassiveScannersManager scannersManager;
+    private ExtensionPassiveScan2 extension;
 
     @BeforeEach
     void setUp() {
         mockMessages(new ExtensionPassiveScan2());
-        pscanApi = new PassiveScanApi(extension, scanRuleManager);
+        pscanApi = new PassiveScanApi(extension, scannersManager);
     }
 
     @AfterAll
@@ -79,7 +77,7 @@ class PassiveScanApiUnitTest extends TestUtils {
     @Test
     void shouldAddApiElements() {
         // Given / When
-        pscanApi = new PassiveScanApi(extension, scanRuleManager);
+        pscanApi = new PassiveScanApi(extension, scannersManager);
         // Then
         assertThat(pscanApi.getApiActions(), hasSize(11));
         assertThat(pscanApi.getApiViews(), hasSize(6));
@@ -142,7 +140,7 @@ class PassiveScanApiUnitTest extends TestUtils {
 
     @Test
     void shouldHaveDescriptionsForAllApiElements() {
-        pscanApi = new PassiveScanApi(extension, scanRuleManager);
+        pscanApi = new PassiveScanApi(extension, scannersManager);
         List<String> issues = new ArrayList<>();
         checkKey(pscanApi.getDescriptionKey(), issues);
         checkApiElements(pscanApi, pscanApi.getApiActions(), API.RequestType.action, issues);

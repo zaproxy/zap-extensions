@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.script.ScriptsCache;
@@ -52,7 +52,7 @@ public class ScriptsPassiveScanner extends PassiveScriptHelper {
         }
         return extension.createScriptsCache(
                 Configuration.<PassiveScript>builder()
-                        .setScriptType(ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE)
+                        .setScriptType(ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE)
                         .setTargetInterface(PassiveScript.class)
                         .setInterfaceProvider(
                                 (scriptWrapper, targetInterface) -> {

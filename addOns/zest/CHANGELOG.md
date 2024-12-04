@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Use Semantic Version.
 - Maintenance changes.
+- Depend on Passive Scanner add-on (Issue 7959).
 
 ## [47] - 2024-09-24
 ### Fixed

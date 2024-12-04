@@ -28,6 +28,9 @@ zapAddOn {
                 register("commonlib") {
                     version.set(">= 1.17.0 & < 2.0.0")
                 }
+                register("pscan") {
+                    version.set(">= 0.1.0 & < 1.0.0")
+                }
             }
         }
     }
@@ -41,6 +44,7 @@ zapAddOn {
 dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
+    zapAddOn("pscan")
 
     compileOnly(libs.log4j.core)
 

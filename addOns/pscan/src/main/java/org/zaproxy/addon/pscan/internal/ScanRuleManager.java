@@ -26,11 +26,11 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.pscan.PassiveScannersManager;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.extension.pscan.scanner.RegexAutoTagScanner;
 
-public class ScanRuleManager {
+public class ScanRuleManager implements PassiveScannersManager {
 
     private static final Logger LOGGER = LogManager.getLogger(ScanRuleManager.class);
 
@@ -39,6 +39,7 @@ public class ScanRuleManager {
 
     public ScanRuleManager() {}
 
+    @Override
     public boolean add(PassiveScanner scanRule) {
         if (scanRule == null) {
             throw new IllegalArgumentException("Parameter must not be null.");
@@ -71,25 +72,34 @@ public class ScanRuleManager {
     }
 
     private boolean addPassiveScannerImpl(PassiveScanner passiveScanner) {
+        String name = passiveScanner.getName();
+        if (scannerNames.contains(name)) {
+            LOGGER.error("Duplicate passive scan rule name: {}", passiveScanner.getName());
+            return false;
+        }
+        scannerNames.add(name);
         return scanRules.add(passiveScanner);
     }
 
-    public PassiveScanner getScanRule(int id) {
+    @Override
+    public PluginPassiveScanner getScanRule(int id) {
         for (PassiveScanner scanner : scanRules) {
             if (scanner instanceof PluginPassiveScanner) {
                 if (((PluginPassiveScanner) scanner).getPluginId() == id) {
-                    return scanner;
+                    return (PluginPassiveScanner) scanner;
                 }
             }
         }
         return null;
     }
 
-    public List<PassiveScanner> getScanRules() {
+    @Override
+    public List<PassiveScanner> getScanners() {
         return scanRules;
     }
 
-    public List<PluginPassiveScanner> getPluginScanRules() {
+    @Override
+    public List<PluginPassiveScanner> getScanRules() {
         List<PluginPassiveScanner> pluginPassiveScanners = new ArrayList<>();
         for (PassiveScanner scanner : scanRules) {
             if ((scanner instanceof PluginPassiveScanner)
@@ -100,6 +110,7 @@ public class ScanRuleManager {
         return pluginPassiveScanners;
     }
 
+    @Override
     public boolean remove(PassiveScanner scanRule) {
         if (scanRule == null) {
             throw new IllegalArgumentException("Parameter must not be null.");
