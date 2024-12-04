@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Allow to choose one thread for the `activeScan` job through the GUI.
 - Active Scan jobs will once again use the default policy if neither a policy nor a policyDefinition has been set.
 - Bug in job alert tests related to alert matching.
+- Active scan rule ID 0 (Directory Browsing) will be included in the plan (yaml) when saved (Issue 8746).
 
 ## [0.43.0] - 2024-10-07
 ### Fixed

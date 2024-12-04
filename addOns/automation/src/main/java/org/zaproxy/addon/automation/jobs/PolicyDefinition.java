@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -230,7 +231,9 @@ public class PolicyDefinition extends AutomationData {
     @Getter
     @Setter
     public static class Rule extends AutomationData {
+        @JsonInclude(JsonInclude.Include.ALWAYS)
         private int id;
+
         private String name;
         private String threshold;
         private String strength;
