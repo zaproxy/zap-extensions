@@ -32,11 +32,11 @@ import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.alert.AlertEventPublisher;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.quickstart.PlugableSpider;
 import org.zaproxy.zap.extension.quickstart.QuickStartBackgroundPanel;
 import org.zaproxy.zap.extension.quickstart.QuickStartParam;
@@ -102,8 +102,10 @@ public class AjaxSpiderExplorer implements PlugableSpider {
         return Control.getSingleton().getExtensionLoader().getExtension(ExtensionAjax.class);
     }
 
-    public ExtensionPassiveScan getExtPscan() {
-        return Control.getSingleton().getExtensionLoader().getExtension(ExtensionPassiveScan.class);
+    public ExtensionPassiveScan2 getExtPscan() {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionPassiveScan2.class);
     }
 
     @Override
@@ -116,7 +118,7 @@ public class AjaxSpiderExplorer implements PlugableSpider {
         if (selInd == Select.MODERN.getIndex()) {
             // Only run if modern - keep monitoring for the relevant alert until the passive scan
             // queue empties
-            ExtensionPassiveScan extPscan = this.getExtPscan();
+            ExtensionPassiveScan2 extPscan = getExtPscan();
             while (extPscan.getRecordsToScan() > 0) {
                 if (isModern) {
                     break;

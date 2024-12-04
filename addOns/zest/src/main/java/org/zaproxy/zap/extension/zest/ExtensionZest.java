@@ -59,11 +59,11 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.httppanel.Message;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
@@ -1374,7 +1374,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                     }
                     if (ZestZapUtils.getShadowLevel(cnpNodes.get(i)) == 0
                             && (stmt.isPassive()
-                                    || !ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(
+                                    || !ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE.equals(
                                             script.getTypeName()))) {
                         // Dont paste non passive statements into a passive script
                         if (afterChild != null) {
@@ -1453,7 +1453,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
         ZestScriptWrapper script = this.getZestTreeModel().getScriptWrapper(node);
 
-        if (ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(script.getType().getName())) {
+        if (ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE.equals(script.getType().getName())) {
             isPassive = true;
         }
 

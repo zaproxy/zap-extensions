@@ -28,9 +28,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.pscan.internal.PassiveScannerOptions;
+import org.zaproxy.addon.pscan.internal.RegexAutoTagScanner;
 import org.zaproxy.addon.pscan.internal.ScanRuleManager;
-import org.zaproxy.zap.extension.pscan.PassiveScanParam;
-import org.zaproxy.zap.extension.pscan.scanner.RegexAutoTagScanner;
 import org.zaproxy.zap.utils.ZapHtmlLabel;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
@@ -69,20 +69,18 @@ public class OptionsPassiveScan extends AbstractParamPanel {
     @Override
     public void initParam(Object obj) {
         OptionsParam optionsParam = (OptionsParam) obj;
-        PassiveScanParam passiveScanParam = optionsParam.getParamSet(PassiveScanParam.class);
-        tableModel.setScanDefns(passiveScanParam.getAutoTagScanners());
-        scannersOptionsPanel.setRemoveWithoutConfirmation(
-                !passiveScanParam.isConfirmRemoveAutoTagScanner());
+        PassiveScannerOptions options = optionsParam.getParamSet(PassiveScannerOptions.class);
+        tableModel.setScanDefns(options.getAutoTagScanners());
+        scannersOptionsPanel.setRemoveWithoutConfirmation(!options.isConfirmRemoveAutoTagScanner());
     }
 
     @Override
     public void saveParam(Object obj) throws Exception {
         OptionsParam optionsParam = (OptionsParam) obj;
-        PassiveScanParam passiveScanParam = optionsParam.getParamSet(PassiveScanParam.class);
-        passiveScanParam.setAutoTagScanners(tableModel.getElements());
-        passiveScanParam.setConfirmRemoveAutoTagScanner(
-                !scannersOptionsPanel.isRemoveWithoutConfirmation());
-        scanRuleManager.setAutoTagScanners(passiveScanParam.getAutoTagScanners());
+        PassiveScannerOptions options = optionsParam.getParamSet(PassiveScannerOptions.class);
+        options.setAutoTagScanners(tableModel.getElements());
+        options.setConfirmRemoveAutoTagScanner(!scannersOptionsPanel.isRemoveWithoutConfirmation());
+        scanRuleManager.setAutoTagScanners(options.getAutoTagScanners());
     }
 
     @Override

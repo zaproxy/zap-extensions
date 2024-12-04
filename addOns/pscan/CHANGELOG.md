@@ -7,13 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Manage the passive scan related options and the scan rules (Issue 7959).
+- Add passive scanner (Issue 7959).
 
 ### Changed
 - Fields with default or missing values are omitted for the following automation jobs in saved Automation Framework plans:
     - `passiveScan-config`
     - `passiveScan-wait`
+
 ### Fixed
-- Fixed passiveScan-wait alert tests.
+- Fixed `passiveScan-wait` alert tests.
 
 ## [0.0.1] - 2024-09-02
 ### Added
@@ -21,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Provide the Stats Passive Scan Rule (Issue 7959).
 - Provide the scan status label (Issue 7959).
 - Provide the `pscan` API on newer ZAP versions (Issue 7959).
+- Provide the Automation Framework passive scan jobs:
+  - `passiveScan-config`
+  - `passiveScan-wait`
 - Dynamically un/load add-on passive scan rules (Issue 7959).
 
 [0.0.1]: https://github.com/zaproxy/zap-extensions/releases/pscan-v0.0.1

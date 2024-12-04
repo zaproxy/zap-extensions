@@ -28,7 +28,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zest.core.v1.ZestConditional;
 import org.zaproxy.zest.core.v1.ZestContainer;
@@ -111,7 +111,7 @@ public class ZestTreeTransferHandler extends TransferHandler {
         ZestScriptWrapper sw = extension.getZestTreeModel().getScriptWrapper(parent);
         if (sw == null) {
             return false;
-        } else if (ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(sw.getTypeName())
+        } else if (ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE.equals(sw.getTypeName())
                 && !isSafe(dragStmt)) {
             // LOGGER.debug("canImport cant paste unsafe stmts into passive script");
             return false;

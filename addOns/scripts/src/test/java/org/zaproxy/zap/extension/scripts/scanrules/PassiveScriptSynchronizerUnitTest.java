@@ -41,14 +41,16 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadataProvider;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
+import org.zaproxy.addon.pscan.PassiveScannersManager;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.testutils.TestUtils;
 
 public class PassiveScriptSynchronizerUnitTest extends TestUtils {
 
-    private ExtensionPassiveScan extensionPassiveScan;
+    private ExtensionPassiveScan2 extensionPassiveScan;
+    private PassiveScannersManager scannersManager;
     private ExtensionScript extensionScript;
     private ExtensionLoader extensionLoader;
     private Model model;
@@ -56,7 +58,8 @@ public class PassiveScriptSynchronizerUnitTest extends TestUtils {
     @BeforeEach
     void setUp() throws Exception {
         setUpZap();
-        extensionPassiveScan = mock(ExtensionPassiveScan.class);
+        extensionPassiveScan = mock(ExtensionPassiveScan2.class);
+        scannersManager = mock(PassiveScannersManager.class);
         extensionScript = mock(ExtensionScript.class);
         extensionLoader = mock(ExtensionLoader.class);
         model = mock(Model.class);
@@ -80,13 +83,13 @@ public class PassiveScriptSynchronizerUnitTest extends TestUtils {
         ScriptWrapper script =
                 createScriptWrapper(metadataProvider, ScanRuleMetadataProvider.class);
         var scanRuleCaptor = ArgumentCaptor.forClass(PassiveScriptScanRule.class);
-        given(extensionPassiveScan.addPluginPassiveScanner(any())).willReturn(true);
+        given(scannersManager.add(any())).willReturn(true);
         // When
         try (var ignored = mockStatic(PluginFactory.class)) {
             synchronizer.scriptAdded(script);
         }
         // Then
-        verify(extensionPassiveScan, times(1)).addPluginPassiveScanner(scanRuleCaptor.capture());
+        verify(scannersManager, times(1)).add(scanRuleCaptor.capture());
         PassiveScriptScanRule scanRule = scanRuleCaptor.getValue();
         assertThat(scanRule, is(notNullValue()));
         assertThat(scanRule.getPluginId(), is(equalTo(metadata.getId())));
@@ -108,7 +111,7 @@ public class PassiveScriptSynchronizerUnitTest extends TestUtils {
                 };
         ScriptWrapper script =
                 createScriptWrapper(metadataProvider, ScanRuleMetadataProvider.class);
-        given(extensionPassiveScan.addPluginPassiveScanner(any())).willReturn(true);
+        given(scannersManager.add(any())).willReturn(true);
         // When
         try (var ignored = mockStatic(PluginFactory.class)) {
             synchronizer.scriptAdded(script);
@@ -116,7 +119,7 @@ public class PassiveScriptSynchronizerUnitTest extends TestUtils {
         }
         // Then
         var scanRuleCaptor = ArgumentCaptor.forClass(PassiveScriptScanRule.class);
-        verify(extensionPassiveScan, times(1)).addPluginPassiveScanner(scanRuleCaptor.capture());
+        verify(scannersManager, times(1)).add(scanRuleCaptor.capture());
         PassiveScriptScanRule scanRule = scanRuleCaptor.getValue();
         assertThat(scanRule, is(notNullValue()));
         assertThat(scanRule.getPluginId(), is(equalTo(metadata.getId())));
@@ -136,7 +139,7 @@ public class PassiveScriptSynchronizerUnitTest extends TestUtils {
                         return metadata;
                     }
                 };
-        given(extensionPassiveScan.addPluginPassiveScanner(any())).willReturn(true);
+        given(scannersManager.add(any())).willReturn(true);
         ScriptWrapper script =
                 createScriptWrapper(metadataProvider, ScanRuleMetadataProvider.class);
         // When
@@ -146,7 +149,7 @@ public class PassiveScriptSynchronizerUnitTest extends TestUtils {
         }
         // Then
         var scanRuleCaptor = ArgumentCaptor.forClass(PassiveScriptScanRule.class);
-        verify(extensionPassiveScan, times(1)).removePluginPassiveScanner(scanRuleCaptor.capture());
+        verify(scannersManager, times(1)).remove(scanRuleCaptor.capture());
         PassiveScriptScanRule scanRule = scanRuleCaptor.getValue();
         assertThat(scanRule, is(notNullValue()));
         assertThat(scanRule.getPluginId(), is(equalTo(metadata.getId())));
@@ -178,8 +181,9 @@ public class PassiveScriptSynchronizerUnitTest extends TestUtils {
             throws Exception {
         var script = mock(ScriptWrapper.class);
         given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extensionScript);
-        given(extensionLoader.getExtension(ExtensionPassiveScan.class))
+        given(extensionLoader.getExtension(ExtensionPassiveScan2.class))
                 .willReturn(extensionPassiveScan);
+        given(extensionPassiveScan.getPassiveScannersManager()).willReturn(scannersManager);
         given(extensionScript.getInterface(script, scriptClass)).willReturn(scriptInterface);
         return script;
     }

@@ -7,6 +7,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## Unreleased
 ### Changed
 - To handle automation class changes.
+- Depend on newer version of Passive Scanner add-on (Issue 7959).
 
 ## [0.10.0] - 2024-09-02
 ### Changed

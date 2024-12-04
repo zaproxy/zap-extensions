@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Fields with default or missing values are omitted for the `alertFilter` job in saved Automation Framework plans.
+- Depend on Passive Scanner add-on (Issue 7959).
 
 ## [22] - 2024-10-07
 ### Fixed

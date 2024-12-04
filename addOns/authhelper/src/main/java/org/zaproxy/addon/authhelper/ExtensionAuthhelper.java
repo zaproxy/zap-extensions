@@ -43,12 +43,12 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.PostBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.PostBasedAuthenticationMethodType.PostBasedAuthenticationMethod;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.sessions.ExtensionSessionManagement;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
@@ -66,7 +66,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
             List.of(
-                    ExtensionPassiveScan.class,
+                    ExtensionPassiveScan2.class,
                     ExtensionSelenium.class,
                     ExtensionUserManagement.class);
 

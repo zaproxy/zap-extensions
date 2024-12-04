@@ -31,6 +31,9 @@ zapAddOn {
                 register("network") {
                     version.set(">=0.6.0")
                 }
+                register("pscan") {
+                    version.set(">= 0.1.0 & < 1.0.0")
+                }
                 register("selenium") {
                     version.set("15.*")
                 }
@@ -50,6 +53,7 @@ crowdin {
 dependencies {
     zapAddOn("commonlib")
     zapAddOn("network")
+    zapAddOn("pscan")
     zapAddOn("selenium")
     zapAddOn("spiderAjax")
 

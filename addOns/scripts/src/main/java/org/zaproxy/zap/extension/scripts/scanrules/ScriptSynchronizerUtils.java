@@ -27,7 +27,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadataProvider;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
@@ -76,7 +76,7 @@ class ScriptSynchronizerUtils {
             hasClashingId = true;
             existingRuleName = loadedPlugin.getName();
         } else {
-            var pluginPassiveScanner = getExtPscan().getPluginPassiveScanner(id);
+            var pluginPassiveScanner = getExtPscan().getPassiveScannersManager().getScanRule(id);
             if (pluginPassiveScanner != null) {
                 hasClashingId = true;
                 existingRuleName = pluginPassiveScanner.getName();
@@ -100,7 +100,9 @@ class ScriptSynchronizerUtils {
         return Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
     }
 
-    private static ExtensionPassiveScan getExtPscan() {
-        return Control.getSingleton().getExtensionLoader().getExtension(ExtensionPassiveScan.class);
+    private static ExtensionPassiveScan2 getExtPscan() {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionPassiveScan2.class);
     }
 }

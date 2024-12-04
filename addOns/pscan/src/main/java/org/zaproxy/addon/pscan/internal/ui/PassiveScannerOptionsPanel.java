@@ -26,8 +26,7 @@ import javax.swing.JLabel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
-import org.zaproxy.zap.extension.pscan.PassiveScanParam;
+import org.zaproxy.addon.pscan.internal.PassiveScannerOptions;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapHtmlLabel;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
@@ -44,7 +43,7 @@ public class PassiveScannerOptionsPanel extends AbstractParamPanel {
     private final ZapNumberSpinner maxBodySizeInBytes;
     private final JButton clearQueue;
 
-    public PassiveScannerOptionsPanel(ExtensionPassiveScan extPassiveScan, I18N messages) {
+    public PassiveScannerOptionsPanel(Runnable queueClearer, I18N messages) {
         setName(messages.getString("pscan.options.main.name"));
 
         scanOnlyInScopeCheckBox =
@@ -55,7 +54,7 @@ public class PassiveScannerOptionsPanel extends AbstractParamPanel {
         maxAlertsPerRule = new ZapNumberSpinner();
         maxBodySizeInBytes = new ZapNumberSpinner();
         clearQueue = new JButton(messages.getString("pscan.options.main.label.clearQueue"));
-        clearQueue.addActionListener(al -> extPassiveScan.clearQueue());
+        clearQueue.addActionListener(al -> queueClearer.run());
 
         setLayout(new GridBagLayout());
 
@@ -91,7 +90,7 @@ public class PassiveScannerOptionsPanel extends AbstractParamPanel {
     @Override
     public void initParam(Object obj) {
         OptionsParam optionsParam = (OptionsParam) obj;
-        PassiveScanParam pscanOptions = optionsParam.getParamSet(PassiveScanParam.class);
+        PassiveScannerOptions pscanOptions = optionsParam.getParamSet(PassiveScannerOptions.class);
 
         scanOnlyInScopeCheckBox.setSelected(pscanOptions.isScanOnlyInScope());
         scanFuzzerMessagesCheckBox.setSelected(pscanOptions.isScanFuzzerMessages());
@@ -103,7 +102,7 @@ public class PassiveScannerOptionsPanel extends AbstractParamPanel {
     @Override
     public void saveParam(Object obj) throws Exception {
         OptionsParam optionsParam = (OptionsParam) obj;
-        PassiveScanParam pscanOptions = optionsParam.getParamSet(PassiveScanParam.class);
+        PassiveScannerOptions pscanOptions = optionsParam.getParamSet(PassiveScannerOptions.class);
 
         pscanOptions.setScanOnlyInScope(scanOnlyInScopeCheckBox.isSelected());
         pscanOptions.setScanFuzzerMessages(scanFuzzerMessagesCheckBox.isSelected());
