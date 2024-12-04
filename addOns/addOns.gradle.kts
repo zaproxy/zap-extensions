@@ -20,7 +20,7 @@ plugins {
     jacoco
     id("org.cyclonedx.bom") version "1.8.2" apply false
     id("org.rm3l.datanucleus-gradle-plugin") version "2.0.0" apply false
-    id("org.zaproxy.add-on") version "0.11.0" apply false
+    id("org.zaproxy.add-on") version "0.12.0" apply false
     id("org.zaproxy.crowdin") version "0.4.0" apply false
     id("me.champeau.gradle.japicmp") version "0.4.3" apply false
 }
