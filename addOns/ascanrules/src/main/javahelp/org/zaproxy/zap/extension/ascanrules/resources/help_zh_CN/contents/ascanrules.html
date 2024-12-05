@@ -3,50 +3,43 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Active Scan Rules
+主动扫描规则
 </title>
 </head>
 <body>
-<h1>Active Scan Rules</h1>
-The following release status active scan rules are included in this add-on:
+<h1>主动扫描规则</h1>
+本插件包含以下已发行版本的主动扫描规则：
 
-<h2 id="id-40034">.env Information Leak</h2>
-Checks for web accessible .env files which may leak sensitive information 
-(such as usernames, passwords, API or APP keys, etc.).
-Environment files come in many flavors but mostly they are KEY=VALUE formatted. <br>
-This rule checks for how servers deliver them by default;
-NGINX returns them as binary/octet-stream content-type Apache just returns the text
-with no content-type. This rule also check for content length over 500 characters to try and exclude
-larger, possibly intentional, files.
+<h2 id="id-40034">.env 信息泄漏</h2>
+检查可能泄露敏感信息（如用户名、密码、API 或 APP 密钥等）的网络访问 .env 文件。
+
+环境文件有很多种，但大多数都是 KEY=VALUE 格式。 <br>
+该规则会检查服务器默认的传输方式；NGINX 会以二进制/八进制流内容类型返回；Apache 只返回文本，不带内容类型。 该规则还检查内容长度是否超过 500 个字符，以尝试排除较大的、可能是有意为之的文件。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/EnvFileScanRule.java">EnvFileScanRule.java</a>
+最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/EnvFileScanRule.java">EnvFileScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40034/">40034</a>.
+警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40034/">40034</a>.
 
-<h2 id="id-40032">.htaccess Information Leak</h2>
-Checks for web accessible .htaccess files which may leak sensitive information 
-(such as usernames, error handling, redirects, directory listing settings, etc.).
+<h2 id="id-40032">.htaccess 信息泄露</h2>。
+检查可能泄露敏感信息（如用户名、错误处理、重定向、目录列表设置等）的网络访问 .htaccess 文件。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HtAccessScanRule.java">HtAccessScanRule.java</a>
+最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/HtAccessScanRule.java">HtAccessScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40032/">40032</a>.
+警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40032/">40032</a>.
 
-<h2 id="id-30001">Buffer Overflow</h2>
+<h2 id="id-30001">缓冲区溢出</h2>。
 
-Looks for indicators of buffer overflows in compiled code.  It does this by putting out large strings of input text and look for code crash
-and abnormal session closure.
+查找已编译代码中的缓冲区溢出指标。  它的做法是输出大串输入文本，并查找代码崩溃和会话的异常关闭。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/BufferOverflowScanRule.java">BufferOverflowScanRule.java</a>
+最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/BufferOverflowScanRule.java">BufferOverflowScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/30001/">30001</a>.
+警报 ID: <a href="https://www.zaproxy.org/docs/alerts/30001/">30001</a>.
 
-<h2 id="id-90034">Cloud Metadata Attack</h2>
-Attempts to abuse a misconfigured NGINX server in order to access the instance metadata maintained by cloud service providers such as AWS, GCP, Azure, and Alibaba.<br>
-Most of these services provide metadata via an internal unroutable IP address '169.254.169.254' ('100.100.100.200' for Alibaba) - this can be exposed by incorrectly configured NGINX servers and accessed by using this IP address in the Host header field.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CloudMetadataScanRule.java">CloudMetadataScanRule.java</a>
+<h2 id="id-90034">云元数据攻击</0
+试图滥用配置错误的><p>
+最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CloudMetadataScanRule.java">CloudMetadataScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90034/">90034</a>.
+警报 ID: <a href="https://www.zaproxy.org/docs/alerts/90034/">90034</a>.
 
 <h2 id="id-90019">Code Injection</h2>
 
