@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Hidden File Finder
     - User Agent Fuzzer
 - Now depends on minimum Common Library version 1.29.0.
+- Use location header in sql injection response comparisons (Issue 8651)
 
 ### Added
 - Standardized Scan Policy related alert tags on the rule.
