@@ -270,7 +270,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             }
         }
 
-        System.err.println(updateLoggers);
         if (updateLoggers) {
             ctx.updateLoggers();
         }
