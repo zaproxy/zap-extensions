@@ -306,15 +306,18 @@ public class AutomationPlan {
                 data.addJob(job.getData());
             }
 
-            FilterProvider filters =
-                    new SimpleFilterProvider()
-                            .addFilter(
-                                    DefaultPropertyFilter.FILTER_ID, new DefaultPropertyFilter());
-            writer.println(YAML_OBJECT_MAPPER.writer(filters).writeValueAsString(data));
+            writer.println(writeObjectAsString(data));
         }
         this.changed = false;
         AutomationEventPublisher.publishEvent(AutomationEventPublisher.PLAN_SAVED, this, null);
         return true;
+    }
+
+    public static String writeObjectAsString(Object obj) throws JsonProcessingException {
+        FilterProvider filters =
+                new SimpleFilterProvider()
+                        .addFilter(DefaultPropertyFilter.FILTER_ID, new DefaultPropertyFilter());
+        return YAML_OBJECT_MAPPER.writer(filters).writeValueAsString(obj);
     }
 
     public static class Data {
