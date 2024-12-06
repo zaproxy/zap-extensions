@@ -60,6 +60,7 @@ import org.zaproxy.addon.client.internal.ReportedObject;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanController;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanHelper;
 import org.zaproxy.addon.client.pscan.OptionsPassiveScan;
+import org.zaproxy.addon.client.spider.AuthenticationHandler;
 import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.client.spider.ClientSpiderDialog;
 import org.zaproxy.addon.client.spider.PopupMenuSpider;
@@ -83,6 +84,7 @@ import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProfileManager;
 import org.zaproxy.zap.model.ScanEventPublisher;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
@@ -125,6 +127,9 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     private ClientSpiderDialog spiderDialog;
     private ZapMenuItem menuItemCustomScan;
+
+    private List<AuthenticationHandler> authHandlers =
+            Collections.synchronizedList(new ArrayList<>());
 
     public ExtensionClientIntegration() {
         super(NAME);
@@ -516,6 +521,18 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         return Constant.messages.getString(PREFIX + ".desc");
     }
 
+    public void addAuthenticationHandler(AuthenticationHandler handler) {
+        authHandlers.add(handler);
+    }
+
+    public void removeAuthenticationHandler(AuthenticationHandler handler) {
+        authHandlers.remove(handler);
+    }
+
+    public List<AuthenticationHandler> getAuthenticationHandlers() {
+        return Collections.unmodifiableList(authHandlers);
+    }
+
     private class SessionChangeListener implements SessionChangedListener {
 
         @Override
@@ -582,15 +599,27 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
      *
      * @param url The inital URL to request
      * @param options Custom options.
+     * @param user the user to be used for authentication.
      * @return an id which can be used to reference the specific scan.
      */
-    public int runSpider(String url, ClientOptions options) {
+    public int runSpider(String url, ClientOptions options, User user) {
         synchronized (spiders) {
-            ClientSpider cs = new ClientSpider(this, url, options, spiders.size());
+            ClientSpider cs = new ClientSpider(this, url, options, spiders.size(), user);
             spiders.add(cs);
             cs.start();
             return spiders.indexOf(cs);
         }
+    }
+
+    /**
+     * Run the client spider with the specified options
+     *
+     * @param url The initial URL to request
+     * @param options Custom options.
+     * @return an id which can be used to reference the specific scan.
+     */
+    public int runSpider(String url, ClientOptions options) {
+        return this.runSpider(url, options, null);
     }
 
     public ClientSpider getSpider(int id) {

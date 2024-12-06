@@ -43,6 +43,7 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.users.User;
 
 public class ClientSpider implements EventConsumer {
 
@@ -74,6 +75,7 @@ public class ClientSpider implements EventConsumer {
     private ClientOptions options;
 
     private String targetUrl;
+    private User user;
     private ExtensionClientIntegration extClient;
     private ExtensionSelenium extSelenium;
 
@@ -92,15 +94,26 @@ public class ClientSpider implements EventConsumer {
     private int tasksTotalCount;
 
     public ClientSpider(
-            ExtensionClientIntegration extClient, String targetUrl, ClientOptions options, int id) {
+            ExtensionClientIntegration extClient,
+            String targetUrl,
+            ClientOptions options,
+            int id,
+            User user) {
         this.extClient = extClient;
         this.targetUrl = targetUrl;
         this.options = options;
         this.id = id;
+        this.user = user;
+
         ZAP.getEventBus().registerConsumer(this, ClientMap.class.getCanonicalName());
 
         extSelenium =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+    }
+
+    public ClientSpider(
+            ExtensionClientIntegration extClient, String targetUrl, ClientOptions options, int id) {
+        this(extClient, targetUrl, options, id, null);
     }
 
     public void start() {
@@ -108,6 +121,13 @@ public class ClientSpider implements EventConsumer {
         lastEventReceivedtime = startTime;
         if (options.getMaxDuration() > 0) {
             maxTime = startTime + TimeUnit.MINUTES.toMillis(options.getMaxDuration());
+        }
+        if (user != null) {
+            synchronized (this.extClient.getAuthenticationHandlers()) {
+                this.extClient
+                        .getAuthenticationHandlers()
+                        .forEach(handler -> handler.enableAuthentication(user));
+            }
         }
 
         this.threadPool =
@@ -299,6 +319,13 @@ public class ClientSpider implements EventConsumer {
         long timeTaken = System.currentTimeMillis() - startTime;
         tempLogProgress(
                 "Spider finished " + DurationFormatUtils.formatDuration(timeTaken, "HH:MM:SS"));
+        if (this.user != null) {
+            synchronized (extClient.getAuthenticationHandlers()) {
+                extClient
+                        .getAuthenticationHandlers()
+                        .forEach(handler -> handler.disableAuthentication(user));
+            }
+        }
         synchronized (this.webDriverPool) {
             for (WebDriver wd : this.webDriverPool) {
                 wd.quit();
