@@ -35,21 +35,25 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.internal.FirefoxProfileManager;
+import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class ExtensionClientIntegrationUnitTest {
 
     @Test
-    void shouldCreatFirefoxPrefFile() throws IOException {
+    void shouldCreateFirefoxPrefFile() throws IOException {
         // Given
         ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
         Control.initSingletonForTesting(mock(Model.class), extensionLoader);
@@ -127,23 +131,33 @@ class ExtensionClientIntegrationUnitTest {
     @Test
     void shouldStartSpider() throws IOException {
         // Given
+        Constant.messages = new I18N(Locale.ENGLISH);
         ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
-        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
+        Model model = mock(Model.class);
+        Session session = mock(Session.class);
+        when(model.getSession()).thenReturn(session);
+        Control.initSingletonForTesting(model, extensionLoader);
         ExtensionSelenium extSel = mock(ExtensionSelenium.class);
         when(extensionLoader.getExtension(ExtensionSelenium.class)).thenReturn(extSel);
         given(extSel.getProxiedBrowser(anyString(), anyString())).willReturn(mock(WebDriver.class));
         ExtensionClientIntegration extClient = new ExtensionClientIntegration();
+        extClient.initModel(model);
+        extClient.init();
         ClientOptions options = new ClientOptions();
         options.load(new ZapXmlConfiguration());
         options.setThreadCount(1);
 
-        // When
-        int spiderId = extClient.runSpider("https://www.example.com", options);
-        ClientSpider spider = extClient.getSpider(spiderId);
-        boolean isRunning = spider.isRunning();
-        spider.stop();
+        try {
+            // When
+            int spiderId = extClient.runSpider("https://www.example.com", options);
+            ClientSpider spider = extClient.getSpider(spiderId);
+            boolean isRunning = spider.isRunning();
+            spider.stop();
 
-        // Then
-        assertEquals(true, isRunning);
+            // Then
+            assertEquals(true, isRunning);
+        } finally {
+            extClient.unload();
+        }
     }
 }
