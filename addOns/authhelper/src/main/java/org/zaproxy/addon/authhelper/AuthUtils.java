@@ -146,10 +146,10 @@ public class AuthUtils {
                 inputElements.stream()
                         .filter(
                                 elem ->
-                                        "text".equalsIgnoreCase(elem.getAttribute("type"))
+                                        "text".equalsIgnoreCase(elem.getDomAttribute("type"))
                                                 || "email"
                                                         .equalsIgnoreCase(
-                                                                elem.getAttribute("type")))
+                                                                elem.getDomAttribute("type")))
                         .collect(Collectors.toList());
 
         if (!filteredList.isEmpty()) {
@@ -161,27 +161,27 @@ public class AuthUtils {
                             || attributeContains(we, "name", USERNAME_FIELD_INDICATORS)) {
                         LOGGER.debug(
                                 "Choosing 'best' user field: name={} id={}",
-                                we.getAttribute("name"),
-                                we.getAttribute("id"));
+                                we.getDomAttribute("name"),
+                                we.getDomAttribute("id"));
                         return we;
                     }
                     LOGGER.debug(
                             "Not yet choosing user field: name={} id={}",
-                            we.getAttribute("name"),
-                            we.getAttribute("id"));
+                            we.getDomAttribute("name"),
+                            we.getDomAttribute("id"));
                 }
             }
             LOGGER.debug(
                     "Choosing first user field: name={} id={}",
-                    filteredList.get(0).getAttribute("name"),
-                    filteredList.get(0).getAttribute("id"));
+                    filteredList.get(0).getDomAttribute("name"),
+                    filteredList.get(0).getDomAttribute("id"));
             return filteredList.get(0);
         }
         return null;
     }
 
     static boolean attributeContains(WebElement we, String attribute, String[] strings) {
-        String att = we.getAttribute(attribute);
+        String att = we.getDomAttribute(attribute);
         if (att == null) {
             return false;
         }
@@ -196,7 +196,7 @@ public class AuthUtils {
 
     static WebElement getPasswordField(List<WebElement> inputElements) {
         for (WebElement element : inputElements) {
-            if ("password".equalsIgnoreCase(element.getAttribute("type"))) {
+            if ("password".equalsIgnoreCase(element.getDomAttribute("type"))) {
                 return element;
             }
         }

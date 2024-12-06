@@ -108,7 +108,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("type"), is(equalTo("text")));
+        assertThat(field.getDomAttribute("type"), is(equalTo("text")));
     }
 
     @Test
@@ -124,7 +124,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("type"), is(equalTo("email")));
+        assertThat(field.getDomAttribute("type"), is(equalTo("email")));
     }
 
     @Test
@@ -141,7 +141,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("id"), is(equalTo("email")));
+        assertThat(field.getDomAttribute("id"), is(equalTo("email")));
     }
 
     @Test
@@ -158,7 +158,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("name"), is(equalTo("username")));
+        assertThat(field.getDomAttribute("name"), is(equalTo("username")));
     }
 
     @Test
@@ -189,7 +189,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("type"), is(equalTo("password")));
+        assertThat(field.getDomAttribute("type"), is(equalTo("password")));
     }
 
     @Test
@@ -666,7 +666,7 @@ class AuthUtilsUnitTest extends TestUtils {
         }
 
         @Override
-        public String getAttribute(String name) {
+        public String getDomAttribute(String name) {
             switch (name) {
                 case "id":
                     return id;
@@ -677,6 +677,12 @@ class AuthUtilsUnitTest extends TestUtils {
                 default:
                     return null;
             }
+        }
+
+        @Override
+        @Deprecated
+        public String getAttribute(String name) {
+            return null;
         }
 
         @Override

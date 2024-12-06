@@ -543,8 +543,8 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
             try {
                 // Save for the evidence
                 tagName = element.getTagName();
-                attributeId = element.getAttribute("id");
-                attributeName = element.getAttribute("name");
+                attributeId = element.getDomAttribute("id");
+                attributeName = element.getDomAttribute("name");
 
                 if (tagName.equals("input")) {
                     steps.add(
@@ -611,8 +611,8 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
             try {
                 // Save for the evidence
                 tagName = element.getTagName();
-                attributeId = element.getAttribute("id");
-                attributeName = element.getAttribute("name");
+                attributeId = element.getDomAttribute("id");
+                attributeName = element.getDomAttribute("name");
 
                 addClickStep(xpath);
                 element.click();
