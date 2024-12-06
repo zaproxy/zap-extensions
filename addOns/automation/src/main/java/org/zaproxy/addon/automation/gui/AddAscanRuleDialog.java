@@ -60,6 +60,7 @@ public class AddAscanRuleDialog extends StandardFieldsDialog {
     public AddAscanRuleDialog(
             AscanRulesTableModel model, PolicyDefinition.Rule rule, int tableIndex)
             throws ConfigurationException {
+        // This dimension will not make a difference, pack is called below
         super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(300, 150));
         this.rule = rule;
         this.model = model;
@@ -108,6 +109,7 @@ public class AddAscanRuleDialog extends StandardFieldsDialog {
         this.addComboField(STRENGTH_PARAM, allstrengths, strengthName);
 
         this.addPadding();
+        pack();
     }
 
     @Override
