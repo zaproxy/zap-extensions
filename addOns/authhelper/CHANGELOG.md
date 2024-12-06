@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Depend on Passive Scanner add-on (Issue 7959).
+- Optionally depend on the Client Integration add-on.
 
 ## [0.16.0] - 2024-11-06
 ### Fixed

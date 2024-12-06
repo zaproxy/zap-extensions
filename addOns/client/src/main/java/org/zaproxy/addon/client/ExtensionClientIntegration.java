@@ -51,6 +51,7 @@ import org.zaproxy.addon.client.impl.ClientZestRecorder;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanController;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanHelper;
 import org.zaproxy.addon.client.pscan.OptionsPassiveScan;
+import org.zaproxy.addon.client.spider.AuthenticationHandler;
 import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.client.spider.ClientSpiderDialog;
 import org.zaproxy.addon.client.spider.PopupMenuSpider;
@@ -107,6 +108,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     private ClientSpiderDialog spiderDialog;
     private ZapMenuItem menuItemCustomScan;
+
+    private List<AuthenticationHandler> authHandlers = new ArrayList<>();
 
     public ExtensionClientIntegration() {
         super(NAME);
@@ -476,6 +479,18 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
+    }
+
+    public void addAuthenticationHandler(AuthenticationHandler handler) {
+        authHandlers.add(handler);
+    }
+
+    public void removeAuthenticationHandler(AuthenticationHandler handler) {
+        authHandlers.remove(handler);
+    }
+
+    protected List<AuthenticationHandler> getAuthenticationHandlers() {
+        return Collections.unmodifiableList(authHandlers);
     }
 
     private class SessionChangeListener implements SessionChangedListener {
