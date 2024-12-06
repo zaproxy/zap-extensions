@@ -111,6 +111,12 @@ public class AjaxSpiderExplorer implements PlugableSpider {
     @Override
     public void startScan(URI uri) {
         int selInd = this.getSelectComboBox().getSelectedIndex();
+
+        // Save the settings for next time
+        QuickStartParam qsParam = extension.getExtQuickStart().getQuickStartParam();
+        qsParam.setAjaxSpiderSelection(((Select) selectComboBox.getSelectedItem()).name());
+        qsParam.setAjaxSpiderDefaultBrowser(browserComboBox.getSelectedItem().toString());
+
         if (selInd == Select.NEVER.getIndex()) {
             ZAP.getEventBus().unregisterConsumer(eventConsumer);
             return;
@@ -180,13 +186,6 @@ public class AjaxSpiderExplorer implements PlugableSpider {
         if (selectComboBox == null) {
             selectComboBox = new JComboBox<>();
             Stream.of(Select.values()).forEach(s -> selectComboBox.addItem(s));
-            selectComboBox.addActionListener(
-                    e ->
-                            extension
-                                    .getExtQuickStart()
-                                    .getQuickStartParam()
-                                    .setAjaxSpiderSelection(
-                                            ((Select) selectComboBox.getSelectedItem()).name()));
         }
         return selectComboBox;
     }
@@ -198,13 +197,6 @@ public class AjaxSpiderExplorer implements PlugableSpider {
                     extension.getExtSelenium().createProvidedBrowsersComboBoxModel();
             model.setIncludeUnconfigured(false);
             browserComboBox.setModel(model);
-            browserComboBox.addActionListener(
-                    e ->
-                            extension
-                                    .getExtQuickStart()
-                                    .getQuickStartParam()
-                                    .setAjaxSpiderDefaultBrowser(
-                                            browserComboBox.getSelectedItem().toString()));
 
             String defaultBrowserId = Browser.FIREFOX_HEADLESS.getId();
             Optional<ProvidedBrowserUI> defaultItem =
