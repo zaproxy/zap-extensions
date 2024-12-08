@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.15.0.
 - Maintenance changes.
+- Add help button to Options panel and add further detailed Help content.
+- The superfluous ID element has been removed from the GUI and config.
 
 ## [0.13.0] - 2023-11-10
 ### Changed
