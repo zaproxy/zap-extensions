@@ -109,7 +109,7 @@ public class RetireScanRule extends PluginPassiveScanner {
                 .setReference(getDetails(result.getInformation().getInfo()))
                 .setSolution(Constant.messages.getString("retire.rule.soln", result.getFilename()))
                 .setEvidence(result.getEvidence().trim())
-                .setCweId(829); // CWE-829: Inclusion of Functionality from Untrusted Control Sphere
+                .setCweId(1395); // CWE-1395: Dependency on Vulnerable Third-Party Component
     }
 
     @Override

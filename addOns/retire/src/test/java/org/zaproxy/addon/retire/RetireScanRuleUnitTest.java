@@ -225,7 +225,9 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
     void shouldReturnExpectedMappings() {
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
+        int cweId = rule.getExampleAlerts().get(0).getCweId();
         // Then
+        assertThat(cweId, is(equalTo(1395)));
         assertThat(tags.size(), is(equalTo(2)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Depend on Passive Scanner add-on (Issue 7959).
+- The scan rule now uses a more specific CWE (Issue 8733).
 
 ## [21.43.0] - 2024-11-25
 ### Changed
