@@ -15,6 +15,7 @@
     <mapID target="automation.ascanconfig" url="contents/job-ascanconfig.html" />
     <mapID target="automation.ascanpolicy" url="contents/job-ascanpolicy.html" />
     <mapID target="automation.delay" url="contents/job-delay.html" />
+    <mapID target="automation.exitstatus" url="contents/job-exitstatus.html" />
     <mapID target="automation.requestor" url="contents/job-requestor.html" />
     <mapID target="automation.about" url="contents/about.html" />
     <mapID target="automation.tests" url="contents/tests.html" />
