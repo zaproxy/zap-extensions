@@ -1159,7 +1159,7 @@ class ExtentionAutomationUnitTest extends TestUtils {
         @Override
         public void logTestsToProgress(AutomationProgress progress) {
             if (testsAdded && testsLogError) {
-                testsLoggedString = RandomStringUtils.randomAlphanumeric(20);
+                testsLoggedString = RandomStringUtils.secure().nextAlphanumeric(20);
                 progress.error(testsLoggedString);
             }
         }

@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support for Sites Tree export and prune.
 
 ### Changed
+- Update minimum ZAP version to 2.16.0.
 - Update dependency.
 - Maintenance changes.
 

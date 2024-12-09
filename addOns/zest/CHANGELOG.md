@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow other add-ons to create a Zest script from a list of messages.
 
 ### Changed
+- Update minimum ZAP version to 2.16.0.
 - Use Semantic Version.
 - Maintenance changes.
 - Depend on Passive Scanner add-on (Issue 7959).

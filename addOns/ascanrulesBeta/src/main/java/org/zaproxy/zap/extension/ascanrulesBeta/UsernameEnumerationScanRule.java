@@ -395,7 +395,8 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
 
                 // get a random user name the same length as the original!
                 String invalidUsername =
-                        RandomStringUtils.randomAlphabetic(currentHtmlParameter.getValue().length())
+                        RandomStringUtils.secure()
+                                .nextAlphabetic(currentHtmlParameter.getValue().length())
                                 .toLowerCase(Locale.ROOT);
 
                 LOGGER.debug("The invalid username chosen was [{}]", invalidUsername);

@@ -256,8 +256,8 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
             tracemsg.setRequestHeader(traceRequestHeader);
             // create a random cookie, and set it up, so we can detect if the TRACE is enabled (in
             // which case, it should echo it back in the response)
-            String randomcookiename = RandomStringUtils.randomAlphanumeric(15);
-            String randomcookievalue = RandomStringUtils.randomAlphanumeric(40);
+            String randomcookiename = randomAlphanumeric(15);
+            String randomcookievalue = randomAlphanumeric(40);
             TreeSet<HtmlParameter> cookies = tracemsg.getCookieParams();
             cookies.add(
                     new HtmlParameter(
@@ -391,7 +391,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                 int step2numberOfNodesForMethod = 0;
                 String[] nodeServersForMethod = new String[MAX_FORWARDS_MAXIMUM + 2];
                 String previousServerDetails =
-                        RandomStringUtils.random(15, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+                        RandomStringUtils.secure().next(15, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
                 int previousResponseStatusCode = 0;
                 int responseStatusCode = 0;
                 boolean httpHandled =
@@ -454,8 +454,8 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
 
                     // create a random cookie, and set it up, so we can detect if the TRACE is
                     // enabled (in which case, it should echo it back in the response)
-                    String randomcookiename2 = RandomStringUtils.randomAlphanumeric(15);
-                    String randomcookievalue2 = RandomStringUtils.randomAlphanumeric(40);
+                    String randomcookiename2 = randomAlphanumeric(15);
+                    String randomcookievalue2 = randomAlphanumeric(40);
                     TreeSet<HtmlParameter> cookies2 = mfMethodMsg.getCookieParams();
                     cookies2.add(
                             new HtmlParameter(
@@ -579,7 +579,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
             //	  yes, I know TRACK requests should *not* be cached, but not all servers are
             // compliant.
             String randompiece =
-                    RandomStringUtils.random(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+                    RandomStringUtils.secure().next(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
             trackRequestHeader.setURI(
                     new URI(
                             trackURI.getScheme()
@@ -763,6 +763,10 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
             // if it's in English, it's still better than not having it at all.
             LOGGER.error("An error occurred checking for proxy disclosure", e);
         }
+    }
+
+    private static String randomAlphanumeric(int count) {
+        return RandomStringUtils.secure().nextAlphanumeric(count);
     }
 
     private static String getPath(URI uri) {

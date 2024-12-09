@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Standardized Policy Tags to the base Scripts Active Scanner.
 
 ### Changed
+- Update minimum ZAP version to 2.16.0.
 - Fields with default or missing values are omitted for the `script` job in saved Automation Framework plans.
 - Depends on an updated version of the Common Library add-on.
 - Depend on Passive Scanner add-on (Issue 7959).

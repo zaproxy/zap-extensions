@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Typo in automation job help.
 
 ### Changed
+- Update minimum ZAP version to 2.16.0.
 - Fields with default or missing values are omitted for the `replacer` job in saved Automation Framework plans.
 
 ## [19] - 2024-10-07

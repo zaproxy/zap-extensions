@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add passive scanner (Issue 7959).
 
 ### Changed
+- Update minimum ZAP version to 2.16.0.
 - Fields with default or missing values are omitted for the following automation jobs in saved Automation Framework plans:
     - `passiveScan-config`
     - `passiveScan-wait`

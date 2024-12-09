@@ -461,9 +461,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin
             }
             String filename = originalMessage.getRequestHeader().getURI().getName();
 
-            String randomfilename =
-                    RandomStringUtils.random(
-                            filename.length(), "abcdefghijklmnopqrstuvwxyz0123456789");
+            String randomfilename = random(filename.length());
             String randomfilepath = temppath.substring(0, slashposition) + "/" + randomfilename;
 
             LOGGER.debug("Trying non-existent file: {}", randomfilepath);
@@ -506,10 +504,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin
                 // If the parent folder name is really short a collision is likely
                 // Default to a reasonable length, which may have the inverse effect but we'll
                 // chance it
-                String randomparentfoldername =
-                        RandomStringUtils.random(
-                                Math.max(parentfoldername.length(), 4),
-                                "abcdefghijklmnopqrstuvwxyz0123456789");
+                String randomparentfoldername = random(Math.max(parentfoldername.length(), 4));
 
                 // replace the parent folder name with the random one, and build it back into a
                 // string
@@ -806,6 +801,10 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin
                     originalMessage.getRequestHeader().getURI(),
                     e);
         }
+    }
+
+    private static String random(int count) {
+        return RandomStringUtils.secure().next(count, "abcdefghijklmnopqrstuvwxyz0123456789");
     }
 
     private static void setMessageCookies(HttpMessage newMsg, HttpMessage originalMsg) {

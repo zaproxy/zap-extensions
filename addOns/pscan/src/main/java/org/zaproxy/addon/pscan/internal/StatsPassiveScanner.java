@@ -28,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.SessionStructure;
@@ -39,14 +40,10 @@ public class StatsPassiveScanner extends PluginPassiveScanner {
     public static final String CONTENT_TYPE_STATS_PREFIX = "stats.contentType.";
     public static final String RESPONSE_TIME_STATS_PREFIX = "stats.responseTime.";
 
-    private static final boolean LOAD_RULE =
-            org.zaproxy.zap.extension.pscan.scanner.StatsPassiveScanner.class.getAnnotation(
-                            Deprecated.class)
-                    != null;
     private static StatsPassiveScanner instance;
 
-    // Package to prevent the scan rule from being picked automatically for the manifest, while the
-    // code is being migrated from core.
+    // Package to prevent the scan rule from being picked automatically for the manifest to keep the
+    // expected status.
     StatsPassiveScanner() {
         // Keep same status as when in core.
         setStatus(AddOn.Status.release);
@@ -104,17 +101,8 @@ public class StatsPassiveScanner extends PluginPassiveScanner {
         return true;
     }
 
-    public static void load(org.zaproxy.zap.extension.pscan.ExtensionPassiveScan extension) {
-        if (LOAD_RULE) {
-            instance = new StatsPassiveScanner();
-            extension.addPluginPassiveScanner(instance);
-        }
-    }
-
-    public static void unload(org.zaproxy.zap.extension.pscan.ExtensionPassiveScan extension) {
-        if (LOAD_RULE) {
-            extension.removePluginPassiveScanner(instance);
-            instance = null;
-        }
+    public static void load(ExtensionPassiveScan2 extension) {
+        instance = new StatsPassiveScanner();
+        extension.getPassiveScannersManager().add(instance);
     }
 }

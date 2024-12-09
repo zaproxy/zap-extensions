@@ -215,7 +215,8 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
             alphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         }
 
-        String referenceValue = RandomStringUtils.random(errorPolyglots[0].length(), alphabet);
+        String referenceValue =
+                RandomStringUtils.secure().next(errorPolyglots[0].length(), alphabet);
         HttpMessage refMsg = getNewMsg();
         setParameter(refMsg, paramName, referenceValue);
         try {

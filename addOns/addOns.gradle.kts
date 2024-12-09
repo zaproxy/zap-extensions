@@ -161,7 +161,7 @@ subprojects {
         }
     }
 
-    val zapGav = "org.zaproxy:zap:2.15.0"
+    val zapGav = "org.zaproxy:zap:2.16.0-SNAPSHOT"
     dependencies {
         "zap"(zapGav)
     }
@@ -174,7 +174,7 @@ subprojects {
         )
 
         manifest {
-            zapVersion.set("2.15.0")
+            zapVersion.set("2.16.0")
 
             changesFile.set(tasks.named<ConvertMarkdownToHtml>("generateManifestChanges").flatMap { it.html })
             repo.set("https://github.com/zaproxy/zap-extensions/")

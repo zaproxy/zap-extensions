@@ -62,7 +62,7 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin
 
     /** a random string (which remains constant across multiple runs, as long as Zap is not */
     static final String RANDOM_STRING =
-            RandomStringUtils.random(20, "abcdefghijklmnopqrstuvwxyz0123456789");
+            RandomStringUtils.secure().next(20, "abcdefghijklmnopqrstuvwxyz0123456789");
 
     private static final String ATTACK_PARAM =
             "?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input";

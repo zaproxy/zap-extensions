@@ -364,8 +364,8 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
         // TRACE is supported in 1.0. TRACK is presumably the same, since it is
         // a alias for TRACE. Typical Microsoft.
         msg.getRequestHeader().setVersion(HttpRequestHeader.HTTP10);
-        String randomcookiename = RandomStringUtils.randomAlphanumeric(15);
-        String randomcookievalue = RandomStringUtils.randomAlphanumeric(40);
+        String randomcookiename = randomAlphanumeric(15);
+        String randomcookievalue = randomAlphanumeric(40);
         TreeSet<HtmlParameter> cookies = msg.getCookieParams();
         cookies.add(
                 new HtmlParameter(HtmlParameter.Type.cookie, randomcookiename, randomcookievalue));
@@ -539,10 +539,10 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
 
         if (httpMethod.equals(HttpRequestHeader.PUT)
                 || httpMethod.equals(HttpRequestHeader.PATCH)) {
-            String randomKey = RandomStringUtils.randomAlphanumeric(15);
-            String randomValue = RandomStringUtils.randomAlphanumeric(15);
+            String randomKey = randomAlphanumeric(15);
+            String randomValue = randomAlphanumeric(15);
             String randomResource =
-                    RandomStringUtils.random(10, "abcdefghijklmnopqrstuvwxyz0123456789");
+                    RandomStringUtils.secure().next(10, "abcdefghijklmnopqrstuvwxyz0123456789");
             String requestBody = '"' + randomKey + "\":\"" + randomValue + '"';
             String newURI = msg.getRequestHeader().getURI().toString();
             if (newURI.endsWith("/")) {
@@ -636,5 +636,9 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
                     .raise();
         } catch (Exception e) {
         }
+    }
+
+    private static String randomAlphanumeric(int count) {
+        return RandomStringUtils.secure().nextAlphanumeric(count);
     }
 }

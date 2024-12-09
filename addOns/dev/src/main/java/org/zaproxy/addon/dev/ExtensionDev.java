@@ -65,10 +65,7 @@ public class ExtensionDev extends ExtensionAdaptor {
             extensionHook.addApiImplementor(new DevApi());
         }
 
-        if (hasView()
-                && org.zaproxy.zap.extension.log4j.ExtensionLog4j.class.getAnnotation(
-                                Deprecated.class)
-                        != null) {
+        if (hasView()) {
             ZapMenuItem menuGarbageCollect = new ZapMenuItem("dev.tools.menu.gc");
             menuGarbageCollect.addActionListener(e -> Runtime.getRuntime().gc());
             extensionHook.getHookMenu().addToolsMenuItem(menuGarbageCollect);

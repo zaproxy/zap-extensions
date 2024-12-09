@@ -69,6 +69,7 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
      * @since 6.0.0
      * @deprecated (6.7.0) Use {@link ExtensionCommonlib#getValueProvider()}.
      */
+    @SuppressWarnings("removal")
     @Deprecated(since = "6.7.0", forRemoval = true)
     public ValueGenerator getValueGenerator() {
         return new DefaultValueGenerator();

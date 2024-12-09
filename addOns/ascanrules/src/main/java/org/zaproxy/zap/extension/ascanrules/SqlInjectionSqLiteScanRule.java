@@ -498,9 +498,10 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
                         // a potential SQL injection causing payload.
                         HttpMessage msgParseDelay = getNewMsg();
                         String parseDelayCheckParameter =
-                                RandomStringUtils.random(
-                                        newTimeBasedInjectionValue.length(),
-                                        RANDOM_PARAMETER_CHARS);
+                                RandomStringUtils.secure()
+                                        .next(
+                                                newTimeBasedInjectionValue.length(),
+                                                RANDOM_PARAMETER_CHARS);
                         setParameter(msgParseDelay, paramName, parseDelayCheckParameter);
                         sendAndReceive(msgParseDelay);
                         countTimeBasedRequests++;

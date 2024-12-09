@@ -41,7 +41,7 @@ public class JsonMultipleCookiesDir extends TestAuthDirectory {
     }
 
     public String getTempToken(String username) {
-        String token = RandomStringUtils.randomAlphanumeric(32);
+        String token = RandomStringUtils.secure().nextAlphanumeric(32);
         tempTokens.put(token, username);
         return token;
     }
