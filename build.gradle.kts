@@ -28,6 +28,9 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+        }
     }
 
     spotless {
@@ -46,6 +49,12 @@ allprojects {
     project.plugins.withType(JavaPlugin::class) {
         dependencies {
             "errorprone"("com.google.errorprone:error_prone_core:2.26.1")
+
+            // Include annotations used by Log4j2 Core library to avoid compiler warnings.
+            "compileOnly"("biz.aQute.bnd:biz.aQute.bnd.annotation:6.4.1")
+            "compileOnly"("com.google.code.findbugs:findbugs-annotations:3.0.1")
+            "testCompileOnly"("biz.aQute.bnd:biz.aQute.bnd.annotation:6.4.1")
+            "testCompileOnly"("com.google.code.findbugs:findbugs-annotations:3.0.1")
         }
 
         java {

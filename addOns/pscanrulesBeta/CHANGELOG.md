@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.16.0.
 - Updated help with specific Category identifier for use with the Custom Payloads add-on for the "Dangerous JS Functions" rule.
 
 ### Fixed

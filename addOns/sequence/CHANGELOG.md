@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Depend on Import/Export add-on to allow to import HARs as sequences.
-- Update minimum ZAP version to 2.15.0.
+- Update minimum ZAP version to 2.16.0.
 - Maintenance changes.
 - Sequence scan implementation.
 - Promoted to beta.

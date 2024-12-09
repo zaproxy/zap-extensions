@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.log4j;
+package org.zaproxy.addon.dev.error;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -36,7 +36,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.zaproxy.zap.extension.log4j.ExtensionLog4j.ErrorAppender;
+import org.zaproxy.addon.dev.error.LoggedErrorsHandler.ErrorAppender;
 
 /** Unit test for {@link LoggedErrorsHandler}. */
 class LoggedErrorsHandlerUnitTest {

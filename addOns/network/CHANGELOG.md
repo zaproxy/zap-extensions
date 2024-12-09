@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.16.0.
 - Configure the logging to prevent verbose log messages when using BC JSSE provider.
 - Improve error handling on client's unknown CA TLS alert.
 - Report available TLS providers when failed to query the TLS/SSL protocol versions.

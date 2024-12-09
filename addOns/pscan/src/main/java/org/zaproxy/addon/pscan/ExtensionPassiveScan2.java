@@ -19,9 +19,6 @@
  */
 package org.zaproxy.addon.pscan;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.List;
 import javax.swing.ImageIcon;
 import org.apache.logging.log4j.LogManager;
@@ -51,6 +48,8 @@ import org.zaproxy.addon.pscan.internal.ui.OptionsPassiveScan;
 import org.zaproxy.addon.pscan.internal.ui.PassiveScannerOptionsPanel;
 import org.zaproxy.addon.pscan.internal.ui.PolicyPassiveScanPanel;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
+import org.zaproxy.zap.extension.pscan.PassiveController;
+import org.zaproxy.zap.extension.pscan.PassiveScanRuleManager;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -77,120 +76,84 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
                     ExtensionAlert.class,
                     org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class);
 
-    private final boolean loadScanRules;
     private AddOnScanRulesLoader scanRulesLoader;
 
-    private boolean addScanStatus;
     private ScanStatus scanStatus;
     private StatsListener statsListener;
 
-    private final boolean addScriptType;
     private ScriptType scriptType;
-
-    private final boolean addOptions;
 
     private OptionsPassiveScan optionsPassiveScan;
     private PolicyPassiveScanPanel policyPanel;
     private PassiveScannerOptions options;
     private PassiveScannerOptionsPanel passiveScannerOptionsPanel;
 
-    private Method setPassiveScanRuleManager;
     private PassiveScannersManagerImpl scannersManager;
-    private Object scanRuleManagerProxy;
+    private PassiveScanRuleManager scanRuleManagerProxy;
+    private PassiveController passiveControllerProxy;
 
-    private final boolean addScanner;
     private PassiveScanController psc;
     private boolean passiveScanEnabled;
 
     public ExtensionPassiveScan2() {
         super(NAME);
 
-        loadScanRules =
-                !hasField(
-                        org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class,
-                        "addOnScanRules");
+        scannersManager = new PassiveScannersManagerImpl();
+        scanRuleManagerProxy =
+                new PassiveScanRuleManager() {
 
-        addScriptType =
-                isFieldDeprecated(
-                        org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class,
-                        "SCRIPT_TYPE_PASSIVE");
+                    @Override
+                    public boolean add(PassiveScanner scanRule) {
+                        return scannersManager.add(scanRule);
+                    }
 
-        addOptions =
-                hasField(
-                        org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class,
-                        "scanRuleManager");
+                    @Override
+                    public PassiveScanner getScanRule(int id) {
+                        return scannersManager.getScanRule(id);
+                    }
 
-        if (addOptions) {
-            try {
-                scannersManager = new PassiveScannersManagerImpl();
-                InvocationHandler invocationHandler =
-                        (o, method, args) -> {
-                            switch (method.getName()) {
-                                case "add":
-                                    return scannersManager.add((PassiveScanner) args[0]);
-                                case "getScanRule":
-                                    return scannersManager.getScanRule((int) args[0]);
+                    @Override
+                    public List<PassiveScanner> getScanRules() {
+                        return scannersManager.getScanners();
+                    }
 
-                                case "getScanRules":
-                                    return scannersManager.getScanners();
+                    @Override
+                    public List<PluginPassiveScanner> getPluginScanRules() {
+                        return scannersManager.getScanRules();
+                    }
 
-                                case "getPluginScanRules":
-                                    return scannersManager.getScanRules();
+                    @Override
+                    public boolean remove(String className) {
+                        return scannersManager.removeImpl(className);
+                    }
 
-                                case "remove":
-                                    return scannersManager.removeImpl(args[0]);
+                    @Override
+                    public boolean remove(PassiveScanner scanRule) {
+                        return scannersManager.removeImpl(scanRule);
+                    }
+                };
 
-                                default:
-                                    return null;
-                            }
-                        };
+        passiveControllerProxy =
+                new PassiveController() {
 
-                Class<?> clazz =
-                        org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class
-                                .getClassLoader()
-                                .loadClass(
-                                        "org.zaproxy.zap.extension.pscan.PassiveScanRuleManager");
-                setPassiveScanRuleManager =
-                        org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class
-                                .getDeclaredMethod("setPassiveScanRuleManager", clazz);
-                scanRuleManagerProxy =
-                        Proxy.newProxyInstance(
-                                clazz.getClassLoader(), new Class<?>[] {clazz}, invocationHandler);
+                    @Override
+                    public int getRecordsToScan() {
+                        return ExtensionPassiveScan2.this.getRecordsToScan();
+                    }
 
-            } catch (Exception e) {
-                LOGGER.error("Failed to create ScanRuleManager:", e);
-            }
-        }
-
-        addScanner =
-                hasField(org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class, "controller");
+                    @Override
+                    public void clearQueue() {
+                        ExtensionPassiveScan2.this.clearQueue();
+                    }
+                };
     }
 
-    private void setScanRuleManager(Object object) {
-        try {
-            setPassiveScanRuleManager.invoke(getExtPscan(), object);
-        } catch (Exception e) {
-            LOGGER.error("Failed to set ScanRuleManager:", e);
-        }
+    private void setScanRuleManager(PassiveScanRuleManager manager) {
+        getExtPscan().setPassiveScanRuleManager(manager);
     }
 
-    private static boolean isFieldDeprecated(Class<?> clazz, String name) {
-        try {
-            return clazz.getField(name).getAnnotation(Deprecated.class) != null;
-        } catch (NoSuchFieldException e) {
-            // Nothing to do.
-        }
-        return true;
-    }
-
-    private static boolean hasField(Class<?> clazz, String name) {
-        try {
-            clazz.getDeclaredField(name);
-            return true;
-        } catch (NoSuchFieldException e) {
-            // Nothing to do.
-        }
-        return false;
+    private void setPassiveController(PassiveController controller) {
+        getExtPscan().setPassiveController(controller);
     }
 
     @Override
@@ -210,39 +173,25 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
     @Override
     public void init() {
-        if (scannersManager != null) {
-            setScanRuleManager(scanRuleManagerProxy);
-        }
+        setScanRuleManager(scanRuleManagerProxy);
+        setPassiveController(passiveControllerProxy);
 
-        if (loadScanRules) {
-            scanRulesLoader = new AddOnScanRulesLoader(this);
-        }
-
-        addScanStatus =
-                hasView()
-                        && !hasField(
-                                org.zaproxy.zap.extension.pscan.ExtensionPassiveScan.class,
-                                "scanStatus");
+        scanRulesLoader = new AddOnScanRulesLoader(this);
     }
 
     @Override
     public void postInit() {
-        if (loadScanRules) {
-            scanRulesLoader.load();
-        }
-        StatsPassiveScanner.load(getExtPscan());
+        scanRulesLoader.load();
+
+        StatsPassiveScanner.load(this);
     }
 
     @Override
     public void optionsLoaded() {
-        if (scannersManager != null) {
-            scannersManager.getManager().setAutoTagScanners(options.getAutoTagScanners());
-        }
+        scannersManager.getManager().setAutoTagScanners(options.getAutoTagScanners());
 
-        if (addScanner) {
-            passiveScanEnabled = true;
-            getPassiveScanController();
-        }
+        passiveScanEnabled = true;
+        getPassiveScanController();
     }
 
     /**
@@ -262,9 +211,6 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
      * @since 0.1.0
      */
     public int getRecordsToScan() {
-        if (!addScanner) {
-            return getExtPscan().getRecordsToScan();
-        }
         if (passiveScanEnabled && psc != null) {
             return psc.getRecordsToScan();
         }
@@ -280,10 +226,6 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
      * @since 0.1.0
      */
     public void clearQueue() {
-        if (!addScanner) {
-            getExtPscan().clearQueue();
-            return;
-        }
         if (psc != null) {
             psc.clearQueue();
         }
@@ -291,7 +233,7 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
     private PassiveScanController getPassiveScanController() {
         if (passiveScanEnabled && psc == null) {
-            final ExtensionLoader extensionLoader = Control.getSingleton().getExtensionLoader();
+            ExtensionLoader extensionLoader = Control.getSingleton().getExtensionLoader();
             psc =
                     new PassiveScanController(
                             this,
@@ -305,29 +247,20 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
     @Override
     public void hook(ExtensionHook extensionHook) {
-        if (scannersManager != null) {
-            if (addScanner) {
-                options = new PassiveScannerOptions();
-                extensionHook.addOptionsParamSet(options);
-            }
+        options = new PassiveScannerOptions();
+        extensionHook.addOptionsParamSet(options);
 
-            if (hasView()) {
-                extensionHook.getHookView().addOptionPanel(getPassiveScannerOptionsPanel());
-                extensionHook.getHookView().addOptionPanel(getOptionsPassiveScan());
-                extensionHook.getHookView().addOptionPanel(getPolicyPanel());
-            }
+        if (hasView()) {
+            extensionHook.getHookView().addOptionPanel(getPassiveScannerOptionsPanel());
+            extensionHook.getHookView().addOptionPanel(getOptionsPassiveScan());
+            extensionHook.getHookView().addOptionPanel(getPolicyPanel());
         }
 
-        if (org.zaproxy.zap.extension.pscan.PassiveScanAPI.class.getAnnotation(Deprecated.class)
-                != null) {
-            extensionHook.addApiImplementor(new PassiveScanApi(this, scannersManager));
-        }
+        extensionHook.addApiImplementor(new PassiveScanApi(this, scannersManager));
 
-        if (loadScanRules) {
-            extensionHook.addAddOnInstallationStatusListener(scanRulesLoader);
-        }
+        extensionHook.addAddOnInstallationStatusListener(scanRulesLoader);
 
-        if (addScanStatus) {
+        if (hasView()) {
             scanStatus =
                     new ScanStatus(
                             DisplayUtils.getScaledIcon(getClass().getResource("icons/pscan.png")),
@@ -350,23 +283,19 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
                     .addFooterToolbarRightLabel(scanStatus.getCountLabel());
         }
 
-        if (addScriptType) {
-            ExtensionScript extScript = getExtension(ExtensionScript.class);
-            if (extScript != null) {
-                scriptType =
-                        new ScriptType(
-                                SCRIPT_TYPE_PASSIVE,
-                                "pscan.scripts.type.passive",
-                                createScriptIcon(),
-                                true);
-                extScript.registerScriptType(scriptType);
-            }
+        ExtensionScript extScript = getExtension(ExtensionScript.class);
+        if (extScript != null) {
+            scriptType =
+                    new ScriptType(
+                            SCRIPT_TYPE_PASSIVE,
+                            "pscan.scripts.type.passive",
+                            createScriptIcon(),
+                            true);
+            extScript.registerScriptType(scriptType);
         }
 
-        if (addScanner) {
-            extensionHook.addProxyListener(new ProxyListenerImpl());
-            extensionHook.addSessionListener(new SessionListenerImpl());
-        }
+        extensionHook.addProxyListener(new ProxyListenerImpl());
+        extensionHook.addSessionListener(new SessionListenerImpl());
     }
 
     private PolicyPassiveScanPanel getPolicyPanel() {
@@ -413,12 +342,9 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (loadScanRules) {
-            scanRulesLoader.unload();
-        }
-        StatsPassiveScanner.unload(getExtPscan());
+        scanRulesLoader.unload();
 
-        if (addScanStatus) {
+        if (hasView()) {
             getView()
                     .getMainFrame()
                     .getMainFooterPanel()
@@ -431,9 +357,8 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
             getExtension(ExtensionScript.class).removeScriptType(scriptType);
         }
 
-        if (addOptions) {
-            setScanRuleManager(null);
-        }
+        setScanRuleManager(null);
+        setPassiveController(null);
     }
 
     @Override
@@ -451,10 +376,6 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
     }
 
     void setPassiveScanEnabled(boolean enabled) {
-        if (!addScanner) {
-            return;
-        }
-
         if (passiveScanEnabled != enabled) {
             passiveScanEnabled = enabled;
             if (enabled) {
@@ -466,9 +387,6 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
     }
 
     PassiveScanTask getOldestRunningTask() {
-        if (!addScanner) {
-            return null;
-        }
         if (passiveScanEnabled) {
             return getPassiveScanController().getOldestRunningTask();
         }
@@ -476,9 +394,6 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
     }
 
     List<PassiveScanTask> getRunningTasks() {
-        if (!addScanner) {
-            return List.of();
-        }
         if (passiveScanEnabled) {
             return getPassiveScanController().getRunningTasks();
         }

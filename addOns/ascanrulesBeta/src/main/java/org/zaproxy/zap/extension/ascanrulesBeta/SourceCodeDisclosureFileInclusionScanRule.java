@@ -51,7 +51,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
 
     // use a random file name which is very unlikely to exist
     private static final String NON_EXISTANT_FILENAME =
-            RandomStringUtils.random(38, "abcdefghijklmnopqrstuvwxyz");
+            RandomStringUtils.secure().next(38, "abcdefghijklmnopqrstuvwxyz");
 
     // the prefixes to try for source file inclusion
     private String[] LOCAL_SOURCE_FILE_TARGET_PREFIXES = {

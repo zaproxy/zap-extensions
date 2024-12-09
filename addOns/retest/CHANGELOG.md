@@ -6,6 +6,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.16.0.
 - To handle automation class changes.
 - Depend on newer version of Passive Scanner add-on (Issue 7959).
 

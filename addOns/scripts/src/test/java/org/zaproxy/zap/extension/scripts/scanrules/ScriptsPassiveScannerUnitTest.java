@@ -52,8 +52,8 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
+import org.zaproxy.zap.extension.pscan.PassiveScanActions;
 import org.zaproxy.zap.extension.pscan.PassiveScanData;
-import org.zaproxy.zap.extension.pscan.PassiveScanTaskHelper;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptsCache;
 import org.zaproxy.zap.extension.script.ScriptsCache.CachedScript;
@@ -128,18 +128,18 @@ class ScriptsPassiveScannerUnitTest extends TestUtils {
     void shouldAddTagsWithTaskHelper() {
         // Given
         String tag = "Tag";
-        PassiveScanTaskHelper taskHelper = mock(PassiveScanTaskHelper.class);
+        PassiveScanActions actions = mock(PassiveScanActions.class);
         HistoryReference href = mock(HistoryReference.class);
         when(message.getHistoryRef()).thenReturn(href);
         ScriptsPassiveScanner scriptsPassiveScanner = new ScriptsPassiveScanner();
         PassiveScanData passiveScanData = mock(PassiveScanData.class);
         when(passiveScanData.getMessage()).thenReturn(message);
         scriptsPassiveScanner.setHelper(passiveScanData);
-        scriptsPassiveScanner.setTaskHelper(taskHelper);
+        scriptsPassiveScanner.setPassiveScanActions(actions);
         // When
         scriptsPassiveScanner.addHistoryTag(tag);
         // Then
-        verify(taskHelper).addHistoryTag(href, tag);
+        verify(actions).addHistoryTag(href, tag);
     }
 
     @Test

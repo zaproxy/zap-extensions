@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Sequence data to JSON & HTML reports.
 
 ### Changed
+- Update minimum ZAP version to 2.16.0.
 - Update automation job help.
 - Fields with default or missing values are omitted for the `report` job in saved Automation Framework plans.
 

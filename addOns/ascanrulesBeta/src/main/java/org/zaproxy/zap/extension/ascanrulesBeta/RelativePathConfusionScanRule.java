@@ -164,11 +164,11 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
      * same URL (in Attack mode, for instance) yielding new vulnerabilities via different random
      * file paths.
      */
-    private static final String RANDOM_ATTACK_PATH =
-            "/"
-                    + RandomStringUtils.random(5, RANDOM_PARAMETER_CHARS)
-                    + "/"
-                    + RandomStringUtils.random(5, RANDOM_PARAMETER_CHARS);
+    private static final String RANDOM_ATTACK_PATH = "/" + random(5) + "/" + random(5);
+
+    private static String random(int count) {
+        return RandomStringUtils.secure().next(count, RANDOM_PARAMETER_CHARS);
+    }
 
     private static final Map<String, String> ALERT_TAGS;
 
