@@ -38,6 +38,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link HarUtils}. */
@@ -217,7 +218,9 @@ class HarUtilsUnitTest extends TestUtils {
     void shouldCreateJsonAsBytesFromHarLog() throws Exception {
         // Given
         var log = HarUtils.createZapHarLog();
-        log.getEntries().add(HarUtils.createHarEntry(1, 2, createHttpMessage()));
+        HttpMessage msg = createHttpMessage();
+        msg.getRequestHeader().setHeader(HttpRequestHeader.USER_AGENT, "My-user-agent");
+        log.getEntries().add(HarUtils.createHarEntry(1, 2, msg));
         // When
         byte[] bytes = HarUtils.toJsonAsBytes(log);
         // Then
@@ -247,7 +250,7 @@ class HarUtilsUnitTest extends TestUtils {
                                         + "          \"value\" : \"example.com\"\n"
                                         + "        }, {\n"
                                         + "          \"name\" : \"user-agent\",\n"
-                                        + "          \"value\" : \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0\"\n"
+                                        + "          \"value\" : \"My-user-agent\"\n"
                                         + "        }, {\n"
                                         + "          \"name\" : \"pragma\",\n"
                                         + "          \"value\" : \"no-cache\"\n"
@@ -261,7 +264,7 @@ class HarUtilsUnitTest extends TestUtils {
                                         + "          \"params\" : [ ],\n"
                                         + "          \"text\" : \"\"\n"
                                         + "        },\n"
-                                        + "        \"headersSize\" : 191,\n"
+                                        + "        \"headersSize\" : 124,\n"
                                         + "        \"bodySize\" : 0\n"
                                         + "      },\n"
                                         + "      \"response\" : {\n"
