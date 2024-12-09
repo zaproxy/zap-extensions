@@ -36,7 +36,9 @@ import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.ClientMap;
+import org.zaproxy.addon.client.ClientNode;
 import org.zaproxy.addon.client.ClientOptions;
+import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
@@ -72,6 +74,7 @@ public class ClientSpider implements EventConsumer {
     private ClientOptions options;
 
     private String targetUrl;
+    private ExtensionClientIntegration extClient;
     private ExtensionSelenium extSelenium;
 
     private List<WebDriver> webDriverPool = new ArrayList<>();
@@ -88,7 +91,9 @@ public class ClientSpider implements EventConsumer {
     private int tasksDoneCount;
     private int tasksTotalCount;
 
-    public ClientSpider(String targetUrl, ClientOptions options, int id) {
+    public ClientSpider(
+            ExtensionClientIntegration extClient, String targetUrl, ClientOptions options, int id) {
+        this.extClient = extClient;
         this.targetUrl = targetUrl;
         this.options = options;
         this.id = id;
@@ -111,7 +116,36 @@ public class ClientSpider implements EventConsumer {
                         new ClientSpiderThreadFactory(
                                 "ZAP-ClientSpiderThreadPool-" + id + "-thread-"));
 
+        List<String> unvisitedUrls = getUnvisitedUrls();
+
         addTask(targetUrl, options.getInitialLoadTimeInSecs());
+
+        // Add all of the known but unvisited URLs otherwise these will get ignored
+        unvisitedUrls.forEach(url -> addTask(url, options.getInitialLoadTimeInSecs()));
+    }
+
+    private List<String> getUnvisitedUrls() {
+        List<String> urls = new ArrayList<>();
+        ClientNode targetNode = extClient.getClientNode(targetUrl, false, false);
+        if (targetUrl.endsWith("/") && targetNode != null) {
+            // Start up one level as "/" will be a leaf node
+            getUnvisitedUrls(targetNode.getParent(), urls);
+        }
+
+        return urls;
+    }
+
+    private void getUnvisitedUrls(ClientNode node, List<String> urls) {
+        String nodeUrl = node.getUserObject().getUrl();
+        if (nodeUrl.startsWith(targetUrl)
+                && !(nodeUrl.length() == targetUrl.length())
+                && !node.isStorage()
+                && !node.getUserObject().isVisited()) {
+            urls.add(nodeUrl);
+        }
+        for (int i = 0; i < node.getChildCount(); i++) {
+            getUnvisitedUrls(node.getChildAt(i), urls);
+        }
     }
 
     public synchronized WebDriver getWebDriver() {
