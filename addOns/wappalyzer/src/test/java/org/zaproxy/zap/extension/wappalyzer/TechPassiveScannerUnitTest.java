@@ -635,7 +635,7 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
                                     "The following CPE is associated with the identified tech: cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*\n"
                                             + "The following version(s) is/are associated with the identified tech: 2.4.7")));
             assertThat(alert.getWascId(), is(equalTo(13)));
-            assertThat(alert.getCweId(), is(equalTo(200)));
+            assertThat(alert.getCweId(), is(equalTo(497)));
         }
 
         @Test
@@ -654,7 +654,7 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
             assertThat(alert.getOtherInfo(), is(equalTo("")));
             assertThat(alert.getReference(), is(equalTo("")));
             assertThat(alert.getWascId(), is(equalTo(13)));
-            assertThat(alert.getCweId(), is(equalTo(200)));
+            assertThat(alert.getCweId(), is(equalTo(497)));
         }
 
         @Test
@@ -673,7 +673,7 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
             assertThat(alert.getOtherInfo(), is(equalTo("")));
             assertThat(alert.getReference(), is(equalTo("https://httpd.apache.org")));
             assertThat(alert.getWascId(), is(equalTo(13)));
-            assertThat(alert.getCweId(), is(equalTo(200)));
+            assertThat(alert.getCweId(), is(equalTo(497)));
         }
 
         @Test
@@ -699,7 +699,7 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
                                     "The following CPE is associated with the identified tech: cpe:2.3:a:example_vendor:example_software:55.4.3:*:*:*:*:*:*:*\n"
                                             + "The following version(s) is/are associated with the identified tech: 55.4.3")));
             assertThat(alert.getWascId(), is(equalTo(13)));
-            assertThat(alert.getCweId(), is(equalTo(200)));
+            assertThat(alert.getCweId(), is(equalTo(497)));
         }
     }
 }
