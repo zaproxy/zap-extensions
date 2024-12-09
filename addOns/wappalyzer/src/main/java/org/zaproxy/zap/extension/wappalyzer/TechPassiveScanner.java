@@ -433,7 +433,6 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setUri(url)
                 .setDescription(getDesc(app))
-                .setCweId(200)
                 .setWascId(13);
         if (!appMatch.getEvidences().isEmpty()) {
             builder.setEvidence(appMatch.getEvidences().stream().findFirst().get());
