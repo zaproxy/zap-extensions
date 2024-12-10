@@ -39,8 +39,12 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
@@ -145,6 +149,32 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     public ExtensionSelenium() {
         super(NAME);
+
+        // Prevent verbose INFO logging of WebDriver BiDi exchanges.
+        setLogLevel(List.of("org.openqa.selenium.bidi.Connection"), Level.WARN);
+    }
+
+    private static void setLogLevel(List<String> classnames, Level level) {
+        boolean updateLoggers = false;
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration configuration = ctx.getConfiguration();
+        for (String classname : classnames) {
+            LoggerConfig loggerConfig = configuration.getLoggerConfig(classname);
+            if (!classname.equals(loggerConfig.getName())) {
+                configuration.addLogger(
+                        classname,
+                        LoggerConfig.newBuilder()
+                                .withLoggerName(classname)
+                                .withLevel(level)
+                                .withConfig(configuration)
+                                .build());
+                updateLoggers = true;
+            }
+        }
+
+        if (updateLoggers) {
+            ctx.updateLoggers();
+        }
     }
 
     @Override
@@ -1038,6 +1068,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             case FIREFOX:
             case FIREFOX_HEADLESS:
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
+                // Use WebDriver BiDi
+                firefoxOptions.setCapability("webSocketUrl", true);
+                // Force the use of just BiDi, should not be required once Selenium stops
+                // adding the preference https://github.com/SeleniumHQ/selenium/issues/14885
+                firefoxOptions.addPreference("remote.active-protocols", "1");
                 setCommonOptions(firefoxOptions, proxyAddress, proxyPort);
 
                 String binaryPath =
