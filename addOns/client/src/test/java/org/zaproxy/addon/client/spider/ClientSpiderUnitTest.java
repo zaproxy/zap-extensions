@@ -48,6 +48,7 @@ import org.zaproxy.addon.client.ClientMap;
 import org.zaproxy.addon.client.ClientNode;
 import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ClientSideDetails;
+import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -55,6 +56,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 class ClientSpiderUnitTest {
 
     private ExtensionSelenium extSel;
+    private ExtensionClientIntegration extClient;
     private ClientOptions clientOptions;
     private ClientMap map;
     private WebDriver wd;
@@ -62,6 +64,7 @@ class ClientSpiderUnitTest {
     @BeforeEach
     void setUp() {
         Control.initSingletonForTesting(Model.getSingleton(), mock(ExtensionLoader.class));
+        extClient = mock(ExtensionClientIntegration.class);
         extSel = mock(ExtensionSelenium.class);
         when(Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class))
                 .thenReturn(extSel);
@@ -82,7 +85,8 @@ class ClientSpiderUnitTest {
     @Test
     void shouldRequestInScopeUrls() {
         // Given
-        ClientSpider spider = new ClientSpider("https://www.example.com/", clientOptions, 1);
+        ClientSpider spider =
+                new ClientSpider(extClient, "https://www.example.com/", clientOptions, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
@@ -117,7 +121,8 @@ class ClientSpiderUnitTest {
     @Test
     void shouldIgnoreRequestAfterStopped() {
         // Given
-        ClientSpider spider = new ClientSpider("https://www.example.com/", clientOptions, 1);
+        ClientSpider spider =
+                new ClientSpider(extClient, "https://www.example.com/", clientOptions, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
@@ -140,7 +145,8 @@ class ClientSpiderUnitTest {
     @Test
     void shouldStartPauseResumeStopSpider() {
         // Given
-        ClientSpider spider = new ClientSpider("https://www.example.com", clientOptions, 1);
+        ClientSpider spider =
+                new ClientSpider(extClient, "https://www.example.com", clientOptions, 1);
         SpiderStatus statusPostStart;
         SpiderStatus statusPostPause;
         SpiderStatus statusPostResume;
@@ -178,7 +184,8 @@ class ClientSpiderUnitTest {
     void shouldIgnoreUrlsTooDeep() {
         // Given
         clientOptions.setMaxDepth(5);
-        ClientSpider spider = new ClientSpider("https://www.example.com/", clientOptions, 1);
+        ClientSpider spider =
+                new ClientSpider(extClient, "https://www.example.com/", clientOptions, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
@@ -220,7 +227,8 @@ class ClientSpiderUnitTest {
     void shouldIgnoreUrlsTooWide() {
         // Given
         clientOptions.setMaxChildren(4);
-        ClientSpider spider = new ClientSpider("https://www.example.com/", clientOptions, 1);
+        ClientSpider spider =
+                new ClientSpider(extClient, "https://www.example.com/", clientOptions, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
@@ -256,6 +264,56 @@ class ClientSpiderUnitTest {
                         "https://www.example.com/l3",
                         "https://www.example.com/l4"));
         assertThat(l6Node, is(notNullValue()));
+    }
+
+    @Test
+    void shouldVisitKnownUnvisitedUrls() {
+        // Given
+        ClientSpider spider =
+                new ClientSpider(extClient, "https://www.example.com/", clientOptions, 1);
+        Options options = mock(Options.class);
+        Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+        when(wd.manage()).thenReturn(options);
+        when(options.timeouts()).thenReturn(timeouts);
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+
+        ClientNode exampleTopNode = getClientNode("https://www.example.com");
+        ClientNode exampleSlashNode = getClientNode("https://www.example.com/");
+        ClientNode exampleTest1Node = getClientNode("https://www.example.com/test#1");
+        ClientNode exampleTest2Node = getClientNode("https://www.example.com/test#2");
+        ClientNode exampleVisitedNode = getClientNode("https://www.example.com/visited");
+        exampleVisitedNode.getUserObject().setVisited(true);
+        exampleTopNode.add(exampleSlashNode);
+        exampleTopNode.add(exampleTest1Node);
+        exampleTopNode.add(exampleTest2Node);
+        exampleTopNode.add(exampleVisitedNode);
+        when(extClient.getClientNode("https://www.example.com/", false, false))
+                .thenReturn(exampleSlashNode);
+
+        // When
+        spider.start();
+
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            // Ignore
+        }
+        spider.stop();
+
+        // Then
+        verify(wd, atLeastOnce()).get(argument.capture());
+
+        List<String> values = argument.getAllValues();
+        assertThat(
+                values,
+                contains(
+                        "https://www.example.com/",
+                        "https://www.example.com/test#1",
+                        "https://www.example.com/test#2"));
+    }
+
+    private ClientNode getClientNode(String url) {
+        return new ClientNode(new ClientSideDetails(url, url, false, false), false);
     }
 
     class SpiderStatus {

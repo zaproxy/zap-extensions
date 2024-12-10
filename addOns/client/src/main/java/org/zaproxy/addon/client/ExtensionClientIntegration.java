@@ -89,7 +89,6 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                     ExtensionSelenium.class);
 
     private ClientMap clientTree;
-
     private ClientMapPanel clientMapPanel;
     private ClientDetailsPanel clientDetailsPanel;
     private ClientHistoryPanel clientHistoryPanel;
@@ -113,9 +112,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     }
 
     @Override
-    public void hook(ExtensionHook extensionHook) {
-        super.hook(extensionHook);
-
+    public void init() {
         clientHistoryTableModel = new ClientHistoryTableModel();
         clientTree =
                 new ClientMap(
@@ -123,6 +120,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                                 new ClientSideDetails(
                                         Constant.messages.getString("client.tree.title"), null),
                                 this.getModel().getSession()));
+    }
+
+    @Override
+    public void hook(ExtensionHook extensionHook) {
+        super.hook(extensionHook);
 
         scanController = new ClientPassiveScanController();
         this.api = new ClientIntegrationAPI(this);
@@ -377,8 +379,12 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                             .getExtension(ExtensionSelenium.class);
             extSelenium.deregisterBrowserHook(redirectScript);
         }
-        ZAP.getEventBus().unregisterPublisher(clientTree);
-        ZAP.getEventBus().unregisterConsumer(eventConsumer);
+        if (clientTree != null) {
+            ZAP.getEventBus().unregisterPublisher(clientTree);
+        }
+        if (eventConsumer != null) {
+            ZAP.getEventBus().unregisterConsumer(eventConsumer);
+        }
     }
 
     @Override
@@ -397,6 +403,10 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     public ClientNode getOrAddClientNode(String url, boolean visited, boolean storage) {
         return this.clientTree.getOrAddNode(url, visited, storage);
+    }
+
+    public ClientNode getClientNode(String url, boolean visited, boolean storage) {
+        return this.clientTree.getNode(url, visited, storage);
     }
 
     public void clientNodeSelected(ClientNode node) {
@@ -548,7 +558,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
      */
     public int runSpider(String url, ClientOptions options) {
         synchronized (spiders) {
-            ClientSpider cs = new ClientSpider(url, options, spiders.size());
+            ClientSpider cs = new ClientSpider(this, url, options, spiders.size());
             spiders.add(cs);
             cs.start();
             return spiders.indexOf(cs);
