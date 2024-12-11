@@ -28,8 +28,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.addon.client.ClientUtils;
-import org.zaproxy.addon.client.ReportedElement;
-import org.zaproxy.addon.client.ReportedObject;
+import org.zaproxy.addon.client.internal.ReportedElement;
+import org.zaproxy.addon.client.internal.ReportedObject;
 
 public class SensitiveInfoInStorageScanRule extends ClientPassiveAbstractScanRule {
 

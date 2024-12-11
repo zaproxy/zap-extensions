@@ -28,6 +28,10 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.client.internal.ClientNode;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
+import org.zaproxy.addon.client.internal.ReportedElement;
+import org.zaproxy.addon.client.internal.ReportedEvent;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -92,22 +96,13 @@ public class ClientIntegrationAPI extends ApiImplementor {
                         () -> {
                             ClientNode node =
                                     this.extension.getOrAddClientNode(urlStr, false, false);
-                            ClientSideDetails details = node.getUserObject();
-                            boolean wasVisited = details.isVisited();
                             ClientSideComponent component = new ClientSideComponent(json);
-                            boolean componentAdded = details.addComponent(component);
-                            if (!wasVisited || componentAdded) {
-                                details.setVisited(true);
-                                this.extension.clientNodeChanged(node);
-                            }
+                            extension.addComponentToNode(node, component);
                             if (component.isStorageEvent()) {
                                 String storageUrl = node.getSite() + component.getTypeForDisplay();
-                                ClientNode storageNode =
-                                        this.extension.getOrAddClientNode(storageUrl, false, true);
-                                ClientSideDetails storageDetails = storageNode.getUserObject();
-                                storageDetails.setStorage(true);
-                                storageDetails.addComponent(component);
-                                this.extension.clientNodeChanged(storageNode);
+                                extension.addComponentToNode(
+                                        this.extension.getOrAddClientNode(storageUrl, false, true),
+                                        component);
                             }
                         });
             }

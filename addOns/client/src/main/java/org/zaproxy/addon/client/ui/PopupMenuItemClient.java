@@ -17,35 +17,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.ui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import javax.swing.JTree;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.zaproxy.zap.view.ZapTable;
 
-public abstract class PopupMenuItemClientDetails extends ExtensionPopupMenuItem {
+public abstract class PopupMenuItemClient extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
-    private ClientDetailsPanel clientDetailsPanel;
+    private ClientMapPanel clientMapPanel;
 
-    public PopupMenuItemClientDetails(String text, ClientDetailsPanel clientDetailsPanel) {
+    public PopupMenuItemClient(String text, ClientMapPanel clientMapPanel) {
         super(text);
-        this.clientDetailsPanel = clientDetailsPanel;
+        this.clientMapPanel = clientMapPanel;
         this.addActionListener(l -> performAction(l));
     }
 
     @Override
     public boolean isEnableForComponent(Component invoker) {
-        boolean enabled =
-                invoker instanceof ZapTable
-                        && ClientNodeDetailsPanel.CLIENT_DETAILS_NAME.equals(invoker.getName());
-        this.setEnabled(!clientDetailsPanel.getSelectedRows().isEmpty());
-        return enabled;
+        if (invoker instanceof JTree) {
+            JTree tree = (JTree) invoker;
+            if (ClientMapPanel.CLIENT_TREE_NAME.equals(tree.getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public ClientDetailsPanel getClientDetailsPanel() {
-        return clientDetailsPanel;
+    public ClientMapPanel getClientMapPanel() {
+        return clientMapPanel;
     }
 
     abstract void performAction(ActionEvent e);

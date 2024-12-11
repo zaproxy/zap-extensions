@@ -17,11 +17,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.internal;
 
 import java.util.Objects;
 import net.sf.json.JSONObject;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.client.ExtensionClientIntegration;
 
 public class ClientSideComponent {
 

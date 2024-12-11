@@ -23,6 +23,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,16 +45,34 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.impl.ClientZestRecorder;
+import org.zaproxy.addon.client.internal.ClientMap;
+import org.zaproxy.addon.client.internal.ClientNode;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
+import org.zaproxy.addon.client.internal.ClientSideDetails;
+import org.zaproxy.addon.client.internal.ReportedElement;
+import org.zaproxy.addon.client.internal.ReportedEvent;
+import org.zaproxy.addon.client.internal.ReportedObject;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanController;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanHelper;
 import org.zaproxy.addon.client.pscan.OptionsPassiveScan;
 import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.client.spider.ClientSpiderDialog;
 import org.zaproxy.addon.client.spider.PopupMenuSpider;
+import org.zaproxy.addon.client.ui.ClientDetailsPanel;
+import org.zaproxy.addon.client.ui.ClientHistoryPanel;
+import org.zaproxy.addon.client.ui.ClientMapPanel;
+import org.zaproxy.addon.client.ui.PopupMenuClientAttack;
+import org.zaproxy.addon.client.ui.PopupMenuClientCopyUrls;
+import org.zaproxy.addon.client.ui.PopupMenuClientDelete;
+import org.zaproxy.addon.client.ui.PopupMenuClientDetailsCopy;
+import org.zaproxy.addon.client.ui.PopupMenuClientHistoryCopy;
+import org.zaproxy.addon.client.ui.PopupMenuClientOpenInBrowser;
+import org.zaproxy.addon.client.ui.PopupMenuClientShowInSites;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
@@ -75,7 +94,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     private static final String FIREFOX_PROFILES_INI = "profiles.ini";
 
-    protected static final String PREFIX = "client";
+    public static final String PREFIX = "client";
 
     protected static final String RESOURCES = "resources";
 
@@ -112,7 +131,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     }
 
     @Override
-    public void init() {
+    public void initModel(Model model) {
+        super.initModel(model);
         clientHistoryTableModel = new ClientHistoryTableModel();
         clientTree =
                 new ClientMap(
@@ -417,6 +437,14 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         this.clientTree.nodeChanged(node);
     }
 
+    public boolean addComponentToNode(ClientNode node, ClientSideComponent component) {
+        if (this.clientTree.addComponentToNode(node, component)) {
+            this.clientNodeChanged(node);
+            return true;
+        }
+        return false;
+    }
+
     public void deleteNodes(List<ClientNode> nodes) {
         this.clientTree.deleteNodes(nodes);
         if (View.isInitialised()) {
@@ -623,11 +651,18 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     public ImageIcon getIcon() {
         if (icon == null) {
-            icon =
-                    DisplayUtils.getScaledIcon(
-                            ExtensionClientIntegration.class.getResource(
-                                    ExtensionClientIntegration.RESOURCES + "/spiderClient.png"));
+            icon = getIcon("spiderClient.png");
         }
         return icon;
+    }
+
+    public static ImageIcon getIcon(String name) {
+        String resourceName = RESOURCES + "/" + name;
+        URL url = ExtensionClientIntegration.class.getResource(resourceName);
+        if (url == null) {
+            LOGGER.error("No icon with name {}", resourceName);
+            return null;
+        }
+        return DisplayUtils.getScaledIcon(url);
     }
 }

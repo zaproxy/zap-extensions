@@ -17,20 +17,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.internal;
 
 import net.sf.json.JSONObject;
 
-public class ReportedEvent extends ReportedObject {
+public class ReportedElement extends ReportedObject {
 
-    private int count;
+    private String tagType;
+    private int formId = -1;
 
-    public ReportedEvent(JSONObject json) {
-        super(json, json.getString("eventName"));
-        this.count = json.getInt("count");
+    public ReportedElement(JSONObject json) {
+        super(json);
+        this.tagType = getParam(json, "tagType");
+        if (json.containsKey("formId")) {
+            this.formId = json.getInt("formId");
+        }
     }
 
-    public int getCount() {
-        return count;
+    public String getTagType() {
+        return tagType;
+    }
+
+    public int getFormId() {
+        return formId;
     }
 }

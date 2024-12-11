@@ -17,21 +17,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.ui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.view.ZapTable;
 
-public abstract class PopupMenuItemClientHistory extends ExtensionPopupMenuItem {
+public abstract class PopupMenuItemClientDetails extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
-    private ClientHistoryPanel clientHistoryPanel;
+    private ClientDetailsPanel clientDetailsPanel;
 
-    public PopupMenuItemClientHistory(String text, ClientHistoryPanel clientHistoryPanel) {
+    public PopupMenuItemClientDetails(String text, ClientDetailsPanel clientDetailsPanel) {
         super(text);
-        this.clientHistoryPanel = clientHistoryPanel;
+        this.clientDetailsPanel = clientDetailsPanel;
         this.addActionListener(l -> performAction(l));
     }
 
@@ -39,13 +39,13 @@ public abstract class PopupMenuItemClientHistory extends ExtensionPopupMenuItem 
     public boolean isEnableForComponent(Component invoker) {
         boolean enabled =
                 invoker instanceof ZapTable
-                        && ClientHistoryPanel.CLIENT_HISTORY_NAME.equals(invoker.getName());
-        this.setEnabled(!clientHistoryPanel.getSelectedRows().isEmpty());
+                        && ClientNodeDetailsPanel.CLIENT_DETAILS_NAME.equals(invoker.getName());
+        this.setEnabled(!clientDetailsPanel.getSelectedRows().isEmpty());
         return enabled;
     }
 
-    public ClientHistoryPanel getClientHistoryPanel() {
-        return clientHistoryPanel;
+    public ClientDetailsPanel getClientDetailsPanel() {
+        return clientDetailsPanel;
     }
 
     abstract void performAction(ActionEvent e);

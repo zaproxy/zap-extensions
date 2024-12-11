@@ -17,18 +17,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.ui;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.List;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.client.internal.ClientNode;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.zap.view.LayoutHelper;
 
 public class ClientDetailsPanel extends AbstractPanel {
@@ -44,11 +46,7 @@ public class ClientDetailsPanel extends AbstractPanel {
 
         this.setLayout(new GridBagLayout());
         setName(Constant.messages.getString(ExtensionClientIntegration.PREFIX + ".details.title"));
-        setIcon(
-                new ImageIcon(
-                        ExtensionClientIntegration.class.getResource(
-                                ExtensionClientIntegration.RESOURCES
-                                        + "/application-browser.png")));
+        setIcon(ExtensionClientIntegration.getIcon("application-browser.png"));
 
         introPanel = new JPanel();
         introPanel.setLayout(new GridBagLayout());

@@ -17,10 +17,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.ui;
 
 import java.awt.event.ActionEvent;
 import java.util.function.Function;
+import org.zaproxy.addon.client.ClientUtils;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
 
 @SuppressWarnings("serial")
 public class PopupMenuClientDetailsCopy extends PopupMenuItemClientDetails {

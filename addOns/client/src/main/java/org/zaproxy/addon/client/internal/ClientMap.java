@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.internal;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -27,6 +27,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.client.ClientUtils;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventPublisher;
@@ -155,6 +156,16 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
     @Override
     public String getPublisherName() {
         return this.getClass().getCanonicalName();
+    }
+
+    public boolean addComponentToNode(ClientNode node, ClientSideComponent component) {
+        ClientSideDetails details = node.getUserObject();
+        boolean wasVisited = details.isVisited();
+        boolean componentAdded = details.addComponent(component);
+        if (!wasVisited || componentAdded) {
+            details.setVisited(true);
+        }
+        return componentAdded;
     }
 }
 

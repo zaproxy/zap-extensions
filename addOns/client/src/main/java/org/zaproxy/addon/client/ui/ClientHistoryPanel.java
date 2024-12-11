@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.ui;
 
 import java.awt.Component;
 import java.awt.GridBagLayout;
@@ -26,7 +26,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.table.TableRowSorter;
@@ -35,6 +34,9 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.client.ClientHistoryTableModel;
+import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.client.internal.ReportedObject;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.ZapTable;
@@ -50,10 +52,7 @@ public class ClientHistoryPanel extends AbstractPanel {
 
     public ClientHistoryPanel(ClientHistoryTableModel clientHistoryTableModel) {
         setName(Constant.messages.getString(ExtensionClientIntegration.PREFIX + ".history.title"));
-        setIcon(
-                new ImageIcon(
-                        ExtensionClientIntegration.class.getResource(
-                                ExtensionClientIntegration.RESOURCES + "/calendar-browser.png")));
+        setIcon(ExtensionClientIntegration.getIcon("calendar-browser.png"));
         this.clientHistoryTableModel = clientHistoryTableModel;
 
         this.setLayout(new GridBagLayout());
