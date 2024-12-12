@@ -22,10 +22,8 @@ package org.zaproxy.addon.client.ui;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.table.TableRowSorter;
@@ -67,7 +65,7 @@ public class ClientHistoryPanel extends AbstractPanel {
         return Arrays.stream(this.getHistoryTable().getSelectedRows())
                 .map(getHistoryTable()::convertRowIndexToModel)
                 .mapToObj(clientHistoryTableModel::getReportedObject)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private JXTable getHistoryTable() {
@@ -110,15 +108,7 @@ public class ClientHistoryPanel extends AbstractPanel {
 
             // The # column can contain positive numbers and blank strings
             TableRowSorter<?> tableRowSorter = new TableRowSorter<>(clientHistoryTableModel);
-            tableRowSorter.setComparator(
-                    4,
-                    new Comparator<>() {
-
-                        @Override
-                        public int compare(Object o1, Object o2) {
-                            return o1.toString().compareTo(o2.toString());
-                        }
-                    });
+            tableRowSorter.setComparator(4, (o1, o2) -> o1.toString().compareTo(o2.toString()));
             historyTable.setRowSorter(tableRowSorter);
 
             historyTable.setComponentPopupMenu(

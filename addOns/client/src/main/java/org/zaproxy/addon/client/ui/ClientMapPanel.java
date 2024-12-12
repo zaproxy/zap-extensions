@@ -24,7 +24,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -106,7 +105,7 @@ public class ClientMapPanel extends AbstractPanel {
                 .flatMap(Stream::of)
                 .map(TreePath::getLastPathComponent)
                 .map(ClientNode.class::cast)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public void deleteNodes(List<ClientNode> nodes) {

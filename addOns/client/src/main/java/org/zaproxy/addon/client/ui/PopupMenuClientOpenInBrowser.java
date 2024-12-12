@@ -55,15 +55,13 @@ public class PopupMenuClientOpenInBrowser extends ExtensionPopupMenu {
                 for (ProvidedBrowserUI bui : extSelenium.getProvidedBrowserUIList()) {
                     ProvidedBrowser pbrowser = bui.getBrowser();
                     Browser browser = Browser.getBrowserWithId(bui.getBrowser().getId());
-                    if (!pbrowser.isHeadless()) {
-                        if (browser != null) {
-                            add(
-                                    new PopupMenuItemClientOpenInBrowser(
-                                            bui.getName(),
-                                            extSelenium,
-                                            bui.getBrowser(),
-                                            clientMapPanel));
-                        }
+                    if (!pbrowser.isHeadless() && browser != null) {
+                        add(
+                                new PopupMenuItemClientOpenInBrowser(
+                                        bui.getName(),
+                                        extSelenium,
+                                        bui.getBrowser(),
+                                        clientMapPanel));
                     }
                 }
                 List<ClientNode> nodes = clientMapPanel.getSelectedNodes();

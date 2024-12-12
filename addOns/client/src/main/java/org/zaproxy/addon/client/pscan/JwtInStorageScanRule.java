@@ -110,7 +110,7 @@ public class JwtInStorageScanRule extends ClientPassiveAbstractScanRule {
                                 "client.pscan.jwtinstorage.solution."
                                         + (isLocal ? "local" : "session")))
                 .setReference("https://www.zaproxy.org/blog/2020-09-03-zap-jwt-scanner/")
-                .setCweId(200) // CWE Id: 200 - Information Exposure
+                .setCweId(922) //  CWE-922: Insecure Storage of Sensitive Information
                 .setWascId(13); // WASC Id: 13 - Information Leakage
     }
 

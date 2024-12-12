@@ -74,7 +74,8 @@ public class InformationInStorageScanRule extends ClientPassiveAbstractScanRule 
                                         obj.getId() + "=" + value,
                                         obj.getId() + "=" + decodedValue))
                 .setSolution(Constant.messages.getString("client.pscan.infoinstorage.solution"))
-                .setCweId(200) // CWE Id: 200 - Information Exposure
+                .setCweId(359) //  CWE-359: Exposure of Private Personal Information to an
+                // Unauthorized Actor
                 .setWascId(13); // WASC Id: 13 - Information Leakage
     }
 

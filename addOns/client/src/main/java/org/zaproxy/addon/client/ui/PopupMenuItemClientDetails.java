@@ -32,7 +32,7 @@ public abstract class PopupMenuItemClientDetails extends ExtensionPopupMenuItem 
     public PopupMenuItemClientDetails(String text, ClientDetailsPanel clientDetailsPanel) {
         super(text);
         this.clientDetailsPanel = clientDetailsPanel;
-        this.addActionListener(l -> performAction(l));
+        this.addActionListener(this::performAction);
     }
 
     @Override

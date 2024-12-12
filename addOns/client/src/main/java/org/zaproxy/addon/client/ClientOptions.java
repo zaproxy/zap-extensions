@@ -21,7 +21,6 @@ package org.zaproxy.addon.client;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.addon.commonlib.Constants;
@@ -86,7 +85,7 @@ public class ClientOptions extends VersionedAbstractParam {
                     getConfig().getList(PSCAN_DISABLED_RULES_KEY).stream()
                             .map(Object::toString)
                             .map(Integer::parseInt)
-                            .collect(Collectors.toList());
+                            .toList();
         } catch (Exception e) {
             LOGGER.warn(e.getMessage(), e);
             pscanRulesDisabled = new ArrayList<>();

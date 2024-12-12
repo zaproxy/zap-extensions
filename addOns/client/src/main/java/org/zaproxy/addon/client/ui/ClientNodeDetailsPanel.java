@@ -24,7 +24,6 @@ import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -102,6 +101,6 @@ public class ClientNodeDetailsPanel extends AbstractPanel {
         return Arrays.stream(table.getSelectedRows())
                 .map(table::convertRowIndexToModel)
                 .mapToObj(getComponentTableModel()::getComponent)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
