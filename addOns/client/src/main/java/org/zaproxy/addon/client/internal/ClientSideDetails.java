@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.internal;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -57,11 +57,11 @@ public class ClientSideDetails {
         return components;
     }
 
-    public void setVisited(boolean visited) {
+    protected void setVisited(boolean visited) {
         this.visited = visited;
     }
 
-    public boolean addComponent(ClientSideComponent component) {
+    protected boolean addComponent(ClientSideComponent component) {
         return this.components.add(component);
     }
 
@@ -69,7 +69,7 @@ public class ClientSideDetails {
         return storage;
     }
 
-    public void setStorage(boolean storage) {
+    protected void setStorage(boolean storage) {
         this.storage = storage;
     }
 }

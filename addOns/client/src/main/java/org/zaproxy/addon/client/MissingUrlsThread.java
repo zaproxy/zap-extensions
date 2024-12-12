@@ -31,6 +31,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.client.internal.ClientNode;
+import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.StructuralNode;

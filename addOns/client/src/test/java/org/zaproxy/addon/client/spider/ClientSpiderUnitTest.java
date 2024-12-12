@@ -44,11 +44,11 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
-import org.zaproxy.addon.client.ClientMap;
-import org.zaproxy.addon.client.ClientNode;
 import org.zaproxy.addon.client.ClientOptions;
-import org.zaproxy.addon.client.ClientSideDetails;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.client.internal.ClientMap;
+import org.zaproxy.addon.client.internal.ClientNode;
+import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -277,12 +277,11 @@ class ClientSpiderUnitTest {
         when(options.timeouts()).thenReturn(timeouts);
         ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
 
-        ClientNode exampleTopNode = getClientNode("https://www.example.com");
-        ClientNode exampleSlashNode = getClientNode("https://www.example.com/");
-        ClientNode exampleTest1Node = getClientNode("https://www.example.com/test#1");
-        ClientNode exampleTest2Node = getClientNode("https://www.example.com/test#2");
-        ClientNode exampleVisitedNode = getClientNode("https://www.example.com/visited");
-        exampleVisitedNode.getUserObject().setVisited(true);
+        ClientNode exampleTopNode = getClientNode("https://www.example.com", false);
+        ClientNode exampleSlashNode = getClientNode("https://www.example.com/", false);
+        ClientNode exampleTest1Node = getClientNode("https://www.example.com/test#1", false);
+        ClientNode exampleTest2Node = getClientNode("https://www.example.com/test#2", false);
+        ClientNode exampleVisitedNode = getClientNode("https://www.example.com/visited", true);
         exampleTopNode.add(exampleSlashNode);
         exampleTopNode.add(exampleTest1Node);
         exampleTopNode.add(exampleTest2Node);
@@ -312,8 +311,8 @@ class ClientSpiderUnitTest {
                         "https://www.example.com/test#2"));
     }
 
-    private ClientNode getClientNode(String url) {
-        return new ClientNode(new ClientSideDetails(url, url, false, false), false);
+    private ClientNode getClientNode(String url, boolean visited) {
+        return new ClientNode(new ClientSideDetails(url, url, visited, false), false);
     }
 
     class SpiderStatus {

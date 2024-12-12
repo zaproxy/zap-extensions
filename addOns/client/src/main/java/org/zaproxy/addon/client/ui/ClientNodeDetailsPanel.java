@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -33,6 +32,10 @@ import javax.swing.SortOrder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.client.ComponentTableModel;
+import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.client.internal.ClientNode;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.zap.view.ZapTable;
 
 public class ClientNodeDetailsPanel extends AbstractPanel {
@@ -51,11 +54,7 @@ public class ClientNodeDetailsPanel extends AbstractPanel {
 
         this.setLayout(new BorderLayout());
         setName(Constant.messages.getString(ExtensionClientIntegration.PREFIX + ".details.title"));
-        setIcon(
-                new ImageIcon(
-                        ExtensionClientIntegration.class.getResource(
-                                ExtensionClientIntegration.RESOURCES
-                                        + "/application-browser.png")));
+        setIcon(ExtensionClientIntegration.getIcon("application-browser.png"));
 
         add(urlLabel, BorderLayout.NORTH);
 

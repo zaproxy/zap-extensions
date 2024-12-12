@@ -17,10 +17,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.ui;
 
 import java.awt.event.ActionEvent;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.client.ClientUtils;
+import org.zaproxy.addon.client.internal.ClientNode;
 
 public class PopupMenuClientCopyUrls extends PopupMenuItemClient {
 

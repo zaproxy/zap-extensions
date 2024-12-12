@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.ui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -29,6 +29,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.client.internal.ClientNode;
 
 public class PopupMenuClientShowInSites extends PopupMenuItemClient {
 

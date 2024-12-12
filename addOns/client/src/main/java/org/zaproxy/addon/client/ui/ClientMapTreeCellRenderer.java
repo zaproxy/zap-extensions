@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.ui;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -26,46 +26,30 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.client.internal.ClientNode;
+import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.OverlayIcon;
 
 public class ClientMapTreeCellRenderer extends DefaultTreeCellRenderer {
 
     private static final ImageIcon ROOT_ICON =
-            new ImageIcon(
-                    ClientMapTreeCellRenderer.class.getResource(
-                            ExtensionClientIntegration.RESOURCES
-                                    + "/sitemap-application-blue.png"));
+            ExtensionClientIntegration.getIcon("sitemap-application-blue.png");
     private static final ImageIcon LEAF_ICON =
-            new ImageIcon(
-                    ClientMapTreeCellRenderer.class.getResource(
-                            ExtensionClientIntegration.RESOURCES + "/blue-document.png"));
+            ExtensionClientIntegration.getIcon("blue-document.png");
     private static final ImageIcon LEAF_NOT_VISITED_ICON =
-            new ImageIcon(
-                    ClientMapTreeCellRenderer.class.getResource(
-                            ExtensionClientIntegration.RESOURCES + "/blue-document--minus.png"));
+            ExtensionClientIntegration.getIcon("blue-document--minus.png");
     private static final ImageIcon FRAGMENT_ICON =
-            new ImageIcon(
-                    ClientMapTreeCellRenderer.class.getResource(
-                            ExtensionClientIntegration.RESOURCES + "/blue-document-number.png"));
+            ExtensionClientIntegration.getIcon("blue-document-number.png");
     private static final ImageIcon FRAGMENT_NOT_VISITED_ICON =
-            new ImageIcon(
-                    ClientMapTreeCellRenderer.class.getResource(
-                            ExtensionClientIntegration.RESOURCES
-                                    + "/blue-document-number-minus.png"));
+            ExtensionClientIntegration.getIcon("blue-document-number-minus.png");
     private static final ImageIcon FOLDER_OPEN_ICON =
-            new ImageIcon(
-                    ClientMapTreeCellRenderer.class.getResource(
-                            ExtensionClientIntegration.RESOURCES
-                                    + "/blue-folder-horizontal-open.png"));
+            ExtensionClientIntegration.getIcon("blue-folder-horizontal-open.png");
     private static final ImageIcon FOLDER_CLOSED_ICON =
-            new ImageIcon(
-                    ClientMapTreeCellRenderer.class.getResource(
-                            ExtensionClientIntegration.RESOURCES + "/blue-folder-horizontal.png"));
+            ExtensionClientIntegration.getIcon("blue-folder-horizontal.png");
     private static final ImageIcon DATABASE_ICON =
-            new ImageIcon(
-                    ClientMapTreeCellRenderer.class.getResource(
-                            ExtensionClientIntegration.RESOURCES + "/database.png"));
+            ExtensionClientIntegration.getIcon("database.png");
 
     private static final long serialVersionUID = 1L;
 

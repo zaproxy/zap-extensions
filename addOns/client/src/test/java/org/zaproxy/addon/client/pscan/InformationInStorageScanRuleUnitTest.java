@@ -38,7 +38,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
-import org.zaproxy.addon.client.ReportedEvent;
+import org.zaproxy.addon.client.internal.ReportedEvent;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link InformationInStorageScanRule}. */

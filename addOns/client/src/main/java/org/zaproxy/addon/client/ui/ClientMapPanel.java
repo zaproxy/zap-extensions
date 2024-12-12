@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
+package org.zaproxy.addon.client.ui;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -26,7 +26,6 @@ import java.awt.Insets;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -36,6 +35,9 @@ import javax.swing.tree.TreePath;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.client.internal.ClientMap;
+import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.zap.view.LayoutHelper;
 
 @SuppressWarnings("serial")
@@ -59,11 +61,7 @@ public class ClientMapPanel extends AbstractPanel {
 
         this.setLayout(new GridBagLayout());
         setName(Constant.messages.getString(ExtensionClientIntegration.PREFIX + ".tree.title"));
-        setIcon(
-                new ImageIcon(
-                        ExtensionClientIntegration.class.getResource(
-                                ExtensionClientIntegration.RESOURCES
-                                        + "/sitemap-application-blue.png")));
+        setIcon(ExtensionClientIntegration.getIcon("sitemap-application-blue.png"));
         add(
                 scrollPane,
                 LayoutHelper.getGBC(
