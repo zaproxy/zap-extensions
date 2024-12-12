@@ -4,9 +4,9 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Active Scan Rules - Alpha" image="ascanalpha-icon" target="ascanalpha"/>
+	<tocitem text="ZAP用户指南" tocid="toplevelitem">
+		<tocitem text="附加组件" tocid="addons">
+			<tocitem text="主动扫描规则 - alpha 版" image="ascanalpha-icon" target="ascanalpha"/>
 		</tocitem>
 	</tocitem>
 </toc>

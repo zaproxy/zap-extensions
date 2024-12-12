@@ -3,33 +3,33 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Active Scan Rules - Beta
+主动扫描规则 - Beta版
 </title>
 </head>
 <body>
-<h1>Active Scan Rules - Beta</h1>
-The following beta status active scan rules are included in this add-on:
+<h1>主动扫描规则 - Beta版</h1>
+该插件包含以下测试状态主动扫描规则：
 
-<h2 id="id-10095">Backup File Disclosure</h2>
-Scans for commonly-named backup copies of files on the web server, which may reveal sensitive information.
+<h2 id="id-10095">备份文件泄露</h2>
+扫描网络服务器上可能泄露敏感信息的常用文件备份副本。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/BackupFileDisclosureScanRule.java">BackupFileDisclosureScanRule.java</a>
+最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/BackupFileDisclosureScanRule.java">BackupFileDisclosureScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10095/">10095</a>.
+警报 ID: <a href="https://www.zaproxy.org/docs/alerts/10095/">10095</a>.
 
-<h2 id="id-90027">Cookie Slack Detector</h2>
-Tests cookies to detect if some have no effect on response size when omitted, especially cookies containing the name "session" or "userid".
+<h2 id="id-90027">有效cookie检测器</h2>
+测试 cookie，以检测某些 cookie（尤其是包含 “session ”或 “userid ”名称的 cookie）在省略时是否对响应大小没有影响。
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SlackerCookieDetector.java">SlackerCookieDetector.java</a>
+最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SlackerCookieDetector.java">SlackerCookieDetector.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90027/">90027</a>.
+警报 ID: <a href="https://www.zaproxy.org/docs/alerts/90027/">90027</a>.
 
-<h2 id="id-40040">CORS Header</h2>
-This rule attempts to identify CORS headers and also CORS misconfiguration. The CORS is considered as misconfigured when it allows all origins, origins with weaker protocols and null origin.<br>
+<h2 id="id-40040">CORS 标头</h2>。
+此规则试图识别 CORS 标头和 CORS 配置错误。 如果 CORS 允许所有来源、协议较弱的来源和空来源，则视为配置错误。<br>
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CorsScanRule.java">CorsScanRule.java</a>
+最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CorsScanRule.java">CorsScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40040/">40040</a>.
+警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40040/">40040</a>.
 
 <h2 id="id-20016">Cross-Domain Misconfiguration</h2>
 Checks if the web server is configured to allow Cross Domain access, from a malicious
