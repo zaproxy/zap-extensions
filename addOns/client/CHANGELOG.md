@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.16.0.
+- Maintenance changes.
+- The current passive scan rules now uses a more specific CWE (Issue 8712).
 
 ### Added
 - Added support for Browser Based Authentication when installed in conjunction with the Auth Helper add-on.

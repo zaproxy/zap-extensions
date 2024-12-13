@@ -311,7 +311,7 @@ class ClientSpiderUnitTest {
                         "https://www.example.com/test#2"));
     }
 
-    private ClientNode getClientNode(String url, boolean visited) {
+    private static ClientNode getClientNode(String url, boolean visited) {
         return new ClientNode(new ClientSideDetails(url, url, visited, false), false);
     }
 

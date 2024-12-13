@@ -158,7 +158,7 @@ public class ClientSpider implements EventConsumer {
     private void getUnvisitedUrls(ClientNode node, List<String> urls) {
         String nodeUrl = node.getUserObject().getUrl();
         if (nodeUrl.startsWith(targetUrl)
-                && !(nodeUrl.length() == targetUrl.length())
+                && nodeUrl.length() != targetUrl.length()
                 && !node.isStorage()
                 && !node.getUserObject().isVisited()) {
             urls.add(nodeUrl);
@@ -258,7 +258,7 @@ public class ClientSpider implements EventConsumer {
     }
 
     public int getProgress() {
-        if (finished & !stopped) {
+        if (finished && !stopped) {
             return 100;
         } else if (this.tasksTotalCount <= 1) {
             // Still waiting for the first request to be processed
@@ -282,7 +282,7 @@ public class ClientSpider implements EventConsumer {
     }
 
     public void resume() {
-        this.pausedTasks.forEach(ct -> executeTask(ct));
+        this.pausedTasks.forEach(this::executeTask);
         this.paused = false;
     }
 

@@ -44,23 +44,23 @@ public class PopupMenuItemClientOpenInBrowser extends ExtensionPopupMenuItem {
         this.browser = browser;
 
         this.addActionListener(
-                l -> {
-                    new Thread(
-                                    () -> {
-                                        try {
-                                            ext.getProxiedBrowser(
-                                                    browser.getId(),
-                                                    clientMapPanel
-                                                            .getSelectedNode()
-                                                            .getUserObject()
-                                                            .getUrl());
-                                        } catch (Exception e) {
-                                            View.getSingleton().showWarningDialog(e.getMessage());
-                                            LOGGER.error(e.getMessage(), e);
-                                        }
-                                    })
-                            .start();
-                });
+                l ->
+                        new Thread(
+                                        () -> {
+                                            try {
+                                                ext.getProxiedBrowser(
+                                                        browser.getId(),
+                                                        clientMapPanel
+                                                                .getSelectedNode()
+                                                                .getUserObject()
+                                                                .getUrl());
+                                            } catch (Exception e) {
+                                                View.getSingleton()
+                                                        .showWarningDialog(e.getMessage());
+                                                LOGGER.error(e.getMessage(), e);
+                                            }
+                                        })
+                                .start());
     }
 
     @Override

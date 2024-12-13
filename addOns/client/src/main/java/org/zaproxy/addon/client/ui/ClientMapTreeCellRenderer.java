@@ -125,7 +125,7 @@ public class ClientMapTreeCellRenderer extends DefaultTreeCellRenderer {
         return this;
     }
 
-    private JLabel wrap(ImageIcon icon) {
+    private static JLabel wrap(ImageIcon icon) {
         JLabel label = new JLabel(icon);
         label.setOpaque(false);
         label.putClientProperty("html.disable", Boolean.TRUE);

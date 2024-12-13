@@ -100,9 +100,7 @@ public class ClientSideComponent {
 
     public boolean isStorageEvent() {
         switch (type) {
-            case "Cookies":
-            case "localStorage":
-            case "sessionStorage":
+            case "Cookies", "localStorage", "sessionStorage":
                 return true;
             default:
                 return false;

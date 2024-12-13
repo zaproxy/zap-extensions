@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client;
 
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
@@ -318,25 +319,17 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             LOGGER.error(e.getMessage(), e);
         }
         eventConsumer =
-                new EventConsumer() {
-
-                    @Override
-                    public void eventReceived(Event event) {
-                        // Listen for AJAX Spider events
-                        if (ScanEventPublisher.SCAN_STARTED_EVENT.equals(event.getEventType())) {
-                            // Record this for when we get the stopped event
-                            lastAjaxSpiderStartEvent = event;
-                        } else if (ScanEventPublisher.SCAN_STOPPED_EVENT.equals(
-                                event.getEventType())) {
-                            // See if we can find any missed URLs in the DOM
-                            MissingUrlsThread mut =
-                                    new MissingUrlsThread(
-                                            getModel(),
-                                            lastAjaxSpiderStartEvent,
-                                            clientTree.getRoot());
-                            lastAjaxSpiderStartEvent = null;
-                            mut.start();
-                        }
+                event -> {
+                    if (ScanEventPublisher.SCAN_STARTED_EVENT.equals(event.getEventType())) {
+                        // Record this for when we get the stopped event
+                        lastAjaxSpiderStartEvent = event;
+                    } else if (ScanEventPublisher.SCAN_STOPPED_EVENT.equals(event.getEventType())) {
+                        // See if we can find any missed URLs in the DOM
+                        MissingUrlsThread mut =
+                                new MissingUrlsThread(
+                                        getModel(), lastAjaxSpiderStartEvent, clientTree.getRoot());
+                        lastAjaxSpiderStartEvent = null;
+                        mut.start();
                     }
                 };
 
@@ -669,7 +662,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                             "client.spider.menu.tools.label",
                             getView()
                                     .getMenuShortcutKeyStroke(
-                                            KeyEvent.VK_C, KeyEvent.ALT_DOWN_MASK, false));
+                                            KeyEvent.VK_C, InputEvent.ALT_DOWN_MASK, false));
             menuItemCustomScan.setEnabled(Control.getSingleton().getMode() != Mode.safe);
             menuItemCustomScan.setIcon(getIcon());
 

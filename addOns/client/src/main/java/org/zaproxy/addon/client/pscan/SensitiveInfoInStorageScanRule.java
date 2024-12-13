@@ -37,10 +37,20 @@ public class SensitiveInfoInStorageScanRule extends ClientPassiveAbstractScanRul
     private static final String SESSION_STORAGE = "sessionStorage";
 
     private enum InfoType {
-        cc,
-        email,
-        ssn
-    };
+        CC("cc"),
+        EMAIL("email"),
+        SSN("ssn");
+
+        private String id;
+
+        InfoType(String id) {
+            this.id = id;
+        }
+
+        String getId() {
+            return this.id;
+        }
+    }
 
     // Patterns copied from {@link InformationDisclosureInUrlScanRule}
     static Pattern emailAddressPattern =
@@ -49,8 +59,8 @@ public class SensitiveInfoInStorageScanRule extends ClientPassiveAbstractScanRul
     // https://www.oreilly.com/library/view/regular-expressions-cookbook/9781449327453/ch04s20.html
     static Pattern creditCardPattern =
             Pattern.compile(
-                    "\\b(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\\d{11})\\b");
-    static Pattern usSSNPattern = Pattern.compile("\\b[0-9]{3}-[0-9]{2}-[0-9]{4}\\b");
+                    "\\b(?:4\\d{12}(?:\\d{3})?|5[1-5]\\d{14}|6(?:011|5\\d\\d)\\d{12}|3[47]\\d{13}|3(?:0[0-5]|[68]\\d)\\d{11}|(?:2131|1800|35\\d{3})\\d{11})\\b");
+    static Pattern usSSNPattern = Pattern.compile("\\b\\d{3}-\\d{2}-\\d{4}\\b");
 
     @Override
     public String getName() {
@@ -70,15 +80,15 @@ public class SensitiveInfoInStorageScanRule extends ClientPassiveAbstractScanRul
             String decodedValue = ClientPassiveScanHelper.base64Decode(value);
 
             if (isCreditCard(value) || isCreditCard(decodedValue)) {
-                helper.raiseAlert(this.getAlertBuilder(obj, decodedValue, InfoType.cc).build(), hr);
+                helper.raiseAlert(this.getAlertBuilder(obj, decodedValue, InfoType.CC).build(), hr);
             }
             if (isEmailAddress(value) || isEmailAddress(decodedValue)) {
                 helper.raiseAlert(
-                        this.getAlertBuilder(obj, decodedValue, InfoType.email).build(), hr);
+                        this.getAlertBuilder(obj, decodedValue, InfoType.EMAIL).build(), hr);
             }
             if (isUsSSN(value) || isUsSSN(decodedValue)) {
                 helper.raiseAlert(
-                        this.getAlertBuilder(obj, decodedValue, InfoType.ssn).build(), hr);
+                        this.getAlertBuilder(obj, decodedValue, InfoType.SSN).build(), hr);
             }
         }
     }
@@ -99,14 +109,17 @@ public class SensitiveInfoInStorageScanRule extends ClientPassiveAbstractScanRul
                 .setOtherInfo(
                         decodedValue == null
                                 ? Constant.messages.getString(
-                                        "client.pscan.seninfoinstorage.other." + infoType,
+                                        "client.pscan.seninfoinstorage.other." + infoType.getId(),
                                         obj.getId() + "=" + obj.getText())
                                 : Constant.messages.getString(
-                                        "client.pscan.seninfoinstorage.other.base64." + infoType,
+                                        "client.pscan.seninfoinstorage.other.base64."
+                                                + infoType.getId(),
                                         obj.getId() + "=" + obj.getText(),
                                         obj.getId() + "=" + decodedValue))
                 .setSolution(Constant.messages.getString("client.pscan.seninfoinstorage.solution"))
-                .setCweId(200) // CWE Id: 200 - Information Exposure
+                .setCweId(
+                        359) // CWE-359: Exposure of Private Personal Information to an Unauthorized
+                // Actor
                 .setWascId(13); // WASC Id: 13 - Information Leakage
     }
 
@@ -119,13 +132,13 @@ public class SensitiveInfoInStorageScanRule extends ClientPassiveAbstractScanRul
         obj.put("tagname", "");
         obj.put("id", "key");
         obj.put("text", "value");
-        alerts.add(getAlertBuilder(new ReportedElement(obj), null, InfoType.cc).build());
+        alerts.add(getAlertBuilder(new ReportedElement(obj), null, InfoType.CC).build());
         obj.put("type", SESSION_STORAGE);
-        alerts.add(getAlertBuilder(new ReportedElement(obj), null, InfoType.email).build());
+        alerts.add(getAlertBuilder(new ReportedElement(obj), null, InfoType.EMAIL).build());
         return alerts;
     }
 
-    private boolean isEmailAddress(String value) {
+    private static boolean isEmailAddress(String value) {
         if (value == null) {
             return false;
         }
@@ -133,7 +146,7 @@ public class SensitiveInfoInStorageScanRule extends ClientPassiveAbstractScanRul
         return matcher.find();
     }
 
-    private boolean isCreditCard(String value) {
+    private static boolean isCreditCard(String value) {
         if (value == null) {
             return false;
         }
@@ -141,7 +154,7 @@ public class SensitiveInfoInStorageScanRule extends ClientPassiveAbstractScanRul
         return matcher.find();
     }
 
-    private boolean isUsSSN(String value) {
+    private static boolean isUsSSN(String value) {
         if (value == null) {
             return false;
         }

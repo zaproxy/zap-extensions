@@ -32,7 +32,7 @@ public abstract class PopupMenuItemClientHistory extends ExtensionPopupMenuItem 
     public PopupMenuItemClientHistory(String text, ClientHistoryPanel clientHistoryPanel) {
         super(text);
         this.clientHistoryPanel = clientHistoryPanel;
-        this.addActionListener(l -> performAction(l));
+        this.addActionListener(this::performAction);
     }
 
     @Override

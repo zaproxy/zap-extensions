@@ -143,7 +143,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         }
 
         this.addCheckBoxField(0, FIELD_SUBTREE_ONLY, subtreeOnlyPreviousCheckedState);
-        this.addComboField(0, FIELD_BROWSER, new ArrayList<String>(), null);
+        this.addComboField(0, FIELD_BROWSER, new ArrayList<>(), null);
 
         // This option is always read from the 'global' options
         this.addCheckBoxField(0, FIELD_ADVANCED, params.isShowAdvancedDialog());
@@ -235,16 +235,13 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         selectButton.setIcon(
                 new ImageIcon(View.class.getResource("/resource/icon/16/094.png"))); // Globe icon
         selectButton.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        NodeSelectDialog nsd = new NodeSelectDialog(ClientSpiderDialog.this);
-                        nsd.setAllowRoot(allowRoot);
-                        SiteNode node = nsd.showDialog((SiteNode) null);
-                        if (node != null) {
-                            urlStartField.setText(getNodeText(node));
-                            siteNodeSelected(fieldLabel, node);
-                        }
+                e -> {
+                    NodeSelectDialog nsd = new NodeSelectDialog(ClientSpiderDialog.this);
+                    nsd.setAllowRoot(allowRoot);
+                    SiteNode node = nsd.showDialog((SiteNode) null);
+                    if (node != null) {
+                        urlStartField.setText(getNodeText(node));
+                        siteNodeSelected(fieldLabel, node);
                     }
                 });
         JPanel panel = new JPanel();
@@ -351,27 +348,27 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
     /** Use the save method to launch a scan */
     @Override
     public void save() {
-        ClientOptions params = this.extension.getClientParam();
+        ClientOptions clientParams = this.extension.getClientParam();
 
         String selectedBrowser = getSelectedBrowser();
         if (selectedBrowser != null) {
-            params.setBrowserId(selectedBrowser);
+            clientParams.setBrowserId(selectedBrowser);
         }
 
-        if (this.getBoolValue(FIELD_ADVANCED)) {
-            params.setThreadCount(this.getIntValue(FIELD_NUM_BROWSERS));
-            params.setMaxDepth(this.getIntValue(FIELD_DEPTH));
-            params.setMaxChildren(this.getIntValue(FIELD_CHILDREN));
-            params.setInitialLoadTimeInSecs(this.getIntValue(FIELD_INITIAL_LOAD_TIME));
-            params.setPageLoadTimeInSecs(this.getIntValue(FIELD_PAGE_LOAD_TIME));
-            params.setShutdownTimeInSecs(this.getIntValue(FIELD_SHUTDOWN_TIME));
-            params.setMaxDuration(this.getIntValue(FIELD_DURATION));
+        if (Boolean.TRUE.equals(this.getBoolValue(FIELD_ADVANCED))) {
+            clientParams.setThreadCount(this.getIntValue(FIELD_NUM_BROWSERS));
+            clientParams.setMaxDepth(this.getIntValue(FIELD_DEPTH));
+            clientParams.setMaxChildren(this.getIntValue(FIELD_CHILDREN));
+            clientParams.setInitialLoadTimeInSecs(this.getIntValue(FIELD_INITIAL_LOAD_TIME));
+            clientParams.setPageLoadTimeInSecs(this.getIntValue(FIELD_PAGE_LOAD_TIME));
+            clientParams.setShutdownTimeInSecs(this.getIntValue(FIELD_SHUTDOWN_TIME));
+            clientParams.setMaxDuration(this.getIntValue(FIELD_DURATION));
         }
 
         subtreeOnlyPreviousCheckedState = getBoolValue(FIELD_SUBTREE_ONLY);
 
         User user = this.getSelectedUser();
-        this.extension.runSpider(getStartUrl(), params, user);
+        this.extension.runSpider(getStartUrl(), clientParams, user);
     }
 
     /**

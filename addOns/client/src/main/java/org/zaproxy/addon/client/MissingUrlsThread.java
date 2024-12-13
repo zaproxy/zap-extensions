@@ -63,7 +63,7 @@ public class MissingUrlsThread extends Thread {
         traverseMap(rootNode);
     }
 
-    private void persistToHistoryAndSitesTree(HttpMessage msg) {
+    private static void persistToHistoryAndSitesTree(HttpMessage msg) {
         HistoryReference historyRef;
         ExtensionHistory extHistory =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
