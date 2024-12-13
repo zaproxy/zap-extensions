@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Server Side Template Injection (Blind)
   - XML External Entity Attack
 
+### Fixed
+- A situation where the Server-Side Template Injection (SSTI) scan rule might result in false positives related to the Go payloads (Issue 8622).
+
 ### Added
 - Standardized Scan Policy related alert tags on the rule.
 
