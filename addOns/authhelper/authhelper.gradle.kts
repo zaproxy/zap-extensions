@@ -22,6 +22,18 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.addon.authhelper.client.ExtensionAuthhelperClient") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.authhelper.client"))
+                }
+                dependencies {
+                    addOns {
+                        register("client") {
+                            version.set(">=0.10.0")
+                        }
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
@@ -56,6 +68,7 @@ dependencies {
     zapAddOn("pscan")
     zapAddOn("selenium")
     zapAddOn("spiderAjax")
+    zapAddOn("client")
 
     testImplementation(project(":testutils"))
 }

@@ -36,12 +36,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
+import org.zaproxy.zap.extension.users.ExtensionUserManagement;
+import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.NodeSelectDialog;
@@ -55,6 +60,8 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
     };
 
     private static final String FIELD_START = "client.scandialog.label.start";
+    private static final String FIELD_CONTEXT = "client.scandialog.label.context";
+    private static final String FIELD_USER = "client.scandialog.label.user";
     private static final String FIELD_SUBTREE_ONLY = "client.scandialog.label.spiderSubtreeOnly";
     private static final String FIELD_BROWSER = "client.scandialog.label.browser";
     private static final String FIELD_ADVANCED = "client.scandialog.label.adv";
@@ -80,10 +87,16 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
     private ZapTextField urlStartField;
     private boolean subtreeOnlyPreviousCheckedState;
 
+    private ExtensionUserManagement extUserMgmt;
+
     public ClientSpiderDialog(ExtensionClientIntegration ext, Frame owner, Dimension dim) {
         super(owner, "client.scandialog.title", dim, LABELS);
         this.extension = ext;
         params = this.extension.getClientParam();
+        this.extUserMgmt =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionUserManagement.class);
     }
 
     public void init(SiteNode node) {
@@ -113,6 +126,20 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
             this.addNodeSelectField(0, FIELD_START, node, true, false);
         } else {
             this.addUrlSelectField(0, FIELD_START, url, true, false);
+        }
+
+        if (extUserMgmt != null) {
+            this.addComboField(0, FIELD_CONTEXT, new String[] {}, "");
+
+            List<String> ctxNames = new ArrayList<>();
+            ctxNames.add("");
+            Session session = Model.getSingleton().getSession();
+            session.getContexts().forEach(context -> ctxNames.add(context.getName()));
+
+            this.setComboFields(FIELD_CONTEXT, ctxNames, "");
+            this.addComboField(0, FIELD_USER, new String[] {}, "");
+
+            this.addFieldListener(FIELD_CONTEXT, e -> setUsers());
         }
 
         this.addCheckBoxField(0, FIELD_SUBTREE_ONLY, subtreeOnlyPreviousCheckedState);
@@ -152,6 +179,44 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         this.pack();
 
         this.updateBrowsers();
+    }
+
+    private Context getSelectedContext() {
+        String ctxName = this.getStringValue(FIELD_CONTEXT);
+        if (this.extUserMgmt != null && !this.isEmptyField(FIELD_CONTEXT)) {
+            Session session = Model.getSingleton().getSession();
+            return session.getContext(ctxName);
+        }
+        return null;
+    }
+
+    private User getSelectedUser() {
+        Context context = this.getSelectedContext();
+        if (context != null && extUserMgmt != null) {
+            String userName = this.getStringValue(FIELD_USER);
+            List<User> users =
+                    this.extUserMgmt.getContextUserAuthManager(context.getId()).getUsers();
+            for (User user : users) {
+                if (userName.equals(user.getName())) {
+                    return user;
+                }
+            }
+        }
+        return null;
+    }
+
+    private void setUsers() {
+        Context context = this.getSelectedContext();
+        List<String> userNames = new ArrayList<>();
+        if (context != null && extUserMgmt != null) {
+            List<User> users = extUserMgmt.getContextUserAuthManager(context.getId()).getUsers();
+            userNames.add("");
+            for (User user : users) {
+                userNames.add(user.getName());
+            }
+        }
+        this.setComboFields(FIELD_USER, userNames, "");
+        this.getField(FIELD_USER).setEnabled(userNames.size() > 1);
     }
 
     /* Tweaked version of super.addNodeSelectField to cope with a URL that might not be in the sites tree */
@@ -305,7 +370,8 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
 
         subtreeOnlyPreviousCheckedState = getBoolValue(FIELD_SUBTREE_ONLY);
 
-        this.extension.runSpider(getStartUrl(), params);
+        User user = this.getSelectedUser();
+        this.extension.runSpider(getStartUrl(), params, user);
     }
 
     /**

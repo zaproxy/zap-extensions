@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.16.0.
 
+### Added
+- Added support for Browser Based Authentication when installed in conjunction with the Auth Helper add-on.
+
 ## [0.9.0] - 2024-11-29
 ### Changed
 - Update minimum ZAP version to 2.15.0.
