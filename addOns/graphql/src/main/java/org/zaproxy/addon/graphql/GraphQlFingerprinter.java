@@ -93,6 +93,7 @@ public class GraphQlFingerprinter {
         fingerprinters.put("pg_graphql", this::checkPgGraphqlEngine);
         fingerprinters.put("tailcall", this::checkTailcallEngine);
         fingerprinters.put("hotchocolate", this::checkHotchocolateEngine);
+        fingerprinters.put("inigo", this::checkInigoEngine);
 
         for (var fingerprinter : fingerprinters.entrySet()) {
             try {
@@ -457,6 +458,23 @@ public class GraphQlFingerprinter {
         sendQuery("query {alias1:__typename @deprecated}");
         return errorContains(
                 "Validation error of type UnknownDirective: Unknown directive deprecated @ '__typename'");
+    }
+
+    private boolean checkInigoEngine() {
+        // https://github.com/dolevf/graphw00f/commit/52e25d376f5fd4dcad062ba79a1b6c3e5e1c68dc
+        sendQuery("query {__typename}");
+        if (lastQueryMsg != null && lastQueryMsg.getResponseHeader().isJson()) {
+            try {
+                String response = lastQueryMsg.getResponseBody().toString();
+                JsonNode exts = OBJECT_MAPPER.readValue(response, JsonNode.class).get("extensions");
+                if (exts != null && exts.isObject() && exts.has("inigo")) {
+                    matchedString = "inigo";
+                    return true;
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        return false;
     }
 
     private boolean checkJaalEngine() {
