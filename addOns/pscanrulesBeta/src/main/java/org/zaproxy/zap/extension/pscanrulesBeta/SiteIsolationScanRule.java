@@ -34,7 +34,6 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -83,13 +82,10 @@ public class SiteIsolationScanRule extends PluginPassiveScanner
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-
-        // Specs don't state that errors pages should be excluded
-        // However, successful responses are associated to a resource
-        // that should be protected.
-        // Only consider HTTP Status code 2XX to avoid a False Positive
-        if (!HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode())
-                || getHelper().isPage200(msg)) {
+        // Specs don't state that errors pages should be excluded. However, successful responses are
+        // associated to a resource that should be protected, while error pages are not. Therefore,
+        // only consider HTTP Status code 2XX to avoid a False Positive
+        if (!getHelper().isSuccess(msg)) {
             return;
         }
 
