@@ -151,7 +151,7 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
         // When
         fp.fingerprint();
         // Then
-        assertThat(nano.getRequestedUris(), hasSize(26));
+        assertThat(nano.getRequestedUris(), hasSize(27));
         verifyNoInteractions(extensionAlert);
     }
 
@@ -288,7 +288,8 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
                         "GraphQL.NET", errorResponse("Directive 'skip' may not be used on Query.")),
                 arguments("pg_graphql", errorResponse("Unknown argument to @skip: aaQuery.")),
                 arguments("tailcall", errorResponse("expected executable_definition")),
-                arguments("Hot Chocolate", errorResponse("Unexpected token: Name.")));
+                arguments("Hot Chocolate", errorResponse("Unexpected token: Name.")),
+                arguments("Inigo", "{\"extensions\": {\"inigo\": []}}"));
     }
 
     private static String errorResponse(String error) {
