@@ -38,17 +38,14 @@ public class CustomPayloadsParam extends AbstractParam {
             CUSTOM_PAYLOADS_BASE_KEY + ".categories.category";
     private static final String CATEGORY_NAME_KEY = "[@name]";
 
-    private static final String PAYLOAD_ID_KEY = "id";
     private static final String PAYLOAD_KEY = "payload";
     private static final String PAYLOAD_ENABLED_KEY = "enabled";
 
     private static final String CONFIRM_REMOVE_PAYLOAD_KEY =
             CUSTOM_PAYLOADS_BASE_KEY + ".confirmRemoveToken";
-    private static final String NEXT_PAYLOAD_ID_KEY = CUSTOM_PAYLOADS_BASE_KEY + ".nextPayloadId";
 
     private Map<String, PayloadCategory> payloadCategories;
     private boolean confirmRemoveToken;
-    private int nextPayloadId = 1;
 
     public CustomPayloadsParam() {
         payloadCategories = new HashMap<>();
@@ -63,7 +60,6 @@ public class CustomPayloadsParam extends AbstractParam {
         HierarchicalConfiguration rootConfig = (HierarchicalConfiguration) getConfig();
         loadPayloadsFromConfig(rootConfig);
         loadConfirmRemoveTokenFromConfig(rootConfig);
-        loadNextPayloadIdFromConfig(rootConfig);
         initializeWithDefaultsIfPayloadsAreEmpty();
     }
 
@@ -73,14 +69,12 @@ public class CustomPayloadsParam extends AbstractParam {
                 resetDefaults(category);
             }
         }
-        setNextPayloadId(nextPayloadId);
     }
 
-    private void resetDefaults(PayloadCategory category) {
+    private static void resetDefaults(PayloadCategory category) {
         List<CustomPayload> payloads = new ArrayList<>(category.getDefaultPayloads().size());
         for (CustomPayload defaultPayload : category.getDefaultPayloads()) {
             CustomPayload payload = defaultPayload.copy();
-            payload.setId(nextPayloadId++);
             payloads.add(payload);
         }
         category.setPayloads(payloads);
@@ -95,10 +89,9 @@ public class CustomPayloadsParam extends AbstractParam {
             String cat = category.getString(CATEGORY_NAME_KEY);
             List<CustomPayload> payloads = new ArrayList<>();
             for (HierarchicalConfiguration sub : fields) {
-                int id = sub.getInt(PAYLOAD_ID_KEY);
                 boolean isEnabled = sub.getBoolean(PAYLOAD_ENABLED_KEY);
                 String payload = sub.getString(PAYLOAD_KEY, "");
-                payloads.add(new CustomPayload(id, isEnabled, cat, payload));
+                payloads.add(new CustomPayload(isEnabled, cat, payload));
             }
             payloadCategories.put(cat, new PayloadCategory(cat, Collections.emptyList(), payloads));
         }
@@ -106,39 +99,6 @@ public class CustomPayloadsParam extends AbstractParam {
 
     private void loadConfirmRemoveTokenFromConfig(HierarchicalConfiguration rootConfig) {
         confirmRemoveToken = rootConfig.getBoolean(CONFIRM_REMOVE_PAYLOAD_KEY, true);
-    }
-
-    private void loadNextPayloadIdFromConfig(HierarchicalConfiguration rootConfig) {
-        int maxUsedPayloadId = getMaxUsedPayloadId();
-        nextPayloadId = rootConfig.getInteger(NEXT_PAYLOAD_ID_KEY, 1);
-        if (nextPayloadId <= maxUsedPayloadId) {
-            setNextPayloadId(maxUsedPayloadId + 1);
-        }
-    }
-
-    public int getNextPayloadId() {
-        return nextPayloadId;
-    }
-
-    public void setNextPayloadId(int id) {
-        nextPayloadId = id;
-        saveNextPayloadId();
-    }
-
-    private void saveNextPayloadId() {
-        getConfig().setProperty(NEXT_PAYLOAD_ID_KEY, Integer.valueOf(nextPayloadId));
-    }
-
-    private int getMaxUsedPayloadId() {
-        int maxUsedPayloadId = 0;
-        for (PayloadCategory category : payloadCategories.values()) {
-            for (CustomPayload payload : category.getPayloads()) {
-                if (maxUsedPayloadId < payload.getId()) {
-                    maxUsedPayloadId = payload.getId();
-                }
-            }
-        }
-        return maxUsedPayloadId;
     }
 
     public List<CustomPayload> getPayloads() {
@@ -178,9 +138,6 @@ public class CustomPayloadsParam extends AbstractParam {
                 String elementBaseKey =
                         catElementBaseKey + ".payloads." + PAYLOAD_KEY + "(" + i + ").";
                 CustomPayload payload = payloads.get(i);
-                getConfig()
-                        .setProperty(
-                                elementBaseKey + PAYLOAD_ID_KEY, Integer.valueOf(payload.getId()));
                 getConfig()
                         .setProperty(
                                 elementBaseKey + PAYLOAD_ENABLED_KEY,
