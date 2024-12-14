@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
     - Hot Chocolate
     - Inigo
 - Support for importing an introspection query response from a file (Issue 8569).
+- If the Tech Detection (Wappalyzer) add-on is installed and a GraphQL engine is successfully fingerprinted, it is added to the Technology tab/data.
 
 ## [0.25.0] - 2024-09-24
 ### Changed
