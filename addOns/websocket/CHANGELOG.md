@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.16.0.
 
+### Fixed
+- Correct location/function of New Context context menu item.
+
 ## [31] - 2024-05-07
 ### Added
 - Support for menu weights (Issue 8369)
