@@ -97,7 +97,7 @@ class ReplacerJobUnitTest extends TestUtils {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void shouldApplyParameterDeleteAllRules(boolean value) {
+    void shouldVerifyAndApplyParameterDeleteAllRules(boolean value) {
         // Given
         ReplacerJob job =
                 createReplacerJob(
@@ -111,6 +111,27 @@ class ReplacerJobUnitTest extends TestUtils {
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(job.getData().getParameters().getDeleteAllRules(), is(equalTo(value)));
+    }
+
+    @Test
+    void shouldApplyParameters() {
+        // Given
+        ReplacerJob job =
+                createReplacerJob(
+                        """
+                        parameters:
+                          deleteAllRules: true
+                        rules: []
+                        """);
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        job.applyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        // Nothing else to check, they are applied at the same time as they are verified.
     }
 
     @Test

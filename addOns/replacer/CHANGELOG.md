@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Typo in automation job help.
+- Address misleading warning `Unrecognised parameter` for `deleteAllRules` (Issue 8764).
 
 ### Changed
 - Update minimum ZAP version to 2.16.0.
