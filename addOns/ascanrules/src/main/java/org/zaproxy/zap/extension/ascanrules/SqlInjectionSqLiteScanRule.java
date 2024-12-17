@@ -221,7 +221,8 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
-                                CommonAlertTag.WSTG_V42_INPV_05_SQLI));
+                                CommonAlertTag.WSTG_V42_INPV_05_SQLI,
+                                CommonAlertTag.TEST_TIMING));
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
@@ -458,6 +459,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
                                     .setOtherInfo(extraInfo)
                                     .setEvidence(matcher.group())
                                     .setMessage(msgDelay)
+                                    .setTags(getNeededAlertTags(true))
                                     .raise();
 
                             LOGGER.debug(
@@ -600,6 +602,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
                             .setOtherInfo(extraInfo)
                             .setEvidence(extraInfo)
                             .setMessage(detectableDelayMessage)
+                            .setTags(getNeededAlertTags(false))
                             .raise();
 
                     if (detectableDelayMessage != null)
@@ -752,6 +755,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
                                                             .setOtherInfo(extraInfo)
                                                             .setEvidence(versionNumber)
                                                             .setMessage(unionAttackMessage)
+                                                            .setTags(getNeededAlertTags(true))
                                                             .raise();
                                                     break unionLoops;
                                                 }
@@ -803,5 +807,14 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    private Map<String, String> getNeededAlertTags(boolean isFeedbackbased) {
+        Map<String, String> alertTags = new HashMap<>();
+        alertTags.putAll(getAlertTags());
+        if (isFeedbackbased) {
+            alertTags.remove(CommonAlertTag.TEST_TIMING.getTag());
+        }
+        return alertTags;
     }
 }
