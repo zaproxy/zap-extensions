@@ -28,6 +28,8 @@ public interface CommonActiveScanRuleInfo {
     }
 
     default String getHelpLink(int id) {
+
+        Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90020/">90020</a>.
         return "https://www.zaproxy.org/docs/desktop/addons/active-scan-rules/#id-" + id;
     }
 }
