@@ -35,6 +35,8 @@ dependencies {
     zapAddOn("commonlib")
 
     implementation("org.jdom:jdom:2.0.2")
+
+    testImplementation(project(":testutils"))
 }
 
 spotless {

@@ -22,7 +22,9 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
@@ -54,7 +56,7 @@ class ShellShockScanRuleUnitTest extends ActiveScannerTest<ShellShockScanRule> {
         // Then
         assertThat(cwe, is(equalTo(78)));
         assertThat(wasc, is(equalTo(31)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
@@ -65,6 +67,7 @@ class ShellShockScanRuleUnitTest extends ActiveScannerTest<ShellShockScanRule> {
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ.getTag()),
                 is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.TEST_TIMING.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));
@@ -84,8 +87,10 @@ class ShellShockScanRuleUnitTest extends ActiveScannerTest<ShellShockScanRule> {
         assertThat(alerts.size(), is(equalTo(2)));
         Alert alert = alerts.get(0);
         assertThat(alert.getAlertRef(), is(equalTo("10048-1")));
+        assertThat(alert.getTags(), not(hasKey(CommonAlertTag.TEST_TIMING.getTag())));
         Alert timingAlert = alerts.get(1);
         assertThat(timingAlert.getAlertRef(), is(equalTo("10048-2")));
+        assertThat(timingAlert.getTags(), is(hasKey(CommonAlertTag.TEST_TIMING.getTag())));
     }
 
     @Test
