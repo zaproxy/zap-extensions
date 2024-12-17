@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - SQL Injection scan rule to start using ComparableResponse - part of the work to reduce False Positives.
 - Depends on an updated version of the Common Library add-on.
+- Scan rules which execute time based attacks now include the "TEST_TIMING" alert tag.
 
 ### Fixed
 - SQL Injection scan rule to treat a 500 response to an SQLi attack as a likely vulnerability.
