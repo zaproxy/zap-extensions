@@ -75,6 +75,8 @@ import org.zaproxy.addon.client.ui.PopupMenuClientDetailsCopy;
 import org.zaproxy.addon.client.ui.PopupMenuClientHistoryCopy;
 import org.zaproxy.addon.client.ui.PopupMenuClientOpenInBrowser;
 import org.zaproxy.addon.client.ui.PopupMenuClientShowInSites;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
@@ -106,6 +108,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
             List.of(
                     ExtensionAlert.class,
+                    ExtensionCommonlib.class,
                     ExtensionHistory.class,
                     ExtensionNetwork.class,
                     ExtensionSelenium.class);
@@ -443,6 +446,13 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         return false;
     }
 
+    private ValueProvider getValueProvider() {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionCommonlib.class)
+                .getValueProvider();
+    }
+
     public void deleteNodes(List<ClientNode> nodes) {
         this.clientTree.deleteNodes(nodes);
         if (View.isInitialised()) {
@@ -597,7 +607,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
      */
     public int runSpider(String url, ClientOptions options, User user) {
         synchronized (spiders) {
-            ClientSpider cs = new ClientSpider(this, url, options, spiders.size(), user);
+            ClientSpider cs =
+                    new ClientSpider(this, url, options, spiders.size(), user, getValueProvider());
             spiders.add(cs);
             cs.start();
             return spiders.indexOf(cs);
