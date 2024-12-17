@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Policy tags for use with scan rules and the new Scan Policies add-on.
 
+### Fixed
+- Be more lenient with the input used for providing values, to prevent exceptions.
+
 ## [1.28.0] - 2024-09-24
 ### Changed
 - Maintenance changes.
