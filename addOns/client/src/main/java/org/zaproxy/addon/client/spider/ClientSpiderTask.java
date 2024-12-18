@@ -20,9 +20,13 @@
 package org.zaproxy.addon.client.spider;
 
 import java.time.Duration;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 
 public class ClientSpiderTask implements Runnable {
+
+    private static final Logger LOGGER = LogManager.getLogger(ClientSpiderTask.class);
 
     private ClientSpider clientSpider;
     private String url;
@@ -56,19 +60,16 @@ public class ClientSpiderTask implements Runnable {
             wd.get(url);
             ok = true;
         } catch (Exception e) {
-            clientSpider.tempLogProgress("Task failed " + url + " " + e.getMessage());
+            LOGGER.warn("Task failed {} {}", url, e.getMessage(), e);
         }
         if (wd != null) {
             this.clientSpider.returnWebDriver(wd);
         }
-        clientSpider.tempLogProgress(
-                "Task completed "
-                        + url
-                        + " "
-                        + ok
-                        + " in "
-                        + (System.currentTimeMillis() - startTime) / 1000
-                        + " secs");
+        LOGGER.debug(
+                "Task completed {} {} in {} secs",
+                url,
+                ok,
+                (System.currentTimeMillis() - startTime) / 1000);
         this.clientSpider.postTaskExecution(this);
     }
 }

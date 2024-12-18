@@ -29,12 +29,12 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.swing.table.TableModel;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
@@ -43,16 +43,18 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.model.GenericScanner2;
+import org.zaproxy.zap.model.ScanListenner2;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.ThreadUtils;
 
-public class ClientSpider implements EventConsumer {
+public class ClientSpider implements EventConsumer, GenericScanner2 {
 
     /*
      * Client Spider status - Work In Progress.
      * This functionality has not yet been officially released, so do not rely on any of the classes or methods for now.
      *
      * TODO The following features will need to be implemented before the first release:
-     * 		GUI (!)
      * 		Separate proxy (or maybe even one proxy per browser?)
      * 		Support for modes
      * 		Help pages
@@ -71,8 +73,9 @@ public class ClientSpider implements EventConsumer {
 
     private ExecutorService threadPool;
 
-    private int id;
     private ClientOptions options;
+    private int scanId;
+    private String displayName;
 
     private String targetUrl;
     private User user;
@@ -93,17 +96,23 @@ public class ClientSpider implements EventConsumer {
     private int tasksDoneCount;
     private int tasksTotalCount;
 
+    private UrlTableModel addedNodesModel;
+    private ScanListenner2 listener;
+
     public ClientSpider(
             ExtensionClientIntegration extClient,
+            String displayName,
             String targetUrl,
             ClientOptions options,
             int id,
             User user) {
         this.extClient = extClient;
+        this.displayName = displayName;
         this.targetUrl = targetUrl;
         this.options = options;
-        this.id = id;
+        this.scanId = id;
         this.user = user;
+        this.addedNodesModel = new UrlTableModel();
 
         ZAP.getEventBus().registerConsumer(this, ClientMap.class.getCanonicalName());
 
@@ -112,11 +121,16 @@ public class ClientSpider implements EventConsumer {
     }
 
     public ClientSpider(
-            ExtensionClientIntegration extClient, String targetUrl, ClientOptions options, int id) {
-        this(extClient, targetUrl, options, id, null);
+            ExtensionClientIntegration extClient,
+            String displayName,
+            String targetUrl,
+            ClientOptions options,
+            int id) {
+        this(extClient, displayName, targetUrl, options, id, null);
     }
 
-    public void start() {
+    @Override
+    public void run() {
         startTime = System.currentTimeMillis();
         lastEventReceivedtime = startTime;
         if (options.getMaxDuration() > 0) {
@@ -134,7 +148,7 @@ public class ClientSpider implements EventConsumer {
                 Executors.newFixedThreadPool(
                         options.getThreadCount(),
                         new ClientSpiderThreadFactory(
-                                "ZAP-ClientSpiderThreadPool-" + id + "-thread-"));
+                                "ZAP-ClientSpiderThreadPool-" + scanId + "-thread-"));
 
         List<String> unvisitedUrls = getUnvisitedUrls();
 
@@ -199,7 +213,7 @@ public class ClientSpider implements EventConsumer {
                 executeTask(task);
             }
         } catch (RejectedExecutionException e) {
-            tempLogProgress("Failed to add task: " + e.getMessage());
+            LOGGER.debug("Failed to add task", e.getMessage());
         }
     }
 
@@ -211,26 +225,31 @@ public class ClientSpider implements EventConsumer {
     protected synchronized void postTaskExecution(ClientSpiderTask task) {
         this.tasksDoneCount++;
         this.spiderTasks.remove(task);
-        if (this.spiderTasks.isEmpty()) {
-            this.tempLogProgress("No running tasks, starting shutdown timer");
+        if (listener != null) {
+            listener.scanProgress(scanId, displayName, this.getProgress(), this.getMaximum());
+        }
+        if (this.spiderTasks.isEmpty() && !paused) {
+            LOGGER.debug("No running tasks, starting shutdown timer");
             new ShutdownThread(options.getShutdownTimeInSecs()).start();
         }
     }
 
     @Override
     public void eventReceived(Event event) {
-        if (finished) {
+        if (finished || stopped) {
             return;
         }
         this.lastEventReceivedtime = System.currentTimeMillis();
         if (maxTime > 0 && this.lastEventReceivedtime > maxTime) {
-            this.tempLogProgress("Exceeded max time, stopping");
-            this.stop();
+            LOGGER.debug("Exceeded max time, stopping");
+            this.stopScan();
             return;
         }
 
         String url = event.getParameters().get(ClientMap.URL_KEY);
         if (url.startsWith(targetUrl)) {
+            addUriToAddedNodesModel(url);
+
             if (options.getMaxDepth() > 0) {
                 int depth = Integer.parseInt(event.getParameters().get(ClientMap.DEPTH_KEY));
                 if (depth > options.getMaxDepth()) {
@@ -257,6 +276,15 @@ public class ClientSpider implements EventConsumer {
         }
     }
 
+    private void addUriToAddedNodesModel(final String uri) {
+        ThreadUtils.invokeLater(
+                () -> {
+                    addedNodesModel.addScanResult(uri);
+                    extClient.updateAddedCount();
+                });
+    }
+
+    @Override
     public int getProgress() {
         if (finished && !stopped) {
             return 100;
@@ -267,7 +295,8 @@ public class ClientSpider implements EventConsumer {
         return (this.tasksDoneCount * 100) / this.tasksTotalCount;
     }
 
-    public void stop() {
+    @Override
+    public void stopScan() {
         this.stopped = true;
         if (paused) {
             this.pausedTasks.clear();
@@ -277,23 +306,28 @@ public class ClientSpider implements EventConsumer {
         ZAP.getEventBus().unregisterConsumer(this, ClientMap.class.getCanonicalName());
     }
 
-    public void pause() {
+    @Override
+    public void pauseScan() {
         this.paused = true;
     }
 
-    public void resume() {
+    @Override
+    public void resumeScan() {
         this.pausedTasks.forEach(this::executeTask);
         this.paused = false;
     }
 
-    protected boolean isStopped() {
-        return stopped;
+    @Override
+    public boolean isStopped() {
+        return finished || stopped;
     }
 
+    @Override
     public boolean isPaused() {
         return paused;
     }
 
+    @Override
     public boolean isRunning() {
         return !finished;
     }
@@ -302,23 +336,11 @@ public class ClientSpider implements EventConsumer {
         return targetUrl;
     }
 
-    /**
-     * TODO This is a temporary method used to record progress. It will be removed once the GUI has
-     * been implemented. Messages are not expected to be i18n'ed.
-     */
-    protected void tempLogProgress(String msg) {
-        if (View.isInitialised()) {
-            View.getSingleton().getOutputPanel().appendAsync(msg + "\n");
-        } else {
-            LOGGER.debug(msg);
-        }
-    }
-
     private void finished() {
         finished = true;
         long timeTaken = System.currentTimeMillis() - startTime;
-        tempLogProgress(
-                "Spider finished " + DurationFormatUtils.formatDuration(timeTaken, "HH:MM:SS"));
+        LOGGER.debug(
+                "Spider finished {}", DurationFormatUtils.formatDuration(timeTaken, "HH:MM:SS"));
         if (this.user != null) {
             synchronized (extClient.getAuthenticationHandlers()) {
                 extClient
@@ -335,6 +357,9 @@ public class ClientSpider implements EventConsumer {
                 wd.quit();
             }
             this.webDriverActive.clear();
+        }
+        if (listener != null) {
+            listener.scanFinshed(scanId, displayName);
         }
     }
 
@@ -357,10 +382,9 @@ public class ClientSpider implements EventConsumer {
                     // Ignore
                 }
                 if (lastEventReceivedtime > starttime) {
-                    // New event, don't shutdown
-                    tempLogProgress("Spider not finished..");
+                    LOGGER.debug("Spider not finished..");
                     if (spiderTasks.isEmpty()) {
-                        tempLogProgress("No running tasks, restarting shutdown timer");
+                        LOGGER.debug("No running tasks, restarting shutdown timer");
                         new ShutdownThread(options.getShutdownTimeInSecs()).start();
                     }
                     return;
@@ -394,5 +418,38 @@ public class ClientSpider implements EventConsumer {
             }
             return t;
         }
+    }
+
+    @Override
+    public void setScanId(int id) {
+        this.scanId = id;
+    }
+
+    @Override
+    public int getScanId() {
+        return this.scanId;
+    }
+
+    @Override
+    public void setDisplayName(String name) {
+        this.displayName = name;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return this.displayName;
+    }
+
+    @Override
+    public int getMaximum() {
+        return 100;
+    }
+
+    public TableModel getAddedNodesTableModel() {
+        return this.addedNodesModel;
+    }
+
+    public void setListener(ScanListenner2 listener) {
+        this.listener = listener;
     }
 }
