@@ -17,12 +17,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.retire;
+package org.zaproxy.addon.retire.model;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.in;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import java.util.Locale;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
-import org.zaproxy.addon.retire.model.Repo;
 
 /** Tests for upstream {@code jsrepository.json} file. */
 class UpstreamJsRepositoryUnitTest {
@@ -31,7 +35,13 @@ class UpstreamJsRepositoryUnitTest {
     void shouldParseUpstreamJsRepository() {
         // Given
         String path = "/org/zaproxy/addon/retire/resources/jsrepository.json";
+        Set<String> expectedSeverities = Vulnerability.SEVERITY_MAP.keySet();
         // When / Then
-        assertDoesNotThrow(() -> new Repo(path));
+        Repo repo = assertDoesNotThrow(() -> new Repo(path));
+        for (RepoEntry entry : repo.getEntries().values()) {
+            for (Vulnerability vuln : entry.getVulnerabilities()) {
+                assertThat(vuln.getSeverity().toLowerCase(Locale.ROOT), is(in(expectedSeverities)));
+            }
+        }
     }
 }

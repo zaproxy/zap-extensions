@@ -21,6 +21,7 @@ package org.zaproxy.addon.retire;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -181,6 +182,24 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
                 alertsRaised.get(0).getReference());
         // Two Constant OWASP tags plus one CVE and CWE
         assertEquals(4, alertsRaised.get(0).getTags().size());
+    }
+
+    @Test
+    void shouldNotRaiseAlertOnNonVulnerableContent() {
+        // Given
+        String content =
+                "/*!\n"
+                        + " * Bootstrap v3.4.0 (http://getbootstrap.com)\n"
+                        + " * Copyright 2011-2016 Twitter, Inc.\n"
+                        + " * Licensed under the MIT license\n"
+                        + " */";
+        HttpMessage msg = createMessage("http://example.com/angular.min.js", content);
+        msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "text/javascript");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test
