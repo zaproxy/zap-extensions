@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -33,6 +34,8 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -119,27 +122,34 @@ class ClientSpiderUnitTest {
     }
 
     @Test
-    void shouldIgnoreRequestAfterStopped() {
+    void shouldIgnoreRequestAfterStopped() throws Exception {
         // Given
-        ClientSpider spider =
-                new ClientSpider(extClient, "https://www.example.com/", clientOptions, 1);
+        CountDownLatch cdl = new CountDownLatch(1);
+        String seedUrl = "https://www.example.com/";
+        ClientSpider spider = new ClientSpider(extClient, seedUrl, clientOptions, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
         when(options.timeouts()).thenReturn(timeouts);
+        String urlAfterStop = "https://www.example.com/test#1";
+        doAnswer(
+                        invocation -> {
+                            spider.stop();
+                            map.getOrAddNode(urlAfterStop, false, false);
+                            cdl.countDown();
+                            return null;
+                        })
+                .when(wd)
+                .get(seedUrl);
 
         // When
         spider.start();
-        spider.stop();
-        map.getOrAddNode("https://www.example.com/test#1", false, false);
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            // Ignore
-        }
+        // and stopped on URL access
 
         // Then
-        verify(wd, never()).get(any());
+        cdl.await(2, TimeUnit.SECONDS);
+        assertThat(spider.isStopped(), is(true));
+        verify(wd, never()).get(urlAfterStop);
     }
 
     @Test
