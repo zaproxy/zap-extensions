@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The following scan rules now use more specific CWE IDs:
     - Proxy Disclosure (Issue 8713)
     - Possible Username Enumeration (Issue 8715)
+- The Shell Shock scan rule now has the TEST_TIMING alert tag.
 
 ### Fixed
 - Address exception when scanning a message without path with Possible Username Enumeration scan rule.
