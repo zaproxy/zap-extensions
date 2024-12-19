@@ -284,6 +284,10 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                 });
     }
 
+    protected void setRedirect(String originalUrl, String redirectedUrl) {
+        ThreadUtils.invokeLater(() -> extClient.setRedirect(originalUrl, redirectedUrl));
+    }
+
     @Override
     public int getProgress() {
         if (finished && !stopped) {

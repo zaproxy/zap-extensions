@@ -456,6 +456,15 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         return false;
     }
 
+    public boolean setRedirect(String originalUrl, String redirectedUrl) {
+        ClientNode node = this.clientTree.setRedirect(originalUrl, redirectedUrl);
+        if (node != null) {
+            this.clientNodeChanged(node);
+            return true;
+        }
+        return false;
+    }
+
     public void deleteNodes(List<ClientNode> nodes) {
         this.clientTree.deleteNodes(nodes);
         if (View.isInitialised()) {

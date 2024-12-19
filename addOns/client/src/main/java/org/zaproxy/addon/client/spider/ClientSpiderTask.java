@@ -58,6 +58,10 @@ public class ClientSpiderTask implements Runnable {
             startTime = System.currentTimeMillis();
             wd.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(this.timeout));
             wd.get(url);
+            String actualUrl = wd.getCurrentUrl();
+            if (!url.equals(actualUrl)) {
+                clientSpider.setRedirect(url, actualUrl);
+            }
             ok = true;
         } catch (Exception e) {
             LOGGER.warn("Task failed {} {}", url, e.getMessage(), e);

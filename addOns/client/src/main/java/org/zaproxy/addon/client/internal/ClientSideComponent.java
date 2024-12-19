@@ -20,11 +20,17 @@
 package org.zaproxy.addon.client.internal;
 
 import java.util.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import net.sf.json.JSONObject;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 
+@Getter
+@AllArgsConstructor
 public class ClientSideComponent {
+
+    public static String REDIRECT = "Redirect";
 
     private String tagName;
     private String id;
@@ -74,45 +80,16 @@ public class ClientSideComponent {
         }
     }
 
-    public String getTagName() {
-        return tagName;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getParentUrl() {
-        return parentUrl;
-    }
-
-    public String getHref() {
-        return href;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public String getType() {
-        return type;
-    }
-
     public boolean isStorageEvent() {
+        if (type == null) {
+            return false;
+        }
         switch (type) {
             case "Cookies", "localStorage", "sessionStorage":
                 return true;
             default:
                 return false;
         }
-    }
-
-    public String getTagType() {
-        return tagType;
-    }
-
-    public int getFormId() {
-        return formId;
     }
 
     @Override
