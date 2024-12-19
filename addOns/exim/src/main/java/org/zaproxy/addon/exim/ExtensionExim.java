@@ -99,14 +99,8 @@ public class ExtensionExim extends ExtensionAdaptor {
             }
 
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportContextUrls());
-            getMenuExport().add(getPopupMenuExportContextUrls());
-
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportSelectedUrls());
-            getMenuExport().add(getPopupMenuExportSelectedUrls());
-
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportUrls());
-            getMenuExport().add(getPopupMenuExportUrls());
-
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuCopyUrls());
 
             MainMenuBar menuBar = getView().getMainFrame().getMainMenuBar();

@@ -12,9 +12,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.16.0.
 - Update dependency.
 - Maintenance changes.
+- Export options available in the Sites Tree context menu are no longer shown in the Export menu.
 
 ### Fixed
 - Import HAR entry sent and elapsed time.
+- Duplicate entries in the Export menu.
 
 ## [0.12.0] - 2024-10-07
 ### Changed
