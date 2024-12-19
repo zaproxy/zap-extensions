@@ -80,6 +80,8 @@ subprojects {
         sourceSets["main"].output.dir(mapOf("builtBy" to downloadTasks), webdriversDir)
 
         zapAddOn {
+            zapVersion.set("2.15.0")
+
             manifest {
                 files.from(webdriversDir)
             }
