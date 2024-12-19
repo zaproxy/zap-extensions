@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client;
 
+import java.awt.EventQueue;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -34,6 +35,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -64,7 +68,9 @@ import org.zaproxy.addon.client.pscan.OptionsPassiveScan;
 import org.zaproxy.addon.client.spider.AuthenticationHandler;
 import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.client.spider.ClientSpiderDialog;
+import org.zaproxy.addon.client.spider.ClientSpiderPanel;
 import org.zaproxy.addon.client.spider.PopupMenuSpider;
+import org.zaproxy.addon.client.spider.SpiderScanController;
 import org.zaproxy.addon.client.ui.ClientDetailsPanel;
 import org.zaproxy.addon.client.ui.ClientHistoryPanel;
 import org.zaproxy.addon.client.ui.ClientMapPanel;
@@ -85,8 +91,10 @@ import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProfileManager;
 import org.zaproxy.zap.model.ScanEventPublisher;
+import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionClientIntegration extends ExtensionAdaptor {
@@ -114,17 +122,18 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private ClientMapPanel clientMapPanel;
     private ClientDetailsPanel clientDetailsPanel;
     private ClientHistoryPanel clientHistoryPanel;
+    private ClientSpiderPanel clientSpiderPanel;
     private ClientHistoryTableModel clientHistoryTableModel;
     private RedirectScript redirectScript;
     private ClientZestRecorder clientHandler;
-    private ClientPassiveScanController scanController;
+    private SpiderScanController spiderScanController;
+    private ClientPassiveScanController passiveScanController;
     private ClientPassiveScanHelper pscanHelper;
     private ClientOptions clientParam;
     private ClientIntegrationAPI api;
     private EventConsumer eventConsumer;
     private Event lastAjaxSpiderStartEvent;
-    private List<ClientSpider> spiders = Collections.synchronizedList(new ArrayList<>());
-    private ImageIcon icon;
+    private static ImageIcon icon;
 
     private ClientSpiderDialog spiderDialog;
     private ZapMenuItem menuItemCustomScan;
@@ -146,15 +155,17 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                                 new ClientSideDetails(
                                         Constant.messages.getString("client.tree.title"), null),
                                 this.getModel().getSession()));
+        spiderScanController = new SpiderScanController(this);
+        passiveScanController = new ClientPassiveScanController();
     }
 
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        scanController = new ClientPassiveScanController();
         this.api = new ClientIntegrationAPI(this);
 
+        extensionHook.addSessionListener(new SessionChangedListenerImpl());
         extensionHook.addOptionsParamSet(getClientParam());
         extensionHook.addApiImplementor(this.api);
         extensionHook.addSessionListener(new SessionChangeListener());
@@ -172,6 +183,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                         .addPopupMenuItem(
                                 new PopupMenuSpider(
                                         Constant.messages.getString("client.attack.spider"), this));
+                extensionHook.getHookView().addStatusPanel(getClientSpiderPanel());
             }
 
             // Client Map menu items
@@ -253,14 +265,16 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                                     Constant.messages.getString("client.details.popup.copy.texts"),
                                     ClientSideComponent::getText));
 
-            extensionHook.getHookView().addOptionPanel(new OptionsPassiveScan(scanController));
+            extensionHook
+                    .getHookView()
+                    .addOptionPanel(new OptionsPassiveScan(passiveScanController));
         }
     }
 
     @Override
     public void optionsLoaded() {
-        scanController.setEnabled(getClientParam().isPscanEnabled());
-        scanController.setDisabledScanRules(getClientParam().getPscanRulesDisabled());
+        passiveScanController.setEnabled(getClientParam().isPscanEnabled());
+        passiveScanController.setDisabledScanRules(getClientParam().getPscanRulesDisabled());
     }
 
     @Override
@@ -403,6 +417,9 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         if (eventConsumer != null) {
             ZAP.getEventBus().unregisterConsumer(eventConsumer);
         }
+        if (hasView()) {
+            getClientSpiderPanel().unload();
+        }
     }
 
     @Override
@@ -412,11 +429,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     @Override
     public void destroy() {
-        stopAllSpiders();
-    }
-
-    private void stopAllSpiders() {
-        spiders.forEach(ClientSpider::stop);
+        this.spiderScanController.stopAllScans();
     }
 
     public ClientNode getOrAddClientNode(String url, boolean visited, boolean storage) {
@@ -476,6 +489,20 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         return clientHistoryPanel;
     }
 
+    private ClientSpiderPanel getClientSpiderPanel() {
+        if (clientSpiderPanel == null) {
+            clientSpiderPanel =
+                    new ClientSpiderPanel(this, this.spiderScanController, this.getClientParam());
+        }
+        return clientSpiderPanel;
+    }
+
+    public void updateAddedCount() {
+        if (getView() != null) {
+            getClientSpiderPanel().updateAddedCount();
+        }
+    }
+
     public void addReportedObject(ReportedObject obj) {
         if (obj instanceof ReportedEvent) {
             ReportedEvent ev = (ReportedEvent) obj;
@@ -493,7 +520,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             }
         }
         this.clientHistoryTableModel.addReportedObject(obj);
-        this.scanController
+        this.passiveScanController
                 .getEnabledScanRules()
                 .forEach(
                         s -> {
@@ -506,7 +533,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     }
 
     public ClientPassiveScanController getPassiveScanController() {
-        return this.scanController;
+        return this.passiveScanController;
     }
 
     @Override
@@ -539,12 +566,12 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             if (clientHistoryTableModel != null) {
                 clientHistoryTableModel.clear();
             }
-            spiders.clear();
+            spiderScanController.reset();
         }
 
         @Override
         public void sessionAboutToChange(Session session) {
-            stopAllSpiders();
+            spiderScanController.stopAllScans();
         }
 
         @Override
@@ -577,54 +604,12 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         return url.startsWith(API.API_URL) || url.startsWith(API.API_URL_S);
     }
 
-    /**
-     * Run the client spider with the configured options
-     *
-     * @param url The inital URL to request
-     * @return an id which can be used to reference the specific scan.
-     */
-    public int runSpider(String url) {
-        return this.runSpider(url, this.getClientParam());
-    }
-
-    /**
-     * Run the client spider with the specified options
-     *
-     * @param url The inital URL to request
-     * @param options Custom options.
-     * @param user the user to be used for authentication.
-     * @return an id which can be used to reference the specific scan.
-     */
-    public int runSpider(String url, ClientOptions options, User user) {
-        synchronized (spiders) {
-            ClientSpider cs = new ClientSpider(this, url, options, spiders.size(), user);
-            spiders.add(cs);
-            cs.start();
-            return spiders.indexOf(cs);
-        }
-    }
-
-    /**
-     * Run the client spider with the specified options
-     *
-     * @param url The initial URL to request
-     * @param options Custom options.
-     * @return an id which can be used to reference the specific scan.
-     */
-    public int runSpider(String url, ClientOptions options) {
-        return this.runSpider(url, options, null);
-    }
-
-    public ClientSpider getSpider(int id) {
-        return this.spiders.get(id);
-    }
-
     @Override
     public List<String> getActiveActions() {
         List<String> activeActions = new ArrayList<>();
         String actionPrefix = Constant.messages.getString("client.activeActionPrefix");
-        spiders.stream()
-                .filter(cs -> cs.isRunning())
+        this.spiderScanController
+                .getActiveScans()
                 .forEach(
                         cs ->
                                 activeActions.add(
@@ -671,7 +656,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         return menuItemCustomScan;
     }
 
-    public ImageIcon getIcon() {
+    public static ImageIcon getIcon() {
         if (icon == null) {
             icon = getIcon("spiderClient.png");
         }
@@ -686,5 +671,129 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             return null;
         }
         return DisplayUtils.getScaledIcon(url);
+    }
+
+    /**
+     * Abbreviates (the middle of) the given display name if greater than 30 characters.
+     *
+     * @param displayName the display name that might be abbreviated
+     * @return the, possibly, abbreviated display name
+     */
+    private static String abbreviateDisplayName(String displayName) {
+        return StringUtils.abbreviateMiddle(displayName, "..", 30);
+    }
+
+    public int startScan(String url, ClientOptions options, User user)
+            throws URIException, NullPointerException {
+        return this.startScan(
+                abbreviateDisplayName(url), null, user, new Object[] {new URI(url, true), options});
+    }
+
+    public int startScan(
+            String displayName, Target target, User user, Object[] contextSpecificObjects) {
+        int id =
+                this.spiderScanController.startScan(
+                        displayName, target, user, contextSpecificObjects);
+        if (hasView()) {
+            addScanToUi(this.spiderScanController.getScan(id));
+        }
+        return id;
+    }
+
+    public List<ClientSpider> getAllScans() {
+        return this.spiderScanController.getAllScans();
+    }
+
+    public List<ClientSpider> getActiveScans() {
+        return this.spiderScanController.getActiveScans();
+    }
+
+    public ClientSpider getScan(int id) {
+        return this.spiderScanController.getScan(id);
+    }
+
+    public void stopScan(int id) {
+        this.spiderScanController.stopScan(id);
+    }
+
+    public void stopAllScans() {
+        this.spiderScanController.stopAllScans();
+    }
+
+    public void pauseScan(int id) {
+        this.spiderScanController.pauseScan(id);
+    }
+
+    public void pauseAllScans() {
+        this.spiderScanController.pauseAllScans();
+    }
+
+    public void resumeScan(int id) {
+        this.spiderScanController.resumeScan(id);
+    }
+
+    public void resumeAllScans() {
+        this.spiderScanController.resumeAllScans();
+    }
+
+    private void addScanToUi(final ClientSpider scan) {
+        if (!Constant.isDevBuild()) {
+            return;
+        }
+
+        if (!EventQueue.isDispatchThread()) {
+            SwingUtilities.invokeLater(() -> addScanToUi(scan));
+            return;
+        }
+
+        this.getClientSpiderPanel().scannerStarted(scan);
+        scan.setListener(getClientSpiderPanel());
+        this.getClientSpiderPanel().switchView(scan);
+        this.getClientSpiderPanel().setTabFocus();
+    }
+
+    private class SessionChangedListenerImpl implements SessionChangedListener {
+
+        @Override
+        public void sessionAboutToChange(Session session) {
+            spiderScanController.reset();
+
+            if (hasView()) {
+                if (Constant.isDevBuild()) {
+                    getClientSpiderPanel().reset();
+                }
+                if (spiderDialog != null) {
+                    spiderDialog.reset();
+                }
+            }
+        }
+
+        @Override
+        public void sessionChanged(final Session session) {
+            if (hasView() && Constant.isDevBuild()) {
+                ThreadUtils.invokeAndWaitHandled(getClientSpiderPanel()::reset);
+            }
+        }
+
+        @Override
+        public void sessionScopeChanged(Session session) {
+            if (hasView() && Constant.isDevBuild()) {
+                getClientSpiderPanel().sessionScopeChanged(session);
+            }
+        }
+
+        @Override
+        public void sessionModeChanged(Mode mode) {
+            if (Mode.safe.equals(mode)) {
+                spiderScanController.stopAllScans();
+            }
+
+            if (hasView()) {
+                if (Constant.isDevBuild()) {
+                    getClientSpiderPanel().sessionModeChanged(mode);
+                }
+                getMenuItemCustomScan().setEnabled(!Mode.safe.equals(mode));
+            }
+        }
     }
 }

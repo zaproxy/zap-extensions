@@ -368,7 +368,12 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         subtreeOnlyPreviousCheckedState = getBoolValue(FIELD_SUBTREE_ONLY);
 
         User user = this.getSelectedUser();
-        this.extension.runSpider(getStartUrl(), clientParams, user);
+        try {
+            this.extension.startScan(getStartUrl(), clientParams, user);
+        } catch (Exception e) {
+            // Should not happen as we will already have checked the URL
+            LOGGER.debug("Failed to start client spider", e);
+        }
     }
 
     /**

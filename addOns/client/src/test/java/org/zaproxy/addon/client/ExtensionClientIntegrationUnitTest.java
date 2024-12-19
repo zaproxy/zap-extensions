@@ -149,10 +149,10 @@ class ExtensionClientIntegrationUnitTest {
 
         try {
             // When
-            int spiderId = extClient.runSpider("https://www.example.com", options);
-            ClientSpider spider = extClient.getSpider(spiderId);
+            int spiderId = extClient.startScan("https://www.example.com", options, null);
+            ClientSpider spider = extClient.getScan(spiderId);
             boolean isRunning = spider.isRunning();
-            spider.stop();
+            spider.stopScan();
 
             // Then
             assertEquals(true, isRunning);

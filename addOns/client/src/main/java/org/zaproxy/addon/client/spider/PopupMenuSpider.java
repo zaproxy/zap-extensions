@@ -34,7 +34,7 @@ public class PopupMenuSpider extends PopupMenuItemSiteNodeContainer {
 
     public PopupMenuSpider(String label, ExtensionClientIntegration extension) {
         super(label);
-        this.setIcon(extension.getIcon());
+        this.setIcon(ExtensionClientIntegration.getIcon());
         this.extension = extension;
     }
 

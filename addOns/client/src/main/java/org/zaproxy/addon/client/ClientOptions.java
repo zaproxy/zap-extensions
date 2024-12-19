@@ -48,6 +48,7 @@ public class ClientOptions extends VersionedAbstractParam {
     private static final String MAX_DEPTH_KEY = CLIENT_BASE_KEY + ".maxDepth";
     private static final String MAX_DURATION_KEY = CLIENT_BASE_KEY + ".maxDuration";
     private static final String MAX_CHILDREN_KEY = CLIENT_BASE_KEY + ".maxChildren";
+    private static final String MAX_SCANS_IN_UI_KEY = CLIENT_BASE_KEY + ".maxScansInUI";
 
     private static final String DEFAULT_BROWSER_ID = Browser.FIREFOX_HEADLESS.getId();
 
@@ -62,6 +63,7 @@ public class ClientOptions extends VersionedAbstractParam {
     private int maxChildren;
     private int maxDepth = 5;
     private int maxDuration;
+    private int maxScansInUi = 5;
 
     @Override
     public ClientOptions clone() {
@@ -79,6 +81,7 @@ public class ClientOptions extends VersionedAbstractParam {
         this.maxChildren = getInt(MAX_CHILDREN_KEY, 0);
         this.maxDepth = getInt(MAX_DEPTH_KEY, 5);
         this.maxDuration = getInt(MAX_DURATION_KEY, 0);
+        this.maxScansInUi = getInt(MAX_SCANS_IN_UI_KEY, 5);
 
         try {
             pscanRulesDisabled =
@@ -215,5 +218,14 @@ public class ClientOptions extends VersionedAbstractParam {
     public void setMaxDuration(int maxDuration) {
         this.maxDuration = maxDuration;
         getConfig().setProperty(MAX_DURATION_KEY, maxDuration);
+    }
+
+    public int getMaxScansInUi() {
+        return this.maxScansInUi;
+    }
+
+    public void setMaxScansInUi(int maxScansInUi) {
+        this.maxScansInUi = maxScansInUi;
+        getConfig().setProperty(MAX_SCANS_IN_UI_KEY, maxScansInUi);
     }
 }
