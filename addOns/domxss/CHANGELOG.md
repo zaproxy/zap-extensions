@@ -5,7 +5,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- Update minimum ZAP version to 2.16.0.
 - Address deprecation warnings with newer Selenium version (4.27).
 - Include the whole HTTP message in the raised alerts.
 - Include the steps to reproduce the DOM XSS in the other info of the alert.
