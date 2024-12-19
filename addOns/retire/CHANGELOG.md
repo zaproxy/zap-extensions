@@ -8,7 +8,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - An issue that was resulting in False Positives.
 
 ### Changed
-- Update minimum ZAP version to 2.16.0.
 - The scan rule now uses a more specific CWE (Issue 8732).
 
 ## [0.42.0] - 2024-11-25

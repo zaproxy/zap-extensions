@@ -121,12 +121,20 @@ subprojects {
 
     group = "org.zaproxy.addon"
 
+    val java11AddOns = setOf("commonlib", "domxss", "network", "retire", "selenium")
+
     java {
         // Compile with appropriate Java version when building ZAP releases.
         if (System.getenv("ZAP_RELEASE") != null) {
             toolchain {
                 languageVersion.set(JavaLanguageVersion.of(System.getenv("ZAP_JAVA_VERSION")))
             }
+        }
+
+        if (java11AddOns.contains(name)) {
+            val javaVersion = JavaVersion.VERSION_11
+            sourceCompatibility = javaVersion
+            targetCompatibility = javaVersion
         }
     }
 
@@ -163,7 +171,7 @@ subprojects {
 
     val zapGav = "org.zaproxy:zap:2.16.0-SNAPSHOT"
     dependencies {
-        "zap"(zapGav)
+        "zap"(if (java11AddOns.contains(name)) "org.zaproxy:zap:2.15.0" else zapGav)
     }
 
     val apiGenClasspath = configurations.detachedConfiguration(dependencies.create(zapGav))
@@ -174,7 +182,7 @@ subprojects {
         )
 
         manifest {
-            zapVersion.set("2.16.0")
+            zapVersion.set(if (java11AddOns.contains(name)) "2.15.0" else "2.16.0")
 
             changesFile.set(tasks.named<ConvertMarkdownToHtml>("generateManifestChanges").flatMap { it.html })
             repo.set("https://github.com/zaproxy/zap-extensions/")
@@ -182,7 +190,7 @@ subprojects {
 
         apiClientGen {
             classpath.run {
-                setFrom(apiGenClasspath)
+                setFrom("org.zaproxy:zap:2.15.0")
                 from(configurations.named(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME))
                 from(tasks.named(JavaPlugin.JAR_TASK_NAME))
             }

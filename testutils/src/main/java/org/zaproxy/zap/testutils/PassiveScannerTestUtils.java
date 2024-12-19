@@ -33,6 +33,9 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -45,8 +48,8 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
-import org.zaproxy.zap.extension.pscan.PassiveScanActions;
 import org.zaproxy.zap.extension.pscan.PassiveScanData;
+import org.zaproxy.zap.extension.pscan.PassiveScanTaskHelper;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -60,7 +63,7 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
         implements ScanRuleTests {
 
     protected T rule;
-    protected PassiveScanActions actions;
+    protected PassiveScanTaskHelper helper;
     protected PassiveScanData passiveScanData;
     protected List<Alert> alertsRaised;
 
@@ -71,7 +74,7 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
         passiveScanData =
                 mock(PassiveScanData.class, withSettings().strictness(Strictness.LENIENT));
         alertsRaised = new ArrayList<>();
-        actions = mock(PassiveScanActions.class, withSettings().strictness(Strictness.LENIENT));
+        helper = mock(PassiveScanTaskHelper.class, withSettings().strictness(Strictness.LENIENT));
         doAnswer(
                         invocation -> {
                             Alert alert = invocation.getArgument(1);
@@ -80,11 +83,38 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
                             alertsRaised.add(alert);
                             return null;
                         })
-                .when(actions)
+                .when(helper)
                 .raiseAlert(any(), any());
 
         rule = createScanner();
-        rule.setPassiveScanActions(actions);
+        rule.setTaskHelper(helper);
+
+        try {
+            InvocationHandler invocationHandler =
+                    (o, method, args) -> {
+                        switch (method.getName()) {
+                            case "raiseAlert":
+                                Alert alert = (Alert) args[1];
+
+                                defaultAssertions(alert);
+                                alertsRaised.add(alert);
+                                return null;
+
+                            default:
+                                return null;
+                        }
+                    };
+
+            Class<?> clazz = Class.forName("org.zaproxy.zap.extension.pscan.PassiveScanActions");
+            Method setPassiveScanActions =
+                    org.zaproxy.zap.extension.pscan.PluginPassiveScanner.class.getDeclaredMethod(
+                            "setPassiveScanActions", clazz);
+            Object actions =
+                    Proxy.newProxyInstance(
+                            clazz.getClassLoader(), new Class<?>[] {clazz}, invocationHandler);
+            setPassiveScanActions.invoke(rule, actions);
+        } catch (Exception ignore) {
+        }
 
         if (rule instanceof PluginPassiveScanner) {
             ((PluginPassiveScanner) rule).setHelper(passiveScanData);
