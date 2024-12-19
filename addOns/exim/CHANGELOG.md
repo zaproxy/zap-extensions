@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Import HAR entry sent and elapsed time.
+- Duplicate or missing "Save URLs..." entries in the Export menu.
+- The "Save All URLs..." export option was saving only the selected URLs.
 
 ## [0.12.0] - 2024-10-07
 ### Changed

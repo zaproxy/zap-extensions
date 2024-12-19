@@ -56,9 +56,6 @@ public class ExtensionExim extends ExtensionAdaptor {
 
     private PopupMenuExportMessages popupMenuExportResponses;
     private PopupMenuExportMessages popupMenuExportMessages;
-    private PopupMenuExportContextUrls popupMenuExportContextUrls;
-    private PopupMenuExportSelectedUrls popupMenuExportSelectedrls;
-    private PopupMenuExportUrls popupMenuExportUrls;
     private PopupMenuCopyUrls popupMenuCopyUrls;
 
     public ExtensionExim() {
@@ -98,14 +95,39 @@ public class ExtensionExim extends ExtensionAdaptor {
                 getMenuExport().add(getPopupMenuExportResponses());
             }
 
-            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportContextUrls());
-            getMenuExport().add(getPopupMenuExportContextUrls());
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuExportContextUrls(
+                                    Constant.messages.getString("exim.menu.export.saveurls"),
+                                    this));
+            getMenuExport()
+                    .add(
+                            new PopupMenuExportContextUrls(
+                                    Constant.messages.getString("exim.menu.export.context.urls"),
+                                    this));
 
-            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportSelectedUrls());
-            getMenuExport().add(getPopupMenuExportSelectedUrls());
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuExportSelectedUrls(
+                                    Constant.messages.getString("exim.menu.export.saveurls"),
+                                    this));
+            getMenuExport()
+                    .add(
+                            new PopupMenuExportSelectedUrls(
+                                    Constant.messages.getString("exim.menu.export.popup.selected"),
+                                    this));
 
-            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportUrls());
-            getMenuExport().add(getPopupMenuExportUrls());
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuExportUrls(
+                                    Constant.messages.getString("exim.menu.export.popup"), this));
+            getMenuExport()
+                    .add(
+                            new PopupMenuExportUrls(
+                                    Constant.messages.getString("exim.menu.export.popup"), this));
 
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuCopyUrls());
 
@@ -202,33 +224,6 @@ public class ExtensionExim extends ExtensionAdaptor {
             popupMenuExportResponses = new PopupMenuExportMessages(getExtensionHistory(), true);
         }
         return popupMenuExportResponses;
-    }
-
-    private PopupMenuExportContextUrls getPopupMenuExportContextUrls() {
-        if (popupMenuExportContextUrls == null) {
-            popupMenuExportContextUrls =
-                    new PopupMenuExportContextUrls(
-                            Constant.messages.getString("exim.menu.export.context.urls"), this);
-        }
-        return popupMenuExportContextUrls;
-    }
-
-    private PopupMenuExportSelectedUrls getPopupMenuExportSelectedUrls() {
-        if (popupMenuExportSelectedrls == null) {
-            popupMenuExportSelectedrls =
-                    new PopupMenuExportSelectedUrls(
-                            Constant.messages.getString("exim.menu.export.popup.selected"), this);
-        }
-        return popupMenuExportSelectedrls;
-    }
-
-    private PopupMenuExportUrls getPopupMenuExportUrls() {
-        if (popupMenuExportUrls == null) {
-            popupMenuExportUrls =
-                    new PopupMenuExportSelectedUrls(
-                            Constant.messages.getString("exim.menu.export.popup"), this);
-        }
-        return popupMenuExportUrls;
     }
 
     private PopupMenuCopyUrls getPopupMenuCopyUrls() {
