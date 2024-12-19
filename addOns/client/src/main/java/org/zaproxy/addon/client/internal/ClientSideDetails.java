@@ -27,6 +27,7 @@ public class ClientSideDetails {
     private String url;
     private boolean visited;
     private boolean storage;
+    private boolean redirect;
 
     private Set<ClientSideComponent> components = new HashSet<>();
 
@@ -71,5 +72,13 @@ public class ClientSideDetails {
 
     protected void setStorage(boolean storage) {
         this.storage = storage;
+    }
+
+    public boolean isRedirect() {
+        return redirect;
+    }
+
+    public void setRedirect(boolean redirect) {
+        this.redirect = redirect;
     }
 }
