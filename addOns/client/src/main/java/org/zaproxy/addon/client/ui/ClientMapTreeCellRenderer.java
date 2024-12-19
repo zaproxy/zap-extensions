@@ -38,16 +38,16 @@ public class ClientMapTreeCellRenderer extends DefaultTreeCellRenderer {
             ExtensionClientIntegration.getIcon("sitemap-application-blue.png");
     private static final ImageIcon LEAF_ICON =
             ExtensionClientIntegration.getIcon("blue-document.png");
-    private static final ImageIcon LEAF_NOT_VISITED_ICON =
-            ExtensionClientIntegration.getIcon("blue-document--minus.png");
     private static final ImageIcon FRAGMENT_ICON =
             ExtensionClientIntegration.getIcon("blue-document-number.png");
-    private static final ImageIcon FRAGMENT_NOT_VISITED_ICON =
-            ExtensionClientIntegration.getIcon("blue-document-number-minus.png");
     private static final ImageIcon FOLDER_OPEN_ICON =
             ExtensionClientIntegration.getIcon("blue-folder-horizontal-open.png");
     private static final ImageIcon FOLDER_CLOSED_ICON =
             ExtensionClientIntegration.getIcon("blue-folder-horizontal.png");
+    private static final ImageIcon NOT_VISITED_OVERLAY =
+            ExtensionClientIntegration.getIcon("overlay-minus.png");
+    private static final ImageIcon REDIRECT_OVERLAY =
+            ExtensionClientIntegration.getIcon("overlay-redirect.png");
     private static final ImageIcon DATABASE_ICON =
             ExtensionClientIntegration.getIcon("database.png");
 
@@ -83,27 +83,23 @@ public class ClientMapTreeCellRenderer extends DefaultTreeCellRenderer {
             setPreferredSize(null); // clears the preferred size, making the node visible
             super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
-            // folder / file icons with scope 'target' if relevant
             if (node.isRoot()) {
-                component.add(wrap(ROOT_ICON)); // 'World' icon
+                component.add(wrap(ROOT_ICON));
             } else {
                 ClientSideDetails csd = node.getUserObject();
                 OverlayIcon icon;
                 if (csd.isStorage()) {
                     icon = new OverlayIcon(DATABASE_ICON);
                 } else if (leaf) {
-                    if (csd.isVisited()) {
-                        if (csd.getUrl().contains("#")) {
-                            icon = new OverlayIcon(FRAGMENT_ICON);
-                        } else {
-                            icon = new OverlayIcon(LEAF_ICON);
-                        }
+                    if (csd.getUrl().contains("#")) {
+                        icon = new OverlayIcon(FRAGMENT_ICON);
                     } else {
-                        if (csd.getUrl().contains("#")) {
-                            icon = new OverlayIcon(FRAGMENT_NOT_VISITED_ICON);
-                        } else {
-                            icon = new OverlayIcon(LEAF_NOT_VISITED_ICON);
-                        }
+                        icon = new OverlayIcon(LEAF_ICON);
+                    }
+                    if (!csd.isVisited()) {
+                        icon.add(NOT_VISITED_OVERLAY);
+                    } else if (csd.isRedirect()) {
+                        icon.add(REDIRECT_OVERLAY);
                     }
                 } else {
                     if (expanded) {

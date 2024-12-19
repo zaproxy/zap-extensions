@@ -26,6 +26,8 @@ import org.zaproxy.addon.client.ExtensionClientIntegration;
 
 public class ClientSideComponent {
 
+    public static String REDIRECT = "Redirect";
+
     private String tagName;
     private String id;
     private String parentUrl;
@@ -34,6 +36,26 @@ public class ClientSideComponent {
     private String type;
     private String tagType;
     private int formId = -1;
+
+    public ClientSideComponent(
+            String tagName,
+            String id,
+            String parentUrl,
+            String href,
+            String text,
+            String type,
+            String tagType,
+            int formId) {
+        super();
+        this.tagName = tagName;
+        this.id = id;
+        this.parentUrl = parentUrl;
+        this.href = href;
+        this.text = text;
+        this.type = type;
+        this.tagType = tagType;
+        this.formId = formId;
+    }
 
     public ClientSideComponent(JSONObject json) {
         this.tagName = json.getString("tagName");
@@ -99,6 +121,9 @@ public class ClientSideComponent {
     }
 
     public boolean isStorageEvent() {
+        if (type == null) {
+            return false;
+        }
         switch (type) {
             case "Cookies", "localStorage", "sessionStorage":
                 return true;

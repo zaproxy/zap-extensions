@@ -21,12 +21,14 @@ package org.zaproxy.addon.client.internal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -335,5 +337,33 @@ class ClientMapUnitTest {
 
         // Then
         assertThat(map.getRoot().getChildCount(), is(0));
+    }
+
+    @Test
+    void shouldSetKnownRedirectDetails() {
+        // Given
+        ClientNode node1 = map.getOrAddNode(BBB_DDD_URL + "/", false, false);
+
+        // When
+        ClientNode node2 = map.setRedirect(BBB_DDD_URL + "/", AAA_URL);
+        Set<ClientSideComponent> components = node2.getUserObject().getComponents();
+        ClientSideComponent c0 = components.iterator().next();
+
+        // Then
+        assertThat(node1, is(node2));
+        assertThat(node2.getUserObject().isVisited(), is(true));
+        assertThat(node2.getUserObject().isRedirect(), is(true));
+        assertThat(components.size(), is(1));
+        assertThat(c0.getTagName(), is("Redirect"));
+        assertThat(c0.getHref(), is(AAA_URL));
+    }
+
+    @Test
+    void shouldIngnoreUnknownRedirectDetails() {
+        // Given / When
+        ClientNode node = map.setRedirect(BBB_DDD_URL + "/", AAA_URL);
+
+        // Then
+        assertThat(node, is(nullValue()));
     }
 }
