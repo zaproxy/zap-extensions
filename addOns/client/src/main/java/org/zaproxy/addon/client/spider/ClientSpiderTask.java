@@ -20,18 +20,22 @@
 package org.zaproxy.addon.client.spider;
 
 import java.time.Duration;
+import java.util.List;
 import org.openqa.selenium.WebDriver;
 
 public class ClientSpiderTask implements Runnable {
 
+    private final int id;
     private ClientSpider clientSpider;
-    private String url;
+    private List<SpiderAction> actions;
     private int timeout;
     private WebDriver wd;
 
-    public ClientSpiderTask(ClientSpider clientSpider, String url, int timeout) {
+    public ClientSpiderTask(
+            int id, ClientSpider clientSpider, List<SpiderAction> actions, int timeout) {
+        this.id = id;
         this.clientSpider = clientSpider;
-        this.url = url;
+        this.actions = actions;
         this.timeout = timeout;
     }
 
@@ -53,18 +57,18 @@ public class ClientSpiderTask implements Runnable {
             wd = this.clientSpider.getWebDriver();
             startTime = System.currentTimeMillis();
             wd.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(this.timeout));
-            wd.get(url);
+            actions.forEach(e -> e.run(wd));
             ok = true;
         } catch (Exception e) {
-            clientSpider.tempLogProgress("Task failed " + url + " " + e.getMessage());
+            clientSpider.tempLogProgress("Task " + id + " failed " + e.getMessage());
         }
         if (wd != null) {
             this.clientSpider.returnWebDriver(wd);
         }
         clientSpider.tempLogProgress(
-                "Task completed "
-                        + url
-                        + " "
+                "Task "
+                        + id
+                        + " completed "
                         + ok
                         + " in "
                         + (System.currentTimeMillis() - startTime) / 1000

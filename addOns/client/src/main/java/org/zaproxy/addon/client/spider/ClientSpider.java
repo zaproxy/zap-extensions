@@ -22,6 +22,7 @@ package org.zaproxy.addon.client.spider;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,6 +30,8 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,6 +42,10 @@ import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientNode;
+import org.zaproxy.addon.client.spider.actions.ClickElement;
+import org.zaproxy.addon.client.spider.actions.OpenUrl;
+import org.zaproxy.addon.client.spider.actions.SubmitForm;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
@@ -71,6 +78,8 @@ public class ClientSpider implements EventConsumer {
 
     private ExecutorService threadPool;
 
+    private final ValueProvider valueProvider;
+
     private int id;
     private ClientOptions options;
 
@@ -91,19 +100,22 @@ public class ClientSpider implements EventConsumer {
     private boolean stopped;
 
     private int tasksDoneCount;
-    private int tasksTotalCount;
+    private final AtomicInteger tasksTotalCount;
 
     public ClientSpider(
             ExtensionClientIntegration extClient,
             String targetUrl,
             ClientOptions options,
             int id,
-            User user) {
+            User user,
+            ValueProvider valueProvider) {
         this.extClient = extClient;
         this.targetUrl = targetUrl;
         this.options = options;
         this.id = id;
+        this.tasksTotalCount = new AtomicInteger();
         this.user = user;
+        this.valueProvider = valueProvider;
 
         ZAP.getEventBus().registerConsumer(this, ClientMap.class.getCanonicalName());
 
@@ -113,7 +125,7 @@ public class ClientSpider implements EventConsumer {
 
     public ClientSpider(
             ExtensionClientIntegration extClient, String targetUrl, ClientOptions options, int id) {
-        this(extClient, targetUrl, options, id, null);
+        this(extClient, targetUrl, options, id, null, null);
     }
 
     public void start() {
@@ -138,10 +150,18 @@ public class ClientSpider implements EventConsumer {
 
         List<String> unvisitedUrls = getUnvisitedUrls();
 
-        addTask(targetUrl, options.getInitialLoadTimeInSecs());
+        addInitialOpenUrlTask(targetUrl);
 
         // Add all of the known but unvisited URLs otherwise these will get ignored
-        unvisitedUrls.forEach(url -> addTask(url, options.getInitialLoadTimeInSecs()));
+        unvisitedUrls.forEach(this::addInitialOpenUrlTask);
+    }
+
+    private void addInitialOpenUrlTask(String url) {
+        addOpenUrlTask(url, options.getInitialLoadTimeInSecs());
+    }
+
+    private void addOpenUrlTask(String url, int loadTimeInSecs) {
+        addTask(List.of(new OpenUrl(url)), loadTimeInSecs);
     }
 
     private List<String> getUnvisitedUrls() {
@@ -189,10 +209,10 @@ public class ClientSpider implements EventConsumer {
         }
     }
 
-    private void addTask(String url, int loadTimeInSecs) {
-        this.tasksTotalCount++;
+    private void addTask(List<SpiderAction> actions, int loadTimeInSecs) {
+        int id = tasksTotalCount.incrementAndGet();
         try {
-            ClientSpiderTask task = new ClientSpiderTask(this, url, loadTimeInSecs);
+            ClientSpiderTask task = new ClientSpiderTask(id, this, actions, loadTimeInSecs);
             if (paused) {
                 this.pausedTasks.add(task);
             } else {
@@ -229,10 +249,11 @@ public class ClientSpider implements EventConsumer {
             return;
         }
 
-        String url = event.getParameters().get(ClientMap.URL_KEY);
+        Map<String, String> parameters = event.getParameters();
+        String url = parameters.get(ClientMap.URL_KEY);
         if (url.startsWith(targetUrl)) {
             if (options.getMaxDepth() > 0) {
-                int depth = Integer.parseInt(event.getParameters().get(ClientMap.DEPTH_KEY));
+                int depth = Integer.parseInt(parameters.get(ClientMap.DEPTH_KEY));
                 if (depth > options.getMaxDepth()) {
                     LOGGER.debug(
                             "Ignoring URL - too deep {} > {} : {}",
@@ -243,7 +264,7 @@ public class ClientSpider implements EventConsumer {
                 }
             }
             if (options.getMaxChildren() > 0) {
-                int siblings = Integer.parseInt(event.getParameters().get(ClientMap.SIBLINGS_KEY));
+                int siblings = Integer.parseInt(parameters.get(ClientMap.SIBLINGS_KEY));
                 if (siblings > options.getMaxChildren()) {
                     LOGGER.debug(
                             "Ignoring URL - too wide {} > {} : {}",
@@ -253,18 +274,44 @@ public class ClientSpider implements EventConsumer {
                     return;
                 }
             }
-            addTask(url, options.getPageLoadTimeInSecs());
+
+            if (ClientMap.MAP_COMPONENT_ADDED_EVENT.equals(event.getEventType())) {
+                if (ClickElement.isSupported(parameters)) {
+                    addTask(
+                            List.of(
+                                    new OpenUrl(url),
+                                    new ClickElement(valueProvider, createURI(url), parameters)),
+                            options.getPageLoadTimeInSecs());
+                } else if (SubmitForm.isSupported(parameters)) {
+                    addTask(
+                            List.of(
+                                    new OpenUrl(url),
+                                    new SubmitForm(valueProvider, createURI(url), parameters)),
+                            options.getPageLoadTimeInSecs());
+                }
+            } else {
+                addOpenUrlTask(url, options.getPageLoadTimeInSecs());
+            }
         }
+    }
+
+    private URI createURI(String value) {
+        try {
+            return new URI(value, true);
+        } catch (URIException | NullPointerException e) {
+            LOGGER.warn("Failed to create URI from {}", value, e);
+        }
+        return null;
     }
 
     public int getProgress() {
         if (finished && !stopped) {
             return 100;
-        } else if (this.tasksTotalCount <= 1) {
+        } else if (tasksTotalCount.get() <= 1) {
             // Still waiting for the first request to be processed
             return 0;
         }
-        return (this.tasksDoneCount * 100) / this.tasksTotalCount;
+        return (this.tasksDoneCount * 100) / tasksTotalCount.get();
     }
 
     public void stop() {

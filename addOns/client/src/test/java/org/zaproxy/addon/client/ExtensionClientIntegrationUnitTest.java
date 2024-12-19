@@ -44,6 +44,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.spider.ClientSpider;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.internal.FirefoxProfileManager;
@@ -140,6 +141,8 @@ class ExtensionClientIntegrationUnitTest {
         ExtensionSelenium extSel = mock(ExtensionSelenium.class);
         when(extensionLoader.getExtension(ExtensionSelenium.class)).thenReturn(extSel);
         given(extSel.getProxiedBrowser(anyString(), anyString())).willReturn(mock(WebDriver.class));
+        ExtensionCommonlib extCommonLib = mock(ExtensionCommonlib.class);
+        when(extensionLoader.getExtension(ExtensionCommonlib.class)).thenReturn(extCommonLib);
         ExtensionClientIntegration extClient = new ExtensionClientIntegration();
         extClient.initModel(model);
         extClient.init();
