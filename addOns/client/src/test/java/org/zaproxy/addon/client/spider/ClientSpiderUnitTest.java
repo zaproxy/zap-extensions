@@ -389,7 +389,7 @@ class ClientSpiderUnitTest extends TestUtils {
                         url,
                         "#",
                         null,
-                        null,
+                        ClientSideComponent.Type.LINK,
                         null,
                         -1));
         try {
