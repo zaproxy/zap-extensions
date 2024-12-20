@@ -167,6 +167,28 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         }
         return componentAdded;
     }
+
+    public ClientNode setRedirect(String originalUrl, String redirectedUrl) {
+        ClientNode node = getNode(originalUrl, false, false);
+        if (node != null) {
+            node.getUserObject().setRedirect(true);
+            node.getUserObject().setVisited(true);
+            node.getUserObject()
+                    .addComponent(
+                            new ClientSideComponent(
+                                    ClientSideComponent.REDIRECT,
+                                    null,
+                                    originalUrl,
+                                    redirectedUrl,
+                                    ClientSideComponent.REDIRECT,
+                                    null,
+                                    null,
+                                    -1));
+            return node;
+        }
+        LOGGER.debug("setRedirect, no node for URL {}", originalUrl);
+        return null;
+    }
 }
 
 /**
