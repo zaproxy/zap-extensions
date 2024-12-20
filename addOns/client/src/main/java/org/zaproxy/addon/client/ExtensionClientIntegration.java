@@ -81,6 +81,7 @@ import org.zaproxy.addon.client.ui.PopupMenuClientDetailsCopy;
 import org.zaproxy.addon.client.ui.PopupMenuClientHistoryCopy;
 import org.zaproxy.addon.client.ui.PopupMenuClientOpenInBrowser;
 import org.zaproxy.addon.client.ui.PopupMenuClientShowInSites;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
@@ -114,6 +115,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
             List.of(
                     ExtensionAlert.class,
+                    ExtensionCommonlib.class,
                     ExtensionHistory.class,
                     ExtensionNetwork.class,
                     ExtensionSelenium.class);
@@ -155,7 +157,13 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                                 new ClientSideDetails(
                                         Constant.messages.getString("client.tree.title"), null),
                                 this.getModel().getSession()));
-        spiderScanController = new SpiderScanController(this);
+        spiderScanController =
+                new SpiderScanController(
+                        this,
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionCommonlib.class)
+                                .getValueProvider());
         passiveScanController = new ClientPassiveScanController();
     }
 

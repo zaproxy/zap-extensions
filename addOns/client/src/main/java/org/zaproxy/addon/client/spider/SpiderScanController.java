@@ -31,6 +31,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.model.ScanController;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
@@ -40,6 +41,8 @@ public class SpiderScanController implements ScanController<ClientSpider> {
     private static final Logger LOGGER = LogManager.getLogger(SpiderScanController.class);
 
     private ExtensionClientIntegration extension;
+
+    private final ValueProvider valueProvider;
 
     /**
      * The {@code Lock} for exclusive access of instance variables related to multiple active scans.
@@ -81,9 +84,10 @@ public class SpiderScanController implements ScanController<ClientSpider> {
      */
     private List<ClientSpider> clientSpiderList;
 
-    public SpiderScanController(ExtensionClientIntegration extension) {
+    public SpiderScanController(ExtensionClientIntegration extension, ValueProvider valueProvider) {
         this.clientSpidersLock = new ReentrantLock();
         this.extension = extension;
+        this.valueProvider = valueProvider;
         this.clientSpiderMap = new HashMap<>();
         this.clientSpiderList = new ArrayList<>();
     }
@@ -113,7 +117,14 @@ public class SpiderScanController implements ScanController<ClientSpider> {
             }
 
             ClientSpider scan =
-                    new ClientSpider(extension, name, startUri.toString(), clientOptions, id, user);
+                    new ClientSpider(
+                            extension,
+                            name,
+                            startUri.toString(),
+                            clientOptions,
+                            id,
+                            user,
+                            valueProvider);
 
             this.clientSpiderMap.put(id, scan);
             this.clientSpiderList.add(scan);
