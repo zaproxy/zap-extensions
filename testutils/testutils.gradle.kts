@@ -18,8 +18,14 @@ tasks.withType<JavaCompile>().configureEach {
     options.compilerArgs = options.compilerArgs + "-Xlint:-processing"
 }
 
+java {
+    val javaVersion = JavaVersion.VERSION_11
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+}
+
 dependencies {
-    compileOnly("org.zaproxy:zap:2.16.0-SNAPSHOT")
+    compileOnly("org.zaproxy:zap:2.15.0")
     implementation(project(":addOns:network"))
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
 
