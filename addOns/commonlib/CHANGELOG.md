@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Add solutions to Insufficient Process Validation vulnerability (Issue 8056).
+
 ### Changed
 - Update minimum ZAP version to 2.16.0.
 - Dependency updates.
