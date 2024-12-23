@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.43.0] - 2024-12-23
 ### Fixed
 - An issue that was resulting in False Positives.
 
@@ -231,6 +231,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - First release.
 
+[0.43.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.43.0
 [0.42.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.42.0
 [0.41.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.41.0
 [0.40.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.40.0
