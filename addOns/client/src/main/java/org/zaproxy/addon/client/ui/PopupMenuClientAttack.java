@@ -43,7 +43,7 @@ public class PopupMenuClientAttack extends ExtensionPopupMenu {
             JTree tree = (JTree) invoker;
             if (ClientMapPanel.CLIENT_TREE_NAME.equals(tree.getName())) {
                 removeAll();
-                if (Constant.isDevBuild()) {
+                if (Constant.isDevMode()) {
                     // Not for release .. yet ;)
                     add(new PopupClientSpider(clientMapPanel));
                     List<ClientNode> nodes = clientMapPanel.getSelectedNodes();
