@@ -175,7 +175,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             extensionHook.getHookView().addWorkPanel(getClientDetailsPanel());
             extensionHook.getHookView().addStatusPanel(getClientHistoryPanel());
 
-            if (Constant.isDevBuild()) {
+            if (Constant.isDevMode()) {
                 // Not for release .. yet ;)
                 extensionHook.getHookMenu().addToolsMenuItem(getMenuItemCustomScan());
                 extensionHook
@@ -746,7 +746,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     }
 
     private void addScanToUi(final ClientSpider scan) {
-        if (!Constant.isDevBuild()) {
+        if (!Constant.isDevMode()) {
             return;
         }
 
@@ -768,7 +768,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             spiderScanController.reset();
 
             if (hasView()) {
-                if (Constant.isDevBuild()) {
+                if (Constant.isDevMode()) {
                     getClientSpiderPanel().reset();
                 }
                 if (spiderDialog != null) {
@@ -779,14 +779,14 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
         @Override
         public void sessionChanged(final Session session) {
-            if (hasView() && Constant.isDevBuild()) {
+            if (hasView() && Constant.isDevMode()) {
                 ThreadUtils.invokeAndWaitHandled(getClientSpiderPanel()::reset);
             }
         }
 
         @Override
         public void sessionScopeChanged(Session session) {
-            if (hasView() && Constant.isDevBuild()) {
+            if (hasView() && Constant.isDevMode()) {
                 getClientSpiderPanel().sessionScopeChanged(session);
             }
         }
@@ -798,7 +798,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             }
 
             if (hasView()) {
-                if (Constant.isDevBuild()) {
+                if (Constant.isDevMode()) {
                     getClientSpiderPanel().sessionModeChanged(mode);
                 }
                 getMenuItemCustomScan().setEnabled(!Mode.safe.equals(mode));
