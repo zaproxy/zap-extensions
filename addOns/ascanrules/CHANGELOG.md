@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add the `OUT_OF_BAND` alert tag to the following scan rules:
   - Server Side Template Injection (Blind)
   - XML External Entity Attack
+- Scan rules which execute time based attacks now include the "TEST_TIMING" alert tag.
 
 ### Fixed
 - A situation where the Server-Side Template Injection (SSTI) scan rule might result in false positives related to the Go payloads (Issue 8622).
