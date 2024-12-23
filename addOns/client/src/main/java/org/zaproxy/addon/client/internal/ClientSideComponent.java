@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.client.internal;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +34,8 @@ public class ClientSideComponent {
 
     public static String REDIRECT = "Redirect";
 
+    private final Map<String, String> data;
+
     private String tagName;
     private String id;
     private String parentUrl;
@@ -42,6 +46,11 @@ public class ClientSideComponent {
     private int formId = -1;
 
     public ClientSideComponent(JSONObject json) {
+        data = new HashMap<>();
+        for (Object key : json.keySet()) {
+            data.put(key.toString(), json.get(key).toString());
+        }
+
         this.tagName = json.getString("tagName");
         this.id = json.getString("id");
         this.parentUrl = json.getString("url");
@@ -58,6 +67,10 @@ public class ClientSideComponent {
         if (json.containsKey("formId")) {
             this.formId = json.getInt("formId");
         }
+    }
+
+    public Map<String, String> getData() {
+        return data;
     }
 
     public String getTypeForDisplay() {

@@ -20,6 +20,7 @@
 package org.zaproxy.addon.client.spider;
 
 import java.time.Duration;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -28,14 +29,17 @@ public class ClientSpiderTask implements Runnable {
 
     private static final Logger LOGGER = LogManager.getLogger(ClientSpiderTask.class);
 
+    private final int id;
     private ClientSpider clientSpider;
-    private String url;
+    private List<SpiderAction> actions;
     private int timeout;
     private WebDriver wd;
 
-    public ClientSpiderTask(ClientSpider clientSpider, String url, int timeout) {
+    public ClientSpiderTask(
+            int id, ClientSpider clientSpider, List<SpiderAction> actions, int timeout) {
+        this.id = id;
         this.clientSpider = clientSpider;
-        this.url = url;
+        this.actions = actions;
         this.timeout = timeout;
     }
 
@@ -57,21 +61,17 @@ public class ClientSpiderTask implements Runnable {
             wd = this.clientSpider.getWebDriver();
             startTime = System.currentTimeMillis();
             wd.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(this.timeout));
-            wd.get(url);
-            String actualUrl = wd.getCurrentUrl();
-            if (!url.equals(actualUrl)) {
-                clientSpider.setRedirect(url, actualUrl);
-            }
+            actions.forEach(e -> e.run(wd));
             ok = true;
         } catch (Exception e) {
-            LOGGER.warn("Task failed {} {}", url, e.getMessage(), e);
+            LOGGER.warn("Task {} failed {}", id, e.getMessage(), e);
         }
         if (wd != null) {
             this.clientSpider.returnWebDriver(wd);
         }
         LOGGER.debug(
-                "Task completed {} {} in {} secs",
-                url,
+                "Task {} completed {} in {} secs",
+                id,
                 ok,
                 (System.currentTimeMillis() - startTime) / 1000);
         this.clientSpider.postTaskExecution(this);

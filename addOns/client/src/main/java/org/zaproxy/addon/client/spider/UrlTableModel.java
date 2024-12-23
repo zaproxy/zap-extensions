@@ -78,8 +78,10 @@ public class UrlTableModel extends AbstractTableModel {
 
     public void addScanResult(String uri) {
         UrlScanResult result = new UrlScanResult(uri);
-        scanResults.add(result);
-        fireTableRowsInserted(scanResults.size() - 1, scanResults.size() - 1);
+        if (!scanResults.contains(result)) {
+            scanResults.add(result);
+            fireTableRowsInserted(scanResults.size() - 1, scanResults.size() - 1);
+        }
     }
 
     public void removesScanResult(String uri) {

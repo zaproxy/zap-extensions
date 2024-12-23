@@ -37,6 +37,7 @@ import org.zaproxy.zap.model.Target;
 public class ClientMap extends SortedTreeModel implements EventPublisher {
 
     public static final String MAP_NODE_ADDED_EVENT = "client.mapNode.added";
+    public static final String MAP_COMPONENT_ADDED_EVENT = "client.mapComponent.added";
     public static final String DEPTH_KEY = "depth";
     public static final String SIBLINGS_KEY = "siblings";
     public static final String URL_KEY = "url";
@@ -48,7 +49,7 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
     public ClientMap(ClientNode root) {
         super(root);
         this.root = root;
-        ZAP.getEventBus().registerPublisher(this, MAP_NODE_ADDED_EVENT);
+        ZAP.getEventBus().registerPublisher(this, MAP_NODE_ADDED_EVENT, MAP_COMPONENT_ADDED_EVENT);
     }
 
     @Override
@@ -164,6 +165,13 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         boolean componentAdded = details.addComponent(component);
         if (!wasVisited || componentAdded) {
             details.setVisited(true);
+
+            Map<String, String> map = new HashMap<>(component.getData());
+            map.put(DEPTH_KEY, Integer.toString(node.getLevel()));
+            map.put(SIBLINGS_KEY, Integer.toString(node.getChildCount()));
+            ZAP.getEventBus()
+                    .publishSyncEvent(
+                            this, new Event(this, MAP_COMPONENT_ADDED_EVENT, new Target(), map));
         }
         return componentAdded;
     }
@@ -176,6 +184,7 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
             node.getUserObject()
                     .addComponent(
                             new ClientSideComponent(
+                                    Map.of(),
                                     ClientSideComponent.REDIRECT,
                                     null,
                                     originalUrl,
