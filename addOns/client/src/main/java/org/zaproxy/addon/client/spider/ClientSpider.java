@@ -38,6 +38,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
@@ -104,6 +105,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
     private final AtomicInteger tasksTotalCount;
 
     private UrlTableModel addedNodesModel;
+    private TaskTableModel tasksModel;
     private ScanListenner2 listener;
 
     public ClientSpider(
@@ -123,6 +125,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         this.user = user;
         this.valueProvider = valueProvider;
         this.addedNodesModel = new UrlTableModel();
+        this.tasksModel = new TaskTableModel();
 
         ZAP.getEventBus().registerConsumer(this, ClientMap.class.getCanonicalName());
 
@@ -168,12 +171,17 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         unvisitedUrls.forEach(this::addInitialOpenUrlTask);
     }
 
-    private void addInitialOpenUrlTask(String url) {
-        addOpenUrlTask(url, options.getInitialLoadTimeInSecs());
+    private ClientSpiderTask addInitialOpenUrlTask(String url) {
+        return addOpenUrlTask(url, options.getInitialLoadTimeInSecs());
     }
 
-    private void addOpenUrlTask(String url, int loadTimeInSecs) {
-        addTask(openAction(url), loadTimeInSecs);
+    private ClientSpiderTask addOpenUrlTask(String url, int loadTimeInSecs) {
+        return addTask(
+                url,
+                openAction(url),
+                loadTimeInSecs,
+                Constant.messages.getString("client.spider.panel.table.action.get"),
+                "");
     }
 
     private List<SpiderAction> openAction(String url, SpiderAction... additionalActions) {
@@ -238,18 +246,28 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         }
     }
 
-    private void addTask(List<SpiderAction> actions, int loadTimeInSecs) {
+    private ClientSpiderTask addTask(
+            String url,
+            List<SpiderAction> actions,
+            int loadTimeInSecs,
+            String displayName,
+            String detailsString) {
         int id = tasksTotalCount.incrementAndGet();
         try {
-            ClientSpiderTask task = new ClientSpiderTask(id, this, actions, loadTimeInSecs);
+            ClientSpiderTask task =
+                    new ClientSpiderTask(
+                            id, this, actions, loadTimeInSecs, displayName, detailsString);
+            this.addTaskToTasksModel(task, url);
             if (paused) {
                 this.pausedTasks.add(task);
             } else {
                 executeTask(task);
             }
+            return task;
         } catch (RejectedExecutionException e) {
             LOGGER.debug("Failed to add task", e.getMessage());
         }
+        return null;
     }
 
     private void executeTask(ClientSpiderTask task) {
@@ -312,20 +330,43 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             if (ClientMap.MAP_COMPONENT_ADDED_EVENT.equals(event.getEventType())) {
                 if (ClickElement.isSupported(href -> href.startsWith(targetUrl), parameters)) {
                     addTask(
+                            url,
                             openAction(
                                     url,
                                     new ClickElement(valueProvider, createURI(url), parameters)),
-                            options.getPageLoadTimeInSecs());
+                            options.getPageLoadTimeInSecs(),
+                            Constant.messages.getString("client.spider.panel.table.action.click"),
+                            paramsToString(parameters));
                 } else if (SubmitForm.isSupported(parameters)) {
                     addTask(
+                            url,
                             openAction(
                                     url, new SubmitForm(valueProvider, createURI(url), parameters)),
-                            options.getPageLoadTimeInSecs());
+                            options.getPageLoadTimeInSecs(),
+                            Constant.messages.getString("client.spider.panel.table.action.submit"),
+                            paramsToString(parameters));
                 }
             } else {
                 addOpenUrlTask(url, options.getPageLoadTimeInSecs());
             }
         }
+    }
+
+    private static String paramsToString(Map<String, String> parameters) {
+        String tag = parameters.get("tagName");
+        if (tag != null) {
+            switch (tag) {
+                case "A":
+                    return Constant.messages.getString(
+                            "client.spider.panel.table.details.link",
+                            parameters.get("href"),
+                            parameters.get("text"));
+                case "BUTTON":
+                    return Constant.messages.getString(
+                            "client.spider.panel.table.details.button", parameters.get("text"));
+            }
+        }
+        return parameters.toString();
     }
 
     private URI createURI(String value) {
@@ -343,6 +384,24 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                     addedNodesModel.addScanResult(uri);
                     extClient.updateAddedCount();
                 });
+    }
+
+    public void taskStateChange(final ClientSpiderTask task) {
+        ThreadUtils.invokeLater(
+                () ->
+                        tasksModel.updateTaskState(
+                                task.getId(), task.getStatus().toString(), task.getError()));
+    }
+
+    private void addTaskToTasksModel(final ClientSpiderTask task, String url) {
+        ThreadUtils.invokeLater(
+                () ->
+                        tasksModel.addTask(
+                                task.getId(),
+                                task.getDisplayName(),
+                                url,
+                                task.getDetailsString(),
+                                task.getStatus().toString()));
     }
 
     protected void setRedirect(String originalUrl, String redirectedUrl) {
@@ -512,6 +571,10 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
 
     public TableModel getAddedNodesTableModel() {
         return this.addedNodesModel;
+    }
+
+    public TableModel getActionsTableModel() {
+        return this.tasksModel;
     }
 
     public void setListener(ScanListenner2 listener) {

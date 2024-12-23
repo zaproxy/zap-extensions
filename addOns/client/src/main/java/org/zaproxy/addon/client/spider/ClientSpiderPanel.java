@@ -54,11 +54,14 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
 
     private static final String ZERO_REQUESTS_LABEL_TEXT = "0";
 
-    private static final UrlTableModel EMPTY_TABLE_MODEL = new UrlTableModel();
+    private static final TaskTableModel EMPTY_ACTIONS_TABLE_MODEL = new TaskTableModel();
+    private static final UrlTableModel EMPTY_URL_TABLE_MODEL = new UrlTableModel();
 
     public static final String PANEL_NAME = "ClientPanel";
 
     private static final String ADDED_NODES_CONTAINER_NAME = "ClientAddedNodesContainer";
+
+    private static final String TASKS_CONTAINER_NAME = "ClientTasksContainer";
 
     private JPanel mainPanel;
     private JTabbedPane tabbedPane;
@@ -67,6 +70,8 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
     private JScrollPane addedNodesTableScrollPane;
     private JLabel addedCountNameLabel;
     private JLabel addedCountValueLabel;
+    private ZapTable tasksTable;
+    private JScrollPane tasksTableScrollPane;
 
     private ExtensionClientIntegration extension;
     private ClientOptions clientOptions;
@@ -89,6 +94,9 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
             tabbedPane.addTab(
                     Constant.messages.getString("client.spider.panel.tab.addednodes"),
                     getAddedNodesTableScrollPane());
+            tabbedPane.addTab(
+                    Constant.messages.getString("client.spider.panel.tab.tasks"),
+                    getTasksTableScrollPane());
             tabbedPane.setSelectedIndex(0);
 
             mainPanel.add(tabbedPane);
@@ -107,7 +115,7 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
 
     private JXTable getAddedNodesTable() {
         if (addedNodesTable == null) {
-            addedNodesTable = new ZapTable(EMPTY_TABLE_MODEL);
+            addedNodesTable = new ZapTable(EMPTY_URL_TABLE_MODEL);
             addedNodesTable.setColumnSelectionAllowed(false);
             addedNodesTable.setCellSelectionEnabled(false);
             addedNodesTable.setRowSelectionAllowed(true);
@@ -137,6 +145,43 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
             addedCountValueLabel.setText(ZERO_REQUESTS_LABEL_TEXT);
         }
         return addedCountValueLabel;
+    }
+
+    private JScrollPane getTasksTableScrollPane() {
+        if (tasksTableScrollPane == null) {
+            tasksTableScrollPane = new JScrollPane();
+            tasksTableScrollPane.setName("ClientSpiderTasksPane");
+            tasksTableScrollPane.setViewportView(getTasksTable());
+        }
+        return tasksTableScrollPane;
+    }
+
+    private JXTable getTasksTable() {
+        if (tasksTable == null) {
+            tasksTable = new ZapTable(EMPTY_ACTIONS_TABLE_MODEL);
+            tasksTable.setColumnSelectionAllowed(false);
+            tasksTable.setCellSelectionEnabled(false);
+            tasksTable.setRowSelectionAllowed(true);
+            tasksTable.setAutoCreateRowSorter(true);
+
+            tasksTable.setAutoCreateColumnsFromModel(false);
+            tasksTable.getColumnModel().getColumn(0).setMinWidth(40);
+            tasksTable.getColumnModel().getColumn(0).setPreferredWidth(50); // ID
+
+            tasksTable.getColumnModel().getColumn(1).setMinWidth(50);
+            tasksTable.getColumnModel().getColumn(1).setPreferredWidth(60); // Action
+
+            tasksTable.getColumnModel().getColumn(2).setMinWidth(300); // URI
+            tasksTable.getColumnModel().getColumn(3).setMinWidth(300); // Details
+            tasksTable.getColumnModel().getColumn(4).setMinWidth(300); // Error
+
+            tasksTable.getColumnModel().getColumn(5).setMinWidth(60);
+            tasksTable.getColumnModel().getColumn(5).setPreferredWidth(70); // Status
+
+            tasksTable.setName(TASKS_CONTAINER_NAME);
+            tasksTable.setDoubleBuffered(true);
+        }
+        return tasksTable;
     }
 
     @Override
@@ -170,8 +215,10 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
         }
         if (scanner != null) {
             getAddedNodesTable().setModel(scanner.getAddedNodesTableModel());
+            getTasksTable().setModel(scanner.getActionsTableModel());
         } else {
-            getAddedNodesTable().setModel(EMPTY_TABLE_MODEL);
+            getAddedNodesTable().setModel(EMPTY_URL_TABLE_MODEL);
+            getTasksTable().setModel(EMPTY_ACTIONS_TABLE_MODEL);
         }
         this.updateAddedCount();
     }
