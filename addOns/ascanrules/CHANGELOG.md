@@ -13,9 +13,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add the `OUT_OF_BAND` alert tag to the following scan rules:
   - Server Side Template Injection (Blind)
   - XML External Entity Attack
+- Cloud Metadata Attack scan rule is improved to support GCP, Azure, and OCI.
 
 ### Fixed
 - A situation where the Server-Side Template Injection (SSTI) scan rule might result in false positives related to the Go payloads (Issue 8622).
+- False Positives in Cloud Metadata Attack scan rule (Issue 8514).
 
 ### Added
 - Standardized Scan Policy related alert tags on the rule.
