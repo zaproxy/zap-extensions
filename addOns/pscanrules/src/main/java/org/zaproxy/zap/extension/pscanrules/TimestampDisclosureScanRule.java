@@ -123,7 +123,8 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (ResourceIdentificationUtils.isFont(msg) || ResourceIdentificationUtils.isJavaScript(msg)) {
+        if (ResourceIdentificationUtils.isFont(msg)
+                || ResourceIdentificationUtils.isJavaScript(msg)) {
             return;
         }
         LOGGER.debug("Checking message {} for timestamps", msg.getRequestHeader().getURI());
