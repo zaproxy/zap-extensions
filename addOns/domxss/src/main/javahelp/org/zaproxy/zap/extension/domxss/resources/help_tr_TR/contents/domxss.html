@@ -17,8 +17,8 @@ As it launches browser windows it will take significantly longer than other (non
 This version supports Firefox (the default) and Chrome. They can be run with GUI or headless (default), it can be changed with
 the rule <code>rules.domxss.browserid</code>, via the Options 'Rule configuration' panel, with values
 <code>firefox</code>, <code>firefox-headless</code>, <code>chrome</code> and <code>chrome-headless</code>.
-</p>
-<p>
+
+<h3>Strengths and Thresholds</h3>
 The following Attack Strengths are supported, and related directly to the number of attack payloads used
 for URL fragment and form input field injections (eg: <code>http://example.com/index.html?foo=bar#injection</code>):
 <ul>
@@ -31,7 +31,14 @@ The scanner will also attempt URL/query parameter injections which are not impac
 </p>
 <p>
 Kural, yalnızca LOW Uyarı eşiği kullanılmadığı sürece, düğüm başına bir DOM XSS güvenlik açığını bildirir; bu durumda belirtilen yüklerin tümünü denemeye devam eder. 
-</p>
+
+<h3>Exclusions</h3>
+The rule will block the browser it launches from accessing any URLs that are excluded by:
+<ul>
+<li>Global Exclusions
+<li>Context Exclusions, if invoked with the relevant context
+</ul>
+
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/domxss/src/main/java/org/zaproxy/zap/extension/domxss/DomXssScanRule.java">DomXssScanRule.java</a>
 
