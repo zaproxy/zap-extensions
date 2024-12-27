@@ -49,6 +49,7 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -96,6 +97,7 @@ import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
+import org.zaproxy.zap.view.ScanStatus;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionClientIntegration extends ExtensionAdaptor {
@@ -140,6 +142,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private ClientSpiderDialog spiderDialog;
     private ZapMenuItem menuItemCustomScan;
 
+    private ScanStatus pscanStatus;
+
     private List<AuthenticationHandler> authHandlers =
             Collections.synchronizedList(new ArrayList<>());
 
@@ -165,6 +169,14 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                                 .getExtension(ExtensionCommonlib.class)
                                 .getValueProvider());
         passiveScanController = new ClientPassiveScanController();
+    }
+
+    @Override
+    public void initView(ViewDelegate view) {
+        pscanStatus =
+                new ScanStatus(
+                        getIcon("pscan-blue.png"),
+                        Constant.messages.getString("client.pscan.footer.label"));
     }
 
     @Override
@@ -276,6 +288,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             extensionHook
                     .getHookView()
                     .addOptionPanel(new OptionsPassiveScan(passiveScanController));
+
+            getView()
+                    .getMainFrame()
+                    .getMainFooterPanel()
+                    .addFooterToolbarRightComponent(pscanStatus.getCountLabel());
         }
     }
 
@@ -427,6 +444,10 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         }
         if (hasView()) {
             getClientSpiderPanel().unload();
+            getView()
+                    .getMainFrame()
+                    .getMainFooterPanel()
+                    .removeFooterToolbarRightComponent(pscanStatus.getCountLabel());
         }
     }
 
@@ -537,6 +558,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             }
         }
         this.clientHistoryTableModel.addReportedObject(obj);
+        incPscanCount();
         this.passiveScanController
                 .getEnabledScanRules()
                 .forEach(
@@ -547,6 +569,19 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                                 LOGGER.error(e.getMessage(), e);
                             }
                         });
+        decPscanCount();
+    }
+
+    private void incPscanCount() {
+        if (hasView()) {
+            ThreadUtils.invokeLater(pscanStatus::incScanCount);
+        }
+    }
+
+    private void decPscanCount() {
+        if (hasView() && this.pscanStatus.getScanCount() > 0) {
+            ThreadUtils.invokeLater(pscanStatus::decScanCount);
+        }
     }
 
     public ClientPassiveScanController getPassiveScanController() {
@@ -584,6 +619,9 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                 clientHistoryTableModel.clear();
             }
             spiderScanController.reset();
+            if (hasView()) {
+                pscanStatus.setScanCount(0);
+            }
         }
 
         @Override
