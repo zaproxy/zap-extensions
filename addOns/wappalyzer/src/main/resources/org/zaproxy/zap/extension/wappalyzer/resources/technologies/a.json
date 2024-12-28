@@ -1,8 +1,10 @@
 {
   "A-Frame": {
     "cats": [
-      25
+      25,
+      105
     ],
+    "description": "A-Frame is an open-source web framework that simplifies building cross-platform virtual reality (VR) experiences using HTML and JavaScript.",
     "html": [
       "<a-scene[^<>]*>"
     ],
@@ -11,8 +13,10 @@
       "Three.js"
     ],
     "js": {
-      "AFRAME.version": "^(.+)$\\;version:\\1"
+      "AFRAME.version": "^(.+)$\\;version:\\1",
+      "aframeStats": ""
     },
+    "oss": true,
     "scriptSrc": [
       "/?([\\d.]+)?/aframe(?:\\.min)?\\.js\\;version:\\1"
     ],
@@ -359,6 +363,22 @@
     ],
     "website": "https://www.apc-pli.com"
   },
+  "ARCaptcha": {
+    "cats": [
+      16
+    ],
+    "description": "ARCaptcha is a CAPTCHA system designed to enhance online security by preventing automated bots from accessing websites.",
+    "icon": "ARCaptcha.svg",
+    "js": {
+      "arcaptcha.checkboxCreatorRegistered": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://arcaptcha.co"
+  },
   "ARI Network Services": {
     "cats": [
       6
@@ -442,16 +462,21 @@
       "_aw_xid": ""
     },
     "description": "AWIN is a global affiliate marketing network.",
+    "dom": [
+      "img[src*='add.zanox.com/']"
+    ],
     "icon": "AWIN.svg",
     "js": {
-      "AWIN.Tracking": ""
+      "AWIN.Tracking": "",
+      "zanox": ""
     },
     "pricing": [
       "payg"
     ],
     "saas": true,
     "scriptSrc": [
-      "dwin1\\.com"
+      "dwin1\\.com",
+      "zanox\\.com/scripts/zanox\\.js$"
     ],
     "website": "https://www.awin.com"
   },
@@ -1549,7 +1574,7 @@
       "freemium"
     ],
     "scriptSrc": [
-      "//addevent\\.com/"
+      "(?://|\\.)addevent\\.com/"
     ],
     "website": "https://www.addevent.com"
   },
@@ -1772,7 +1797,15 @@
     "cats": [
       3
     ],
+    "cookies": {
+      "adminer_key": "",
+      "adminer_sid": ""
+    },
     "cpe": "cpe:2.3:a:adminer:adminer:*:*:*:*:*:*:*:*",
+    "description": "Adminer is a lightweight, web-based database management tool that supports multiple database systems and provides a simple interface for managing databases, tables, and running SQL queries.",
+    "headers": {
+      "composed-by": "adminer\\((\\d\\.)+\\)\\;version:\\1"
+    },
     "html": [
       "Adminer</a> <span class=\"version\">([\\d.]+)</span>\\;version:\\1",
       "onclick=\"bodyClick\\(event\\);\" onload=\"verifyVersion\\('([\\d.]+)'\\);\">\\;version:\\1"
@@ -1781,6 +1814,7 @@
     "implies": [
       "PHP"
     ],
+    "oss": true,
     "website": "https://www.adminer.org"
   },
   "Admiral": {
@@ -1948,7 +1982,11 @@
     "cats": [
       18
     ],
+    "cookies": {
+      "CFGLOBALS": ""
+    },
     "cpe": "cpe:2.3:a:adobe:coldfusion:*:*:*:*:*:*:*:*",
+    "description": "Adobe ColdFusion is a server-side scripting platform for building web applications and APIs, using a language called CFML (ColdFusion Markup Language).",
     "headers": {
       "Cookie": "CFTOKEN="
     },
@@ -2089,6 +2127,9 @@
       17
     ],
     "description": "Adobe Fonts is a web-based service providing access to a vast library of high-quality fonts for web and print design.",
+    "dom": [
+      "link[href*='use.typekit.net'], link[href*='use.typekit.com']"
+    ],
     "html": [
       "<link [^>]*href=\"[^\"]+use\\.typekit\\.(?:net|com)"
     ],
@@ -2541,6 +2582,9 @@
       "X-Powered-By": "Afosto SaaS BV\\;version:2.0"
     },
     "icon": "Afosto.svg",
+    "scripts": [
+      "\\.afosto\\.nl/"
+    ],
     "website": "https://afosto.com"
   },
   "AfterBuy": {
@@ -2652,6 +2696,23 @@
       "age-gate(?:\\/dist)?(?:\\/all)?(?:\\/focus)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
     ],
     "website": "https://wordpress.org/plugins/age-gate"
+  },
+  "AgentFire": {
+    "cats": [
+      32
+    ],
+    "description": "AgentFire is a platform designed for the real estate industry, offering tools and features that help agents capitalize on digital opportunities for marketing, lead generation, and client engagement.",
+    "icon": "AgentFire.svg",
+    "js": {
+      "AgentFire.Api": "",
+      "AgentFire_Oauth2": "",
+      "AgentFire_Settings": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://agentfire.com"
   },
   "Agile CRM": {
     "cats": [
@@ -2898,6 +2959,22 @@
     ],
     "website": "https://aircall.io"
   },
+  "Airdata": {
+    "cats": [
+      104
+    ],
+    "description": "Airdata is a ticket booking system for agents in Vietnam, offering unique features to maximize benefits for businesses in managing and selling flight tickets.",
+    "icon": "Airdata.svg",
+    "js": {
+      "BOOKING_BASE_API_URL": "api\\.airdata\\.vn"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://airdata.vn"
+  },
   "Airee": {
     "cats": [
       31,
@@ -3109,6 +3186,18 @@
     ],
     "oss": true,
     "website": "https://akaunting.com"
+  },
+  "Akero": {
+    "cats": [
+      32
+    ],
+    "description": "Akero is a platform that provides marketing and admissions technology designed for educational institutions.",
+    "icon": "Akero.svg",
+    "saas": true,
+    "scripts": [
+      "\\.akerolabs\\.com"
+    ],
+    "website": "https://akerolabs.com"
   },
   "Akilli Ticaret": {
     "cats": [
@@ -3361,6 +3450,9 @@
       "payg"
     ],
     "saas": true,
+    "scripts": [
+      "algoliasearch"
+    ],
     "website": "https://www.algolia.com"
   },
   "Algolia DocSearch": {
@@ -3664,6 +3756,25 @@
       "/alpine(?:\\.min)?\\.js"
     ],
     "website": "https://alpinejs.dev"
+  },
+  "Altcha": {
+    "cats": [
+      16
+    ],
+    "description": "Altcha is a spam and abuse protection solution for websites and apps, offering a privacy-friendly Captcha and other tools designed with GDPR compliance to provide strong security while safeguarding user privacy.",
+    "icon": "Altcha.svg",
+    "js": {
+      "ALTCHA_WIDGET_ATTRS": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "freemium"
+    ],
+    "scripts": [
+      ".*altcha\\.(org|js)"
+    ],
+    "website": "https://altcha.org"
   },
   "AlternC": {
     "cats": [
@@ -6128,6 +6239,22 @@
     ],
     "website": "https://wpastra.com/did-you-know-astra-is-widget-ready"
   },
+  "AstraFit": {
+    "cats": [
+      6
+    ],
+    "description": "AstraFit is an online virtual fitting software for large and small retailers.",
+    "icon": "AstraFit.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.astrafit\\.com/"
+    ],
+    "website": "https://www.astrafit.com"
+  },
   "Astro": {
     "cats": [
       57,
@@ -7379,6 +7506,19 @@
       "actionheroClient\\.js"
     ],
     "website": "https://www.actionherojs.com"
+  },
+  "adCAPTCHA": {
+    "cats": [
+      16
+    ],
+    "description": "adCAPTCHA is a security tool that integrates marketing and user experience to block bots while enhancing brand visibility, using dynamic content for varied challenges without collecting user data.",
+    "icon": "adCAPTCHA.svg",
+    "js": {
+      "adCAPTCHA": "",
+      "adcaptcha_vars": ""
+    },
+    "saas": true,
+    "website": "https://adcaptcha.com"
   },
   "amCharts": {
     "cats": [

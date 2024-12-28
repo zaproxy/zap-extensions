@@ -169,6 +169,22 @@
     ],
     "website": "https://dplayer.js.org"
   },
+  "DSpace": {
+    "cats": [
+      50
+    ],
+    "description": "DSpace is a software platform for academic, non-profit, and commercial organizations to create and manage open digital repositories.",
+    "icon": "DSpace.svg",
+    "js": {
+      "DSpaceChoiceLookup": "",
+      "DSpaceChoicesSetup": ""
+    },
+    "meta": {
+      "generator": "DSpace ([\\d.]+)\\;version:\\1"
+    },
+    "saas": true,
+    "website": "https://dspace.org/"
+  },
   "DTScout": {
     "cats": [
       36
@@ -444,6 +460,23 @@
     ],
     "website": "https://www.dashly.io"
   },
+  "DatHuis": {
+    "cats": [
+      32
+    ],
+    "description": "DatHuis is a platform providing marketing automation tools for real estate professionals, designed to enhance visibility and streamline operations.",
+    "icon": "DatHuis.svg",
+    "js": {
+      "DatHuisObject": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://dathuis.nl"
+  },
   "DataDome": {
     "cats": [
       16
@@ -697,6 +730,24 @@
     ],
     "website": "https://decibel.com"
   },
+  "Deco.cx": {
+    "cats": [
+      108
+    ],
+    "description": "Deco.cx is an enterprise frontend platform designed to optimize and accelerate ecommerce performance.",
+    "icon": "Deco.svg",
+    "js": {
+      "DECO.events": "",
+      "DECO_SITES_STD": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://deco.cx"
+  },
   "DedeCMS": {
     "cats": [
       1
@@ -858,6 +909,24 @@
     ],
     "website": "https://deliverr.com"
   },
+  "Delivra": {
+    "cats": [
+      32,
+      75
+    ],
+    "description": "Delivra is a premium email marketing tracking software.",
+    "icon": "Delivra.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "integration\\.delivra\\.com"
+    ],
+    "website": "https://www.delivra.com"
+  },
   "Delm": {
     "cats": [
       100
@@ -981,6 +1050,18 @@
     "saas": true,
     "website": "https://depict.ai"
   },
+  "Deriv": {
+    "cats": [
+      10
+    ],
+    "description": "Deriv is an online platform that allows users to track trading activities.",
+    "icon": "Deriv.svg",
+    "saas": true,
+    "scripts": [
+      "track\\.deriv\\.com"
+    ],
+    "website": "https://deriv.com"
+  },
   "DeskPro": {
     "cats": [
       1,
@@ -1089,6 +1170,22 @@
     "saas": true,
     "website": "https://destini.co/"
   },
+  "Desty": {
+    "cats": [
+      6
+    ],
+    "description": "Desty is a platform offering product and order management services, enabling handling of inventory, orders, and related processes for businesses.",
+    "icon": "Desty.svg",
+    "js": {
+      "DestyBp": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.desty.app"
+  },
   "Deta": {
     "cats": [
       62
@@ -1161,6 +1258,24 @@
     },
     "oss": true,
     "website": "https://js.devexpress.com"
+  },
+  "DevRev": {
+    "cats": [
+      52,
+      53
+    ],
+    "description": "DevRev PLuG is a customer support platform offering live chat, help documentation, search functionality, an observability engine, and product announcements, all integrated within a widget similar to a support chat widget for website assistance.",
+    "icon": "DevRev.svg",
+    "pricing": [
+      "freemium",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "plug-platform\\.devrev\\.ai/"
+    ],
+    "website": "https://devrev.ai/plug-observability"
   },
   "Developing Azerbaijan": {
     "cats": [
@@ -2980,7 +3095,7 @@
     "cats": [
       78
     ],
-    "description": "Dynatrace RUM is a AI powered, full stack, automated real user monutoring platform built by Dynatrace.",
+    "description": "Dynatrace RUM is an AI powered, full stack, automated real user monitoring platform built by Dynatrace.",
     "icon": "Dynatrace.svg",
     "implies": [
       "Dynatrace"
@@ -3036,6 +3151,9 @@
       "Tailwind CSS"
     ],
     "oss": true,
+    "scripts": [
+      "daisyUI"
+    ],
     "website": "https://daisyui.com"
   },
   "db-ip": {

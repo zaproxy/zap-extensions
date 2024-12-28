@@ -1192,7 +1192,8 @@
     "icon": "jQuery.svg",
     "js": {
       "$.fn.jquery": "([\\d.]+)\\;version:\\1",
-      "jQuery.fn.jquery": "([\\d.]+)\\;version:\\1"
+      "jQuery.fn.jquery": "([\\d.]+)\\;version:\\1",
+      "jQuery.prototype.jquery": "([\\d.]+)\\;version:\\1"
     },
     "scriptSrc": [
       "jquery",
@@ -1244,7 +1245,7 @@
       "jQuery"
     ],
     "js": {
-      "jQuery.migrateVersion": "((?:\\d+\\.){1,2}\\d+)\\;version:\\1",
+      "jQuery.migrateVersion": "([\\d.]+)\\;version:\\1",
       "jQuery.migrateWarnings": "",
       "jqueryMigrate": ""
     },

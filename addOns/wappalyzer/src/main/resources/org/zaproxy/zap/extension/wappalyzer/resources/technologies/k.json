@@ -112,6 +112,21 @@
     "saas": false,
     "website": "https://www.kqs.pl"
   },
+  "KUKUI": {
+    "cats": [
+      32
+    ],
+    "description": "KUKUI is an all-in-one solution designed to enhance profitability, streamline lead management, and boost customer engagement for shop marketing.",
+    "icon": "KUKUI.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.kukui\\.com/"
+    ],
+    "website": "https://www.kukui.com"
+  },
   "KaTeX": {
     "cats": [
       25
@@ -536,6 +551,22 @@
     },
     "oss": true,
     "website": "https://keen-slider.io"
+  },
+  "Keepeek": {
+    "cats": [
+      7,
+      95
+    ],
+    "description": "Keepeek is a digital asset management and photo library solutions provider.",
+    "icon": "Keepeek.svg",
+    "js": {
+      "keepeekScrollToName": ""
+    },
+    "requires": [
+      "jQuery"
+    ],
+    "saas": true,
+    "website": "https://www.keepeek.com"
   },
   "KelonCloud": {
     "cats": [
@@ -1251,7 +1282,8 @@
       "klevu.version": "([\\d\\.]+)\\;version:\\1",
       "klevu_apiKey": "",
       "klevu_layout": "",
-      "klevu_sessionId": ""
+      "klevu_sessionId": "",
+      "sendKlevuAnalytics": ""
     },
     "pricing": [
       "mid",
@@ -1680,6 +1712,19 @@
     ],
     "website": "https://www.konduto.com"
   },
+  "Konfidency Reviews": {
+    "cats": [
+      90
+    ],
+    "description": "Konfidency Reviews is a platform that builds trust, boosts organic traffic, and supports purchasing decisions by providing reviews from customers who are familiar with the products.",
+    "icon": "KonfidencyReviews.svg",
+    "js": {
+      "konfidencyCustomer": "",
+      "konfidencyLoader": ""
+    },
+    "saas": true,
+    "website": "https://www.konfidency.com.br"
+  },
   "Kong": {
     "cats": [
       64
@@ -1910,6 +1955,18 @@
     },
     "website": "https://kudobuzz.com/"
   },
+  "Kueez": {
+    "cats": [
+      36
+    ],
+    "description": "Kueez is a platform offering data-driven solutions tailored for publishers to enhance advertising strategies.",
+    "icon": "Kueez.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.kueez\\.net/"
+    ],
+    "website": "https://weare.kueez.com"
+  },
   "KueskiPay": {
     "cats": [
       41,
@@ -1930,6 +1987,25 @@
       "cdn\\.kueskipay\\.com"
     ],
     "website": "https://kueskipay.com/"
+  },
+  "Kuroco": {
+    "cats": [
+      47
+    ],
+    "description": "Kuroco is an API-centric platform that enables developers to create customizable APIs, manage content, and leverage a CDN for fast content delivery across various devices.",
+    "headers": {
+      "x-kuroco-edge-log": "",
+      "x-rcms-hash": ""
+    },
+    "icon": "Kuroco.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://kuroco.app"
   },
   "Kustomer": {
     "cats": [

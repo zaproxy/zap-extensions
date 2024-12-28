@@ -360,6 +360,22 @@
     ],
     "website": "https://fanplayr.com"
   },
+  "FarCry": {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "FARCRYDEVICETYPE": ""
+    },
+    "description": "FarCry is a web application framework that helps CFML developers build tailor-made content solutions.",
+    "icon": "FarCry.svg",
+    "js": {
+      "farcryForgotPassword": "",
+      "farcryLogin": ""
+    },
+    "oss": true,
+    "website": "https://www.farcrycore.org"
+  },
   "FaraPy": {
     "cats": [
       1
@@ -893,6 +909,20 @@
     ],
     "saas": true,
     "website": "https://fibosearch.com"
+  },
+  "Filamentphp": {
+    "cats": [
+      47
+    ],
+    "description": "Filamentphp is a set of full-stack components designed to serve as a foundational starting point for developing applications.",
+    "icon": "Filament.svg",
+    "js": {
+      "FilamentNotification": "",
+      "filamentData": "",
+      "webpackChunkfilament": ""
+    },
+    "saas": true,
+    "website": "https://filamentphp.com"
   },
   "FilePond": {
     "cats": [
@@ -1979,6 +2009,23 @@
     ],
     "website": "https://flyspray.org"
   },
+  "Flyvi": {
+    "cats": [
+      66
+    ],
+    "description": "Flyvi is a platform that generates visually engaging graphics optimized for social media.",
+    "icon": "Flyvi.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.flyvi\\.io/"
+    ],
+    "website": "https://flyvi.io"
+  },
   "Flywheel": {
     "cats": [
       62,
@@ -2884,6 +2931,24 @@
     },
     "website": "https://freetextbox.com"
   },
+  "Freemius": {
+    "cats": [
+      6
+    ],
+    "description": "Freemius is a managed ecommerce engine designed for selling WordPress plugins.",
+    "icon": "Freemius.svg",
+    "pricing": [
+      "payg"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "checkout\\.freemius\\.com/"
+    ],
+    "website": "https://freemius.com"
+  },
   "Freespee": {
     "cats": [
       10
@@ -3656,6 +3721,9 @@
       "payg"
     ],
     "saas": true,
+    "scriptSrc": [
+      "\\.fynd\\.com/"
+    ],
     "website": "https://platform.fynd.com"
   },
   "framework7": {

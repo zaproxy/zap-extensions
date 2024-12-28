@@ -295,6 +295,19 @@
     "saas": true,
     "website": "https://www.7shifts.com"
   },
+  "7moor": {
+    "cats": [
+      32,
+      53
+    ],
+    "description": "7moor is an integrated customer service marketing solution that combines communication, customer support, and marketing tools.",
+    "icon": "7moor.svg",
+    "js": {
+      "moor7Source": ""
+    },
+    "saas": true,
+    "website": "https://www.7moor.com"
+  },
   "8base": {
     "cats": [
       3,

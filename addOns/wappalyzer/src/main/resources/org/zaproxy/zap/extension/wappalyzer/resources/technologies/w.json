@@ -438,9 +438,11 @@
     ],
     "icon": "WP Rocket.svg",
     "js": {
+      "RocketBrowserCompatibilityChecker": "",
       "RocketLazyLoadScripts": "",
       "RocketPreloadLinksConfig": "",
-      "rocket_lazy": ""
+      "rocket_lazy": "",
+      "rocket_lazyload_css_data": ""
     },
     "pricing": [
       "low",
@@ -1031,6 +1033,26 @@
       "wz.mmConfig.buildVersion": ""
     },
     "website": "https://wazimo.com"
+  },
+  "WeBlocks": {
+    "cats": [
+      12
+    ],
+    "description": "WeBlocks is an educational platform for creating custom JavaScript and Webflow projects using Blocks.",
+    "icon": "WeBlocks.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Webflow"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "//weblocks\\.io/"
+    ],
+    "website": "https://www.weblocks.com"
   },
   "WeTravel": {
     "cats": [
@@ -1657,6 +1679,22 @@
     ],
     "website": "https://webim.ru"
   },
+  "Webinaris": {
+    "cats": [
+      32
+    ],
+    "description": "Webinaris is a platform that automates customer acquisition, allowing businesses to attract more customers with significantly reduced effort.",
+    "icon": "Webinaris.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "webinaris_load"
+    ],
+    "website": "https://www.webinaris.com"
+  },
   "Webix": {
     "cats": [
       12
@@ -1819,6 +1857,22 @@
       "cdn\\.webpushr\\.com/app\\.min\\.js"
     ],
     "website": "https://www.webpushr.com"
+  },
+  "Webready": {
+    "cats": [
+      51
+    ],
+    "description": "Webready is a platform that enables users to create custom vacation rental websites.",
+    "icon": "Webready.svg",
+    "js": {
+      "Webready": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://usewebready.com"
   },
   "Webriti Busiprof": {
     "cats": [
@@ -2160,6 +2214,22 @@
       "wheelioapp\\.azureedge\\.net"
     ],
     "website": "https://wheelio-app.com/"
+  },
+  "Wheely Sales": {
+    "cats": [
+      32
+    ],
+    "description": "Wheely Sales is a tool that boosts email opt-in rates using a gamified exit intent popup designed to engage users as they leave a website.",
+    "icon": "WheelSales.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.wheelysales\\.com/"
+    ],
+    "website": "https://wheelysales.com"
   },
   "Whistl": {
     "cats": [
@@ -2517,6 +2587,29 @@
     ],
     "saas": true,
     "website": "https://wisernotify.com"
+  },
+  "Wisetracker": {
+    "cats": [
+      10,
+      32
+    ],
+    "description": "Wisetracker is a behavioral analytics and marketing automation tool.",
+    "icon": "Wisetracker.svg",
+    "js": {
+      "DOP_SDK_CONF.adClkEndPoint": "\\.analytics\\.wisetracker\\.co\\.kr",
+      "DOT_ADCLK_ENDPOINT": "\\.analytics\\.wisetracker\\.co\\.kr"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.wisetracker\\.co\\.kr"
+    ],
+    "website": "https://www.wisetracker.co.kr"
   },
   "Wishlist King": {
     "cats": [
@@ -3142,6 +3235,7 @@
       "MySQL"
     ],
     "js": {
+      "wp.receiveEmbedMessage": "",
       "wp_username": ""
     },
     "meta": {
@@ -3271,6 +3365,9 @@
     "implies": [
       "WordPress"
     ],
+    "js": {
+      "WordPressPopularPosts": ""
+    },
     "website": "https://wordpress.com"
   },
   "Wordfence": {

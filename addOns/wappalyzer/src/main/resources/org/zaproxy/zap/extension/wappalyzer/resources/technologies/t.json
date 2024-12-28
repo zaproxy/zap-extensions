@@ -161,6 +161,19 @@
     "saas": true,
     "website": "https://www.thron.com"
   },
+  "TIEIT": {
+    "cats": [
+      32,
+      53
+    ],
+    "description": "TIEIT is an all-in-one platform offering integrated tools for sales, marketing, customer service, billing, subscriptions, and scheduling, designed to streamline business operations in a unified solution.",
+    "icon": "TIEIT.svg",
+    "saas": true,
+    "scripts": [
+      "app\\.tieit\\.io"
+    ],
+    "website": "https://www.tieit.ai"
+  },
   "TITANPush": {
     "cats": [
       32
@@ -296,6 +309,9 @@
     "implies": [
       "PHP"
     ],
+    "js": {
+      "webpackChunkTYPO3Webpack": ""
+    },
     "meta": {
       "generator": "TYPO3\\s+(?:CMS\\s+)?(?:[\\d.]+)?(?:\\s+CMS)?"
     },
@@ -673,12 +689,18 @@
         "attributes": {
           "href": "tailwindcss[@|/](?:\\^)?([\\d.]+)(?:/[a-z]+)?/(?:tailwind|base|components|utilities)(?:\\.min)?\\.css\\;version:\\1"
         }
+      },
+      "style": {
+        "text": "/\\/\\*! tailwindcss v([\\d.]+) \\| MIT License \\| https:\\/\\/tailwindcss\\.com\\*\\/\\;version:\\1"
       }
     },
     "icon": "tailwindcss.svg",
     "js": {
       "hexToTailwindColorVar": "",
       "tailwind": ""
+    },
+    "meta": {
+      "application-name": "^Tailwind CSS$"
     },
     "scriptSrc": [
       "\\.tailwindcss(?:tailwind-config-cdn)?\\.(?:com|js)"
@@ -739,6 +761,24 @@
     ],
     "saas": true,
     "website": "https://talk-me.ru"
+  },
+  "TalkJS": {
+    "cats": [
+      52
+    ],
+    "description": "TalkJS is a platform that enables user-to-user messaging within marketplaces or platforms.",
+    "icon": "TalkJS.svg",
+    "js": {
+      "Talk.v": "^(.+)$\\;version:\\1",
+      "_talkjs_locales": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://talkjs.com"
   },
   "Talkable": {
     "cats": [
@@ -1313,6 +1353,22 @@
     ],
     "website": "https://www.tebex.io"
   },
+  "TechTarget": {
+    "cats": [
+      4
+    ],
+    "description": "TechTarget is a resource providing technology professionals and buyers with the technical information required to perform in their roles.",
+    "icon": "TechTarget.svg",
+    "js": {
+      "loadTechTarget": "",
+      "techtargetic.client": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.techtarget\\.com/"
+    ],
+    "website": "https://www.techtarget.com"
+  },
   "Teeinblue": {
     "cats": [
       76
@@ -1335,6 +1391,18 @@
       "sdk\\.teeinblue\\.com"
     ],
     "website": "https://teeinblue.com"
+  },
+  "Tekion": {
+    "cats": [
+      6
+    ],
+    "description": "Tekion is an end-to-end cloud automotive platform.",
+    "icon": "Tekion.svg",
+    "saas": true,
+    "scripts": [
+      "\\.tekioncloud\\.com"
+    ],
+    "website": "https://tekion.com"
   },
   "TeleportHQ": {
     "cats": [
@@ -1421,6 +1489,40 @@
       "captcha\\.qq\\.com/.*"
     ],
     "website": "https://007.qq.com/"
+  },
+  "Tend": {
+    "cats": [
+      10
+    ],
+    "description": "Tend is a conversion optimization tool designed to analyze visitor behavior and identify areas of interaction on websites.",
+    "icon": "Tend.svg",
+    "js": {
+      "tend.event": "",
+      "tendKey": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://tend.io"
+  },
+  "Tendenci": {
+    "cats": [
+      1
+    ],
+    "description": "Tendenci is a platform that provides resources for managing and organizing website content without requiring knowledge of HTML or complex programming tools.",
+    "icon": "Tendenci.svg",
+    "meta": {
+      "generator": "^Tendenci$"
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.tendenci.com"
   },
   "Tender Support": {
     "cats": [
@@ -1549,6 +1651,21 @@
       "\\.testfreaks\\.com/"
     ],
     "website": "https://www.testfreaks.com"
+  },
+  "Testflow": {
+    "cats": [
+      16
+    ],
+    "description": "Testflow is a platform that digitizes manual workflows for test centers while ensuring secure patient data management in compliance with data protection regulations.",
+    "icon": "Testflow.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.testflow\\.eu"
+    ],
+    "website": "https://testflow.eu"
   },
   "Testimonial Robot": {
     "cats": [
@@ -2916,6 +3033,7 @@
     ],
     "icon": "TiddlyWiki.svg",
     "js": {
+      "__tiddlywiki_cpl__": "",
       "tiddler": ""
     },
     "meta": {
@@ -2978,6 +3096,26 @@
       "(?://|\\.)tiiny\\.(?:host|site)/"
     ],
     "website": "https://tiiny.host"
+  },
+  "TikShop": {
+    "cats": [
+      100
+    ],
+    "description": "TikShop is a tool that integrates TikTok accounts with Shopify stores, allowing for the creation of shoppable feeds to facilitate quicker product promotion and sales directly through TikTok.",
+    "icon": "TikShop.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.tikshop\\.co/"
+    ],
+    "website": "https://tikshop.co"
   },
   "TikTok Pixel": {
     "cats": [
@@ -3287,6 +3425,22 @@
     },
     "website": "https://titan360.com"
   },
+  "Tix": {
+    "cats": [
+      104
+    ],
+    "description": "Tix is a system designed for managing event tickets, allowing users to organize, distribute, and track tickets.",
+    "icon": "Tix.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.secure-tix\\.com/"
+    ],
+    "website": "https://www.tix.com"
+  },
   "Tolt": {
     "cats": [
       71
@@ -3397,6 +3551,22 @@
     "saas": true,
     "website": "https://www.tontine.ai"
   },
+  "Toolbx": {
+    "cats": [
+      6
+    ],
+    "description": "Toolbx is a platform that helps independent building suppliers streamline payments, simplify accounts receivable, grow online sales, and enhance customer experience.",
+    "icon": "Toolbx.svg",
+    "js": {
+      "toolbxPixel": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.toolbx.com/"
+  },
   "Tooltip": {
     "cats": [
       52
@@ -3413,6 +3583,22 @@
       "cdn\\.tooltip\\.io/"
     ],
     "website": "https://tooltip.io"
+  },
+  "Top Producer": {
+    "cats": [
+      53
+    ],
+    "description": "Top Producer is an all-in-one business management platform, tailored for real estate as a CRM solution.",
+    "icon": "TopProducer.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.topproducerwebsite\\.com/"
+    ],
+    "website": "https://www.topproducer.com"
   },
   "TornadoServer": {
     "cats": [
@@ -4069,6 +4255,18 @@
     "xhr": [
       "reware-production\\.yerdlesite\\.com"
     ]
+  },
+  "Trovit": {
+    "cats": [
+      10
+    ],
+    "description": "Trovit is a platform that provides analytics on homes, cars, and jobs.",
+    "icon": "Trovit.svg",
+    "js": {
+      "TrovitAnalyticsObject": ""
+    },
+    "saas": true,
+    "website": "https://www.trovit.com"
   },
   "TruValidate": {
     "cats": [
@@ -4982,6 +5180,22 @@
       "typed(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
     ],
     "website": "https://mattboldt.com/demos/typed-js/"
+  },
+  "Typeflo": {
+    "cats": [
+      50
+    ],
+    "description": "Typeflo is a platform that simplifies blogging by allowing users to create websites directly from Google Docs, offering features such as analytics, custom domains, and theme customization.",
+    "icon": "Typeflo.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "analytics\\.typeflo\\.io/"
+    ],
+    "website": "https://typeflo.io"
   },
   "Typeform": {
     "cats": [

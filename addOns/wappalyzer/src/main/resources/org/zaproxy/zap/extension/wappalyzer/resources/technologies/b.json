@@ -616,6 +616,20 @@
     ],
     "website": "https://basis.net/"
   },
+  "Batch": {
+    "cats": [
+      32
+    ],
+    "description": "Batch is a web-push notifications technology provider.",
+    "icon": "Batch.svg",
+    "js": {
+      "batchSDK": "",
+      "batchSDKUIConfig": "",
+      "reregisterBatchPushIfNeeded": ""
+    },
+    "saas": true,
+    "website": "https://batch.com"
+  },
   "Batflat": {
     "cats": [
       1
@@ -665,6 +679,9 @@
     "saas": true,
     "scriptSrc": [
       "apps\\.bazaarvoice\\.com"
+    ],
+    "scripts": [
+      "apps\\.bazaarvoice\\.com/"
     ],
     "website": "https://www.bazaarvoice.com/products/ratings-and-reviews/"
   },
@@ -903,6 +920,28 @@
     ],
     "website": "https://benchmedia.com"
   },
+  "Bento": {
+    "cats": [
+      32,
+      75
+    ],
+    "description": "Bento is an email marketing and automation platform designed for startups.",
+    "icon": "Bento.svg",
+    "js": {
+      "bento.identify": "",
+      "bento_wordpress_sdk_params": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.bentonow\\.com/"
+    ],
+    "website": "https://bentonow.com"
+  },
   "Bentobox": {
     "cats": [
       1,
@@ -921,6 +960,46 @@
       "\\.getbento\\.com/"
     ],
     "website": "https://getbento.com"
+  },
+  "BerqWP": {
+    "cats": [
+      92
+    ],
+    "description": "BerqWP is a speed optimization plugin designed to help websites pass the core web vitals assessment and improve overall speed scores for better performance.",
+    "icon": "BerqWP.svg",
+    "js": {
+      "BerqWPcacheResource": "",
+      "berqwp_add_assets_browser_cache": "",
+      "berqwp_readyState": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "website": "https://berqwp.com/"
+  },
+  "Bestie": {
+    "cats": [
+      73
+    ],
+    "description": "Bestie is a platform that provides AI-powered post-purchase surveys for Shopify brands, automating the survey creation process.",
+    "icon": "Bestie.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.bestie\\.ai"
+    ],
+    "website": "https://www.bestie.ai"
   },
   "Better Cart": {
     "cats": [
@@ -1083,6 +1162,23 @@
     ],
     "website": "https://betterdocs.co/docs/wordpress"
   },
+  "Bettermode": {
+    "cats": [
+      53
+    ],
+    "description": "Bettermode is an all-in-one community engagement platform designed to help businesses streamline the customer experience and build better relationships.",
+    "icon": "Bettermode.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "bettermode\\.com"
+    ],
+    "website": "https://bettermode.com"
+  },
   "Betty Blocks": {
     "cats": [
       47,
@@ -1121,6 +1217,24 @@
       "\\.beusable\\.net/"
     ],
     "website": "https://www.beusable.net"
+  },
+  "Bevy": {
+    "cats": [
+      53
+    ],
+    "description": "Bevy is a platform designed to elevate communities by transforming engagement into measurable enterprise return on investment (ROI).",
+    "icon": "Bevy.svg",
+    "js": {
+      "_BEVY_LANGUAGE_": "",
+      "_BEVY_SETTINGS_": "",
+      "_BEVY_STYLES_": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://bevy.com"
   },
   "Beyable": {
     "cats": [
@@ -1287,6 +1401,24 @@
       "api\\.bigdatacloud\\.net"
     ]
   },
+  "BigMarker": {
+    "cats": [
+      103
+    ],
+    "description": "BigMarker is a platform for hosting webinars, virtual, and hybrid events, providing tools for presentations, audience engagement, and event management in one solution.",
+    "dom": [
+      "input[value*='.bigmarker.com/']"
+    ],
+    "icon": "BigMarker.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.bigmarker\\.com/"
+    ],
+    "website": "https://www.bigmarker.com"
+  },
   "BigPoint": {
     "cats": [
       38
@@ -1414,6 +1546,24 @@
       "\\bBillbee\\b"
     ],
     "website": "https://www.billbee.io"
+  },
+  "Billgang": {
+    "cats": [
+      6
+    ],
+    "description": "Billgang is a digital commerce platform built for internet entrepreneurs.",
+    "dom": [
+      "link[href*='.billgang.com']"
+    ],
+    "icon": "Billgang.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://billgang.com"
   },
   "Binance Pay": {
     "cats": [
@@ -1906,6 +2056,18 @@
     ],
     "saas": true,
     "website": "https://blotout.io"
+  },
+  "Bludit": {
+    "cats": [
+      1
+    ],
+    "description": "Bludit is a flat file content management system that stores data in text files.",
+    "icon": "Bludit.svg",
+    "meta": {
+      "generator": "^Bludit$"
+    },
+    "saas": true,
+    "website": "https://www.bludit.com"
   },
   "Blue": {
     "cats": [
@@ -3098,6 +3260,18 @@
     ],
     "website": "https://botble.com"
   },
+  "Bothive": {
+    "cats": [
+      32
+    ],
+    "description": "Bothive is a platform that automates repetitive tasks, enhances collaboration, reduces email reliance, and improves customer relationships by prioritizing meaningful interactions.",
+    "icon": "Bothive.svg",
+    "js": {
+      "Bothive.widget": ""
+    },
+    "saas": true,
+    "website": "https://bothive.be"
+  },
   "Botmind": {
     "cats": [
       52
@@ -3376,6 +3550,22 @@
       "app\\.link/_r\\?sdk=web([\\d.]+)\\;version:\\1"
     ],
     "website": "https://branch.io"
+  },
+  "BrandBuilderAI": {
+    "cats": [
+      32
+    ],
+    "description": "BrandBuilderAI is an all-in-one system designed to automate marketing and lead generation processes.",
+    "icon": "BrandBuilderAI.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.brandbuilderai\\.com"
+    ],
+    "website": "https://brandbuilderai.com"
   },
   "Brandfolder": {
     "cats": [
@@ -4280,6 +4470,18 @@
       "cdn\\.co-buying\\.com/"
     ],
     "website": "https://www.buyapowa.com"
+  },
+  "Buyist": {
+    "cats": [
+      6
+    ],
+    "description": "Buyist is a code-less ecommerce platform designed for performance marketers.",
+    "icon": "Buyist.svg",
+    "js": {
+      "buyistApp.buttonService": "",
+      "buyistAppData": ""
+    },
+    "website": "https://buyist.com"
   },
   "Buz Club": {
     "cats": [
