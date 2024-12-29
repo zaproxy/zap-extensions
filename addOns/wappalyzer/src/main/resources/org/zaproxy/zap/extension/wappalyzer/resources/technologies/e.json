@@ -252,6 +252,18 @@
     "saas": true,
     "website": "https://www.oclc.org/en/ezproxy.html"
   },
+  "EaselJS": {
+    "cats": [
+      59
+    ],
+    "description": "EaselJS is a JavaScript library designed to simplify working with the HTML5 Canvas element, making it useful for creating games, generative art, and other graphical applications.",
+    "icon": "EaselJS.svg",
+    "oss": true,
+    "scriptSrc": [
+      "/easeljs\\.min\\.js"
+    ],
+    "website": "https://createjs.com/easeljs"
+  },
   "Easy Accordion": {
     "cats": [
       87
@@ -422,6 +434,23 @@
     "saas": true,
     "website": "https://apps.shopify.com/gifter-cart-auto-include"
   },
+  "EasyPolls": {
+    "cats": [
+      73
+    ],
+    "description": "EasyPolls is a tool that allows poll creation and sharing across websites, Facebook, Twitter, or via a direct link to the poll, enabling users to engage audiences across multiple platforms.",
+    "icon": "EasyPolls.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.easypolls\\.net"
+    ],
+    "website": "https://easypolls.net"
+  },
   "EasyStore": {
     "cats": [
       6
@@ -452,6 +481,24 @@
       "/jquery\\.easyui\\.min\\.js"
     ],
     "website": "https://jeasyui.com"
+  },
+  "EasyWebinar": {
+    "cats": [
+      103
+    ],
+    "description": "EasyWebinar is a webinar platform designed for marketing and growing businesses.",
+    "icon": "EasyWebinar.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.easywebinar\\.com/"
+    ],
+    "website": "https://easywebinar.com"
   },
   "Easylog": {
     "cats": [
@@ -489,6 +536,27 @@
       "cdnebasnet\\.com/"
     ],
     "website": "https://ebasnet.com"
+  },
+  "Eber": {
+    "cats": [
+      84
+    ],
+    "description": "Eber is a consumer engagement management platform for retail, F&B, hotels, and more.",
+    "icon": "Eber.svg",
+    "js": {
+      "Eber": "",
+      "EberVars.channelId": "",
+      "intervalEberJQuery": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.eber\\.co/"
+    ],
+    "website": "https://eber.co"
   },
   "EcForce": {
     "cats": [
@@ -747,7 +815,9 @@
     "js": {
       "EFILLI_GLOBAL_OPTIONS": "",
       "Efilli": "",
-      "efilli.__cookieBlocker": ""
+      "efilli.__cookieBlocker": "",
+      "efilliSdk": "",
+      "efilliSdkConfig": ""
     },
     "pricing": [
       "recurring",
@@ -2310,6 +2380,23 @@
     "saas": true,
     "website": "https://www.etailsystems.com"
   },
+  "Etermio": {
+    "cats": [
+      72
+    ],
+    "description": "Etermio is an automated system for online appointment scheduling.",
+    "icon": "Etermio.svg",
+    "js": {
+      "$eTermio": "",
+      "eTermio_autoOpenWindow": "",
+      "etermio_handler": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.etermio.com"
+  },
   "Etherpad": {
     "cats": [
       24
@@ -3354,6 +3441,21 @@
     ],
     "saas": true,
     "website": "https://www.ebisumart.com"
+  },
+  "ecbeing": {
+    "cats": [
+      6
+    ],
+    "description": "Ecbeing is a platform designed for building ecommerce sites, tailored for medium-sized and large companies.",
+    "icon": "Ecbeing.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "www\\.ecbeing\\.net"
+    ],
+    "website": "https://www.ecbeing.net"
   },
   "ef.js": {
     "cats": [

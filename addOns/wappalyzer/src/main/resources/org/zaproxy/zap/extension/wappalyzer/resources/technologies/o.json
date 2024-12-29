@@ -680,6 +680,22 @@
     ],
     "website": "https://www.olark.com/"
   },
+  "Oleoshop": {
+    "cats": [
+      6
+    ],
+    "description": "Oleoshop is a platform that enables businesses to create and manage their own online stores.",
+    "icon": "Oleoshop.svg",
+    "meta": {
+      "generator": "Oleoshop\\.com"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.oleoshop.com"
+  },
   "Omeda": {
     "cats": [
       86,
@@ -1728,6 +1744,18 @@
     ],
     "website": "https://openx.com"
   },
+  "Opentracker": {
+    "cats": [
+      10
+    ],
+    "description": "Opentracker is a real-time analytics tool that tracks website traffic, user behavior, and engagement.",
+    "icon": "Opentracker.svg",
+    "saas": true,
+    "scriptSrc": [
+      "script\\.opentracker\\.net"
+    ],
+    "website": "https://www.opentracker.net"
+  },
   "OperateBeyond": {
     "cats": [
       53
@@ -2735,6 +2763,18 @@
       "wp-content/plugins/oxygen"
     ],
     "website": "https://oxygenbuilder.com"
+  },
+  "oXyShop": {
+    "cats": [
+      6
+    ],
+    "description": "oXyShop is a platform for creating and managing online stores.",
+    "icon": "OxyShop.svg",
+    "meta": {
+      "web_author": "^oXyShop$"
+    },
+    "saas": true,
+    "website": "https://www.oxyshop.cz"
   },
   "ocStore": {
     "cats": [

@@ -153,6 +153,23 @@
     ],
     "website": "https://www.qonnex.nl"
   },
+  "Qooqie": {
+    "cats": [
+      10
+    ],
+    "description": "Qooqie is a call tracking tool designed to monitor and analyze inbound phone calls.",
+    "icon": "Qooqie.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.qooqie\\.com"
+    ],
+    "website": "https://qooqie.com"
+  },
   "Qstomizer": {
     "cats": [
       76
@@ -217,6 +234,21 @@
       "\\.qualified\\.com/"
     ],
     "website": "https://www.qualified.com"
+  },
+  "Qualitelis": {
+    "cats": [
+      90
+    ],
+    "description": "Qualitelis is a hotel guest review system designed to collect, manage, and analyze feedback, helping hospitality providers improve services by addressing customer experiences and satisfaction levels.",
+    "icon": "Qualitelis.svg",
+    "js": {
+      "InitWidgetQualitelis": "",
+      "resizeWidgetQualitelis": "",
+      "showHideWidgetQualitelis": "",
+      "widgetQualitelisFixed": ""
+    },
+    "saas": true,
+    "website": "https://www.qualitelis.septeo.com"
   },
   "Qualtrics": {
     "cats": [

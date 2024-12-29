@@ -414,6 +414,24 @@
     "icon": "Varnish.svg",
     "website": "https://www.varnish-cache.org"
   },
+  "Vaven": {
+    "cats": [
+      32,
+      36
+    ],
+    "description": "Vaven is a platform that allows users to create and display Ad widgets on websites, enabling the development of a personalized Ad network with precise targeting capabilities.",
+    "icon": "Vaven.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.vaven\\.co/"
+    ],
+    "website": "https://vaven.co"
+  },
   "Ve Global": {
     "cats": [
       10
@@ -669,6 +687,18 @@
       "analytics\\.vepaar\\.com/"
     ],
     "website": "https://vepaar.com"
+  },
+  "VeraSafe": {
+    "cats": [
+      67
+    ],
+    "description": "VeraSafe is a privacy compliance system designed to help organizations adhere to global data protection regulations and maintain compliance with privacy laws.",
+    "icon": "VeraSafe.svg",
+    "saas": true,
+    "scriptSrc": [
+      "www\\.verasafe\\.com/"
+    ],
+    "website": "https://verasafe.com"
   },
   "Vercel": {
     "cats": [
@@ -1614,6 +1644,23 @@
     "saas": true,
     "website": "https://visitor.chat"
   },
+  "Viskan": {
+    "cats": [
+      6
+    ],
+    "description": "Viskan is a scalable platform designed to support ecommerce growth.",
+    "icon": "Viskan.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.viskan\\.com/"
+    ],
+    "website": "https://www.viskan.com/fi-fi"
+  },
   "Visual Composer": {
     "cats": [
       51
@@ -2303,6 +2350,23 @@
       "generator": "vBulletin ?([\\d.]+)?\\;version:\\1"
     },
     "website": "https://www.vbulletin.com"
+  },
+  "vChat": {
+    "cats": [
+      52
+    ],
+    "description": "vChat is a chat solution in Vietnam.",
+    "icon": "vChat.svg",
+    "js": {
+      "__vnpDefault.url": "core\\.vchat\\.vn"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://vchat.vn"
   },
   "vcita": {
     "cats": [

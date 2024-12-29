@@ -173,7 +173,8 @@
     "js": {
       "PIXI": "",
       "PIXI.VERSION": "^(.+)$\\;version:\\1",
-      "PIXI_WEBWORKER_URL": ""
+      "PIXI_WEBWORKER_URL": "",
+      "webpackChunkpixi_docusaurus": ""
     },
     "oss": true,
     "scriptSrc": [
@@ -1178,7 +1179,7 @@
       "button": {
         "text": "PayPal"
       },
-      "iframe[src*='paypal.com'], img[src*='paypal.com'], img[src*='paypalobjects.com'], [aria-labelledby='pi-paypal'], [data-paypal-v4='true'], img[alt*='PayPal' i]": {
+      "iframe[src*='paypal.com'], img[src*='paypal.com'], img[src*='paypalobjects.com'], [aria-labelledby='pi-paypal'], [data-paypal-v4], [data-paypal-commerce-button], [data-paypal-smart-button-version], img[alt*='PayPal']": {
         "exists": ""
       }
     },
@@ -1497,6 +1498,20 @@
     },
     "website": "https://joinpeertube.org/"
   },
+  "Peerius": {
+    "cats": [
+      76
+    ],
+    "description": "Peerius is a platform that analyzes individual visitor behavior on websites to optimize the checkout process.",
+    "js": {
+      "PeeriusCallbacks": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.peerius\\.com/"
+    ],
+    "website": "https://www.peerius.com"
+  },
   "Pegboard7": {
     "cats": [
       1
@@ -1522,15 +1537,18 @@
     "cats": [
       59
     ],
-    "description": "Peity is a simple jQuery plugin that converts an element's content into a simple mini svg pie, line or bar chart.",
+    "description": "Peity is a jQuery plugin that converts an element's content into a simple mini svg pie, line or bar chart.",
     "js": {
       "peity": ""
     },
     "oss": true,
+    "requires": [
+      "jQuery"
+    ],
     "scriptSrc": [
       "peity(?:-demo)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
     ],
-    "website": "https://github.com/benpickles/peity"
+    "website": "https://benpickles.github.io/peity/"
   },
   "Pelican": {
     "cats": [
@@ -1945,6 +1963,18 @@
       "Phaser.VERSION": "^(.+)$\\;version:\\1"
     },
     "website": "https://phaser.io"
+  },
+  "Phenom": {
+    "cats": [
+      101
+    ],
+    "description": "Phenom is a talent relationship marketing platform.",
+    "icon": "Phenom.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.phenompeople\\.com/"
+    ],
+    "website": "https://www.phenom.com"
   },
   "Phenomic": {
     "cats": [
@@ -2999,6 +3029,21 @@
     ],
     "website": "https://www.platinmarket.com"
   },
+  "Plattar": {
+    "cats": [
+      105
+    ],
+    "description": "Plattar is a 3D and augmented reality platform for businesses that facilitates product customization to help retailers increase sales and reduce returns.",
+    "icon": "Plattar.svg",
+    "js": {
+      "PlattarARAdapter": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.plattar.com"
+  },
   "Platter": {
     "cats": [
       108
@@ -3666,6 +3711,7 @@
     "description": "PostHog is the open-source, all-in-one product analytics platform.",
     "icon": "PostHog.svg",
     "js": {
+      "__PosthogExtensions__": "",
       "posthog": ""
     },
     "oss": true,
@@ -3677,7 +3723,10 @@
     "scriptSrc": [
       "app\\.posthog\\.com/"
     ],
-    "website": "https://posthog.com"
+    "website": "https://posthog.com",
+    "xhr": [
+      "\\.posthog\\.com"
+    ]
   },
   "PostNL": {
     "cats": [
@@ -3855,6 +3904,25 @@
     },
     "saas": true,
     "website": "https://powa.com"
+  },
+  "Power CRM": {
+    "cats": [
+      53
+    ],
+    "description": "Power CRM is a platform tailored for vehicle protection associations, offering support to meet operational needs.",
+    "icon": "PowerCRM.svg",
+    "js": {
+      "PowerCRM.init": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.powercrm\\.com\\.br"
+    ],
+    "website": "https://site.powercrm.com.br"
   },
   "PowerReviews": {
     "cats": [
@@ -4269,6 +4337,9 @@
       "generator": "PrestaShop"
     },
     "oss": true,
+    "scripts": [
+      "PrestaShop-"
+    ],
     "website": "https://www.prestashop.com"
   },
   "Presto Player": {
@@ -4331,6 +4402,34 @@
       "cdn\\.pricespider\\.com/"
     ],
     "website": "https://www.pricespider.com"
+  },
+  "Prima Software": {
+    "cats": [
+      6
+    ],
+    "description": "Prime Software is an ecommerce platform designed for the office supplies market.",
+    "icon": "PrimaSoftware.svg",
+    "js": {
+      "prima.address": "",
+      "prima_module_load": ""
+    },
+    "meta": {
+      "DCTERMS.publisher": "^Prima Software Ltd$"
+    },
+    "saas": true,
+    "website": "https://www.primasoftware.co.uk"
+  },
+  "Prime AI": {
+    "cats": [
+      105
+    ],
+    "description": "Prime AI is a platform that uses AI-powered technology to match customers' body shapes with garment SKU specifications, helping them choose the best-fitting clothing size.",
+    "icon": "PrimeAI.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.primeai\\.co\\.uk"
+    ],
+    "website": "https://www.primeai.co.uk"
   },
   "PrimeGate": {
     "cats": [
@@ -4870,6 +4969,23 @@
     ],
     "website": "https://www.prommt.com"
   },
+  "Promo AI": {
+    "cats": [
+      32
+    ],
+    "description": "Promo AI is a tool that generates, schedules, and publishes professional videos across platforms, designed to support business marketing efforts.",
+    "icon": "Promo.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "ak04-promo-cdn\\.slidely\\.com"
+    ],
+    "website": "https://promo.com"
+  },
   "PromoBuilding": {
     "cats": [
       51
@@ -4894,6 +5010,25 @@
     ],
     "saas": true,
     "website": "https://promobuilding.ru"
+  },
+  "Property Shell": {
+    "cats": [
+      53
+    ],
+    "description": "Property Shell is a real estate CRM solution to manage, develop, and drive the selling of residential and commercial property, and more.",
+    "icon": "PropertyShell.svg",
+    "pricing": [
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.propertyshell\\.com"
+    ],
+    "scripts": [
+      "api\\.propertyshell\\.com"
+    ],
+    "website": "https://propertyshell.com"
   },
   "Proton Mail": {
     "cats": [

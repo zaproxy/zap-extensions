@@ -274,6 +274,22 @@
     ],
     "website": "https://www.mrw.es"
   },
+  "MSAAQ": {
+    "cats": [
+      6
+    ],
+    "description": "MSAAQ is a platform that allows users to create, sell, and manage their products or services from a single location.",
+    "icon": "MSAAQ.svg",
+    "meta": {
+      "generator": "msaaq\\.com"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://msaaq.com"
+  },
   "MSHOP": {
     "cats": [
       6
@@ -1500,6 +1516,18 @@
     ],
     "website": "https://marker.io"
   },
+  "MarketHero": {
+    "cats": [
+      32
+    ],
+    "description": "Market Hero is a platform that automates ROI calculations for ecommerce businesses, streamlining financial performance tracking and providing data-driven insights.",
+    "icon": "MarketHero.svg",
+    "saas": true,
+    "scripts": [
+      "tracking\\.markethero\\.io"
+    ],
+    "website": "https://markethero.io"
+  },
   "MarketPlan": {
     "cats": [
       10,
@@ -2281,6 +2309,9 @@
     "cats": [
       6
     ],
+    "cookies": {
+      "medusa.sid": ""
+    },
     "description": "Medusa is an open-source ecommerce platform that enables users to create online stores.",
     "dom": [
       "div.content-container > a[href*='www.medusajs.com'], a[href*='mailto:hello@medusajs.com']"
@@ -2313,6 +2344,21 @@
       "bookmenow\\.info/(?:runtime|main).+\\.js"
     ],
     "website": "https://bookmenow.info"
+  },
+  "Meetup Express": {
+    "cats": [
+      72
+    ],
+    "cookies": {
+      "meetup_express_quick_appointment_session": ""
+    },
+    "description": "Meetup Express is an appointment scheduling system designed to simplify booking and managing meetings.",
+    "icon": "MeetupExpress.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://meetupexpress.com"
   },
   "Megagroup CMS.S3": {
     "cats": [
@@ -2353,6 +2399,9 @@
       "recurring"
     ],
     "saas": true,
+    "scripts": [
+      "\\.meilisearch\\.com"
+    ],
     "website": "https://www.meilisearch.com"
   },
   "Meks Simple Flickr Widget": {
@@ -2465,6 +2514,24 @@
     ],
     "saas": true,
     "website": "https://www.mendix.com"
+  },
+  "Mentad": {
+    "cats": [
+      32
+    ],
+    "description": "Mentad is a predictive marketing platform to acquire new customers.",
+    "js": {
+      "mentad_website_id": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "mentad_website_id"
+    ],
+    "website": "https://www.mentad.com"
   },
   "Mention Me": {
     "cats": [
@@ -2827,7 +2894,7 @@
   },
   "Mginex": {
     "cats": [
-      108
+      6
     ],
     "description": "Mginex is an online store website creation platform.",
     "icon": "Mginex.svg",
@@ -3818,10 +3885,21 @@
       "Webpack"
     ],
     "scripts": [
-      "data-webpack\\;confidence:50",
       "Container initialization failed as it has already been initialized with a different share scope"
     ],
     "website": "https://webpack.js.org/concepts/module-federation/"
+  },
+  "Modulify": {
+    "cats": [
+      51
+    ],
+    "description": "Modulify is a platform that enables the creation and deployment of scalable websites.",
+    "dom": [
+      "html[data-wf-domain^='mdlfy-']"
+    ],
+    "icon": "Modulify.svg",
+    "saas": true,
+    "website": "https://modulify.ai"
   },
   "Moguta.CMS": {
     "cats": [
@@ -3903,6 +3981,22 @@
     ],
     "oss": true,
     "website": "https://mojolicio.us"
+  },
+  "Mokini": {
+    "cats": [
+      32
+    ],
+    "description": "Mokini is a marketing automation platform designed for ecommerce businesses with customizable templates, user segmentation, and scheduling.",
+    "icon": "Mokini.svg",
+    "js": {
+      "mokiniSettings": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.mokini.com"
   },
   "Mokka": {
     "cats": [
@@ -5151,10 +5245,29 @@
       "payg"
     ],
     "saas": true,
+    "scripts": [
+      "microCMS:"
+    ],
     "website": "https://microcms.io",
     "xhr": [
       "\\.microcms\\.io"
     ]
+  },
+  "miniCal": {
+    "cats": [
+      1
+    ],
+    "description": "miniCal is an open-source property management system.",
+    "icon": "miniCal.svg",
+    "js": {
+      "miniCal.projectUrl": "app\\.minical\\.io"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "website": "https://www.minical.io"
   },
   "mini_httpd": {
     "cats": [

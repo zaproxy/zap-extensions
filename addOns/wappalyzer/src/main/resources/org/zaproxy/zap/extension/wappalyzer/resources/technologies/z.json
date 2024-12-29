@@ -412,6 +412,21 @@
     "saas": true,
     "website": "https://zentap.com"
   },
+  "Zenzzen": {
+    "cats": [
+      6
+    ],
+    "description": "Zenzzen is an ecommerce platform enabling businesses to build fully customizable online stores under their own brand, providing flexibility in managing products, processing payments, and enhancing the customer experience.",
+    "dom": [
+      "span[class*='zenzzen-store']"
+    ],
+    "icon": "Zenzzen.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://zenzzen.com"
+  },
   "Zeotap": {
     "cats": [
       97
@@ -459,6 +474,23 @@
     ],
     "saas": true,
     "website": "https://www.zestmoney.in"
+  },
+  "Zeta Producer": {
+    "cats": [
+      51
+    ],
+    "cpe": "cpe:2.3:a:zeta-producer:zeta_producer:*:*:*:*:*:*:*:*",
+    "description": "Zeta Producer is a professional homepage builder for Windows that enables users to create websites.",
+    "icon": "ZetaProducer.svg",
+    "meta": {
+      "generator": "^Zeta Producer ([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "saas": true,
+    "website": "https://www.zeta-producer.com"
   },
   "Zeus Technology": {
     "cats": [

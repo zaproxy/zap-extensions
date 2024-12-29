@@ -347,6 +347,27 @@
     },
     "website": "https://www.idosell.com"
   },
+  "Ifdo": {
+    "cats": [
+      32,
+      86
+    ],
+    "description": "Ifdo is a marketing and segmentation tool ",
+    "icon": "Ifdo.svg",
+    "js": {
+      "_NBIFDOBODYINNERHTML": "",
+      "_NBIFDOHEADCSSFILE": "",
+      "_NBIFDOHEADINNERHTML": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://ifdo.co.kr/"
+  },
   "Ignition": {
     "cats": [
       55
@@ -1202,7 +1223,7 @@
     "html": [
       "<!-- (?:Begin|End) Inspectlet Embed Code -->"
     ],
-    "icon": "inspectlet.png",
+    "icon": "Inspectlet.svg",
     "js": {
       "__insp": "",
       "__inspld": ""
@@ -1872,6 +1893,18 @@
     "icon": "Ionicons.svg",
     "oss": true,
     "website": "https://ionicons.com"
+  },
+  "Iress": {
+    "cats": [
+      55
+    ],
+    "description": "Iress is a platform that provides software solutions for the financial services industry.",
+    "icon": "Iress.svg",
+    "js": {
+      "IRESSWebToolbox": ""
+    },
+    "saas": true,
+    "website": "https://www.iress.com"
   },
   "IrisLMS": {
     "cats": [

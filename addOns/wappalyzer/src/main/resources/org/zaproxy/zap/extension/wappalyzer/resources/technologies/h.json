@@ -781,6 +781,21 @@
     "oss": true,
     "website": "https://www.joomshaper.com/joomla-templates/helixultimate"
   },
+  "HelixPay": {
+    "cats": [
+      104
+    ],
+    "description": "HelixPay is an event ticketing platform providing online payment integration, digital tickets, and customizable event websites for large-scale events.",
+    "icon": "HelixPay.svg",
+    "js": {
+      "HELIXPAY.PAGE": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://helixpay.ph"
+  },
   "Helixo UFE": {
     "cats": [
       100
@@ -1419,6 +1434,25 @@
     ],
     "website": "https://highcharts.com/products/highstock"
   },
+  "HikaShop": {
+    "cats": [
+      6
+    ],
+    "description": "HikaShop is a Joomla extension for managing shop content, handling price management, and customizing store views with an intuitive interface.",
+    "icon": "HikaShop.svg",
+    "js": {
+      "hikashop": "",
+      "hikashopCheckField": ""
+    },
+    "requires": [
+      "Joomla"
+    ],
+    "saas": true,
+    "scripts": [
+      "com_hikashop"
+    ],
+    "website": "https://www.hikashop.com"
+  },
   "HikeOrders": {
     "cats": [
       68
@@ -1618,6 +1652,9 @@
     "js": {
       "HolduixConfig.baseURL": ""
     },
+    "meta": {
+      "author": "^Holduix$"
+    },
     "pricing": [
       "onetime",
       "freemium"
@@ -1717,6 +1754,23 @@
     "icon": "Hono.svg",
     "oss": true,
     "website": "https://hono.dev"
+  },
+  "Horoshop": {
+    "cats": [
+      6
+    ],
+    "description": "Horoshop is an all-in-one platform designed to support launching and managing online stores tailored for businesses in  Ukraine.",
+    "js": {
+      "Horoshop.Widgets": "",
+      "horoshopReCaptcha": "",
+      "webpackChunkHoroshop": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://horoshop.ua"
   },
   "HostEurope": {
     "cats": [
@@ -2205,6 +2259,23 @@
     ],
     "website": "https://www.huberway.com/analytics-software"
   },
+  "Hubtiger": {
+    "cats": [
+      53,
+      101
+    ],
+    "description": "Hubtiger offers rental and workshop management software solutions to help businesses elevate their operations and efficiency.",
+    "icon": "Hubtiger.svg",
+    "meta": {
+      "author": "^Hubtiger$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://hubtiger.com"
+  },
   "Huckabuy": {
     "cats": [
       54
@@ -2367,6 +2438,25 @@
     ],
     "saas": true,
     "website": "https://www.hulkapps.com/products/product-reviews-shopify"
+  },
+  "Hull": {
+    "cats": [
+      97
+    ],
+    "description": "Hull is a platform that collects, unifies, enriches product, marketing, and sales data, then synchronizes it across various tools.",
+    "icon": "Hull.svg",
+    "js": {
+      "Hull._initialized": "",
+      "Hull.js._initialized": "",
+      "HullShopify": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.hull.io"
   },
   "Human Presence": {
     "cats": [

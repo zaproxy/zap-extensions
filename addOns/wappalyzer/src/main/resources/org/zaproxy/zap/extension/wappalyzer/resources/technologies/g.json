@@ -317,6 +317,22 @@
     ],
     "website": "https://www.gameball.co"
   },
+  "Gastronaut": {
+    "cats": [
+      93
+    ],
+    "description": "Gastronaut is a reservation system designed to automate the booking process, streamlining operations to enhance sales efficiency.",
+    "icon": "Gastronaut.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.gastronaut\\.ai/"
+    ],
+    "website": "https://get.gastronaut.ai"
+  },
   "Gator": {
     "cats": [
       10
@@ -649,6 +665,38 @@
     ],
     "website": "https://geniee.co.jp"
   },
+  "Geniee Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Geniee Chat is a chat-based web customer service platform.",
+    "icon": "GenieeChat.svg",
+    "js": {
+      "GenooCSS.add": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.chamo-chat\\.com/"
+    ],
+    "website": "https://chamo-chat.com"
+  },
+  "Genoo": {
+    "cats": [
+      32
+    ],
+    "description": "Genoo is a provider of marketing automation and online marketing tools.",
+    "icon": "Genoo.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://genoo.com"
+  },
   "Gentoo": {
     "cats": [
       28
@@ -776,6 +824,21 @@
     ],
     "saas": true,
     "website": "https://www.getmeashop.com"
+  },
+  "GetMoreStudents": {
+    "cats": [
+      32
+    ],
+    "description": "GetMoreStudents is a platform that supports dance studio owners in increasing class enrollment and boosting profits through marketing automation.",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.getmorestudents\\.net"
+    ],
+    "website": "https://getmorestudents.net"
   },
   "GetResponse": {
     "cats": [
@@ -2013,6 +2076,25 @@
     "saas": true,
     "website": "https://goprep.com"
   },
+  "GoSquared": {
+    "cats": [
+      10
+    ],
+    "description": "GoSquared is a web analytics platform positioned as an alternative to Google Analytics.",
+    "icon": "GoSquared.svg",
+    "js": {
+      "GoSquared": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "gosquared\\.js"
+    ],
+    "website": "https://www.gosquared.com"
+  },
   "GoStats": {
     "cats": [
       10
@@ -2199,6 +2281,18 @@
     },
     "oss": true,
     "website": "https://goober.js.org"
+  },
+  "GoodEshop": {
+    "cats": [
+      6
+    ],
+    "description": "GoodEshop is an online ecommerce management tool.",
+    "icon": "GoodEshop.svg",
+    "saas": true,
+    "scripts": [
+      "api\\.goodeshop\\.sk"
+    ],
+    "website": "https://goodeshop.sk"
   },
   "Google AdSense": {
     "cats": [
@@ -2710,6 +2804,22 @@
     "saas": true,
     "website": "https://www.gorgias.com/"
   },
+  "Goshly": {
+    "cats": [
+      6
+    ],
+    "description": "Goshly is a platform that builds responsive websites for both desktop and mobile, offering features like ecommerce integration and shopping cart functionality.",
+    "icon": "Goshly.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.goshlyanalytics\\.com/"
+    ],
+    "website": "https://www.goshly.com"
+  },
   "GotiPath": {
     "cats": [
       31
@@ -3030,6 +3140,47 @@
       "(?:cdn|id)\\.gravitec\\.(?:media|net)"
     ],
     "website": "https://gravitec.net"
+  },
+  "Gravito": {
+    "cats": [
+      97
+    ],
+    "cookies": {
+      "gravitoSync": ""
+    },
+    "description": "Gravito is a service that enables centralized consumer consent and the collection of observed data from multiple digital touchpoints, securely integrating it with personal data.",
+    "icon": "Gravito.svg",
+    "js": {
+      "gravito.init": "",
+      "gravitoCMP": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.gravito.net"
+  },
+  "Gravity": {
+    "cats": [
+      52
+    ],
+    "description": "Gravity is a live chat solution designed to facilitate real-time communication for businesses.",
+    "icon": "Gravity.svg",
+    "js": {
+      "gravi_api.chatMode": "",
+      "gravi_init": "",
+      "gravi_version": "^([\\d\\.]+[a-z]?)$\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.gravi\\.org/"
+    ],
+    "website": "https://gravi.org"
   },
   "Gravity Forms": {
     "cats": [
@@ -3359,6 +3510,27 @@
       "ib\\.guestonline\\.\\w+"
     ],
     "website": "https://www.guestonline.io"
+  },
+  "Guesty": {
+    "cats": [
+      93
+    ],
+    "cookies": {
+      "guesty-muid": "",
+      "guesty-utms": ""
+    },
+    "description": "Guesty is a cloud-based platform, designed exclusively for Airbnb and vacation rental managers.",
+    "dom": [
+      "script[id*='guesty-js-extra']"
+    ],
+    "icon": "Guesty.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.guesty.com/"
   },
   "Guidap": {
     "cats": [
