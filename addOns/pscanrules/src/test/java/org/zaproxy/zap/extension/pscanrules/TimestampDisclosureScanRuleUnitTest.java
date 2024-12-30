@@ -36,6 +36,7 @@ import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -501,20 +502,36 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
         assertEquals(0, alertsRaised.size());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"javascript"})
-    void shouldNotRaiseAlertOnTimeStampInJavascriptFilesAtHighThreshold(String type)
+    @Test
+    void shouldNotRaiseAlertOnTimeStampInJavascriptFilesAtHighThreshold()
             throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
         String strTestDate = String.valueOf(testDate.getEpochSecond());
         HttpMessage msg = createMessage(strTestDate);
-        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, type);
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "javascript");
         rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = AlertThreshold.class,
+            names = {"MEDIUM", "LOW"})
+    void shouldRaiseAlertBelowHighThresholdOnTimeStampInJavascriptFiles(AlertThreshold threshold)
+            throws URIException {
+        // Given
+        Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        HttpMessage msg = createMessage(strTestDate);
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "javascript");
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(1, alertsRaised.size());
     }
 
     private static HttpMessage createMessage(String timestamp) throws URIException {
