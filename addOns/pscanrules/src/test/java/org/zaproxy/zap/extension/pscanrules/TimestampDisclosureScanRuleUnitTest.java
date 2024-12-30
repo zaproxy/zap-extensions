@@ -501,6 +501,22 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
         assertEquals(0, alertsRaised.size());
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"javascript"})
+    void shouldNotRaiseAlertOnTimeStampInJavascriptFilesAtHighThreshold(String type)
+            throws Exception {
+        // Given
+        Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        HttpMessage msg = createMessage(strTestDate);
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, type);
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
     private static HttpMessage createMessage(String timestamp) throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));
