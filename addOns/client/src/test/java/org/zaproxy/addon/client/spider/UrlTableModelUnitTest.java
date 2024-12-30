@@ -23,21 +23,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.hasSize;
 
-import java.util.Locale;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.utils.I18N;
+import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link UrlTableModel}. */
-class UrlTableModelUnitTest {
+class UrlTableModelUnitTest extends TestUtils {
 
     private UrlTableModel model;
 
     @BeforeAll
     static void setupAll() {
-        Constant.messages = new I18N(Locale.ROOT);
+        mockMessages(new ExtensionClientIntegration());
     }
 
     @BeforeEach

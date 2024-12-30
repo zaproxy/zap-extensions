@@ -295,8 +295,6 @@ class ClientMapUnitTest {
         assertThat(root.getChildAt(0).getChildAt(2).getChildCount(), is(1));
         assertThat(
                 root.getChildAt(0).getChildAt(2).getChildAt(0).getUserObject().getName(), is("#"));
-        System.out.println(root.getChildAt(0).getChildAt(2).getChildAt(0).getUserObject().getUrl());
-        System.out.println("https://www.example.com/?p2=v3&p1=v4#/");
         assertThat(
                 root.getChildAt(0).getChildAt(2).getChildAt(0).getUserObject().getUrl(),
                 is("https://www.example.com/?p2=v3&p1=v4#"));
