@@ -6,7 +6,9 @@
 <toc version="2.0">
     <tocitem text="ZAP User Guide" tocid="toplevelitem">
         <tocitem text="Add Ons" tocid="addons">
-            <tocitem text="Common Library" target="commonlib"/>
+            <tocitem text="Common Library" target="commonlib">
+                <tocitem text="Tabbed Output Panel" target="commonlib.output.panel" />
+            </tocitem>
         </tocitem>
     </tocitem>
 </toc>
