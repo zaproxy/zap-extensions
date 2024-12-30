@@ -128,15 +128,14 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
             this.addUrlSelectField(0, FIELD_START, url, true, false);
         }
 
+        this.addComboField(0, FIELD_CONTEXT, new String[] {}, "");
+        List<String> ctxNames = new ArrayList<>();
+        ctxNames.add("");
+        Session session = Model.getSingleton().getSession();
+        session.getContexts().forEach(context -> ctxNames.add(context.getName()));
+        this.setComboFields(FIELD_CONTEXT, ctxNames, "");
+
         if (extUserMgmt != null) {
-            this.addComboField(0, FIELD_CONTEXT, new String[] {}, "");
-
-            List<String> ctxNames = new ArrayList<>();
-            ctxNames.add("");
-            Session session = Model.getSingleton().getSession();
-            session.getContexts().forEach(context -> ctxNames.add(context.getName()));
-
-            this.setComboFields(FIELD_CONTEXT, ctxNames, "");
             this.addComboField(0, FIELD_USER, new String[] {}, "");
 
             this.addFieldListener(FIELD_CONTEXT, e -> setUsers());
@@ -183,7 +182,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
 
     private Context getSelectedContext() {
         String ctxName = this.getStringValue(FIELD_CONTEXT);
-        if (this.extUserMgmt != null && !this.isEmptyField(FIELD_CONTEXT)) {
+        if (!this.isEmptyField(FIELD_CONTEXT)) {
             Session session = Model.getSingleton().getSession();
             return session.getContext(ctxName);
         }
@@ -369,7 +368,12 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
 
         User user = this.getSelectedUser();
         try {
-            this.extension.startScan(getStartUrl(), clientParams, user);
+            this.extension.startScan(
+                    getStartUrl(),
+                    clientParams,
+                    getSelectedContext(),
+                    user,
+                    subtreeOnlyPreviousCheckedState);
         } catch (Exception e) {
             // Should not happen as we will already have checked the URL
             LOGGER.debug("Failed to start client spider", e);

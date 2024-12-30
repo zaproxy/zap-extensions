@@ -92,6 +92,7 @@ import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProfileManager;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ScanEventPublisher;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
@@ -738,10 +739,14 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         return StringUtils.abbreviateMiddle(displayName, "..", 30);
     }
 
-    public int startScan(String url, ClientOptions options, User user)
+    public int startScan(
+            String url, ClientOptions options, Context context, User user, boolean subtreeOnly)
             throws URIException, NullPointerException {
         return this.startScan(
-                abbreviateDisplayName(url), null, user, new Object[] {new URI(url, true), options});
+                abbreviateDisplayName(url),
+                null,
+                user,
+                new Object[] {new URI(url, true), options, context, subtreeOnly});
     }
 
     public int startScan(

@@ -19,19 +19,26 @@
  */
 package org.zaproxy.addon.client.spider;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import javax.swing.table.TableModel;
+import lombok.Getter;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -40,6 +47,15 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.extension.Extension;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
@@ -48,12 +64,19 @@ import org.zaproxy.addon.client.spider.actions.ClickElement;
 import org.zaproxy.addon.client.spider.actions.OpenUrl;
 import org.zaproxy.addon.client.spider.actions.SubmitForm;
 import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
+import org.zaproxy.addon.network.server.HttpServerConfig;
+import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.GenericScanner2;
 import org.zaproxy.zap.model.ScanListenner2;
+import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ThreadUtils;
 
@@ -64,17 +87,24 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
      * This functionality has not yet been officially released, so do not rely on any of the classes or methods for now.
      *
      * TODO The following features will need to be implemented before the first release:
-     * 		Separate proxy (or maybe even one proxy per browser?)
      * 		Support for modes
      * 		Help pages
      *
      * The following features should be implemented in future releases:
      * 		Clicking on likely navigation elements
-     * 		Preventing reqs to out of scope sites (via navigation elements)
      * 		Automation framework support
      * 		API support
      */
     private static final Logger LOGGER = LogManager.getLogger(ClientSpider.class);
+
+    public enum ResourceState {
+        ALLOWED,
+        EXCLUDED,
+        IO_ERROR,
+        OUT_OF_CONTEXT,
+        OUT_OF_HOST,
+        OUT_OF_SUBTREE,
+    }
 
     private static final int SHUTDOWN_SLEEP_INTERVAL = 200;
 
@@ -86,12 +116,20 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
     private String displayName;
 
     private String targetUrl;
-    private User user;
+    private final String targetHost;
+    private final HttpPrefixUriValidator httpPrefixUriValidator;
+    private final Context context;
+    private final User user;
     private ExtensionClientIntegration extClient;
-    private ExtensionSelenium extSelenium;
+    private final ExtensionSelenium extSelenium;
+    private final ExtensionNetwork extensionNetwork;
 
-    private List<WebDriver> webDriverPool = new ArrayList<>();
-    private Set<WebDriver> webDriverActive = new HashSet<>();
+    private final ProxyHandler proxyHandler;
+    private final Session session;
+    private final List<String> exclusionList;
+
+    private List<WebDriverProcess> webDriverPool = new ArrayList<>();
+    private Set<WebDriverProcess> webDriverActive = new HashSet<>();
     private List<ClientSpiderTask> spiderTasks = new ArrayList<>();
     private List<ClientSpiderTask> pausedTasks = new ArrayList<>();
     private long startTime;
@@ -106,6 +144,8 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
 
     private UrlTableModel addedNodesModel;
     private TaskTableModel tasksModel;
+    private final MessagesTableModel messagesTableModel;
+    private final Set<String> crawledUrls;
     private ScanListenner2 listener;
 
     public ClientSpider(
@@ -114,23 +154,45 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             String targetUrl,
             ClientOptions options,
             int id,
+            Context context,
             User user,
+            boolean subtreeOnly,
             ValueProvider valueProvider) {
         this.extClient = extClient;
+        session = extClient.getModel().getSession();
         this.displayName = displayName;
         this.targetUrl = targetUrl;
+        URI targetUri = createUri(targetUrl);
+        targetHost = new String(targetUri.getRawHost());
         this.options = options;
         this.scanId = id;
         this.tasksTotalCount = new AtomicInteger();
+        this.context = context;
         this.user = user;
         this.valueProvider = valueProvider;
         this.addedNodesModel = new UrlTableModel();
         this.tasksModel = new TaskTableModel();
+        messagesTableModel = new MessagesTableModel();
+        crawledUrls = Collections.synchronizedSet(new TreeSet<>());
 
         ZAP.getEventBus().registerConsumer(this, ClientMap.class.getCanonicalName());
 
-        extSelenium =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+        extSelenium = getExtension(ExtensionSelenium.class);
+        extensionNetwork = getExtension(ExtensionNetwork.class);
+
+        exclusionList = new ArrayList<>();
+        exclusionList.addAll(session.getExcludeFromSpiderRegexs());
+        exclusionList.addAll(session.getGlobalExcludeURLRegexs());
+
+        proxyHandler = new ProxyHandler();
+
+        HttpPrefixUriValidator validator =
+                subtreeOnly ? new HttpPrefixUriValidator(targetUri) : null;
+        this.httpPrefixUriValidator = validator;
+    }
+
+    private static <T extends Extension> T getExtension(Class<T> clazz) {
+        return Control.getSingleton().getExtensionLoader().getExtension(clazz);
     }
 
     public ClientSpider(
@@ -139,7 +201,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             String targetUrl,
             ClientOptions options,
             int id) {
-        this(extClient, displayName, targetUrl, options, id, null, null);
+        this(extClient, displayName, targetUrl, options, id, null, null, false, null);
     }
 
     @Override
@@ -214,10 +276,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
 
     private void getUnvisitedUrls(ClientNode node, List<String> urls) {
         String nodeUrl = node.getUserObject().getUrl();
-        if (nodeUrl.startsWith(targetUrl)
-                && nodeUrl.length() != targetUrl.length()
-                && !node.isStorage()
-                && !node.getUserObject().isVisited()) {
+        if (!node.isStorage() && !node.getUserObject().isVisited() && isUrlInScope(nodeUrl)) {
             urls.add(nodeUrl);
         }
         for (int i = 0; i < node.getChildCount(); i++) {
@@ -225,24 +284,33 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         }
     }
 
-    public synchronized WebDriver getWebDriver() {
-        WebDriver wd;
+    public synchronized WebDriverProcess getWebDriverProcess() {
+        WebDriverProcess wdp;
         synchronized (this.webDriverPool) {
             if (!this.webDriverPool.isEmpty()) {
-                wd = this.webDriverPool.remove(0);
+                wdp = this.webDriverPool.remove(0);
             } else {
-                wd = extSelenium.getProxiedBrowser(options.getBrowserId(), targetUrl);
+                try {
+                    wdp =
+                            new WebDriverProcess(
+                                    extensionNetwork,
+                                    extSelenium,
+                                    proxyHandler,
+                                    options.getBrowserId());
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to create WebDriver process:", e);
+                }
             }
-            this.webDriverActive.add(wd);
+            this.webDriverActive.add(wdp);
         }
-        return wd;
+        return wdp;
     }
 
-    public void returnWebDriver(WebDriver wd) {
+    public void returnWebDriverProcess(WebDriverProcess wdp) {
         // Deliberately synchronized on webDriverPool as they are modified together
         synchronized (this.webDriverPool) {
-            this.webDriverActive.remove(wd);
-            this.webDriverPool.add(wd);
+            this.webDriverActive.remove(wdp);
+            this.webDriverPool.add(wdp);
         }
     }
 
@@ -265,7 +333,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             }
             return task;
         } catch (RejectedExecutionException e) {
-            LOGGER.debug("Failed to add task", e.getMessage());
+            LOGGER.debug("Failed to add task: {}", e.getMessage());
         }
         return null;
     }
@@ -301,55 +369,87 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
 
         Map<String, String> parameters = event.getParameters();
         String url = parameters.get(ClientMap.URL_KEY);
-        if (url.startsWith(targetUrl)) {
-            addUriToAddedNodesModel(url);
+        if (!isUrlInScope(url)) {
+            return;
+        }
 
-            if (options.getMaxDepth() > 0) {
-                int depth = Integer.parseInt(parameters.get(ClientMap.DEPTH_KEY));
-                if (depth > options.getMaxDepth()) {
-                    LOGGER.debug(
-                            "Ignoring URL - too deep {} > {} : {}",
-                            depth,
-                            options.getMaxDepth(),
-                            url);
-                    return;
-                }
-            }
-            if (options.getMaxChildren() > 0) {
-                int siblings = Integer.parseInt(parameters.get(ClientMap.SIBLINGS_KEY));
-                if (siblings > options.getMaxChildren()) {
-                    LOGGER.debug(
-                            "Ignoring URL - too wide {} > {} : {}",
-                            siblings,
-                            options.getMaxChildren(),
-                            url);
-                    return;
-                }
-            }
+        addUriToAddedNodesModel(url);
 
-            if (ClientMap.MAP_COMPONENT_ADDED_EVENT.equals(event.getEventType())) {
-                if (ClickElement.isSupported(href -> href.startsWith(targetUrl), parameters)) {
-                    addTask(
-                            url,
-                            openAction(
-                                    url,
-                                    new ClickElement(valueProvider, createURI(url), parameters)),
-                            options.getPageLoadTimeInSecs(),
-                            Constant.messages.getString("client.spider.panel.table.action.click"),
-                            paramsToString(parameters));
-                } else if (SubmitForm.isSupported(parameters)) {
-                    addTask(
-                            url,
-                            openAction(
-                                    url, new SubmitForm(valueProvider, createURI(url), parameters)),
-                            options.getPageLoadTimeInSecs(),
-                            Constant.messages.getString("client.spider.panel.table.action.submit"),
-                            paramsToString(parameters));
-                }
-            } else {
-                addOpenUrlTask(url, options.getPageLoadTimeInSecs());
+        if (options.getMaxDepth() > 0) {
+            int depth = Integer.parseInt(parameters.get(ClientMap.DEPTH_KEY));
+            if (depth > options.getMaxDepth()) {
+                LOGGER.debug(
+                        "Ignoring URL - too deep {} > {} : {}", depth, options.getMaxDepth(), url);
+                return;
             }
         }
+        if (options.getMaxChildren() > 0) {
+            int siblings = Integer.parseInt(parameters.get(ClientMap.SIBLINGS_KEY));
+            if (siblings > options.getMaxChildren()) {
+                LOGGER.debug(
+                        "Ignoring URL - too wide {} > {} : {}",
+                        siblings,
+                        options.getMaxChildren(),
+                        url);
+                return;
+            }
+        }
+
+        if (ClientMap.MAP_COMPONENT_ADDED_EVENT.equals(event.getEventType())) {
+            if (ClickElement.isSupported(this::isUrlInScope, parameters)) {
+                addTask(
+                        url,
+                        openAction(
+                                url, new ClickElement(valueProvider, createUri(url), parameters)),
+                        options.getPageLoadTimeInSecs(),
+                        Constant.messages.getString("client.spider.panel.table.action.click"),
+                        paramsToString(parameters));
+            } else if (SubmitForm.isSupported(parameters)) {
+                addTask(
+                        url,
+                        openAction(url, new SubmitForm(valueProvider, createUri(url), parameters)),
+                        options.getPageLoadTimeInSecs(),
+                        Constant.messages.getString("client.spider.panel.table.action.submit"),
+                        paramsToString(parameters));
+            }
+        } else {
+            addOpenUrlTask(url, options.getPageLoadTimeInSecs());
+        }
+    }
+
+    private boolean isUrlInScope(String url) {
+        URI uri = createUri(url);
+        if (uri == null) {
+            return false;
+        }
+
+        return checkResourceState(uri, new String(uri.getRawHost())) == ResourceState.ALLOWED;
+    }
+
+    protected ResourceState checkResourceState(URI uri, String hostName) {
+        ResourceState state = ResourceState.ALLOWED;
+        String uriString = uri.toString();
+        if (httpPrefixUriValidator != null && !httpPrefixUriValidator.isValid(uri)) {
+            LOGGER.debug("Excluding resource not under subtree: {}", uriString);
+            state = ResourceState.OUT_OF_SUBTREE;
+        } else if (context != null) {
+            if (!context.isInContext(uriString)) {
+                LOGGER.debug("Excluding resource not in specified context: {}", uriString);
+                state = ResourceState.OUT_OF_CONTEXT;
+            }
+        } else if (!targetHost.equalsIgnoreCase(hostName)) {
+            LOGGER.debug("Excluding resource not on target host: {}", uriString);
+            state = ResourceState.OUT_OF_HOST;
+        }
+        if (state == ResourceState.ALLOWED) {
+            for (String regex : exclusionList) {
+                if (Pattern.matches(regex, uriString)) {
+                    LOGGER.debug("Excluding resource with {} {}", regex, uriString);
+                    state = ResourceState.EXCLUDED;
+                }
+            }
+        }
+        return state;
     }
 
     private static String paramsToString(Map<String, String> parameters) {
@@ -369,7 +469,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         return parameters.toString();
     }
 
-    private URI createURI(String value) {
+    private static URI createUri(String value) {
         try {
             return new URI(value, true);
         } catch (URIException | NullPointerException e) {
@@ -473,18 +573,17 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             }
         }
         synchronized (this.webDriverPool) {
-            for (WebDriver wd : this.webDriverPool) {
-                wd.quit();
-            }
-            this.webDriverPool.clear();
-            for (WebDriver wd : this.webDriverActive) {
-                wd.quit();
-            }
-            this.webDriverActive.clear();
+            clear(webDriverPool);
+            clear(webDriverActive);
         }
         if (listener != null) {
             listener.scanFinshed(scanId, displayName);
         }
+    }
+
+    private static void clear(Collection<WebDriverProcess> entries) {
+        entries.forEach(WebDriverProcess::shutdown);
+        entries.clear();
     }
 
     private class ShutdownThread extends Thread {
@@ -577,7 +676,194 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         return this.tasksModel;
     }
 
+    public TableModel getMessagesTableModel() {
+        return messagesTableModel;
+    }
+
+    public int getCountCrawledUrls() {
+        return crawledUrls.size();
+    }
+
     public void setListener(ScanListenner2 listener) {
         this.listener = listener;
+    }
+
+    void unload() {
+        messagesTableModel.unload();
+    }
+
+    @Getter
+    static class WebDriverProcess {
+
+        private static final String LOCAL_PROXY_IP = "127.0.0.1";
+        private static final int INITIATOR = HttpSender.CLIENT_SPIDER_INITIATOR;
+
+        private Server proxy;
+        private WebDriver webDriver;
+
+        private WebDriverProcess(
+                ExtensionNetwork extensionNetwork,
+                ExtensionSelenium extensionSelenium,
+                ProxyHandler proxyHandler,
+                String browser)
+                throws IOException {
+            proxy =
+                    extensionNetwork.createHttpServer(
+                            HttpServerConfig.builder()
+                                    .setHttpMessageHandler(proxyHandler)
+                                    .setHttpSender(new HttpSender(INITIATOR))
+                                    .setServeZapApi(true)
+                                    .build());
+            int port = proxy.start(Server.ANY_PORT);
+
+            webDriver = extensionSelenium.getWebDriver(INITIATOR, browser, LOCAL_PROXY_IP, port);
+        }
+
+        private void shutdown() {
+            if (webDriver != null) {
+                try {
+                    webDriver.quit();
+                } catch (Exception e) {
+                    LOGGER.debug("An error occurred while quitting the browser.", e);
+                }
+            }
+
+            if (proxy != null) {
+                try {
+                    proxy.close();
+                } catch (IOException e) {
+                    LOGGER.debug("An error occurred while stopping the proxy.", e);
+                }
+            }
+        }
+    }
+
+    private class ProxyHandler implements HttpMessageHandler {
+
+        private final List<Pattern> allowedResources =
+                List.of(
+                        Pattern.compile("^http.*\\.js(?:\\?.*)?$"),
+                        Pattern.compile("^http.*\\.css(?:\\?.*)?$"));
+
+        private HttpResponseHeader outOfScopeResponseHeader;
+        private HttpResponseBody outOfScopeResponseBody;
+
+        ProxyHandler() {
+
+            createOutOfScopeResponse(
+                    Constant.messages.getString("client.spider.outofscope.response"));
+        }
+
+        private void createOutOfScopeResponse(String response) {
+            outOfScopeResponseBody = new HttpResponseBody();
+            outOfScopeResponseBody.setBody(response.getBytes(StandardCharsets.UTF_8));
+
+            final StringBuilder strBuilder = new StringBuilder(150);
+            final String crlf = HttpHeader.CRLF;
+            strBuilder.append("HTTP/1.1 403 Forbidden").append(crlf);
+            strBuilder.append(HttpHeader.PRAGMA).append(": ").append("no-cache").append(crlf);
+            strBuilder
+                    .append(HttpHeader.CACHE_CONTROL)
+                    .append(": ")
+                    .append("no-cache")
+                    .append(crlf);
+            strBuilder
+                    .append(HttpHeader.CONTENT_TYPE)
+                    .append(": ")
+                    .append("text/plain; charset=UTF-8")
+                    .append(crlf);
+            strBuilder
+                    .append(HttpHeader.CONTENT_LENGTH)
+                    .append(": ")
+                    .append(outOfScopeResponseBody.length())
+                    .append(crlf);
+
+            HttpResponseHeader responseHeader;
+            try {
+                responseHeader = new HttpResponseHeader(strBuilder.toString());
+            } catch (HttpMalformedHeaderException e) {
+                LOGGER.error("Failed to create a valid response header: ", e);
+                responseHeader = new HttpResponseHeader();
+            }
+            outOfScopeResponseHeader = responseHeader;
+        }
+
+        @Override
+        public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage httpMessage) {
+            if (!ctx.isFromClient()) {
+                notifyMessage(
+                        httpMessage,
+                        HistoryReference.TYPE_CLIENT_SPIDER,
+                        getResourceState(httpMessage));
+                return;
+            }
+
+            ResourceState state = ResourceState.ALLOWED;
+            URI uri = httpMessage.getRequestHeader().getURI();
+            if (isAllowedResource(uri)) {
+                // Nothing to do, state already set to allowed.
+            } else {
+                state = checkResourceState(uri, httpMessage.getRequestHeader().getHostName());
+            }
+
+            if (state != ResourceState.ALLOWED) {
+                setOutOfScopeResponse(httpMessage);
+                // TODO HistoryReference.TYPE_CLIENT_SPIDER_TEMPORARY
+                notifyMessage(httpMessage, 25, state);
+                ctx.overridden();
+                return;
+            }
+
+            if (extClient.getAuthenticationHandlers().isEmpty()) {
+                httpMessage.setRequestingUser(user);
+            }
+        }
+
+        private boolean isAllowedResource(URI uri) {
+            String uriString = uri.toString();
+            return allowedResources.stream().anyMatch(e -> e.matcher(uriString).matches());
+        }
+
+        private void setOutOfScopeResponse(HttpMessage httpMessage) {
+            try {
+                httpMessage.setTimeSentMillis(System.currentTimeMillis());
+                httpMessage.setTimeElapsedMillis(0);
+                httpMessage.setResponseHeader(outOfScopeResponseHeader.toString());
+            } catch (HttpMalformedHeaderException ignore) {
+                // Setting a valid response header.
+            }
+            httpMessage.setResponseBody(outOfScopeResponseBody.getBytes());
+        }
+
+        private ResourceState getResourceState(HttpMessage httpMessage) {
+            if (!httpMessage.isResponseFromTargetHost()) {
+                return ResourceState.IO_ERROR;
+            }
+            return ResourceState.ALLOWED;
+        }
+
+        private void notifyMessage(HttpMessage httpMessage, int historyType, ResourceState state) {
+            ThreadUtils.invokeAndWaitHandled(
+                    () -> {
+                        try {
+                            HistoryReference historyRef =
+                                    new HistoryReference(session, historyType, httpMessage);
+                            if (state == ResourceState.ALLOWED) {
+                                crawledUrl(httpMessage.getRequestHeader().getURI().toString());
+                                session.getSiteTree().addPath(historyRef, httpMessage);
+                            }
+
+                            messagesTableModel.addHistoryReference(historyRef, state);
+                        } catch (HttpMalformedHeaderException | DatabaseException e) {
+                            LOGGER.error(e);
+                        }
+                    });
+        }
+    }
+
+    private void crawledUrl(String url) {
+        if (crawledUrls.add(url)) {
+            extClient.updateAddedCount();
+        }
     }
 }

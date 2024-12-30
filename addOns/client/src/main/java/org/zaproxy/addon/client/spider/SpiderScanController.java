@@ -32,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ScanController;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
@@ -100,14 +101,24 @@ public class SpiderScanController implements ScanController<ClientSpider> {
 
             ClientOptions clientOptions = extension.getClientParam();
             URI startUri = null;
+            boolean subtreeOnly = false;
+            Context context = null;
 
             if (contextSpecificObjects != null) {
                 for (Object obj : contextSpecificObjects) {
+                    if (obj == null) {
+                        continue;
+                    }
+
                     if (obj instanceof ClientOptions) {
                         LOGGER.debug("Setting custom spider params");
                         clientOptions = (ClientOptions) obj;
                     } else if (obj instanceof URI) {
                         startUri = (URI) obj;
+                    } else if (obj instanceof Context) {
+                        context = (Context) obj;
+                    } else if (obj instanceof Boolean) {
+                        subtreeOnly = (Boolean) obj;
                     } else {
                         LOGGER.error(
                                 "Unexpected contextSpecificObject: {}",
@@ -123,7 +134,9 @@ public class SpiderScanController implements ScanController<ClientSpider> {
                             startUri.toString(),
                             clientOptions,
                             id,
+                            context,
                             user,
+                            subtreeOnly,
                             valueProvider);
 
             this.clientSpiderMap.put(id, scan);
@@ -193,9 +206,8 @@ public class SpiderScanController implements ScanController<ClientSpider> {
             if (!clientSpiderMap.containsKey(id)) {
                 return null;
             }
-            ascan.stopScan();
+            removeScanImpl(ascan);
             clientSpiderMap.remove(id);
-            clientSpiderList.remove(ascan);
             return ascan;
         } finally {
             clientSpidersLock.unlock();
@@ -249,15 +261,20 @@ public class SpiderScanController implements ScanController<ClientSpider> {
             int count = 0;
             for (Iterator<ClientSpider> it = clientSpiderMap.values().iterator(); it.hasNext(); ) {
                 ClientSpider ascan = it.next();
-                ascan.stopScan();
+                removeScanImpl(ascan);
                 it.remove();
-                clientSpiderList.remove(ascan);
                 count++;
             }
             return count;
         } finally {
             clientSpidersLock.unlock();
         }
+    }
+
+    private void removeScanImpl(ClientSpider scan) {
+        scan.stopScan();
+        scan.unload();
+        clientSpiderList.remove(scan);
     }
 
     @Override
@@ -268,9 +285,8 @@ public class SpiderScanController implements ScanController<ClientSpider> {
             for (Iterator<ClientSpider> it = clientSpiderMap.values().iterator(); it.hasNext(); ) {
                 ClientSpider scan = it.next();
                 if (scan.isStopped()) {
-                    scan.stopScan();
+                    removeScanImpl(scan);
                     it.remove();
-                    clientSpiderList.remove(scan);
                     count++;
                 }
             }
