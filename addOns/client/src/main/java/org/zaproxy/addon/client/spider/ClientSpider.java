@@ -92,7 +92,6 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
      *
      * The following features should be implemented in future releases:
      * 		Clicking on likely navigation elements
-     * 		Automation framework support
      * 		API support
      */
     private static final Logger LOGGER = LogManager.getLogger(ClientSpider.class);
