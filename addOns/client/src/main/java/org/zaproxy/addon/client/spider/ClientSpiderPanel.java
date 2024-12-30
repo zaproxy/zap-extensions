@@ -56,6 +56,7 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
 
     private static final TaskTableModel EMPTY_ACTIONS_TABLE_MODEL = new TaskTableModel();
     private static final UrlTableModel EMPTY_URL_TABLE_MODEL = new UrlTableModel();
+    private static final MessagesTableModel EMPTY_MESSAGES_TABLE_MODEL = new MessagesTableModel();
 
     public static final String PANEL_NAME = "ClientPanel";
 
@@ -70,7 +71,9 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
     private JScrollPane addedNodesTableScrollPane;
     private JLabel addedCountNameLabel;
     private JLabel addedCountValueLabel;
+    private JLabel countCrawledUrlsLabel;
     private ZapTable tasksTable;
+    private ZapTable messagesTable;
     private JScrollPane tasksTableScrollPane;
 
     private ExtensionClientIntegration extension;
@@ -97,6 +100,10 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
             tabbedPane.addTab(
                     Constant.messages.getString("client.spider.panel.tab.tasks"),
                     getTasksTableScrollPane());
+            messagesTable = new MessagesTable(EMPTY_MESSAGES_TABLE_MODEL);
+            tabbedPane.addTab(
+                    Constant.messages.getString("client.spider.panel.tab.messages"),
+                    new JScrollPane(messagesTable));
             tabbedPane.setSelectedIndex(0);
 
             mainPanel.add(tabbedPane);
@@ -188,6 +195,12 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
     protected int addToolBarElements(JToolBar toolBar, Location location, int gridX) {
         if (ScanPanel2.Location.afterProgressBar == location) {
             toolBar.add(new JToolBar.Separator(), getGBC(gridX++, 0));
+            toolBar.add(
+                    new JLabel(Constant.messages.getString("client.spider.toolbar.urls.label")),
+                    getGBC(gridX++, 0));
+            countCrawledUrlsLabel = new JLabel(ZERO_REQUESTS_LABEL_TEXT);
+            toolBar.add(countCrawledUrlsLabel, getGBC(gridX++, 0));
+            toolBar.add(new JToolBar.Separator(), getGBC(gridX++, 0));
             toolBar.add(getAddedCountNameLabel(), getGBC(gridX++, 0));
             toolBar.add(getAddedCountValueLabel(), getGBC(gridX++, 0));
 
@@ -202,8 +215,10 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
         if (sc != null) {
             this.getAddedCountValueLabel()
                     .setText(Integer.toString(sc.getAddedNodesTableModel().getRowCount()));
+            countCrawledUrlsLabel.setText(Integer.toString(sc.getCountCrawledUrls()));
         } else {
             this.getAddedCountValueLabel().setText(ZERO_REQUESTS_LABEL_TEXT);
+            countCrawledUrlsLabel.setText(ZERO_REQUESTS_LABEL_TEXT);
         }
     }
 
@@ -216,9 +231,11 @@ public class ClientSpiderPanel extends ScanPanel2<ClientSpider, ScanController<C
         if (scanner != null) {
             getAddedNodesTable().setModel(scanner.getAddedNodesTableModel());
             getTasksTable().setModel(scanner.getActionsTableModel());
+            messagesTable.setModel(scanner.getMessagesTableModel());
         } else {
             getAddedNodesTable().setModel(EMPTY_URL_TABLE_MODEL);
             getTasksTable().setModel(EMPTY_ACTIONS_TABLE_MODEL);
+            messagesTable.setModel(EMPTY_MESSAGES_TABLE_MODEL);
         }
         this.updateAddedCount();
     }

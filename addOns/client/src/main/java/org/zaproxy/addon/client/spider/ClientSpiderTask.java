@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
 
 public class ClientSpiderTask implements Runnable {
 
@@ -53,7 +54,6 @@ public class ClientSpiderTask implements Runnable {
     private ClientSpider clientSpider;
     private List<SpiderAction> actions;
     private int timeout;
-    private WebDriver wd;
     @Getter private Status status;
     @Getter private String error;
 
@@ -93,8 +93,10 @@ public class ClientSpiderTask implements Runnable {
         long startTime = System.currentTimeMillis();
         this.status = Status.RUNNING;
         this.clientSpider.taskStateChange(this);
+        WebDriverProcess wdp = null;
         try {
-            wd = this.clientSpider.getWebDriver();
+            wdp = this.clientSpider.getWebDriverProcess();
+            WebDriver wd = wdp.getWebDriver();
             startTime = System.currentTimeMillis();
             wd.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(this.timeout));
             actions.forEach(e -> e.run(wd));
@@ -107,8 +109,8 @@ public class ClientSpiderTask implements Runnable {
             this.error = e.getMessage();
             this.clientSpider.taskStateChange(this);
         }
-        if (wd != null) {
-            this.clientSpider.returnWebDriver(wd);
+        if (wdp != null) {
+            this.clientSpider.returnWebDriverProcess(wdp);
         }
         LOGGER.debug(
                 "Task {} completed {} in {} secs",

@@ -24,6 +24,8 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doAnswer;
@@ -37,14 +39,17 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.quality.Strictness;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Options;
 import org.openqa.selenium.WebDriver.Timeouts;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.ClientOptions;
@@ -52,28 +57,48 @@ import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.HttpServerConfig;
+import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-class ClientSpiderUnitTest {
+class ClientSpiderUnitTest extends TestUtils {
 
     private ExtensionSelenium extSel;
+    private ExtensionHistory history;
     private ExtensionClientIntegration extClient;
     private ClientOptions clientOptions;
     private ClientMap map;
     private WebDriver wd;
 
+    @BeforeAll
+    static void setUpAll() {
+        mockMessages(new ExtensionClientIntegration());
+    }
+
     @BeforeEach
     void setUp() {
-        Control.initSingletonForTesting(Model.getSingleton(), mock(ExtensionLoader.class));
+        Model model = mock(Model.class);
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(model, extensionLoader);
         extClient = mock(ExtensionClientIntegration.class);
-        extSel = mock(ExtensionSelenium.class);
-        when(Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class))
-                .thenReturn(extSel);
+        extSel = mock(ExtensionSelenium.class, withSettings().strictness(Strictness.LENIENT));
+        history = mock(ExtensionHistory.class);
+        when(extensionLoader.getExtension(ExtensionHistory.class)).thenReturn(history);
+        when(extensionLoader.getExtension(ExtensionSelenium.class)).thenReturn(extSel);
+        ExtensionNetwork network =
+                mock(ExtensionNetwork.class, withSettings().strictness(Strictness.LENIENT));
+        when(extensionLoader.getExtension(ExtensionNetwork.class)).thenReturn(network);
+        given(network.createHttpServer(any(HttpServerConfig.class))).willReturn(mock(Server.class));
         wd = mock(WebDriver.class);
-        when(extSel.getProxiedBrowser(any(String.class), any(String.class))).thenReturn(wd);
+        when(extSel.getWebDriver(anyInt(), any(String.class), any(String.class), anyInt()))
+                .thenReturn(wd);
+        given(extClient.getModel()).willReturn(model);
         Session session = mock(Session.class);
+        given(model.getSession()).willReturn(session);
         map = new ClientMap(new ClientNode(new ClientSideDetails("Root", ""), session));
         clientOptions = new ClientOptions();
         clientOptions.load(new ZapXmlConfiguration());
@@ -316,6 +341,8 @@ class ClientSpiderUnitTest {
         assertThat(
                 values,
                 contains(
+                        "https://www.example.com/",
+                        "https://www.example.com",
                         "https://www.example.com/",
                         "https://www.example.com/test#1",
                         "https://www.example.com/test#2"));
