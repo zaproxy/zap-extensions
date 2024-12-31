@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.custompayloads;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
@@ -39,6 +40,8 @@ class CustomPayloadsParamUnitTest {
 
     private static CustomPayloadsParam param;
     private ZapXmlConfiguration configuration;
+
+    private static CustomPayload testPayload = new CustomPayload(true, "foo", "bar");
 
     @BeforeEach
     void setUp() {
@@ -97,15 +100,17 @@ class CustomPayloadsParamUnitTest {
                 (int) configuration.getProperty("custompayloads[@version]"),
                 is(greaterThanOrEqualTo(1)));
         assertThat(configuration.getProperty(configKey + "id"), is(nullValue()));
-        assertThat(configuration.getBoolean(configKey + "enabled"), is(equalTo(true)));
-        assertThat(configuration.getProperty(configKey + "payload"), is(equalTo("bar")));
+        assertThat(param.getCategoriesNames(), hasItem("foo"));
+        assertThat(param.getPayloads().size(), is(equalTo(1)));
+        CustomPayload payload = param.getPayloads().get(0);
+        assertThat(payload.getCategory(), is(equalTo(testPayload.getCategory())));
+        assertThat(payload.getPayload(), is(equalTo(testPayload.getPayload())));
     }
 
     private static ZapXmlConfiguration createUnversionedConfig() {
         ZapXmlConfiguration testConfig = new ZapXmlConfiguration();
 
         Map<String, PayloadCategory> payloadCategories = new HashMap<>();
-        CustomPayload testPayload = new CustomPayload(true, "foo", "bar");
         payloadCategories.put(
                 testPayload.getCategory(),
                 new PayloadCategory(testPayload.getCategory(), List.of(), List.of(testPayload)));
