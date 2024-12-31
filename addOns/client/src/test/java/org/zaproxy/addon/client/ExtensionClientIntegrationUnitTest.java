@@ -22,10 +22,9 @@ package org.zaproxy.addon.client;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,10 +36,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebDriver;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.spider.ClientSpider;
@@ -48,15 +48,17 @@ import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.internal.FirefoxProfileManager;
+import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-class ExtensionClientIntegrationUnitTest {
+class ExtensionClientIntegrationUnitTest extends TestUtils {
 
     @Test
     void shouldCreateFirefoxPrefFile() throws IOException {
         // Given
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(mock(Model.class), extensionLoader);
         ExtensionSelenium extSel = mock(ExtensionSelenium.class);
         when(extensionLoader.getExtension(ExtensionSelenium.class)).thenReturn(extSel);
@@ -138,9 +140,10 @@ class ExtensionClientIntegrationUnitTest {
         Session session = mock(Session.class);
         when(model.getSession()).thenReturn(session);
         Control.initSingletonForTesting(model, extensionLoader);
+        when(extensionLoader.getExtension(ExtensionHistory.class))
+                .thenReturn(mock(ExtensionHistory.class));
         ExtensionSelenium extSel = mock(ExtensionSelenium.class);
         when(extensionLoader.getExtension(ExtensionSelenium.class)).thenReturn(extSel);
-        given(extSel.getProxiedBrowser(anyString(), anyString())).willReturn(mock(WebDriver.class));
         ExtensionCommonlib extCommonLib = mock(ExtensionCommonlib.class);
         when(extensionLoader.getExtension(ExtensionCommonlib.class)).thenReturn(extCommonLib);
         ExtensionClientIntegration extClient = new ExtensionClientIntegration();
