@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The following scan rules now use more specific CWE IDs:
     - Proxy Disclosure (Issue 8713)
     - Possible Username Enumeration (Issue 8715)
+- Remove double dot in skipped message of scan rules that use the Active Scan OAST service.
 
 ### Fixed
 - Address exception when scanning a message without path with Possible Username Enumeration scan rule.
