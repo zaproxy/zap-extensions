@@ -61,7 +61,7 @@ public class CustomPayloadCategoryColumn extends EditableSelectColumn<CustomPayl
         return categoryObjects;
     }
 
-    private ExtensionCustomPayloads getExtension() {
+    private static ExtensionCustomPayloads getExtension() {
         return Control.getSingleton()
                 .getExtensionLoader()
                 .getExtension(ExtensionCustomPayloads.class);

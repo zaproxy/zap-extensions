@@ -28,43 +28,46 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.parosproxy.paros.common.AbstractParam;
+import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
-public class CustomPayloadsParam extends AbstractParam {
+public class CustomPayloadsParam extends VersionedAbstractParam {
 
-    private static final String CUSTOM_PAYLOADS_BASE_KEY = "custompayloads";
-    private static final String ALL_CATEGORIES_KEY =
+    /**
+     * The current version of the configurations. Used to keep track of configuration changes
+     * between releases, in case changes/updates are needed.
+     *
+     * <p>It only needs to be incremented for configuration changes (not releases of the add-on).
+     *
+     * @see #CONFIG_VERSION_KEY
+     * @see #updateConfigsImpl(int)
+     */
+    private static final int CURRENT_CONFIG_VERSION = 1;
+
+    protected static final String CUSTOM_PAYLOADS_BASE_KEY = "custompayloads";
+
+    /**
+     * The key for the version of the configurations.
+     *
+     * @see #CURRENT_CONFIG_VERSION
+     */
+    protected static final String CONFIG_VERSION_KEY = CUSTOM_PAYLOADS_BASE_KEY + VERSION_ATTRIBUTE;
+
+    protected static final String ALL_CATEGORIES_KEY =
             CUSTOM_PAYLOADS_BASE_KEY + ".categories.category";
-    private static final String CATEGORY_NAME_KEY = "[@name]";
+    protected static final String CATEGORY_NAME_KEY = "[@name]";
 
-    private static final String PAYLOAD_ID_KEY = "id";
-    private static final String PAYLOAD_KEY = "payload";
-    private static final String PAYLOAD_ENABLED_KEY = "enabled";
+    protected static final String PAYLOAD_KEY = "payload";
+    protected static final String PAYLOAD_ENABLED_KEY = "enabled";
 
-    private static final String CONFIRM_REMOVE_PAYLOAD_KEY =
+    protected static final String CONFIRM_REMOVE_PAYLOAD_KEY =
             CUSTOM_PAYLOADS_BASE_KEY + ".confirmRemoveToken";
-    private static final String NEXT_PAYLOAD_ID_KEY = CUSTOM_PAYLOADS_BASE_KEY + ".nextPayloadId";
 
     private Map<String, PayloadCategory> payloadCategories;
     private boolean confirmRemoveToken;
-    private int nextPayloadId = 1;
 
     public CustomPayloadsParam() {
         payloadCategories = new HashMap<>();
-    }
-
-    @Override
-    protected void parse() {
-        loadFromConfig();
-    }
-
-    private void loadFromConfig() {
-        HierarchicalConfiguration rootConfig = (HierarchicalConfiguration) getConfig();
-        loadPayloadsFromConfig(rootConfig);
-        loadConfirmRemoveTokenFromConfig(rootConfig);
-        loadNextPayloadIdFromConfig(rootConfig);
-        initializeWithDefaultsIfPayloadsAreEmpty();
     }
 
     private void initializeWithDefaultsIfPayloadsAreEmpty() {
@@ -73,14 +76,12 @@ public class CustomPayloadsParam extends AbstractParam {
                 resetDefaults(category);
             }
         }
-        setNextPayloadId(nextPayloadId);
     }
 
-    private void resetDefaults(PayloadCategory category) {
+    private static void resetDefaults(PayloadCategory category) {
         List<CustomPayload> payloads = new ArrayList<>(category.getDefaultPayloads().size());
         for (CustomPayload defaultPayload : category.getDefaultPayloads()) {
             CustomPayload payload = defaultPayload.copy();
-            payload.setId(nextPayloadId++);
             payloads.add(payload);
         }
         category.setPayloads(payloads);
@@ -88,17 +89,16 @@ public class CustomPayloadsParam extends AbstractParam {
 
     private void loadPayloadsFromConfig(HierarchicalConfiguration rootConfig) {
         List<HierarchicalConfiguration> categories =
-                rootConfig.configurationsAt(ALL_CATEGORIES_KEY);
+                rootConfig.configurationsAt("custompayloads.categories.");
         payloadCategories = new HashMap<>();
         for (HierarchicalConfiguration category : categories) {
             List<HierarchicalConfiguration> fields = category.configurationsAt("payloads.payload");
             String cat = category.getString(CATEGORY_NAME_KEY);
             List<CustomPayload> payloads = new ArrayList<>();
             for (HierarchicalConfiguration sub : fields) {
-                int id = sub.getInt(PAYLOAD_ID_KEY);
                 boolean isEnabled = sub.getBoolean(PAYLOAD_ENABLED_KEY);
                 String payload = sub.getString(PAYLOAD_KEY, "");
-                payloads.add(new CustomPayload(id, isEnabled, cat, payload));
+                payloads.add(new CustomPayload(isEnabled, cat, payload));
             }
             payloadCategories.put(cat, new PayloadCategory(cat, Collections.emptyList(), payloads));
         }
@@ -106,39 +106,6 @@ public class CustomPayloadsParam extends AbstractParam {
 
     private void loadConfirmRemoveTokenFromConfig(HierarchicalConfiguration rootConfig) {
         confirmRemoveToken = rootConfig.getBoolean(CONFIRM_REMOVE_PAYLOAD_KEY, true);
-    }
-
-    private void loadNextPayloadIdFromConfig(HierarchicalConfiguration rootConfig) {
-        int maxUsedPayloadId = getMaxUsedPayloadId();
-        nextPayloadId = rootConfig.getInteger(NEXT_PAYLOAD_ID_KEY, 1);
-        if (nextPayloadId <= maxUsedPayloadId) {
-            setNextPayloadId(maxUsedPayloadId + 1);
-        }
-    }
-
-    public int getNextPayloadId() {
-        return nextPayloadId;
-    }
-
-    public void setNextPayloadId(int id) {
-        nextPayloadId = id;
-        saveNextPayloadId();
-    }
-
-    private void saveNextPayloadId() {
-        getConfig().setProperty(NEXT_PAYLOAD_ID_KEY, Integer.valueOf(nextPayloadId));
-    }
-
-    private int getMaxUsedPayloadId() {
-        int maxUsedPayloadId = 0;
-        for (PayloadCategory category : payloadCategories.values()) {
-            for (CustomPayload payload : category.getPayloads()) {
-                if (maxUsedPayloadId < payload.getId()) {
-                    maxUsedPayloadId = payload.getId();
-                }
-            }
-        }
-        return maxUsedPayloadId;
     }
 
     public List<CustomPayload> getPayloads() {
@@ -180,9 +147,6 @@ public class CustomPayloadsParam extends AbstractParam {
                 CustomPayload payload = payloads.get(i);
                 getConfig()
                         .setProperty(
-                                elementBaseKey + PAYLOAD_ID_KEY, Integer.valueOf(payload.getId()));
-                getConfig()
-                        .setProperty(
                                 elementBaseKey + PAYLOAD_ENABLED_KEY,
                                 Boolean.valueOf(payload.isEnabled()));
                 getConfig().setProperty(elementBaseKey + PAYLOAD_KEY, payload.getPayload());
@@ -210,7 +174,7 @@ public class CustomPayloadsParam extends AbstractParam {
         return payloadCategories.values().stream()
                 .map(PayloadCategory::getDefaultPayloads)
                 .flatMap(List::stream)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Collection<String> getCategoriesNames() {
@@ -245,5 +209,34 @@ public class CustomPayloadsParam extends AbstractParam {
                     }
                     return null;
                 });
+    }
+
+    @Override
+    protected void parseImpl() {
+        HierarchicalConfiguration rootConfig = (HierarchicalConfiguration) getConfig();
+        loadPayloadsFromConfig(rootConfig);
+        loadConfirmRemoveTokenFromConfig(rootConfig);
+        initializeWithDefaultsIfPayloadsAreEmpty();
+    }
+
+    @Override
+    protected int getCurrentVersion() {
+        return CURRENT_CONFIG_VERSION;
+    }
+
+    @Override
+    protected String getConfigVersionKey() {
+        return CONFIG_VERSION_KEY;
+    }
+
+    @Override
+    @SuppressWarnings("fallthrough")
+    protected void updateConfigsImpl(int fileVersion) {
+        switch (fileVersion) {
+            case NO_CONFIG_VERSION:
+                getConfig().clearProperty(CUSTOM_PAYLOADS_BASE_KEY + ".nextPayloadId");
+                getConfig().clearProperty("custompayloads.categories.category.payloads.payload.id");
+            default:
+        }
     }
 }

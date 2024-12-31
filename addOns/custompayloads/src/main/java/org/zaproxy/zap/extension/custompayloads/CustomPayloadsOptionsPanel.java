@@ -58,7 +58,6 @@ public class CustomPayloadsOptionsPanel extends AbstractParamPanel {
         tableModel.clear();
         tableModel.addModels(param.getPayloads());
         tableModel.setDefaultPayloads(param.getDefaultPayloads());
-        tableModel.setNextPayloadId(param.getNextPayloadId());
         tablePanel.setRemoveWithoutConfirmation(param.isConfirmRemoveToken());
     }
 
@@ -67,7 +66,11 @@ public class CustomPayloadsOptionsPanel extends AbstractParamPanel {
         OptionsParam optionsParam = (OptionsParam) obj;
         CustomPayloadsParam param = optionsParam.getParamSet(CustomPayloadsParam.class);
         param.setPayloads(tableModel.getElements());
-        param.setNextPayloadId(tableModel.getNextPayloadId());
         param.setConfirmRemoveToken(tablePanel.isRemoveWithoutConfirmation());
+    }
+
+    @Override
+    public String getHelpIndex() {
+        return "custompayloads.options";
     }
 }
