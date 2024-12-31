@@ -44,8 +44,9 @@ class ScriptSynchronizerUtils {
                 // Python and Kotlin scripts throw this exception when the method is not implemented
                 return null;
             } catch (Exception e) {
-                if ("groovy.lang.MissingMethodException"
-                        .equals(e.getCause().getClass().getCanonicalName())) {
+                if (e.getCause() != null
+                        && "groovy.lang.MissingMethodException"
+                                .equals(e.getCause().getClass().getCanonicalName())) {
                     // Groovy scripts throw this exception when the method is not implemented
                     return null;
                 }

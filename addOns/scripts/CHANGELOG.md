@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Correct auto-complete suggestions for parameters of Passive Rules.
+- Some script errors were not being propagated to the output correctly.
 
 ## [45.7.0] - 2024-10-07
 ### Fixed
