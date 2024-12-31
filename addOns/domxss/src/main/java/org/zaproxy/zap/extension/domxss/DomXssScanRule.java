@@ -701,7 +701,12 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
 
     private static String getXPath(WebElement element) {
         StringBuilder strBuilder = new StringBuilder(100);
-        insertXPath(element, strBuilder);
+        try {
+            insertXPath(element, strBuilder);
+        } catch (Exception e) {
+            LOGGER.debug("Failed to obtain full XPath: {}", e.getMessage());
+            strBuilder.insert(0, Constant.messages.getString("domxss.step.partial.xpath"));
+        }
         return strBuilder.toString();
     }
 
