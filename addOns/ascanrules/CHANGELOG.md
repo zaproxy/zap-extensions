@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Server Side Template Injection (Blind)
   - XML External Entity Attack
 - Cloud Metadata Attack scan rule is improved to support GCP, Azure, and OCI.
+- Remove double dot in skipped message of a scan rule that uses the Active Scan OAST service.
 
 ### Fixed
 - A situation where the Server-Side Template Injection (SSTI) scan rule might result in false positives related to the Go payloads (Issue 8622).
