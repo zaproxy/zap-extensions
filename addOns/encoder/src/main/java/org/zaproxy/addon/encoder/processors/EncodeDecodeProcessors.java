@@ -109,7 +109,7 @@ public class EncodeDecodeProcessors {
         addPredefined("powershellencode", PowerShellEncoder.getSingleton());
         addPredefined("ascify", Ascify.getSingleton());
         addPredefined("morsecodeencode", MorseEncoder.getSingleton());
-        addPredefined("morsecodecode", MorseDecoder.getSingleton());
+        addPredefined("morsecodedecode", MorseDecoder.getSingleton());
     }
 
     private Map<String, EncodeDecodeProcessorItem> scriptProcessors = new HashMap<>();
