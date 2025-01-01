@@ -30,6 +30,7 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.commonlib.internal.vulns.LegacyVulnerabilities;
 import org.zaproxy.addon.commonlib.ui.ProgressPanel;
+import org.zaproxy.addon.commonlib.ui.TabbedOutputPanel;
 
 public class ExtensionCommonlib extends ExtensionAdaptor {
 
@@ -109,6 +110,7 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         if (hasView()) {
             extensionHook.getHookView().addStatusPanel(getProgressPanel());
+            getView().setOutputPanel(new TabbedOutputPanel());
         }
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
     }
@@ -127,6 +129,9 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
 
     @Override
     public void unload() {
+        if (hasView()) {
+            getView().setOutputPanel(null);
+        }
         LegacyVulnerabilities.unload();
     }
 

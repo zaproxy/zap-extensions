@@ -21,35 +21,31 @@ package org.zaproxy.zap.extension.scripts;
 
 import java.io.IOException;
 import java.io.Writer;
+import org.parosproxy.paros.view.OutputPanel;
 
 public class OutputPanelWriter extends Writer {
 
-    private OutputPanel outputPanel;
-    private boolean enabled = true;
+    private final String sourceName;
+    private final OutputPanel outputPanel;
 
-    public OutputPanelWriter(OutputPanel outputPanel) {
+    public OutputPanelWriter(OutputPanel outputPanel, String sourceName) {
+        this.sourceName = sourceName;
         this.outputPanel = outputPanel;
     }
 
     @Override
     public void write(int c) throws IOException {
-        if (enabled) {
-            outputPanel.append(String.valueOf((char) c));
-        }
+        outputPanel.append(String.valueOf((char) c), sourceName);
     }
 
     @Override
     public void write(String str, int off, int len) throws IOException {
-        if (enabled) {
-            outputPanel.append(str.substring(off, len));
-        }
+        outputPanel.append(str.substring(off, len), sourceName);
     }
 
     @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
-        if (enabled) {
-            outputPanel.append(new String(cbuf, off, len));
-        }
+        outputPanel.append(new String(cbuf, off, len), sourceName);
     }
 
     @Override
@@ -60,13 +56,5 @@ public class OutputPanelWriter extends Writer {
     @Override
     public void close() throws IOException {
         // Ignore
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 }
