@@ -808,8 +808,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
 
             if (state != ResourceState.ALLOWED) {
                 setOutOfScopeResponse(httpMessage);
-                // TODO HistoryReference.TYPE_CLIENT_SPIDER_TEMPORARY
-                notifyMessage(httpMessage, 25, state);
+                notifyMessage(httpMessage, HistoryReference.TYPE_CLIENT_SPIDER_TEMPORARY, state);
                 ctx.overridden();
                 return;
             }
