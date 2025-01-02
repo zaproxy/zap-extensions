@@ -94,6 +94,9 @@ public class CustomPayloadsParam extends VersionedAbstractParam {
         for (HierarchicalConfiguration category : categories) {
             List<HierarchicalConfiguration> fields = category.configurationsAt("payloads.payload");
             String cat = category.getString(CATEGORY_NAME_KEY);
+            if (cat == null) {
+                continue;
+            }
             List<CustomPayload> payloads = new ArrayList<>();
             for (HierarchicalConfiguration sub : fields) {
                 boolean isEnabled = sub.getBoolean(PAYLOAD_ENABLED_KEY);
