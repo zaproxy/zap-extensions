@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Add solutions to Insufficient Process Validation vulnerability (Issue 8056).
+- Replace the default Output panel with a tabbed version to allow multiple sources of output to be displayed in separate tabs.
 
 ### Changed
 - Update minimum ZAP version to 2.16.0.
