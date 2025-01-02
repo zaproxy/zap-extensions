@@ -19,6 +19,18 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.addon.client.automation.ExtensionClientAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.client.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">=0.43.0")
+                        }
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
@@ -45,6 +57,7 @@ crowdin {
 }
 
 dependencies {
+    zapAddOn("automation")
     zapAddOn("commonlib")
     zapAddOn("selenium")
     zapAddOn("network")
