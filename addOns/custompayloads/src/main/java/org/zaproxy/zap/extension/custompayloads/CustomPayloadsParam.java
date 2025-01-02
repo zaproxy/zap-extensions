@@ -89,7 +89,7 @@ public class CustomPayloadsParam extends VersionedAbstractParam {
 
     private void loadPayloadsFromConfig(HierarchicalConfiguration rootConfig) {
         List<HierarchicalConfiguration> categories =
-                rootConfig.configurationsAt("custompayloads.categories.");
+                rootConfig.configurationsAt(ALL_CATEGORIES_KEY);
         payloadCategories = new HashMap<>();
         for (HierarchicalConfiguration category : categories) {
             List<HierarchicalConfiguration> fields = category.configurationsAt("payloads.payload");
