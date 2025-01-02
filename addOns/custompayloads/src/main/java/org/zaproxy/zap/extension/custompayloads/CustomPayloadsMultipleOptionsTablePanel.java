@@ -200,4 +200,12 @@ public class CustomPayloadsMultipleOptionsTablePanel
 
         return false;
     }
+
+    @Override
+    public void setComponentEnabled(boolean enabled) {
+        super.setComponentEnabled(enabled);
+        resetButton.setEnabled(enabled);
+        addMissingDefaultsButton.setEnabled(enabled);
+        fileButton.setEnabled(enabled);
+    }
 }

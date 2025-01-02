@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.custompayloads;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasItem;
@@ -86,6 +87,18 @@ class CustomPayloadsParamUnitTest {
                 (int) configuration.getProperty("custompayloads[@version]"),
                 is(greaterThanOrEqualTo(1)));
         assertThat(configuration.getProperty(configKey), is(nullValue()));
+    }
+
+    @Test
+    void shouldNotLoadPayloadWithNamelessCategory() {
+        // Given
+        configuration = createUnversionedConfig();
+        configuration.clearProperty("custompayloads.categories.category[@name]");
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(param.getCategoriesNames(), is(empty()));
+        assertThat(param.getPayloads(), is(empty()));
     }
 
     @Test
