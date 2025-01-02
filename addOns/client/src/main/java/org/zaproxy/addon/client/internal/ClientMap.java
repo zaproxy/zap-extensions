@@ -198,6 +198,16 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         LOGGER.debug("setRedirect, no node for URL {}", originalUrl);
         return null;
     }
+
+    public ClientNode setVisited(String url) {
+        ClientNode node = getNode(url, false, false);
+        if (node != null && !node.getUserObject().isVisited()) {
+            node.getUserObject().setVisited(true);
+            return node;
+        }
+        LOGGER.debug("setVisited, no node for URL or already visited {}", url);
+        return null;
+    }
 }
 
 /**
