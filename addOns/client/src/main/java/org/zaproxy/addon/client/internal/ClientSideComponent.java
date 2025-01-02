@@ -30,8 +30,7 @@ import org.zaproxy.addon.client.ExtensionClientIntegration;
 
 @Getter
 @AllArgsConstructor
-public class ClientSideComponent {
-
+public class ClientSideComponent implements Comparable<ClientSideComponent> {
     public static String REDIRECT = "Redirect";
 
     private final Map<String, String> data;
@@ -121,5 +120,66 @@ public class ClientSideComponent {
                 && Objects.equals(parentUrl, other.parentUrl)
                 && Objects.equals(tagName, other.tagName)
                 && Objects.equals(text, other.text);
+    }
+
+    @Override
+    public int compareTo(ClientSideComponent o) {
+        if (this.type.compareTo(o.type) > 0) {
+            return 1;
+        } else if (this.type.compareTo(o.type) < 0) {
+            return -1;
+        } else {
+            // Types are the same, Check next relevant property(ies)
+            switch (this.type) {
+                case "Cookies", "localStorage", "sessionStorage":
+                    if (this.href != null && o.href != null && this.href.compareTo(o.id) > 0) {
+                        return 1;
+                    } else if (this.href != null
+                            && o.href != null
+                            && this.href.compareTo(o.id) < 0) {
+                        return -1;
+                    } else {
+                        if (this.id.compareTo(o.id) > 0) {
+                            return 1;
+                        } else if (this.id.compareTo(o.id) < 0) {
+                            return -1;
+                        } else {
+                            return this.text.compareTo(o.text);
+                        }
+                    }
+                case "Button":
+                    if (this.formId > o.formId) {
+                        return 1;
+                    } else if (this.formId < o.formId) {
+                        return -1;
+                    } else {
+                        return this.text.compareTo(o.text);
+                    }
+                case "Link":
+                    if (this.href.compareTo(o.href) > 0) {
+                        return 1;
+                    } else if (this.href.compareTo(o.href) < 0) {
+                        return -1;
+                    } else {
+                        return this.text.compareTo(o.text);
+                    }
+                case "Input":
+                    if (this.tagType.compareTo(o.tagType) > 0) {
+                        return 1;
+                    } else if (this.tagType.compareTo(o.tagType) < 0) {
+                        return -1;
+                    } else {
+                        if (this.id.compareTo(o.id) > 0) {
+                            return 1;
+                        } else if (this.id.compareTo(o.id) < 0) {
+                            return -1;
+                        } else {
+                            return this.text.compareTo(o.text);
+                        }
+                    }
+                default:
+                    return 0;
+            }
+        }
     }
 }
