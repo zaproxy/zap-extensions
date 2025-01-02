@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Application Error Disclosure
     - Information Disclosure - Suspicious Comments
     - Username Hash Found
+- Updated Timestamp Disclosure Scan Rule to skip JavaScript files when Alert Threshold is set to High.
 
 ## [61] - 2024-09-24
 ### Changed
