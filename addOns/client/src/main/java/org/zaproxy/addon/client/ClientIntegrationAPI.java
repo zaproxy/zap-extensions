@@ -116,6 +116,16 @@ public class ClientIntegrationAPI extends ApiImplementor {
         }
     }
 
+    private void handleReportEvent(JSONObject json) {
+        ReportedEvent event = new ReportedEvent(json);
+        if (event.getUrl() == null || !ExtensionClientIntegration.isApiUrl(event.getUrl())) {
+            this.extension.addReportedObject(event);
+            if (event.getUrl() != null) {
+                ThreadUtils.invokeAndWaitHandled(() -> this.extension.setVisited(event.getUrl()));
+            }
+        }
+    }
+
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         JSONObject json;
@@ -131,11 +141,7 @@ public class ClientIntegrationAPI extends ApiImplementor {
                 String eventJson = this.getParam(params, PARAM_EVENT_JSON, "");
                 LOGGER.debug("Got event: {}", eventJson);
                 json = JSONObject.fromObject(eventJson);
-                ReportedEvent event = new ReportedEvent(json);
-                if (event.getUrl() == null
-                        || !ExtensionClientIntegration.isApiUrl(event.getUrl())) {
-                    this.extension.addReportedObject(event);
-                }
+                handleReportEvent(json);
                 break;
 
             case ACTION_REPORT_ZEST_STATEMENT:
@@ -193,7 +199,7 @@ public class ClientIntegrationAPI extends ApiImplementor {
             } else if (body.startsWith(PARAM_EVENT_JSON)) {
                 JSONObject json = decodeParam(body, PARAM_EVENT_JSON);
                 LOGGER.debug("Got event: {}", json);
-                this.extension.addReportedObject(new ReportedEvent(json));
+                handleReportEvent(json);
             } else if (body.startsWith(PARAM_STATEMENT_JSON)) {
                 try {
                     this.extension.addZestStatement(decodeParamString(body, PARAM_STATEMENT_JSON));

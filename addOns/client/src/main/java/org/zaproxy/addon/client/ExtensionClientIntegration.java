@@ -495,6 +495,15 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         return false;
     }
 
+    public boolean setVisited(String url) {
+        ClientNode node = this.clientTree.setVisited(url);
+        if (node != null) {
+            this.clientNodeChanged(node);
+            return true;
+        }
+        return false;
+    }
+
     public void deleteNodes(List<ClientNode> nodes) {
         this.clientTree.deleteNodes(nodes);
         if (View.isInitialised()) {
