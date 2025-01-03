@@ -24,6 +24,7 @@ import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.commonlib.ui.ReadableFileChooser;
 import org.zaproxy.zap.utils.DisplayUtils;
 
 public class CustomMultiplePayloadDialog extends AbstractColumnDialog<CustomPayload> {
@@ -50,13 +51,19 @@ public class CustomMultiplePayloadDialog extends AbstractColumnDialog<CustomPayl
         this.addFileButtonListener(fileButton);
     }
 
+    @Override
+    public String validateFields() {
+        return multiplePayload == null
+                ? Constant.messages.getString(
+                        "custompayloads.options.dialog.addMultiplePayload.file.error.text")
+                : null;
+    }
+
     public void addFileButtonListener(JButton fileButton) {
         fileButton.addActionListener(
                 e -> {
-                    JFileChooser chooser = new JFileChooser();
-                    int result = chooser.showOpenDialog(this);
-
-                    if (result == JFileChooser.APPROVE_OPTION) {
+                    JFileChooser chooser = new ReadableFileChooser();
+                    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                         multiplePayload = chooser.getSelectedFile();
                     }
                 });

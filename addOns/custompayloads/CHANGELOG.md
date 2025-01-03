@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add help button to Options panel and add further detailed Help content.
 
+### Fixed
+- Ensure file is selected, exists, and is readable when attempting to import multiple payloads.
+
 ## [0.13.0] - 2023-11-10
 ### Changed
 - Update minimum ZAP version to 2.14.0.
