@@ -9,6 +9,14 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/custom-payloads/")
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.17.0 & < 2.0.0")
+                }
+            }
+        }
     }
 
     apiClientGen {
@@ -18,5 +26,7 @@ zapAddOn {
 }
 
 dependencies {
+    zapAddOn("commonlib")
+
     testImplementation(project(":testutils"))
 }
