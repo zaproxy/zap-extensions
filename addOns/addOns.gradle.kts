@@ -150,6 +150,11 @@ subprojects {
             exclude(group = "org.apache.logging.log4j", module = "log4j-1.2-api")
         }
 
+        "runtimeClasspath" {
+            exclude(group = "org.apache.logging.log4j", module = "log4j-core")
+            exclude(group = "org.apache.logging.log4j", module = "log4j-api")
+        }
+
         val zapAddOn by creating
 
         "compileOnly" {
