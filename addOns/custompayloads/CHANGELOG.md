@@ -8,12 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.16.0.
 - Maintenance changes.
 - The superfluous/unused ID element of the custom payloads has been removed from the GUI and config.
+- Now depends on the Common Library add-on.
 
 ### Added
 - Add help button to Options panel and add further detailed Help content.
 
 ### Fixed
 - The add-on will no longer attempt to save or load Payloads for which there is no Category.
+- Ensure file is selected, exists, and is readable when attempting to import multiple payloads.
 
 ## [0.13.0] - 2023-11-10
 ### Changed
