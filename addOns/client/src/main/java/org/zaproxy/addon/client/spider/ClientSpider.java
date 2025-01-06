@@ -89,7 +89,6 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
      *
      * TODO The following features will need to be implemented before the first release:
      * 		Support for modes
-     * 		Help pages
      *
      * The following features should be implemented in future releases:
      * 		Clicking on likely navigation elements
