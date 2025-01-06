@@ -128,9 +128,9 @@ public class SitesTreeHandler {
             if (HttpRequestHeader.POST.equals(href.getMethod())) {
                 try {
                     HttpMessage msg = href.getHttpMessage();
-                    if (!msg.getRequestHeader()
-                            .getHeader(HttpHeader.CONTENT_TYPE)
-                            .startsWith(HttpHeader.FORM_MULTIPART_CONTENT_TYPE)) {
+                    String contentType = msg.getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE);
+                    if (contentType == null
+                            || !contentType.startsWith(HttpHeader.FORM_MULTIPART_CONTENT_TYPE)) {
                         List<NameValuePair> params =
                                 Model.getSingleton().getSession().getParameters(msg, Type.form);
                         StringBuilder sb = new StringBuilder();

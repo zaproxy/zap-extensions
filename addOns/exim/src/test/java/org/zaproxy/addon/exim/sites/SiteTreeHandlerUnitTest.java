@@ -172,6 +172,36 @@ class SiteTreeHandlerUnitTest {
     }
 
     @Test
+    void shouldOutputNodeWithDataButNoContentType() throws Exception {
+        // Given
+        String expectedYaml =
+                "- node: Sites\n"
+                        + "  children: \n"
+                        + "  - node: https://www.example.com\n"
+                        + "    url: https://www.example.com?aa=bb&cc=dd\n"
+                        + "    method: POST\n"
+                        + "    responseLength: 61\n"
+                        + "    statusCode: 200\n"
+                        + "    data: eee=&ggg=\n";
+        HttpMessage msg =
+                new HttpMessage(
+                        "POST https://www.example.com?aa=bb&cc=dd HTTP/1.1\r\n",
+                        "eee=fff&ggg=hhh".getBytes(),
+                        "HTTP/1.1 200 OK\r\n" + "content-length: 20",
+                        "12345678901234567890".getBytes());
+        siteMap.addPath(getHref(msg));
+        StringWriter sw = new StringWriter();
+        ExporterResult result = new ExporterResult();
+
+        // When
+        SitesTreeHandler.exportSitesTree(sw, siteMap, result);
+
+        // Then
+        assertThat(sw.toString(), is(expectedYaml));
+        assertThat(result.getCount(), is(2));
+    }
+
+    @Test
     void shouldOutputNodes() throws Exception {
         // Given
         String expectedYaml =
@@ -181,13 +211,22 @@ class SiteTreeHandlerUnitTest {
                         + "    url: https://www.example.com\n"
                         + "    method: GET\n"
                         + "    children: \n"
-                        + "    - node: POST:/()\n"
+                        + "    - node: POST:/()(aaa)\n"
                         + "      url: https://www.example.com/\n"
                         + "      method: POST\n"
+                        + "      responseLength: 61\n"
+                        + "      statusCode: 200\n"
+                        + "      data: aaa=\n"
                         + "    - node: PUT:aaa\n"
                         + "      url: https://www.example.com/aaa\n"
                         + "      method: PUT\n";
-        siteMap.addPath(getHref("https://www.example.com/", "POST"));
+        HttpMessage msg =
+                new HttpMessage(
+                        "POST https://www.example.com/ HTTP/1.1\r\n",
+                        "aaa=bbb".getBytes(),
+                        "HTTP/1.1 200 OK\r\n" + "content-length: 20",
+                        "12345678901234567890".getBytes());
+        siteMap.addPath(getHref(msg));
         siteMap.addPath(getHref("https://www.example.com/aaa", "PUT"));
 
         StringWriter sw = new StringWriter();
