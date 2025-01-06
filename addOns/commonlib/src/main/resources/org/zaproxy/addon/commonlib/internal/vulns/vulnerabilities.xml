@@ -986,7 +986,17 @@ There are two main types of processes that require validation: flow control and 
 "Flow control" refers to multi-step processes that require each step to be performed in a specific order by the user. When an attacker performs the step incorrectly or out of order, the access controls may be bypassed and an application integrity error may occur. Examples of multi-step processes include wire transfer, password recovery, purchase checkout, and account sign-up.
 
 "Business logic" refers to the context in which a process will execute as governed by the business requirements. Exploiting a business logic weakness requires knowledge of the business; if no knowledge is needed to exploit it, then most likely it isn't a business logic flaw. Due to this, typical security measures such as scans and code review will not find this class of weakness. One approach to testing is offered by OWASP in their Testing Guide.</desc>
-	<solution></solution>
+	<solution>Make sure that all operations within a multi-step process are either performed entirely or not at all. If one step fails, the changes made must be canceled. Fuzzing inputs is a good way to test for anomalies and to verify the results after the flow completes.
+
+		Make sure the correct order of steps in the flow is enforced and that the order cannot be changed or bypassed by the user.
+
+		Developers and testers must have a solid understanding of the domain that the application serves.
+
+		Do not rely on implicit assumptions about how users or different application parts will behave.
+
+		Identify all references to other code that interacts with each component and evaluate the possible side-effects if a malicious actor manipulates these dependencies in unexpected ways.
+
+		Maintain clear code, design documents, and data flow diagrams for all transactions and workflows, noting any assumptions made at each stage and what the expected behavior is.</solution>
 	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
 	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>
