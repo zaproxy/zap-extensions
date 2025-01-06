@@ -21,6 +21,7 @@ package org.zaproxy.addon.client.spider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,9 +36,22 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.StringLayout;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Property;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,6 +70,7 @@ import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientNode;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpServerConfig;
@@ -106,8 +121,9 @@ class ClientSpiderUnitTest extends TestUtils {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() throws Exception {
         ZAP.getEventBus().unregisterPublisher(map);
+        Configurator.reconfigure(getClass().getResource("/log4j2-test.properties").toURI());
     }
 
     @Test
@@ -348,6 +364,49 @@ class ClientSpiderUnitTest extends TestUtils {
                         "https://www.example.com/test#2"));
     }
 
+    @Test
+    void shouldHandleComponentHrefWithoutHostname() {
+        // Given
+        List<String> logEvents = registerLogEvents(Level.ERROR);
+        ClientSpider spider =
+                new ClientSpider(extClient, "", "https://www.example.com/", clientOptions, 1);
+        Options options = mock(Options.class);
+        Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+        when(wd.manage()).thenReturn(options);
+        when(options.timeouts()).thenReturn(timeouts);
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+
+        spider.run();
+        String url = "https://www.example.com/new";
+        ClientNode node = map.getOrAddNode(url, false, false);
+        // When
+        map.addComponentToNode(
+                node,
+                new ClientSideComponent(
+                        Map.of(ClientMap.URL_KEY, url, "tagName", "area", "href", "#"),
+                        "area",
+                        null,
+                        url,
+                        "#",
+                        null,
+                        null,
+                        null,
+                        -1));
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            // Ignore
+        }
+        spider.stopScan();
+
+        // Then
+        verify(wd, atLeastOnce()).get(argument.capture());
+
+        List<String> values = argument.getAllValues();
+        assertThat(values, contains("https://www.example.com/", "https://www.example.com/new"));
+        assertThat(logEvents, is(empty()));
+    }
+
     private static ClientNode getClientNode(String url, boolean visited) {
         return new ClientNode(new ClientSideDetails(url, url, visited, false), false);
     }
@@ -373,6 +432,49 @@ class ClientSpiderUnitTest extends TestUtils {
 
         public boolean isStopped() {
             return stopped;
+        }
+    }
+
+    private static List<String> registerLogEvents(Level level) {
+        List<String> logEvents = new ArrayList<>();
+        TestLogAppender logAppender = new TestLogAppender(logEvents::add);
+        LoggerContext context = LoggerContext.getContext();
+        LoggerConfig rootLoggerconfig = context.getConfiguration().getRootLogger();
+        rootLoggerconfig.getAppenders().values().forEach(context.getRootLogger()::removeAppender);
+        rootLoggerconfig.addAppender(logAppender, null, null);
+        rootLoggerconfig.setLevel(level);
+        context.updateLoggers();
+        return logEvents;
+    }
+
+    private static class TestLogAppender extends AbstractAppender {
+
+        private static final Property[] NO_PROPERTIES = {};
+
+        private final Consumer<String> logConsumer;
+
+        public TestLogAppender(Consumer<String> logConsumer) {
+            this("%m%n", logConsumer);
+        }
+
+        public TestLogAppender(String pattern, Consumer<String> logConsumer) {
+            super(
+                    "TestLogAppender",
+                    null,
+                    PatternLayout.newBuilder()
+                            .withDisableAnsi(true)
+                            .withCharset(StandardCharsets.UTF_8)
+                            .withPattern(pattern)
+                            .build(),
+                    true,
+                    NO_PROPERTIES);
+            this.logConsumer = logConsumer;
+            start();
+        }
+
+        @Override
+        public void append(LogEvent event) {
+            logConsumer.accept(((StringLayout) getLayout()).toSerializable(event));
         }
     }
 }

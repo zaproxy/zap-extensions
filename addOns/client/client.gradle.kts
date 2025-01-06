@@ -64,4 +64,5 @@ dependencies {
     zapAddOn("zest")
 
     testImplementation(project(":testutils"))
+    testImplementation(libs.log4j.core)
 }

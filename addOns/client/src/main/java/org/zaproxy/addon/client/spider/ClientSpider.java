@@ -422,6 +422,11 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             return false;
         }
 
+        char[] host = uri.getRawHost();
+        if (host == null) {
+            return true;
+        }
+
         return checkResourceState(uri, new String(uri.getRawHost())) == ResourceState.ALLOWED;
     }
 
