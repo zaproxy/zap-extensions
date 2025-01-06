@@ -196,16 +196,13 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             extensionHook.getHookView().addWorkPanel(getClientDetailsPanel());
             extensionHook.getHookView().addStatusPanel(getClientHistoryPanel());
 
-            if (Constant.isDevMode()) {
-                // Not for release .. yet ;)
-                extensionHook.getHookMenu().addToolsMenuItem(getMenuItemCustomScan());
-                extensionHook
-                        .getHookMenu()
-                        .addPopupMenuItem(
-                                new PopupMenuSpider(
-                                        Constant.messages.getString("client.attack.spider"), this));
-                extensionHook.getHookView().addStatusPanel(getClientSpiderPanel());
-            }
+            extensionHook.getHookMenu().addToolsMenuItem(getMenuItemCustomScan());
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuSpider(
+                                    Constant.messages.getString("client.attack.spider"), this));
+            extensionHook.getHookView().addStatusPanel(getClientSpiderPanel());
 
             // Client Map menu items
             extensionHook
@@ -815,10 +812,6 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     }
 
     private void addScanToUi(final ClientSpider scan) {
-        if (!Constant.isDevMode()) {
-            return;
-        }
-
         if (!EventQueue.isDispatchThread()) {
             SwingUtilities.invokeLater(() -> addScanToUi(scan));
             return;
@@ -837,9 +830,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             spiderScanController.reset();
 
             if (hasView()) {
-                if (Constant.isDevMode()) {
-                    getClientSpiderPanel().reset();
-                }
+                getClientSpiderPanel().reset();
                 if (spiderDialog != null) {
                     spiderDialog.reset();
                 }
@@ -848,14 +839,14 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
         @Override
         public void sessionChanged(final Session session) {
-            if (hasView() && Constant.isDevMode()) {
+            if (hasView()) {
                 ThreadUtils.invokeAndWaitHandled(getClientSpiderPanel()::reset);
             }
         }
 
         @Override
         public void sessionScopeChanged(Session session) {
-            if (hasView() && Constant.isDevMode()) {
+            if (hasView()) {
                 getClientSpiderPanel().sessionScopeChanged(session);
             }
         }
@@ -867,9 +858,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             }
 
             if (hasView()) {
-                if (Constant.isDevMode()) {
-                    getClientSpiderPanel().sessionModeChanged(mode);
-                }
+                getClientSpiderPanel().sessionModeChanged(mode);
                 getMenuItemCustomScan().setEnabled(!Mode.safe.equals(mode));
             }
         }
