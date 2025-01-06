@@ -21,11 +21,14 @@ package org.zaproxy.addon.client.internal;
 
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Getter;
 
+@Getter
 public class ClientSideDetails {
-    private String name;
-    private String url;
+    private final String name;
+    private final String url;
     private boolean visited;
+    private boolean contentLoaded;
     private boolean storage;
     private boolean redirect;
 
@@ -42,18 +45,6 @@ public class ClientSideDetails {
         this(name, url, false, false);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public boolean isVisited() {
-        return visited;
-    }
-
     public Set<ClientSideComponent> getComponents() {
         return components;
     }
@@ -62,20 +53,16 @@ public class ClientSideDetails {
         this.visited = visited;
     }
 
+    protected void setContentLoaded(boolean contentLoaded) {
+        this.contentLoaded = contentLoaded;
+    }
+
     protected boolean addComponent(ClientSideComponent component) {
         return this.components.add(component);
     }
 
-    public boolean isStorage() {
-        return storage;
-    }
-
     protected void setStorage(boolean storage) {
         this.storage = storage;
-    }
-
-    public boolean isRedirect() {
-        return redirect;
     }
 
     public void setRedirect(boolean redirect) {

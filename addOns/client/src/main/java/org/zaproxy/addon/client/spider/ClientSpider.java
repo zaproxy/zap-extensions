@@ -60,6 +60,7 @@ import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientNode;
+import org.zaproxy.addon.client.internal.ClientSideDetails;
 import org.zaproxy.addon.client.spider.actions.ClickElement;
 import org.zaproxy.addon.client.spider.actions.OpenUrl;
 import org.zaproxy.addon.client.spider.actions.SubmitForm;
@@ -274,8 +275,12 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
     }
 
     private void getUnvisitedUrls(ClientNode node, List<String> urls) {
-        String nodeUrl = node.getUserObject().getUrl();
-        if (!node.isStorage() && !node.getUserObject().isVisited() && isUrlInScope(nodeUrl)) {
+        ClientSideDetails details = node.getUserObject();
+        String nodeUrl = details.getUrl();
+        if (!node.isStorage()
+                && !details.isVisited()
+                && !details.isContentLoaded()
+                && isUrlInScope(nodeUrl)) {
             urls.add(nodeUrl);
         }
         for (int i = 0; i < node.getChildCount(); i++) {
@@ -575,6 +580,9 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             clear(webDriverPool);
             clear(webDriverActive);
         }
+
+        crawledUrls.forEach(extClient::setContentLoaded);
+
         if (listener != null) {
             listener.scanFinshed(scanId, displayName);
         }
