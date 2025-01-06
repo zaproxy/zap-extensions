@@ -59,16 +59,16 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
 
     public ClientNode getOrAddNode(String url, boolean visited, boolean storage) {
         LOGGER.debug("getOrAddNode {}", url);
-        return this.getNode(url, visited, storage, true);
+        return this.getNode(url, visited, storage, true, true);
     }
 
     public ClientNode getNode(String url, boolean visited, boolean storage) {
         LOGGER.debug("getNode {}", url);
-        return this.getNode(url, visited, storage, false);
+        return this.getNode(url, visited, storage, false, false);
     }
 
     private synchronized ClientNode getNode(
-            String url, boolean visited, boolean storage, boolean add) {
+            String url, boolean visited, boolean storage, boolean add, boolean publishEvent) {
         if (url == null) {
             throw new IllegalArgumentException("The url parameter should not be null");
         }
@@ -91,7 +91,7 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                             new ClientNode(
                                     new ClientSideDetails(nodeName, url, visited, storage),
                                     storage);
-                    if (!storage) {
+                    if (!storage && publishEvent) {
                         Map<String, String> map = new HashMap<>();
                         map.put(URL_KEY, url);
                         // Note we haven't added the child to the parent yet
@@ -207,6 +207,29 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
         }
         LOGGER.debug("setVisited, no node for URL or already visited {}", url);
         return null;
+    }
+
+    public ClientNode setContentLoaded(String url) {
+        ClientNode node = getNode(url, false, false, true, false);
+        if (node.getUserObject().isVisited()) {
+            return null;
+        }
+
+        node.getUserObject().setContentLoaded(true);
+        node.getUserObject()
+                .addComponent(
+                        new ClientSideComponent(
+                                Map.of(),
+                                ClientSideComponent.CONTENT_LOADED,
+                                null,
+                                null,
+                                null,
+                                ClientSideComponent.CONTENT_LOADED,
+                                null,
+                                null,
+                                -1));
+
+        return node;
     }
 }
 

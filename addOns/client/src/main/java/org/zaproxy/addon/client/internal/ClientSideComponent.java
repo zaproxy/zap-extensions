@@ -32,7 +32,9 @@ import org.zaproxy.addon.client.ExtensionClientIntegration;
 @AllArgsConstructor
 public class ClientSideComponent {
 
-    public static String REDIRECT = "Redirect";
+    public static final String REDIRECT = "Redirect";
+
+    public static final String CONTENT_LOADED = "ContentLoaded";
 
     private final Map<String, String> data;
 

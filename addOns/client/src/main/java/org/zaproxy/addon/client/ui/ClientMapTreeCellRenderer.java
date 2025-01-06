@@ -48,6 +48,8 @@ public class ClientMapTreeCellRenderer extends DefaultTreeCellRenderer {
             ExtensionClientIntegration.getIcon("overlay-minus.png");
     private static final ImageIcon REDIRECT_OVERLAY =
             ExtensionClientIntegration.getIcon("overlay-redirect.png");
+    private static final ImageIcon CONTENT_LOADED_OVERLAY =
+            ExtensionClientIntegration.getIcon("overlay-content-loaded.png");
     private static final ImageIcon DATABASE_ICON =
             ExtensionClientIntegration.getIcon("database.png");
 
@@ -97,7 +99,10 @@ public class ClientMapTreeCellRenderer extends DefaultTreeCellRenderer {
                         icon = new OverlayIcon(LEAF_ICON);
                     }
                     if (!csd.isVisited()) {
-                        icon.add(NOT_VISITED_OVERLAY);
+                        icon.add(
+                                csd.isContentLoaded()
+                                        ? CONTENT_LOADED_OVERLAY
+                                        : NOT_VISITED_OVERLAY);
                     } else if (csd.isRedirect()) {
                         icon.add(REDIRECT_OVERLAY);
                     }
