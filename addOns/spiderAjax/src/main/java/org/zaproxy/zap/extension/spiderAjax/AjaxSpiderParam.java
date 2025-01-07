@@ -211,7 +211,8 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        this.numberOfBrowsers = getInt(NUMBER_OF_BROWSERS_KEY, Constants.getDefaultThreadCount());
+        this.numberOfBrowsers =
+                getInt(NUMBER_OF_BROWSERS_KEY, Constants.getDefaultThreadCount() / 2);
         this.maxCrawlDepth = getInt(MAX_CRAWL_DEPTH_KEY, DEFAULT_MAX_CRAWL_DEPTH);
         this.maxCrawlStates = getInt(MAX_CRAWL_STATES_KEY, DEFAULT_CRAWL_STATES);
         this.maxDuration = getInt(MAX_DURATION_KEY, DEFAULT_MAX_DURATION);
@@ -326,7 +327,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             case 4:
                 if (getInt(NUMBER_OF_BROWSERS_KEY, 1) == 1) {
                     // the old default
-                    this.setNumberOfBrowsers(Constants.getDefaultThreadCount());
+                    this.setNumberOfBrowsers(Constants.getDefaultThreadCount() / 2);
                 }
             case 5:
                 if (!getConfig().getKeys(ALL_ALLOWED_RESOURCES_KEY).hasNext()) {

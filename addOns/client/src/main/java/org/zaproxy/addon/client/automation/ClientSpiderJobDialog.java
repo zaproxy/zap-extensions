@@ -113,7 +113,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
                 Integer.MAX_VALUE,
                 getInt(
                         this.job.getParameters().getNumberOfBrowsers(),
-                        Constants.getDefaultThreadCount()));
+                        Constants.getDefaultThreadCount() / 2));
 
         this.addNumberField(
                 1,
