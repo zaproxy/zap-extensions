@@ -142,7 +142,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
                 Integer.MAX_VALUE,
                 getInt(
                         this.job.getParameters().getNumberOfBrowsers(),
-                        Constants.getDefaultThreadCount()));
+                        Constants.getDefaultThreadCount() / 2));
         this.addCheckBoxField(
                 0, IN_SCOPE_ONLY, JobUtils.unBox(this.job.getParameters().getInScopeOnly()));
         this.addCheckBoxField(

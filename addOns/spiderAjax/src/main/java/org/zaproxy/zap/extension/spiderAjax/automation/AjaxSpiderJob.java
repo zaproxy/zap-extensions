@@ -525,7 +525,7 @@ public class AjaxSpiderJob extends AutomationJob {
         private String url = "";
         private Integer maxDuration = AjaxSpiderParam.DEFAULT_MAX_DURATION;
         private Integer maxCrawlDepth = AjaxSpiderParam.DEFAULT_MAX_CRAWL_DEPTH;
-        private Integer numberOfBrowsers = Constants.getDefaultThreadCount();
+        private Integer numberOfBrowsers = Constants.getDefaultThreadCount() / 2;
 
         private String browserId = "";
         private Integer maxCrawlStates = AjaxSpiderParam.DEFAULT_CRAWL_STATES;

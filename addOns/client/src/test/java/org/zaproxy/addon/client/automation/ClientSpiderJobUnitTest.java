@@ -149,7 +149,8 @@ public class ClientSpiderJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getMaxCrawlDepth(), is(ClientOptions.DEFAULT_MAX_DEPTH));
         assertThat(job.getParameters().getMaxChildren(), is(nullValue()));
         assertThat(
-                job.getParameters().getNumberOfBrowsers(), is(Constants.getDefaultThreadCount()));
+                job.getParameters().getNumberOfBrowsers(),
+                is(Constants.getDefaultThreadCount() / 2));
         assertThat(job.getParameters().getBrowserId(), is(nullValue()));
         assertThat(
                 job.getParameters().getInitialLoadTime(),

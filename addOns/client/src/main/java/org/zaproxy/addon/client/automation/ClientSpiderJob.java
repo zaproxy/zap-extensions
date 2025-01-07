@@ -279,7 +279,7 @@ public class ClientSpiderJob extends AutomationJob {
         private Integer maxDuration;
         private Integer maxChildren;
         private Integer maxCrawlDepth = ClientOptions.DEFAULT_MAX_DEPTH;
-        private Integer numberOfBrowsers = Constants.getDefaultThreadCount();
+        private Integer numberOfBrowsers = Constants.getDefaultThreadCount() / 2;
         private String browserId;
         private Integer initialLoadTime = ClientOptions.DEFAULT_INITIAL_LOAD_TIME;
         private Integer pageLoadTime = ClientOptions.DEFAULT_PAGE_LOAD_TIME;
