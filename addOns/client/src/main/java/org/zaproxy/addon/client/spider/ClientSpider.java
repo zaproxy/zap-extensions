@@ -347,8 +347,9 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
     }
 
     protected synchronized void postTaskExecution(ClientSpiderTask task) {
-        this.tasksDoneCount++;
-        this.spiderTasks.remove(task);
+        if (spiderTasks.remove(task)) {
+            tasksDoneCount++;
+        }
         if (listener != null) {
             listener.scanProgress(scanId, displayName, this.getProgress(), this.getMaximum());
         }
@@ -580,6 +581,21 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                         .forEach(handler -> handler.disableAuthentication(user));
             }
         }
+
+        threadPool.shutdown();
+        try {
+            if (!threadPool.awaitTermination(
+                    Math.max(1, options.getPageLoadTimeInSecs()) * 2, TimeUnit.SECONDS)) {
+                LOGGER.warn("Failed to await for all tasks to stop in the expected time.");
+                for (Runnable task : this.threadPool.shutdownNow()) {
+                    ((ClientSpiderTask) task).cleanup();
+                }
+            }
+        } catch (InterruptedException ignore) {
+            Thread.currentThread().interrupt();
+            LOGGER.warn("Interrupted while awaiting for all tasks to stop.");
+        }
+
         synchronized (this.webDriverPool) {
             clear(webDriverPool);
             clear(webDriverActive);
