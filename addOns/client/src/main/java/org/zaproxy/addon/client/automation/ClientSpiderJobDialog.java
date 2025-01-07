@@ -157,7 +157,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
         this.addNumberField(
                 1,
                 MAX_DURATION_PARAM,
-                1,
+                0,
                 Integer.MAX_VALUE,
                 getInt(this.job.getParameters().getMaxDuration(), 0));
 
