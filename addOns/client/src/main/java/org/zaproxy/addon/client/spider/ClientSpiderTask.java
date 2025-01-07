@@ -56,6 +56,7 @@ public class ClientSpiderTask implements Runnable {
     private int timeout;
     @Getter private Status status;
     @Getter private String error;
+    private WebDriverProcess wdp;
 
     public ClientSpiderTask(
             int id,
@@ -75,6 +76,22 @@ public class ClientSpiderTask implements Runnable {
 
     @Override
     public void run() {
+        try {
+            runImpl();
+        } finally {
+            cleanup();
+        }
+    }
+
+    void cleanup() {
+        if (wdp != null) {
+            clientSpider.returnWebDriverProcess(wdp);
+            wdp = null;
+        }
+        clientSpider.postTaskExecution(this);
+    }
+
+    private void runImpl() {
         if (clientSpider.isStopped()) {
             this.status = Status.STOPPED;
             this.clientSpider.taskStateChange(this);
@@ -93,7 +110,6 @@ public class ClientSpiderTask implements Runnable {
         long startTime = System.currentTimeMillis();
         this.status = Status.RUNNING;
         this.clientSpider.taskStateChange(this);
-        WebDriverProcess wdp = null;
         try {
             wdp = this.clientSpider.getWebDriverProcess();
             WebDriver wd = wdp.getWebDriver();
@@ -109,14 +125,10 @@ public class ClientSpiderTask implements Runnable {
             this.error = e.getMessage();
             this.clientSpider.taskStateChange(this);
         }
-        if (wdp != null) {
-            this.clientSpider.returnWebDriverProcess(wdp);
-        }
         LOGGER.debug(
                 "Task {} completed {} in {} secs",
                 id,
                 ok,
                 (System.currentTimeMillis() - startTime) / 1000);
-        this.clientSpider.postTaskExecution(this);
     }
 }
