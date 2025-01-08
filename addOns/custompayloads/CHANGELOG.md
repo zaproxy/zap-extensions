@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Promoted to Release status.
 - Update minimum ZAP version to 2.16.0.
 - Maintenance changes.
 - The superfluous/unused ID element of the custom payloads has been removed from the GUI and config.
