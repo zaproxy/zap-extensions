@@ -535,6 +535,7 @@ public class AjaxSpiderJob extends AutomationJob {
         private Boolean clickElemsOnce = AjaxSpiderParam.DEFAULT_CLICK_ELEMS_ONCE;
         private Boolean randomInputs = AjaxSpiderParam.DEFAULT_RANDOM_INPUTS;
         private Boolean inScopeOnly = Boolean.TRUE;
+        private Boolean enableExtensions = Boolean.FALSE;
 
         private Boolean runOnlyIfModern = Boolean.FALSE;
 

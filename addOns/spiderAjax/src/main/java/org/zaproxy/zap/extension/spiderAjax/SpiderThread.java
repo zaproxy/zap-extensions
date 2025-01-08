@@ -195,7 +195,9 @@ public class SpiderThread implements Runnable {
                 new BrowserConfiguration(
                         com.crawljax.browser.EmbeddedBrowser.BrowserType.FIREFOX,
                         target.getOptions().getNumberOfBrowsers(),
-                        new AjaxSpiderBrowserBuilder(target.getOptions().getBrowserId())));
+                        new AjaxSpiderBrowserBuilder(
+                                target.getOptions().getBrowserId(),
+                                target.getOptions().isEnableExtensions())));
 
         if (target.getOptions().isClickDefaultElems()) {
             configurationBuilder.crawlRules().clickDefaultElements();
@@ -470,13 +472,15 @@ public class SpiderThread implements Runnable {
         @Inject private Plugins plugins;
 
         private final String providedBrowserId;
+        private final boolean enableExtensions;
 
-        public AjaxSpiderBrowserBuilder(String providedBrowserId) {
+        public AjaxSpiderBrowserBuilder(String providedBrowserId, boolean enableExtensions) {
             super();
             this.providedBrowserId =
                     StringUtils.isEmpty(providedBrowserId)
                             ? AjaxSpiderParam.DEFAULT_BROWSER_ID
                             : providedBrowserId;
+            this.enableExtensions = enableExtensions;
         }
 
         /**
@@ -503,7 +507,8 @@ public class SpiderThread implements Runnable {
                                     HttpSender.AJAX_SPIDER_INITIATOR,
                                     providedBrowserId,
                                     configuration.getProxyConfiguration().getHostname(),
-                                    configuration.getProxyConfiguration().getPort()),
+                                    configuration.getProxyConfiguration().getPort(),
+                                    enableExtensions),
                             filterAttributes,
                             crawlWaitEvent,
                             crawlWaitReload);
