@@ -4,11 +4,15 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Option to enable browser extensions added by other add-ons, previously they were always enabled but now the default is false.
+
 ### Changed
 - Update minimum ZAP version to 2.16.0.
 - Updated automation framework documentation and templates for `spiderAjax` job to reflect changes to the default value of numberOfBrowsers parameter
 - Fields with default or missing values are omitted for the `spiderAjax` job in saved Automation Framework plans.
 - Default the number of browsers to the number of available cores.
+- Updated the job GUI to add an aditional "Elements" tab.
 
 ## [23.21.0] - 2024-09-02
 ### Changed
