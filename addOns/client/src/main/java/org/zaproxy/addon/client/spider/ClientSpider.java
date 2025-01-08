@@ -495,22 +495,17 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                 });
     }
 
-    public void taskStateChange(final ClientSpiderTask task) {
-        ThreadUtils.invokeLater(
-                () ->
-                        tasksModel.updateTaskState(
-                                task.getId(), task.getStatus().toString(), task.getError()));
+    void taskStateChange(final ClientSpiderTask task) {
+        tasksModel.updateTaskState(task.getId(), task.getStatus().toString(), task.getError());
     }
 
     private void addTaskToTasksModel(final ClientSpiderTask task, String url) {
-        ThreadUtils.invokeLater(
-                () ->
-                        tasksModel.addTask(
-                                task.getId(),
-                                task.getDisplayName(),
-                                url,
-                                task.getDetailsString(),
-                                task.getStatus().toString()));
+        tasksModel.addTask(
+                task.getId(),
+                task.getDisplayName(),
+                url,
+                task.getDetailsString(),
+                task.getStatus().toString());
     }
 
     protected void setRedirect(String originalUrl, String redirectedUrl) {

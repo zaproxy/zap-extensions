@@ -20,6 +20,7 @@
 package org.zaproxy.addon.client.spider;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 @SuppressWarnings("serial")
 public class TaskTableModel extends AbstractTableModel {
@@ -47,7 +50,7 @@ public class TaskTableModel extends AbstractTableModel {
     private List<TaskRecord> scanResults;
 
     public TaskTableModel() {
-        scanResults = new ArrayList<>();
+        scanResults = Collections.synchronizedList(new ArrayList<>());
     }
 
     @Override
@@ -86,15 +89,26 @@ public class TaskTableModel extends AbstractTableModel {
         }
     }
 
+    private void withView(Runnable runnable) {
+        if (!View.isInitialised()) {
+            return;
+        }
+
+        ThreadUtils.invokeAndWaitHandled(runnable);
+    }
+
     public void removeAllElements() {
         scanResults.clear();
-        fireTableDataChanged();
+
+        withView(() -> fireTableDataChanged());
     }
 
     public void addTask(int id, String action, String uri, String details, String status) {
         TaskRecord result = new TaskRecord(id, action, uri, details, "", status);
+        int row = scanResults.size();
         scanResults.add(result);
-        fireTableRowsInserted(scanResults.size() - 1, scanResults.size() - 1);
+
+        withView(() -> fireTableRowsInserted(row, row));
     }
 
     @Override
@@ -145,7 +159,9 @@ public class TaskTableModel extends AbstractTableModel {
         if (action.getId() == id) {
             action.setStatus(newState);
             action.setError(error);
-            this.fireTableCellUpdated(id2, 4);
+
+            int row = id2;
+            withView(() -> fireTableCellUpdated(row, 4));
         }
     }
 }
