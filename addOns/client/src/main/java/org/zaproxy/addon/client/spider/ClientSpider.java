@@ -287,7 +287,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         }
     }
 
-    public synchronized WebDriverProcess getWebDriverProcess() {
+    public WebDriverProcess getWebDriverProcess() {
         WebDriverProcess wdp;
         synchronized (this.webDriverPool) {
             if (!this.webDriverPool.isEmpty()) {
@@ -341,7 +341,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         return null;
     }
 
-    private void executeTask(ClientSpiderTask task) {
+    private synchronized void executeTask(ClientSpiderTask task) {
         this.spiderTasks.add(task);
         this.threadPool.execute(task);
     }
@@ -864,21 +864,21 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         }
 
         private void notifyMessage(HttpMessage httpMessage, int historyType, ResourceState state) {
-            ThreadUtils.invokeAndWaitHandled(
-                    () -> {
-                        try {
-                            HistoryReference historyRef =
-                                    new HistoryReference(session, historyType, httpMessage);
+            try {
+                HistoryReference historyRef =
+                        new HistoryReference(session, historyType, httpMessage);
+                ThreadUtils.invokeLater(
+                        () -> {
                             if (state == ResourceState.ALLOWED) {
                                 crawledUrl(httpMessage.getRequestHeader().getURI().toString());
                                 session.getSiteTree().addPath(historyRef, httpMessage);
                             }
 
                             messagesTableModel.addHistoryReference(historyRef, state);
-                        } catch (HttpMalformedHeaderException | DatabaseException e) {
-                            LOGGER.error(e);
-                        }
-                    });
+                        });
+            } catch (HttpMalformedHeaderException | DatabaseException e) {
+                LOGGER.error(e);
+            }
         }
     }
 
