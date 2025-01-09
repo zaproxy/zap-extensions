@@ -471,8 +471,12 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         getClientDetailsPanel().setClientNode(node);
     }
 
-    public void clientNodeChanged(ClientNode node) {
-        this.clientTree.nodeChanged(node);
+    private void clientNodeChanged(ClientNode node) {
+        if (!hasView()) {
+            return;
+        }
+
+        ThreadUtils.invokeAndWaitHandled(() -> clientTree.nodeChanged(node));
     }
 
     public boolean addComponentToNode(ClientNode node, ClientSideComponent component) {

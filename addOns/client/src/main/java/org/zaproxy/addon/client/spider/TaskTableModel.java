@@ -20,8 +20,9 @@
 package org.zaproxy.addon.client.spider;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.table.AbstractTableModel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -48,9 +49,11 @@ public class TaskTableModel extends AbstractTableModel {
     private static final int COLUMN_COUNT = COLUMN_NAMES.length;
 
     private List<TaskRecord> scanResults;
+    private Map<Integer, Integer> taskIdToRow;
 
     public TaskTableModel() {
-        scanResults = Collections.synchronizedList(new ArrayList<>());
+        scanResults = new ArrayList<>();
+        taskIdToRow = new HashMap<>();
     }
 
     @Override
@@ -94,7 +97,7 @@ public class TaskTableModel extends AbstractTableModel {
             return;
         }
 
-        ThreadUtils.invokeAndWaitHandled(runnable);
+        ThreadUtils.invokeLater(runnable);
     }
 
     public void removeAllElements() {
@@ -104,11 +107,13 @@ public class TaskTableModel extends AbstractTableModel {
     }
 
     public void addTask(int id, String action, String uri, String details, String status) {
-        TaskRecord result = new TaskRecord(id, action, uri, details, "", status);
-        int row = scanResults.size();
-        scanResults.add(result);
+        synchronized (taskIdToRow) {
+            int row = scanResults.size();
+            scanResults.add(new TaskRecord(id, action, uri, details, "", status));
+            taskIdToRow.put(id, row);
 
-        withView(() -> fireTableRowsInserted(row, row));
+            withView(() -> fireTableRowsInserted(row, row));
+        }
     }
 
     @Override
@@ -143,25 +148,11 @@ public class TaskTableModel extends AbstractTableModel {
     }
 
     public void updateTaskState(int id, String newState, String error) {
-        int id2 = id - 1;
-        TaskRecord action = this.scanResults.get(id2);
-        if (action.getId() > id) {
-            while (action.getId() > id) {
-                id2--;
-                action = this.scanResults.get(id2);
-            }
-        } else if (action.getId() < id) {
-            while (action.getId() < id) {
-                id2++;
-                action = this.scanResults.get(id2);
-            }
-        }
-        if (action.getId() == id) {
-            action.setStatus(newState);
-            action.setError(error);
+        int row = taskIdToRow.get(id);
+        TaskRecord action = this.scanResults.get(row);
+        action.setStatus(newState);
+        action.setError(error);
 
-            int row = id2;
-            withView(() -> fireTableCellUpdated(row, 4));
-        }
+        withView(() -> fireTableRowsUpdated(row, row));
     }
 }

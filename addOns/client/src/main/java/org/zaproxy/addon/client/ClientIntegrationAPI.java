@@ -38,7 +38,6 @@ import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
-import org.zaproxy.zap.utils.ThreadUtils;
 
 public class ClientIntegrationAPI extends ApiImplementor {
     private static final String PREFIX = "client";
@@ -92,27 +91,21 @@ public class ClientIntegrationAPI extends ApiImplementor {
         if (url instanceof String) {
             String urlStr = (String) url;
             if (!ExtensionClientIntegration.isApiUrl(urlStr)) {
-                ThreadUtils.invokeAndWaitHandled(
-                        () -> {
-                            ClientNode node =
-                                    this.extension.getOrAddClientNode(urlStr, false, false);
-                            ClientSideComponent component = new ClientSideComponent(json);
-                            extension.addComponentToNode(node, component);
-                            if (component.isStorageEvent()) {
-                                String storageUrl = node.getSite() + component.getTypeForDisplay();
-                                extension.addComponentToNode(
-                                        this.extension.getOrAddClientNode(storageUrl, false, true),
-                                        component);
-                            }
-                        });
+                ClientNode node = this.extension.getOrAddClientNode(urlStr, false, false);
+                ClientSideComponent component = new ClientSideComponent(json);
+                extension.addComponentToNode(node, component);
+                if (component.isStorageEvent()) {
+                    String storageUrl = node.getSite() + component.getTypeForDisplay();
+                    extension.addComponentToNode(
+                            this.extension.getOrAddClientNode(storageUrl, false, true), component);
+                }
             }
         } else {
             LOGGER.debug("Not got url:(: {}", url);
         }
         Object href = json.get("href");
         if (href instanceof String && ((String) href).toLowerCase(Locale.ROOT).startsWith("http")) {
-            ThreadUtils.invokeAndWaitHandled(
-                    () -> this.extension.getOrAddClientNode((String) href, false, false));
+            extension.getOrAddClientNode((String) href, false, false);
         }
     }
 
@@ -121,7 +114,7 @@ public class ClientIntegrationAPI extends ApiImplementor {
         if (event.getUrl() == null || !ExtensionClientIntegration.isApiUrl(event.getUrl())) {
             this.extension.addReportedObject(event);
             if (event.getUrl() != null) {
-                ThreadUtils.invokeAndWaitHandled(() -> this.extension.setVisited(event.getUrl()));
+                extension.setVisited(event.getUrl());
             }
         }
     }
