@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [44] - 2025-01-09
 ### Changed
 - Update minimum ZAP version to 2.16.0.
 - Depend on newer version of Common Library add-on (Issue 8016).
@@ -331,6 +331,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[44]: https://github.com/zaproxy/zap-extensions/releases/openapi-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/openapi-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/openapi-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/openapi-v41
