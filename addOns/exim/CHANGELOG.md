@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.13.0] - 2025-01-09
 ### Added
 - Add Automation Framework job to export data (e.g. HAR, URLs).
 - Support for Sites Tree export and prune.
@@ -116,6 +116,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release.
 
+[0.13.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.12.0
 [0.11.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.11.0
 [0.10.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.10.0

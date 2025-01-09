@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [23] - 2025-01-09
 ### Changed
 - Update minimum ZAP version to 2.16.0.
 - Fields with default or missing values are omitted for the `alertFilter` job in saved Automation Framework plans.
@@ -146,6 +146,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[23]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v23
 [22]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v22
 [21]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v21
 [20]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v20
