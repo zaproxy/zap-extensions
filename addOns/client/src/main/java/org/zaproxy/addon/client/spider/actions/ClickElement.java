@@ -36,7 +36,7 @@ public class ClickElement extends BaseElementAction {
 
     private static final Logger LOGGER = LogManager.getLogger(ClickElement.class);
 
-    private static final String STATS_PREFIX = "client.spider.click";
+    private static final String STATS_PREFIX = "stats.client.spider.action.click";
 
     private final Map<String, String> elementData;
     private final String tagName;

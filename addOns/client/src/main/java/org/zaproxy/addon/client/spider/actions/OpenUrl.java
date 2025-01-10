@@ -26,7 +26,7 @@ import org.zaproxy.zap.utils.Stats;
 
 public class OpenUrl implements SpiderAction {
 
-    private static final String STATS_PREFIX = "client.spider.url";
+    private static final String STATS_PREFIX = "stats.client.spider.action.url";
 
     private final String url;
 

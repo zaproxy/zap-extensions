@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.client.spider.ClientSpider.WebDriverProcess;
+import org.zaproxy.zap.utils.Stats;
 
 public class ClientSpiderTask implements Runnable {
 
@@ -119,7 +120,9 @@ public class ClientSpiderTask implements Runnable {
             ok = true;
             this.status = Status.FINISHED;
             this.clientSpider.taskStateChange(this);
+            Stats.incCounter("stats.client.spider.task.finished");
         } catch (Exception e) {
+            Stats.incCounter("stats.client.spider.task.failed");
             LOGGER.warn("Task {} failed {}", id, e.getMessage(), e);
             this.status = Status.FAILED;
             this.error = e.getMessage();

@@ -79,6 +79,7 @@ import org.zaproxy.zap.model.GenericScanner2;
 import org.zaproxy.zap.model.ScanListenner2;
 import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
 public class ClientSpider implements EventConsumer, GenericScanner2 {
@@ -367,6 +368,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         this.lastEventReceivedtime = System.currentTimeMillis();
         if (maxTime > 0 && this.lastEventReceivedtime > maxTime) {
             LOGGER.debug("Exceeded max time, stopping");
+            Stats.incCounter("stats.client.spider.event.max.time");
             this.stopScan();
             return;
         }
@@ -374,9 +376,11 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         Map<String, String> parameters = event.getParameters();
         String url = parameters.get(ClientMap.URL_KEY);
         if (!isUrlInScope(url)) {
+            Stats.incCounter("stats.client.spider.event.scope.out");
             return;
         }
 
+        Stats.incCounter("stats.client.spider.event.scope.in");
         addUriToAddedNodesModel(url);
 
         if (options.getMaxDepth() > 0) {
@@ -384,6 +388,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             if (depth > options.getMaxDepth()) {
                 LOGGER.debug(
                         "Ignoring URL - too deep {} > {} : {}", depth, options.getMaxDepth(), url);
+                Stats.incCounter("stats.client.spider.event.max.depth");
                 return;
             }
         }
@@ -395,12 +400,15 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                         siblings,
                         options.getMaxChildren(),
                         url);
+                Stats.incCounter("stats.client.spider.event.max.children");
                 return;
             }
         }
 
         if (ClientMap.MAP_COMPONENT_ADDED_EVENT.equals(event.getEventType())) {
+            Stats.incCounter("stats.client.spider.event.component");
             if (ClickElement.isSupported(this::isUrlInScope, parameters)) {
+                Stats.incCounter("stats.client.spider.event.component.click");
                 addTask(
                         url,
                         openAction(
@@ -409,6 +417,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                         Constant.messages.getString("client.spider.panel.table.action.click"),
                         paramsToString(parameters));
             } else if (SubmitForm.isSupported(parameters)) {
+                Stats.incCounter("stats.client.spider.event.component.form");
                 addTask(
                         url,
                         openAction(url, new SubmitForm(valueProvider, createUri(url), parameters)),
@@ -417,6 +426,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                         paramsToString(parameters));
             }
         } else {
+            Stats.incCounter("stats.client.spider.event.url");
             addOpenUrlTask(url, options.getPageLoadTimeInSecs());
         }
     }
@@ -596,11 +606,22 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             clear(webDriverActive);
         }
 
-        crawledUrls.forEach(extClient::setContentLoaded);
+        int contentLoaded = 0;
+        for (String url : crawledUrls) {
+            if (extClient.setContentLoaded(url)) {
+                contentLoaded++;
+            }
+        }
 
         if (listener != null) {
             listener.scanFinshed(scanId, displayName);
         }
+
+        Stats.incCounter("stats.client.spider.urls", crawledUrls.size());
+        Stats.incCounter(
+                "stats.client.spider.nodes", addedNodesModel.getRowCount() + contentLoaded);
+        Stats.incCounter("stats.client.spider.nodes.found", addedNodesModel.getRowCount());
+        Stats.incCounter("stats.client.spider.nodes.contentLoaded", contentLoaded);
     }
 
     private static void clear(Collection<WebDriverProcess> entries) {

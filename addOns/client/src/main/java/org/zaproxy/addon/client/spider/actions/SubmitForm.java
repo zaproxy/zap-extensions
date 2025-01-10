@@ -34,7 +34,7 @@ public class SubmitForm extends BaseElementAction {
 
     private static final Logger LOGGER = LogManager.getLogger(SubmitForm.class);
 
-    private static final String STATS_PREFIX = "client.spider.form";
+    private static final String STATS_PREFIX = "stats.client.spider.action.form";
 
     private final String tagName;
     private final int formIndex;
