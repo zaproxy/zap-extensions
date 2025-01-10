@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [20] - 2025-01-10
 ### Fixed
 - Typo in automation job help.
 - Address misleading warning `Unrecognised parameter` for `deleteAllRules` (Issue 8764).
@@ -124,6 +124,7 @@ the dialogue when other match types are selected.
 
 - First version
 
+[20]: https://github.com/zaproxy/zap-extensions/releases/replacer-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/replacer-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/replacer-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/replacer-v17

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [119] - 2025-01-10
 ### Changed
 - Update minimum ZAP version to 2.16.0.
 
@@ -505,6 +505,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27 IE 3.0.0
 
+[119]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v119
 [118]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v118
 [117]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v117
 [116]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v116

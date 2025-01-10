@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [51] - 2025-01-10
 ### Added
 - Stats counter to the main toolbar button (Issue 8375).
 
@@ -279,6 +279,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[51]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v48
