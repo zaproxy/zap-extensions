@@ -1,0 +1,6 @@
+  - type: sequence-import      # Imports a sequence from a HAR file.
+    parameters:
+      name:                    # The name by which the seq will be known in ZAP.
+      path:                    # The full/relative path to the HAR file to import.
+      assertCode:              # Boolean, if true add status code assertion.
+      assertLength:            # Integer, if supplied then add approx len assertion (value between 0 and 100).

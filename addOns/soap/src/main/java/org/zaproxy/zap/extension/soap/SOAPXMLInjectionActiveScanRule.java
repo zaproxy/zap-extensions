@@ -23,6 +23,8 @@ import jakarta.xml.soap.SOAPException;
 import jakarta.xml.soap.SOAPMessage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +37,7 @@ import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpMessage;
 import org.w3c.dom.NodeList;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 /**
  * SOAP XML Injection Active scan rule
@@ -46,10 +49,23 @@ public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin
 
     private static final String MESSAGE_PREFIX = "soap.soapxmlinjection.";
     private static final Logger LOGGER = LogManager.getLogger(SOAPXMLInjectionActiveScanRule.class);
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION));
+        alertTags.put(PolicyTag.API.getTag(), "");
+        alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public int getId() {

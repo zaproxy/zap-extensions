@@ -30,6 +30,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -61,6 +66,36 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldCheckContainsSessionTokenWhileAddingAndRemoving() throws Exception {
+        // Given
+        AtomicBoolean concurrentModification = new AtomicBoolean();
+        CountDownLatch cdl = new CountDownLatch(2500);
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
+        SessionToken token = new SessionToken("source", "key", "value");
+        executor.scheduleAtFixedRate(
+                () -> AuthUtils.recordSessionToken(token), 0, 1, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(
+                () -> AuthUtils.removeSessionToken(token), 0, 1, TimeUnit.MILLISECONDS);
+        // When
+        executor.scheduleAtFixedRate(
+                () -> {
+                    try {
+                        AuthUtils.containsSessionToken(token.getValue());
+                    } catch (Exception e) {
+                        concurrentModification.set(true);
+                    }
+                    cdl.countDown();
+                },
+                0,
+                1,
+                TimeUnit.MILLISECONDS);
+        // Then
+        cdl.await(5000, TimeUnit.SECONDS);
+        executor.shutdownNow();
+        assertThat(concurrentModification.get(), is(equalTo(false)));
+    }
+
+    @Test
     void shouldReturnUserTextField() throws Exception {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
@@ -73,7 +108,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("type"), is(equalTo("text")));
+        assertThat(field.getDomAttribute("type"), is(equalTo("text")));
     }
 
     @Test
@@ -89,7 +124,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("type"), is(equalTo("email")));
+        assertThat(field.getDomAttribute("type"), is(equalTo("email")));
     }
 
     @Test
@@ -106,7 +141,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("id"), is(equalTo("email")));
+        assertThat(field.getDomAttribute("id"), is(equalTo("email")));
     }
 
     @Test
@@ -123,7 +158,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("name"), is(equalTo("username")));
+        assertThat(field.getDomAttribute("name"), is(equalTo("username")));
     }
 
     @Test
@@ -154,7 +189,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("type"), is(equalTo("password")));
+        assertThat(field.getDomAttribute("type"), is(equalTo("password")));
     }
 
     @Test
@@ -631,7 +666,7 @@ class AuthUtilsUnitTest extends TestUtils {
         }
 
         @Override
-        public String getAttribute(String name) {
+        public String getDomAttribute(String name) {
             switch (name) {
                 case "id":
                     return id;
@@ -642,6 +677,12 @@ class AuthUtilsUnitTest extends TestUtils {
                 default:
                     return null;
             }
+        }
+
+        @Override
+        @Deprecated
+        public String getAttribute(String name) {
+            return null;
         }
 
         @Override

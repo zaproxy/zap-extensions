@@ -37,6 +37,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
@@ -88,6 +89,11 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (AlertThreshold.HIGH.equals(getAlertThreshold()) && !msg.isInScope()
                 || !msg.getResponseHeader().isHtml()) {
+            return;
+        }
+
+        if (!AlertThreshold.LOW.equals(getAlertThreshold())
+                && HttpRequestHeader.GET.equals(msg.getRequestHeader().getMethod())) {
             return;
         }
 
@@ -208,12 +214,12 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
     }
 
-    private String getExtraInfo(String tokenNamesFlattened, String formDetails) {
+    private static String getExtraInfo(String tokenNamesFlattened, String formDetails) {
         return Constant.messages.getString(
                 "pscanrules.noanticsrftokens.alert.extrainfo", tokenNamesFlattened, formDetails);
     }
 
-    private boolean formOnIgnoreList(Element formElement, List<String> ignoreList) {
+    private static boolean formOnIgnoreList(Element formElement, List<String> ignoreList) {
         String id = formElement.getAttributeValue("id");
         String name = formElement.getAttributeValue("name");
         for (String ignore : ignoreList) {
@@ -235,42 +241,22 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
         return Constant.messages.getString("pscanrules.noanticsrftokens.name");
     }
 
-    public String getDescription() {
-        return VULN.getDescription();
-    }
-
-    public String getSolution() {
-        return VULN.getSolution();
-    }
-
-    public String getReference() {
-        return VULN.getReferencesAsString();
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 352; // CWE-352: Cross-Site Request Forgery (CSRF)
-    }
-
-    public int getWascId() {
-        return 9;
     }
 
     private AlertBuilder buildAlert(int risk, String desc, String extraInfo, String evidence) {
         return newAlert()
                 .setRisk(risk)
                 .setConfidence(Alert.CONFIDENCE_LOW)
-                .setDescription(desc + "\n" + getDescription())
+                .setDescription(desc + "\n" + VULN.getDescription())
                 .setOtherInfo(extraInfo)
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setSolution(VULN.getSolution())
+                .setReference(VULN.getReferencesAsString())
                 .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setCweId(352) // CWE-352: Cross-Site Request Forgery (CSRF)
+                .setWascId(9);
     }
 
     @Override

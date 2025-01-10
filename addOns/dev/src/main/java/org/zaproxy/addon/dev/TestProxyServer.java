@@ -23,6 +23,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import net.sf.json.JSON;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +46,7 @@ import org.zaproxy.addon.dev.auth.simpleJsonBearer.SimpleJsonBearerDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerCookie.SimpleJsonBearerCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerJsCookie.SimpleJsonBearerJsCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonCookie.SimpleJsonCookieDir;
+import org.zaproxy.addon.dev.seq.performance.PerformanceDir;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
@@ -94,9 +99,13 @@ public class TestProxyServer {
         htmlDir.addDirectory(locStoreDir);
         htmlDir.addDirectory(sessStoreDir);
 
+        TestDirectory seqDir = new TestDirectory(this, "seq");
+        seqDir.addDirectory(new PerformanceDir(this, "performance"));
+
         root.addDirectory(authDir);
         root.addDirectory(apiDir);
         root.addDirectory(htmlDir);
+        root.addDirectory(seqDir);
     }
 
     private Server getServer() {
@@ -160,17 +169,38 @@ public class TestProxyServer {
         }
     }
 
+    public static String getDefaultResponseHeader(
+            String contentType, int contentLength, boolean allowCache) {
+        return getDefaultResponseHeader(STATUS_OK, contentType, contentLength, allowCache);
+    }
+
     public static String getDefaultResponseHeader(String contentType, int contentLength) {
         return getDefaultResponseHeader(STATUS_OK, contentType, contentLength);
     }
 
     public static String getDefaultResponseHeader(
             String responseStatus, String contentType, int contentLength) {
+        return getDefaultResponseHeader(responseStatus, contentType, contentLength, false);
+    }
+
+    public static String getDefaultResponseHeader(
+            String responseStatus, String contentType, int contentLength, boolean allowCache) {
         StringBuilder sb = new StringBuilder(250);
 
         sb.append("HTTP/1.1 ").append(responseStatus).append("\r\n");
-        sb.append("Pragma: no-cache\r\n");
-        sb.append("Cache-Control: no-cache, no-store, must-revalidate\r\n");
+
+        if (allowCache) {
+            sb.append("Cache-Control: public\r\n");
+            sb.append("Expires: ")
+                    .append(
+                            DateTimeFormatter.RFC_1123_DATE_TIME
+                                    .withZone(ZoneOffset.UTC)
+                                    .format(Instant.now().plus(7, ChronoUnit.DAYS)))
+                    .append("\r\n");
+        } else {
+            sb.append("Pragma: no-cache\r\n");
+            sb.append("Cache-Control: no-cache, no-store, must-revalidate\r\n");
+        }
         sb.append("Access-Control-Allow-Methods: GET,POST,OPTIONS\r\n");
         sb.append("Access-Control-Allow-Headers: ZAP-Header\r\n");
         sb.append("X-Frame-Options: DENY\r\n");
@@ -195,19 +225,23 @@ public class TestProxyServer {
                         getDefaultResponseHeader(
                                 STATUS_NOT_FOUND, "text/html", msg.getResponseBody().length()));
             } else {
+                boolean allowCache = false;
                 msg.setResponseBody(body);
                 String contentType = "text/plain"; // Fallback
                 if (name.endsWith(".html")) {
                     contentType = "text/html";
                 } else if (name.endsWith(".css")) {
                     contentType = "text/css";
+                    allowCache = true;
                 } else if (name.endsWith(".js")) {
                     contentType = "text/javascript";
+                    allowCache = true;
                 } else {
                     LOGGER.error("Unexpected tutorial file extension: {}", name);
                 }
                 msg.setResponseHeader(
-                        getDefaultResponseHeader(contentType, msg.getResponseBody().length()));
+                        getDefaultResponseHeader(
+                                contentType, msg.getResponseBody().length(), allowCache));
             }
         } catch (HttpMalformedHeaderException e) {
             LOGGER.error(e.getMessage(), e);

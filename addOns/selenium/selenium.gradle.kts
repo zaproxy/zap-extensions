@@ -36,13 +36,12 @@ zapAddOn {
 }
 
 dependencies {
-    var seleniumVersion = "4.23.1"
+    compileOnly(libs.log4j.core)
+
+    var seleniumVersion = "4.27.0"
     selenium("org.seleniumhq.selenium:selenium-java:$seleniumVersion")
-    selenium("org.seleniumhq.selenium:htmlunit3-driver:4.23.0")
-    implementation(libs.log4j.slf4j) {
-        // Provided by ZAP.
-        exclude(group = "org.apache.logging.log4j")
-    }
+    selenium("org.seleniumhq.selenium:htmlunit3-driver:$seleniumVersion")
+    implementation(libs.log4j.slf4j)
 
     zapAddOn("commonlib")
     zapAddOn("network")

@@ -58,17 +58,17 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        trustedDomains.update(getConfig().getString(RuleConfigParam.RULE_DOMAINS_TRUSTED, ""));
-
         if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isHtml()) {
             List<Element> sourceElements = source.getAllElements(HTMLElementName.SCRIPT);
             if (sourceElements != null) {
+                trustedDomains.update(
+                        getConfig().getString(RuleConfigParam.RULE_DOMAINS_TRUSTED, ""));
                 for (Element sourceElement : sourceElements) {
                     String src = sourceElement.getAttributeValue("src");
                     if (src != null
+                            && !trustedDomains.isIncluded(src)
                             && isScriptFromOtherDomain(
-                                    msg.getRequestHeader().getHostName(), src, msg)
-                            && !trustedDomains.isIncluded(src)) {
+                                    msg.getRequestHeader().getHostName(), src, msg)) {
                         String integrity = sourceElement.getAttributeValue("integrity");
                         if (integrity == null || integrity.trim().length() == 0) {
                             /*
@@ -87,14 +87,15 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner
 
     private AlertBuilder createAlert(String crossDomainScript, String evidence) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setParam(crossDomainScript)
-                .setSolution(getSolution())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setCweId(829) // CWE Id 829 - Inclusion of Functionality from Untrusted Control
+                // Sphere
+                .setWascId(15); // WASC-15: Application Misconfiguration
     }
 
     private void raiseAlert(HttpMessage msg, int id, String crossDomainScript, String evidence) {
@@ -115,34 +116,14 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner
         return PLUGIN_ID;
     }
 
-    public int getRisk() {
-        return Alert.RISK_LOW;
-    }
-
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 829; // CWE Id 829 - Inclusion of Functionality from Untrusted Control Sphere
-    }
-
-    public int getWascId() {
-        return 15; // WASC-15: Application Misconfiguration)
     }
 
     private Model getModel() {

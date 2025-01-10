@@ -20,6 +20,7 @@
                     "desc": "[(${helper.legacyEscapeParagraph(alert.description, true)})]",
                     "instances":[ [#th:block th:each="instance, instState: ${instances}"][#th:block th:if="${! instState.first}"],[/th:block]
                         {
+                            "id": "[(${instance.alertId})]",
                             "uri": "[(${helper.legacyEscapeText(instance.uri, true)})]",
                             "method": "[(${helper.legacyEscapeText(instance.method, true)})]",
                             "param": "[(${helper.legacyEscapeTextAlertParam(instance, true)})]",
@@ -48,6 +49,37 @@
                 }[#th:block th:if="${! alertState.last}"],[/th:block][/th:block]
             ]
         }[/th:block]
-    ]
+    ][#th:block th:if="${reportData.reportObjects.get('seqAScanData') != null}"],
+    "sequences":[[#th:block th:each="seq, seqState: ${reportData.reportObjects.get('seqAScanData').seqData}"][#th:block th:if="${! seqState.first}"],[/th:block]
+        {
+            "name": "[(${seq.sequenceName})]",
+            "steps": [[#th:block th:each="step, stepState: ${seq.steps}"][#th:block th:if="${! stepState.first}"],[/th:block]
+                {
+                "step": "[(${step.step})]",
+                "pass": "[(${step.pass})]",
+                "resultDetails": "[(${step.result})]",
+                "alertIds": [[(${step.alertIds})]],
+                "original":
+                    {
+                        "uri": "[(${helper.legacyEscapeText(step.originalMsg.requestHeader.uri, true)})]",
+                        "method": "[(${helper.legacyEscapeText(step.originalMsg.requestHeader.method, true)})]",
+                        "request-header": "[(${helper.legacyEscapeText(step.originalMsg.requestHeader, true)})]",
+                        "request-body": "[(${helper.legacyEscapeText(step.originalMsg.requestBody, true)})]",
+                        "response-header": "[(${helper.legacyEscapeText(step.originalMsg.responseHeader, true)})]",
+                        "response-body": "[(${helper.legacyEscapeText(step.originalMsg.responseBody, true)})]"
+                    },
+                "replay":
+                    {
+                        "uri": "[(${helper.legacyEscapeText(step.replayMsg.requestHeader.uri, true)})]",
+                        "method": "[(${helper.legacyEscapeText(step.replayMsg.requestHeader.method, true)})]",
+                        "request-header": "[(${helper.legacyEscapeText(step.replayMsg.requestHeader, true)})]",
+                        "request-body": "[(${helper.legacyEscapeText(step.replayMsg.requestBody, true)})]",
+                        "response-header": "[(${helper.legacyEscapeText(step.replayMsg.responseHeader, true)})]",
+                        "response-body": "[(${helper.legacyEscapeText(step.replayMsg.responseBody, true)})]"
+                    }
+                }[/th:block]
+            ]
+        }[/th:block]
+    ][/th:block]
 }
 

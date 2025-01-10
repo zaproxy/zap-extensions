@@ -75,13 +75,13 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
 
     private AlertBuilder buildAlert(String evidence) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
-                .setSolution(getSolution())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setWascId(13); // WASC Id - Info leakage
     }
 
     private String doesResponseContainsDebugErrorMessage(HttpBody body) {
@@ -99,7 +99,7 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
         return null;
     }
 
-    private List<String> loadFile(Path path) {
+    private static List<String> loadFile(Path path) {
         List<String> strings = new ArrayList<>();
         BufferedReader reader = null;
         File f = path.toFile();
@@ -133,34 +133,14 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
         this.errors = loadFile(path);
     }
 
-    public int getRisk() {
-        return Alert.RISK_LOW;
-    }
-
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 200; // CWE Id 200 - Information Exposure
-    }
-
-    public int getWascId() {
-        return 13; // WASC Id - Info leakage
     }
 
     @Override

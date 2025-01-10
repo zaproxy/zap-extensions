@@ -32,11 +32,11 @@ import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.alert.AlertEventPublisher;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.quickstart.PlugableSpider;
 import org.zaproxy.zap.extension.quickstart.QuickStartBackgroundPanel;
 import org.zaproxy.zap.extension.quickstart.QuickStartParam;
@@ -102,13 +102,21 @@ public class AjaxSpiderExplorer implements PlugableSpider {
         return Control.getSingleton().getExtensionLoader().getExtension(ExtensionAjax.class);
     }
 
-    public ExtensionPassiveScan getExtPscan() {
-        return Control.getSingleton().getExtensionLoader().getExtension(ExtensionPassiveScan.class);
+    public ExtensionPassiveScan2 getExtPscan() {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionPassiveScan2.class);
     }
 
     @Override
     public void startScan(URI uri) {
         int selInd = this.getSelectComboBox().getSelectedIndex();
+
+        // Save the settings for next time
+        QuickStartParam qsParam = extension.getExtQuickStart().getQuickStartParam();
+        qsParam.setAjaxSpiderSelection(((Select) selectComboBox.getSelectedItem()).name());
+        qsParam.setAjaxSpiderDefaultBrowser(browserComboBox.getSelectedItem().toString());
+
         if (selInd == Select.NEVER.getIndex()) {
             ZAP.getEventBus().unregisterConsumer(eventConsumer);
             return;
@@ -116,7 +124,7 @@ public class AjaxSpiderExplorer implements PlugableSpider {
         if (selInd == Select.MODERN.getIndex()) {
             // Only run if modern - keep monitoring for the relevant alert until the passive scan
             // queue empties
-            ExtensionPassiveScan extPscan = this.getExtPscan();
+            ExtensionPassiveScan2 extPscan = getExtPscan();
             while (extPscan.getRecordsToScan() > 0) {
                 if (isModern) {
                     break;
@@ -178,13 +186,6 @@ public class AjaxSpiderExplorer implements PlugableSpider {
         if (selectComboBox == null) {
             selectComboBox = new JComboBox<>();
             Stream.of(Select.values()).forEach(s -> selectComboBox.addItem(s));
-            selectComboBox.addActionListener(
-                    e ->
-                            extension
-                                    .getExtQuickStart()
-                                    .getQuickStartParam()
-                                    .setAjaxSpiderSelection(
-                                            ((Select) selectComboBox.getSelectedItem()).name()));
         }
         return selectComboBox;
     }
@@ -196,13 +197,6 @@ public class AjaxSpiderExplorer implements PlugableSpider {
                     extension.getExtSelenium().createProvidedBrowsersComboBoxModel();
             model.setIncludeUnconfigured(false);
             browserComboBox.setModel(model);
-            browserComboBox.addActionListener(
-                    e ->
-                            extension
-                                    .getExtQuickStart()
-                                    .getQuickStartParam()
-                                    .setAjaxSpiderDefaultBrowser(
-                                            browserComboBox.getSelectedItem().toString()));
 
             String defaultBrowserId = Browser.FIREFOX_HEADLESS.getId();
             Optional<ProvidedBrowserUI> defaultItem =

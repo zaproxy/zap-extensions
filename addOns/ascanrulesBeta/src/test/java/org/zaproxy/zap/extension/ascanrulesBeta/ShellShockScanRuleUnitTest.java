@@ -19,15 +19,23 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class ShellShockScanRuleUnitTest extends ActiveScannerTest<ShellShockScanRule> {
 
@@ -72,11 +80,84 @@ class ShellShockScanRuleUnitTest extends ActiveScannerTest<ShellShockScanRule> {
         List<Alert> alerts = rule.getExampleAlerts();
         // Then
         assertThat(alerts.size(), is(equalTo(2)));
-        System.out.println(alerts.get(0).getName());
         Alert alert = alerts.get(0);
         assertThat(alert.getAlertRef(), is(equalTo("10048-1")));
         Alert timingAlert = alerts.get(1);
         assertThat(timingAlert.getAlertRef(), is(equalTo("10048-2")));
+    }
+
+    @Test
+    void shouldAlertIfSleepTimesGetLonger() throws Exception {
+        String test = "/";
+        Pattern sleepPattern = Pattern.compile(" /bin/sleep (\\d+)");
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response = "<html><body></body></html>";
+                        if (name == null) {
+                            return newFixedLengthResponse(response);
+                        }
+                        Matcher match = sleepPattern.matcher(name);
+                        if (!match.find()) {
+                            return newFixedLengthResponse(name);
+                        }
+                        try {
+                            int sleepSeconds = Integer.parseInt(match.group(1));
+                            Thread.sleep(TimeUnit.SECONDS.toMillis(sleepSeconds));
+                        } catch (InterruptedException e) {
+                            // Ignore
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+        this.rule.setTimeSleepSeconds(2);
+
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("() { :;}; /bin/sleep 2"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldNotAlertIfAllTimesGetLonger() throws Exception {
+        String test = "/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    private int time = 100;
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String response = "<html><body></body></html>";
+                        try {
+                            Thread.sleep(time);
+                        } catch (InterruptedException e) {
+                            // Ignore
+                        }
+                        time += 100;
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+        this.rule.setTimeSleepSeconds(2);
+
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test

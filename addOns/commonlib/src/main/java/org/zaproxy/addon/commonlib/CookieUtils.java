@@ -62,7 +62,7 @@ public final class CookieUtils {
         }
 
         String[] cookieElements = headerValue.split(";");
-        if (cookieElements.length == 1 || !isCookieNameValuePairValid(cookieElements[0])) {
+        if (cookieElements.length == 1) {
             return false;
         }
 
@@ -92,7 +92,7 @@ public final class CookieUtils {
         }
 
         String[] cookieElements = headerValue.split(";");
-        if (cookieElements.length == 1 || !isCookieNameValuePairValid(cookieElements[0])) {
+        if (cookieElements.length == 1) {
             return null;
         }
 
@@ -122,7 +122,7 @@ public final class CookieUtils {
         int semicolonIdx = cookieHeaderValue.indexOf(';');
         if (nameValuePairIdx == NOT_FOUND
                 || (semicolonIdx != NOT_FOUND && nameValuePairIdx > semicolonIdx)) {
-            return null;
+            return "";
         }
 
         return cookieHeaderValue.substring(0, nameValuePairIdx).trim();
@@ -158,19 +158,16 @@ public final class CookieUtils {
         if (matcher.find()) {
             // Found a line that matches
             String match = matcher.group();
-            return match.substring(0, match.indexOf(name) + name.length());
+            int end = match.indexOf(name) + name.length();
+            if (name.isBlank()) {
+                end = match.indexOf(';');
+                if (end == NOT_FOUND) {
+                    return match;
+                }
+            }
+            return match.substring(0, end);
         }
         return null;
-    }
-
-    private static boolean isCookieNameValuePairValid(String nameValuePair) {
-        int nameValuePairIdx = nameValuePair.indexOf('=');
-        if (nameValuePairIdx == NOT_FOUND) {
-            return false;
-        }
-
-        String cookieName = nameValuePair.substring(0, nameValuePairIdx).trim();
-        return !cookieName.isEmpty();
     }
 
     private static void validateParameterNotNull(Object parameter, String name) {

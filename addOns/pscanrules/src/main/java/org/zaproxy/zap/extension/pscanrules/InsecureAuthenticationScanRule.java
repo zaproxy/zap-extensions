@@ -214,29 +214,9 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner
         return Constant.messages.getString("pscanrules.insecureauthentication.name");
     }
 
-    public String getDescription() {
-        return Constant.messages.getString("pscanrules.insecureauthentication.desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString("pscanrules.insecureauthentication.soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString("pscanrules.insecureauthentication.refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 326; // CWE Id - Inadequate Encryption Strength
-    }
-
-    public int getWascId() {
-        return 4; // WASC Id - Insufficient Transport Layer Protection
     }
 
     @Override
@@ -283,12 +263,13 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner
         return newAlert()
                 .setRisk(Alert.RISK_MEDIUM)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setDescription(
+                        Constant.messages.getString("pscanrules.insecureauthentication.desc"))
+                .setSolution(Constant.messages.getString("pscanrules.insecureauthentication.soln"))
+                .setReference(Constant.messages.getString("pscanrules.insecureauthentication.refs"))
                 .setEvidence(HttpHeader.WWW_AUTHENTICATE + ": " + auth)
-                .setCweId(getCweId())
-                .setWascId(getWascId())
+                .setCweId(326) // CWE Id - Inadequate Encryption Strength
+                .setWascId(4) // WASC Id - Insufficient Transport Layer Protection
                 .setAlertRef(getPluginId() + "-2");
     }
 

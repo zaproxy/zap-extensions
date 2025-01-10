@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [1.30.0] - 2025-01-09
+### Added
+- Add solutions to Insufficient Process Validation vulnerability (Issue 8056).
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Improve solution and add more references to 'Information Leakage' vulnerability (Issue 8056).
+
+## [1.29.0] - 2024-12-23
+### Changed
+- Dependency updates.
+- Let the Value Generator add-on provide the custom values through this add-on (Issue 8016).
+
+### Added
+- Policy tags for use with scan rules and the new Scan Policies add-on.
+
+### Fixed
+- Be more lenient with the input used for providing values, to prevent exceptions.
+
+## [1.28.0] - 2024-09-24
+### Changed
+- Maintenance changes.
+
+## [1.27.0] - 2024-09-02
+### Fixed
+- Address false positives/negatives when handling cookies without name value pair separator (Issue 8613).
+
 ## [1.26.0] - 2024-05-10
 ### Added
 - Include the Jackson Datatype: JSR310 library for other add-ons to use.
@@ -175,6 +202,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.30.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.30.0
+[1.29.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.29.0
+[1.28.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.28.0
+[1.27.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.27.0
 [1.26.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.26.0
 [1.25.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.25.0
 [1.24.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.24.0

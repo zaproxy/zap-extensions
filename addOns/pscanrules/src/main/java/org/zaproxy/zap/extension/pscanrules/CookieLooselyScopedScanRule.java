@@ -86,7 +86,7 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
      * Determines whether the specified cookie is loosely scoped by
      * checking it's Domain attribute value against the host
      */
-    private boolean isLooselyScopedCookie(HttpCookie cookie, String host) {
+    private static boolean isLooselyScopedCookie(HttpCookie cookie, String host) {
         // preconditions
         assert cookie != null;
         assert host != null;
@@ -138,7 +138,8 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
         return true;
     }
 
-    private boolean isCookieAndHostHaveTheSameDomain(String[] cookieDomains, String[] hostDomains) {
+    private static boolean isCookieAndHostHaveTheSameDomain(
+            String[] cookieDomains, String[] hostDomains) {
         if (cookieDomains == null
                 || hostDomains == null
                 || cookieDomains[0].equalsIgnoreCase("null")
@@ -168,15 +169,15 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
         }
 
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_LOW)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(
                         Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", host, sbCookies))
-                .setSolution(getSolution())
-                .setReference(getReference())
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
+                .setCweId(565) // CWE-565: Reliance on Cookies without Validation and Integrity)
+                .setWascId(15); // WASC-15: Application Misconfiguration)
     }
 
     @Override
@@ -193,37 +194,9 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
         return 90033;
     }
 
-    public int getRisk() {
-        return Alert.RISK_INFO;
-    }
-
-    /*
-     * Rule-associated messages
-     */
-
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 565; // CWE-565: Reliance on Cookies without Validation and Integrity
-    }
-
-    public int getWascId() {
-        return 15; // WASC-15: Application Misconfiguration)
     }
 
     private Model getModel() {

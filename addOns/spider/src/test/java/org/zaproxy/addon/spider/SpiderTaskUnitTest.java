@@ -54,10 +54,10 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.spider.parser.ParseContext;
 import org.zaproxy.addon.spider.parser.SpiderParser;
 import org.zaproxy.addon.spider.parser.SpiderResourceFound;
-import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link SpiderTask}. */
@@ -70,7 +70,7 @@ class SpiderTaskUnitTest extends TestUtils {
     private SpiderParam options;
     private SpiderController controller;
     private ExtensionSpider2 extensionSpider;
-    private ValueGenerator valueGenerator;
+    private ValueProvider valueProvider;
     private Spider parent;
     private HttpMessage msg;
 
@@ -100,8 +100,8 @@ class SpiderTaskUnitTest extends TestUtils {
         extensionSpider =
                 mock(ExtensionSpider2.class, withSettings().strictness(Strictness.LENIENT));
         given(parent.getExtensionSpider()).willReturn(extensionSpider);
-        valueGenerator = mock(ValueGenerator.class);
-        given(extensionSpider.getValueGenerator()).willReturn(valueGenerator);
+        valueProvider = mock(ValueProvider.class);
+        given(extensionSpider.getValueProvider()).willReturn(valueProvider);
 
         msg = new HttpMessage();
         msg.setRequestHeader("GET /path HTTP/1.1\r\nHost: example.com\r\n");
@@ -130,7 +130,7 @@ class SpiderTaskUnitTest extends TestUtils {
         ParseContext ctxParse = captorCtx.getValue();
         assertThat(ctxCanParse, is(sameInstance(ctxParse)));
         assertThat(ctxParse.getSpiderParam(), is(sameInstance(options)));
-        assertThat(ctxParse.getValueGenerator(), is(sameInstance(valueGenerator)));
+        assertThat(ctxParse.getValueProvider(), is(sameInstance(valueProvider)));
         assertThat(ctxParse.getHttpMessage(), is(sameInstance(msg)));
         assertThat(ctxParse.getPath(), is(equalTo("/path")));
         assertThat(ctxParse.getDepth(), is(equalTo(depth)));

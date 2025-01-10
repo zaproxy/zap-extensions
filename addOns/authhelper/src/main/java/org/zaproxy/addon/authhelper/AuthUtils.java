@@ -22,6 +22,7 @@ package org.zaproxy.addon.authhelper;
 import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -79,6 +80,7 @@ public class AuthUtils {
     public static final String AUTH_NO_PASSWORD_FIELD_STATS = "stats.auth.browser.nopasswordfield";
     public static final String AUTH_FOUND_FIELDS_STATS = "stats.auth.browser.foundfields";
     public static final String AUTH_SESSION_TOKEN_STATS_PREFIX = "stats.auth.sessiontoken.";
+    public static final String AUTH_SESSION_TOKENS_MAX = "stats.auth.sessiontokens.max";
     public static final String AUTH_BROWSER_PASSED_STATS = "stats.auth.browser.passed";
     public static final String AUTH_BROWSER_FAILED_STATS = "stats.auth.browser.failed";
 
@@ -108,7 +110,8 @@ public class AuthUtils {
      * These are session tokens that have been seen in responses but not yet seen in use. When they
      * are seen in use then they are removed.
      */
-    private static Map<String, SessionToken> knownTokenMap = new HashMap<>();
+    private static Map<String, SessionToken> knownTokenMap =
+            Collections.synchronizedMap(new HashMap<>());
 
     /**
      * The best verification request we have found for a context. There will only be a verification
@@ -143,10 +146,10 @@ public class AuthUtils {
                 inputElements.stream()
                         .filter(
                                 elem ->
-                                        "text".equalsIgnoreCase(elem.getAttribute("type"))
+                                        "text".equalsIgnoreCase(elem.getDomAttribute("type"))
                                                 || "email"
                                                         .equalsIgnoreCase(
-                                                                elem.getAttribute("type")))
+                                                                elem.getDomAttribute("type")))
                         .collect(Collectors.toList());
 
         if (!filteredList.isEmpty()) {
@@ -158,27 +161,27 @@ public class AuthUtils {
                             || attributeContains(we, "name", USERNAME_FIELD_INDICATORS)) {
                         LOGGER.debug(
                                 "Choosing 'best' user field: name={} id={}",
-                                we.getAttribute("name"),
-                                we.getAttribute("id"));
+                                we.getDomAttribute("name"),
+                                we.getDomAttribute("id"));
                         return we;
                     }
                     LOGGER.debug(
                             "Not yet choosing user field: name={} id={}",
-                            we.getAttribute("name"),
-                            we.getAttribute("id"));
+                            we.getDomAttribute("name"),
+                            we.getDomAttribute("id"));
                 }
             }
             LOGGER.debug(
                     "Choosing first user field: name={} id={}",
-                    filteredList.get(0).getAttribute("name"),
-                    filteredList.get(0).getAttribute("id"));
+                    filteredList.get(0).getDomAttribute("name"),
+                    filteredList.get(0).getDomAttribute("id"));
             return filteredList.get(0);
         }
         return null;
     }
 
     static boolean attributeContains(WebElement we, String attribute, String[] strings) {
-        String att = we.getAttribute(attribute);
+        String att = we.getDomAttribute(attribute);
         if (att == null) {
             return false;
         }
@@ -193,7 +196,7 @@ public class AuthUtils {
 
     static WebElement getPasswordField(List<WebElement> inputElements) {
         for (WebElement element : inputElements) {
-            if ("password".equalsIgnoreCase(element.getAttribute("type"))) {
+            if ("password".equalsIgnoreCase(element.getDomAttribute("type"))) {
                 return element;
             }
         }
@@ -656,6 +659,7 @@ public class AuthUtils {
 
     public static void recordSessionToken(SessionToken token) {
         knownTokenMap.put(token.getValue(), token);
+        Stats.setHighwaterMark(AUTH_SESSION_TOKENS_MAX, knownTokenMap.size());
     }
 
     public static SessionToken getSessionToken(String value) {
@@ -663,24 +667,21 @@ public class AuthUtils {
     }
 
     public static SessionToken containsSessionToken(String value) {
-        Optional<Entry<String, SessionToken>> entry =
-                knownTokenMap.entrySet().stream()
-                        .filter(m -> value.contains(m.getKey()))
-                        .findFirst();
+        Optional<Entry<String, SessionToken>> entry;
+        synchronized (knownTokenMap) {
+            entry =
+                    knownTokenMap.entrySet().stream()
+                            .filter(m -> value.contains(m.getKey()))
+                            .findFirst();
+        }
         if (entry.isPresent()) {
             return entry.get().getValue();
         }
         return null;
     }
 
-    public static void removeSessionToken(SessionToken token) {
-        Optional<Entry<String, SessionToken>> entry =
-                knownTokenMap.entrySet().stream()
-                        .filter(m -> m.getValue().equals(token))
-                        .findFirst();
-        if (entry.isPresent()) {
-            knownTokenMap.remove(token.getValue());
-        }
+    static void removeSessionToken(SessionToken token) {
+        knownTokenMap.remove(token.getValue());
     }
 
     public static void clean() {

@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URIException;
@@ -32,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 /**
  * Active scan rule which checks whether or not HTTPS content is also available via HTTP
@@ -42,12 +45,20 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin implements CommonActi
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanbeta.httpsashttp.";
 
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                                CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL));
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
+
     private static final int PLUGIN_ID = 10047;
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                    CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL);
 
     private static final Logger LOGGER = LogManager.getLogger(HttpsAsHttpScanRule.class);
 

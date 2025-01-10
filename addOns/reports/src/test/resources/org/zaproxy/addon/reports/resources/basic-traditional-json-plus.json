@@ -20,6 +20,7 @@
                     "desc": "<p>XSS Description</p>",
                     "instances":[ 
                         {
+                            "id": "-1",
                             "uri": "http://example.com/example_3",
                             "method": "GET",
                             "param": "Test Param",
@@ -32,6 +33,7 @@
                             "response-body": "Test Response Body"
                         },
                         {
+                            "id": "-1",
                             "uri": "http://example.com/example_3",
                             "method": "GET",
                             "param": "Test Param",

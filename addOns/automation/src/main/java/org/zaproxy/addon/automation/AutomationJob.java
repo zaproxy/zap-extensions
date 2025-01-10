@@ -49,6 +49,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
     private static final int ZERO_TESTS = 0;
 
     public enum Status {
+        NOT_ENABLED,
         NOT_STARTED,
         RUNNING,
         COMPLETED
@@ -62,6 +63,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
     private AutomationPlan plan;
     private long timeStarted;
     private long timeFinished;
+    private boolean enabled = true;
 
     public enum Order {
         RUN_FIRST,
@@ -121,6 +123,14 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     public String getSummary() {
         return EMPTY_SUMMARY;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public int addDefaultTests(AutomationProgress progress) {

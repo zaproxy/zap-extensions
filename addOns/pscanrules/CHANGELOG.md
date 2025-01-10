@@ -4,8 +4,37 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [62] - 2025-01-10
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Updated help with specific Category identifiers for use with the Custom Payloads add-on for rules:
+    - Application Error Disclosure
+    - Information Disclosure - Suspicious Comments
+    - Username Hash Found
+
+## [61] - 2024-09-24
+### Changed
+- Maintenance changes.
+- Rename Mac OSX salted SHA-1 in the Hash Disclosure scan rule to "Salted SHA-1", reduce the associated alerts to Low risk and Low confidence, to align with other SHA related patterns it will only be evaluated a Low Threshold. (Note such matches may indicate leaks related but not limited to: MacOS X, Oracle, Tiger-192, Haval-192) (Issue 8624).
+- The Insecure JSF ViewState now includes example alert functionality for documentation generation purposes (Issue 6119).
+- The Absence of Anti-CSRF Tokens scan rule now only considers GET requests at Low Threshold (Issue 7741).
+
+## [60] - 2024-09-02
 ### Changed
 - Clarified Missing Anti-clickjacking Header description.
+- Depend on Passive Scanner add-on to include it by default (Issue 7959).
+- Re-examine Cache-control Directives scan rule now ignores cache-control for POST method requests (Issue 8592).
+### Fixed
+- Polyfill scan rule running slowly.
+- Only scan text responses for:
+  - Hash Disclosure
+  - Private IP Disclosure
+  - Username Hash Found
+- Performance improvements for:
+  - Cross-Domain JavaScript Source File Inclusion.
+  - Cross-Domain Misconfiguration.
 
 ## [59] - 2024-07-24
 ### Added
@@ -549,6 +578,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[62]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v62
+[61]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v61
+[60]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v60
 [59]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v59
 [58]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v58
 [57]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v57

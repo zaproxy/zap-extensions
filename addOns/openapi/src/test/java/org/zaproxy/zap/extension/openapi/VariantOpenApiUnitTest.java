@@ -39,9 +39,9 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.DefaultValueProvider;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.zap.model.Context;
-import org.zaproxy.zap.model.DefaultValueGenerator;
 
 class VariantOpenApiUnitTest extends AbstractServerTest {
 
@@ -57,7 +57,7 @@ class VariantOpenApiUnitTest extends AbstractServerTest {
         ExtensionCommonlib extCommonlib =
                 mock(ExtensionCommonlib.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionCommonlib.class)).willReturn(extCommonlib);
-        given(extCommonlib.getValueGenerator()).willReturn(new DefaultValueGenerator());
+        given(extCommonlib.getValueProvider()).willReturn(new DefaultValueProvider());
         extensionOpenApi = new ExtensionOpenApi();
         extensionOpenApi.initModel(Model.getSingleton());
         Model.getSingleton().closeSession();

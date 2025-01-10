@@ -136,6 +136,9 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     protected static final ImageIcon WHITE_BALL_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/160.png")));
+    protected static final ImageIcon GREY_BALL_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/158.png")));
 
     private static final Logger LOGGER = LogManager.getLogger(AutomationPanel.class);
 

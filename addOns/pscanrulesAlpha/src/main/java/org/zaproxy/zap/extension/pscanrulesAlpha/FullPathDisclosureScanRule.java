@@ -82,27 +82,14 @@ public class FullPathDisclosureScanRule extends PluginPassiveScanner
         return ALERT_TAGS;
     }
 
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
     private AlertBuilder buildAlert(String evidence) {
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setRisk(Alert.RISK_LOW)
                 .setEvidence(evidence)
-                .setDescription(getDescription())
-                .setSolution(getSolution())
-                .setReference(getReference())
-                .setSolution(getSolution())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setWascId(13) // WASC-13 Information Leakage
                 .setCweId(209); // CWE-209: Generation of Error Message Containing Sensitive
         // Information

@@ -74,6 +74,9 @@ zapAddOn {
                 register("network") {
                     version.set(">= 0.3.0")
                 }
+                register("pscan") {
+                    version.set(">= 0.1.0 & < 1.0.0")
+                }
             }
         }
     }
@@ -82,6 +85,7 @@ zapAddOn {
 dependencies {
     zapAddOn("callhome")
     zapAddOn("network")
+    zapAddOn("pscan")
     zapAddOn("reports")
     zapAddOn("selenium")
     zapAddOn("spider")

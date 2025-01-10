@@ -1,0 +1,55 @@
+name: Generate Scan Policies from Policy Tags
+on:
+  schedule: # The start of every Friday
+    - cron: '0 0 * * 5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-policies:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+        path: zap-extensions
+        fetch-depth: 0
+    - name: Create Policies
+      run: |
+        # Run the ZAP script
+        docker run -v $(pwd):/zap/wrk/:rw --user root -t ghcr.io/zaproxy/zaproxy:nightly ./zap.sh -addoninstall ascanrulesAlpha -silent -script /zap/wrk/zap-extensions/.github/scripts/generateScanPolicies.js -cmd
+    - name: Attach Policies
+      uses: actions/upload-artifact@v4
+      with:
+        name: Policies
+        path: 'zap-extensions/addOns/scanpolicies/src/main/zapHomeFiles/policies/*.policy'
+    - name: Update Scan Policies
+      run: |
+        export BASE=$(pwd)
+        # Setup git details
+        export GITHUB_USER=zapbot
+        git config --global user.email "12745184+zapbot@users.noreply.github.com"
+        git config --global user.name $GITHUB_USER
+        export GITHUB_TOKEN=${{ secrets.ZAPBOT_TOKEN }}
+        BRANCH=scan-policies-updt
+        cd zap-extensions
+        SRC_BASE="zaproxy/zap-extensions@"$(git log -1 --format=format:%h)
+        git checkout -b $BRANCH
+        git remote add upstream https://github.com/zaproxy/zap-extensions.git
+        git fetch upstream
+        # Update the index to be sure git is aware of changes
+        git update-index -q --refresh
+        git add .
+        ## If there are changes: comment, commit, PR
+        if ! git diff-index --quiet HEAD --; then
+          ./gradlew :addOns:scanpolicies:updateChangelog --change="- Updated based on Rules' Policy Tag assignments."
+          git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
+          git add .
+          git commit -m "Update scan policies based on Tags" -m "Updates based on $SRC_BASE" --signoff
+          git push --set-upstream origin $BRANCH --force
+          gh pr create --fill
+        fi

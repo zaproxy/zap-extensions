@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -33,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.timing.TimingUtils;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
@@ -185,11 +188,21 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin
                 + SQL_ONE_LINE_COMMENT, // Param in WHERE clause.
     };
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION,
-                    CommonAlertTag.WSTG_V42_INPV_05_SQLI);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION,
+                                CommonAlertTag.WSTG_V42_INPV_05_SQLI));
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     /** for logging. */
     private static final Logger LOGGER = LogManager.getLogger(SqlInjectionPostgreScanRule.class);

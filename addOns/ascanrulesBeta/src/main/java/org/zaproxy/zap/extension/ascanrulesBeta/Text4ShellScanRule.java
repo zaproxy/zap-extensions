@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -41,11 +43,27 @@ public class Text4ShellScanRule extends AbstractAppParamPlugin implements Common
 
     private static final Logger LOGGER = LogManager.getLogger(Text4ShellScanRule.class);
     private static final String PREFIX = "ascanbeta.text4shell.";
-    private static final String CVE = "CVE-2022-42889";
+    protected static final String CVE = "CVE-2022-42889";
     private static final String[] ATTACK_PATTERNS = {
         "${url:UTF-8:http://{0}/bingo}", "${url:UTF-8:https://{0}/bingo}"
     };
     protected static final int ATTACK_PATTERN_COUNT = ATTACK_PATTERNS.length;
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                                CommonAlertTag.OWASP_2017_A09_VULN_COMP,
+                                CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ));
+        alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        CommonAlertTag.putCve(alertTags, CVE);
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public int getId() {
@@ -89,15 +107,7 @@ public class Text4ShellScanRule extends AbstractAppParamPlugin implements Common
 
     @Override
     public Map<String, String> getAlertTags() {
-        Map<String, String> alertTags =
-                new HashMap<>(
-                        CommonAlertTag.toMap(
-                                CommonAlertTag.OWASP_2021_A06_VULN_COMP,
-                                CommonAlertTag.OWASP_2017_A09_VULN_COMP,
-                                CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ));
-        alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
-        CommonAlertTag.putCve(alertTags, CVE);
-        return alertTags;
+        return ALERT_TAGS;
     }
 
     @Override

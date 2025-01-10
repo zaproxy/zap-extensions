@@ -4,8 +4,22 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.9.0] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [0.8.0] - 2024-09-24
 ### Added
 - Document the engine name in the help page.
+
+### Changed
+- Maintenance changes.
+- Update script templates:
+  - authentication/Authentication default template GraalJS.js - remove outdated example code.
+  - httpsender/AddZapHeader GraalJS.js - fix runtime error (Issue 8611) and update documentation.
+  - httpsender/HttpSender default template GraalJS.js - update documentation.
 
 ## [0.7.0] - 2024-05-07
 ### Changed
@@ -54,6 +68,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 First version.
 
+[0.9.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.9.0
+[0.8.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.8.0
 [0.7.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.5.0

@@ -45,7 +45,7 @@ class ExtensionClientZestTest {
     void setUp() {
         extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
 
         ExtensionZest extensionZest = mock(ExtensionZest.class);
         given(extensionLoader.getExtension(ExtensionZest.class)).willReturn(extensionZest);

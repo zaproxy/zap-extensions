@@ -12,9 +12,19 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/value-generator/")
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.29.0 & < 2.0.0")
+                }
+            }
+        }
     }
 }
 
 dependencies {
+    zapAddOn("commonlib")
+
     testImplementation(project(":testutils"))
 }

@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -33,6 +35,7 @@ import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.ComparableResponse;
 
 /**
@@ -47,11 +50,19 @@ public class GetForPostScanRule extends AbstractAppPlugin implements CommonActiv
 
     // The required similarity ratio to consider GET and POST responses to be the same.
     private static final double REQUIRED_SIMILARITY = 0.95;
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                    CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                                CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS));
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public int getId() {

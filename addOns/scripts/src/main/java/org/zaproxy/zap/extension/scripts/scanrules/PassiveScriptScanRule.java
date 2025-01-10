@@ -21,9 +21,8 @@ package org.zaproxy.zap.extension.scripts.scanrules;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import net.htmlparser.jericho.Source;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -31,11 +30,11 @@ import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class PassiveScriptScanRule extends PassiveScriptHelper {
 
-    private static final Logger LOGGER = LogManager.getLogger(PassiveScriptScanRule.class);
     private ExtensionScript extScript;
     private ScriptWrapper script;
     private CachedScriptInterfaces cachedScriptInterfaces;
@@ -59,17 +58,33 @@ public class PassiveScriptScanRule extends PassiveScriptHelper {
         }
     }
 
+    // Note: This method is called always on the same scan rule instance
+    // so should honour the threaded property of the script engine.
     @Override
     public boolean appliesToHistoryType(int historyType) {
         try {
             var s = cachedScriptInterfaces.getInterface(script, PassiveScript.class);
             if (s != null) {
-                return s.appliesToHistoryType(historyType);
+                return execute(() -> s.appliesToHistoryType(historyType));
             }
         } catch (Exception e) {
             getExtScript().handleScriptException(script, e);
         }
         return false;
+    }
+
+    private <R> R execute(Callable<R> action) throws Exception {
+        if (isSyncAccess()) {
+            synchronized (this) {
+                return action.call();
+            }
+        }
+        return action.call();
+    }
+
+    private boolean isSyncAccess() {
+        ScriptEngineWrapper engine = script.getEngine();
+        return engine != null && engine.isSingleThreaded();
     }
 
     @Override

@@ -165,6 +165,9 @@ public class AutomationAlertTest extends AbstractAutomationTest {
         boolean passIfAbsent = this.getData().getAction().equals(ACTION_PASS_IF_ABSENT);
         String key = getJob().getKeyAlertTestsResultData();
         JobResultData resultData = progress.getJobResultData(key);
+        if (resultData == null) {
+            return passIfAbsent;
+        }
         List<Alert> alerts =
                 resultData.getAllAlertData().stream()
                         .filter(t -> (t.getPluginId() == this.getData().getScanRuleId()))
@@ -188,52 +191,28 @@ public class AutomationAlertTest extends AbstractAutomationTest {
 
         for (Alert alert : alerts) {
 
-            if (matches(alertNamePattern, alert.getName(), passIfAbsent)) {
-                return false;
-            }
-
-            if (matches(urlPattern, alert.getUri(), passIfAbsent)) {
-                return false;
-            }
-
-            if (matches(methodPattern, alert.getMethod(), passIfAbsent)) {
-                return false;
-            }
-
-            if (matches(attackPattern, alert.getAttack(), passIfAbsent)) {
-                return false;
-            }
-
-            if (matches(paramPattern, alert.getParam(), passIfAbsent)) {
-                return false;
-            }
-
-            if (matches(evidencePattern, alert.getEvidence(), passIfAbsent)) {
-                return false;
-            }
-
-            if (matchesInt(confidence, alert.getConfidence(), passIfAbsent)) {
-                return false;
-            }
-
-            if (matchesInt(risk, alert.getRisk(), passIfAbsent)) {
-                return false;
-            }
-
-            if (matches(otherInfoPattern, alert.getOtherInfo(), passIfAbsent)) {
-                return false;
+            if (matches(alertNamePattern, alert.getName())
+                    && matches(urlPattern, alert.getUri())
+                    && matches(methodPattern, alert.getMethod())
+                    && matches(attackPattern, alert.getAttack())
+                    && matches(paramPattern, alert.getParam())
+                    && matches(evidencePattern, alert.getEvidence())
+                    && matchesInt(confidence, alert.getConfidence())
+                    && matchesInt(risk, alert.getRisk())
+                    && matches(otherInfoPattern, alert.getOtherInfo())) {
+                return !passIfAbsent;
             }
         }
 
-        return true;
+        return passIfAbsent;
     }
 
-    private static boolean matches(Pattern pattern, String value, boolean passIfAbsent) {
-        return pattern != null && pattern.matcher(value).matches() == passIfAbsent;
+    private static boolean matches(Pattern pattern, String value) {
+        return pattern == null || pattern.matcher(value).matches();
     }
 
-    private static boolean matchesInt(Integer setValue, Integer value, boolean passIfAbsent) {
-        return setValue != null && setValue.equals(value) == passIfAbsent;
+    private static boolean matchesInt(Integer setValue, Integer value) {
+        return setValue == null || setValue.equals(value);
     }
 
     @Override

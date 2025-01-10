@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,6 +45,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 /**
@@ -161,16 +164,23 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
      * same URL (in Attack mode, for instance) yielding new vulnerabilities via different random
      * file paths.
      */
-    private static final String RANDOM_ATTACK_PATH =
-            "/"
-                    + RandomStringUtils.random(5, RANDOM_PARAMETER_CHARS)
-                    + "/"
-                    + RandomStringUtils.random(5, RANDOM_PARAMETER_CHARS);
+    private static final String RANDOM_ATTACK_PATH = "/" + random(5) + "/" + random(5);
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+    private static String random(int count) {
+        return RandomStringUtils.secure().next(count, RANDOM_PARAMETER_CHARS);
+    }
+
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG));
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public int getId() {
@@ -645,7 +655,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin
                 .setEvidence(evidence);
     }
 
-    private Matcher matchStyles(String body) {
+    private static Matcher matchStyles(String body) {
         // remove all " and ' for proper matching url('somefile.png')
         String styleBody = body.replaceAll("['\"]", "");
         return STYLE_URL_LOAD.matcher(styleBody);

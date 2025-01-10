@@ -488,7 +488,7 @@ class ServerCertificatesOptionsPanel extends AbstractParamPanel {
                 file = Files.createTempFile(ZAP_ROOT_CA_NAME, ZAP_ROOT_CA_FILE_EXT);
                 writePem(file);
             } catch (IOException e) {
-                LOGGER.error("An error occured while creating the temporary file", e);
+                LOGGER.error("An error occurred while creating the temporary file", e);
                 return;
             }
 

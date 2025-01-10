@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.model.Tech;
@@ -60,7 +62,7 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin
 
     /** a random string (which remains constant across multiple runs, as long as Zap is not */
     static final String RANDOM_STRING =
-            RandomStringUtils.random(20, "abcdefghijklmnopqrstuvwxyz0123456789");
+            RandomStringUtils.secure().next(20, "abcdefghijklmnopqrstuvwxyz0123456789");
 
     private static final String ATTACK_PARAM =
             "?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input";
@@ -72,15 +74,18 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin
     private static final String NIX_PAYLOAD =
             PAYLOAD_BOILERPLATE.replace("<<<<COMMAND>>>>", "echo " + RANDOM_STRING);
     private static final String CVE = "CVE-2012-1823";
-    private static final Map<String, String> ALERT_TAGS = new HashMap<>();
+    private static final Map<String, String> ALERT_TAGS;
 
     static {
-        ALERT_TAGS.putAll(
-                CommonAlertTag.toMap(
-                        CommonAlertTag.OWASP_2021_A06_VULN_COMP,
-                        CommonAlertTag.OWASP_2017_A09_VULN_COMP,
-                        CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ));
-        CommonAlertTag.putCve(ALERT_TAGS, CVE);
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                                CommonAlertTag.OWASP_2017_A09_VULN_COMP,
+                                CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ));
+        CommonAlertTag.putCve(alertTags, CVE);
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
     @Override

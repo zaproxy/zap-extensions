@@ -30,16 +30,16 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.commonlib.internal.vulns.LegacyVulnerabilities;
 import org.zaproxy.addon.commonlib.ui.ProgressPanel;
-import org.zaproxy.zap.model.DefaultValueGenerator;
-import org.zaproxy.zap.model.ValueGenerator;
 
 public class ExtensionCommonlib extends ExtensionAdaptor {
 
-    private static final ValueGenerator DEFAULT_VALUE_GENERATOR = new DefaultValueGenerator();
+    private static final ValueProvider DEFAULT_VALUE_PROVIDER = new DefaultValueProvider();
 
-    private ValueGenerator valueGeneratorImpl;
+    @SuppressWarnings("removal")
+    private org.zaproxy.zap.model.ValueGenerator valueGeneratorImpl;
 
-    private final ValueGenerator valueGeneratorWrapper =
+    @SuppressWarnings({"removal", "deprecation"})
+    private final org.zaproxy.zap.model.ValueGenerator valueGeneratorWrapper =
             (URI uri,
                     String url,
                     String fieldId,
@@ -58,7 +58,38 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
                             envAttributes,
                             fieldAttributes);
                 }
-                return DEFAULT_VALUE_GENERATOR.getValue(
+                return DEFAULT_VALUE_PROVIDER.getValue(
+                        uri,
+                        url,
+                        fieldId,
+                        defaultValue,
+                        definedValues,
+                        envAttributes,
+                        fieldAttributes);
+            };
+
+    private ValueProvider valueProviderImpl;
+
+    private final ValueProvider valueProviderWrapper =
+            (URI uri,
+                    String url,
+                    String fieldId,
+                    String defaultValue,
+                    List<String> definedValues,
+                    Map<String, String> envAttributes,
+                    Map<String, String> fieldAttributes) -> {
+                var local = valueProviderImpl;
+                if (local != null) {
+                    return local.getValue(
+                            uri,
+                            url,
+                            fieldId,
+                            defaultValue,
+                            definedValues,
+                            envAttributes,
+                            fieldAttributes);
+                }
+                return DEFAULT_VALUE_PROVIDER.getValue(
                         uri,
                         url,
                         fieldId,
@@ -118,15 +149,35 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
      * Gets the value generator.
      *
      * @return the value generator, never {@code null}.
-     * @since 2.17.0
+     * @since 1.17.0
+     * @deprecated (1.29.0) Use {@link #getValueProvider()} instead, to stop using core interface.
      */
-    public ValueGenerator getValueGenerator() {
+    @SuppressWarnings("removal")
+    @Deprecated(since = "1.29.0", forRemoval = true)
+    public org.zaproxy.zap.model.ValueGenerator getValueGenerator() {
         return valueGeneratorWrapper;
     }
 
+    /**
+     * Gets the value generator.
+     *
+     * @return the value generator, never {@code null}.
+     * @since 1.29.0
+     */
+    public ValueProvider getValueProvider() {
+        return valueProviderWrapper;
+    }
+
     /** <strong>Note:</strong> Not part of the public API. */
-    public void setCustomValueGenerator(ValueGenerator generator) {
+    @Deprecated(forRemoval = true)
+    @SuppressWarnings("removal")
+    public void setCustomValueGenerator(org.zaproxy.zap.model.ValueGenerator generator) {
         this.valueGeneratorImpl = generator;
+    }
+
+    /** <strong>Note:</strong> Not part of the public API. */
+    public void setCustomValueProvider(ValueProvider provider) {
+        this.valueProviderImpl = provider;
     }
 
     private class SessionChangedListenerImpl implements SessionChangedListener {

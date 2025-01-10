@@ -19,7 +19,6 @@
  */
 package org.zaproxy.addon.pscan;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +27,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Plugin;
+import org.zaproxy.addon.pscan.internal.PassiveScannerOptions;
+import org.zaproxy.addon.pscan.internal.scanner.PassiveScanTask;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
@@ -36,9 +37,6 @@ import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.extension.api.ApiResponseList;
 import org.zaproxy.zap.extension.api.ApiResponseSet;
 import org.zaproxy.zap.extension.api.ApiView;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
-import org.zaproxy.zap.extension.pscan.PassiveScanParam;
-import org.zaproxy.zap.extension.pscan.PassiveScanTask;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.utils.ApiUtils;
@@ -75,15 +73,16 @@ public class PassiveScanApi extends ApiImplementor {
     private static final String PARAM_ALERT_THRESHOLD = "alertThreshold";
     private static final String PARAM_MAX_ALERTS = "maxAlerts";
 
-    private ExtensionPassiveScan extension;
-    private Method setPassiveScanEnabledMethod;
+    private final ExtensionPassiveScan2 extension;
+    private final PassiveScannersManager scannersManager;
 
     public PassiveScanApi() {
-        this(null);
+        this(null, null);
     }
 
-    public PassiveScanApi(ExtensionPassiveScan extension) {
+    public PassiveScanApi(ExtensionPassiveScan2 extension, PassiveScannersManager scannersManager) {
         this.extension = extension;
+        this.scannersManager = scannersManager;
 
         this.addApiAction(new ApiAction(ACTION_SET_ENABLED, new String[] {PARAM_ENABLED}));
         this.addApiAction(
@@ -107,23 +106,11 @@ public class PassiveScanApi extends ApiImplementor {
         this.addApiView(new ApiView(VIEW_SCANNERS));
         ApiView currentRule = new ApiView(VIEW_CURRENT_RULE);
         currentRule.setDeprecated(true);
-        // When generating the API clients messages is not initialised.
-        if (Constant.messages != null) {
-            currentRule.setDeprecatedDescription(
-                    Constant.messages.getString("pscan.api.view.currentRule.deprecated"));
-        }
+        currentRule.setDeprecatedDescription(
+                Constant.messages.getString("pscan.api.view.currentRule.deprecated"));
         this.addApiView(currentRule);
         this.addApiView(new ApiView(VIEW_CURRENT_TASKS));
         this.addApiView(new ApiView(VIEW_MAX_ALERTS_PER_RULE));
-
-        try {
-            setPassiveScanEnabledMethod =
-                    ExtensionPassiveScan.class.getDeclaredMethod(
-                            "setPassiveScanEnabled", boolean.class);
-            setPassiveScanEnabledMethod.setAccessible(true);
-        } catch (NoSuchMethodException | SecurityException e) {
-            LOGGER.debug("An error occurred while getting the method:", e);
-        }
     }
 
     @Override
@@ -137,14 +124,10 @@ public class PassiveScanApi extends ApiImplementor {
             case ACTION_SET_ENABLED:
                 boolean enabled = getParam(params, PARAM_ENABLED, false);
 
-                try {
-                    setPassiveScanEnabledMethod.invoke(extension, enabled);
-                } catch (Exception e) {
-                    throw new ApiException(ApiException.Type.INTERNAL_ERROR, e);
-                }
+                extension.setPassiveScanEnabled(enabled);
                 break;
             case ACTION_SET_SCAN_ONLY_IN_SCOPE:
-                getPassiveScanParam().setScanOnlyInScope(params.getBoolean(PARAM_ONLY_IN_SCOPE));
+                getOptions().setScanOnlyInScope(params.getBoolean(PARAM_ONLY_IN_SCOPE));
                 break;
             case ACTION_ENABLE_ALL_SCANNERS:
                 setAllPluginPassiveScannersEnabled(true);
@@ -175,16 +158,15 @@ public class PassiveScanApi extends ApiImplementor {
                 setPluginPassiveScannerAlertThreshold(pluginId, alertThreshold);
                 break;
             case ACTION_SET_MAX_ALERTS_PER_RULE:
-                getPassiveScanParam()
-                        .setMaxAlertsPerRule(ApiUtils.getIntParam(params, PARAM_MAX_ALERTS));
+                getOptions().setMaxAlertsPerRule(ApiUtils.getIntParam(params, PARAM_MAX_ALERTS));
                 break;
             case ACTION_DISABLE_ALL_TAGS:
-                getPassiveScanParam()
+                getOptions()
                         .getAutoTagScanners()
                         .forEach(tagScanner -> tagScanner.setEnabled(false));
                 break;
             case ACTION_ENABLE_ALL_TAGS:
-                getPassiveScanParam()
+                getOptions()
                         .getAutoTagScanners()
                         .forEach(tagScanner -> tagScanner.setEnabled(true));
                 break;
@@ -198,8 +180,8 @@ public class PassiveScanApi extends ApiImplementor {
         return ApiResponseElement.OK;
     }
 
-    private PassiveScanParam getPassiveScanParam() {
-        return extension.getModel().getOptionsParam().getParamSet(PassiveScanParam.class);
+    private PassiveScannerOptions getOptions() {
+        return extension.getModel().getOptionsParam().getParamSet(PassiveScannerOptions.class);
     }
 
     private void setPluginPassiveScannersEnabled(JSONObject params, boolean enabled)
@@ -226,7 +208,11 @@ public class PassiveScanApi extends ApiImplementor {
      * @return {@code true} if the scanner exist, {@code false} otherwise.
      */
     private boolean hasPluginPassiveScanner(int pluginId) {
-        return extension.getPluginPassiveScanner(pluginId) != null;
+        return getScanRule(pluginId) != null;
+    }
+
+    private PluginPassiveScanner getScanRule(int pluginId) {
+        return scannersManager.getScanRule(pluginId);
     }
 
     /**
@@ -235,10 +221,14 @@ public class PassiveScanApi extends ApiImplementor {
      * @param enabled {@code true} if the scanners should be enabled, {@code false} otherwise
      */
     private void setAllPluginPassiveScannersEnabled(boolean enabled) {
-        for (PluginPassiveScanner scanner : extension.getPluginPassiveScanners()) {
+        for (PluginPassiveScanner scanner : getPluginScanRules()) {
             scanner.setEnabled(enabled);
             scanner.save();
         }
+    }
+
+    private List<PluginPassiveScanner> getPluginScanRules() {
+        return scannersManager.getScanRules();
     }
 
     /**
@@ -249,7 +239,7 @@ public class PassiveScanApi extends ApiImplementor {
      * @param enabled {@code true} if the scanner should be enabled, {@code false} otherwise
      */
     private void setPluginPassiveScannerEnabled(int pluginId, boolean enabled) {
-        PluginPassiveScanner scanner = extension.getPluginPassiveScanner(pluginId);
+        PluginPassiveScanner scanner = getScanRule(pluginId);
         if (scanner != null) {
             scanner.setEnabled(enabled);
             scanner.save();
@@ -280,7 +270,7 @@ public class PassiveScanApi extends ApiImplementor {
      */
     private void setPluginPassiveScannerAlertThreshold(
             int pluginId, Plugin.AlertThreshold alertThreshold) {
-        PluginPassiveScanner scanner = extension.getPluginPassiveScanner(pluginId);
+        PluginPassiveScanner scanner = getScanRule(pluginId);
         if (scanner != null) {
             scanner.setAlertThreshold(alertThreshold);
             scanner.setEnabled(!Plugin.AlertThreshold.OFF.equals(alertThreshold));
@@ -296,13 +286,13 @@ public class PassiveScanApi extends ApiImplementor {
             case VIEW_SCAN_ONLY_IN_SCOPE:
                 result =
                         new ApiResponseElement(
-                                name, Boolean.toString(getPassiveScanParam().isScanOnlyInScope()));
+                                name, Boolean.toString(getOptions().isScanOnlyInScope()));
                 break;
             case VIEW_RECORDS_TO_SCAN:
                 result = new ApiResponseElement(name, String.valueOf(extension.getRecordsToScan()));
                 break;
             case VIEW_SCANNERS:
-                List<PluginPassiveScanner> scanners = extension.getPluginPassiveScanners();
+                List<PluginPassiveScanner> scanners = getPluginScanRules();
 
                 ApiResponseList resultList = new ApiResponseList(name);
                 for (PluginPassiveScanner scanner : scanners) {
@@ -331,7 +321,7 @@ public class PassiveScanApi extends ApiImplementor {
                 result =
                         new ApiResponseElement(
                                 VIEW_MAX_ALERTS_PER_RULE,
-                                Integer.toString(getPassiveScanParam().getMaxAlertsPerRule()));
+                                Integer.toString(getOptions().getMaxAlertsPerRule()));
                 break;
             default:
                 throw new ApiException(ApiException.Type.BAD_VIEW);
@@ -341,14 +331,16 @@ public class PassiveScanApi extends ApiImplementor {
 
     private ApiResponseSet<String> getResponseForTask(PassiveScanTask task, String name) {
         Map<String, String> map = new HashMap<>();
-        PassiveScanner scanner = task.getCurrentScanner();
-        map.put("name", scanner == null ? "" : scanner.getName());
-        map.put("url", task.getURI().toString());
-        long time = task.getStartTime();
-        if (time > 0) {
-            time = System.currentTimeMillis() - time;
+        if (task != null) {
+            PassiveScanner scanner = task.getCurrentScanner();
+            map.put("name", scanner == null ? "" : scanner.getName());
+            map.put("url", task.getURI().toString());
+            long time = task.getStartTime();
+            if (time > 0) {
+                time = System.currentTimeMillis() - time;
+            }
+            map.put("time", String.valueOf(time));
         }
-        map.put("time", String.valueOf(time));
         return new ApiResponseSet<>(name, map);
     }
 }

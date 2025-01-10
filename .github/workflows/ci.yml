@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [11, 17, 19]
+        java: [17, 19]
 
     steps:
       - uses: actions/checkout@v4
@@ -23,8 +23,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
-      - uses: gradle/actions/wrapper-validation@v3
-      - uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@0bdd871935719febd78681f197cd39af5b6e16a6 # v4.2.2
         with:
           gradle-home-cache-includes: |
             caches

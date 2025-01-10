@@ -84,13 +84,13 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner
 
     private AlertBuilder buildAlert(String xContentTypeOption) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setParam(HttpHeader.X_CONTENT_TYPE_OPTIONS)
-                .setOtherInfo(getOtherInfo())
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(xContentTypeOption)
                 .setCweId(getCweId())
                 .setWascId(getWascId());
@@ -104,26 +104,6 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
-    }
-
-    public int getRisk() {
-        return Alert.RISK_LOW;
-    }
-
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getOtherInfo() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     @Override

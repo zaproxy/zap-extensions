@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
 
 public class ComponentTableModel extends AbstractTableModel {
 

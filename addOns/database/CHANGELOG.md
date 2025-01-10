@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [0.7.0] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [0.6.0] - 2024-09-17
+### Added
+- Allow to access persistence manager of the database.
+
 ## [0.5.0] - 2024-08-05
 ### Changed
 - Dependency updates.
@@ -31,6 +39,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Provides the SQLite database engine for other add-ons to use.
 - Support for the ZAP permanent database.
 
+[0.7.0]: https://github.com/zaproxy/zap-extensions/releases/database-v0.7.0
+[0.6.0]: https://github.com/zaproxy/zap-extensions/releases/database-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/database-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/database-v0.4.0
 [0.3.0]: https://github.com/zaproxy/zap-extensions/releases/database-v0.3.0

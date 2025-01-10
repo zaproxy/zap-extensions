@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +44,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
@@ -55,11 +58,18 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin
         implements CommonActiveScanRuleInfo {
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                    CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                                CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE));
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     // TODO: for imported classes that we do not find in the classes folder, map to jar file names,
     // which we might find in WEB-INF/lib/ ?
@@ -277,7 +287,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin
      * @return
      * @throws URIException
      */
-    private URI getClassURI(URI hostURI, String classname) throws URIException {
+    private static URI getClassURI(URI hostURI, String classname) throws URIException {
         return new URI(
                 hostURI.getScheme()
                         + "://"
@@ -288,7 +298,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin
                 false);
     }
 
-    private URI getPropsFileURI(URI hostURI, String propsfilename) throws URIException {
+    private static URI getPropsFileURI(URI hostURI, String propsfilename) throws URIException {
         return new URI(
                 hostURI.getScheme()
                         + "://"

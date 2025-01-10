@@ -67,9 +67,7 @@
 				</h3>
 
 				<h4>
-					ZAP is supported by the <a
-						href="https://crashoverride.com/?zap=rep">Crash Override Open
-						Source Fellowship</a>
+					ZAP by <a href="https://checkmarx.com/">Checkmarx</a>
 				</h4>
 
 				<th:block th:if="${reportData.isIncludeSection('chart')}">
@@ -251,9 +249,9 @@
 								</th:block>
 							</th:block>
 							<th:block
-								th:if="${reportData.reportObjects.get('passiveScanData') != null}">
+								th:if="${reportData.reportObjects.get('passiveScanData2') != null}">
 								<th:block
-									th:each="pscan : ${reportData.reportObjects.get('passiveScanData').allRuleData}">
+									th:each="pscan : ${reportData.reportObjects.get('passiveScanData2').allRuleData}">
 									<tr th:if="${alertCountsByRule.get(pscan.id) == null}">
 										<td><a
 											th:href="${'https://www.zaproxy.org/docs/alerts/' + pscan.id + '/'}"

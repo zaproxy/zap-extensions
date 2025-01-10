@@ -264,6 +264,16 @@ class HttpSenderImplUnitTest {
                 .flatMap(response -> sendAndReceiveMethods().map(sm -> arguments(response, sm)));
     }
 
+    static Stream<Arguments> statusCodesForRetryAndSendAndReceiveMethods() {
+        var statusCodes = new ArrayList<Integer>();
+        for (int i = 200; i < 600; i++) {
+            statusCodes.add(i);
+        }
+        return statusCodes.stream()
+                .flatMap(
+                        statusCode -> sendAndReceiveMethods().map(sm -> arguments(statusCode, sm)));
+    }
+
     @Nested
     class Request {
 
@@ -570,6 +580,27 @@ class HttpSenderImplUnitTest {
             for (HttpMessage receivedMessage : server.getReceivedMessages()) {
                 assertRequest(receivedMessage, requestMethod, requestBody);
             }
+        }
+
+        @Timeout(10)
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#statusCodesForRetryAndSendAndReceiveMethods")
+        void shouldNotBeRetriedOnAnyStatusCode(int statusCode, SenderMethod method)
+                throws Exception {
+            // Given
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        msg.setResponseHeader(
+                                "HTTP/1.1 "
+                                        + statusCode
+                                        + "\r\nretry-after: 3600\r\ncontent-length: 13\r\n\r\n");
+                        msg.getResponseBody().setBody("Response Body");
+                    });
+            // When
+            httpSender.sendAndReceive(message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(1));
         }
 
         @Test

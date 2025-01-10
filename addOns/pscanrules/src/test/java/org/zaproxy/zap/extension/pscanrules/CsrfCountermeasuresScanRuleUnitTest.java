@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,10 +33,16 @@ import static org.mockito.Mockito.withSettings;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -98,12 +105,8 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(352)));
-        assertThat(wasc, is(equalTo(9)));
         assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
@@ -430,24 +433,30 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         assertEquals(1, alertsRaised.size());
     }
 
-    @Test
-    void shouldRaiseAlertWhenThresholdMediumAndMessageOutOfScope() throws URIException {
+    @ParameterizedTest
+    @EnumSource(
+            value = AlertThreshold.class,
+            names = {"MEDIUM", "LOW"})
+    void shouldRaiseAlertBelowHighThresholdAndOutOfScope(AlertThreshold threshold)
+            throws URIException {
         // Given
         rule.setCSRFIgnoreAttName("ignore");
         HttpMessage msg = createScopedMessage(false);
         // When
         rule.setConfig(new ZapXmlConfiguration());
-        rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        rule.setAlertThreshold(threshold);
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
     }
 
-    @Test
-    void shouldRaiseAlertWhenThresholdLowAndMessageOutOfScope() throws URIException {
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldRaiseAlertOnGetAtLowThresholdRegardlessOfScope(boolean isInScope)
+            throws URIException {
         // Given
         rule.setCSRFIgnoreAttName("ignore");
-        HttpMessage msg = createScopedMessage(false);
+        HttpMessage msg = createScopedMessage(isInScope, HttpRequestHeader.GET);
         // When
         rule.setConfig(new ZapXmlConfiguration());
         rule.setAlertThreshold(AlertThreshold.LOW);
@@ -456,12 +465,40 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         assertEquals(1, alertsRaised.size());
     }
 
+    private static Stream<Arguments> provideNonLowThresholdsAndBooleans() {
+        return Stream.of(
+                Arguments.of(AlertThreshold.MEDIUM, true),
+                Arguments.of(AlertThreshold.MEDIUM, false),
+                Arguments.of(AlertThreshold.HIGH, true),
+                Arguments.of(AlertThreshold.HIGH, false));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideNonLowThresholdsAndBooleans")
+    void shouldNotRaiseAlertOnGetAtNonLowThresholdRegardlessOfScope(
+            AlertThreshold threshold, boolean isInScope) throws URIException {
+        // Given
+        rule.setCSRFIgnoreAttName("ignore");
+        HttpMessage msg = createScopedMessage(isInScope, HttpRequestHeader.GET);
+        // When
+        rule.setConfig(new ZapXmlConfiguration());
+        rule.setAlertThreshold(threshold);
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
     void formWithoutAntiCsrfToken() {
         msg.setResponseBody(
                 "<html><head></head><body><form id=\"no_csrf_token\"><input type=\"text\"/><input type=\"submit\"/></form></body></html>");
     }
 
-    private HttpMessage createScopedMessage(boolean isInScope) throws URIException {
+    private static HttpMessage createScopedMessage(boolean isInScope) throws URIException {
+        return createScopedMessage(isInScope, HttpRequestHeader.POST);
+    }
+
+    private static HttpMessage createScopedMessage(boolean isInScope, String method)
+            throws URIException {
         HttpMessage newMsg =
                 new HttpMessage() {
                     @Override
@@ -470,6 +507,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
                     }
                 };
         newMsg.getRequestHeader().setURI(new URI("http://", "localhost", "/", ""));
+        newMsg.getRequestHeader().setMethod(method);
         newMsg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/html");
         newMsg.setResponseBody(
                 "<html><head></head><body>"

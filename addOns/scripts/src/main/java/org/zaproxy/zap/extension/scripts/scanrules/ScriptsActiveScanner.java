@@ -22,7 +22,10 @@ package org.zaproxy.zap.extension.scripts.scanrules;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -30,6 +33,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadataProvider;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -45,6 +49,9 @@ public class ScriptsActiveScanner extends ActiveScriptHelper {
     private ScriptsCache<ActiveScript> cachedScripts;
 
     private static final Logger LOGGER = LogManager.getLogger(ScriptsActiveScanner.class);
+    private static final Map<String, String> POLICY_ALERT_TAGS =
+            Stream.of(PolicyTag.values())
+                    .collect(Collectors.toUnmodifiableMap(k -> k.getTag(), v -> ""));
 
     /**
      * A {@code Set} containing the scripts that do not implement {@code ActiveScript2}, to show an
@@ -251,5 +258,10 @@ public class ScriptsActiveScanner extends ActiveScriptHelper {
     @Override
     public int getWascId() {
         return 0;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return POLICY_ALERT_TAGS;
     }
 }

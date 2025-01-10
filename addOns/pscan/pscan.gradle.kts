@@ -14,6 +14,21 @@ zapAddOn {
             baseName.set("org.zaproxy.addon.pscan.help%LC%.helpset")
             localeToken.set("%LC%")
         }
+
+        extensions {
+            register("org.zaproxy.addon.pscan.automation.ExtensionPscanAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.pscan.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">=0.42.0")
+                        }
+                    }
+                }
+            }
+        }
     }
 
     apiClientGen {
@@ -22,5 +37,8 @@ zapAddOn {
 }
 
 dependencies {
+    zapAddOn("automation")
+    zapAddOn("commonlib")
+
     testImplementation(project(":testutils"))
 }

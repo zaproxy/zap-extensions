@@ -21,13 +21,17 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
@@ -114,6 +118,33 @@ class ExponentialEntityExpansionScanRuleUnitTest
         rule.scan();
         // Then
         assertThat(countMessagesSent, is(0));
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(776)));
+        assertThat(wasc, is(equalTo(44)));
+        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_BUSL_09_UPLOAD_MALICIOUS_FILES.getTag()),
+                is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_BUSL_09_UPLOAD_MALICIOUS_FILES.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_BUSL_09_UPLOAD_MALICIOUS_FILES.getValue())));
     }
 
     private static class OkResponse extends NanoServerHandler {
