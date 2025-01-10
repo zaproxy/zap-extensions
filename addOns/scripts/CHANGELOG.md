@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [45.8.0] - 2025-01-10
 ### Added
 - Report indirect script errors while the Automation Framework plans are running (Issue 8586).
