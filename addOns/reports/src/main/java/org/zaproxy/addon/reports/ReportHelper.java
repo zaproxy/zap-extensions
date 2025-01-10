@@ -38,6 +38,8 @@ import org.zaproxy.zap.utils.XMLStringUtil;
 
 public class ReportHelper {
 
+    private static final String STATS_RESOURCE_PREFIX = ExtensionReports.PREFIX + ".report.";
+
     public static String getRiskString(int risk) {
         return Constant.messages.getString(ExtensionReports.PREFIX + ".report.risk." + risk);
     }
@@ -48,7 +50,11 @@ public class ReportHelper {
     }
 
     public static String getStatisticsString(String statsKey) {
-        return Constant.messages.getString(ExtensionReports.PREFIX + ".report." + statsKey);
+        String resourceKey = STATS_RESOURCE_PREFIX + statsKey;
+        if (Constant.messages.containsKey(resourceKey)) {
+            return Constant.messages.getString(resourceKey);
+        }
+        return statsKey;
     }
 
     public static String getHostForSite(String site) {

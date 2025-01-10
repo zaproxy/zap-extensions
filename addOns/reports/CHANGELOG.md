@@ -13,6 +13,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update automation job help.
 - Fields with default or missing values are omitted for the `report` job in saved Automation Framework plans.
 
+### Fixed
+- Do not log an error when the statistics do not have a resource message (Issue 8788).
+
 ## [0.34.0] - 2024-10-07
 ### Changed
 - Checkmarx rebrand.
