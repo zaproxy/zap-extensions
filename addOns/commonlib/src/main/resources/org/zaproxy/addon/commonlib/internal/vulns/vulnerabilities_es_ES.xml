@@ -435,8 +435,19 @@ Si no se eliminan los comentarios HTML/Script antes de enviarlos al entorno de p
 Los números de versión de software y los mensajes de error detallados (como los números de versión de ASP.NET) son ejemplos de configuraciones de servidor incorrectas. Esta información es muy útil para un atacante al proporcionar información muy detallada sobre el marco de trabajo, los lenguajes o las funciones que se encuentran prediseñadas que utiliza una aplicación web. La mayoría de las configuraciones de servidor predeterminadas proporcionan números de versión de software y mensajes de error detallados para fines de depuración y solución de problemas. Se pueden realizar cambios en la configuración para deshabilitar estas funciones, evitando mostrar esa información.
 
 Las páginas que brindan diferentes respuestas según la validez de los datos también pueden provocar una fuga de información; específicamente cuando se revelan datos considerados confidenciales como resultado del diseño de la aplicación web. Los ejemplos de datos confidenciales incluyen (pero no se limitan solamente a): números de cuenta, identificadores de usuario (número de licencia de conducir, número de pasaporte, números de seguridad social, etc) e información muy puntual del usuario (contraseñas, sesiones, direcciones). La fuga de información en este contexto se refiere a la exposición de datos clave del usuario considerados confidenciales o secretos, que no deben exponerse a la vista, ni siquiera para el usuario. Los números de tarjetas de crédito y otra información fuertemente regulada son excelentes ejemplos de datos de usuario que deben protegerse aún más contra la exposición o filtración, incluso con el cifrado adecuado y los controles de acceso ya implementados.</desc>
-	<solution>Compartimente su sistema para tener áreas "seguras" donde se puedan trazar límites de confianza sin ambigüedades. No permita que datos confidenciales salgan del límite de confianza y siempre tenga cuidado al interactuar con un compartimento fuera del área segura.</solution>
-	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
+	<solution>
+    * Have a clear definition of which information is considered sensitive and which isn't. Take privacy laws, regulatory requirements, and business needs into account.
+    * Store sensitive data only if you have to.
+    * Implement checks for sensitive information in your devops pipeline. Steps that could be taken include stripping developer comments, removing debugging information and sensitive logs, as well as making error messages less verbose.
+    * In situations where the sensitive information must be used, for instance, backend microservices, ensure trust boundaries are appropriately drawn. Example: set up an isolated, well secured kubernetes cluster with well configured access controls, then only grant access to authorized clients.
+    * In situations where error messages need to be returned to the user, use messages that are as generic as possible eg "invalid credentials" instead of "invalid username" or "invalid password".
+    * When using third party technologies, understand how the software works, its configuration, as well as security risks of using it. After understanding the technology, use only the features that you need and disable everything else.
+    * Detailed debug messages are sometimes necessary, for instance, when adding a new feature to an application. In this case, separate the development environment from the production one. Ensure appropriate access controls are implemented for the development environments.
+    * All sensitive data should be encrypted before storage. Ensure up-to-date and strong standard algorithms, protocols, and keys are in place; use proper key management.
+</solution>
+<reference>https://portswigger.net/web-security/information-disclosure</reference>
+<reference>https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure</reference>
+<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
 <vuln_items>wasc_14</vuln_items>
@@ -979,7 +990,17 @@ Hay dos tipos principales de procesos que requieren validación: control de fluj
 “Control de flujo” se refiere a procesos multi-pasos que requieren que cada paso sea ejecutado por el usuario en un orden específico. Cuando un atacante ejecuta el paso de manera incorrecta o fuera del orden, los controles de acceso pueden ser pasados por alto y puede ocurrir un error de integridad en la aplicación. Ejemplos de procesos multi-pasos incluyen transferencias bancarias, recupero de contraseñas, salida luego de hacer una compra e inicio de sesión para en una cuenta.
 
 “Lógica de negocio” se refiere al contexto en el cual un proceso será ejecutado bajo la orden de los requerimientos del negocio. Explotar la debilidad de una lógica de negocio requiere conocimiento acerca negocio; si no se necesita conocimiento para explotarlo, entonces muy probablemente no es una falla de lógica de negocio. Debido a esto, medidas de seguridad típicas como escaneos y revisión de códigos no encontrarán esta clase de debilidad. OWASP presenta una forma de enfoque para las pruebas en su Guía de Prueba.</desc>
-	<solution/>
+	<solution>Make sure that all operations within a multi-step process are either performed entirely or not at all. If one step fails, the changes made must be canceled. Fuzzing inputs is a good way to test for anomalies and to verify the results after the flow completes.
+
+Make sure the correct order of steps in the flow is enforced and that the order cannot be changed or bypassed by the user.
+
+Developers and testers must have a solid understanding of the domain that the application serves.
+
+Do not rely on implicit assumptions about how users or different application parts will behave.
+
+Identify all references to other code that interacts with each component and evaluate the possible side-effects if a malicious actor manipulates these dependencies in unexpected ways.
+
+Maintain clear code, design documents, and data flow diagrams for all transactions and workflows, noting any assumptions made at each stage and what the expected behavior is.</solution>
 	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
 	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>

@@ -438,8 +438,19 @@ Failure to scrub HTML/Script comments prior to a push to the production environm
 Software version numbers and verbose error messages (such as ASP.NET version numbers) are examples of improper server configurations. This information is useful to an attacker by providing detailed insight as to the framework, languages, or pre-built functions being utilized by a web application. Most default server configurations provide software version numbers and verbose error messages for debugging and troubleshooting purposes. Configuration changes can be made to disable these features, preventing the display of this information.
 
 Pages that provide different responses based on the validity of the data can also lead to Information Leakage; specifically when data deemed confidential is being revealed as a result of the web application's design. Examples of sensitive data includes (but is not limited to): account numbers, user identifiers (Drivers license number, Passport number, Social Security Numbers, etc.) and user-specific information (passwords, sessions, addresses). Information Leakage in this context deals with exposure of key user data deemed confidential, or secret, that should not be exposed in plain view, even to the user. Credit card numbers and other heavily regulated information are prime examples of user data that needs to be further protected from exposure or leakage even with proper encryption and access controls already in place.</desc>
-	<solution>Compartmentalize your system to have "safe" areas where trust boundaries can be unambiguously drawn. Sta niet toe dat gevoelige gegevens buiten de betrouwbaarheidslimiet vallen en wees altijd op de hoogte van de interface met een compartiment buiten de veilige zone.</solution>
-	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
+	<solution>
+    * Have a clear definition of which information is considered sensitive and which isn't. Take privacy laws, regulatory requirements, and business needs into account.
+    * Store sensitive data only if you have to.
+    * Implement checks for sensitive information in your devops pipeline. Steps that could be taken include stripping developer comments, removing debugging information and sensitive logs, as well as making error messages less verbose.
+    * In situations where the sensitive information must be used, for instance, backend microservices, ensure trust boundaries are appropriately drawn. Example: set up an isolated, well secured kubernetes cluster with well configured access controls, then only grant access to authorized clients.
+    * In situations where error messages need to be returned to the user, use messages that are as generic as possible eg "invalid credentials" instead of "invalid username" or "invalid password".
+    * When using third party technologies, understand how the software works, its configuration, as well as security risks of using it. After understanding the technology, use only the features that you need and disable everything else.
+    * Detailed debug messages are sometimes necessary, for instance, when adding a new feature to an application. In this case, separate the development environment from the production one. Ensure appropriate access controls are implemented for the development environments.
+    * All sensitive data should be encrypted before storage. Ensure up-to-date and strong standard algorithms, protocols, and keys are in place; use proper key management.
+</solution>
+<reference>https://portswigger.net/web-security/information-disclosure</reference>
+<reference>https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure</reference>
+<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
 <vuln_items>wasc_14</vuln_items>
@@ -985,7 +996,17 @@ There are two main types of processes that require validation: flow control and 
 "Flow control" refers to multi-step processes that require each step to be performed in a specific order by the user. When an attacker performs the step incorrectly or out of order, the access controls may be bypassed and an application integrity error may occur. Examples of multi-step processes include wire transfer, password recovery, purchase checkout, and account sign-up.
 
 "Business logic" refers to the context in which a process will execute as governed by the business requirements. Exploiting a business logic weakness requires knowledge of the business; if no knowledge is needed to exploit it, then most likely it isn't a business logic flaw. Due to this, typical security measures such as scans and code review will not find this class of weakness. One approach to testing is offered by OWASP in their Testing Guide.</desc>
-	<solution/>
+	<solution>Make sure that all operations within a multi-step process are either performed entirely or not at all. If one step fails, the changes made must be canceled. Fuzzing inputs is a good way to test for anomalies and to verify the results after the flow completes.
+
+Make sure the correct order of steps in the flow is enforced and that the order cannot be changed or bypassed by the user.
+
+Developers and testers must have a solid understanding of the domain that the application serves.
+
+Do not rely on implicit assumptions about how users or different application parts will behave.
+
+Identify all references to other code that interacts with each component and evaluate the possible side-effects if a malicious actor manipulates these dependencies in unexpected ways.
+
+Maintain clear code, design documents, and data flow diagrams for all transactions and workflows, noting any assumptions made at each stage and what the expected behavior is.</solution>
 	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
 	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>

@@ -49,9 +49,10 @@ Skips responses that contain ISO control characters (those which are likely bina
 At HIGH Threshold don’t alert on HTTP 500 (but do for other error patterns). Also, such known error strings are much less likely to be relevant in static pages like JS / CSS so these files are only scanned at LOW threshold.<br>
 For Internal Server Error (HTTP 500) the Alert is set to Low risk and in other case it is set to Medium risk.
 
-<p><strong>Примечание.</strong> Если установлен дополнительный модуль Custom Payloads, вы можете добавить свои собственные строки ошибок приложения (полезные данные) на панели параметров Custom Payloads.  
-Их также будут искать в ответах, поскольку они пассивно сканируются.  Имейте в виду, что чем больше количество полезных нагрузок, тем больше
-количество времени, необходимое для пассивного сканирования. 
+<p><strong>Note:</strong> If the Custom Payloads add-on is installed you can add your own Application Error strings (payloads) in the Custom Payloads options panel. 
+Их также будут искать в ответах, поскольку они пассивно сканируются.  Keep in mind that the greater the number of payloads the greater the 
+amount of time needed to passively scan.<br>
+The Custom Payloads category for this rule is: <code>Application-Errors</code>.
 <p>Также можно добавить шаблоны в файл <code>xml/application_errors.xml</code> в пользовательском каталоге ZAP. <br>
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ApplicationErrorScanRule.java">ApplicationErrorScanRule.java</a>
@@ -310,7 +311,8 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10025/">10025</a>.
 <h2 id="id-10027">Information Disclosure: Suspicious Comments</h2>
 Analyzes web content to identify comments which contain potentially sensitive details. Which may lead to 
 further attack or exposure of unintended data.
-<p><strong>Note:</strong> The strings to look for can be extended by using the Custom Payloads addon.
+<p><strong>Note:</strong> The strings to look for can be extended by using the Custom Payloads add-on.<br>
+The Custom Payloads category for this rule is: <code>Suspicious-Comments</code>.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InformationDisclosureSuspiciousCommentsScanRule.java">InformationDisclosureSuspiciousCommentsScanRule.java</a>
 <br>
@@ -506,9 +508,10 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10043/">10043</a>.
 
 <h2 id="id-10057">Username Hash Found</h2>
 If any context contains defined users this scan rule checks all responses for the presence of hashed values representing those usernames.
-<p><strong>Note:</strong> If the Custom Payloads addon is installed you can add your own Username strings (payloads) in the Custom Payloads options panel. 
+<p><strong>Note:</strong> If the Custom Payloads add-on is installed you can add your own Username strings (payloads) in the Custom Payloads options panel. 
 They will also be hashed and searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the 
 amount of time needed to passively scan. (The default payloads are "Admin" and "admin".)<br>
+The Custom Payloads category for this rule is: <code>Username-Idor</code>.<br>
 <p>Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact.
 <p>
 This scan rule will only analyze text responses. 

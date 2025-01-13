@@ -8,7 +8,9 @@ Automation Framework
 <BODY>
 <H1>Автоматизация Фреймворк </H1>
 Это дополнение обеспечивает структуру, которая позволяет автоматизировать ZAP простым и гибким способом. 
-<p>
+
+<H3><a name="command-line-options">Command Line Options</a></H3>
+
 Он предоставляет следующие параметры командной строки: 
 <ul>
 <li>-autorun &lt;source&gt;		Run the automation jobs specified in the file or from the URL.
@@ -17,14 +19,17 @@ Automation Framework
 <li>-autogenconf &lt;filename&gt; Сгенерировать файл автоматизации шаблона с использованием текущей конфигурации. 
 </ul>
 
-Если параметр <code> -autorun </code> используется с параметром ZAP <code> -cmd </code>, тогда значение выхода ZAP будет установлено следующим образом:  
+<H3><a name="exit-codes">Exit Codes</a></H3>
+If the <code>-autorun</code> option is used with the ZAP <code>-cmd</code> option then the ZAP exit value will be set by default as follows: 
 <ul>
 <li>0 - план выполнен успешно, ошибок и предупреждений нет. 
 <li>1 - План сообщил об одной или нескольких ошибках 
 <li>2 - План не сообщил об ошибках, кроме одного или нескольких предупреждений. 
 </ul>
-Завершится ли план после обнаружения ошибок или предупреждений, будет зависеть от настроек, используемых в <a href="environment.html"> среде </a>. 
-<p>
+These values can be overridden by the <a href="job-exitstatus.html">exitStatus</a> job.<br>
+Whether the plan completed after encountering errors or warnings will depend on the settings used in the <a href="environment.html">environment</a>.
+
+<H3><a name="usage">Usage</a></H3>
 Чтобы использовать среду автоматизации: 
 <ol>
 <li>Создайте файл автоматизации шаблона, используя один из параметров командной строки <code> -autogen * </code> 
@@ -32,20 +37,22 @@ Automation Framework
 <li>Запустите файл с помощью параметра командной строки <code> -autorun </code>, например. <code> ./zap.sh -cmd -autorun config.yaml </code> 
 </ol>
 
+<strong>Note:</strong> The Jobs are executed in the order in which they appear (top to bottom) within the Plan.
+<p>
 В большинстве случаев рекомендуется также использовать параметр командной строки <code> -cmd </code>, чтобы рабочий стол ZAP не отображался.
 и ZAP завершает работу, как только завершит создание или выполнение заданий, определенных в файле. 
 Однако вы можете запускать задания Automation Framework с помощью рабочего стола ZAP, чтобы помочь вам отладить проблемы. 
 
-<H2>Аутентификация</H2>
+<H2><a name="authentication">Аутентификация</a></H2>
 The Automation Framework supports all of the <a href="authentication.html">authentication</a> mechanisms supported by ZAP.
 
-<H2>GUI  (Графический Интерфейс)</H2>
+<H2><a name="gui">GUI  (Графический Интерфейс)</a></H2>
 <a href="gui.html"> GUI </a> находится в стадии разработки и предоставляет постоянно расширяющийся набор функций. 
 
-<H2>Options</H2>
+<H2><a name="options">Options</a></H2>
 The <a href="options.html">Automation Options</a> screen allows you to configure specific options.
 
-<H2>API</H2>
+<H2><a name="api">API</a></H2>
 The following API endpoints are provided by this add-on:
 <ul>
 <li>Действие: runPlan (filePath) - загружает и асинхронно запускает план в указанном файле, возвращая planId </li>
@@ -54,21 +61,34 @@ planProgress (planId) - возвращает сведения о прогрес�
 </ul>
 If the ZAP desktop is being used then the plan will also be shown in the GUI to make it easier to diagnose any problems.
 
-<H2>Environment</H2>
+<H2><a name="environment">Environment</a></H2>
 The <a href="environment.html">environment</a> section of the file defines the applications which the rest of the jobs can act on.
 
-<H2>File Paths</H2>
+<H2><a name="file-paths">File Paths</a></H2>
 All file and directory paths can either be absolute or relative to the directory containing the plan. 
 Relative paths are recommended for portability.
 
-<H2>Jobs</H2>
+<H2><a name="jobs">Jobs</a></H2>
+The jobs can be enabled/disabled through the GUI and the automation plan, with the <code>enabled</code> flag. Jobs are enabled by default.
+<p>
 The following automation jobs are supported by this add-on:
 <ul>
+<li><a href="job-ascanconfig.html">activeScan-config</a> - configures the active scanner</li>
+<li><a href="job-ascanpolicy.html">activeScan-policy</a> - creates an active policy</li>
 <li><a href="job-addons.html">addOns</a> - add-on management, now deprecated</li>
 <li><a href="job-delay.html"> delay </a> - приостанавливает выполнение плана на указанный период времени или выполняется определенное условие </li>
 <li><a href="job-requestor.html">requestor</a> - crafts specific requests to send отправить по соответствующим целям</li>
 <li><a href="job-ascan.html">activeScan</a> - runs the active scanner</li>
+<li><a href="job-exitstatus.html">exitStatus</a> - sets ZAP's exit code based on scan results</li>
 </ul>
+
+<H3>Importance of Job Order</H3>
+The order of jobs is relevant and important. For example: 
+<ul>
+  <li>there is no point putting a passiveScan-wait job before any sort of spidering or importing</li>
+  <li>configuring an alertFilter job after alerts have been generated by passive or active scanning will have no effect on the Alerts that were raised by those components in earlier jobs</li>
+</ul>>
+
 <p>
 <a href="tests.html"> Рабочие тесты </a> могут быть добавлены к заданиям, чтобы проверить, что задания выполняются должным образом. 
 <p>
