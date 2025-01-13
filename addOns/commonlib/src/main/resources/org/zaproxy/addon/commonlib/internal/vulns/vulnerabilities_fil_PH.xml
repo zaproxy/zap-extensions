@@ -436,8 +436,19 @@ Kabiguan sa pagkuskus sa HTML/Script na mga komento bago sa isang tulak patungon
 ANg software na bersyon ng mga numero at verbose na maling mga mensahe (tulad ng ASP.NET na mga numero ng bersyon) ay mga halimbawa sa maling server na mga kumpigurasyon. Ang impormasyon na ito ay kapaki-pakinabang sa isang umatake sa pamamagitan ng detalyadong kabatiran sa framework, mga wika, o pre-built na mga function na napapakinabangan ng isang aplikasyon sa web. Karamihan sa default na server na mga kumpigurasyon ay nagbibigay ng software bersyon ng mga numero at verbose na maling mga mensahe para sa pagde-debug at paglutas na mga layunin. Kumpigurasyon ay nagbabago ay maaaring gawin na hindi paganahin ang mga tampok na ito, upang mapigilan ang pagdispley sa impormasyon na ito.
 
 Mga pahina na nagbibigay ng iba't ibang mga tugon batay sa kabuluhan ng datos ay maaari ring humantong sa pagtagas ng impormasyon; lalo na kapag ang datos ay itinuturing na kumpidensyal ay inihayag bilang resulta ng disenyo ng aplikasyon ng web. Mga halimbawa sa sensitibong datos ay kabilang (ngunit hindi limitado sa): mga numero ng account, mga pagkakilanlan ng gumagamit (Numero ng lisensya ng drayber, numero ng passport, mga numero sa social security, atbp.) at gumagamit-partikular na impormasyon (mga password, mga sesyon, mga tirahan). Pagtagas ng impormasyon sa kontekstong ito ay tumatakay sa pagkalantad ng pangunahing gumagamit ng datos na itinuturing na kumpidensyal, o lihim, na dapat hindi nakalantad sa simpleng pananaw, maging ang gumagamit. Ang mga numero ng credit card at iba pang mabigat na regulated na impormasyon ay pangunahing halimbawa ng gumagamit ng datos na nangangailangan ng karagdagang maprotektahan mula sa exposure o pagtagas kahit na may wastong encrypsyon at pagpasok ng mga kontrol na nasa lugar na.</desc>
-	<solution>Paghiwa-hiwalayin ang iyong sistema na magkaroon ng "ligtas" na lugar na kung saan ang mga hangganan ng tiwala ay hindi magagalaw o makukuha ng iba. Huwag payagan ang mga sensitibong datos na mag punta sa labas ng pinagkaktiwalaang lugar o lalagyanan at kaialngang lagi ay maging maingat lalo na sa pag interface sa mga kasama sa labas ng ligtas na lalagyan o lugar.</solution>
-	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
+	<solution>
+    * Have a clear definition of which information is considered sensitive and which isn't. Take privacy laws, regulatory requirements, and business needs into account.
+    * Store sensitive data only if you have to.
+    * Implement checks for sensitive information in your devops pipeline. Steps that could be taken include stripping developer comments, removing debugging information and sensitive logs, as well as making error messages less verbose.
+    * In situations where the sensitive information must be used, for instance, backend microservices, ensure trust boundaries are appropriately drawn. Example: set up an isolated, well secured kubernetes cluster with well configured access controls, then only grant access to authorized clients.
+    * In situations where error messages need to be returned to the user, use messages that are as generic as possible eg "invalid credentials" instead of "invalid username" or "invalid password".
+    * When using third party technologies, understand how the software works, its configuration, as well as security risks of using it. After understanding the technology, use only the features that you need and disable everything else.
+    * Detailed debug messages are sometimes necessary, for instance, when adding a new feature to an application. In this case, separate the development environment from the production one. Ensure appropriate access controls are implemented for the development environments.
+    * All sensitive data should be encrypted before storage. Ensure up-to-date and strong standard algorithms, protocols, and keys are in place; use proper key management.
+</solution>
+<reference>https://portswigger.net/web-security/information-disclosure</reference>
+<reference>https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure</reference>
+<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
 <vuln_items>wasc_14</vuln_items>
@@ -982,7 +993,17 @@ Mayroong dalawang pangunahing uri ng mga proseso na nangangailangan ng pagpapatu
 Ang "kontrol ng daloy" ay tumutukoy sa maraming-hakbang na mga proseso na kinakailangang ang bawat hakbang ay maisagawa sa isang partikular na pagkakasunud-sunod ng gumagamit. Kapag ang isang taga-atake ay nagsagawa ng hindi tamang hakbang o wala sa pagkasunod-sunod, ang mga kontrol ng access ay maaaring na-bypass at isang kamalian sa integridad ng aplikasyon ang maaaring mangyari. Mga halimbawa ng maramihang-hakbang na mga proseso ay kinabibilangan ng wire transfer, pagrekober ng password, checkout ng purchase, at pag-sign-up ng account.
 
 "Lohika ng negosyo" ay tumutukoy sa konteksto kung saan ang isang proseso ay magsasagawa ayon sa pinamamahalaan ng mga kinakailangan sa negosyo. Ang pagsasamantala sa kahinaan ng lohika ng negosyo ay nangangailangan ng kaalaman sa negosyo; kung walang kinakailangang kaalaman para pagsamantalahan ito, malamang na hindi ito isang kapintasan ng lohika ng negosyo. Dahil dito, ang tipikal na mga hakbang ng seguridad tulad ng pag-scan at pagsusuri ng code ay hindi makikita ang ganitong klase ng kahinaan. Isang paraan sa pagsusuri ay inaalok ng OWASP sa kanilang Gabay sa Pagsusuri.</desc>
-	<solution/>
+	<solution>Make sure that all operations within a multi-step process are either performed entirely or not at all. If one step fails, the changes made must be canceled. Fuzzing inputs is a good way to test for anomalies and to verify the results after the flow completes.
+
+Make sure the correct order of steps in the flow is enforced and that the order cannot be changed or bypassed by the user.
+
+Developers and testers must have a solid understanding of the domain that the application serves.
+
+Do not rely on implicit assumptions about how users or different application parts will behave.
+
+Identify all references to other code that interacts with each component and evaluate the possible side-effects if a malicious actor manipulates these dependencies in unexpected ways.
+
+Maintain clear code, design documents, and data flow diagrams for all transactions and workflows, noting any assumptions made at each stage and what the expected behavior is.</solution>
 	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
 	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>

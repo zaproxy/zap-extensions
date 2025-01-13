@@ -154,8 +154,10 @@ ELMAH 扫描规则以基于 Microsoft 的技术为目标： IIS、Windows、ASP 
 最初包含的有效负载基于汉诺-博克（Hanno Böck）的<a href="https://github.com/hannob/snallygaster">Snallygaster</a>。
 此类有效负载通过检查响应代码和内容进行验证。 如果响应代码为 200（OK），则会执行额外的内容检查，以提高警报的可信度。
 如果响应代码为 401（未授权）或 403（禁止）或内容检查不成功，则会以较低的置信度（低阈值）发出警报。
-<strong>注意：</strong>如果安装了自定义有效负载插件，则可以在自定义有效负载选项面板中添加自己的隐藏文件路径（有效负载）。 
-对于自定义有效负载，只检查响应状态代码。 如果需要包含内容检查，也可以将有效负载添加到 ZAP用户目录中的<code>json/hidden_files.json</code>文件中添加有效负载（在这种情况下，它们将被视为包含的有效负载）。
+<strong>Note:</strong> If the Custom Payloads add-on is installed you can add your own hidden file paths (payloads) in the Custom Payloads options panel. 
+<br>
+The Custom Payloads category for this rule is: <code>Hidden-File</code>.<br>
+For custom payloads only the response status code is checked. 如果需要包含内容检查，也可以将有效负载添加到 ZAP用户目录中的<code>json/hidden_files.json</code>文件中添加有效负载（在这种情况下，它们将被视为包含的有效负载）。
 <p>
 下面介绍 JSON 条目的字段。
 <pre><code>
@@ -388,8 +390,10 @@ trace.axd 扫描规则的目标是基于 Microsoft 的技术： IIS、Windows、
 警报 ID: <a href="https://www.zaproxy.org/docs/alerts/40029/">40029</a>.
 
 <h2 id="id-10104">用户代理模糊器 (Fuzzer)</h2>
-此活动扫描规则根据模糊用户代理检查响应的差异（例如： 移动网站，作为搜索引擎爬虫访问）。 该规则将响应状态代码和响应正文的哈希代码与原始响应进行比较。
-<strong>注意：</strong>如果安装了自定义负载插件，则可以在自定义负载选项面板中添加自己的用户代理字符串（负载）。
+此活动扫描规则根据模糊用户代理检查响应的差异（例如： 移动网站，作为搜索引擎爬虫访问）。 The rule compares the response statuscode and the hashcode of the response body with the original response.<br>
+<strong>Note:</strong> If the Custom Payloads add-on is installed you can add your own User Agent strings (payloads) in the Custom Payloads options panel.
+<br>
+The Custom Payloads category for this rule is: <code>User-Agent</code>.
 <p>
 最新代码: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/UserAgentScanRule.java">UserAgentScanRule.java</a>
 <br>
