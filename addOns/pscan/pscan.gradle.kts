@@ -36,6 +36,13 @@ zapAddOn {
     }
 }
 
+crowdin {
+    configuration {
+        tokens.put("%messagesPath%", "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/")
+        tokens.put("%helpPath%", "org/zaproxy/addon/${zapAddOn.addOnId.get()}/")
+    }
+}
+
 dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
