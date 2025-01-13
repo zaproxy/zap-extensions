@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Replace usage of CWE-200 for the Insecure HTTP Method scan rule (Issue 8714).
 
+### Fixed
+- Address potential/theoretical reDoS issue in the Insecure HTTP Method scan rule.
+
 ## [57] - 2025-01-15
 ### Changed
 - Update minimum ZAP version to 2.16.0.
