@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Address malformed HTML in the help.
+- Correct default value of `threadPerHost` property of the `activeScan-config` job's help.
 
 ## [0.44.0] - 2025-01-09
 ### Added
