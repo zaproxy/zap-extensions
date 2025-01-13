@@ -19,7 +19,7 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 dependencies {
-    compileOnly("org.zaproxy:zap:2.16.0-SNAPSHOT")
+    compileOnly("org.zaproxy:zap:2.16.0")
     implementation(project(":addOns:network"))
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
 
