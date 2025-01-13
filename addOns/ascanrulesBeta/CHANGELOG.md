@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Address exception when scanning a message without path with Possible Username Enumeration scan rule.
 - The WSTG alert tags on the HTTP Only Site scan rule.
+- Address potential/theoretical reDoS issue in the Insecure HTTP Method scan rule.
 
 ### Added
 - Standardized Scan Policy related alert tags on various rules.
