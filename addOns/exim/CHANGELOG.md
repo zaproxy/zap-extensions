@@ -31,7 +31,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Count invalid messages as tasks done toward progress when importing HARs.
 
 ## [0.11.0] - 2024-09-24
-
 ### Changed
 - Leverage Jackson library from the Common Library add-on.
 - Depend on newer version of Common Library add-on.
