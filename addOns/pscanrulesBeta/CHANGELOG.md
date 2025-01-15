@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [42] - 2025-01-15
 ### Changed
 - Update minimum ZAP version to 2.16.0.
 - Updated help with specific Category identifier for use with the Custom Payloads add-on for the "Dangerous JS Functions" rule.
@@ -348,6 +348,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[42]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v39
