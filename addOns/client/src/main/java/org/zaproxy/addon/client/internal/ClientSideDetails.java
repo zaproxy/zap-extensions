@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client.internal;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
@@ -32,7 +33,7 @@ public class ClientSideDetails {
     private boolean storage;
     private boolean redirect;
 
-    private Set<ClientSideComponent> components = new HashSet<>();
+    private Set<ClientSideComponent> components = Collections.synchronizedSet(new HashSet<>());
 
     public ClientSideDetails(String name, String url, boolean visited, boolean storage) {
         this.name = name;
