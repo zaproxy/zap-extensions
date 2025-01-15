@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [57] - 2025-01-15
 ### Changed
 - Update minimum ZAP version to 2.16.0.
 - The following scan rules now use more specific CWE IDs:
@@ -557,6 +557,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[57]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v57
 [56]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v56
 [55]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v54
