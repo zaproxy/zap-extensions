@@ -503,7 +503,7 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
     }
 
     @Test
-    void shouldNotRaiseAlertOnTimeStampInJavascriptFilesAtHighThreshold() throws Exception {
+    void shouldNotRaiseAlertOnTimeStampInJavaScriptFilesAtHighThreshold() throws Exception {
         // Given
         Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
         String strTestDate = String.valueOf(testDate.getEpochSecond());

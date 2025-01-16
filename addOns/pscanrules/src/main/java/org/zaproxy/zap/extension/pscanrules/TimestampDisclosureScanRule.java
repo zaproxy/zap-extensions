@@ -129,7 +129,6 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner
             return;
         }
 
-        LOGGER.debug("Checking message {} for timestamps", msg.getRequestHeader().getURI());
         List<HttpHeaderField> responseparts = new ArrayList<>();
         msg.getResponseHeader().getHeaders().stream()
                 .filter(header -> !containsIgnoreCase(RESPONSE_HEADERS_TO_IGNORE, header.getName()))
