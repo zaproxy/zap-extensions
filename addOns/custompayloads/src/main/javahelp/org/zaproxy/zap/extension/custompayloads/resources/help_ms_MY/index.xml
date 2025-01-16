@@ -4,4 +4,5 @@
     <!-- index entries are merged (sorted) into core index -->
     <indexitem text="custompayloads" target="custompayloads"/>
     <indexitem text="Custom Payloads API" target="custompayloads.api"/>
+    <indexitem text="Custom Payloads Options" target="custompayloads.options"/>
 </index>
