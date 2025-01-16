@@ -58,6 +58,7 @@ import org.openqa.selenium.firefox.ProfilesIni;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
 import org.parosproxy.paros.Constant;
@@ -91,6 +92,10 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public static final String SCRIPT_TYPE_SELENIUM = "selenium";
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionSelenium.class);
+
+    private static final Logger WEBDRIVER_LOGGER = LogManager.getLogger("org.zaproxy.webdriver");
+
+    private static final String BIDI_CAPABILITIY = "webSocketUrl";
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
             List.of(ExtensionNetwork.class);
@@ -1037,6 +1042,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                         .collect(Collectors.toList()));
     }
 
+    private static RemoteWebDriver configureDriver(RemoteWebDriver driver) {
+        driver.script().addConsoleMessageHandler(e -> WEBDRIVER_LOGGER.debug(e.getText()));
+        return driver;
+    }
+
     private static WebDriver getWebDriverImpl(
             int requester,
             Browser browser,
@@ -1048,6 +1058,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             case CHROME:
             case CHROME_HEADLESS:
                 ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.setCapability(BIDI_CAPABILITIY, true);
                 if (enableExtensions) {
                     addChromeExtensions(chromeOptions);
                 }
@@ -1064,12 +1075,12 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
                 addChromeArguments(chromeOptions);
                 consumer.accept(chromeOptions);
-                return new ChromeDriver(chromeOptions);
+                return configureDriver(new ChromeDriver(chromeOptions));
             case FIREFOX:
             case FIREFOX_HEADLESS:
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
                 // Use WebDriver BiDi
-                firefoxOptions.setCapability("webSocketUrl", true);
+                firefoxOptions.setCapability(BIDI_CAPABILITIY, true);
                 // Force the use of just BiDi, should not be required once Selenium stops
                 // adding the preference https://github.com/SeleniumHQ/selenium/issues/14885
                 firefoxOptions.addPreference("remote.active-protocols", "1");
@@ -1141,7 +1152,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 if (enableExtensions) {
                     addFirefoxExtensions(driver);
                 }
-                return driver;
+                return configureDriver(driver);
             case HTML_UNIT:
                 DesiredCapabilities htmlunitCapabilities = new DesiredCapabilities();
                 setCommonOptions(htmlunitCapabilities, proxyAddress, proxyPort);
