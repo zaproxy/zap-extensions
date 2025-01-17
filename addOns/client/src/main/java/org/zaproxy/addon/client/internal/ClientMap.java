@@ -190,7 +190,7 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                                     originalUrl,
                                     redirectedUrl,
                                     ClientSideComponent.REDIRECT,
-                                    null,
+                                    ClientSideComponent.Type.REDIRECT,
                                     null,
                                     -1));
             return node;
@@ -225,7 +225,7 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                                 null,
                                 null,
                                 ClientSideComponent.CONTENT_LOADED,
-                                null,
+                                ClientSideComponent.Type.CONTENT_LOADED,
                                 null,
                                 -1));
 

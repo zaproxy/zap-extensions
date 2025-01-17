@@ -23,8 +23,11 @@ import java.awt.EventQueue;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -57,6 +60,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.impl.ClientZestRecorder;
 import org.zaproxy.addon.client.internal.ClientMap;
+import org.zaproxy.addon.client.internal.ClientMapWriter;
 import org.zaproxy.addon.client.internal.ClientNode;
 import org.zaproxy.addon.client.internal.ClientSideComponent;
 import org.zaproxy.addon.client.internal.ClientSideDetails;
@@ -82,6 +86,7 @@ import org.zaproxy.addon.client.ui.PopupMenuClientDetailsCopy;
 import org.zaproxy.addon.client.ui.PopupMenuClientHistoryCopy;
 import org.zaproxy.addon.client.ui.PopupMenuClientOpenInBrowser;
 import org.zaproxy.addon.client.ui.PopupMenuClientShowInSites;
+import org.zaproxy.addon.client.ui.PopupMenuExportClientMap;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.ZAP;
@@ -97,6 +102,7 @@ import org.zaproxy.zap.model.ScanEventPublisher;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ScanStatus;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -122,6 +128,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                     ExtensionHistory.class,
                     ExtensionNetwork.class,
                     ExtensionSelenium.class);
+    private static final String STATS_EXPORT_CLIENTMAP = PREFIX + ".export.clientmap";
 
     private ClientMap clientTree;
     private ClientMapPanel clientMapPanel;
@@ -291,6 +298,13 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                     .getMainFrame()
                     .getMainFooterPanel()
                     .addFooterToolbarRightComponent(pscanStatus.getCountLabel());
+
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuExportClientMap(
+                                    Constant.messages.getString("client.tree.popup.export.menu"),
+                                    this));
         }
     }
 
@@ -866,5 +880,24 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                 getMenuItemCustomScan().setEnabled(!Mode.safe.equals(mode));
             }
         }
+    }
+
+    public void exportClientMap(String path) {
+        File file = new File(path);
+        try (Writer fileWriter = new FileWriter(file, false)) {
+            ClientMapWriter.exportClientMap(fileWriter, clientTree);
+        } catch (IOException | UncheckedIOException e) {
+            LOGGER.warn(
+                    "An error occurred while exporting the Client Map: {}",
+                    file.getAbsolutePath(),
+                    e);
+            if (hasView()) {
+                this.getView()
+                        .showWarningDialog(
+                                Constant.messages.getString(
+                                        "client.tree.export.error", file.getAbsolutePath()));
+            }
+        }
+        Stats.incCounter(STATS_EXPORT_CLIENTMAP);
     }
 }

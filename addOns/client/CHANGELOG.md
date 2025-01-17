@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated Chrome and Firefox extensions to v0.0.11.
 
+### Added
+- A context menu allowing users to Export Client Map.
+
 ## [0.10.0] - 2025-01-10
 ### Changed
 - Update minimum ZAP version to 2.16.0.
