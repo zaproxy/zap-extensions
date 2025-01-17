@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Fix concurrency issue with page components which could lead to exceptions in the GUI.
 
+### Changed
+- Updated Chrome and Firefox extensions to v0.0.11.
+
 ## [0.10.0] - 2025-01-10
 ### Changed
 - Update minimum ZAP version to 2.16.0.
