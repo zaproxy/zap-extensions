@@ -23,6 +23,8 @@ import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHA
 
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URIException;
@@ -38,6 +40,7 @@ import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
@@ -50,11 +53,23 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.crosssitescripting.";
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A07_XSS,
-                    CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A07_XSS,
+                                CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS));
+        alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     protected static final String GENERIC_SCRIPT_ALERT = "<scrIpt>alert(1);</scRipt>";
     protected static final String GENERIC_ONERROR_ALERT = "<img src=x onerror=prompt()>";
@@ -258,20 +273,21 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
         }
         HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
         List<HtmlContext> contexts;
-        if (Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
-            // High level, so check all results are in the expected context
-            contexts =
-                    hca.getHtmlContexts(
-                            findDecoded ? getURLDecode(evidence) : evidence,
-                            targetContext,
-                            ignoreFlags,
-                            ignoreSafeParents);
-        } else {
+        if (Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
+            // Low level, so don't check all results are in the expected context
             contexts =
                     hca.getHtmlContexts(
                             findDecoded ? getURLDecode(evidence) : evidence,
                             null,
                             0,
+                            ignoreSafeParents);
+        } else {
+            // High or Medium level, so check all results are in the expected context
+            contexts =
+                    hca.getHtmlContexts(
+                            findDecoded ? getURLDecode(evidence) : evidence,
+                            targetContext,
+                            ignoreFlags,
                             ignoreSafeParents);
         }
         if (mutateAttack || !contexts.isEmpty()) {
@@ -447,7 +463,9 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                             param,
                             context.getSurroundingQuote() + " src=http://badsite.com",
                             context,
-                            HtmlContext.IGNORE_TAG);
+                            HtmlContext.IGNORE_TAG
+                                    | HtmlContext.IGNORE_IN_URL
+                                    | HtmlContext.IGNORE_WITH_SRC);
             if (contexts2 == null) {
                 return false;
             }
@@ -507,7 +525,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
                                 + context.getSurroundingQuote()
                                 + "alert(1);",
                         context,
-                        HtmlContext.IGNORE_TAG);
+                        HtmlContext.IGNORE_TAG | HtmlContext.IGNORE_IN_URL);
         if (contexts2 == null) {
             return false;
         }
@@ -832,7 +850,9 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
 
     private boolean performElementAttack(HtmlContext context, HttpMessage msg, String param) {
         String attackString1 = "tag " + ACCESSKEY_ATTRIBUTE_ALERT;
-        List<HtmlContext> context2 = performAttack(msg, param, attackString1, context, 0);
+        // In this case the parent effectively changes
+        List<HtmlContext> context2 =
+                performAttack(msg, param, attackString1, context, HtmlContext.IGNORE_PARENT);
         if (context2 == null) {
             context2 = performAttack(msg, param, TAG_ONCLICK_ALERT, context, 0);
             if (context2 == null) {
@@ -1016,6 +1036,18 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
     @Override
     public int getWascId() {
         return 8;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        String attack = "</p><scrIpt>alert`1`;</scRipt><p>";
+        return List.of(
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setParam("name")
+                        .setAttack(attack)
+                        .setEvidence(attack)
+                        .build());
     }
 
     private static class Mutation {

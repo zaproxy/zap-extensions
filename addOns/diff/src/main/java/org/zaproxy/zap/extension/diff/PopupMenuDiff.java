@@ -33,6 +33,7 @@ public class PopupMenuDiff extends PopupMenuItemHistoryReferenceContainer {
     private static final long serialVersionUID = 1L;
     private ExtensionDiff ext = null;
     private boolean request = false;
+    private int weight;
 
     /**
      * @param label
@@ -83,5 +84,15 @@ public class PopupMenuDiff extends PopupMenuItemHistoryReferenceContainer {
     @Override
     public boolean isSafe() {
         return true;
+    }
+
+    @Override
+    public int getWeight() {
+        return weight;
+    }
+
+    @Override
+    public void setWeight(int weight) {
+        this.weight = weight;
     }
 }

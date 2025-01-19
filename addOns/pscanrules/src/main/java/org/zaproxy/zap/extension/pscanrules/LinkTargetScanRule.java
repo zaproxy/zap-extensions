@@ -41,7 +41,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Context;
 
-public class LinkTargetScanRule extends PluginPassiveScanner {
+public class LinkTargetScanRule extends PluginPassiveScanner implements CommonPassiveScanRuleInfo {
 
     public static final String TRUSTED_DOMAINS_PROPERTY = RuleConfigParam.RULE_DOMAINS_TRUSTED;
     private static final String MESSAGE_PREFIX = "pscanrules.linktarget.";
@@ -130,18 +130,21 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
         if (relAtt != null) {
             relAtt = relAtt.toLowerCase();
             if (relAtt.contains(OPENER) && !relAtt.contains(NOOPENER)) {
-                newAlert()
-                        .setRisk(Alert.RISK_MEDIUM)
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setDescription(getDescription())
-                        .setSolution(getSolution())
-                        .setReference(getReference())
-                        .setEvidence(link.toString())
-                        .raise();
+                buildAlert(link.toString()).raise();
                 return true;
             }
         }
         return false;
+    }
+
+    private AlertBuilder buildAlert(String evidence) {
+        return newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
+                .setEvidence(evidence);
     }
 
     @Override
@@ -174,20 +177,16 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "<a href=\"https://www.example3.com/page1\" rel=\"opener\" target=\"_blank\">link</a>")
+                        .build());
     }
 }

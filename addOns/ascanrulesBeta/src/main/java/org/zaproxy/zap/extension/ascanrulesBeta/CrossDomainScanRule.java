@@ -21,6 +21,9 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,6 +46,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 /**
  * A class to actively check if the web server is configured to allow Cross Domain access, from a
@@ -51,7 +55,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
  *
  * @author 70pointer@gmail.com
  */
-public class CrossDomainScanRule extends AbstractHostPlugin {
+public class CrossDomainScanRule extends AbstractHostPlugin implements CommonActiveScanRuleInfo {
 
     /** the logger object */
     private static final Logger LOGGER = LogManager.getLogger(CrossDomainScanRule.class);
@@ -70,11 +74,18 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
     /** Silverlight's cross domain policy file name */
     static final String SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE = "clientaccesspolicy.xml";
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                    CommonAlertTag.WSTG_V42_CONF_08_RIA_CROSS_DOMAIN);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                                CommonAlertTag.WSTG_V42_CONF_08_RIA_CROSS_DOMAIN));
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private DocumentBuilder docBuilder;
     private XPath xpath;
@@ -192,21 +203,7 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
                 String domain = exprAllowAccessFromDomainNodes.item(i).getNodeValue();
                 if (domain.equals("*")) {
                     // oh dear me.
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setName(
-                                    Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ + "name"))
-                            .setDescription(
-                                    Constant.messages.getString(MESSAGE_PREFIX_ADOBE + "desc"))
-                            .setOtherInfo(
-                                    Constant.messages.getString(
-                                            MESSAGE_PREFIX_ADOBE_READ + "extrainfo",
-                                            "/" + ADOBE_CROSS_DOMAIN_POLICY_FILE))
-                            .setSolution(
-                                    Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ + "soln"))
-                            .setEvidence("<allow-access-from domain=\"*\"")
-                            .setMessage(crossdomainmessage)
-                            .raise();
+                    buildAdobeReadAlert().setMessage(crossdomainmessage).raise();
                 }
             }
             // check for cross domain send (upload) access
@@ -223,21 +220,7 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
                 String domain = exprRequestHeadersFromDomainNodes.item(i).getNodeValue();
                 if (domain.equals("*")) {
                     // oh dear, dear me.
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setName(
-                                    Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND + "name"))
-                            .setDescription(
-                                    Constant.messages.getString(MESSAGE_PREFIX_ADOBE + "desc"))
-                            .setOtherInfo(
-                                    Constant.messages.getString(
-                                            MESSAGE_PREFIX_ADOBE_SEND + "extrainfo",
-                                            "/" + ADOBE_CROSS_DOMAIN_POLICY_FILE))
-                            .setSolution(
-                                    Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND + "soln"))
-                            .setEvidence("<allow-http-request-headers-from domain=\"*\"")
-                            .setMessage(crossdomainmessage)
-                            .raise();
+                    buildAdobeSendAlert().setMessage(crossdomainmessage).raise();
                 }
             }
         } catch (SAXException | IOException e) {
@@ -247,6 +230,35 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
                     ADOBE_CROSS_DOMAIN_POLICY_FILE,
                     e);
         }
+    }
+
+    private AlertBuilder buildAdobeAlert(String ref) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX_ADOBE + "desc"))
+                .setAlertRef(getId() + ref);
+    }
+
+    private AlertBuilder buildAdobeReadAlert() {
+        return buildAdobeAlert("-1")
+                .setName(Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ + "name"))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX_ADOBE_READ + "extrainfo",
+                                "/" + ADOBE_CROSS_DOMAIN_POLICY_FILE))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX_ADOBE_READ + "soln"))
+                .setEvidence("<allow-access-from domain=\"*\"");
+    }
+
+    private AlertBuilder buildAdobeSendAlert() {
+        return buildAdobeAlert("-2")
+                .setName(Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND + "name"))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX_ADOBE_SEND + "extrainfo",
+                                "/" + ADOBE_CROSS_DOMAIN_POLICY_FILE))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX_ADOBE_SEND + "soln"))
+                .setEvidence("<allow-http-request-headers-from domain=\"*\"");
     }
 
     private void scanSilverlightCrossdomainPolicyFile(URI originalURI)
@@ -292,23 +304,7 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
                     LOGGER.debug(
                             "Bingo! {}, at /access-policy/cross-domain-access/policy/allow-from/domain/@uri",
                             SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE);
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setName(
-                                    Constant.messages.getString(
-                                            MESSAGE_PREFIX_SILVERLIGHT + "name"))
-                            .setDescription(
-                                    Constant.messages.getString(
-                                            MESSAGE_PREFIX_SILVERLIGHT + "desc"))
-                            .setOtherInfo(
-                                    Constant.messages.getString(
-                                            MESSAGE_PREFIX_SILVERLIGHT + "extrainfo"))
-                            .setSolution(
-                                    Constant.messages.getString(
-                                            MESSAGE_PREFIX_SILVERLIGHT + "soln"))
-                            .setEvidence("<domain uri=\"*\"")
-                            .setMessage(clientaccesspolicymessage)
-                            .raise();
+                    buildSilverlightAlert().setMessage(clientaccesspolicymessage).raise();
                 }
             }
 
@@ -319,6 +315,17 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
                     SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE,
                     e);
         }
+    }
+
+    private AlertBuilder buildSilverlightAlert() {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setName(Constant.messages.getString(MESSAGE_PREFIX_SILVERLIGHT + "name"))
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX_SILVERLIGHT + "desc"))
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX_SILVERLIGHT + "extrainfo"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX_SILVERLIGHT + "soln"))
+                .setEvidence("<domain uri=\"*\"")
+                .setAlertRef(getId() + "-3");
     }
 
     @Override
@@ -340,5 +347,13 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAdobeReadAlert().build(),
+                buildAdobeSendAlert().build(),
+                buildSilverlightAlert().build());
     }
 }

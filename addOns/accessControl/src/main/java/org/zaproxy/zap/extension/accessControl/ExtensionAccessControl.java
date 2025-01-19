@@ -95,16 +95,11 @@ public class ExtensionAccessControl extends ExtensionAdaptor
     public static final String NAME = "ExtensionAccessControl";
 
     /** The list of extensions this depends on. */
-    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
-
-    static {
-        // Prepare a list of Extensions on which this extension depends
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionUserManagement.class);
-        dependencies.add(ExtensionAuthentication.class);
-        dependencies.add(ExtensionAuthorization.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            List.of(
+                    ExtensionUserManagement.class,
+                    ExtensionAuthentication.class,
+                    ExtensionAuthorization.class);
 
     /** The status panel used by the extension. */
     private AccessControlStatusPanel statusPanel;
@@ -688,5 +683,9 @@ public class ExtensionAccessControl extends ExtensionAdaptor
     @Override
     public List<Alert> getExampleAlerts() {
         return AccessControlAlertsProcessor.getExampleAlerts();
+    }
+
+    public String getHelpLink() {
+        return "https://www.zaproxy.org/docs/desktop/addons/access-control-testing/#alerts";
     }
 }

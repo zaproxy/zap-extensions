@@ -67,13 +67,13 @@ import org.zaproxy.addon.callhome.ExtensionCallHome;
 import org.zaproxy.addon.callhome.InvalidServiceUrlException;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.common.ZapUnknownHostException;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.ZAP.ProcessType;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.ext.ExtensionExtension;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.quickstart.AttackThread.Progress;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -109,7 +109,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(
-                    ExtensionPassiveScan.class,
+                    ExtensionPassiveScan2.class,
                     ExtensionAlert.class,
                     ExtensionReports.class,
                     ExtensionNetwork.class);
@@ -196,15 +196,15 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                 }
                 if (localeNode != null) {
                     String itemText = getFirstChildNodeString(localeNode, "item");
+                    String fixedStr = getFirstChildNodeString(localeNode, "fixed");
 
                     if (itemText != null && itemText.length() > 0) {
                         announceNews(
                                 new NewsItem(
                                         id,
                                         itemText,
-                                        new URI(
-                                                getFirstChildNodeString(localeNode, "link"),
-                                                true)));
+                                        new URI(getFirstChildNodeString(localeNode, "link"), true),
+                                        Boolean.parseBoolean(fixedStr)));
                     }
                 }
             }

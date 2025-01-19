@@ -2,6 +2,7 @@
 <!DOCTYPE index PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Index Version 1.0//EN" "http://java.sun.com/products/javahelp/index_2_0.dtd">
 <index version="2.0">
     <indexitem text="oast" target="oast"/>
+    <indexitem text="oast api" target="oast.api"/>
     <indexitem text="oast tab" target="oast.tab"/>
     <indexitem text="oast options" target="oast.options"/>
     <indexitem text="oast services" target="oast.services"/>

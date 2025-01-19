@@ -23,7 +23,6 @@ import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.KeyStroke;
@@ -51,14 +50,12 @@ public class ExtensionEncoder extends ExtensionAdaptor {
     public static final ImageIcon ICON;
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionEncoder.class);
-    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            List.of(ExtensionScript.class);
     private static final String CORE_MENU_IDENTIFIER = "enc2.tools.menu.encdec";
     private static final String ENCODER_MENU_IDENTIFIER = "encoder.tools.menu.encdec";
 
     static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionScript.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
         ICON = createIcon("encoder.png");
     }
 

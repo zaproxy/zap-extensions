@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.quickstart.spider;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.JCheckBox;
 import org.parosproxy.paros.Constant;
@@ -38,8 +36,7 @@ import org.zaproxy.zap.model.Target;
 public class ExtensionQuickStartSpider extends ExtensionAdaptor {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(
-                    Arrays.asList(ExtensionQuickStart.class, ExtensionSpider2.class));
+            List.of(ExtensionQuickStart.class, ExtensionSpider2.class);
 
     private TraditionalSpiderImpl traditionalSpider;
 

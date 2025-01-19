@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.bruteforce;
 import javax.swing.ImageIcon;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
@@ -53,8 +54,8 @@ public class PopupMenuBruteForceSite extends PopupMenuItemSiteNodeContainer {
     }
 
     @Override
-    public int getParentMenuIndex() {
-        return ATTACK_MENU_INDEX;
+    public int getParentWeight() {
+        return MenuWeights.MENU_ATTACK_WEIGHT;
     }
 
     @Override

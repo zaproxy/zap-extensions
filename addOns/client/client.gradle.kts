@@ -19,6 +19,18 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.addon.client.automation.ExtensionClientAutomation") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.client.automation"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">=0.43.0")
+                        }
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
@@ -28,7 +40,9 @@ zapAddOn {
                 register("network") {
                     version.set(">=0.8.0")
                 }
-                register("commonlib")
+                register("commonlib") {
+                    version.set(">=1.23.0")
+                }
             }
         }
     }
@@ -43,10 +57,12 @@ crowdin {
 }
 
 dependencies {
+    zapAddOn("automation")
     zapAddOn("commonlib")
     zapAddOn("selenium")
     zapAddOn("network")
     zapAddOn("zest")
 
     testImplementation(project(":testutils"))
+    testImplementation(libs.log4j.core)
 }

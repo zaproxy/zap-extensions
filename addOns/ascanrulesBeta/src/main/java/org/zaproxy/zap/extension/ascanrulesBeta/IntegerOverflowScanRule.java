@@ -23,6 +23,9 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,19 +35,28 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
+public class IntegerOverflowScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanbeta.integeroverflow.";
 
     private static final int PLUGIN_ID = 30003;
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION));
+        alertTags.put(PolicyTag.API.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static final Logger LOGGER = LogManager.getLogger(IntegerOverflowScanRule.class);
 
@@ -83,7 +95,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private String getError(char c) {
+    private static String getError(char c) {
         return Constant.messages.getString(MESSAGE_PREFIX + "error" + c);
     }
 
@@ -143,7 +155,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
         return ALERT_TAGS;
     }
 
-    private String randomIntegerString(int length) {
+    private static String randomIntegerString(int length) {
 
         int numbercounter = 0;
         int character = 0;
@@ -167,7 +179,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
         return sb1.toString();
     }
 
-    private String singleString(int length, char c) // Single Character String
+    private static String singleString(int length, char c) // Single Character String
             {
 
         int numbercounter = 0;
@@ -204,13 +216,12 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
             sendAndReceive(msg);
             if (isPage500(msg)) {
                 LOGGER.debug("Found Header");
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setUri(this.getBaseMsg().getRequestHeader().getURI().toString())
-                        .setParam(param)
-                        .setAttack(returnAttack)
-                        .setOtherInfo(this.getError(type))
-                        .setEvidence(msg.getResponseHeader().getPrimeHeader())
+                buildAlert(
+                                getBaseMsg().getRequestHeader().getURI().toString(),
+                                param,
+                                returnAttack,
+                                type,
+                                msg.getResponseHeader().getPrimeHeader())
                         .setMessage(msg)
                         .raise();
                 return true;
@@ -219,5 +230,28 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
             LOGGER.debug(e.getMessage(), e);
         }
         return false;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "https://example.com/?years=1",
+                                "years",
+                                "95697568703220167658153205694899573480013738",
+                                '1',
+                                "HTTP/1.1 500 Internal Server Error")
+                        .build());
+    }
+
+    private AlertBuilder buildAlert(
+            String url, String param, String attack, char type, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setUri(url)
+                .setParam(param)
+                .setAttack(attack)
+                .setOtherInfo(getError(type))
+                .setEvidence(evidence);
     }
 }

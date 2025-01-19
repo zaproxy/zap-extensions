@@ -33,6 +33,7 @@ import io.netty.handler.timeout.ReadTimeoutException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -101,6 +102,36 @@ class ServerExceptionHandlerUnitTest {
                 hasItem(
                         startsWith(
                                 "WARN Failed while establishing secure connection, cause: missing protocol")));
+    }
+
+    @Test
+    void shouldLogUnknownCaSslHandshakeExceptionAsDebug() throws Exception {
+        // Given
+        Exception cause = new SSLHandshakeException("unknown_ca");
+        Exception exception = new DecoderException(cause);
+        // When
+        serverExceptionHandler.exceptionCaught(ctx, exception);
+        // Then
+        assertThat(
+                logEvents,
+                hasItem(
+                        startsWith(
+                                "DEBUG Failed while establishing secure connection, cause: the client does not trust ZAP's Root CA Certificate.")));
+    }
+
+    @Test
+    void shouldLogUnknownCaSslExceptionAsDebug() throws Exception {
+        // Given
+        Exception cause = new SSLException("unknown_ca");
+        Exception exception = new DecoderException(cause);
+        // When
+        serverExceptionHandler.exceptionCaught(ctx, exception);
+        // Then
+        assertThat(
+                logEvents,
+                hasItem(
+                        startsWith(
+                                "DEBUG Failed while establishing secure connection, cause: the client does not trust ZAP's Root CA Certificate.")));
     }
 
     @Test

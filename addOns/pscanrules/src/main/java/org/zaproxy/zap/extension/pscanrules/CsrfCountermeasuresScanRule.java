@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.function.BiPredicate;
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -38,10 +37,10 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
-import org.zaproxy.zap.extension.anticsrf.AntiCsrfParam;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
@@ -52,7 +51,8 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
  *
  * @author 70pointer
  */
-public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
+public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** contains the base vulnerability that this plugin refers to */
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_9");
@@ -92,6 +92,11 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
             return;
         }
 
+        if (!AlertThreshold.LOW.equals(getAlertThreshold())
+                && HttpRequestHeader.GET.equals(msg.getRequestHeader().getMethod())) {
+            return;
+        }
+
         // need to do this if we are to be able to get an element's parent. Do it as early as
         // possible in the logic
         source.fullSequentialParse();
@@ -105,9 +110,6 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
         }
 
         List<Element> formElements = source.getAllElements(HTMLElementName.FORM);
-        List<String> tokenNames = extAntiCSRF.getAntiCsrfTokenNames();
-        // TODO: Update to use extensionAntiCSRF.isAntiCsrfToken(String) after 2.15
-        BiPredicate<String, String> matcher = getMatcher();
 
         if (formElements != null && !formElements.isEmpty()) {
             boolean hasSecurityAnnotation = false;
@@ -170,12 +172,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                         String attId = inputElement.getAttributeValue("ID");
                         if (attId != null) {
                             elementNames.add(attId);
-                            for (String tokenName : tokenNames) {
-                                if (matcher.test(attId, tokenName)) {
-                                    foundCsrfToken = true;
-                                    break;
-                                }
-                            }
+                            foundCsrfToken |= extAntiCSRF.isAntiCsrfToken(attId);
                         }
                         String name = inputElement.getAttributeValue("NAME");
                         if (name != null) {
@@ -183,12 +180,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                                 // Dont bother recording both
                                 elementNames.add(name);
                             }
-                            for (String tokenName : tokenNames) {
-                                if (matcher.test(name, tokenName)) {
-                                    foundCsrfToken = true;
-                                    break;
-                                }
-                            }
+                            foundCsrfToken |= extAntiCSRF.isAntiCsrfToken(name);
                         }
                     }
                 }
@@ -204,15 +196,11 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                 sbForm.append("\" ]");
 
                 String formDetails = sbForm.toString();
-                String tokenNamesFlattened = tokenNames.toString();
+                String tokenNamesFlattened = extAntiCSRF.getAntiCsrfTokenNames().toString();
 
                 int risk = Alert.RISK_MEDIUM;
                 String desc = Constant.messages.getString("pscanrules.noanticsrftokens.desc");
-                String extraInfo =
-                        Constant.messages.getString(
-                                "pscanrules.noanticsrftokens.alert.extrainfo",
-                                tokenNamesFlattened,
-                                formDetails);
+                String extraInfo = getExtraInfo(tokenNamesFlattened, formDetails);
                 if (hasSecurityAnnotation) {
                     risk = Alert.RISK_INFO;
                     extraInfo =
@@ -220,23 +208,18 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                                     "pscanrules.noanticsrftokens.extrainfo.annotation");
                 }
 
-                newAlert()
-                        .setRisk(risk)
-                        .setConfidence(Alert.CONFIDENCE_LOW)
-                        .setDescription(desc + "\n" + getDescription())
-                        .setOtherInfo(extraInfo)
-                        .setSolution(getSolution())
-                        .setReference(getReference())
-                        .setEvidence(evidence)
-                        .setCweId(getCweId())
-                        .setWascId(getWascId())
-                        .raise();
+                buildAlert(risk, desc, extraInfo, evidence).raise();
             }
         }
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
     }
 
-    private boolean formOnIgnoreList(Element formElement, List<String> ignoreList) {
+    private static String getExtraInfo(String tokenNamesFlattened, String formDetails) {
+        return Constant.messages.getString(
+                "pscanrules.noanticsrftokens.alert.extrainfo", tokenNamesFlattened, formDetails);
+    }
+
+    private static boolean formOnIgnoreList(Element formElement, List<String> ignoreList) {
         String id = formElement.getAttributeValue("id");
         String name = formElement.getAttributeValue("name");
         for (String ignore : ignoreList) {
@@ -251,16 +234,6 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
         return false;
     }
 
-    private static BiPredicate<String, String> getMatcher() {
-        if (Model.getSingleton()
-                .getOptionsParam()
-                .getParamSet(AntiCsrfParam.class)
-                .isPartialMatchingEnabled()) {
-            return StringUtils::containsIgnoreCase;
-        }
-        return String::equalsIgnoreCase;
-    }
-
     @Override
     public String getName() {
         // do not use the name of the related vulnerability
@@ -268,29 +241,34 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
         return Constant.messages.getString("pscanrules.noanticsrftokens.name");
     }
 
-    public String getDescription() {
-        return VULN.getDescription();
-    }
-
-    public String getSolution() {
-        return VULN.getSolution();
-    }
-
-    public String getReference() {
-        return VULN.getReferencesAsString();
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
-        return 352; // CWE-352: Cross-Site Request Forgery (CSRF)
+    private AlertBuilder buildAlert(int risk, String desc, String extraInfo, String evidence) {
+        return newAlert()
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setDescription(desc + "\n" + VULN.getDescription())
+                .setOtherInfo(extraInfo)
+                .setSolution(VULN.getSolution())
+                .setReference(VULN.getReferencesAsString())
+                .setEvidence(evidence)
+                .setCweId(352) // CWE-352: Cross-Site Request Forgery (CSRF)
+                .setWascId(9);
     }
 
-    public int getWascId() {
-        return 9;
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                Alert.RISK_MEDIUM,
+                                Constant.messages.getString("pscanrules.noanticsrftokens.desc"),
+                                getExtraInfo(
+                                        "[token, csrfToken, csrf-token]", "[Form 1: \"name\" ]"),
+                                "<form name=\"someName\" data-no-csrf>")
+                        .build());
     }
 
     protected ExtensionAntiCSRF getExtensionAntiCSRF() {

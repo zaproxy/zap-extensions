@@ -41,7 +41,9 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
@@ -51,15 +53,23 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
  * CsrfTokenScanRule is an effort to improve the anti-CSRF token detection of ZAP It is based on
  * previous plugins such as csrfcountermeasuresscan and sessionfixation
  */
-public class CsrfTokenScanRule extends AbstractAppPlugin {
+public class CsrfTokenScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "ascanbeta.csrftoken.";
     private static final int PLUGIN_ID = 20012;
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                    CommonAlertTag.WSTG_V42_SESS_05_CSRF);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                                CommonAlertTag.WSTG_V42_SESS_05_CSRF));
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private List<String> ignoreList = new ArrayList<>();
     private String ignoreAttName;
@@ -124,6 +134,11 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
     public void scan() {
         if ((AlertThreshold.HIGH.equals(getAlertThreshold()) && !getBaseMsg().isInScope())
                 || !getBaseMsg().getResponseHeader().isHtml()) {
+            return;
+        }
+
+        if (!AlertThreshold.LOW.equals(getAlertThreshold())
+                && HttpRequestHeader.GET.equals(getBaseMsg().getRequestHeader().getMethod())) {
             return;
         }
 
@@ -220,13 +235,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
                                     Constant.messages.getString(
                                             MESSAGE_PREFIX + "extrainfo.annotation");
                         }
-                        newAlert()
-                                .setRisk(risk)
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setOtherInfo(otherInfo)
-                                .setEvidence(evidence)
-                                .setMessage(getBaseMsg())
-                                .raise();
+                        buildAlert(risk, otherInfo, evidence).setMessage(getBaseMsg()).raise();
                     }
                 }
 
@@ -235,6 +244,14 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
         } catch (IOException e) {
             LOGGER.error(e);
         }
+    }
+
+    private AlertBuilder buildAlert(int risk, String otherInfo, String evidence) {
+        return newAlert()
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setOtherInfo(otherInfo)
+                .setEvidence(evidence);
     }
 
     private boolean formOnIgnoreList(Element formElement) {
@@ -300,5 +317,15 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                Alert.RISK_MEDIUM,
+                                "",
+                                "<input type=\"hidden\" name=\"firstName\" value=\"\">")
+                        .build());
     }
 }

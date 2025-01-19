@@ -4,8 +4,32 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [20] - 2025-01-10
+### Fixed
+- Typo in automation job help.
+- Address misleading warning `Unrecognised parameter` for `deleteAllRules` (Issue 8764).
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Fields with default or missing values are omitted for the `replacer` job in saved Automation Framework plans.
+
+## [19] - 2024-10-07
+### Changed
+- Update ZAP API endpoint description.
+
+## [18] - 2024-05-08
+### Added
+- Rules to disable Caching (Issue 8437).
+
+## [17] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
 ### Added
 - Video link in help for Automation Framework job.
+- A rule to disable CSP reporting (Issue 740).
 
 ## [16] - 2023-11-30
 ### Changed
@@ -103,6 +127,10 @@ the dialogue when other match types are selected.
 
 - First version
 
+[20]: https://github.com/zaproxy/zap-extensions/releases/replacer-v20
+[19]: https://github.com/zaproxy/zap-extensions/releases/replacer-v19
+[18]: https://github.com/zaproxy/zap-extensions/releases/replacer-v18
+[17]: https://github.com/zaproxy/zap-extensions/releases/replacer-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/replacer-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/replacer-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/replacer-v14

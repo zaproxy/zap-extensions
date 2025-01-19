@@ -21,7 +21,10 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.net.MalformedURLException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.httpclient.URI;
@@ -35,6 +38,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
@@ -43,13 +47,21 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
  *
  * @author 70pointer
  */
-public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
+public class BackupFileDisclosureScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
-                    CommonAlertTag.WSTG_V42_CONF_04_BACKUP_FILES);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
+                                CommonAlertTag.WSTG_V42_CONF_04_BACKUP_FILES));
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     int numExtensionsToTry = 0;
     int numSuffixesToTry = 0;
@@ -385,6 +397,18 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
         }
     }
 
+    private AlertBuilder buildAlert(String candidateUrl, String originalUrl) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setAttack(candidateUrl)
+                .setSolution(Constant.messages.getString("ascanbeta.backupfiledisclosure.soln"))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "ascanbeta.backupfiledisclosure.otherinfo",
+                                originalUrl,
+                                candidateUrl));
+    }
+
     @Override
     public int getRisk() {
         return Alert.RISK_MEDIUM; // Medium or maybe High.. depends on the file.
@@ -405,7 +429,14 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
         return ALERT_TAGS;
     }
 
-    private boolean isEmptyResponse(byte[] response) {
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert("https://example.com/profile.asp.old", "https://example.com/profile.asp")
+                        .build());
+    }
+
+    private static boolean isEmptyResponse(byte[] response) {
         return response.length == 0;
     }
 
@@ -430,9 +461,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
             }
             String filename = originalMessage.getRequestHeader().getURI().getName();
 
-            String randomfilename =
-                    RandomStringUtils.random(
-                            filename.length(), "abcdefghijklmnopqrstuvwxyz0123456789");
+            String randomfilename = random(filename.length());
             String randomfilepath = temppath.substring(0, slashposition) + "/" + randomfilename;
 
             LOGGER.debug("Trying non-existent file: {}", randomfilepath);
@@ -475,10 +504,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 // If the parent folder name is really short a collision is likely
                 // Default to a reasonable length, which may have the inverse effect but we'll
                 // chance it
-                String randomparentfoldername =
-                        RandomStringUtils.random(
-                                Math.max(parentfoldername.length(), 4),
-                                "abcdefghijklmnopqrstuvwxyz0123456789");
+                String randomparentfoldername = random(Math.max(parentfoldername.length(), 4));
 
                 // replace the parent folder name with the random one, and build it back into a
                 // string
@@ -648,7 +674,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
             // whatever the plural of prefix/suffix is)
             counted = 0;
             if (pathbreak.length > 2) {
-                // if there is a a parent folder to play with
+                // if there is a parent folder to play with
                 for (String fileSuffixToTry : fileSuffixes) {
                     // inject the directory suffix at positionDirectorySuffixInjection
                     String candidateBackupFilePath =
@@ -718,18 +744,9 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                         && nonexistfilemsg.getResponseHeader().getStatusCode()
                                                 != requestStatusCode
                                         && (!Arrays.equals(disclosedData, nonexistfilemsgdata))))) {
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setAttack(candidateBackupFileURI.toString())
-                            .setOtherInfo(originalMessage.getRequestHeader().getURI().toString())
-                            .setSolution(
-                                    Constant.messages.getString(
-                                            "ascanbeta.backupfiledisclosure.soln"))
-                            .setEvidence(
-                                    Constant.messages.getString(
-                                            "ascanbeta.backupfiledisclosure.evidence",
-                                            originalURI,
-                                            candidateBackupFileURI))
+                    buildAlert(
+                                    candidateBackupFileURI.toString(),
+                                    originalMessage.getRequestHeader().getURI().toString())
                             .setMessage(requestmsg)
                             .raise();
                 }
@@ -765,21 +782,9 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                                 != requestStatusCode
                                         && (!Arrays.equals(
                                                 disclosedData, nonexistparentmsgdata))))) {
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setName(
-                                    Constant.messages.getString(
-                                            "ascanbeta.backupfiledisclosure.name"))
-                            .setAttack(candidateBackupFileURI.toString())
-                            .setOtherInfo(originalMessage.getRequestHeader().getURI().toString())
-                            .setSolution(
-                                    Constant.messages.getString(
-                                            "ascanbeta.backupfiledisclosure.soln"))
-                            .setEvidence(
-                                    Constant.messages.getString(
-                                            "ascanbeta.backupfiledisclosure.evidence",
-                                            originalURI,
-                                            candidateBackupFileURI))
+                    buildAlert(
+                                    candidateBackupFileURI.toString(),
+                                    originalMessage.getRequestHeader().getURI().toString())
                             .setMessage(requestmsg)
                             .raise();
                 }
@@ -796,6 +801,10 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                     originalMessage.getRequestHeader().getURI(),
                     e);
         }
+    }
+
+    private static String random(int count) {
+        return RandomStringUtils.secure().next(count, "abcdefghijklmnopqrstuvwxyz0123456789");
     }
 
     private static void setMessageCookies(HttpMessage newMsg, HttpMessage originalMsg) {

@@ -7,6 +7,11 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/dev-add-on/")
 
+        bundle {
+            baseName.set("org.zaproxy.addon.dev.Messages")
+            prefix.set("dev")
+        }
+
         dependencies {
             addOns {
                 register("commonlib") {
@@ -23,4 +28,9 @@ zapAddOn {
 dependencies {
     zapAddOn("network")
     zapAddOn("commonlib")
+
+    compileOnly(libs.log4j.core)
+
+    testImplementation(project(":testutils"))
+    testImplementation(libs.log4j.core)
 }

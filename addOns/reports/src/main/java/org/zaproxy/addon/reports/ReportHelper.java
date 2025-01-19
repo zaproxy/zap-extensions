@@ -19,11 +19,14 @@
  */
 package org.zaproxy.addon.reports;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -35,6 +38,8 @@ import org.zaproxy.zap.utils.XMLStringUtil;
 
 public class ReportHelper {
 
+    private static final String STATS_RESOURCE_PREFIX = ExtensionReports.PREFIX + ".report.";
+
     public static String getRiskString(int risk) {
         return Constant.messages.getString(ExtensionReports.PREFIX + ".report.risk." + risk);
     }
@@ -45,7 +50,11 @@ public class ReportHelper {
     }
 
     public static String getStatisticsString(String statsKey) {
-        return Constant.messages.getString(ExtensionReports.PREFIX + ".report." + statsKey);
+        String resourceKey = STATS_RESOURCE_PREFIX + statsKey;
+        if (Constant.messages.containsKey(resourceKey)) {
+            return Constant.messages.getString(resourceKey);
+        }
+        return statsKey;
     }
 
     public static String getHostForSite(String site) {
@@ -73,18 +82,27 @@ public class ReportHelper {
         if (site == null) {
             return 80;
         }
-        String[] schemeHostPort = site.split(":");
-        if (schemeHostPort.length == 3) {
-            try {
-                return Integer.parseInt(schemeHostPort[2]);
-            } catch (NumberFormatException e) {
-                // Ignore
+
+        try {
+            var uri = new URI(site);
+            int port = uri.getPort();
+            if (port != -1) {
+                return port;
             }
+
+            return getPortFromScheme(site);
+
+        } catch (URISyntaxException e) {
+            return getPortFromScheme(site);
         }
-        if (schemeHostPort[0].equalsIgnoreCase("https")) {
+    }
+
+    private static int getPortFromScheme(String site) {
+        if (StringUtils.startsWithIgnoreCase(site, "https")) {
             return 443;
+        } else {
+            return 80;
         }
-        return 80;
     }
 
     public static boolean isSslSite(String site) {
@@ -129,7 +147,7 @@ public class ReportHelper {
     }
 
     /**
-     * @deprecated Use {@link getAlertInstancesForSite(AlertNode, String, String int)} instead -
+     * @deprecated Use {@link #getAlertInstancesForSite(AlertNode, String, String, int)} instead -
      *     this method can return the instances for different alerts with the same pluginId.
      */
     @Deprecated
@@ -240,5 +258,12 @@ public class ReportHelper {
                         escapeJson)
                 .replace("&lt;p&gt;", "<p>")
                 .replace("&lt;/p&gt;", "</p>");
+    }
+
+    public static String escapeXml(String text) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+        return XMLStringUtil.escapeControlChrs(text);
     }
 }

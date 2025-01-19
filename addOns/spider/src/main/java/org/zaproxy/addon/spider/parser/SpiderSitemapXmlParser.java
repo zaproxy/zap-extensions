@@ -20,6 +20,7 @@
 package org.zaproxy.addon.spider.parser;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
@@ -33,8 +34,11 @@ import org.apache.logging.log4j.LogManager;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.zaproxy.zap.utils.XmlUtils;
 
 /**
@@ -48,16 +52,14 @@ public class SpiderSitemapXmlParser extends SpiderParser {
     /** a pattern to match the sitemap.xml file name */
     private static final Pattern SITEMAP_XML_FILENAME_PATTERN = Pattern.compile("/sitemap\\.xml$");
 
-    /** a pattern to match the sitemap.xml file.. hint: It's XML */
-    private static final Pattern XML_PATTERN =
-            Pattern.compile(
-                    "^<\\?xml\\s+version\\s*=\\s*\"[0-9.]+\"\\s+encoding\\s*=\\s*\"[^\"]+\"\\s*\\?>");
-
     /** used to parse the XML based file format */
     private static DocumentBuilder dBuilder;
 
     /** an x path expression to match the "loc" tag in sitemap.xml */
     private static XPathExpression xpathLocationExpression;
+
+    /** an x path expression to match xhtml:link hrefs in sitemap.xml */
+    private static XPathExpression xpathXhtmlLinkHrefExpression;
 
     /** statically initialise the XML DocumentBuilderFactory and DocumentBuilder */
     static {
@@ -65,6 +67,7 @@ public class SpiderSitemapXmlParser extends SpiderParser {
             dBuilder = XmlUtils.newXxeDisabledDocumentBuilderFactory().newDocumentBuilder();
             XPath xpath = XPathFactory.newInstance().newXPath();
             xpathLocationExpression = xpath.compile("/urlset/url/loc/text()");
+            xpathXhtmlLinkHrefExpression = xpath.compile("//*[@href or @HREF]");
         } catch (ParserConfigurationException | XPathExpressionException e) {
             LogManager.getLogger(SpiderSitemapXmlParser.class).error(e);
         }
@@ -84,33 +87,54 @@ public class SpiderSitemapXmlParser extends SpiderParser {
 
         // Get the response content
         byte[] response = message.getResponseBody().getBytes();
-        Matcher xmlFormatMatcher = XML_PATTERN.matcher(new String(response));
-        if (xmlFormatMatcher.find()) {
+        boolean consumed = false;
+        try {
+            Document xmldoc = dBuilder.parse(new InputSource(new ByteArrayInputStream(response)));
 
-            getLogger().debug("The format matches XML");
-
-            try {
-                Document xmldoc =
-                        dBuilder.parse(new InputSource(new ByteArrayInputStream(response)));
-                NodeList locationNodes =
-                        (NodeList) xpathLocationExpression.evaluate(xmldoc, XPathConstants.NODESET);
-                for (int i = 0; i < locationNodes.getLength(); i++) {
-                    processUrl(ctx, locationNodes.item(i).getNodeValue());
-                }
-            } catch (Exception e) {
-                getLogger().error("An error occurred trying to parse sitemap.xml", e);
-                return false;
-            }
-            // We consider the message fully parsed, so it doesn't get parsed by 'fallback' parsers
-            return true;
-        } else {
-            // the file name is right, but the content is not. Pass it to another parser.
-            getLogger()
-                    .debug(
-                            "The content of the response from '{}' does not match the expected content for a sitemap.xml file. Ignoring it.",
-                            ctx.getBaseUrl());
+            consumed |= processUrlset(xmldoc, ctx);
+            consumed |= processXhtmlLinkHrefs(xmldoc, ctx);
+        } catch (SAXException | IOException | XPathExpressionException e) {
+            getLogger().warn("An error occurred trying to parse sitemap.xml. {}", e.getMessage());
+            getLogger().debug(e, e);
             return false;
         }
+        return consumed;
+    }
+
+    private boolean processUrlset(Document xmldoc, ParseContext ctx)
+            throws XPathExpressionException {
+        getLogger().debug("Processing sitemap Urlset...");
+
+        NodeList locationNodes =
+                (NodeList) xpathLocationExpression.evaluate(xmldoc, XPathConstants.NODESET);
+        for (int i = 0; i < locationNodes.getLength(); i++) {
+            processUrl(ctx, locationNodes.item(i).getNodeValue());
+        }
+        return locationNodes.getLength() != 0;
+    }
+
+    private boolean processXhtmlLinkHrefs(Document xmldoc, ParseContext ctx)
+            throws XPathExpressionException {
+        getLogger().debug("Processing sitemap.xml xhtml:link hrefs...");
+        boolean consumed = false;
+
+        NodeList xhtmlLinkHrefNodes =
+                (NodeList) xpathXhtmlLinkHrefExpression.evaluate(xmldoc, XPathConstants.NODESET);
+        for (int i = 0; i < xhtmlLinkHrefNodes.getLength(); i++) {
+            NamedNodeMap attrs = xhtmlLinkHrefNodes.item(i).getAttributes();
+            consumed |= processCandidate(attrs, "href", ctx);
+            consumed |= processCandidate(attrs, "HREF", ctx);
+        }
+        return consumed;
+    }
+
+    private boolean processCandidate(NamedNodeMap attrs, String attrName, ParseContext ctx) {
+        Node candidate = attrs.getNamedItem(attrName);
+        if (candidate != null) {
+            processUrl(ctx, candidate.getNodeValue());
+            return true;
+        }
+        return false;
     }
 
     @Override

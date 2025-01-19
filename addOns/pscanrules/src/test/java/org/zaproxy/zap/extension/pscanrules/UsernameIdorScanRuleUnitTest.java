@@ -34,6 +34,7 @@ import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -62,6 +63,7 @@ class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdorScanRu
 
         msg = new HttpMessage();
         msg.setRequestHeader(requestHeader);
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/html");
         UsernameIdorScanRule.setPayloadProvider(null);
     }
 
@@ -73,12 +75,8 @@ class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdorScanRu
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(284)));
-        assertThat(wasc, is(equalTo(2)));
         assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
@@ -106,7 +104,8 @@ class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdorScanRu
         Alert alert = alerts.get(0);
         Map<String, String> tags = alert.getTags();
         // Then
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(tags, hasKey("CWE-284"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_ATHZ_04_IDOR.getTag()));
@@ -225,5 +224,19 @@ class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdorScanRu
         // Then
         assertEquals(alertsRaised.size(), 1);
         assertEquals(alertsRaised.get(0).getEvidence(), FOOBAR_MD2);
+    }
+
+    @Test
+    void shouldNotRaiseAlertForImageResponse() {
+        // Given
+        msg.getResponseHeader().setHeader("X-Test-Thing", FOOBAR_MD2);
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "image/jpeg");
+        msg.setResponseBody("Some text <h1>Some Title Element</h1>");
+        List<String> testUsers = Arrays.asList("foobar");
+        UsernameIdorScanRule.setPayloadProvider(() -> testUsers);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(alertsRaised.size(), 0);
     }
 }

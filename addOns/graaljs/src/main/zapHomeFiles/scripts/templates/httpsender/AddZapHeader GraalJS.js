@@ -4,8 +4,9 @@
 // Note that new HttpSender scripts will initially be disabled
 // Right click the script in the Scripts tree and select "enable"  
 
-// For the latest list of 'initiator' values see the HttpSender class:
-// https://github.com/zaproxy/zaproxy/blob/main/zap/src/main/java/org/parosproxy/paros/network/HttpSender.java
+// 'initiator' is the component the initiated the request.
+// For the latest list of values see the "Request Initiator" entries in the constants documentation:
+// https://www.zaproxy.org/docs/constants/
 // 'helper' just has one method at the moment: helper.getHttpSender() which returns the HttpSender 
 // instance used to send the request.
 
@@ -15,7 +16,7 @@
 
 function sendingRequest(msg, initiator, helper) {
 	// Add a ZAP identifier header to all traffic that originates with or passes through ZAP
-	msg.getRequestHeader().setHeader("X-ZAP-Initiator", initiator);
+	msg.getRequestHeader().setHeader("X-ZAP-Initiator", `${initiator}`);
 }
 
 function responseReceived(msg, initiator, helper) {

@@ -7,8 +7,43 @@
     "name": "Message boards",
     "priority": 1
   },
+  "6": {
+    "groups": [
+      1
+    ],
+    "name": "Ecommerce",
+    "priority": 1
+  },
+  "22": {
+    "groups": [
+      7
+    ],
+    "name": "Web servers",
+    "priority": 8
+  },
+  "27": {
+    "groups": [
+      9
+    ],
+    "name": "Programming languages",
+    "priority": 5
+  },
   "36": {
     "name": "Advertising",
+    "priority": 9
+  },
+  "57": {
+    "groups": [
+      9
+    ],
+    "name": "Static site generator",
+    "priority": 1
+  },
+  "59": {
+    "groups": [
+      9
+    ],
+    "name": "JavaScript libraries",
     "priority": 9
   }
 }

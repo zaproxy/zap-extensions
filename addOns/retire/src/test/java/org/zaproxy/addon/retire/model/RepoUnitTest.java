@@ -96,7 +96,7 @@ class RepoUnitTest {
         assertThat(identifiers.getCve(), contains("cve 1", "cve 2"));
         assertThat(identifiers.getSummary(), is("summary"));
         assertThat(vuln.getInfo(), contains("info 1", "info 2"));
-        assertThat(vuln.getSeverity(), is("severity"));
+        assertThat(vuln.getSeverity(), is("high"));
     }
 
     @Test

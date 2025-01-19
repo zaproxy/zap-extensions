@@ -26,9 +26,6 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.net.Authenticator;
 import java.net.BindException;
 import java.net.InetAddress;
@@ -67,8 +64,12 @@ import javax.swing.JPanel;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.hc.client5.http.cookie.BasicCookieStore;
 import org.apache.hc.client5.http.cookie.CookieStore;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
@@ -84,14 +85,13 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.network.HttpBody;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.OptionsDialog;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.LocalServersOptions.ServersChangedListener;
+import org.zaproxy.addon.network.common.HttpProxy;
 import org.zaproxy.addon.network.internal.ContentEncodingsHandler;
 import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.CertData;
@@ -100,7 +100,6 @@ import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.internal.client.CloseableHttpSenderImpl;
-import org.zaproxy.addon.network.internal.client.HttpProxy;
 import org.zaproxy.addon.network.internal.client.LegacyUtils;
 import org.zaproxy.addon.network.internal.client.ZapAuthenticator;
 import org.zaproxy.addon.network.internal.client.ZapProxySelector;
@@ -156,8 +155,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     private static final int ARG_HOST_IDX = 3;
     private static final int ARG_PORT_IDX = 4;
-
-    private Method setContentEncodingsHandlerMethod;
 
     private CloseableHttpSenderImpl<?> httpSenderNetwork;
 
@@ -215,32 +212,18 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         // Let the servers start after everything has been initialised.
         setOrder(Integer.MAX_VALUE);
 
+        // Prevent verbose INFO logging from Bouncy Castle JSSE provider.
+        setLogLevel(
+                List.of(
+                        "org.bouncycastle.jsse.provider.PropertyUtils",
+                        "org.bouncycastle.jsse.provider.ProvTlsClient",
+                        "org.bouncycastle.jsse.provider.ProvTlsServer"),
+                Level.WARN);
+
         // Force initialisation.
         TlsUtils.getSupportedTlsProtocols();
 
-        try {
-            Class<?> handlerClass =
-                    Class.forName("org.parosproxy.paros.network.HttpMessage$HttpEncodingsHandler");
-            ContentEncodingsHandler handler = new ContentEncodingsHandler();
-            InvocationHandler invocationHandler =
-                    (o, method, args) -> {
-                        if ("handle".equals(method.getName())) {
-                            handler.handle((HttpHeader) args[0], (HttpBody) args[1]);
-                        }
-                        return null;
-                    };
-
-            setContentEncodingsHandlerMethod =
-                    HttpMessage.class.getMethod("setContentEncodingsHandler", handlerClass);
-            setContentEncodingsHandlerMethod.invoke(
-                    null,
-                    Proxy.newProxyInstance(
-                            getClass().getClassLoader(),
-                            new Class<?>[] {handlerClass},
-                            invocationHandler));
-        } catch (Exception e) {
-            LOGGER.debug("An error occurred while setting content encodings handler:", e);
-        }
+        HttpMessage.setContentEncodingsHandler(new ContentEncodingsHandler());
 
         connectionOptions = new ConnectionOptions();
         legacyConnectionOptions =
@@ -266,6 +249,29 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             HttpSender.setImpl(httpSenderNetwork);
         } catch (Exception e) {
             LOGGER.error("An error occurred while creating the sender:", e);
+        }
+    }
+
+    private static void setLogLevel(List<String> classnames, Level level) {
+        boolean updateLoggers = false;
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration configuration = ctx.getConfiguration();
+        for (String classname : classnames) {
+            LoggerConfig loggerConfig = configuration.getLoggerConfig(classname);
+            if (!classname.equals(loggerConfig.getName())) {
+                configuration.addLogger(
+                        classname,
+                        LoggerConfig.newBuilder()
+                                .withLoggerName(classname)
+                                .withLevel(level)
+                                .withConfig(configuration)
+                                .build());
+                updateLoggers = true;
+            }
+        }
+
+        if (updateLoggers) {
+            ctx.updateLoggers();
         }
     }
 
@@ -296,6 +302,31 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     ConnectionOptions getConnectionOptions() {
         return connectionOptions;
+    }
+
+    /**
+     * Gets the HTTP proxy.
+     *
+     * @return the HTTP proxy, never {@code null}.
+     * @since 0.15.0
+     */
+    public HttpProxy getHttpProxy() {
+        return getConnectionOptions().getHttpProxy();
+    }
+
+    /**
+     * Sets the specified HTTP proxy.
+     *
+     * @param proxy the HTTP proxy.
+     * @throws NullPointerException if the given {@code httpProxy} is {@code null}.
+     * @since 0.15.0
+     */
+    public void setHttpProxy(HttpProxy proxy) {
+        getConnectionOptions().setHttpProxy(proxy);
+    }
+
+    public void setHttpProxyEnabled(boolean enabled) {
+        getConnectionOptions().setHttpProxyEnabled(enabled);
     }
 
     ClientCertificatesOptions getClientCertificatesOptions() {
@@ -611,19 +642,13 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                     new LocalServerInfoLabel(
                             getView().getMainFrame().getMainFooterPanel(), localServersOptions);
 
-            hookView.addOptionPanel(
-                    new LegacyOptionsPanel("dynssl", serverCertificatesOptionsPanel));
-            hookView.addOptionPanel(new LegacyOptionsPanel("proxies", localServersOptionsPanel));
-
-            connectionOptionsPanel = new ConnectionOptionsPanel();
+            connectionOptionsPanel =
+                    new ConnectionOptionsPanel(localServersOptionsPanel::isConfiguredAddress);
             optionsDialog.addParamPanel(networkNode, connectionOptionsPanel, true);
-            hookView.addOptionPanel(new LegacyOptionsPanel("connection", connectionOptionsPanel));
 
             clientCertificatesOptionsPanel =
                     new ClientCertificatesOptionsPanel(View.getSingleton());
             optionsDialog.addParamPanel(networkNode, clientCertificatesOptionsPanel, true);
-            hookView.addOptionPanel(
-                    new LegacyOptionsPanel("clientcerts", clientCertificatesOptionsPanel));
 
             optionsDialog.addParamPanel(
                     networkNode, rateLimitExtensionHelper.getRateLimitOptionsPanel(), true);
@@ -1129,7 +1154,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
      * @param serverConfigs the server configurations to filter.
      */
     void removeStartedLocalServers(Set<LocalServerConfig> serverConfigs) {
-        if (mainProxyServer.isStarted()) {
+        if (mainProxyServer != null && mainProxyServer.isStarted()) {
             serverConfigs.remove(mainProxyServer.getConfig());
         }
         localServers.values().stream()
@@ -1425,13 +1450,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     @Override
     @SuppressWarnings({"deprecation", "removal"})
     public void unload() {
-        if (setContentEncodingsHandlerMethod != null) {
-            try {
-                setContentEncodingsHandlerMethod.invoke(null, (Object) null);
-            } catch (Exception e) {
-                LOGGER.error("An error occurred while unloading the content encodings handler:", e);
-            }
-        }
+        HttpMessage.setContentEncodingsHandler(null);
 
         Control.getSingleton().getExtensionLoader().removeProxyServer(legacyProxyListenerHandler);
         legacyProxyListenerHandler = null;

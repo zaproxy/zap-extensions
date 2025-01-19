@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,13 +34,28 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastPayload;
 
-public class SsrfScanRule extends AbstractAppParamPlugin {
+public class SsrfScanRule extends AbstractAppParamPlugin implements CommonActiveScanRuleInfo {
 
     private static final int PLUGIN_ID = 40046;
     private static final Logger LOGGER = LogManager.getLogger(SsrfScanRule.class);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A10_SSRF,
+                                CommonAlertTag.WSTG_V42_INPV_19_SSRF));
+        alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public int getId() {
@@ -83,13 +99,7 @@ public class SsrfScanRule extends AbstractAppParamPlugin {
 
     @Override
     public Map<String, String> getAlertTags() {
-        Map<String, String> alertTags =
-                new HashMap<>(
-                        CommonAlertTag.toMap(
-                                CommonAlertTag.OWASP_2021_A10_SSRF,
-                                CommonAlertTag.WSTG_V42_INPV_19_SSRF));
-        alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
-        return alertTags;
+        return ALERT_TAGS;
     }
 
     @Override

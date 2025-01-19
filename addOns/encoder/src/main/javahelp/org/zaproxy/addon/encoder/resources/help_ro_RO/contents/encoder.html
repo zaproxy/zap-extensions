@@ -144,6 +144,10 @@ Will display the full URL encoding of the text you enter (all characters convert
 Will display the unescaped Unicode characters. For example, the text
 <code>%u0041%u00e7%u006f%u0072%u0065%u0073</code> would be decoded as <code>A&ccedil;ores</code>.
 
+<H4>Morse Code Encoder</H4>
+Will display dits (.) and dahs (-) and word breaks (/) representing the provided Alpha Numeric (including space) input.
+For example, the text <code>SOS SOS</code> would be encoded as <code>... --- .../... --- ...</code>.
+
 <H3>Decoders</H3>
 
 <H4>ASCII Hex Decode</H4>
@@ -152,7 +156,7 @@ If there is no valid decoding then the field will be disabled.
 
 <H4>Base 64 Decode</H4>
 Will display the base 64 decoding of the text you enter.<br/>
-Leveraging a <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/util/Base64.html#getMimeDecoder()">Mime decoder</a> to handle wrapped lines.
+Leveraging a <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Base64.html#getMimeDecoder()">Mime decoder</a> to handle wrapped lines.
 
 <H4>Base 64 URL Decode</H4>
 Will display the base 64 URL decoding of the text you enter. Base64URL is a modification to the primary base 64 standard 
@@ -173,6 +177,10 @@ Will display the URL decoding of the text you enter.
 
 <H4>Full URL Decode</H4>
 Will display the URL decoding of the text you enter (percent signs removed and HEX decoded).
+
+<H4>Morse Code Decoder</H4>
+Will display Alpha Numeric (including space) output representing the provided morse code input.
+For example, the text <code>... --- .../... --- ...</code> would be encoded as <code>SOS SOS</code>.
 
 <H3>Hashers</H3>
 
@@ -198,13 +206,27 @@ in the event that users aren't careful in doing so will return other data types 
 Converts the input to all lower case characters.
 
 <H4>Remove Whitespace</H4>
-Removes all whitespace characters from the text, based on <a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/lang/Character.html#isWhitespace(char)">Character.isWhiteSpace(char)</a>.
+Removes all whitespace characters from the text, based on <a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Character.html#isWhitespace(char)">Character.isWhiteSpace(char)</a>.
 
 <H4>Reverse</H4>
 Reverses the order of the input.
 
 <H4>To Upper Case</H4>
 Converts the input to all upper case characters.
+
+<H4>ASCify</H4>
+Converts text removing accents/diacritics/ligatures (perhaps not fully, due to operation in compatibility mode) leaving only ASCII characters.
+Examples:
+<ukl>
+  <li><code>Tĥïŝ ĩš â fůňķŷ Šťŕĭńġ: ﬁ. étrange.</code> becomes <code>This is a funky String: fi. etrange.</code>.>br></li>
+  <li><code>鸟儿</code> becomes an empty string (all characters are dropped).</li>
+<ul>
+
+See also:<br>
+<ul>
+    <li><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/text/Normalizer.html">Normalizer JavaDoc</a>. </li>
+    <li><a href="https://en.wikipedia.org/wiki/Transliteration">Wikipedia: Transliteration</a></li>
+</ul>
 
 <H3>Miscellaneous</H3>
 

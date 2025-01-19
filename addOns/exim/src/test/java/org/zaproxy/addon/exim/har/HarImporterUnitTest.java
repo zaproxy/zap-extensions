@@ -20,63 +20,165 @@
 package org.zaproxy.addon.exim.har;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.withSettings;
 
-import edu.umass.cs.benchlab.har.HarEntries;
-import edu.umass.cs.benchlab.har.HarLog;
+import de.sstoehr.harreader.HarReader;
+import de.sstoehr.harreader.HarReaderException;
+import de.sstoehr.harreader.model.HarEntry;
+import de.sstoehr.harreader.model.HarLog;
 import java.io.File;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.StringLayout;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Property;
+import org.apache.logging.log4j.core.filter.BurstFilter;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.RecordHistory;
+import org.parosproxy.paros.db.TableAlert;
+import org.parosproxy.paros.db.TableHistory;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.model.SiteMap;
+import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
-import org.zaproxy.zap.utils.HarUtils;
-import org.zaproxy.zap.utils.I18N;
+import org.zaproxy.addon.exim.ExtensionExim;
+import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link HarImporter}. */
-class HarImporterUnitTest {
+class HarImporterUnitTest extends TestUtils {
 
+    private static final String APPENDER_NAME = "ZAP-TestAppender";
     private static final byte[] EMPTY_BODY = {};
+    private static final String PLACEHOLDER = "replace";
+    private static final String DEFAULT_RESPONSE_HEADER =
+            "HTTP/1.0 0" + HttpHeader.CRLF + HttpHeader.CRLF;
+
+    private static TableHistory tableHistory;
+    private static long sessionId;
+    private static Session session;
+    private static ExtensionLoader extensionLoader;
+    private static ExtensionHistory extHistory;
+    private static SiteMap siteMap;
+
+    private List<String> logMessages;
 
     @BeforeAll
-    static void setup() {
-        Constant.messages = mock(I18N.class);
-        given(Constant.messages.getString(any())).willReturn("");
+    static void setup() throws HttpMalformedHeaderException, DatabaseException {
+        mockMessages(new ExtensionExim());
+
+        tableHistory = mock(TableHistory.class, withSettings().strictness(Strictness.LENIENT));
+        given(tableHistory.write(anyLong(), anyInt(), any())).willReturn(mock(RecordHistory.class));
+        HistoryReference.setTableHistory(tableHistory);
+        HistoryReference.setTableAlert(mock(TableAlert.class));
+
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        Model.setSingletonForTesting(model);
+        session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
+        given(model.getSession()).willReturn(session);
+        sessionId = 1234;
+        given(session.getSessionId()).willReturn(sessionId);
+
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        extHistory = mock(ExtensionHistory.class);
+        given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        siteMap = mock(SiteMap.class);
+        given(session.getSiteTree()).willReturn(siteMap);
+    }
+
+    @BeforeEach
+    void initLogger() {
+        logMessages = new ArrayList<>();
+        LoggerConfig rootLogger = LoggerContext.getContext().getConfiguration().getRootLogger();
+        rootLogger.addAppender(new TestAppender(logMessages::add), null, null);
+        Configurator.setRootLevel(Level.ALL);
     }
 
     @AfterAll
     static void cleanup() {
         Constant.messages = null;
+        HistoryReference.setTableHistory(null);
+        HistoryReference.setTableAlert(null);
+    }
+
+    @AfterEach
+    void reset() throws URISyntaxException {
+        Configurator.reconfigure(getClass().getResource("/log4j2-test.properties").toURI());
     }
 
     @Test
     void serializedAndDeserializedShouldMatch() throws Exception {
         // Given
+        var requestHeader =
+                "POST http://example.com/path HTTP/1.1\r\nContent-Type: application/octet-stream\r\n\r\n";
+        var responseHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/plain;charset=US-ASCII\r\n\r\n";
         byte[] requestBody = {0x01, 0x02};
         byte[] responseBody = {0x30, 0x31};
         HttpMessage httpMessage =
-                new HttpMessage(
-                        "POST /path HTTP/1.1\r\nContent-Type: application/octet-stream\r\n\r\n",
-                        requestBody,
-                        "HTTP/1.1 200 OK\r\nContent-Type: text/plain;charset=US-ASCII\r\n\r\n",
-                        responseBody);
+                new HttpMessage(requestHeader, requestBody, responseHeader, responseBody);
+        long timeSentMillis = 1234L;
+        httpMessage.setTimeSentMillis(timeSentMillis);
+        int timeElapsedMillis = 42;
+        httpMessage.setTimeElapsedMillis(timeElapsedMillis);
 
         HarLog harLog = createHarLog(httpMessage);
         // When
         List<HttpMessage> deserialized = HarImporter.getHttpMessages(harLog);
         // Then
-        assertThat(deserialized.size(), equalTo(1));
-        assertThat(deserialized.get(0), equalTo(httpMessage));
+        assertThat(deserialized, hasSize(1));
+        var deserializedHttpMessage = deserialized.get(0);
+        assertThat(
+                deserializedHttpMessage.getRequestHeader().toString(), is(equalTo(requestHeader)));
+        assertThat(deserializedHttpMessage.getRequestBody().getBytes(), is(equalTo(requestBody)));
+        assertThat(
+                deserializedHttpMessage.getResponseHeader().toString(),
+                is(equalTo(responseHeader)));
+        assertThat(deserializedHttpMessage.getResponseBody().getBytes(), is(equalTo(responseBody)));
+        assertThat(deserializedHttpMessage.getTimeSentMillis(), is(equalTo(timeSentMillis)));
+        assertThat(deserializedHttpMessage.getTimeElapsedMillis(), is(equalTo(timeElapsedMillis)));
     }
 
     @Test
@@ -126,11 +228,195 @@ class HarImporterUnitTest {
         verify(listener).completed();
     }
 
+    @Test
+    void shouldImportIfHarEntryHasNoResponse() throws Exception {
+        // Given
+        ProgressPaneListener listener = mock(ProgressPaneListener.class);
+        // When
+        HarImporter importer =
+                new HarImporter(getResourcePath("noresponse.har").toFile(), listener);
+        // Then
+        assertThat(importer.isSuccess(), equalTo(true));
+        verify(listener).completed();
+    }
+
+    @Test
+    void shouldCountNullMessagesTowardsTasksDone() {
+        // Given
+        ProgressPaneListener listener = mock(ProgressPaneListener.class);
+        // When
+        new HarImporter(getResourcePath("oneNullMessage.har").toFile(), listener);
+        // Then
+        verify(listener).setTasksDone(1);
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "templates/replaceableReqHttpVer.har",
+                "templates/replaceableRespHttpVer.har"
+            })
+    void shouldSkipEntryIfHttpVersionInvalid(String templateFile) throws Exception {
+        // Given
+        HarLog harLog = getHarLog(templateFile, "Foo");
+        // When
+        HarImporter.getHttpMessages(harLog);
+        // Then
+        assertTrue(logMessages.get(0).startsWith("Message with unsupported HTTP version"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", HttpHeader.HTTP})
+    void shouldSetReqHttpVersionWhenMissing(String version) throws Exception {
+        // Given
+        HarLog harLog = getHarLog("templates/replaceableReqHttpVer.har", version);
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(1));
+        HttpMessage processed = messages.get(0);
+        assertThat(processed.getRequestHeader().getVersion(), is(equalTo(HttpHeader.HTTP11)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", HttpHeader.HTTP})
+    void shouldSetRespHttpVersionWhenMissing(String version) throws Exception {
+        // Given
+        HarLog harLog = getHarLog("templates/replaceableRespHttpVer.har", version);
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(1));
+        HttpMessage processed = messages.get(0);
+        assertThat(processed.getResponseHeader().getVersion(), is(equalTo(HttpHeader.HTTP11)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"h3", "http/3", "http/3.0"})
+    void shouldSetHttp2ReqIfHttpVersionHttp3(String version) throws Exception {
+        // Given
+        HarLog harLog = getHarLog("templates/replaceableReqHttpVer.har", version);
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(1));
+        HttpMessage processed = messages.get(0);
+        assertThat(processed.getRequestHeader().getVersion(), is(equalTo(HttpHeader.HTTP2)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"h3", "http/3", "http/3.0"})
+    void shouldSetHttp2RespIfHttpVersionHttp3(String version) throws Exception {
+        // Given
+        HarLog harLog = getHarLog("templates/replaceableRespHttpVer.har", version);
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(1));
+        HttpMessage processed = messages.get(0);
+        assertThat(processed.getResponseHeader().getVersion(), is(equalTo(HttpHeader.HTTP2)));
+    }
+
+    @Test
+    void shouldHandleSetCookiesWithLFAndUsableHeader() throws Exception {
+        // Given
+        HarLog harLog = getHarLog("cookiesLFWithUsableResponseHeader.har", "");
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(1));
+        HttpMessage processed = messages.get(0);
+        assertThat(processed.getResponseHeader().toString(), is(not(emptyString())));
+        assertThat(logMessages, hasSize(1));
+    }
+
+    @Test
+    void shouldHandleSetCookiesWithLFAndUnusableHeader() throws Exception {
+        // Given
+        HarLog harLog = getHarLog("cookiesLFWithUnusableResponseHeader.har", "");
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(1));
+        HttpMessage processed = messages.get(0);
+        assertThat(processed.getResponseHeader().toString(), is(equalTo(DEFAULT_RESPONSE_HEADER)));
+        assertThat(logMessages, hasSize(2));
+    }
+
+    @Test
+    void shouldSkipLocalPrivate() throws Exception {
+        // Given
+        HarLog harLog = getHarLog("localPrivateAboutBlank.har", "");
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(0));
+        assertThat(logMessages, hasSize(1));
+        assertThat(
+                logMessages.get(0).trim(),
+                is(equalTo("Skipping local private entry: about:blank")));
+    }
+
+    @Test
+    void shouldBase64DecodeResponseBody() throws Exception {
+        // Given
+        HarLog harLog = getHarLog("response-base64.har", "");
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(1));
+        assertThat(messages.get(0).getResponseBody().toString(), is(equalTo("1234")));
+    }
+
+    @Test
+    void shouldFallbackToPlainTextOnMalformedBase64ResponseBody() throws Exception {
+        // Given
+        HarLog harLog = getHarLog("response-base64-invalid.har", "");
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(1));
+        assertThat(messages.get(0).getResponseBody().toString(), is(equalTo("Not base 64")));
+    }
+
+    private HarLog getHarLog(String path, String replacement) throws HarReaderException {
+        return new HarReader()
+                .readFromString(getHtml(path, Map.of(PLACEHOLDER, replacement)))
+                .getLog();
+    }
+
     private static HarLog createHarLog(HttpMessage message) {
         HarLog harLog = HarUtils.createZapHarLog();
-        HarEntries harEntries = new HarEntries();
-        harEntries.addEntry(HarUtils.createHarEntry(message));
+        List<HarEntry> harEntries = new ArrayList<>();
+        harEntries.add(HarUtils.createHarEntry(message));
         harLog.setEntries(harEntries);
         return harLog;
+    }
+
+    static class TestAppender extends AbstractAppender {
+
+        private static final Property[] NO_PROPERTIES = {};
+
+        private final Consumer<String> logConsumer;
+
+        TestAppender(Consumer<String> logConsumer) {
+            super(
+                    APPENDER_NAME,
+                    BurstFilter.newBuilder().setMaxBurst(100).setLevel(Level.WARN).build(),
+                    PatternLayout.newBuilder()
+                            .withDisableAnsi(true)
+                            .withCharset(StandardCharsets.UTF_8)
+                            .withPattern("%m%n")
+                            .build(),
+                    true,
+                    NO_PROPERTIES);
+            this.logConsumer = logConsumer;
+            start();
+        }
+
+        @Override
+        public void append(LogEvent event) {
+            logConsumer.accept(((StringLayout) getLayout()).toSerializable(event));
+        }
     }
 }

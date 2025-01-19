@@ -4,8 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Document the engine name in the help page.
+
 ### Changed
-- Update minimum ZAP version to 2.14.0.
+- Update minimum ZAP version to 2.16.0.
+- Maintenance changes.
+- Update script template:
+  - httpsender/HttpSender default template.rb - update documentation.
 - This add-on now depends on the Scripts add-on for providing scanning related functionality.
 - The active and passive scan rule templates were updated to import classes from the scripts add-on.
 

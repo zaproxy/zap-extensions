@@ -28,6 +28,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class HeartBleedActiveScanRuleUnitTest extends ActiveScannerTest<HeartBleedActiveScanRule> {
 
@@ -45,7 +46,7 @@ class HeartBleedActiveScanRuleUnitTest extends ActiveScannerTest<HeartBleedActiv
         // Then
         assertThat(cwe, is(equalTo(119)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
@@ -55,6 +56,7 @@ class HeartBleedActiveScanRuleUnitTest extends ActiveScannerTest<HeartBleedActiv
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_CRYP_01_TLS.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey("CVE-2014-0160"), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));

@@ -29,6 +29,8 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,6 +45,7 @@ import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.retire.Result;
 import org.zaproxy.addon.retire.RetireUtil;
@@ -128,7 +131,7 @@ public class Repo {
         return scanHash(hash);
     }
 
-    private String getCleanContent(HttpMessage msg, Source source) {
+    private static String getCleanContent(HttpMessage msg, Source source) {
         if (msg.getResponseHeader().isHtml()) {
             StringBuilder contents = new StringBuilder();
             for (Element scriptElement : source.getAllElements(HTMLElementName.SCRIPT)) {
@@ -144,7 +147,7 @@ public class Repo {
      * This function computes the SHA 1 hash of the HTTP response body,
      * IF the hash matches that of an existing entry in the vulnerability database
      * corresponding info is returned.
-     * ELSE an empty HashSet is returned.
+     * ELSE null is returned.
      */
     private Result scanHash(String hash) {
         // Testable URL: https://ajax.googleapis.com/ajax/libs/dojo/1.1.1/dojo/dojo.js
@@ -157,10 +160,10 @@ public class Repo {
                     List<Vulnerability> vulnerabilities = repoEntry.getValue().getVulnerabilities();
 
                     if (hash.equalsIgnoreCase(hashEntry.getKey())) {
-                        Map<String, Set<String>> results =
+                        VulnerabilityData vulnData =
                                 isVersionVulnerable(vulnerabilities, hashEntry.getValue());
                         Result result =
-                                new Result(repoEntry.getKey(), hashEntry.getValue(), results, "");
+                                new Result(repoEntry.getKey(), hashEntry.getValue(), vulnData, "");
                         result.setOtherinfo(
                                 Constant.messages.getString(
                                         "retire.rule.otherinfo", hashEntry.getKey()));
@@ -198,13 +201,13 @@ public class Repo {
                             // Now try to determine if this version is vulnerable
                             List<Vulnerability> vulnerabilities =
                                     repoEntry.getValue().getVulnerabilities();
-                            Map<String, Set<String>> results =
+                            VulnerabilityData vulnData =
                                     isVersionVulnerable(vulnerabilities, versionString);
-                            if (!results.isEmpty()) {
+                            if (!vulnData.isEmpty()) {
                                 return new Result(
                                         repoEntry.getKey(),
                                         versionString,
-                                        results,
+                                        vulnData,
                                         matcher.group(0));
                             }
                         }
@@ -249,16 +252,17 @@ public class Repo {
     /*
      * This function depending on the vulnerability info of a passed JS library,
      * detects if the current version is vulnerable.
-     * If YES returns the HashSet of vulnerability info.
-     * else returns an empty HashSet.
+     * If YES returns the vulnerability data.
+     * else returns an empty data object.
      */
-    private static Map<String, Set<String>> isVersionVulnerable(
+    private static VulnerabilityData isVersionVulnerable(
             List<Vulnerability> vulnerabilities, String versionString) {
+        if (!isGoodCandidate(versionString)) {
+            return VulnerabilityData.EMPTY;
+        }
         // Do a match for each of the above vulnerabilities
-        Map<String, Set<String>> results = new HashMap<>();
+        VulnerabilityData vulnData = new VulnerabilityData();
         ListIterator<Vulnerability> viterator = vulnerabilities.listIterator();
-        Set<String> cve = new HashSet<>();
-        Set<String> info = new HashSet<>();
 
         while (viterator.hasNext()) {
             boolean isVulnerable = false;
@@ -279,12 +283,82 @@ public class Repo {
                 }
             }
             if (isVulnerable) {
-                cve.addAll(vnext.getIdentifiers().getCve());
-                results.put(Result.CVE, cve);
-                info.addAll(vnext.getInfo());
-                results.put(Result.INFO, info);
+                vulnData.addCves(vnext.getIdentifiers().getCve());
+                vulnData.addInfo(vnext.getInfo());
+                vulnData.setRisk(vnext.getRisk());
             }
         }
-        return results;
+        return vulnData.getRisk() > 0 ? vulnData : VulnerabilityData.EMPTY;
+    }
+
+    private static boolean isGoodCandidate(String version) {
+        String[] v1 = version.split("[._-]");
+        if (v1.length == 1) {
+            // There were no separators in the "version" being checked
+            // Likely a cache buster string, ex: 7a06f256
+            return false;
+        }
+        int isAllZeros = 9; // Placeholder
+        try {
+            isAllZeros = Arrays.stream(v1).mapToInt(Integer::parseInt).sum();
+        } catch (NumberFormatException nfe) {
+            // Nothing to do, it might happen
+        }
+        return isAllZeros != 0; // Not a good value if all zero
+    }
+
+    /** For testing purposes only */
+    Map<String, RepoEntry> getEntries() {
+        return entries;
+    }
+
+    public static class VulnerabilityData {
+        public static final VulnerabilityData EMPTY = new VulnerabilityData();
+
+        static {
+            EMPTY.empty = true;
+            EMPTY.cves = Set.of();
+            EMPTY.info = Set.of();
+            EMPTY.risk = Alert.RISK_MEDIUM;
+        }
+
+        private Set<String> cves;
+        private Set<String> info;
+        private int risk;
+        private boolean empty;
+
+        public VulnerabilityData() {
+            this.empty = false;
+            this.cves = new HashSet<>();
+            this.info = new HashSet<>();
+        }
+
+        public Set<String> getCves() {
+            return cves;
+        }
+
+        public void addCves(Collection<String> cves) {
+            this.cves.addAll(cves);
+        }
+
+        public Set<String> getInfo() {
+            return info;
+        }
+
+        public void addInfo(Collection<String> info) {
+            this.info.addAll(info);
+        }
+
+        public int getRisk() {
+            return risk;
+        }
+
+        public void setRisk(int newRisk) {
+            this.risk = Math.max(risk, newRisk);
+        }
+
+        public boolean isEmpty() {
+            return empty;
+        }
     }
 }

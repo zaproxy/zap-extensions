@@ -74,6 +74,7 @@ import org.apache.hc.core5.http.config.CharCodingConfig;
 import org.apache.hc.core5.http.config.Lookup;
 import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.hc.core5.http.io.HttpClientConnection;
+import org.apache.hc.core5.http.io.SocketConfig;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.apache.hc.core5.http.message.BasicHttpRequest;
@@ -254,6 +255,9 @@ public class HttpSenderApache
                         .build();
         connectionManager.setDefaultConnectionConfig(connConfig);
 
+        connectionManager.setDefaultSocketConfig(
+                SocketConfig.custom().setSoTimeout(timeout).build());
+
         connectionManager.setDefaultTlsConfig(
                 TlsConfig.custom()
                         .setHandshakeTimeout(timeout)
@@ -395,6 +399,7 @@ public class HttpSenderApache
                 RequestConfig.copy(requestCtx.getRequestConfig());
 
         boolean reauthenticate = false;
+        requestCtx.setAttribute(ZapProtocolExec.AUTH_DISABLED_ATTR, Boolean.TRUE);
         boolean reauthenticateProxy =
                 ctx.isRemoveUserDefinedAuthHeaders()
                         && credentialsProvider.hasProxyAuth()
@@ -418,6 +423,7 @@ public class HttpSenderApache
             if (!authHeaderPresent) {
                 requestCtx.setCredentialsProvider(
                         new HttpStateCredentialsProvider(user.getCorrespondingHttpState()));
+                requestCtx.setAttribute(ZapProtocolExec.AUTH_DISABLED_ATTR, Boolean.FALSE);
             }
         } else {
             switch (ctx.getCookieUsage()) {
@@ -639,6 +645,7 @@ public class HttpSenderApache
         request.removeHeaders(HttpHeader.AUTHORIZATION);
         requestCtx.setCredentialsProvider(
                 new HttpStateCredentialsProvider(user.getCorrespondingHttpState()));
+        requestCtx.setAttribute(ZapProtocolExec.AUTH_DISABLED_ATTR, Boolean.FALSE);
         return true;
     }
 

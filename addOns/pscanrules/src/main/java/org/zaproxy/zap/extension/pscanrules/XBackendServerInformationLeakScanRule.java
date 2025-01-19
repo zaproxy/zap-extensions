@@ -34,7 +34,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * X-Backend-Server header information leak passive scan rule
  * https://github.com/zaproxy/zaproxy/issues/1169
  */
-public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner {
+public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.xbackendserver.";
     private static final int PLUGIN_ID = 10039;
@@ -66,9 +67,8 @@ public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner 
         return newAlert()
                 .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setEvidence(evidence)
                 .setCweId(200)
                 .setWascId(13);
@@ -82,18 +82,6 @@ public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner 
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
-    }
-
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     @Override

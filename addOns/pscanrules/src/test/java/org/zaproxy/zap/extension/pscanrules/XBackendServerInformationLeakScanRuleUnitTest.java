@@ -40,7 +40,7 @@ class XBackendServerInformationLeakScanRuleUnitTest
     private static final String XBS_HEADER = "X-Backend-Server";
     private static final String HEADER_VALUE = "developer1.webapp.scl3.mozilla.com";
 
-    private HttpMessage createMessage() throws URIException {
+    private static HttpMessage createMessage() throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));
 
@@ -110,9 +110,6 @@ class XBackendServerInformationLeakScanRuleUnitTest
 
         Alert alert = alerts.get(0);
         assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
-        assertThat(
-                alert.getReference(),
-                equalTo(Constant.messages.getString(MESSAGE_PREFIX + "refs")));
         assertThat(alert.getEvidence(), equalTo(HEADER_VALUE));
         assertThat(
                 alert.getSolution(), equalTo(Constant.messages.getString(MESSAGE_PREFIX + "soln")));

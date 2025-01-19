@@ -38,7 +38,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
+public class DirectoryBrowsingScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /**
      * a consistently ordered map of: a regular expression pattern, mapping to the Web server to
@@ -115,10 +116,10 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
                 .setName(getName())
                 .setRisk(Alert.RISK_MEDIUM)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
-                .setOtherInfo(getExtraInfo(server))
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", server))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
                 .setCweId(548) // Information Exposure Through Directory Listing
                 .setWascId(16); // Directory Indexing
@@ -137,37 +138,6 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
     @Override
     public int getPluginId() {
         return 10033;
-    }
-
-    /**
-     * get the description of the alert
-     *
-     * @return
-     */
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    /**
-     * get the solution for the alert
-     *
-     * @return
-     */
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    /**
-     * gets references for the alert
-     *
-     * @return
-     */
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    private static String getExtraInfo(String server) {
-        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", server);
     }
 
     @Override

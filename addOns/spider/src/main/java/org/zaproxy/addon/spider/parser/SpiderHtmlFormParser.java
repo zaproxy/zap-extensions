@@ -391,7 +391,7 @@ public class SpiderHtmlFormParser extends SpiderParser {
             List<String> submitFields = new ArrayList<>();
             for (String value : field.getPredefinedValues()) {
                 String finalValue =
-                        ctx.getValueGenerator()
+                        ctx.getValueProvider()
                                 .getValue(
                                         uri,
                                         url,
@@ -443,9 +443,8 @@ public class SpiderHtmlFormParser extends SpiderParser {
             defaultValue = values.get(0);
         }
 
-        // Get the default value used in DefaultValueGenerator
         String finalValue =
-                ctx.getValueGenerator()
+                ctx.getValueProvider()
                         .getValue(
                                 uri,
                                 url,

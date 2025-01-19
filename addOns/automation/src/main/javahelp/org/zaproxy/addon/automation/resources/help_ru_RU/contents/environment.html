@@ -10,6 +10,8 @@ Automation Framework - Environment
 
 Этот раздел файла конфигурации YAML определяет приложения, с которыми могут работать остальные задания. 
 <p>
+The environment is covered in the video: <a href="https://youtu.be/1fcpU54N-mA">ZAP Chat 08 Automation Framework Part 2 - Environment</a>.
+<p>
 The Automation Framework supports all of the <a href="authentication.html">authentication</a> mechanisms supported by ZAP.
 <p>
 <strong>Note</strong> When testing targets that operate on default ports (80 for http, 443 for https), the colon port portion of the URL should not be included.
@@ -53,6 +55,9 @@ env:                                   # The environment, mandatory
           scriptEngine:                # String, the name of the script engine to use, only for 'script' session management
       technology:
         exclude:                       # List of tech to exclude, as per https://www.zaproxy.org/techtags/ (just use last names)
+        include:                       # List of tech to include, should only be used when targeting specific techs, the exclude takes precedence when configuring the context.
+      structure:
+        structuralParameters:          # List of names of structural parameters.
       users:                           # List of one or more users available to use for authentication
       - name:                          # String, the name to be used by the jobs
         credentials:                   # List of user credentials - may include any required for scripts
@@ -64,7 +69,14 @@ env:                                   # The environment, mandatory
   parameters:
     failOnError: true                  # If set exit on an error         
     failOnWarning: false               # If set exit on a warning
+    continueOnFailure: false           # Continue running all jobs, even if one fails
     progressToStdout: true             # If set will write job progress to stdout
+  proxy:                               # Optional upstream proxy settings
+    hostname:                          # String, the proxy host
+    port:                              # Int, the proxy port
+    realm:                             # String, the proxy realm
+    username:                          # String, the proxy username
+    password:                          # String, the proxy password
 </pre>
 
 <h3>Variables</h3>

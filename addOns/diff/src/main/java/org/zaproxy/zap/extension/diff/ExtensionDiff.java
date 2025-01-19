@@ -27,6 +27,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.extension.diff.ZapDiffRowGenerator.Builder;
 import org.zaproxy.zap.extension.diff.diff_match_patch.Diff;
 
@@ -73,6 +74,7 @@ public class ExtensionDiff extends ExtensionAdaptor {
             popupMenuDiffRequests =
                     new PopupMenuDiff(
                             Constant.messages.getString("diff.diff.req.popup"), this, true);
+            popupMenuDiffRequests.setWeight(MenuWeights.MENU_COMPARE_REQ_WEIGHT);
         }
         return popupMenuDiffRequests;
     }
@@ -82,6 +84,7 @@ public class ExtensionDiff extends ExtensionAdaptor {
             popupMenuDiffResponses =
                     new PopupMenuDiff(
                             Constant.messages.getString("diff.diff.resp.popup"), this, false);
+            popupMenuDiffResponses.setWeight(MenuWeights.MENU_COMPARE_RESP_WEIGHT);
         }
         return popupMenuDiffResponses;
     }

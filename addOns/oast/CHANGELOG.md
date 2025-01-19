@@ -8,6 +8,33 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## Unreleased
 
 
+## [0.21.0] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Maintenance changes.
+- Include the handler and source when logging interactions not found in the permanent database.
+
+## [0.20.0] - 2024-09-17
+### Added 
+- API support.
+- Raise alerts for OAST interactions that happened in other sessions.
+- Options to trim the OAST permanent database.
+
+### Changed
+- Depend on newer version of Database add-on.
+
+### Fixed
+- Address warnings when using BOAST payloads.
+
+## [0.19.0] - 2024-07-18
+### Changed
+- Update BOAST port, use 2096 instead of 1337.
+
+## [0.18.0] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Maintenance changes.
+
 ## [0.17.0] - 2023-10-12
 ### Changed
 - Update minimum ZAP version to 2.14.0.
@@ -159,6 +186,10 @@ Button is disabled in that case.
 
 ## [0.1.0] - 2021-08-04
 
+[0.21.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.21.0
+[0.20.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.20.0
+[0.19.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.19.0
+[0.18.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.18.0
 [0.17.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.17.0
 [0.16.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.16.0
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.15.0

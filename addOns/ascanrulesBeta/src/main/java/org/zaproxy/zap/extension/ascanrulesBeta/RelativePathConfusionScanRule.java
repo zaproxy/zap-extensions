@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,6 +45,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 /**
@@ -52,7 +55,8 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
  *
  * @author 70pointer
  */
-public class RelativePathConfusionScanRule extends AbstractAppPlugin {
+public class RelativePathConfusionScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** the logger object */
     private static final Logger LOGGER = LogManager.getLogger(RelativePathConfusionScanRule.class);
@@ -147,7 +151,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
     //										     background: url(image.png)
     static final Pattern STYLE_URL_LOAD =
             Pattern.compile(
-                    "[a-zA-Z_-]*\\s*:\\s*url\\s*\\([^/)]+[^)]*\\)",
+                    "[a-zA-Z_-]*\\s*:\\s*url\\s*\\((?!https?:)[^/][^)]*\\)",
                     Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
 
     // Note: important here to *NOT* include any characters that could cause the resulting file
@@ -160,16 +164,23 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
      * same URL (in Attack mode, for instance) yielding new vulnerabilities via different random
      * file paths.
      */
-    private static final String RANDOM_ATTACK_PATH =
-            "/"
-                    + RandomStringUtils.random(5, RANDOM_PARAMETER_CHARS)
-                    + "/"
-                    + RandomStringUtils.random(5, RANDOM_PARAMETER_CHARS);
+    private static final String RANDOM_ATTACK_PATH = "/" + random(5) + "/" + random(5);
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+    private static String random(int count) {
+        return RandomStringUtils.secure().next(count, RANDOM_PARAMETER_CHARS);
+    }
+
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG));
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public int getId() {
@@ -328,7 +339,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                                 // for the style tag, look at the entire body, not an attribute..
                                 String styleBody = tagInstance.data();
                                 LOGGER.debug("Got <style> data: {}", styleBody);
-                                Matcher matcher = STYLE_URL_LOAD.matcher(styleBody);
+                                Matcher matcher = matchStyles(styleBody);
                                 if (matcher.find()) {
                                     relativeReferenceFound = true;
                                     relativeReferenceEvidence = matcher.group();
@@ -376,7 +387,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                                 } else {
                                     // for the style attribute (on various tags), look for a pattern
                                     // like "background: url(image.png)"
-                                    Matcher matcher = STYLE_URL_LOAD.matcher(attributeUpper);
+                                    Matcher matcher = matchStyles(attributeUpper);
                                     if (matcher.find()) {
                                         relativeReferenceFound = true;
                                         relativeReferenceEvidence =
@@ -616,13 +627,8 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                                                 MESSAGE_PREFIX + "extrainfo.nocontenttype");
                 }
 
-                // alert it..
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                buildAlert(hackedUri.toString(), extraInfo, relativeReferenceEvidence)
                         .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                        .setAttack(hackedUri.toString())
-                        .setOtherInfo(extraInfo)
-                        .setEvidence(relativeReferenceEvidence)
                         .setMessage(hackedMessage)
                         .raise();
 
@@ -639,6 +645,20 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
             LOGGER.error(
                     "Error scanning a request for Relative Path confusion: {}", e.getMessage(), e);
         }
+    }
+
+    private AlertBuilder buildAlert(String attack, String otherInfo, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setAttack(attack)
+                .setOtherInfo(otherInfo)
+                .setEvidence(evidence);
+    }
+
+    private static Matcher matchStyles(String body) {
+        // remove all " and ' for proper matching url('somefile.png')
+        String styleBody = body.replaceAll("['\"]", "");
+        return STYLE_URL_LOAD.matcher(styleBody);
     }
 
     @Override
@@ -659,5 +679,16 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "https://example.com/profile/ybpsv/bqmmn/?foo=bar",
+                                Constant.messages.getString(
+                                        MESSAGE_PREFIX + "extrainfo.nocontenttype"),
+                                "background: url(image.png)")
+                        .build());
     }
 }

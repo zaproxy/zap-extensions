@@ -6,6 +6,49 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [42] - 2025-01-15
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Updated help with specific Category identifier for use with the Custom Payloads add-on for the "Dangerous JS Functions" rule.
+
+### Fixed
+- Fix typo in log message.
+- Fix Insufficient Site Isolation scan rule check that filters responses based on whether a response is a success or not.
+
+### Changed
+- Maintenance changes.
+
+## [41] - 2024-09-02
+### Fixed
+- A possible false positive condition with the Dangerous JS Functions scan rule with substrings in certain circumstances (Issue 8553).
+
+## [40] - 2024-07-24
+### Removed
+- Polyfill scan rule, promoted to release.
+
+## [39] - 2024-06-28
+### Added
+- More 'polyfill' related domains.
+
+## [38] - 2024-06-27
+### Added
+- Polyfill.io script detection.
+
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Maintenance changes.
+
+### Fixed
+- Alert text for various rules has been updated to more consistently use periods and spaces in a uniform manner.
+
+## [37] - 2024-02-12
+
+### Added
+- Website alert links (Issue 8189).
+
+### Changed
+- Maintenance changes.
+
 ## [36] - 2024-01-16
 ### Changed
 - Update minimum ZAP version to 2.14.0.
@@ -308,6 +351,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[42]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v42
+[41]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v41
+[40]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v40
+[39]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v39
+[38]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v38
+[37]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v34

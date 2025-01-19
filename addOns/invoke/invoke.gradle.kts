@@ -9,5 +9,16 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/invoke-applications/")
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">=1.23.0")
+                }
+            }
+        }
     }
+}
+
+dependencies {
+    zapAddOn("commonlib")
 }

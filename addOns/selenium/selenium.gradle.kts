@@ -18,6 +18,9 @@ zapAddOn {
                 register("network") {
                     version.set(">=0.2.0")
                 }
+                register("commonlib") {
+                    version.set(">=1.23.0")
+                }
             }
         }
 
@@ -33,14 +36,14 @@ zapAddOn {
 }
 
 dependencies {
-    var seleniumVersion = "4.16.1"
-    selenium("org.seleniumhq.selenium:selenium-java:$seleniumVersion")
-    selenium("org.seleniumhq.selenium:htmlunit-driver:4.13.0")
-    implementation(libs.log4j.slf4j) {
-        // Provided by ZAP.
-        exclude(group = "org.apache.logging.log4j")
-    }
+    compileOnly(libs.log4j.core)
 
+    var seleniumVersion = "4.27.0"
+    selenium("org.seleniumhq.selenium:selenium-java:$seleniumVersion")
+    selenium("org.seleniumhq.selenium:htmlunit3-driver:$seleniumVersion")
+    implementation(libs.log4j.slf4j)
+
+    zapAddOn("commonlib")
     zapAddOn("network")
 
     testImplementation(project(":testutils"))

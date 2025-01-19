@@ -18,27 +18,30 @@ import org.zaproxy.gradle.crowdin.CrowdinExtension
 plugins {
     eclipse
     jacoco
-    id("org.cyclonedx.bom") version "1.8.1" apply false
+    id("org.cyclonedx.bom") version "1.8.2" apply false
     id("org.rm3l.datanucleus-gradle-plugin") version "2.0.0" apply false
-    id("org.zaproxy.add-on") version "0.10.0" apply false
-    id("org.zaproxy.crowdin") version "0.3.1" apply false
-    id("me.champeau.gradle.japicmp") version "0.4.2" apply false
+    id("org.zaproxy.add-on") version "0.12.0" apply false
+    id("org.zaproxy.crowdin") version "0.4.0" apply false
+    id("me.champeau.gradle.japicmp") version "0.4.3" apply false
 }
 
 description = "Common configuration of the add-ons."
 
-val mandatoryAddOns = listOf(
-    "callhome",
-    "network",
-)
+val mandatoryAddOns =
+    listOf(
+        "callhome",
+        "network",
+    )
 
-val parentProjects = listOf(
-    "webdrivers",
-)
+val parentProjects =
+    listOf(
+        "webdrivers",
+    )
 
-val ghReleaseDataProvider = provider {
-    subprojects.first().zapAddOn.gitHubRelease
-}
+val ghReleaseDataProvider =
+    provider {
+        subprojects.first().zapAddOn.gitHubRelease
+    }
 val generateReleaseStateLastCommit by tasks.registering(GenerateReleaseStateLastCommit::class)
 
 val handleRelease by tasks.registering(HandleRelease::class) {
@@ -59,9 +62,10 @@ val createPullRequestNextDevIter by tasks.registering(CreatePullRequest::class) 
     commitSummary.set("Prepare next dev iteration(s)")
     commitDescription.set(
         provider {
-            "Update version and changelog for:\n" + releasedProjects.map {
-                " - ${it.zapAddOn.addOnName.get()}"
-            }.sorted().joinToString("\n")
+            "Update version and changelog for:\n" +
+                releasedProjects.map {
+                    " - ${it.zapAddOn.addOnName.get()}"
+                }.sorted().joinToString("\n")
         },
     )
 
@@ -73,9 +77,10 @@ val allJarsForBom by tasks.registering {
     dependsOn(project(":testutils").tasks.named(JavaPlugin.JAR_TASK_NAME))
 }
 
-val crowdinExcludedProjects = setOf(
-    childProjects.get("dev"),
-)
+val crowdinExcludedProjects =
+    setOf(
+        childProjects.get("dev"),
+    )
 
 subprojects {
     if (parentProjects.contains(project.name)) {
@@ -125,6 +130,14 @@ subprojects {
         }
     }
 
+    tasks.withType<JavaCompile>().configureEach {
+        val lintFlags = mutableListOf("-processing")
+        if (JavaVersion.current().getMajorVersion() >= "21") {
+            lintFlags.add("-this-escape")
+        }
+        options.compilerArgs = options.compilerArgs + "-Xlint:${lintFlags.joinToString(",")}"
+    }
+
     tasks.named<JacocoReport>("jacocoTestReport") {
         reports {
             xml.required.set(true)
@@ -135,6 +148,11 @@ subprojects {
         "compileClasspath" {
             exclude(group = "log4j")
             exclude(group = "org.apache.logging.log4j", module = "log4j-1.2-api")
+        }
+
+        "runtimeClasspath" {
+            exclude(group = "org.apache.logging.log4j", module = "log4j-core")
+            exclude(group = "org.apache.logging.log4j", module = "log4j-api")
         }
 
         val zapAddOn by creating
@@ -148,7 +166,7 @@ subprojects {
         }
     }
 
-    val zapGav = "org.zaproxy:zap:2.14.0"
+    val zapGav = "org.zaproxy:zap:2.16.0"
     dependencies {
         "zap"(zapGav)
     }
@@ -156,10 +174,12 @@ subprojects {
     val apiGenClasspath = configurations.detachedConfiguration(dependencies.create(zapGav))
 
     zapAddOn {
-        releaseLink.set(project.provider { "https://github.com/zaproxy/zap-extensions/releases/${zapAddOn.addOnId.get()}-v@CURRENT_VERSION@" })
+        releaseLink.set(
+            project.provider { "https://github.com/zaproxy/zap-extensions/releases/${zapAddOn.addOnId.get()}-v@CURRENT_VERSION@" },
+        )
 
         manifest {
-            zapVersion.set("2.14.0")
+            zapVersion.set("2.16.0")
 
             changesFile.set(tasks.named<ConvertMarkdownToHtml>("generateManifestChanges").flatMap { it.html })
             repo.set("https://github.com/zaproxy/zap-extensions/")
@@ -233,7 +253,13 @@ subprojects {
 
             assets {
                 register("bom") {
-                    file.set(cyclonedxBom.map { project.layout.projectDirectory.file(File(it.destination.get(), "${it.outputName.get()}.json").absolutePath) })
+                    file.set(
+                        cyclonedxBom.map {
+                            project.layout.projectDirectory.file(
+                                File(it.destination.get(), "${it.outputName.get()}.json").absolutePath,
+                            )
+                        },
+                    )
                     contentType.set("application/json")
                 }
             }
@@ -394,12 +420,13 @@ subprojects {
 
 val crowdinUploadSourceFiles by tasks.registering {
     System.getenv("ADD_ON_IDS")?.let {
-        val projects = splitAddOnIds(it).map { name ->
-            val project = subprojects.find { it.name == name }
-            require(project != null) { "Add-on with project name $name not found." }
+        val projects =
+            splitAddOnIds(it).map { name ->
+                val project = subprojects.find { it.name == name }
+                require(project != null) { "Add-on with project name $name not found." }
 
-            project
-        }.filter { !crowdinExcludedProjects.contains(it) }
+                project
+            }.filter { !crowdinExcludedProjects.contains(it) }
 
         projects.forEach {
             dependsOn(it.tasks.named("crowdinUploadSourceFiles"))
@@ -409,11 +436,12 @@ val crowdinUploadSourceFiles by tasks.registering {
 
 val createPullRequestRelease by tasks.registering(CreatePullRequest::class) {
     System.getenv("ADD_ON_IDS")?.let {
-        val projects = splitAddOnIds(it).map { name ->
-            val project = subprojects.find { it.name == name }
-            require(project != null) { "Add-on with project name $name not found." }
-            project
-        }
+        val projects =
+            splitAddOnIds(it).map { name ->
+                val project = subprojects.find { it.name == name }
+                require(project != null) { "Add-on with project name $name not found." }
+                project
+            }
 
         projects.forEach {
             dependsOn(it.tasks.named("prepareRelease"))
@@ -426,9 +454,10 @@ val createPullRequestRelease by tasks.registering(CreatePullRequest::class) {
         commitSummary.set("Release add-on(s)")
         commitDescription.set(
             provider {
-                "Release the following add-ons:\n" + projects.map {
-                    " - ${it.zapAddOn.addOnName.get()} version ${it.zapAddOn.addOnVersion.get()}"
-                }.sorted().joinToString("\n")
+                "Release the following add-ons:\n" +
+                    projects.map {
+                        " - ${it.zapAddOn.addOnName.get()} version ${it.zapAddOn.addOnVersion.get()}"
+                    }.sorted().joinToString("\n")
             },
         )
     }
@@ -502,11 +531,9 @@ val jacocoReport by tasks.registering(JacocoReport::class) {
     }
 }
 
-fun Project.java(configure: JavaPluginExtension.() -> Unit): Unit =
-    (this as ExtensionAware).extensions.configure("java", configure)
+fun Project.java(configure: JavaPluginExtension.() -> Unit): Unit = (this as ExtensionAware).extensions.configure("java", configure)
 
-fun Project.jacoco(configure: JacocoPluginExtension.() -> Unit): Unit =
-    (this as ExtensionAware).extensions.configure("jacoco", configure)
+fun Project.jacoco(configure: JacocoPluginExtension.() -> Unit): Unit = (this as ExtensionAware).extensions.configure("jacoco", configure)
 
 fun Project.publishing(configure: PublishingExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("publishing", configure)
@@ -514,8 +541,7 @@ fun Project.publishing(configure: PublishingExtension.() -> Unit): Unit =
 val Project.publishing: PublishingExtension get() =
     (this as ExtensionAware).extensions.getByName("publishing") as PublishingExtension
 
-fun Project.signing(configure: SigningExtension.() -> Unit): Unit =
-    (this as ExtensionAware).extensions.configure("signing", configure)
+fun Project.signing(configure: SigningExtension.() -> Unit): Unit = (this as ExtensionAware).extensions.configure("signing", configure)
 
 fun Project.zapAddOn(configure: AddOnPluginExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("zapAddOn", configure)
@@ -526,8 +552,7 @@ val Project.zapAddOn: AddOnPluginExtension get() =
 val AddOnPluginExtension.gitHubRelease: GitHubReleaseExtension get() =
     (this as ExtensionAware).extensions.getByName("gitHubRelease") as GitHubReleaseExtension
 
-fun Project.crowdin(configure: CrowdinExtension.() -> Unit): Unit =
-    (this as ExtensionAware).extensions.configure("crowdin", configure)
+fun Project.crowdin(configure: CrowdinExtension.() -> Unit): Unit = (this as ExtensionAware).extensions.configure("crowdin", configure)
 
 val Project.crowdin: CrowdinExtension get() =
     (this as ExtensionAware).extensions.getByName("crowdin") as CrowdinExtension
@@ -545,7 +570,10 @@ fun mandatoryProjects() =
         project
     }
 
-fun Project.hasProperty(name: String, value: String) = hasProperty(name) && property(name) == value
+fun Project.hasProperty(
+    name: String,
+    value: String,
+) = hasProperty(name) && property(name) == value
 
 fun Project.addOnJar(version: String): File {
     val oldGroup = group

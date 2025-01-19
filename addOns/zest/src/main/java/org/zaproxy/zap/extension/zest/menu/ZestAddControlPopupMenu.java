@@ -142,7 +142,6 @@ public class ZestAddControlPopupMenu extends ExtensionPopupMenuItem {
                         extension.addToParent(parent, za);
                     }
                 });
-        menu.setMenuIndex(this.getMenuIndex());
         View.getSingleton().getPopupList().add(menu);
     }
 

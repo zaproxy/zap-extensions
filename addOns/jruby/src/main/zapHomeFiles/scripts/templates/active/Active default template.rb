@@ -6,14 +6,14 @@
 require 'java'
 java_package 'org.zaproxy.zap.extension.ascan'
 java_import 'org.zaproxy.zap.extension.scripts.scanrules.ActiveScript'
-java_import 'org.zaproxy.zap.extension.scripts.scanrules.ScriptsActiveScanner'
+java_import 'org.zaproxy.zap.extension.scripts.scanrules.ActiveScriptHelper'
 java_import 'org.parosproxy.paros.network.HttpMessage'
 java_import 'org.parosproxy.paros.view.View'
 
 class JRubyActiveScript 
   include Java::org.zaproxy.zap.extension.scripts.scanrules.ActiveScript
 
-  java_signature 'scan(ScriptsActiveScanner, HttpMessage, String, String)'
+  java_signature 'scan(ActiveScriptHelper, HttpMessage, String, String)'
   def scan(sas, msg, param, value)
     # Debugging can be done to the Output tab like this
     # (not sure why print/puts doesnt work yet :(

@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.quickstart.launch;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -35,13 +33,14 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.extension.AddOnInstallationStatusListener;
+import org.zaproxy.zap.extension.AddOnInstallationStatusListener.StatusUpdate;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.quickstart.ExtensionQuickStart;
 import org.zaproxy.zap.extension.quickstart.QuickStartParam;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.Stats;
 
 public class ExtensionQuickStartLaunch extends ExtensionAdaptor
         implements AddOnInstallationStatusListener, OptionsChangedListener {
@@ -58,14 +57,8 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
 
     private JButton launchToolbarButton;
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionQuickStart.class);
-        dependencies.add(ExtensionSelenium.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionQuickStart.class, ExtensionSelenium.class);
 
     private ImageIcon chromeIcon;
     private ImageIcon chromiumIcon;
@@ -152,7 +145,11 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
             launchToolbarButton = new JButton();
             launchToolbarButton.setToolTipText(
                     Constant.messages.getString("quickstart.toolbar.button.tooltip.launch"));
-            launchToolbarButton.addActionListener(e -> launchPanel.launchBrowser());
+            launchToolbarButton.addActionListener(
+                    e -> {
+                        launchPanel.launchBrowser();
+                        Stats.incCounter("stats.ui.maintoolbar.button.quickstart.browserlaunch");
+                    });
         }
         return launchToolbarButton;
     }
@@ -274,16 +271,10 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
     }
 
     @Override
-    public void addOnInstalled(AddOn addOn) {
-        // Not currently supported
-    }
-
-    @Override
-    public void addOnSoftUninstalled(AddOn addOn, boolean successfully) {}
-
-    @Override
-    public void addOnUninstalled(AddOn addOn, boolean successfully) {
-        if (hasView() && addOn.getId().equals("hud")) {
+    public void update(StatusUpdate statusUpdate) {
+        if (statusUpdate.getStatus() == StatusUpdate.Status.UNINSTALLED
+                && hasView()
+                && statusUpdate.getAddOn().getId().equals("hud")) {
             this.launchPanel.hudAddOnUninstalled();
         }
     }

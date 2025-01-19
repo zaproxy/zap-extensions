@@ -12,7 +12,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.13.0 & < 2.0.0")
+                    version.set(">= 1.23.0 & < 2.0.0")
                 }
             }
         }
@@ -27,7 +27,7 @@ dependencies {
         // Only "jbrofuzz-core" is needed.
         setTransitive(false)
     }
-    implementation("com.github.mifmif:generex:1.0.2")
+    implementation("com.github.curious-odd-man:rgxgen:2.0")
 
     testImplementation(project(":testutils"))
 }

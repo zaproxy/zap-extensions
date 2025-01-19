@@ -15,6 +15,10 @@ zapAddOn {
                 register("commonlib") {
                     version.set(">= 1.17.0 & < 2.0.0")
                 }
+
+                // Not an actual dependency (yet) but allows to include passive scan add-on "by default".
+                // Can be removed for the next main core release.
+                register("pscan")
             }
         }
 
@@ -37,7 +41,7 @@ zapAddOn {
 
 dependencies {
     implementation("com.google.re2j:re2j:1.7")
-    implementation("com.shapesecurity:salvation2:3.0.1")
+    implementation("org.htmlunit:htmlunit-csp:4.0.0")
 
     zapAddOn("commonlib")
     zapAddOn("custompayloads")

@@ -21,7 +21,6 @@ package org.zaproxy.addon.retire;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,8 +32,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.addon.retire.model.Repo;
+import org.zaproxy.addon.retire.model.Repo.VulnerabilityData;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class RetireScanRule extends PluginPassiveScanner {
@@ -59,18 +58,21 @@ public class RetireScanRule extends PluginPassiveScanner {
         return PLUGIN_ID;
     }
 
+    public String getHelpLink() {
+        return "https://www.zaproxy.org/docs/desktop/addons/retire.js/#id-" + PLUGIN_ID;
+    }
+
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (!getHelper().isPage200(msg) || getRepo() == null) {
+        Repo scanRepo = getRepo();
+        if (!getHelper().isPage200(msg) || scanRepo == null) {
+            if (scanRepo == null) {
+                LOGGER.error("\tThe Retire.js repository was null.");
+            }
             return;
         }
         String uri = msg.getRequestHeader().getURI().toString();
-        if (!ResourceIdentificationUtils.isImage(msg) && !ResourceIdentificationUtils.isCss(msg)) {
-            Repo scanRepo = getRepo();
-            if (scanRepo == null) {
-                LOGGER.error("\tThe Retire.js repository was null.");
-                return;
-            }
+        if (msg.getResponseHeader().isHtml() || msg.getResponseHeader().isJavaScript()) {
             Result result = scanRepo.scanJS(msg, source);
             if (result == null) {
                 LOGGER.debug("\tNo vulnerabilities found in record {} with URL {}", id, uri);
@@ -83,7 +85,7 @@ public class RetireScanRule extends PluginPassiveScanner {
                         result.getVersion(),
                         result.getInformation());
 
-                String otherInfo = getDetails(Result.CVE, result.getInformation());
+                String otherInfo = getDetails(result.getInformation().getCves());
 
                 if (result.hasOtherInfo()) {
                     otherInfo = otherInfo + result.getOtherinfo();
@@ -96,7 +98,7 @@ public class RetireScanRule extends PluginPassiveScanner {
 
     private AlertBuilder buildAlert(Result result, String otherInfo) {
         return newAlert()
-                .setRisk(Alert.RISK_MEDIUM)
+                .setRisk(result.getInformation().getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setName(getAlertName())
                 .setDescription(
@@ -104,31 +106,39 @@ public class RetireScanRule extends PluginPassiveScanner {
                                 "retire.rule.desc", result.getFilename(), result.getVersion()))
                 .setOtherInfo(otherInfo)
                 .setTags(getAllAlertTags(result))
-                .setReference(getDetails(Result.INFO, result.getInformation()))
+                .setReference(getDetails(result.getInformation().getInfo()))
                 .setSolution(Constant.messages.getString("retire.rule.soln", result.getFilename()))
                 .setEvidence(result.getEvidence().trim())
-                .setCweId(829); // CWE-829: Inclusion of Functionality from Untrusted Control Sphere
+                .setCweId(1395); // CWE-1395: Dependency on Vulnerable Third-Party Component
     }
 
     @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
         alerts.add(
-                buildAlert(new Result("ExampleLibrary", "x.y.z", Collections.emptyMap(), ""), "")
+                buildAlert(new Result("ExampleLibrary", "x.y.z", VulnerabilityData.EMPTY, ""), "")
                         .build());
         return alerts;
+    }
+
+    @Override
+    public PluginPassiveScanner copy() {
+        RetireScanRule scanRule = new RetireScanRule();
+        scanRule.setRepo(this.getRepo());
+        scanRule.setConfig(this.getConfig());
+        return scanRule;
     }
 
     private static String getAlertName() {
         return Constant.messages.getString("retire.alert.name");
     }
 
-    private String getDetails(String key, Map<String, Set<String>> info) {
-        if (info.isEmpty() || !info.containsKey(key)) {
+    private static String getDetails(Set<String> info) {
+        if (info.isEmpty()) {
             return "";
         }
         StringBuilder sb = new StringBuilder();
-        for (String item : info.get(key)) {
+        for (String item : info) {
             sb.append(item).append('\n');
         }
         return sb.toString();
@@ -146,7 +156,7 @@ public class RetireScanRule extends PluginPassiveScanner {
         return ALERT_TAGS;
     }
 
-    private Repo getRepo() {
+    protected Repo getRepo() {
         if (repo == null) {
             try {
                 this.repo = new Repo(COLLECTION_PATH);

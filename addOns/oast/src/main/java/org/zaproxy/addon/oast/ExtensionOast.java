@@ -19,15 +19,11 @@
  */
 package org.zaproxy.addon.oast;
 
-import static java.util.Collections.synchronizedMap;
-
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.collections.map.AbstractReferenceMap;
-import org.apache.commons.collections.map.ReferenceMap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -43,9 +39,11 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.database.PermanentDatabase;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.oast.OastState.OastStateEventType;
+import org.zaproxy.addon.oast.internal.AlertEntity;
+import org.zaproxy.addon.oast.internal.MessageEntity;
+import org.zaproxy.addon.oast.internal.OastPermanentDatabase;
 import org.zaproxy.addon.oast.services.boast.BoastEntity;
 import org.zaproxy.addon.oast.services.boast.BoastOptionsPanelTab;
 import org.zaproxy.addon.oast.services.boast.BoastService;
@@ -72,21 +70,18 @@ public class ExtensionOast extends ExtensionAdaptor {
     private static final String OAST_PERSISTENCE_UNIT_NAME = "oast";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(Arrays.asList(ExtensionNetwork.class));
+            List.of(ExtensionNetwork.class);
 
     private final Map<String, OastService> services = new HashMap<>();
 
-    @SuppressWarnings("unchecked")
-    private final Map<String, Alert> alertCache =
-            synchronizedMap(new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.SOFT));
-
     private OastOptionsPanel oastOptionsPanel;
+    private BoastOptionsPanelTab boastOptionsPanelTab;
     private OastPanel oastPanel;
     private OastParam oastParam;
     private BoastService boastService;
     private CallbackService callbackService;
     private InteractshService interactshService;
-    private PermanentDatabase permanentDatabase;
+    private OastPermanentDatabase permanentDatabase;
     private boolean wasUsePermanentDatabase;
 
     public ExtensionOast() {
@@ -131,16 +126,22 @@ public class ExtensionOast extends ExtensionAdaptor {
         extensionHook.addOptionsChangedListener(callbackService);
         extensionHook.addOptionsChangedListener(interactshService);
 
+        extensionHook.addApiImplementor(new OastApi(this));
+
         if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOastOptionsPanel());
-            getOastOptionsPanel().addServicePanel(new GeneralOastOptionsPanelTab());
-            getOastOptionsPanel().addServicePanel(new BoastOptionsPanelTab(boastService));
+            getOastOptionsPanel().addServicePanel(new GeneralOastOptionsPanelTab(this));
+            getOastOptionsPanel().addServicePanel(getBoastOptionsPanelTab());
             getOastOptionsPanel().addServicePanel(new CallbackOptionsPanelTab(callbackService));
             getOastOptionsPanel().addServicePanel(new InteractshOptionsPanelTab(interactshService));
             extensionHook.getHookMenu().addPopupMenuItem(new OastInsertPayloadMenu(this));
             extensionHook.getHookView().addStatusPanel(getOastPanel());
             ExtensionHelp.enableHelpKey(getOastPanel(), "oast.tab");
         }
+    }
+
+    public OastParam getParams() {
+        return oastParam;
     }
 
     @Override
@@ -154,11 +155,24 @@ public class ExtensionOast extends ExtensionAdaptor {
     @Override
     public void postInit() {
         if (oastParam.isUsePermanentDatabase()) {
-            getPermanentDatabase();
+            trimDatabase(oastParam.getDaysToKeepRecords());
         }
+
         boastService.startService();
         callbackService.startService();
         interactshService.startService();
+    }
+
+    public void trimDatabase(int days) {
+        getPermanentDatabase().trim(days);
+    }
+
+    public void clearAllRecords() {
+        getPermanentDatabase().clearAllRecords();
+        boastService.clearRegisteredServers();
+        if (hasView()) {
+            ThreadUtils.invokeAndWaitHandled(() -> getBoastOptionsPanelTab().resetBoastServers());
+        }
     }
 
     private void optionsChanged(OptionsParam optionsParam) {
@@ -224,10 +238,11 @@ public class ExtensionOast extends ExtensionAdaptor {
         getOastServices().values().forEach(OastService::poll);
     }
 
-    private PermanentDatabase getPermanentDatabase() {
+    private OastPermanentDatabase getPermanentDatabase() {
         if (permanentDatabase == null) {
             permanentDatabase =
-                    new PermanentDatabase(OAST_PERSISTENCE_UNIT_NAME, getClass().getClassLoader());
+                    new OastPermanentDatabase(
+                            OAST_PERSISTENCE_UNIT_NAME, getClass().getClassLoader());
         }
         return permanentDatabase;
     }
@@ -237,6 +252,13 @@ public class ExtensionOast extends ExtensionAdaptor {
             oastOptionsPanel = new OastOptionsPanel();
         }
         return oastOptionsPanel;
+    }
+
+    private BoastOptionsPanelTab getBoastOptionsPanelTab() {
+        if (boastOptionsPanelTab == null) {
+            boastOptionsPanelTab = new BoastOptionsPanelTab(boastService);
+        }
+        return boastOptionsPanelTab;
     }
 
     public OastPanel getOastPanel() {
@@ -258,9 +280,20 @@ public class ExtensionOast extends ExtensionAdaptor {
         return getOastServices().get(oastParam.getActiveScanServiceName());
     }
 
+    public void setActiveScanOastService(String serviceName) {
+        if (StringUtils.isEmpty(serviceName)) {
+            serviceName = OastParam.NO_ACTIVE_SCAN_SERVICE_SELECTED_OPTION;
+        } else if (!OastParam.NO_ACTIVE_SCAN_SERVICE_SELECTED_OPTION.equals(serviceName)
+                && !services.containsKey(serviceName)) {
+            throw new IllegalArgumentException(
+                    "No service with the given name exists: " + serviceName);
+        }
+        oastParam.setActiveScanServiceName(serviceName);
+    }
+
     public String registerAlertAndGetPayloadForCallbackService(Alert alert, String handler) {
         String payload = callbackService.getNewPayload(handler);
-        alertCache.put(payload, alert);
+        persistAlert(payload, alert);
         return payload;
     }
 
@@ -271,33 +304,33 @@ public class ExtensionOast extends ExtensionAdaptor {
     public OastPayload registerAlertAndGetOastPayload(Alert alert) throws Exception {
         if (getActiveScanOastService() != null) {
             OastPayload payload = getActiveScanOastService().getNewOastPayload();
-            alertCache.put(payload.getPayload(), alert);
+            persistAlert(payload.getPayload(), alert);
             return payload;
         }
         return null;
     }
 
-    @SuppressWarnings("unchecked")
+    private void persistAlert(String payload, Alert alert) {
+        var messageEntity = new MessageEntity(alert.getMessage());
+        getPermanentDatabase().persistEntity(new AlertEntity(payload, messageEntity, alert));
+    }
+
     private void activeScanAlertOastRequestHandler(OastRequest request) {
         try {
             HttpMessage oastReceivedMsg = request.getHistoryReference().getHttpMessage();
             String uri = oastReceivedMsg.getRequestHeader().getURI().toString();
-            Alert alert;
-            synchronized (alertCache) {
-                alert =
-                        alertCache.entrySet().stream()
-                                .filter(it -> uri.contains(it.getKey()))
-                                .findAny()
-                                .map(it -> it.getValue())
-                                .orElse(null);
-            }
-            if (alert == null) {
+
+            AlertEntity alertEntity = getPermanentDatabase().getAlertForPayload(uri);
+            if (alertEntity == null) {
                 LOGGER.warn(
-                        "Soft reference to alert object for interaction at {} expired. Not raising alert.",
-                        uri);
+                        "Not raising alert, the interaction {} through '{}' from {} was not found.",
+                        uri,
+                        request.getHandler(),
+                        request.getSource());
                 return;
             }
 
+            Alert alert = alertEntity.toAlert();
             StringBuilder otherInfo = new StringBuilder(alert.getOtherInfo());
             if (otherInfo.length() > 0) {
                 otherInfo.append('\n');
@@ -391,7 +424,6 @@ public class ExtensionOast extends ExtensionAdaptor {
             }
             getOastServices().values().forEach(OastService::sessionChanged);
             getOastServices().values().forEach(OastService::clearOastRequestHandlers);
-            alertCache.clear();
             for (OastService s : getOastServices().values()) {
                 if (hasView()) {
                     s.addOastRequestHandler(o -> getOastPanel().addOastRequest(o));

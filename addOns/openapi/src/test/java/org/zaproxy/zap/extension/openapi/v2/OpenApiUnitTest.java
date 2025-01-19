@@ -37,13 +37,13 @@ import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.openapi.AbstractServerTest;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerException;
 import org.zaproxy.zap.extension.openapi.network.RequesterListener;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
-import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class OpenApiUnitTest extends AbstractServerTest {
@@ -76,7 +76,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
@@ -109,7 +109,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
@@ -145,7 +145,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkPetStoreRequests(accessedUrls, altHost);
     }
@@ -183,7 +183,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                 };
         requestor.addListener(listener);
         // When
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
         // Then
         checkPetStoreRequests(accessedUrls, defaultHost);
     }
@@ -220,7 +220,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                 };
         requestor.addListener(listener);
         // When / Then
-        assertThrows(SwaggerException.class, () -> requestor.run(converter.getRequestModels()));
+        assertThrows(SwaggerException.class, () -> requestor.run(converter.getRequestModels(null)));
     }
 
     @Test
@@ -256,7 +256,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                 };
         requestor.addListener(listener);
         // When
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
         // Then
         checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
@@ -280,7 +280,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
                         null);
         // When / Then
-        assertThrows(SwaggerException.class, () -> converter.getRequestModels());
+        assertThrows(SwaggerException.class, () -> converter.getRequestModels(null));
     }
 
     @Test
@@ -312,7 +312,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                 };
         requestor.addListener(listener);
         // When
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
         // Then
         assertThat(converter.getErrorMessages(), is(empty()));
         assertEquals(
@@ -329,8 +329,8 @@ class OpenApiUnitTest extends AbstractServerTest {
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         HttpMessage defnMsg = this.getHttpMessage(test + defnName);
 
-        ValueGenerator vg =
-                new ValueGenerator() {
+        ValueProvider valueProvider =
+                new ValueProvider() {
                     @Override
                     public String getValue(
                             URI uri,
@@ -368,7 +368,8 @@ class OpenApiUnitTest extends AbstractServerTest {
 
         Converter converter =
                 new SwaggerConverter(
-                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), vg);
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
+                        valueProvider);
         final Map<String, String> accessedUrls = new HashMap<>();
         RequesterListener listener =
                 new RequesterListener() {
@@ -382,7 +383,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkPetStoreRequestsValGen(accessedUrls, "localhost:" + nano.getListeningPort());
     }
@@ -416,7 +417,7 @@ class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         assertEquals(accessedUrls.size(), 2);
 

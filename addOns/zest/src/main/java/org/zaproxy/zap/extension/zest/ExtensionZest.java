@@ -29,7 +29,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -60,11 +59,11 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.httppanel.Message;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
@@ -74,7 +73,11 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.ZestResultsTableModel.ZestResultsTableEntry;
 import org.zaproxy.zap.extension.zest.dialogs.ZestDialogManager;
+import org.zaproxy.zap.extension.zest.internal.DefaultRequestValueReplacer;
+import org.zaproxy.zap.extension.zest.internal.NoopRequestValueReplacer;
+import org.zaproxy.zap.extension.zest.internal.RequestValueReplacer;
 import org.zaproxy.zap.extension.zest.menu.ZestMenuManager;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.ZapToggleButton;
 import org.zaproxy.zest.core.v1.ZestActionFail;
 import org.zaproxy.zest.core.v1.ZestAssertion;
@@ -112,11 +115,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private static final Logger LOGGER = LogManager.getLogger(ExtensionZest.class);
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
-            Collections.unmodifiableList(
-                    Arrays.asList(
-                            ExtensionScript.class,
-                            ExtensionNetwork.class,
-                            ExtensionSelenium.class));
+            List.of(ExtensionScript.class, ExtensionNetwork.class, ExtensionSelenium.class);
 
     private ZestParam param = null;
     private OptionsZestPanel optionsZestPanel = null;
@@ -748,18 +747,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 }
 
                 if (zsw.isIncStatusCodeAssertion()) {
-                    req.addAssertion(
-                            new ZestAssertion(
-                                    new ZestExpressionStatusCode(
-                                            msg.getResponseHeader().getStatusCode())));
+                    addStatusCodeAssertion(msg, req);
                 }
                 if (zsw.isIncLengthAssertion()) {
-                    req.addAssertion(
-                            new ZestAssertion(
-                                    new ZestExpressionLength(
-                                            ZestVariables.RESPONSE_BODY,
-                                            getResponseBodyLength(msg),
-                                            zsw.getLengthApprox())));
+                    addLengthAssertion(msg, req, zsw.getLengthApprox());
                 }
 
                 if (getExtACSRF() != null) {
@@ -819,6 +810,19 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 LOGGER.error(e.getMessage(), e);
             }
         }
+    }
+
+    private static void addLengthAssertion(HttpMessage msg, ZestRequest req, int approx) {
+        req.addAssertion(
+                new ZestAssertion(
+                        new ZestExpressionLength(
+                                ZestVariables.RESPONSE_BODY, getResponseBodyLength(msg), approx)));
+    }
+
+    private static void addStatusCodeAssertion(HttpMessage msg, ZestRequest req) {
+        req.addAssertion(
+                new ZestAssertion(
+                        new ZestExpressionStatusCode(msg.getResponseHeader().getStatusCode())));
     }
 
     private static int getResponseBodyLength(HttpMessage message) {
@@ -1370,7 +1374,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                     }
                     if (ZestZapUtils.getShadowLevel(cnpNodes.get(i)) == 0
                             && (stmt.isPassive()
-                                    || !ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(
+                                    || !ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE.equals(
                                             script.getTypeName()))) {
                         // Dont paste non passive statements into a passive script
                         if (afterChild != null) {
@@ -1449,7 +1453,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
         ZestScriptWrapper script = this.getZestTreeModel().getScriptWrapper(node);
 
-        if (ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(script.getType().getName())) {
+        if (ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE.equals(script.getType().getName())) {
             isPassive = true;
         }
 
@@ -1771,7 +1775,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     @Override
     public void scriptAdded(ScriptWrapper script, boolean display) {
-        if (script.getEngineName().equals(ZestScriptEngineFactory.NAME)) {
+        if (ZestScriptEngineFactory.NAME.equals(script.getEngineName())) {
 
             ScriptNode typeNode =
                     this.getExtScript().getTreeModel().getTypeNode(script.getTypeName());
@@ -1903,8 +1907,83 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     /**
-     * Return all of the requests in the script ScriptWrapper is deliberately used to make it easier
-     * to call this method by reflection
+     * Creates a script with the given name, type, and messages as {@code ZestRequest}s.
+     *
+     * @param name the name of the script.
+     * @param type the type of the script.
+     * @param messages the messages that will be added to the script.
+     * @param options the options for the script creation.
+     * @return the created script.
+     * @since 48.0.0
+     * @throws IllegalArgumentException if there are any problems with the inputs (e.g. no messages)
+     * @throws IllegalStateException if unable to create the script (e.g. duplicated script name).
+     */
+    public ScriptWrapper createScript(
+            String name, ScriptType type, List<HttpMessage> messages, CreateScriptOptions options) {
+        if (messages == null || messages.isEmpty()) {
+            throw new IllegalArgumentException("The messages should not be null nor empty.");
+        }
+
+        ZestParam conversionOptions = getParam(options);
+        ZestScript sz = new ZestScript();
+        sz.setTitle(name);
+        RequestValueReplacer requestValueReplacer =
+                options.isReplaceRequestValues()
+                        ? new DefaultRequestValueReplacer(getModel().getSession())
+                        : NoopRequestValueReplacer.getInstance();
+        for (var msg : messages) {
+            if (msg == null) {
+                throw new IllegalArgumentException("A message should not be null.");
+            }
+            try {
+                ZestRequest request = requestValueReplacer.process(sz, msg, conversionOptions);
+                if (options.isAddStatusAssertion()) {
+                    addStatusCodeAssertion(msg, request);
+                }
+                if (options.isAddLengthAssertion()) {
+                    addLengthAssertion(msg, request, options.getLengthApprox());
+                }
+                sz.add(request);
+            } catch (Exception e) {
+                throw new IllegalArgumentException(
+                        "Failed to convert message to ZestRequest: " + e.getMessage(), e);
+            }
+        }
+
+        ScriptWrapper sw = new ScriptWrapper();
+        sw.setName(sz.getTitle());
+        sw.setDescription(sz.getDescription());
+        sw.setContents(convertElementToString(sz));
+        sw.setType(type);
+        sw.setEngine(getZestEngineWrapper());
+
+        ZestScriptWrapper zsw = new ZestScriptWrapper(sw);
+        try {
+            add(zsw, false);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to add the script: " + e.getMessage(), e);
+        }
+        return zsw;
+    }
+
+    private ZestParam getParam(CreateScriptOptions options) {
+        switch (options.getIncludeResponses()) {
+            case ALWAYS:
+            case NEVER:
+                ZestParam copy = new ZestParam(getParam());
+                copy.load(new ZapXmlConfiguration());
+                copy.setIncludeResponses(
+                        options.getIncludeResponses()
+                                == CreateScriptOptions.IncludeResponses.ALWAYS);
+                return copy;
+
+            default:
+                return getParam();
+        }
+    }
+
+    /**
+     * Return all of the requests in the script.
      *
      * @param script
      * @return

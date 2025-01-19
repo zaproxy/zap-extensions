@@ -49,6 +49,8 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.PolicyTag;
+import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadataProvider;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.VariantFactory;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -430,11 +432,23 @@ class ScriptsActiveScannerUnitTest extends TestUtils {
         verify(script2, times(1)).scan(scriptsActiveScanner, message, name2, value2);
     }
 
+    @Test
+    void shouldHaveExpectedNumberOfAlertTags() {
+        // Given
+        ScriptsActiveScanner scriptsActiveScanner = new ScriptsActiveScanner();
+        // When
+        int tagCount = scriptsActiveScanner.getAlertTags().size();
+        // Then
+        assertThat(tagCount, is(equalTo(PolicyTag.values().length)));
+    }
+
     private <T> ScriptWrapper createScriptWrapper(T script, Class<T> scriptClass) throws Exception {
         ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
         given(scriptWrapper.isEnabled()).willReturn(true);
         given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extensionScript);
         given(extensionScript.getInterface(scriptWrapper, scriptClass)).willReturn(script);
+        given(extensionScript.getInterface(scriptWrapper, ScanRuleMetadataProvider.class))
+                .willReturn(null);
         return scriptWrapper;
     }
 

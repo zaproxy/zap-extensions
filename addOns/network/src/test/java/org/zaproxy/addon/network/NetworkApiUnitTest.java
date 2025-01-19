@@ -31,11 +31,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyBoolean;
-import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -68,8 +68,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.network.common.HttpProxy;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
-import org.zaproxy.addon.network.internal.client.HttpProxy;
 import org.zaproxy.addon.network.internal.client.HttpProxyExclusion;
 import org.zaproxy.addon.network.internal.client.SocksProxy;
 import org.zaproxy.addon.network.internal.ratelimit.RateLimitOptions;
@@ -838,7 +838,7 @@ class NetworkApiUnitTest extends TestUtils {
 
     @ParameterizedTest
     @CsvSource({"true, true", "false, false", "invalid, false"})
-    void shouldSetHttpProxyAuthEnabled(boolean enabled, boolean expected) throws Exception {
+    void shouldSetHttpProxyAuthEnabled(String enabled, boolean expected) throws Exception {
         // Given
         String name = "setHttpProxyAuthEnabled";
         JSONObject params = new JSONObject();
@@ -852,7 +852,7 @@ class NetworkApiUnitTest extends TestUtils {
 
     @ParameterizedTest
     @CsvSource({"true, true", "false, false", "invalid, false"})
-    void shouldSetHttpProxyEnabled(boolean enabled, boolean expected) throws Exception {
+    void shouldSetHttpProxyEnabled(String enabled, boolean expected) throws Exception {
         // Given
         String name = "setHttpProxyEnabled";
         JSONObject params = new JSONObject();

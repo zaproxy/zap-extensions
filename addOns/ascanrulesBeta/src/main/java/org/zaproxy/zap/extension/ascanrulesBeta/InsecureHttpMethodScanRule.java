@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,6 +52,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
@@ -63,7 +65,8 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
  *
  * @author 70pointer
  */
-public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
+public class InsecureHttpMethodScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     /* These are the 'default' HTTP methods which are considered as insecure */
     private static final List<String> INSECURE_DEFAULT_METHODS =
@@ -95,11 +98,19 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
         INSECURE_METHODS.addAll(WEBDAV_METHODS);
     }
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                    CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                                CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS));
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public int getId() {
@@ -353,8 +364,8 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
         // TRACE is supported in 1.0. TRACK is presumably the same, since it is
         // a alias for TRACE. Typical Microsoft.
         msg.getRequestHeader().setVersion(HttpRequestHeader.HTTP10);
-        String randomcookiename = RandomStringUtils.randomAlphanumeric(15);
-        String randomcookievalue = RandomStringUtils.randomAlphanumeric(40);
+        String randomcookiename = randomAlphanumeric(15);
+        String randomcookievalue = randomAlphanumeric(40);
         TreeSet<HtmlParameter> cookies = msg.getCookieParams();
         cookies.add(
                 new HtmlParameter(HtmlParameter.Type.cookie, randomcookiename, randomcookievalue));
@@ -528,10 +539,10 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
 
         if (httpMethod.equals(HttpRequestHeader.PUT)
                 || httpMethod.equals(HttpRequestHeader.PATCH)) {
-            String randomKey = RandomStringUtils.randomAlphanumeric(15);
-            String randomValue = RandomStringUtils.randomAlphanumeric(15);
+            String randomKey = randomAlphanumeric(15);
+            String randomValue = randomAlphanumeric(15);
             String randomResource =
-                    RandomStringUtils.random(10, "abcdefghijklmnopqrstuvwxyz0123456789");
+                    RandomStringUtils.secure().next(10, "abcdefghijklmnopqrstuvwxyz0123456789");
             String requestBody = '"' + randomKey + "\":\"" + randomValue + '"';
             String newURI = msg.getRequestHeader().getURI().toString();
             if (newURI.endsWith("/")) {
@@ -625,5 +636,9 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                     .raise();
         } catch (Exception e) {
         }
+    }
+
+    private static String randomAlphanumeric(int count) {
+        return RandomStringUtils.secure().nextAlphanumeric(count);
     }
 }

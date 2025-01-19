@@ -150,7 +150,7 @@ public class EventStreamProxy {
                 field = line.substring(0, colonIndex);
 
                 int dataIndex = colonIndex + 1;
-                if (line.charAt(dataIndex) == ' ') {
+                if (dataIndex < line.length() && line.charAt(dataIndex) == ' ') {
                     // do not include first whitespace
                     dataIndex++;
                 }

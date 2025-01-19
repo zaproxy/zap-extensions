@@ -6,6 +6,90 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [57] - 2025-01-15
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- The following scan rules now use more specific CWE IDs:
+    - Proxy Disclosure (Issue 8713)
+    - Possible Username Enumeration (Issue 8715)
+- Remove double dot in skipped message of scan rules that use the Active Scan OAST service.
+
+### Fixed
+- Address exception when scanning a message without path with Possible Username Enumeration scan rule.
+- The WSTG alert tags on the HTTP Only Site scan rule.
+
+### Added
+- Standardized Scan Policy related alert tags on various rules.
+
+## [56] - 2024-09-24
+### Changed
+- Log exception details in Out of Band XSS scan rule.
+- Maintenance changes.
+- The Anti-CSRF Tokens Check scan rule now only considers GET requests at Low Threshold (Issue 7741).
+
+### Fixed
+- Address time-based false positives in Remote Code Execution - Shell Shock scan rule (Issue 8516).
+
+## [55] - 2024-09-02
+### Changed
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Expression Language Injection
+    - Cookie Slack Detector
+
+### Fixed
+- Potential false positives in the Source Code Disclosure - File Inclusion scan rule when responses are empty or the original message resulted in an error to start with (Issue 8517).
+- A spacing/punctuation issue in the Cookie Slack Detector scan rule, whereby the Other Info field would not have a space after colons and before lists of cookie names.
+
+## [54] - 2024-07-22
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Maintenance changes.
+
+### Fixed
+- Fixed regex for Relative Path Confusion, which detected absolute URL as relative.
+- Alert text for various rules has been updated to more consistently use periods and spaces in a uniform manner.
+
+## [53] - 2024-03-28
+### Changed
+- Change links to use HTTPS in other info of Insecure HTTP Method (Issue 8262).
+
+## [52] - 2024-03-25
+### Changed
+- Updated reference for scan rule: Possible Username Enumeration (Issue 8262)
+- Cookie Slack Detector scan rule now has a more specific CWE.
+- Possible Username Enumeration scan rule now includes CWE-204 as a reference link.
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Relative Path Confusion
+    - Integer Overflow Error
+
+### Removed
+- Removed HTTP only reference for scan rule: Integer Overflow Error (Issue 8262)
+
+## [51] - 2024-02-16
+### Changed
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Backup File Disclosure
+    - Httpoxy - Proxy Header Misuse
+    - Anti-CSRF Tokens Check
+    - HTTP Parameter Pollution
+    - Cross-Domain Misconfiguration
+- Alerts from the HTTP Parameter Pollution scan rule are now raised with Low confidence.
+- Updated reference for scan rules (Issue 8262):
+    - Session Fixation
+    - Cross-Domain Misconfiguration
+- Add website alert links to the help page (Issue 8189).
+
+## [50] - 2024-01-26
+### Changed
+- References for the following scan rules were updated (Issue 8262):
+    - Exponential Entity Expansion (Billion Laughs Attack)
+    - Relative Path Confusion
+    - HTTPS Content Available via HTTP
+    - Remote Code Execution - Shell Shock
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - HTTPS Content Available via HTTP
+    - Remote Code Execution - Shell Shock (it now also uses Alert Refs (Issue 7100))
+
 ## [49] - 2024-01-16
 ### Changed
 - Update minimum ZAP version to 2.14.0.
@@ -328,7 +412,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Correct HTTP message usage in Insecure HTTP Method scanner.
 - Fix missing resource messages with Cross-Domain Misconfiguration scanner.
 - Remove Source Code Disclosure WEB-INF Scanner (promoted to release Issue 4448).
-- Report source code disclosure alerts at Medium instead of High 
+- Report source code disclosure alerts at Medium instead of High
 - Bundle Diff Utils library instead of relying on core.
 
 ## 24 - 2018-07-31
@@ -476,6 +560,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[57]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v57
+[56]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v56
+[55]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v55
+[54]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v54
+[53]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v53
+[52]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v52
+[51]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v51
+[50]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v47

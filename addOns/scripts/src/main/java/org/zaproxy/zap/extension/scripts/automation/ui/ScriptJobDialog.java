@@ -120,14 +120,14 @@ public class ScriptJobDialog extends StandardFieldsDialog {
         this.addCheckBoxField(0, SCRIPT_IS_INLINE_PARAM, isInline);
         this.addFieldListener(SCRIPT_IS_INLINE_PARAM, e -> onIsInlineChanged());
 
-        String fileName = this.job.getData().getParameters().getFile();
+        String fileName = this.job.getData().getParameters().getSource();
         File f;
         if (StringUtils.isEmpty(fileName)) {
             f = getDefaultDirectory();
         } else {
             f = new File(fileName);
         }
-        this.addFileSelectField(0, SCRIPT_FILE_PARAM, f, JFileChooser.FILES_ONLY, null);
+        this.addFileSelectField(0, SCRIPT_FILE_PARAM, f, JFileChooser.FILES_AND_DIRECTORIES, null);
         if (isInline) {
             this.setFieldValue(SCRIPT_FILE_PARAM, "");
         }
@@ -243,11 +243,14 @@ public class ScriptJobDialog extends StandardFieldsDialog {
 
         ScriptAction sa = getScriptAction();
         if (sa.getDisabledFields().contains(SCRIPT_FILE_PARAM)) {
-            this.job.getData().getParameters().setFile(null);
+            this.job.getData().getParameters().setSource(null);
         } else {
             File f = new File(this.getStringValue(SCRIPT_FILE_PARAM));
-            if (f.isFile()) {
-                this.job.getData().getParameters().setFile(this.getStringValue(SCRIPT_FILE_PARAM));
+            if (f.exists()) {
+                this.job
+                        .getData()
+                        .getParameters()
+                        .setSource(this.getStringValue(SCRIPT_FILE_PARAM));
             }
         }
         this.job.resetAndSetChanged();

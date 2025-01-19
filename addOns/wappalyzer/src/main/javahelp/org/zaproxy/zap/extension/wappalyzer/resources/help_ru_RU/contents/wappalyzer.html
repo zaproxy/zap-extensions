@@ -2,12 +2,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Technology Detection - Wappalyzer</title>
+<title>Technology Detection</title>
 </head>
 <body>
-<h1>Обнаружение технологий с помощью Wappalyzer </h1>
+<h1>Technology Detection</h1>
 <p>
-Дополнение Technology Detection использует правила Wappalyzer для обнаружения технологий, используемых приложениями. <p>
+The Technology Detection add-on uses various patterns and finger prints to detect the technologies used by applications.<p>
 Он работает очень похоже на надстройки браузера Wappalyzer со следующими исключениями: 
 <ul>
 <li>Он не использует «глобальные переменные JavaScript», так как их трудно протестировать без «полного» браузера. </li>
@@ -15,40 +15,42 @@
 <li>Это не соответствует технологиям на основе свойств DOM, так как некоторые свойства устанавливаются JavaScript в браузере после того, как ответ прошел через ZAP. </li>
 <li>Это позволяет вам увидеть «доказательства», используемые для обнаружения технологий. </li>
 </ul>
+
 <h2>Вкладка «Технологии» </h2>
 На этой вкладке отображаются все обнаруженные технологии для выбранного сайта. <br>
 Щелчок правой кнопкой мыши по технологии отобразит меню «Показать доказательства», в котором находятся все регулярные выражения, используемые для ее обнаружения. <br>
 При выборе регулярного выражения вы переключитесь на вкладку «Поиск» и выполните поиск по истории для этого регулярного выражения. Примечание. Если выбрано несколько строк
 меню не будет отображаться. 
 <p>
-Рядом с раскрывающимся списком выбора сайта находится кнопка «Экспорт», которую можно использовать для экспорта файла CSV (значения, разделенные запятыми) на основе
-табличная информация, отображаемая в данный момент.  Существует также кнопка-переключатель, которая позволяет пользователям легко включать/отключать Wappalyzer.
-пассивный сканер. 
+Beside the site selection drop down is an Export button which can be used to export a CSV (comma separated values) file based on the
+table information currently being displayed.
 <p>
-На панели инструментов есть кнопка-переключатель включения/выключения, которая определяет, работает ли правило пассивного сканирования обнаружения технологий.
-Это включенное состояние сохраняется между сеансами ZAP. 
+The toolbar also includes:
+<ul>
+  <li>An enable/disable toggle button which controls whether the technology detection passive scan rule is functioning or not. This enabled state is persisted between ZAP sessions.</li>
+<ul>
 
-<h2>Составление отчетов</h2>
+<h2>Reporting</h2>
 
-Технологические данные доступны для отчетов через  
-<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/WappalyzerJobResultData.java">WappalyzerJobResultData</a> класс.
+Technology data is available to reports via the 
+<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/TechJobResultData.java">TechJobResultData</a> class.
 
-<h2>Внешние ссылки</h2>
+<h2>External Links</h2>
 <table>
-<tr>
-	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="https://www.wappalyzer.com/">https://www.wappalyzer.com/</a></td>
-	<td>Домашняя страница Wappalyzer </td>
-</tr>
-<tr>
-	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td>https://github.com/wappalyzer/wappalyzer</td>
-	<td>As of early August 2023 the The Wappalyzer Repository is no longer public.</td>
-</tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://github.com/enthec/webappanalyzer">Enthec Webappanalyzer</a></td>
 	<td>This project is a continuation of the iconic Wappalyzer that went private in August 2023.</td>
+</tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://www.wappalyzer.com/">https://www.wappalyzer.com/</a></td>
+	<td>The Wappalyzer Homepage</td>
+</tr>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td>https://github.com/wappalyzer/wappalyzer</td>
+	<td>As of early August 2023 the Wappalyzer Repository is no longer public.</td>
 </tr>
 </table>
 

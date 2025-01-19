@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.exim;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.JMenu;
 import org.parosproxy.paros.Constant;
@@ -29,6 +27,7 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.MainMenuBar;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
@@ -37,6 +36,9 @@ import org.zaproxy.addon.commonlib.ui.ZapSortedMenu;
 import org.zaproxy.addon.exim.har.MenuImportHar;
 import org.zaproxy.addon.exim.har.PopupMenuItemSaveHarMessage;
 import org.zaproxy.addon.exim.log.MenuItemImportLogs;
+import org.zaproxy.addon.exim.pcap.MenuItemImportPcap;
+import org.zaproxy.addon.exim.sites.MenuPruneSites;
+import org.zaproxy.addon.exim.sites.MenuSaveSites;
 import org.zaproxy.addon.exim.urls.MenuItemImportUrls;
 
 public class ExtensionExim extends ExtensionAdaptor {
@@ -45,19 +47,33 @@ public class ExtensionExim extends ExtensionAdaptor {
     public static final String EXIM_OUTPUT_ERROR = "exim.output.error";
     private static final String NAME = "ExtensionExim";
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(Arrays.asList(ExtensionCommonlib.class));
+            List.of(ExtensionCommonlib.class);
+
+    private Exporter exporter;
+    private Importer importer;
 
     private JMenu menuExport;
 
     private PopupMenuExportMessages popupMenuExportResponses;
     private PopupMenuExportMessages popupMenuExportMessages;
-    private PopupMenuExportContextUrls popupMenuExportContextUrls;
-    private PopupMenuExportSelectedUrls popupMenuExportSelectedrls;
-    private PopupMenuExportUrls popupMenuExportUrls;
     private PopupMenuCopyUrls popupMenuCopyUrls;
 
     public ExtensionExim() {
         super(NAME);
+    }
+
+    @Override
+    public void init() {
+        super.init();
+
+        importer = new Importer();
+    }
+
+    @Override
+    public void initModel(Model model) {
+        super.initModel(model);
+
+        exporter = new Exporter(model);
     }
 
     @Override
@@ -79,23 +95,52 @@ public class ExtensionExim extends ExtensionAdaptor {
                 getMenuExport().add(getPopupMenuExportResponses());
             }
 
-            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportContextUrls());
-            getMenuExport().add(getPopupMenuExportContextUrls());
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuExportContextUrls(
+                                    Constant.messages.getString("exim.menu.export.saveurls"),
+                                    this));
+            getMenuExport()
+                    .add(
+                            new PopupMenuExportContextUrls(
+                                    Constant.messages.getString("exim.menu.export.context.urls"),
+                                    this));
 
-            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportSelectedUrls());
-            getMenuExport().add(getPopupMenuExportSelectedUrls());
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuExportSelectedUrls(
+                                    Constant.messages.getString("exim.menu.export.saveurls"),
+                                    this));
+            getMenuExport()
+                    .add(
+                            new PopupMenuExportSelectedUrls(
+                                    Constant.messages.getString("exim.menu.export.popup.selected"),
+                                    this));
 
-            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportUrls());
-            getMenuExport().add(getPopupMenuExportUrls());
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuExportUrls(
+                                    Constant.messages.getString("exim.menu.export.popup"), this));
+            getMenuExport()
+                    .add(
+                            new PopupMenuExportUrls(
+                                    Constant.messages.getString("exim.menu.export.popup"), this));
 
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuCopyUrls());
 
             MainMenuBar menuBar = getView().getMainFrame().getMainMenuBar();
             menuBar.add(getMenuExport(), menuBar.getMenuCount() - 2); // Before Online and Help
 
+            getMenuExport().add(new MenuSaveSites());
+            extensionHook.getHookMenu().addToolsMenuItem(new MenuPruneSites());
+
             extensionHook.getHookMenu().addImportMenuItem(new MenuImportHar());
             extensionHook.getHookMenu().addImportMenuItem(new MenuItemImportUrls());
             extensionHook.getHookMenu().addImportMenuItem(new MenuItemImportLogs());
+            extensionHook.getHookMenu().addImportMenuItem(new MenuItemImportPcap());
         }
         extensionHook.addApiImplementor(new ImportExportApi());
     }
@@ -121,6 +166,26 @@ public class ExtensionExim extends ExtensionAdaptor {
             MainMenuBar menuBar = getView().getMainFrame().getMainMenuBar();
             menuBar.remove(getMenuExport());
         }
+    }
+
+    /**
+     * Gets the exporter.
+     *
+     * @return the exporter, never {@code null}.
+     * @since 0.13.0
+     */
+    public Exporter getExporter() {
+        return exporter;
+    }
+
+    /**
+     * Gets the importer.
+     *
+     * @return the importer, never {@code null}.
+     * @since 0.13.0
+     */
+    public Importer getImporter() {
+        return importer;
     }
 
     public static void updateOutput(String messageKey, String filePath) {
@@ -159,33 +224,6 @@ public class ExtensionExim extends ExtensionAdaptor {
             popupMenuExportResponses = new PopupMenuExportMessages(getExtensionHistory(), true);
         }
         return popupMenuExportResponses;
-    }
-
-    private PopupMenuExportContextUrls getPopupMenuExportContextUrls() {
-        if (popupMenuExportContextUrls == null) {
-            popupMenuExportContextUrls =
-                    new PopupMenuExportContextUrls(
-                            Constant.messages.getString("exim.menu.export.context.urls"), this);
-        }
-        return popupMenuExportContextUrls;
-    }
-
-    private PopupMenuExportSelectedUrls getPopupMenuExportSelectedUrls() {
-        if (popupMenuExportSelectedrls == null) {
-            popupMenuExportSelectedrls =
-                    new PopupMenuExportSelectedUrls(
-                            Constant.messages.getString("exim.menu.export.popup.selected"), this);
-        }
-        return popupMenuExportSelectedrls;
-    }
-
-    private PopupMenuExportUrls getPopupMenuExportUrls() {
-        if (popupMenuExportUrls == null) {
-            popupMenuExportUrls =
-                    new PopupMenuExportSelectedUrls(
-                            Constant.messages.getString("exim.menu.export.popup"), this);
-        }
-        return popupMenuExportUrls;
     }
 
     private PopupMenuCopyUrls getPopupMenuCopyUrls() {

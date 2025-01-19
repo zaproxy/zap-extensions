@@ -4,7 +4,130 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Address malformed HTML in the help.
+- Correct default value of `threadPerHost` property of the `activeScan-config` job's help.
 
+## [0.44.0] - 2025-01-09
+### Added
+- Active scan policy job.
+- Add job to configure the active scanner, `activeScan-config`.
+- Allow to enable/disable jobs (Issue 5845).
+- Method to allow the user to set the exit code via a script.
+- Add exitStatus job (Issue #6928)
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Maintenance changes.
+- Updated automation framework documentation and templates for `activeScan` job to reflect changes to the default value of threadPerHost parameter
+- Update help for the "requestor" job.
+- Update help to indicate that job order is important (Issue 8675).
+- Fields with default or missing values are omitted for the following automation jobs in saved plans:
+  - `activeScan`
+  - `delay`
+  - `requestor`
+
+### Removed
+- Remove job implementations that were previously migrated to the Passive Scanner add-on (Issue 7959).
+
+### Fixed
+- Templates generated with `-autogenmin` or `-autogenmax` were invalid in some cases.
+- Allow to choose one thread for the `activeScan` job through the GUI.
+- Active Scan jobs will once again use the default policy if neither a policy nor a policyDefinition has been set.
+- Bug in job alert tests related to alert matching.
+- Active scan rule ID 0 (Directory Browsing) will be included in the plan (yaml) when saved (Issue 8746).
+- Sizing/display of the Active Scan Policy job rule add/modify dialogs.
+
+## [0.43.0] - 2024-10-07
+### Fixed
+- Handle exceptions while running jobs.
+
+### Changed
+- In saved YAML plans:
+  - Fields with default values are omitted.
+  - The "name" and "type" fields are added before other fields.
+  - Values are not quoted unless required.
+
+## [0.42.0] - 2024-09-02
+### Added
+- Allow to configure the structural parameters of a context (Issue 7780).
+
+### Fixed
+- NPE in GUI if the technology was not specified.
+
+### Changed
+- Rely on Passive Scanner add-on for the passive scan related jobs (Issue 7959).
+
+### Deprecated
+- The classes of the passive scan related jobs are now deprecated and will be removed in a following release, use the classes from the Passive Scanner add-on instead (Issue 7959).
+
+## [0.41.0] - 2024-07-31
+### Added
+- Env / continueOnFailure option.
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Address errors when the last plan loaded had a `passiveScan-config` job with configured rules.
+
+## [0.40.1] - 2024-05-28
+### Fixed
+- Address HTTP authentication failure when the realm is not configured.
+
+## [0.40.0] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [0.39.0] - 2024-04-23
+### Added
+- Allow reports to know the number of Sites tree nodes actively scanned (Issue 7022).
+
+### Changed
+- Allow to run remote plans through the command line.
+
+## [0.38.0] - 2024-04-11
+### Fixed
+- Correctly expose all information in the `planProgress` API view (Issue 8433). This might break existing clients as the format has changed.
+  - JSON changed to, e.g.:
+  ```json
+  {
+    "warn" : [ ],
+    "planId" : 0,
+    "started" : "2024-04-08T00:00:00.615Z",
+    "finished" : "2024-04-08T00:00:00.702Z",
+    "error" : [ ],
+    "info" : [ "Job requestor started", "Job requestor finished, time taken: 00:00:00" ]
+  }
+  ```
+  - XML changed to, e.g.:
+  ```xml
+   <planProgress type="set">
+     <planId>0</planId>
+     <started>2024-04-08T00:00:00.615Z</started>
+     <finished>2024-04-08T00:00:00.702Z</finished>
+     <info type="list">
+       <message>Job requestor started</message>
+       <message>Job requestor finished, time taken: 00:00:00</message>
+     </info>
+     <warn type="list"/>
+     <error type="list"/>
+   </planProgress>
+  ```
+
+## [0.37.0] - 2024-03-28
+### Changed
+- Allow to use variables composed of multiple variables.
+
+## [0.36.0] - 2024-03-25
+### Added
+- Support for upstream proxy in environment (Issue 8360).
+
+### Changed
+- Maintenance changes.
+- Cut down env data when generating min template.
+
+### Fixed
+- Correct parsing of attack strength and alert threshold in some locales.
 
 ## [0.35.0] - 2024-01-16
 ### Added
@@ -333,6 +456,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.44.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.44.0
+[0.43.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.43.0
+[0.42.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.42.0
+[0.41.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.41.0
+[0.40.1]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.40.1
+[0.40.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.40.0
+[0.39.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.39.0
+[0.38.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.38.0
+[0.37.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.37.0
+[0.36.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.36.0
 [0.35.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.35.0
 [0.34.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.34.0
 [0.33.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.33.0

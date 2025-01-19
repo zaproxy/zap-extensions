@@ -29,7 +29,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class ContentTypeMissingScanRule extends PluginPassiveScanner {
+public class ContentTypeMissingScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.contenttypemissing.";
@@ -68,14 +69,14 @@ public class ContentTypeMissingScanRule extends PluginPassiveScanner {
 
         return newAlert()
                 .setName(issue)
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setParam(HttpHeader.CONTENT_TYPE)
-                .setSolution(getSolution())
-                .setReference(getReference())
-                .setCweId(getCweId())
-                .setWascId(getWascId())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
+                .setCweId(345) // CWE Id 345 - Insufficient Verification of Data Authenticity
+                .setWascId(12) // WASC Id 12 - Content Spoofing)
                 .setAlertRef(alertRef);
     }
 
@@ -84,33 +85,9 @@ public class ContentTypeMissingScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 345; // CWE Id 345 - Insufficient Verification of Data Authenticity
-    }
-
-    public int getWascId() {
-        return 12; // WASC Id 12 - Content Spoofing
-    }
-
-    public int getRisk() {
-        return Alert.RISK_INFO;
     }
 
     @Override

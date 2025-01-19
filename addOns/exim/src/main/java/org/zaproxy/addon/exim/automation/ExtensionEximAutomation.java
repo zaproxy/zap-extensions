@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.exim.automation;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -34,16 +32,12 @@ public class ExtensionEximAutomation extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionEximAutomation";
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionExim.class, ExtensionAutomation.class);
 
     private ImportJob importJob;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionExim.class);
-        dependencies.add(ExtensionAutomation.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private ExportJob exportJob;
+    private PruneJob pruneJob;
 
     public ExtensionEximAutomation() {
         super(NAME);
@@ -57,10 +51,17 @@ public class ExtensionEximAutomation extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        ExtensionAutomation extAuto =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
+        ExtensionAutomation extAuto = getExtension(ExtensionAutomation.class);
         importJob = new ImportJob();
         extAuto.registerAutomationJob(importJob);
+        exportJob = new ExportJob(getExtension(ExtensionExim.class));
+        extAuto.registerAutomationJob(exportJob);
+        pruneJob = new PruneJob();
+        extAuto.registerAutomationJob(pruneJob);
+    }
+
+    private static <T extends Extension> T getExtension(Class<T> clazz) {
+        return Control.getSingleton().getExtensionLoader().getExtension(clazz);
     }
 
     @Override
@@ -70,10 +71,11 @@ public class ExtensionEximAutomation extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        ExtensionAutomation extAuto =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
+        ExtensionAutomation extAuto = getExtension(ExtensionAutomation.class);
 
         extAuto.unregisterAutomationJob(importJob);
+        extAuto.unregisterAutomationJob(exportJob);
+        extAuto.unregisterAutomationJob(pruneJob);
     }
 
     @Override

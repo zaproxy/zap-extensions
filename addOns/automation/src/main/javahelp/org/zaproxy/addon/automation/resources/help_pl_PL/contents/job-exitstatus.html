@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Automation Framework - exitStatus Job
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Automation Framework - exitStatus Job</H1>
+
+This job sets <a href="automation.html#exit-codes">ZAP's exit code</a> based on scan results.
+It also allows you to choose which exit values are used.
+It should typically be the last job in a plan.
+<p>
+If warnLevel or errorLevel are set then the job will report a warning or error if any alerts
+are raised which have the same risk level or greater.
+<p>
+By default when ZAP is run with the <code>-cmd</code> and <code>-autorun</code> options then it will
+exit with a 1 if there are any errors, with a 2 if there are any warnings, and if everything is ok
+then it will exit with a 0.
+These values can be overriden by the <code>*ExitValue</code> options. The <code>*ExitValues</code> can be used together 
+with the warn/errorLevel or completely independently of them.
+
+<H2>YAML</H2>
+
+<pre>
+  - type: exitStatus                   # Sets the exit code based on scan results
+    parameters:
+      errorLevel:                      # String: Informational, Low, Medium, High, default: not set
+      warnLevel:                       # String: Informational, Low, Medium, High, default: not set
+      okExitValue:                     # Integer: Exit value if all ok, default 0
+      errorExitValue:                  # Integer: Exit value if there are errors, default 1
+      warnExitValue:                   # Integer: Exit value if there are warnings, default 2
+ </pre>
+
+</BODY>
+</HTML>

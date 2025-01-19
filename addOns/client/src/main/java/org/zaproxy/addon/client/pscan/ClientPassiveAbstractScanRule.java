@@ -21,7 +21,7 @@ package org.zaproxy.addon.client.pscan;
 
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Alert.Source;
-import org.zaproxy.addon.client.ReportedObject;
+import org.zaproxy.addon.client.internal.ReportedObject;
 
 public abstract class ClientPassiveAbstractScanRule implements ClientPassiveScanRule {
 

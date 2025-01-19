@@ -36,6 +36,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
 import java.util.Collections;
+import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,10 +54,10 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.spider.parser.ParseContext;
 import org.zaproxy.addon.spider.parser.SpiderParser;
 import org.zaproxy.addon.spider.parser.SpiderResourceFound;
-import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link SpiderTask}. */
@@ -69,7 +70,7 @@ class SpiderTaskUnitTest extends TestUtils {
     private SpiderParam options;
     private SpiderController controller;
     private ExtensionSpider2 extensionSpider;
-    private ValueGenerator valueGenerator;
+    private ValueProvider valueProvider;
     private Spider parent;
     private HttpMessage msg;
 
@@ -99,8 +100,8 @@ class SpiderTaskUnitTest extends TestUtils {
         extensionSpider =
                 mock(ExtensionSpider2.class, withSettings().strictness(Strictness.LENIENT));
         given(parent.getExtensionSpider()).willReturn(extensionSpider);
-        valueGenerator = mock(ValueGenerator.class);
-        given(extensionSpider.getValueGenerator()).willReturn(valueGenerator);
+        valueProvider = mock(ValueProvider.class);
+        given(extensionSpider.getValueProvider()).willReturn(valueProvider);
 
         msg = new HttpMessage();
         msg.setRequestHeader("GET /path HTTP/1.1\r\nHost: example.com\r\n");
@@ -129,10 +130,49 @@ class SpiderTaskUnitTest extends TestUtils {
         ParseContext ctxParse = captorCtx.getValue();
         assertThat(ctxCanParse, is(sameInstance(ctxParse)));
         assertThat(ctxParse.getSpiderParam(), is(sameInstance(options)));
-        assertThat(ctxParse.getValueGenerator(), is(sameInstance(valueGenerator)));
+        assertThat(ctxParse.getValueProvider(), is(sameInstance(valueProvider)));
         assertThat(ctxParse.getHttpMessage(), is(sameInstance(msg)));
         assertThat(ctxParse.getPath(), is(equalTo("/path")));
         assertThat(ctxParse.getDepth(), is(equalTo(depth)));
+    }
+
+    @Test
+    void shouldHandleParsersExceptions() {
+        // Given
+        SpiderParser parserA = mock(SpiderParser.class);
+        given(parserA.canParseResource(any(), anyBoolean())).willReturn(true);
+        given(parserA.parseResource(any())).willThrow(NullPointerException.class);
+        SpiderParser parserB = mock(SpiderParser.class);
+        given(parserB.canParseResource(any(), anyBoolean())).willReturn(true);
+        given(controller.getParsers()).willReturn(List.of(parserA, parserB));
+        int depth = 123;
+        // When
+        SpiderTask.processResource(parent, depth, msg);
+        // Then
+        verify(parserA).canParseResource(any(), eq(false));
+        verify(parserA).parseResource(any());
+        verify(parserB).canParseResource(any(), eq(false));
+        verify(parserB).parseResource(any());
+    }
+
+    @Test
+    void shouldPassAlreadyConsumedStateToFollowingParsers() {
+        // Given
+        SpiderParser parserA = mock(SpiderParser.class);
+        given(parserA.canParseResource(any(), anyBoolean())).willReturn(true);
+        given(parserA.parseResource(any())).willReturn(true);
+        SpiderParser parserB = mock(SpiderParser.class);
+        given(parserB.canParseResource(any(), anyBoolean())).willReturn(true);
+        given(parserB.parseResource(any())).willReturn(false);
+        SpiderParser parserC = mock(SpiderParser.class);
+        given(controller.getParsers()).willReturn(List.of(parserA, parserB, parserC));
+        int depth = 123;
+        // When
+        SpiderTask.processResource(parent, depth, msg);
+        // Then
+        verify(parserA).canParseResource(any(), eq(false));
+        verify(parserB).canParseResource(any(), eq(true));
+        verify(parserC).canParseResource(any(), eq(true));
     }
 
     @ParameterizedTest

@@ -6,11 +6,96 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
-## [21.29.0] - 2024-01-03
+## [21.44.0] - 2025-01-15
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+- Update minimum ZAP version to 2.16.0.
+- Depend on Passive Scanner add-on (Issue 7959).
+- The scan rule no longer sets a CWE for alerts (Issue 8733).
+
+## [21.43.0] - 2024-11-25
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+- Maintenance changes.
+
+## [21.42.0] - 2024-09-24
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+- Maintenance changes.
+
+## [21.41.0] - 2024-09-02
+### Added
+- Request stats.
+
+### Fixed
+- Example alert details for documentation generation (Issue 6119).
+
+## [21.40.0] - 2024-08-28
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+- The add-on now has an options screen to allow users to select Quick/Exhaustive mode used by the passive scanner (part of Issue 8361).
+    - Quick > Return on first match; which may mean missing version information, but should be slightly more performant. (This is the default.)
+    - Exhaustive > Keep matching and don't return early; likely slightly less performant.
+- The add-on now also has the ability to optionally raise Alerts for each technology identified. The default setting is enabled. (Issue 8361)
+- Maintenance changes.
+    - This may be a breaking change for anyone that has code using the Automation Framework's Tech Detection (Wappalyzer) data.
+- The scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
+- Link website alert page and help (Issues 8189).
+
+## [21.39.0] - 2024-07-04
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
 
+## [21.38.0] - 2024-06-03
+### Changed
+- Updated with enthec upstream icon and pattern changes.
 
+## [21.37.0] - 2024-05-21
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Updated with enthec upstream icon and pattern changes.
+- Maintenance changes (standardize on "Technology Detection" naming).
+
+## [21.36.0] - 2024-05-02
+### Fixed
+- Implemented a change to address a resource contention issue when loading Tech Detection details (Issue 8464).
+
+### Changed
+- Suppress further un-helpful messages from the jsvg library logger.
+
+## [21.35.0] - 2024-04-23
+### Changed
+- Maintenance changes.
+
+### Fixed
+- A typo in the help content.
+
+## [21.34.0] - 2024-04-11
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+- Parallelize loading of the technology files, to improve install/start-up performance.
+
+## [21.33.0] - 2024-03-28
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+
+## [21.32.0] - 2024-03-04
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+- Maintenance changes.
+
+## [21.31.0] - 2024-02-09
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+
+## [21.30.0] - 2024-02-05
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+- Made UI strings and help less Wappalyzer centric and more Technology Detection focused.
+
+## [21.29.0] - 2024-01-03
+### Changed
+- Updated with enthec upstream icon and pattern changes.
 
 ## [21.28.0] - 2023-12-04
 ### Changed
@@ -323,6 +408,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.44.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.44.0
+[21.43.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.43.0
+[21.42.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.42.0
+[21.41.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.41.0
+[21.40.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.40.0
+[21.39.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.39.0
+[21.38.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.38.0
+[21.37.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.37.0
+[21.36.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.36.0
+[21.35.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.35.0
+[21.34.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.34.0
+[21.33.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.33.0
+[21.32.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.32.0
+[21.31.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.31.0
+[21.30.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.30.0
 [21.29.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.29.0
 [21.28.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.28.0
 [21.27.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.27.0

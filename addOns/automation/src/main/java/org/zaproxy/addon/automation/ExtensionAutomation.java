@@ -25,6 +25,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -34,8 +36,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.swing.Timer;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
@@ -50,19 +55,24 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
 import org.zaproxy.addon.automation.gui.OptionsPanel;
+import org.zaproxy.addon.automation.jobs.ActiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
+import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
+import org.zaproxy.addon.automation.jobs.ExitStatusJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.ZAP.ProcessType;
 import org.zaproxy.zap.eventBus.Event;
+import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ScriptVars;
 import org.zaproxy.zap.utils.Stats;
 
@@ -75,6 +85,9 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     public static final String PREFIX = "automation";
 
     public static final String RESOURCES_DIR = "/org/zaproxy/addon/automation/resources/";
+    public static final int OK_EXIT_VALUE = 0;
+    public static final int ERROR_EXIT_VALUE = 1;
+    public static final int WARN_EXIT_VALUE = 2;
 
     protected static final String PLANS_RUN_STATS = "stats.auto.plans.run";
     protected static final String TOTAL_JOBS_RUN_STATS = "stats.auto.jobs.run";
@@ -105,6 +118,8 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
     private AutomationPanel automationPanel;
 
+    private static Integer exitOverride;
+
     public ExtensionAutomation() {
         super(NAME);
         setI18nPrefix(PREFIX);
@@ -119,11 +134,16 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         super.init();
 
         registerAutomationJob(new org.zaproxy.addon.automation.jobs.AddOnJob());
-        registerAutomationJob(new PassiveScanConfigJob());
         registerAutomationJob(new RequestorJob());
-        registerAutomationJob(new PassiveScanWaitJob());
         registerAutomationJob(new DelayJob());
+        registerAutomationJob(new ExitStatusJob());
+        registerAutomationJob(
+                new ActiveScanConfigJob(
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionActiveScan.class)));
         registerAutomationJob(new ActiveScanJob());
+        registerAutomationJob(new ActiveScanPolicyJob());
         registerAutomationJob(new ParamsJob());
     }
 
@@ -191,7 +211,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     }
 
     @Override
-    public void postInit() {
+    public void start() {
         if (hasView() && this.getParam().isOpenLastPlan()) {
             String path = getParam().getLastPlanPath();
             if (path != null) {
@@ -278,18 +298,28 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                 Constant.messages.getString(
                         "automation.cmdline.out.template", f.getAbsolutePath()));
         try (FileWriter fw = new FileWriter(f)) {
-            fw.write(AutomationEnvironment.getTemplateFileData());
+            if (incAll) {
+                fw.write(AutomationEnvironment.getTemplateFileDataMax());
+            } else {
+                fw.write(AutomationEnvironment.getTemplateFileDataMin());
+            }
 
             jobs.values().stream()
+                    .filter(job -> job.getClass().getAnnotation(Deprecated.class) == null)
+                    .filter(Predicate.not(AutomationJob::isDataJob))
                     .sorted()
                     .forEach(
                             j -> {
                                 try {
-                                    if (incAll) {
-                                        fw.write(j.getTemplateDataMax());
-                                    } else {
-                                        fw.write(j.getTemplateDataMin());
+                                    String template =
+                                            incAll
+                                                    ? j.getTemplateDataMax()
+                                                    : j.getTemplateDataMin();
+                                    if (StringUtils.isBlank(template)) {
+                                        return;
                                     }
+                                    template = template.stripTrailing() + "\n\n";
+                                    fw.write(template);
                                 } catch (Exception e) {
                                     CommandLine.error(
                                             Constant.messages.getString(
@@ -353,6 +383,14 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
 
         for (AutomationJob job : jobsToRun) {
+
+            if (!job.isEnabled()) {
+                progress.info(
+                        Constant.messages.getString("automation.info.jobdisabled", job.getType()));
+                job.setStatus(AutomationJob.Status.NOT_ENABLED);
+                continue;
+            }
+
             job.applyParameters(progress);
             progress.info(Constant.messages.getString("automation.info.jobstart", job.getType()));
             job.setStatus(AutomationJob.Status.RUNNING);
@@ -363,7 +401,14 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                 timer = new Timer(1000, e -> getAutomationPanel().updateJob(job));
                 timer.start();
             }
-            job.runJob(env, progress);
+            try {
+                job.runJob(env, progress);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.unexpected.internal", e.getMessage()));
+            }
             job.setTimeFinished();
             if (timer != null) {
                 timer.stop();
@@ -582,7 +627,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                         1,
                         null,
                         "",
-                        "-autorun <filename>      "
+                        "-autorun <source>        "
                                 + Constant.messages.getString("automation.cmdline.autorun.help"));
         arguments[ARG_AUTO_GEN_MIN_IDX] =
                 new CommandLineArgument(
@@ -617,21 +662,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     @Override
     public void execute(CommandLineArgument[] args) {
         if (arguments[ARG_AUTO_RUN_IDX].isEnabled()) {
-            AutomationProgress progress =
-                    runAutomationFile(arguments[ARG_AUTO_RUN_IDX].getArguments().firstElement());
-            if (ProcessType.cmdline.equals(ZAP.getProcessType())) {
-                if (progress.hasErrors()) {
-                    Control.getSingleton()
-                            .setExitStatus(
-                                    1,
-                                    "Automation Framework setting exit status to due to plan errors");
-                } else if (progress.hasWarnings()) {
-                    Control.getSingleton()
-                            .setExitStatus(
-                                    2,
-                                    "Automation Framework setting exit status to due to plan warnings");
-                }
-            }
+            runPlanCommandLine(arguments[ARG_AUTO_RUN_IDX].getArguments().firstElement());
         }
         if (arguments[ARG_AUTO_GEN_MIN_IDX].isEnabled()) {
             generateTemplateFile(
@@ -643,6 +674,79 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
         if (arguments[ARG_AUTO_GEN_CONF_IDX].isEnabled()) {
             generateConfigFile(arguments[ARG_AUTO_GEN_CONF_IDX].getArguments().firstElement());
+        }
+    }
+
+    private void runPlanCommandLine(String source) {
+        URI uri = createUri(source);
+        if (uri != null) {
+            Path file;
+            try {
+                HttpMessage message = new HttpMessage(uri);
+                new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR).sendAndReceive(message);
+                int statusCode = message.getResponseHeader().getStatusCode();
+                if (statusCode != HttpStatusCode.OK) {
+                    setExitStatus(
+                            1,
+                            "non-200 response (" + statusCode + ") for remote plan: " + source,
+                            true);
+                    return;
+                }
+
+                file = Files.createTempFile("zap-af-plan-", ".yaml");
+                Files.write(file, message.getResponseBody().getBytes());
+            } catch (IOException e) {
+                setExitStatus(1, "I/O error getting remote plan: " + e.getMessage(), true);
+                return;
+            }
+            source = file.toAbsolutePath().toString();
+        }
+
+        AutomationProgress progress = runAutomationFile(source);
+        if (exitOverride != null) {
+            setExitStatus(exitOverride, "set by user", false);
+        } else if (progress == null || progress.hasErrors()) {
+            setExitStatus(ERROR_EXIT_VALUE, "plan errors", false);
+        } else if (progress.hasWarnings()) {
+            setExitStatus(WARN_EXIT_VALUE, "plan warnings", false);
+        }
+    }
+
+    public static Integer getExitOverride() {
+        return exitOverride;
+    }
+
+    public static void setExitOverride(Integer exitOverride) {
+        ExtensionAutomation.exitOverride = exitOverride;
+    }
+
+    private static URI createUri(String source) {
+        try {
+            new java.net.URI(source).toURL();
+            URI uri = new URI(source, true);
+            String scheme = uri.getScheme();
+            if (HttpHeader.HTTP.equalsIgnoreCase(scheme)
+                    || HttpHeader.HTTPS.equalsIgnoreCase(scheme)) {
+                return uri;
+            }
+            LOGGER.debug("Skipping non-HTTP(S) URI, will attempt to run plan as file.");
+        } catch (Exception e) {
+            LOGGER.debug("Failed to parse {} as URI, attempting to run plan as file.", source, e);
+        }
+        return null;
+    }
+
+    private static void setExitStatus(int status, String logMessage, boolean error) {
+        if (ProcessType.cmdline.equals(ZAP.getProcessType())) {
+            String fullMessage =
+                    "Automation Framework setting exit status to "
+                            + status
+                            + " due to "
+                            + logMessage;
+            if (error) {
+                CommandLine.error(fullMessage);
+            }
+            Control.getSingleton().setExitStatus(status, fullMessage);
         }
     }
 

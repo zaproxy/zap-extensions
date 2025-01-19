@@ -5,11 +5,70 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [0.20.0] - 2025-01-09
+### Added
+- Set the local address where (e.g. server, proxy) the request header was received.
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [0.19.0] - 2024-12-23
+### Changed
+- Configure the logging to prevent verbose log messages when using BC JSSE provider.
+- Improve error handling on client's unknown CA TLS alert.
+- Report available TLS providers when failed to query the TLS/SSL protocol versions.
+- Rely on the default secure random generator when creating the Root CA certificate to use the most appropriate defined by the security provider.
+- Update default user-agents.
+
+## [0.18.0] - 2024-09-24
+### Added
+- Send success/failure stats.
+
+### Changed
+- Stop retrying 429 and 503 responses, instead of waiting for `retry-after` (Issue 8627).
+
+### Fixed
+- Fix typo in log message.
+
+## [0.17.0] - 2024-09-02
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Guard against user without authentication state.
+- Fix exception after regenerating the root CA cert during ZAP startup (Issue 8499).
+- Use configured timeout as default.
+
+## [0.16.0] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Update default user-agents.
+
+### Fixed
+- Help content typos.
+
+## [0.15.0] - 2024-03-25
+### Added
+- Methods for accessing the upstream proxy.
+
+## [0.14.0] - 2024-02-22
 ### Changed
 - Notify proxy listeners concurrently, might break listeners that do not correctly handle concurrency.
+- Update dependencies.
+
+### Removed
+- Remove legacy options panels that helped the user find the new options panels:
+  - Client Certificate
+  - Connection
+  - Dynamic SSL Certificates
+  - Local Proxies
 
 ### Fixed
 - Accept rate limit rule's group by in lower case, when handling the API requests.
+- Prevent configuration of the outgoing HTTP/SOCKS Proxy with the address of one of the Local Servers/Proxies, as it would lead to unintended request loops (Issue 5308).
+- Fix exception while proxying NTLM authentication (Issue 7685).
 
 ## [0.13.0] - 2023-11-17
 ### Added
@@ -162,6 +221,13 @@ would not be cleared when reusing the same message.
   - Options panel to manage the root CA certificate and issued certificates.
   - API endpoints to configure the validity of the root CA certificate and issued certificates ([Issue 4673](https://github.com/zaproxy/zaproxy/issues/4673)).
 
+[0.20.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.20.0
+[0.19.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.19.0
+[0.18.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.18.0
+[0.17.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.17.0
+[0.16.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.16.0
+[0.15.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.15.0
+[0.14.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.12.0
 [0.11.2]: https://github.com/zaproxy/zap-extensions/releases/network-v0.11.2

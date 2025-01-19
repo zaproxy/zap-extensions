@@ -22,6 +22,7 @@ package org.zaproxy.addon.client.spider;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
@@ -33,7 +34,7 @@ public class PopupMenuSpider extends PopupMenuItemSiteNodeContainer {
 
     public PopupMenuSpider(String label, ExtensionClientIntegration extension) {
         super(label);
-        this.setIcon(extension.getIcon());
+        this.setIcon(ExtensionClientIntegration.getIcon());
         this.extension = extension;
     }
 
@@ -48,8 +49,13 @@ public class PopupMenuSpider extends PopupMenuItemSiteNodeContainer {
     }
 
     @Override
-    public int getParentMenuIndex() {
-        return ATTACK_MENU_INDEX;
+    public int getParentWeight() {
+        return MenuWeights.MENU_ATTACK_WEIGHT;
+    }
+
+    @Override
+    public int getWeight() {
+        return MenuWeights.MENU_ATTACK_CLIENT_WEIGHT;
     }
 
     @Override
@@ -61,23 +67,15 @@ public class PopupMenuSpider extends PopupMenuItemSiteNodeContainer {
 
     @Override
     public boolean isButtonEnabledForSiteNode(SiteNode node) {
-        if (!node.isRoot()) {
-            return true;
-        }
-        return false;
+        return !node.isRoot();
     }
 
     @Override
     public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
         switch (invoker) {
-            case ALERTS_PANEL:
-            case ACTIVE_SCANNER_PANEL:
-            case FORCED_BROWSE_PANEL:
-            case FUZZER_PANEL:
+            case ALERTS_PANEL, ACTIVE_SCANNER_PANEL, FORCED_BROWSE_PANEL, FUZZER_PANEL:
                 return false;
-            case HISTORY_PANEL:
-            case SITES_PANEL:
-            case SEARCH_PANEL:
+            case HISTORY_PANEL, SITES_PANEL, SEARCH_PANEL:
             default:
                 return true;
         }

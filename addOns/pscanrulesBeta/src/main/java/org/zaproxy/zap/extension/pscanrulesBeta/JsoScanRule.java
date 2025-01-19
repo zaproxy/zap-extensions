@@ -33,7 +33,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** Java Serialized Objects (JSO) scan rule. Detect the magic sequence and generate an alert */
-public class JsoScanRule extends PluginPassiveScanner {
+public class JsoScanRule extends PluginPassiveScanner implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanbeta.jso.";
@@ -125,7 +125,7 @@ public class JsoScanRule extends PluginPassiveScanner {
                 .setCweId(502); // CWE-502: Deserialization of Untrusted Data
     }
 
-    private boolean hasJsoMagicSequence(String value) {
+    private static boolean hasJsoMagicSequence(String value) {
         return hasJsoBase64MagicSequence(value) || hasUriEncodedMagicSequence(value);
     }
 

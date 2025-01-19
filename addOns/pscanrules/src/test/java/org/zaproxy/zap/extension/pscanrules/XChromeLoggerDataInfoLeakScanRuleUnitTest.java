@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
@@ -52,7 +53,7 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
                     + "ZWN1cml0eUNvbnRleHQgd2l0aCBhbiBhbm9ueW1vdXMgVG9rZW4iLCJ1bmtub"
                     + "3duIiwiaW5mbyJdXSwicmVxdWVzdF91cmkiOiJcL2xvZ2luIn0=";
 
-    private HttpMessage createMessage() throws URIException {
+    private static HttpMessage createMessage() throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));
 
@@ -163,8 +164,9 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
 
         Alert alert = alerts.get(0);
         Map<String, String> tags1 = alert.getTags();
-        assertThat(tags1.size(), is(equalTo(3)));
+        assertThat(tags1.size(), is(equalTo(4)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(tags1, hasKey("CWE-200"));
         assertThat(
                 tags1.containsKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
                 is(equalTo(true)));

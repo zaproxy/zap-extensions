@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vulnerabilities xmlns="http://tempuri.org/XMLSchemaOptions.xsd">
+<vulnerabilities>
 
 <vuln_items>wasc_1</vuln_items>
 <vuln_item_wasc_1>
@@ -9,7 +9,7 @@
 Pour éviter la mise en place d'une authentification, certaines ressources sont protégées en "cachant" l'emplacement précis et ne reliant pas cet emplacement depuis le site web principal ou autres sites publics. Toutefois, cette approche n'est rien d'autre que de la "sécurité par obscurité". Il est important de comprendre que, même si une ressource est inconnue d'un attaquant, elle reste encore accessible directement via une URL spécifique. Cette URL spécifique pourrait être découverte par  force brute en testant un fichier commun et des emplacements de répertoires (/admin par exemple), des messages d'erreur, des journaux ou de la documentation, comme les fichiers d'aide. Ces ressources, qu'elles soient contenu ou fonctionnalité, doivent être adéquatement protégées.</desc>
 	<solution>Phase: Architecture et Design
 Utiliser un framework ou une bibliothèque d'authentification, comme par exemple la bibliothèque d'authentification ESAPI d'OWASP.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Authentication</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/287.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/284.html</reference>
 </vuln_item_wasc_1>
@@ -27,11 +27,11 @@ Un exemple très parlant était le piratage du processus de candidature de la Ha
  
 Autorisation insuffisante pour l'accès aux données
 
-De nombreuses applications exposent dans une URL les identificateurs aux bases de données sous-jacentes. Par exemple, lors de l'accès à des données médicales sur un système, on pourrait avoir une URL telle que:
+De nombreuses applications exposent dans une URL les identificateurs aux bases de données sous-jacentes. For example, when accessing a medical record on a system one might have a URL such as:
 
-http://example.com/RecordView?id=12345
+https://example.com/RecordView?id=12345
 
-Si l'application ne contrôle pas que l'utilisateur connecté a le droit d'accès, alors elle pourrait afficher des données que l'utilisateur n'est pas censé voir.
+If the application does not check that the authenticated user ID has read rights, then it could display data to the user that the user should not see.
 
 L'autorisation insuffisante pour l'accès aux données est plus fréquente que l'autorisation insuffisante d'accès aux fonctions, car les programmeurs ont généralement une parfaite connaissance des fonctionnalités de l'application, mais n'ont pas toujours une vue complète de toutes les données auxquelles l'application accède. Les programmeurs ont souvent un contrôle strict des mécanismes d'autorisation d'accès aux fonctions, mais s'appuient sur d'autres systèmes, tels que les bases de données, pour exécuter l'autorisation d'accès aux données.</desc>
 	<solution>Phases: Architecture et Design; Exploitation
@@ -39,7 +39,7 @@ Gérez très soigneusement les réglages, la gestion et la manipulation des priv
 
 Phase: Architecture et Design
 Assurez-vous qu'un cloisonnement approprié est intégré à la conception du système et que ce cloisonnement sert à permettre et à renforcer la fonctionnalité de séparation de privilège. Les architectes et designers devraient se baser sur le principe du moindre privilège au moment de décider quand il convient d'utiliser et d'abandonner les privilèges d'accès système.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Authorization</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/284.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/285.html</reference>
 </vuln_item_wasc_2>
@@ -72,7 +72,6 @@ Veillez également à tenir compte de 32 bits, 64 bits et d'autres différences 
 
 Phase: Implémentation
 Examinez attentivement les avertissements du compilateur et éliminez les problèmes critiques potentiels touchant la sécurité, comme la discordance signé / non-signé. Même si la faille est rarement exploitable, une seule défaillance peut entraîner la compromission de l'ensemble du système.</solution>
-	<reference>http://projects.webappsec.org/Integer-Overflows</reference>
 	<reference>https://cwe.mitre.org/data/definitions/190.html</reference>
 </vuln_item_wasc_3>
 
@@ -120,7 +119,7 @@ Quand vous utilisez des techniques éprouvées dans l'industrie, vous devez les 
 Phase: Implémentation
 Utilisez des conventions de nommage et des types forts pour repérer plus facilement quand des données sensibles sont utilisées. Lors de la création de structures, objets ou autres entités complexes, séparez autant que possible les données sensibles des non sensibles.
 Il est ainsi plus facile de repérer les parties du code traitant des données non chiffrées.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Transport-Layer-Protection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/311.html</reference>
 </vuln_item_wasc_4>
 
@@ -158,7 +157,7 @@ Ceci réduit considérablement les risques qu'un attaquant soit capable de conto
 Phases : Architecture et Design; Implémentation
 Assurez-vous de comprendre tous les secteurs potentiels où les entrées douteuses peuvent pénétrer dans votre logiciel: paramètres ou arguments, cookies, tout ce qui vient du réseau, variables d'environnement, requêtes DNS inverses, résultats de requêtes, en-têtes de requêtes, composantes d'URLs, courriels, fichiers, bases de données et tout système externe fournissant des données à l'application. Rappelez-vous que de telles entrées peuvent être obtenues indirectement via des appels d'API.
 De nombreux problèmes d'inclusion de fichiers se produisent parce que le programmeur a assumé que certaines entrées ne pouvaient pas être modifiées, en particulier les cookies et les composants d'URL.</solution>
-	<reference>http://projects.webappsec.org/Remote-File-Inclusion</reference>
+	<reference>https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.2-Testing_for_Remote_File_Inclusion</reference>
 	<reference>https://cwe.mitre.org/data/definitions/98.html</reference>
 </vuln_item_wasc_5>
 
@@ -180,7 +179,7 @@ Phase : Implémentation
 Assurez-vous que toutes les fonctions de formatage de chaînes reçoivent une chaîne statique qui ne peut être manipulée par l'utilisateur et que ces fonctions sont toujours appelées avec le nombre correct d'arguments. Dans la mesure du possible, utilisez les fonctions qui ne supportent pas l'opérateur %n en schéma de formatage.
 Construction : observez les avertissements des compilateurs et des linkers, car ils peuvent vous alerter de l'usage impropre de l'une de ces fonctions.
 </solution>
-	<reference>http://projects.webappsec.org/Format-String</reference>
+	<reference>https://owasp.org/www-community/attacks/Format_string_attack</reference>
 	<reference>https://cwe.mitre.org/data/definitions/134.html</reference>
 </vuln_item_wasc_6>
 
@@ -228,7 +227,7 @@ Utilisez un processeur et un système d'exploitation offrant la Data Execution P
 Phase: Implémentation
 Remplacez les fonctions de copie non bornée par des fonctions analogues demandant la longueur en argument, p.ex. remplacez strcpy par strncpy. Créez celles-ci si elles ne sont pas disponibles.
 </solution>
-	<reference>http://projects.webappsec.org/Buffer-Overflow</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/Buffer_Overflow</reference>
 	<reference>https://cwe.mitre.org/data/definitions/119.html</reference>
 </vuln_item_wasc_7>
 
@@ -266,7 +265,7 @@ Lorsque vous effectuez une validation d'entrée, considérez toutes les proprié
 
 Ensure that you perform input validation at well-defined interfaces within the application. Ceci aidera à protéger l'application, même si un composant est réutilisé ou déplacé ailleurs.
 	</solution>
-	<reference>http://projects.webappsec.org/Cross-Site-Scripting</reference>
+	<reference>https://owasp.org/www-community/attacks/xss/</reference>
 	<reference>https://cwe.mitre.org/data/definitions/79.html</reference>
 </vuln_item_wasc_8>
 
@@ -302,7 +301,7 @@ N'utilisez pas la méthode GET pour les requêtes entraînant un changement d'é
 
 Phase: Implémentation
 Vérifiez l'en-tête HTTP Referer pour voir si la requête provient d'une page attendue. Ceci pourrait toutefois restreindre la fonctionnalité de l'application, car les utilisateurs ou les serveurs proxy pourraient avoir désactivé le renvoi du HTTP Referer pour des raisons de confidentialité.</solution>
-	<reference>http://projects.webappsec.org/Cross-Site-Request-Forgery</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/352.html</reference>
 </vuln_item_wasc_9>
 
@@ -329,7 +328,7 @@ Assurez-vous que les protocoles sont pourvus de limites d'échelle spécifiques.
 
 Phase: Implémentation
 Veillez à ce que tous les échecs d'allocation des ressources laissent le système dans un état sûr.</solution>
-	<reference>http://projects.webappsec.org/Denial-of-Service</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/400.html</reference>
 </vuln_item_wasc_10>
 
@@ -350,7 +349,7 @@ Le type le plus commun d'attaque par force brute dans les applications internet 
 It is important that the techniques used to limit user access to the system be implemented properly in order to prevent abuses and negative side effects such as denial of service.
 
 Additionally consider migrating to password-less authentication mechanisms like passkeys.</solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11a>
 
 <vuln_items>wasc_11b</vuln_items>
@@ -361,7 +360,7 @@ Additionally consider migrating to password-less authentication mechanisms like 
 Comme HTTP est un protocole sans suivi d'état, les applications internet doivent s'assurer qu'un identifiant de session est envoyé par le navigateur à chaque requête, ceci afin de maintenir un suivi d'état. Le plus souvent, l'identifiant de session est conservé dans un cookie HTTP ou dans l'URL. À l'aide d'une attaque par force brute, un agresseur peut deviner l'identifiant de session d'un autre utilisateur. Cela peut permettre au pirate d'emprunter l'identité de l'utilisateur, de récupérer des informations personnelles et d'exécuter des actions au nom de l'utilisateur.
 	</desc>
 	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11b>
 
 <vuln_items>wasc_11c</vuln_items>
@@ -374,7 +373,7 @@ Lorsque des fichiers résident dans des répertoires qui sont servis par le serv
 Une attaque par force brute tente de localiser les fichiers non liés en essayant d'accéder à un grand nombre de fichiers. La liste de noms de fichier essayés pourrait être basée sur une liste de fichiers potentiels connus ou construite à partir de variantes des fichiers visibles sur le site internet. Plus d'informations sur les attaques par force brute sur les répertoires et les fichiers se trouvent dans la vulnérabilité nommée "emplacement de ressources prévisibles".
 	</desc>
 	<solution>Never rely on "security by obscurity" mechanisms to restrict access to sensitive files and directories on a web server. Implement appropriate access control measures if hosting sensitive information is required.</solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Forced_browsing</reference>
 </vuln_item_wasc_11c>
 
 <vuln_items>wasc_11d</vuln_items>
@@ -405,7 +404,7 @@ Phase: Operation
 Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
 
 </solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11d>
 
 <vuln_items>wasc_12</vuln_items>
@@ -417,14 +416,14 @@ Usurpation de contenu Texte seulement
 Une approche fréquente pour construire dynamiquement des pages internet consiste à passer le corps ou des parties de celui-ci dans la page via une valeur de chaîne de requête. Cette approche est commune pour les pages d'erreur ou des sites fournissant des nouvelles. Le contenu spécifié dans ce paramètre apparaît plus tard dans la page pour former le contenu de la page.
  
 Usurpation de balisage réfléchi
-Certaines pages internet sont construites de manière dynamique à partir de sources de contenu HTML. For example, the source location of a frame <frame src="http://foo.example/file.html"/>) could be specified by a URL parameter value. (http://foo.example/page?frame_src=http://foo.example/file.html). Un agresseur peut être en mesure de remplacer la valeur du paramètre "frame_src" par "frame_src = http://attacker.example/spoof.html". À la différence des redirections, lorsque la page internet résultante est présentée, la barre d'adresse du navigateur reste manifestement sur le domaine attendu par l'utilisateur (foo.example), mais les données d'origine étrangère (attacker.example) sont entourées par le contenu légitime.
+Certaines pages internet sont construites de manière dynamique à partir de sources de contenu HTML. For example, the source location of a frame <frame src="https://foo.example/file.html"/>) could be specified by a URL parameter value. (https://foo.example/page?frame_src=https://foo.example/file.html). An attacker may be able to replace the "frame_src" parameter value with "frame_src=https://attacker.example/spoof.html". À la différence des redirections, lorsque la page internet résultante est présentée, la barre d'adresse du navigateur reste manifestement sur le domaine attendu par l'utilisateur (foo.example), mais les données d'origine étrangère (attacker.example) sont entourées par le contenu légitime.
 
-Des liens spécialement conçus peuvent être envoyés à l'utilisateur par e-mail ou par messagerie instantanée, publiés sur un tableau de messages ou imposés aux utilisateurs par une attaque de Cross-site Scripting. Si un agresseur peut forcer un utilisateur à visiter une page web désignée par leur URL malveillante, l'utilisateur croira qu'il voit le contenu d'un site authentique, alors qu'il ne l'est pas. Les utilisateurs feront implicitement confiance au contenu usurpé, car la barre d'adresse du navigateur affiche http://foo.example, alors qu'en fait le cadre HTML sous-jacent fait appel à http://attacker.example.
+Des liens spécialement conçus peuvent être envoyés à l'utilisateur par e-mail ou par messagerie instantanée, publiés sur un tableau de messages ou imposés aux utilisateurs par une attaque de Cross-site Scripting. Si un agresseur peut forcer un utilisateur à visiter une page web désignée par leur URL malveillante, l'utilisateur croira qu'il voit le contenu d'un site authentique, alors qu'il ne l'est pas. Users will implicitly trust the spoofed content since the browser location bar displays https://foo.example, when in fact the underlying HTML frame is referencing https://attacker.example.
 
 Cette attaque exploite la relation de confiance établie entre l'utilisateur et le site internet. La technique a été utilisée pour créer de fausses pages web, notamment des formulaires d'identification, des pages vandalisées, de faux communiqués de presse, etc.
 	</desc>
 	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
-	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
+	<reference>https://owasp.org/www-community/attacks/Content_Spoofing</reference>
 </vuln_item_wasc_12>
 
 <vuln_items>wasc_13</vuln_items>
@@ -437,9 +436,19 @@ Oublier de retirer les commentaires des pages HTML ou des scripts avant un dépl
 Les numéros de version de logiciel et des messages d'erreur détaillés (par exemple les numéros de version ASP.NET) sont des exemples de configurations de serveur incorrectes. Cette information est utile pour un agresseur, en lui fournissant un aperçu détaillé sur le framework, les langages ou les fonctions prédéfinies utilisées par une application internet. La plupart des configurations serveur par défaut fournissent les numéros de version de logiciel et des messages d'erreur détaillés pour le débogage et à des fins de dépannage. Ces configurations peuvent être modifiées pour désactiver ces fonctionnalités, empêchant l'affichage de ces informations.
 
 Des pages fournissant des réponses différentes selon la validité des données injectées peuvent aussi conduire à une fuite d'information; plus précisément lorsque des données jugées confidentielles sont révélées à cause de la conception de l'application web. Des exemples de données sensibles incluent (mais ne sont pas limités à): numéros de compte, identifiants de l'utilisateur (numéro du permis de conduire, numéro de passeport, numéros de sécurité sociale, etc.) et les informations spécifiques à l'utilisateur (mots de passe, sessions, adresses). Dans ce contexte, la fuite d'informations concerne la divulgation de données-clés de l'utilisateur, données jugées confidentielles ou secrètes, et qui ne doivent en aucun cas être exposées en claire, pas même à l'utilisateur. Les numéros de carte de crédit et autres informations fortement réglementées sont d'excellents exemples de données de l'utilisateur qui ont besoin d'être davantage protégées contre l'exposition ou la fuite, même si des mesures appropriées de cryptage et d'accès ont déjà été mises en place.</desc>
-	<solution>Compartimentez votre système pour avoir des zones "sécurisées", où les limites de confiance peuvent être établies sans ambiguïté. Ne permettez pas que des données sensibles sortent de la limite de confiance et soyez toujours attentif à l'interface avec un compartiment situé hors de la zone sûre.</solution>
-	<reference>http://projects.webappsec.org/Information-Leakage</reference>
-	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
+	<solution>
+    * Have a clear definition of which information is considered sensitive and which isn't. Take privacy laws, regulatory requirements, and business needs into account.
+    * Store sensitive data only if you have to.
+    * Implement checks for sensitive information in your devops pipeline. Steps that could be taken include stripping developer comments, removing debugging information and sensitive logs, as well as making error messages less verbose.
+    * In situations where the sensitive information must be used, for instance, backend microservices, ensure trust boundaries are appropriately drawn. Example: set up an isolated, well secured kubernetes cluster with well configured access controls, then only grant access to authorized clients.
+    * In situations where error messages need to be returned to the user, use messages that are as generic as possible eg "invalid credentials" instead of "invalid username" or "invalid password".
+    * When using third party technologies, understand how the software works, its configuration, as well as security risks of using it. After understanding the technology, use only the features that you need and disable everything else.
+    * Detailed debug messages are sometimes necessary, for instance, when adding a new feature to an application. In this case, separate the development environment from the production one. Ensure appropriate access controls are implemented for the development environments.
+    * All sensitive data should be encrypted before storage. Ensure up-to-date and strong standard algorithms, protocols, and keys are in place; use proper key management.
+</solution>
+<reference>https://portswigger.net/web-security/information-disclosure</reference>
+<reference>https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure</reference>
+<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
 <vuln_items>wasc_14</vuln_items>
@@ -450,8 +459,13 @@ Des pages fournissant des réponses différentes selon la validité des données
 Les serveurs peuvent inclure des comptes par défaut et des mots de passe bien connus. Oublier de tout verrouiller ou de durcir le serveur peut laisser ouverts les droits d'accès aux fichiers et aux répertoires. Des certificats SSL et des paramètres de chiffrement mal configurés, l'utilisation de certificats par défaut et l'implémentation d'authentification à des systèmes externes incorrecte peuvent compromettre la confidentialité des informations.
 
 Des messages d'erreur détaillés et informatifs peuvent entraîner des fuites de données et les renseignements révélés pourraient servir à formuler le prochain niveau de l'attaque. Des configurations incorrectes du logiciel du serveur peuvent permettre l'indexation de répertoires et les attaques par traversée de chemins.</desc>
-	<solution/>
-	<reference>http://projects.webappsec.org/Server-Misconfiguration</reference>
+	<solution>
+    * Don't use default credentials. Replace all default usernames and passwords with strong and unique credentials. Periodically update them.
+    * Implement an appropriate error message handling strategy that doesn't leak sensitive and debug information.
+    * Ensure that administrative functions are not accessible to unauthorized users. Implement strong authentication and authorization mechanisms.
+    * Follow the best practices and security guidelines for your specific server.
+   </solution>
+	<reference>https://owasp.org/www-project-mobile-top-10/2023-risks/m8-security-misconfiguration</reference>
 </vuln_item_wasc_14>
 
 <vuln_items>wasc_15</vuln_items>
@@ -460,16 +474,20 @@ Des messages d'erreur détaillés et informatifs peuvent entraîner des fuites d
 	<desc>Les attaques au travers de mauvaises configurations des applications (Application Misconfiguration attacks) exploitent les failles de configuration dans les applications internet. De nombreuses applications sont fournies avec des fonctionnalités inutiles et dangereuses, telles que des fonctionnalités de débogage et d'assurance qualité (QA) activées par défaut. Ces fonctionnalités peuvent fournir un moyen pour un pirate de contourner les méthodes d'authentification et d'accéder à des informations sensibles, peut-être avec des privilèges élevés.
 
 Par ailleurs, les installations par défaut peuvent inclure des noms d'utilisateur et des mots de passe connus, des comptes de porte dérobée codés en dur, des  mécanismes d'accès spéciaux et des autorisations incorrectes pour l'accès aux fichiers par l'intermédiaire de serveurs internet. Des exemples d'applications par défaut peuvent être accessibles dans les environnements de production. Les fichiers de configuration des applications qui ne sont pas correctement verrouillés peuvent révéler en clair des chaînes de connexion à la base de données, et les paramètres par défaut peuvent ne pas avoir été définis dans les fichiers de configuration avec la sécurité à l'esprit. Toutes ces erreurs de configuration peuvent conduire à un accès non autorisé à des informations sensibles.</desc>
-	<solution/>
-	<reference>http://projects.webappsec.org/Application-Misconfiguration</reference>
+	<solution>
+    * Ensure that debug and QA features are deactivated.
+    * Ensure the error messages doesn't leak sensitive and debug information.
+    * Follow the best practices and security guidelines for your specific application tech stack.
+	</solution>
+	<reference>https://cwe.mitre.org/data/definitions/16.html</reference>
 </vuln_item_wasc_15>
 
 <vuln_items>wasc_16</vuln_items>
 <vuln_item_wasc_16>
 	<alert>Indexation des répertoires</alert>
-	<desc>L'énumération ou l'indexation automatique des répertoires (Automatic directory listing/indexing) est une fonction des serveurs internet affichant tous les fichiers d'un répertoire demandé si le fichier de base normal (index.html/home.html/default.htm/default.asp/default.aspx/index.php) est absent. Lorsqu'un utilisateur demande la page d'accueil d'un site internet, il tape normalement une URL comme: http://www.example.com/directory1/ - en utilisant le nom de domaine et en excluant le nom d'un fichier spécifique. Le serveur web traite cette requête et recherche le nom du fichier par défaut dans le répertoire racine des documents, puis il envoie cette page au client. Si cette page est absente, le serveur internet publiera dynamiquement une liste de répertoires et enverra ces informations au client. Fondamentalement, cela équivaut à exécuter un "ls" (Unix) ou la commande "dir" (Windows) dans ce répertoire, en montrant ainsi les résultats sous forme HTML. Du point de vue d'une attaque et de contre-mesures, il est important de réaliser que l'affichage non souhaité des répertoires peut être possible suite à une requête internet spécifique et en présence de failles logicielles (discutées dans l'exemple de la section ci-dessous) .</desc>
+	<desc>L'énumération ou l'indexation automatique des répertoires (Automatic directory listing/indexing) est une fonction des serveurs internet affichant tous les fichiers d'un répertoire demandé si le fichier de base normal (index.html/home.html/default.htm/default.asp/default.aspx/index.php) est absent. When a user requests the main page of a web site, they normally type in a URL such as: https://www.example.com/directory1/ - using the domain name and excluding a specific file. Le serveur web traite cette requête et recherche le nom du fichier par défaut dans le répertoire racine des documents, puis il envoie cette page au client. Si cette page est absente, le serveur internet publiera dynamiquement une liste de répertoires et enverra ces informations au client. Fondamentalement, cela équivaut à exécuter un "ls" (Unix) ou la commande "dir" (Windows) dans ce répertoire, en montrant ainsi les résultats sous forme HTML. Du point de vue d'une attaque et de contre-mesures, il est important de réaliser que l'affichage non souhaité des répertoires peut être possible suite à une requête internet spécifique et en présence de failles logicielles (discutées dans l'exemple de la section ci-dessous) .</desc>
 	<solution>Les recommandations consistent à restreindre l'accès aux fichiers ou répertoires importants, en adoptant la politique de "besoin de connaître" pour la racine des documents et du serveur, en désactivant des fonctionnalités telles que l'affichage automatique des répertoires, qui pourraient exposer des fichiers privés et fournir des informations utilisables par un agresseur élaborant ou menant une attaque.</solution>
-	<reference>http://projects.webappsec.org/Directory-Indexing</reference>
+	<reference>https://owasp.org/www-community/attacks/Path_Traversal</reference>
 	<reference>https://cwe.mitre.org/data/definitions/548.html</reference>
 </vuln_item_wasc_16>
 
@@ -478,7 +496,7 @@ Par ailleurs, les installations par défaut peuvent inclure des noms d'utilisate
 	<alert>Droits d'accès inadéquats au système de fichiers</alert>
 	<desc>Les droits d'accès inadéquats au système de fichiers (improper filesystem permissions) sont une menace pour la confidentialité, l'intégrité et la disponibilité d'une application internet. Le problème survient lorsque des droits d'accès inappropriés sont définis sur les fichiers, dossiers et liens symboliques. Lorsque de mauvais droits d'accès sont définis, un agresseur peut être en mesure d'accéder à des fichiers ou des répertoires interdits et de modifier ou de supprimer leur contenu. Par exemple, si un compte d'utilisateur anonyme a le droit d'écriture dans un fichier, un pirate peut être capable de modifier le contenu du fichier, ce qui peut influencer l'application internet de manière indésirable. Un agresseur peut également exploiter des liens symboliques inappropriés pour augmenter leurs privilèges et/ou accéder à des fichiers non autorisés; par exemple, un lien symbolique pointant vers un répertoire en dehors de la racine internet.</desc>
 	<solution>Very carefully manage the setting, management and handling of permissions. Gérez explicitement les zones de confiance dans le logiciel.</solution>
-	<reference>http://projects.webappsec.org/Improper-Filesystem-Permissions</reference>
+	<reference>https://owasp.org/www-community/Broken_Access_Control</reference>
 	<reference>https://cwe.mitre.org/data/definitions/280.html</reference>
 </vuln_item_wasc_17>
 
@@ -489,7 +507,8 @@ Par ailleurs, les installations par défaut peuvent inclure des noms d'utilisate
 
 De nombreux sites web sont conçus pour authentifier un utilisateur à l'établissement de la connexion. Pour ce faire, les utilisateurs doivent prouver leur identité auprès du site internet, en fournissant généralement une combinaison nom d'utilisateur/mot de passe (identifiants). Plutôt que de transmettre ces informations confidentielles dans les deux sens à chaque transaction, les sites internet généreront un "identificateur de session" unique destiné à qualifier la session de l'utilisateur comme étant authentifiée. Toute communication ultérieure entre l'utilisateur et le site web est marquée avec l'identificateur de session comme "preuve" d'une session authentifiée. Si un agresseur peut prédire ou deviner l'identificateur de session d'un autre utilisateur, une activité frauduleuse est possible.</desc>
 	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
-	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
+	<reference>https://owasp.org/www-community/attacks/Session_Prediction</reference>
 </vuln_item_wasc_18>
 
 <vuln_items>wasc_19</vuln_items>
@@ -524,7 +543,8 @@ When constructing SQL query strings, use stringent allow lists that limit the ch
 Notez que le codage de sortie, l'échappement, et la mise entre guillemets est la solution la plus efficace pour prévenir les injections SQL, même si la validation d'entrée peut fournir une certaine défense en profondeur. La raison est qu'elle limite efficacement ce qui apparaîtra en sortie. La validation des entrées n'empêchera pas toujours l'injection SQL, surtout si vous êtes tenu de supporter des champs de texte libre qui peuvent contenir des caractères arbitraires. Par exemple, le nom "d'Aubigné" pourrait probablement passer l'étape de validation, puisque c'est un nom commun en français. Toutefois, il ne peut pas être directement inséré dans la base de données car il contient le caractère apostrophe "'", qui aurait besoin d'être échappé ou traîté d'une manière ou d'une autre. Dans ce cas, retirer l'apostrophe réduirait le risque d'injection SQL, mais il produirait un comportement incorrect parce qu'un mauvais nom serait enregistré.
 
 Lorsque c'est possible, il peut être plus sûr d'interdire complètement les méta-caractères plutôt que de les échapper. Ceci amènera une certaine défense en profondeur. Après que les données sont entrées dans la base de données, des processus ultérieurs peuvent négliger d'échapper les méta-caractères avant utilisation, et vous pouvez ne pas avoir le contrôle de ces processus.</solution>
-	<reference>http://projects.webappsec.org/SQL-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/SQL_Injection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html</reference>
 </vuln_item_wasc_19>
 
 <vuln_items>wasc_20</vuln_items>
@@ -563,7 +583,8 @@ Les entrées devraient être décodées et rendues canoniques selon la représen
 Envisagez d'effectuer une canonisation répétée jusqu'à ce que l'entrée ne change plus. Vous éviterez le double-décodage ou des scénarios similaires, mais cela pourrait modifier par inadvertance des entrées qui sont autorisées à contenir des contenus dangereux codés correctement.
 
 Lors de l'échange de données entre des composants, assurez-vous que les deux composants utilisent le même codage de caractères. Assurez-vous que l'encodage approprié est appliqué à chaque interface. Définissez explicitement l'encodage que vous utilisez chaque fois que le protocole le permet.</solution>
-	<reference>http://projects.webappsec.org/Improper-Input-Handling</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/Improper_Data_Validation</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/89.html</reference>
 </vuln_item_wasc_20>
 
@@ -594,8 +615,9 @@ Les fonctionnalités ci-dessous sont souvent la cible d'attaques par automatisat
 7. **Monitoring and Logging:** Regularly monitor and log user activities to identify and respond to unusual patterns indicative of automation.
 
 A combination of these measures is often more effective in preventing automated attacks.</solution>
-	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
+	<reference>https://owasp.org/www-project-automated-threats-to-web-applications/</reference>
 	<reference>https://cwe.mitre.org/data/definitions/116.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/799.html</reference>
 </vuln_item_wasc_21>
 
 <vuln_items>wasc_22</vuln_items>
@@ -629,7 +651,7 @@ Dans certains cas, la validation d'entrée peut être une stratégie importante 
 Utilisez la validation d'entrée comme mesure de défense en profondeur pour réduire la probabilité d'erreur dans l'encodage de sortie (voir CWE-20).
 
 Lors de l'échange de données entre des composants, assurez-vous que les deux composants utilisent le même codage de caractères. Assurez-vous que l'encodage approprié est appliqué à chaque interface. Définissez explicitement l'encodage que vous utilisez chaque fois que le protocole le permet.</solution>
-	<reference>http://projects.webappsec.org/Improper-Output-Handling</reference>
+	<reference>https://owasp.org/www-project-proactive-controls/v3/en/c4-encode-escape-data</reference>
 </vuln_item_wasc_22>
 
 <vuln_items>wasc_23</vuln_items>
@@ -637,7 +659,9 @@ Lors de l'échange de données entre des composants, assurez-vous que les deux c
 	<alert>Injection XML</alert>
 	<desc>L'injection XML est une technique d'attaque utilisée pour manipuler ou compromettre la logique d'un service ou d'une application XML. L'injection de contenu ou de structures XML accidentel dans un message XML peut modifier la logique prévue de l'application. De plus, l'injection XML peut provoquer l'insertion de contenu malveillant dans le message ou document résultant.</desc>
 	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
-	<reference>http://projects.webappsec.org/XML-Injection</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_Security_Cheat_Sheet.html</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html</reference>
 </vuln_item_wasc_23>
 
 <vuln_items>wasc_24</vuln_items>
@@ -647,8 +671,9 @@ Lors de l'échange de données entre des composants, assurez-vous que les deux c
 	<solution>Avoid using CRLF as a special sequence.
 
 Appropriately filter or quote CRLF sequences in user-controlled input.</solution>
-	<reference>http://projects.webappsec.org/HTTP-Request-Splitting</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/CRLF_Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/93.html</reference>
+	<reference>https://portswigger.net/web-security/request-smuggling</reference>
 </vuln_item_wasc_24>
 
 <vuln_items>wasc_25</vuln_items>
@@ -663,7 +688,7 @@ Le principe du fractionnement de réponse HTTP consiste pour l'agresseur à envo
 
 Les attaques par fractionnement de réponse HTTP ont lieu là où le script serveur introduit des données utilisateur dans les en-têtes de réponse HTTP. Cela se produit généralement lorsque le script intègre des données utilisateur dans l'URL de redirection d'une réponse de redirection (code de statut HTTP 3xx), ou lorsque le script intègre les données utilisateur dans un nom ou une valeur de cookie, au cas où la réponse définit un cookie.</desc>
 	<solution>Construisez très soigneusement les en-têtes HTTP, en évitant l'utilisation de données d'entrée non validées.</solution>
-	<reference>http://projects.webappsec.org/HTTP-Response-Splitting</reference>
+	<reference>https://owasp.org/www-community/attacks/HTTP_Response_Splitting</reference>
 	<reference>https://cwe.mitre.org/data/definitions/113.html</reference>
 </vuln_item_wasc_25>
 
@@ -678,7 +703,6 @@ Utilisez uniquement les communications SSL.
 Mettez fin à la session de client après chaque requête.
 
 Définissez toutes les pages comme non cachables.</solution>
-	<reference>https://crowdin.net/translate/owasp-zap/33817/engb-fr#</reference>
 	<reference>https://cwe.mitre.org/data/definitions/444.html</reference>
 </vuln_item_wasc_26>
 
@@ -691,8 +715,24 @@ Cette technique est fréquemment utilisée pour contourner les mesures contre  l
 
 Le trafic de réponses HTTP utilise le trafic de requêtes HTTP - comme les techniques pour exploiter les divergences entre ce qu'un mécanisme contre le fractionnement de réponse HTTP (ou un serveur proxy) considérerait comme le flux de réponse HTTP, et le flux de réponse tel qu'analysé par un serveur proxy (ou un navigateur). Ainsi, alors même qu'un mécanisme contre le fractionnement de réponse HTTP peut considérer un certain flux de réponse comme inoffensif (réponse HTTP unique), un proxy/navigateur peut toujours l'analyser comme deux réponses HTTP, et donc être sensible à tous les résultats de la technique de fractionnement de réponse HTTP originale (dans le premier cas d'utilisation), ou être sujet à l'usurpation de page (dans le second cas). Par exemple, certains mécanismes de protection contre le fractionnement de réponse HTTP utilisés par certains moteurs applicatifs interdisent à l'application d'insérer un en-tête contenant CR + LF à la réponse. Pourtant, un agresseur peut forcer l'application à insérer un en-tête contenant des CRs, contournant ainsi le mécanisme de défense. Certains serveurs proxy peuvent encore traîter les CR (tous seuls) comme un séparateur d'en-tête (et de réponse) , et par conséquent la combinaison du serveur internet et du serveur proxy sera toujours vulnérable à une attaque pouvant empoisonner le cache du proxy.
 	</desc>
-	<solution/>
-	<reference>http://projects.webappsec.org/HTTP-Response-Smuggling</reference>
+	<solution>Use HTTP/2 for backend connections. While HTTP/2 doesn't entirely prevent request smuggling, it does introduce certain changes that makes it difficult for attacker to exploit this.
+
+		Utilize a Web Application Firewall (WAF) that has built-in mitigation to detect abnormal requests/responses.
+
+		Whenever a HTTP message contains both Transfer-Encoding and Content-Length either prioritize the Transfer-Encoding header or just completely reject the HTTP message. Make this behavior consistent in the back-end server and any intermediary HTTP agents.
+
+		Disallow Malformed/Invalid Transfer-Encoding Headers used in obfuscation, such as:
+			* Headers with no space before the value “chunked”
+			* Headers with extra spaces
+			* Headers beginning with trailing characters
+			* Headers providing a value “chunk” instead of “chunked” (the server normalizes this as chunked encoding)
+			* Headers with multiple spaces before the value “chunked”
+			* Headers with quoted values (whether single or double quotations)
+			* Headers with CRLF characters before the value “chunked”
+			* Values with invalid characters
+	</solution>
+	<reference>https://owasp.org/www-community/attacks/HTTP_Response_Splitting</reference>
+	<reference>https://capec.mitre.org/data/definitions/273.html</reference>
 </vuln_item_wasc_27>
 
 <vuln_items>wasc_28</vuln_items>
@@ -712,7 +752,7 @@ Utilisez et spécifiez un codage de sortie fort (comme ISO 8859-1 ou UTF 8).
 Do not rely exclusively on deny list validation to detect malicious input or to encode output. Il y a trop de variantes pour coder un caractère; vous risquez de manquer certaines variantes.
 
 Les entrées devraient être décodées et rendues canoniques selon la représentation interne actuelle de l'application avant d'en effectuer la validation. Assurez-vous que votre application ne décode pas la même entrée deux fois. Such errors could be used to bypass allow list schemes by introducing dangerous inputs after they have been checked.</solution>
-	<reference>http://projects.webappsec.org/Null-Byte-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/Embedding_Null_Code</reference>
 	<reference>https://cwe.mitre.org/data/definitions/158.html</reference>
 </vuln_item_wasc_28>
 
@@ -725,7 +765,8 @@ Le protocole Lightweight Directory Access Protocol (LDAP) est un standard ouvert
 
 Lorsqu'une application internet ne parvient pas à assainir correctement les entrées fournies par l'utilisateur, il est possible pour un utilisateur malveillant de modifier la construction d'une requête LDAP. Lorsqu'un agresseur peut modifier une instruction LDAP, le processus s'exécute avec les mêmes autorisations que le composant ayant exécuté la commande. (par exemple serveur de base de données, serveur applicatif, serveur internet, etc.). Cela peut provoquer des problèmes de sécurité graves là où les autorisations octroyent les droits d'interroger, de modifier ou de supprimer quoi que ce soit à l'intérieur de l'arbre LDAP. Les techniques d'exploitation avancées disponibles pour l'injection SQL peuvent également être appliquées de la même manière dans l'injection LDAP.</desc>
 	<solution>Supposez que toutes les entrées sont malveillantes. Use an appropriate combination of black lists and white lists to neutralize LDAP syntax from user-controlled input.</solution>
-	<reference>http://projects.webappsec.org/LDAP-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/LDAP_Injection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/LDAP_Injection_Prevention_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/90.html</reference>
 </vuln_item_wasc_29>
 
@@ -748,7 +789,6 @@ Envisagez d'effectuer une canonisation répétée jusqu'à ce que l'entrée ne c
 Lors de l'échange de données entre des composants, assurez-vous que les deux composants utilisent le même codage de caractères. Assurez-vous que l'encodage approprié est appliqué à chaque interface. Définissez explicitement l'encodage que vous utilisez chaque fois que le protocole le permet.
 
 Quand votre application combine des données issues de plusieurs sources, effectuez la validation après que les sources aient été combinées. Des éléments de données pris individuellement pourraient en effet passer l'étape de validation, mais pourraient violer les restrictions prévues une fois regroupés.</solution>
-	<reference>http://projects.webappsec.org/Mail-Command-Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/88.html</reference>
 </vuln_item_wasc_30>
 
@@ -788,7 +828,8 @@ When constructing OS command strings, use stringent allow lists that limit the c
 Notez que le codage de sortie, l'échappement, et la mise entre guillemets est la solution la plus efficace pour prévenir les injections de commandes d'OS, même si la validation d'entrée peut fournir une certaine défense en profondeur. La raison est qu'elle limite efficacement ce qui apparaîtra en sortie. La validation des entrées n'empêchera pas toujours l'injection de commande d'OS, surtout si vous êtes tenu de supporter des champs de texte libre qui peuvent contenir des caractères arbitraires. Par exemple, lors de l'appel à un logiciel de messagerie, vous devrez accepter que le champ objet contienne des entrées potentiellement dangereuses, comme les caractères ";" et ">", qui devraient être échappés ou traités autrement. Dans ce cas, supprimer ce caractère pourrait réduire le risque d'injection de  commande d'OS, mais il produirait un comportement incorrect, parce que le champ objet ne serait pas traité de la façon dont l'utilisateur l'attend. Cela peut sembler être un inconvénient mineur, mais il pourrait être plus important lorsque le programme s'appuie sur des lignes d'objet bien structuré afin de transmettre des messages à d'autres composants.
 
 Même si vous faites une erreur dans votre validation (par exemple, oublier un champ de saisie parmi 100 autres), un codage approprié sera toujours susceptible de vous protéger contre les attaques basées sur l'injection. Tant qu'elle n'est pas utilisée seule, la validation des entrées reste une technique utile, car elle peut significativement réduire votre surface d'attaque, vous permettre de détecter certaines attaques et fournir d'autres bénéfices de sécurité que même un codage approprié n'apporte pas.</solution>
-	<reference>http://projects.webappsec.org/OS-Commanding</reference>
+	<reference>https://owasp.org/www-community/attacks/Command_Injection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/OS_Command_Injection_Defense_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/78.html</reference>
 </vuln_item_wasc_31>
 
@@ -799,13 +840,13 @@ Même si vous faites une erreur dans votre validation (par exemple, oublier un c
 
 La déviation de routage est un type d'attaque "Homme du Milieu" (HDM), ou "Man in the Middle" en anglais, où des intermédiaires peuvent être injectés ou "détournés" pour router des messages sensibles vers un emplacement extérieur. Les informations de routage (que ce soit dans l'en-tête HTTP ou dans l'en-tête WS-Routing) peuvent être modifiées en cours de route et les traces du cheminement peuvent être supprimées de l'en-tête et du message, de telle manière que l'application réceptrice ne remarquera même pas qu'une déviation de routage s'est produite. L'en-tête et l'insertion d'objets d'en-tête est souvent moins protégé que le message lui-même; cela est dû au fait que l'en-tête est utilisée comme un fourre-tout pour les métadonnées relatives à la transaction, telles que l'authentification, le routage, la mise en forme, le schéma, la canonisation, les espaces de nommage, etc. Aussi, beaucoup de processus pourraient être impliqués dans l'ajout ou le traitement de l'en-tête d'un document XML. Dans de nombreuses implémentations, les informations de routage peuvent provenir d'un service internet externe (à l'aide de WS-Referral par exemple), qui fournit le routage spécifique pour la transaction.
 
-WS-Addressing est une norme plus récente publiée par le W3C pour fournir des fonctionnalités de routage de messages SOAP. L'une des principales différences entre WS-Routing et WS-Addressing est que WS-Addressing fournit uniquement la destination suivante dans l'itinéraire. Alors que peu de recherches ont été faites sur la vulnérabilité de WS-Addressing à l'attaque par déviation de routage, au moins un article (voir référence #6 ci-dessous) suggère que WS-Addressing est aussi vulnérable à la déviation de routage.</desc>
+WS-Addressing est une norme plus récente publiée par le W3C pour fournir des fonctionnalités de routage de messages SOAP. L'une des principales différences entre WS-Routing et WS-Addressing est que WS-Addressing fournit uniquement la destination suivante dans l'itinéraire. While little research has been done into the susceptibility of WS-Addressing to Routing Detour Attack, some research suggests that WS-Addressing is vulnerable to Routing Detour as well.</desc>
 	<solution>Authentifiez toujours entièrement les deux extrémités de tout canal de communication.
 
 Respectez le principe de la médiation complète.
 
 Un certificat lie une identité à une clé de chiffrement pour authentifier une partie communicante. Souvent, le certificat prend la forme cryptée, à l'aide de la clé privée de l'émetteur, du hachage de l'identité de l'objet, de la clé publique et d'informations telles que la durée d'émission ou d'expiration. Le certificat peut être validé en déchiffrant le certificat avec la clé publique de l'émetteur. Voir aussi les chaînes de signatures de certificat X.509 et la structure de certification PGP.</solution>
-	<reference>http://projects.webappsec.org/Routing-Detour</reference>
+	<reference>https://learn.microsoft.com/en-us/previous-versions/ms951244(v=msdn.10)</reference>
 	<reference>https://cwe.mitre.org/data/definitions/300.html</reference>
 </vuln_item_wasc_32>
 
@@ -841,7 +882,7 @@ Au niveau du système d'exploitation, on peut citer les exemples pour Unix: chro
 
 Ceci peut ne pas être une solution adéquate. Par ailleurs, elle limite l'impact au seul système d'exploitation; le reste de votre application peut encore faire l'objet de vulnérabilités.
 </solution>
-	<reference>http://projects.webappsec.org/Path-Traversal</reference>
+	<reference>https://owasp.org/www-community/attacks/Path_Traversal</reference>
 	<reference>https://cwe.mitre.org/data/definitions/22.html</reference>
 </vuln_item_wasc_33>
 
@@ -854,7 +895,7 @@ Cela n'aidera pas seulement à identifier la surface du site qui peut conduire �
 	<solution>Apply appropriate access control authorizations for each access to all restricted URLs, scripts or files.
 
 Envisagez d'utiliser des frameworks basés sur MVC comme Struts.</solution>
-	<reference>http://projects.webappsec.org/Predictable-Resource-Location</reference>
+	<reference>https://owasp.org/www-community/attacks/Forced_browsing</reference>
 	<reference>https://cwe.mitre.org/data/definitions/425.html</reference>
 </vuln_item_wasc_34>
 
@@ -865,7 +906,7 @@ Envisagez d'utiliser des frameworks basés sur MVC comme Struts.</solution>
 	<solution> Effectuez une validation d'entrée adéquate contre toute valeur qui influe sur la quantité de mémoire allouée. Définissez une stratégie appropriée pour traiter les requêtes dépassant la limite, et envisagez de supporter une option de configuration permettant à l'administrateur d'étendre la quantité de mémoire à utiliser en cas de nécessité.
 
 Exécutez votre programme à l'aide des limites en ressources mémoire fournies par le système. Ceci pourrait encore planter le programme ou le forcer à s'interrompre, mais l'impact sur le reste du système serait minimisé.</solution>
-	<reference>http://projects.webappsec.org/SOAP-Array-Abuse</reference>
+	<reference>https://capec.mitre.org/data/definitions/256.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/789.html</reference>
 </vuln_item_wasc_35>
 
@@ -881,7 +922,7 @@ Si un utilisateur malveillant soumet une instruction Server-Side Include, il peu
  - activez seulement les directives SSI qui sont nécessaires pour cette page et désactivez toutes les autres.
 - encodez selon HTML les données fournies par l'utilisateur avant de les passer à une page ayant des autorisations d'exécution de SSI.
 - Utilisez SUExec pour que la page s'exécute en tant que propriétaire du fichier plutôt que comme utilisateur du serveur internet.</solution>
-	<reference>http://projects.webappsec.org/SSI-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/Server-Side_Includes_(SSI)_Injection</reference>
 </vuln_item_wasc_36>
 
 <vuln_items>wasc_37</vuln_items>
@@ -897,7 +938,9 @@ Contrairement au vol des ID de session après que l'utilisateur se soit connect�
 	<solution>Invalider le ou les identifiants de session existants avant d'autoriser une nouvelle session utilisateur.
 
 Pour les plateformes ne générant pas automatiquement de nouveaux identifiants de session (p. ex.: ASP), utiliser un second cookie de session. Dans cette approche, fixez à une valeur aléatoire le cookie secondaire sur le navigateur de l'utilisateur et définissez une variable de session à la même valeur. S'il arrive que la variable de session et la valeur du cookie ne correspondent plus, invalidez la session et forcez l'utilisateur à se reconnecter.</solution>
-	<reference>http://projects.webappsec.org/Session-Fixation</reference>
+	<reference>https://owasp.org/www-community/attacks/Session_fixation</reference>
+	<reference>https://owasp.org/www-community/controls/Session_Fixation_Protection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/384.html</reference>
 </vuln_item_wasc_37>
 
@@ -915,12 +958,12 @@ Utilisez une page d'avertissement intermédiaire signalant clairement à l'utili
 
 Lorsque l'ensemble des objets admissibles, tels que les noms de fichier ou les URLs, est limité ou connu, créez une correspondance à partir d'un ensemble de valeurs d'entrée fixe (tels que des ID numériques) sur les noms de fichiers réels ou sur les URLs, et rejetez toute autre entrée.
 
-Par exemple, ID 1 pourrait correspondre à "/login.asp" et ID 2 à "http://www.example.com/". Des librairies telles que ESAPI AccessReferenceMap fournissent cette fonctionnalité.
+For example, ID 1 could map to "/login.asp" and ID 2 could map to "https://www.example.com/". Des librairies telles que ESAPI AccessReferenceMap fournissent cette fonctionnalité.
 
 Assurez-vous que vous comprenez tous les secteurs potentiels où des entrées douteuses peuvent pénétrer dans votre logiciel: paramètres ou arguments, cookies, toute entrée en provenance du réseau, requêtes DNS inverses, résultats de requêtes, en-têtes de requêtes, composants d'URL, e-mails, fichiers, bases de données, et tout système externe fournissant des données à l'application. Rappelez-vous que de telles entrées peuvent être obtenues indirectement via des appels d'API.
 
 Beaucoup de problèmes de redirection se produisent parce que le programmeur a assumé que certaines entrées ne pouvaient être modifiées, comme les cookies et les champs de formulaire masqués.</solution>
-	<reference>http://projects.webappsec.org/URL-Redirector-Abuse</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/601.html</reference>
 </vuln_item_wasc_38>
 
@@ -933,7 +976,8 @@ Si une application utilise la construction des requêtes XPath à la volée, en 
 	<solution>Utilisez des requêtes paramétrées XPath (par exemple à l'aide de XQuery). Cela aidera à assurer une séparation entre plan de données et plan de contrôle.
 
 Validez correctement les entrées de l'utilisateur. Rejetez les données le cas échéant, filtrez si nécessaire et échappez si besoin est. Assurez-vous que l'entrée qui sera utilisée dans les requêtes XPath est sûre dans le contexte donné.</solution>
-	<reference>http://projects.webappsec.org/XPath-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/XPATH_Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/Blind_XPath_Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/643.html</reference>
 </vuln_item_wasc_39>
 
@@ -947,8 +991,19 @@ Il existe deux principaux types de processus nécessitant une validation: le flu
 Le "flux de contrôle" se réfère à des processus en plusieurs étapes, qui nécessitent que chacune des étapes soit effectuée par l'utilisateur dans un ordre spécifique. Quand un agresseur effectue l'étape incorrectement ou dans un ordre différent, les contrôles d'accès peuvent être contournés et une erreur d'intégrité peut se produire dans l'application. Des exemples de procéssus à plusieurs étapes sont: virements, récupération de mot de passe, achats en ligne et enregistrement de nouveau compte.
 
 La "logique métier" se réfère au contexte dans lequel un processus s'exécutera selon les exigences métier. Exploiter une faille de logique métier exige la connaissance de l'entreprise et de ses affaires; si aucune connaissance n'est nécessaire pour exploiter cette faille, alors il ne s'agit très probablement pas d'un défaut de logique métier. Pour cette raison, les mesures de sécurité typiques, telles que les analyses de code et les revues de code, ne permettront pas de trouver cette classe de faille. Une approche pour tester la logique métier est fournie par OWASP dans leur Guide de test.</desc>
-	<solution/>
-	<reference>http://projects.webappsec.org/Insufficient-Process-Validation</reference>
+	<solution>Make sure that all operations within a multi-step process are either performed entirely or not at all. If one step fails, the changes made must be canceled. Fuzzing inputs is a good way to test for anomalies and to verify the results after the flow completes.
+
+Make sure the correct order of steps in the flow is enforced and that the order cannot be changed or bypassed by the user.
+
+Developers and testers must have a solid understanding of the domain that the application serves.
+
+Do not rely on implicit assumptions about how users or different application parts will behave.
+
+Identify all references to other code that interacts with each component and evaluate the possible side-effects if a malicious actor manipulates these dependencies in unexpected ways.
+
+Maintain clear code, design documents, and data flow diagrams for all transactions and workflows, noting any assumptions made at each stage and what the expected behavior is.</solution>
+	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
+	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>
 
 <vuln_items>wasc_41</vuln_items>
@@ -968,7 +1023,7 @@ Quant à la deuxième solution, il est difficile de la mettre en place efficacem
 Assurez-vous que les protocoles sont pourvus de limites d'échelle spécifiques.
 
 Assurez-vous que tous les échecs dans l'allocation des ressources laissent le système dans un état sûr.</solution>
-	<reference>http://projects.webappsec.org/XML-Attribute-Blowup</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_Security_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/400.html</reference>
 </vuln_item_wasc_41>
 
@@ -977,7 +1032,7 @@ Assurez-vous que tous les échecs dans l'allocation des ressources laissent le s
 	<alert>Abus de fonctionnalité</alert>
 	<desc>L'abus de fonctionnalité est une technique d'attaque qui utilise les caractéristiques propres et la fonctionnalité du site internet pour attaquer le site lui-même ou d'autres sites. L'abus de fonctionnalités peut être décrit comme l'abus de la fonctionnalité prévue de l'application, pour fournir un résultat non désiré. Ces attaques fournissent divers résultats, comme la consommation de ressources, le contournement de contrôles d'accès, ou la fuite d'informations. Le potentiel et la malignité de cette attaque varie de site internet en site internet et d'application en application. Les attaques par abus de fonctionnalité sont souvent une combinaison d'autres types d'attaques et/ou utilisent d'autres vecteurs d'attaque.</desc>
 	<solution>Utilisez toujours les API de la manière précisée.</solution>
-	<reference>http://projects.webappsec.org/Abuse-of-Functionality</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Abuse_Case_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/227.html</reference>
 </vuln_item_wasc_42>
 
@@ -987,7 +1042,9 @@ Assurez-vous que tous les échecs dans l'allocation des ressources laissent le s
 	<desc>La technique des entités XML externes (XML External Entities) tire parti d'une fonctionnalité du langage XML pour générer dynamiquement des documents au moment du traitement. Un message XML peut soit fournir des données explicitement, soit pointer vers un URI où les données sont disponibles. Dans cette technique d'attaque, des entités externes peuvent remplacer la valeur de l'entité par des données malveillantes ou des renvois alternatifs, ou peuvent compromettre la sécurité des données auxquelles le serveur ou l'application XML a accès.
 	Les agresseurs peuvent également utiliser des entités externes pour forcer le serveur de services internet à télécharger du code ou du contenu malveillant sur le serveur pour utilisation dans des attaques secondaires ou ultérieures.</desc>
 	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
-	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/611.html</reference>
 </vuln_item_wasc_43>
 
 <vuln_items>wasc_44</vuln_items>
@@ -999,7 +1056,6 @@ Le message XML malveillant est utilisé pour forcer l'expansion d'entités récu
 	<solution>Si possible, interdisez l'utilisation de DTDs ou utilisez un analyseur XML qui limite l'expansion des entités DTD récursives.
 
 Avant d'analyser des fichiers XML avec des DTDs associées, recherchez les déclarations d'entité récursives et interrompez l'analyse de contenu potentiellement explosif.</solution>
-	<reference>http://projects.webappsec.org/XML-Entity-Expansion</reference>
 	<reference>https://cwe.mitre.org/data/definitions/776.html</reference>
 </vuln_item_wasc_44>
 
@@ -1022,7 +1078,7 @@ La recherche d'empreintes multi-tier est similaire à son prédécesseur, la rec
 5. **Regular Updates:** Keep software, platforms, and configurations up-to-date to patch known vulnerabilities and prevent accurate identification based on outdated information.
 
 There is no one-size-fits-all solution, and a combination of these measures may be most effective.</solution>
-	<reference>http://projects.webappsec.org/Fingerprinting</reference>
+	<reference>https://cwe.mitre.org/data/definitions/205.html</reference>
 </vuln_item_wasc_45>
 
 <vuln_items>wasc_46</vuln_items>
@@ -1032,7 +1088,8 @@ There is no one-size-fits-all solution, and a combination of these measures may 
 	<solution>Utilisez des requêtes paramétrées. Cela aidera à assurer une séparation entre plan de données et plan de contrôle.
 
 Validez correctement les entrées de l'utilisateur. Rejetez les données le cas échéant, filtrez si nécessaire et échappez si besoin est. Assurez-vous que l'entrée qui sera utilisée dans les requêtes XQL est sûre dans le contexte donné.</solution>
-	<reference>http://projects.webappsec.org/XQuery-Injection</reference>
+	<reference>https://owasp.org/www-community/Injection_Theory</reference>
+	<reference>https://owasp.org/www-community/Injection_Flaws</reference>
 	<reference>https://cwe.mitre.org/data/definitions/652.html</reference>
 </vuln_item_wasc_46>
 
@@ -1047,7 +1104,8 @@ L'expiration de session se compose de deux types de délai d'attente : délai d'
 
 Une application internet devrait invalider une session après un temps d'inactivité prédéfini (un délai d'attente) et fournir aux utilisateurs le moyen d'invalider leur propre session, c'est-à-dire une possibilité de déconnexion; ceci aide à limiter au strict minimum la durée de vie d'un ID de session dans un environnement informatique partagé, où plus d'une personne a l'accès physique sans restriction à un ordinateur. La fonction de déconnexion doit être clairement visible de l'utilisateur, elle doit explicitement invalider la session de l'utilisateur, et ne pas autoriser la réutilisation du jeton de session.</desc>
 	<solution>Définissez la date d'expiration de la session et des identifiants.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Session-Expiration</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
+	<reference>https://owasp.org/www-community/Session_Timeout</reference>
 	<reference>https://cwe.mitre.org/data/definitions/613.html</reference>
 </vuln_item_wasc_47>
 
@@ -1064,13 +1122,13 @@ Une application internet devrait invalider une session après un temps d'inactiv
 6. **Security Headers:** Utilize security headers (e.g., Content Security Policy) to control how browsers and search engines interact with your website.
 
 A proactive and layered approach to security is crucial for safeguarding against Insecure Indexing.</solution>
-	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
+	<reference>https://cwe.mitre.org/data/definitions/612.html</reference>
 </vuln_item_wasc_48>
 
 <vuln_items>wasc_49</vuln_items>
 <vuln_item_wasc_49>
 	<alert>Récupération de mot de passe insuffisante</alert>
-	<desc>La récupération de mot de passe insuffisante (Insufficient Password Recovery) est une attaque apparaissant lorsqu'un site internet permet à un pirate d'obtenir, de modifier ou de récupérer illégitimement le mot de passe d'un autre utilisateur. Les méthodes classiques d'authentification aux sites internet demandent aux utilisateurs de choisir et retenir un mot de passe ou une phrase. L'utilisateur doit être la seule personne qui sache le mot de passe et il doit se le rappeler précisément. Alors que le temps passe, la capacité de l'utilisateur à se souvenir d'un mot de passe s'estompe. La question est encore compliquée lorsque l'utilisateur moyen visite 20 sites l'obligeant à fournir un mot de passe.  (Sondage RSA : http://news.bbc.co.uk/1/hi/technology/3639679.stm) Ainsi, la récupération de mot de passe est un élément important en matière de service aux utilisateurs.
+	<desc>La récupération de mot de passe insuffisante (Insufficient Password Recovery) est une attaque apparaissant lorsqu'un site internet permet à un pirate d'obtenir, de modifier ou de récupérer illégitimement le mot de passe d'un autre utilisateur. Les méthodes classiques d'authentification aux sites internet demandent aux utilisateurs de choisir et retenir un mot de passe ou une phrase. L'utilisateur doit être la seule personne qui sache le mot de passe et il doit se le rappeler précisément. Alors que le temps passe, la capacité de l'utilisateur à se souvenir d'un mot de passe s'estompe. La question est encore compliquée lorsque l'utilisateur moyen visite 20 sites l'obligeant à fournir un mot de passe. Thus, password recovery is an important part in servicing online users.
 
 Comme exemple de processus de récupération de mot de passe automatisée, citons l'obligation faite à l'utilisateur de répondre à une "question secrète" définie dans le cadre de la procédure d'enregistrement de l'utilisateur. Cette question peut être choisie parmi une liste de questions prédéfinie ou fournie par l'utilisateur. Un autre mécanisme utilisé est de demander un "indice" à l'utilisateur lors de l'inscription, indice qui aidera l'utilisateur à se rappeler son mot de passe. Other mechanisms require the user to provide several pieces of personal data such as their social security number, home address, zip code etc. to validate their identity. Après que l'utilisateur ait prouvé son identité, le système de récupération affiche un nouveau mot de passe ou l'envoie par courriel.
 
@@ -1086,7 +1144,8 @@ Exigez que l'utilisateur réponde correctement à la question de sécurité avan
 Ne permettez jamais à l'utilisateur de contrôler l'adresse de courriel à laquelle le nouveau mot de passe sera envoyé par le mécanisme de récupération de mot de passe.
 
 Attribuez un nouveau mot de passe temporaire, plutôt que de révéler le mot de passe original.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Password-Recovery</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/640.html</reference>
 </vuln_item_wasc_49>
 

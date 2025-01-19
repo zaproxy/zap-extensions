@@ -31,7 +31,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class MixedContentScanRule extends PluginPassiveScanner {
+public class MixedContentScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.mixedcontent.";
@@ -98,7 +99,7 @@ public class MixedContentScanRule extends PluginPassiveScanner {
                 sb.append('\n');
             }
 
-            this.raiseAlert(msg, id, list.get(0).getValue(), sb.toString(), incScript);
+            buildAlert(list.get(0).getValue(), sb.toString(), incScript).raise();
         }
     }
 
@@ -112,25 +113,24 @@ public class MixedContentScanRule extends PluginPassiveScanner {
         return false;
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String first, String all, boolean incScript) {
+    private AlertBuilder buildAlert(String first, String all, boolean incScript) {
         String name = getName();
         int risk = Alert.RISK_LOW;
         if (incScript) {
             name = Constant.messages.getString(MESSAGE_PREFIX + "name.inclscripts");
             risk = Alert.RISK_MEDIUM;
         }
-        newAlert()
+        return newAlert()
                 .setName(name)
                 .setRisk(risk)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(all)
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(first)
-                .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setCweId(311) // CWE Id 311 - Missing Encryption of Sensitive Data
+                .setWascId(4); // WASC Id 4 - Insufficient Transport Layer Protection
     }
 
     @Override
@@ -143,29 +143,19 @@ public class MixedContentScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
-        return 311; // CWE Id 311 - Missing Encryption of Sensitive Data
-    }
-
-    public int getWascId() {
-        return 4; // WASC Id 4 - Insufficient Transport Layer Protection
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "http://example.com/file",
+                                "tag=img src=http://example.com/file\n",
+                                false)
+                        .build());
     }
 
     private class MixedContent {

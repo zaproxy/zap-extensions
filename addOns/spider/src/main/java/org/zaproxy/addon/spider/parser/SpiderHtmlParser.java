@@ -331,7 +331,10 @@ public class SpiderHtmlParser extends SpiderParser {
                     }
 
                     if (foundMatch.startsWith(".")) {
-                        foundMatch = foundMatch.substring(foundMatch.indexOf('/'));
+                        int idx = foundMatch.indexOf('/');
+                        if (idx != -1) {
+                            foundMatch = foundMatch.substring(idx);
+                        }
                     }
 
                     processUrl(ctx, foundMatch, baseUrlForText);

@@ -19,15 +19,26 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HtmlParameter;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class GetForPostScanRuleUnitTest extends ActiveScannerTest<GetForPostScanRule> {
 
@@ -45,7 +56,7 @@ class GetForPostScanRuleUnitTest extends ActiveScannerTest<GetForPostScanRule> {
         // Then
         assertThat(cwe, is(equalTo(16)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
@@ -55,6 +66,8 @@ class GetForPostScanRuleUnitTest extends ActiveScannerTest<GetForPostScanRule> {
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getValue())));
@@ -64,6 +77,46 @@ class GetForPostScanRuleUnitTest extends ActiveScannerTest<GetForPostScanRule> {
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS.getValue())));
+    }
+
+    @Test
+    void shouldRaiseAlertIfGetAndPostResponsesAreSameWithDifferentTimeInBody()
+            throws HttpMalformedHeaderException {
+        // Given
+        String testPath = "/shouldRaiseAlertIfGetAndPostResponsesAreSameWithDifferentTimeInBody/";
+        this.nano.addHandler(
+                new NanoServerHandler(testPath) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        return newFixedLengthResponse(getResponseForPostRequest("1:30"));
+                    }
+                });
+        HttpMessage msg = createMsg(testPath, getResponseForPostRequest("12:00"));
+        this.rule.init(msg, this.parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertEquals(1, alertsRaised.size());
+    }
+
+    @Test
+    void shouldNotRaiseAlertIfResponsesAreDifferentForGetAndPost()
+            throws HttpMalformedHeaderException {
+        // Given
+        String testPath = "/shouldNotRaiseAlertIfResponsesAreDifferentForGetAndPost/";
+        this.nano.addHandler(
+                new NanoServerHandler(testPath) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        return newFixedLengthResponse(getResponseForGetRequest());
+                    }
+                });
+        HttpMessage msg = createMsg(testPath, getResponseForPostRequest("12:00"));
+        this.rule.init(msg, this.parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertEquals(0, alertsRaised.size());
     }
 
     @Test
@@ -82,5 +135,33 @@ class GetForPostScanRuleUnitTest extends ActiveScannerTest<GetForPostScanRule> {
     @Override
     public void shouldHaveValidReferences() {
         super.shouldHaveValidReferences();
+    }
+
+    private HttpMessage createMsg(String testPath, String response)
+            throws HttpMalformedHeaderException {
+        HttpMessage msg = this.getHttpMessage("POST", "text/html", testPath, response);
+        TreeSet<HtmlParameter> treeSet = new TreeSet<>();
+        treeSet.add(new HtmlParameter(HtmlParameter.Type.form, "key", "value"));
+        msg.setFormParams(treeSet);
+        msg.getRequestHeader()
+                .setHeader(HttpFieldsNames.CONTENT_TYPE, "application/x-www-form-urlencoded");
+        return msg;
+    }
+
+    private static String getResponseForPostRequest(String time) {
+        return "<html>"
+                + "<body>"
+                + "This is a response for post request. Time is "
+                + time
+                + "</body>"
+                + "</html>";
+    }
+
+    private static String getResponseForGetRequest() {
+        return "<html>"
+                + "<body>"
+                + "Get request is not allowed for this method"
+                + "</body>"
+                + "</html>";
     }
 }

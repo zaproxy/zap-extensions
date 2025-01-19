@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,6 +38,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -64,11 +65,17 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
         Files.write(testFile, Arrays.asList("# Test File", "bypassSecurityTrustHtml", "eval"));
     }
 
-    @Test
-    void shouldAlertGivenFunctionInJavaScriptResponse()
+    @ParameterizedTest(name = "{1}")
+    @CsvSource({
+        "'$eval ()','Space'",
+        "'eval\t()','Tab'",
+        "'eval\n()','NewLine'",
+        "'eval\r\n()','CRLF'"
+    })
+    void shouldAlertGivenFunctionInJavaScriptResponse(String content, String argName)
             throws HttpMalformedHeaderException, URIException {
         // Given
-        String body = "Some text <script>$eval()</script>\nLine 2\n";
+        String body = "Some text <script>" + content + "</script>\nLine 2\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
         // When
@@ -76,7 +83,7 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
 
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertEquals("eval", alertsRaised.get(0).getEvidence());
+        assertThat(alertsRaised.get(0).getEvidence(), startsWith("eval"));
     }
 
     @Test
@@ -94,7 +101,7 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
 
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertEquals("bypassSecurityTrustHtml", alertsRaised.get(0).getEvidence());
+        assertThat(alertsRaised.get(0).getEvidence(), startsWith("bypassSecurityTrustHtml"));
     }
 
     @Test
@@ -107,7 +114,7 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
         scanHttpResponseReceive(msg);
 
         // Then
-        assertThat(alertsRaised, empty());
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test
@@ -121,7 +128,7 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
         scanHttpResponseReceive(msg);
 
         // Then
-        assertThat(alertsRaised, empty());
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test
@@ -138,7 +145,7 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
 
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertEquals("badFunction", alertsRaised.get(0).getEvidence());
+        assertThat(alertsRaised.get(0).getEvidence(), startsWith("badFunction"));
     }
 
     @Test
@@ -153,7 +160,7 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
         scanHttpResponseReceive(msg);
 
         // Then
-        assertThat(alertsRaised, empty());
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test
@@ -170,7 +177,7 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
 
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertEquals("eval", alertsRaised.get(0).getEvidence());
+        assertThat(alertsRaised.get(0).getEvidence(), startsWith("eval"));
     }
 
     @Test
@@ -188,7 +195,7 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
 
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertEquals("eval", alertsRaised.get(0).getEvidence());
+        assertThat(alertsRaised.get(0).getEvidence(), startsWith("eval"));
     }
 
     @Test
@@ -202,15 +209,21 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
 
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertEquals("bypassSecurityTrustHtml", alertsRaised.get(0).getEvidence());
+        assertThat(alertsRaised.get(0).getEvidence(), startsWith("bypassSecurityTrustHtml"));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"globalEval", "parentPromiseValue"})
-    void shouldNotAlertOnMatchingSubString(String funcName)
+    @ValueSource(
+            strings = {
+                "globalEval()",
+                "parentPromiseValue()",
+                "var V=hungarian:['A[href*=\"eval.example.org\"]','A[href*=\"ad.example.com \"]'",
+                "function T(){var n=window,e=navigator;return y([\"ApplePayError\"in n,\"CSSPrimitiveValue\"in"
+            })
+    void shouldNotAlertOnMatchingSubString(String content)
             throws HttpMalformedHeaderException, URIException {
         // Given
-        String body = "Some text <script>" + funcName + "()</script>\n";
+        String body = "Some text <script>" + content + "</script>\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
         // When
@@ -245,7 +258,8 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
         Map<String, String> tags = alert.getTags();
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags, hasKey("CWE-749"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_CLNT_02_JS_EXEC.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
@@ -253,7 +267,8 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
     }
 
-    private HttpMessage createHttpMessageWithRespBody(String responseBody, String contentType)
+    private static HttpMessage createHttpMessageWithRespBody(
+            String responseBody, String contentType)
             throws HttpMalformedHeaderException, URIException {
 
         HttpRequestHeader requestHeader = new HttpRequestHeader();

@@ -29,6 +29,7 @@ import static org.mockito.Mockito.withSettings;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -66,12 +67,8 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(1275)));
-        assertThat(wasc, is(equalTo(13)));
         assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
@@ -91,6 +88,29 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // THen
+        assertThat(alerts.size(), is(equalTo(3)));
+        Alert missingAlert = alerts.get(0);
+        assertThat(missingAlert.getName(), is(equalTo("Cookie without SameSite Attribute")));
+        assertThat(missingAlert.getAlertRef(), is(equalTo("10054-1")));
+        Alert noneAlert = alerts.get(1);
+        assertThat(noneAlert.getName(), is(equalTo("Cookie with SameSite Attribute None")));
+        assertThat(noneAlert.getAlertRef(), is(equalTo("10054-2")));
+        Alert badValueAlert = alerts.get(2);
+        assertThat(badValueAlert.getName(), is(equalTo("Cookie with Invalid SameSite Attribute")));
+        assertThat(badValueAlert.getAlertRef(), is(equalTo("10054-3")));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     @Test

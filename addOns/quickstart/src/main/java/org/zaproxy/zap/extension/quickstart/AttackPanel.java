@@ -263,6 +263,7 @@ public class AttackPanel extends QuickStartSubPanel {
             case safe:
             case protect:
                 this.getUrlField().setEnabled(false);
+                this.getUrlField().setModel(new DefaultComboBoxModel<>());
                 this.getUrlField()
                         .setSelectedItem(
                                 Constant.messages.getString("quickstart.field.url.disabled.mode"));
@@ -272,6 +273,7 @@ public class AttackPanel extends QuickStartSubPanel {
             case standard:
             case attack:
                 this.getUrlField().setEnabled(true);
+                this.getUrlField().setModel(getUrlModel());
                 this.getUrlField().setSelectedItem(DEFAULT_VALUE_URL_FIELD);
                 this.selectButton.setEnabled(true);
                 this.getAttackButton().setEnabled(true);
@@ -375,6 +377,16 @@ public class AttackPanel extends QuickStartSubPanel {
             this.getUrlField().requestFocusInWindow();
             return false;
         }
+        if (plugableSpider != null
+                && plugableSpider.requireStdSpider()
+                && (traditionalSpider == null || !traditionalSpider.isSelected())) {
+            getExtensionQuickStart()
+                    .getView()
+                    .showWarningDialog(
+                            Constant.messages.getString("quickstart.url.warning.needspider"));
+            return false;
+        }
+
         String urlStr = item.toString();
         URL url;
         try {

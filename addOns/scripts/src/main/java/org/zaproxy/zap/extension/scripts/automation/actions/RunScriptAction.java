@@ -106,7 +106,7 @@ public class RunScriptAction extends ScriptAction {
             }
         }
         // Note dont warn/error if script not currently in ZAP - it might be added by another job
-        if (!StringUtils.isEmpty(params.getFile())) {
+        if (!StringUtils.isEmpty(params.getSource())) {
             issue =
                     Constant.messages.getString(
                             "scripts.automation.warn.fileNotNeeded", params.getName());
@@ -158,7 +158,7 @@ public class RunScriptAction extends ScriptAction {
         try {
             se = extScript.getEngineWrapper(this.parameters.getEngine());
         } catch (Exception e) {
-            String filename = params.getFile();
+            String filename = params.getSource();
             if (filename != null && filename.contains(".")) {
                 try {
                     se =
@@ -189,6 +189,18 @@ public class RunScriptAction extends ScriptAction {
                                 parameters.getName()));
                 return;
             }
+
+            if (!getSupportedScriptTypes().contains(script.getTypeName())) {
+                progress.error(
+                        Constant.messages.getString(
+                                "scripts.automation.error.scriptTypeNotSupported",
+                                jobName,
+                                script.getTypeName(),
+                                getName(),
+                                String.join(", ", getSupportedScriptTypes())));
+                return;
+            }
+
             if (parameters.getType().equals(ExtensionScript.TYPE_TARGETED)) {
                 URI targetUri = new URI(parameters.getTarget(), true);
                 SiteNode siteNode =
@@ -208,16 +220,28 @@ public class RunScriptAction extends ScriptAction {
                 extScript.invokeScript(script);
             }
             scriptJobOutputListener.flush();
+
+            if (script.getLastException() != null) {
+                reportScriptError(progress, jobName, parameters, script.getLastException());
+            }
         } catch (Exception e) {
             LOGGER.error(e);
-            progress.error(
-                    Constant.messages.getString(
-                            "scripts.automation.error.scriptError",
-                            jobName,
-                            parameters.getName(),
-                            e.getMessage()));
+            reportScriptError(progress, jobName, parameters, e);
         } finally {
             extScript.removeScriptOutputListener(scriptJobOutputListener);
         }
+    }
+
+    private static void reportScriptError(
+            AutomationProgress progress,
+            String jobName,
+            ScriptJobParameters parameters,
+            Exception e) {
+        progress.error(
+                Constant.messages.getString(
+                        "scripts.automation.error.scriptError",
+                        jobName,
+                        parameters.getName(),
+                        e.getMessage()));
     }
 }

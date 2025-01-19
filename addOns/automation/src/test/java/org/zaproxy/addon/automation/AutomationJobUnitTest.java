@@ -45,7 +45,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
-import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest.OnFail;
 import org.zaproxy.addon.automation.tests.AutomationAlertTest;
@@ -485,8 +484,8 @@ class AutomationJobUnitTest {
         AutomationJob job =
                 new AutomationJobImpl(tpc) {
                     @Override
-                    public String getType() {
-                        return ActiveScanJob.JOB_NAME;
+                    public boolean supportsAlertTests() {
+                        return true;
                     }
                 };
 
@@ -567,8 +566,8 @@ class AutomationJobUnitTest {
         AutomationJob job =
                 new AutomationJobImpl(tpc) {
                     @Override
-                    public String getType() {
-                        return ActiveScanJob.JOB_NAME;
+                    public boolean supportsAlertTests() {
+                        return true;
                     }
                 };
 
@@ -627,8 +626,8 @@ class AutomationJobUnitTest {
         AutomationJob job =
                 new AutomationJobImpl(tpc) {
                     @Override
-                    public String getType() {
-                        return ActiveScanJob.JOB_NAME;
+                    public boolean supportsAlertTests() {
+                        return true;
                     }
                 };
 
@@ -696,8 +695,8 @@ class AutomationJobUnitTest {
         AutomationJob job =
                 new AutomationJobImpl(tpc) {
                     @Override
-                    public String getType() {
-                        return ActiveScanJob.JOB_NAME;
+                    public boolean supportsAlertTests() {
+                        return true;
                     }
 
                     @Override
@@ -1154,6 +1153,19 @@ class AutomationJobUnitTest {
         assertThat(list.get(1), is(equalTo(explore1Job)));
         assertThat(list.get(2), is(equalTo(explore2Job)));
         assertThat(list.get(3), is(equalTo(lastJob)));
+    }
+
+    @Test
+    void shouldBeEnabledByDefault() {
+        // Given
+        TestParamContainer tpc = new TestParamContainer();
+        AutomationJob job = new AutomationJobImpl(tpc);
+
+        // When
+        boolean isEnabled = job.isEnabled();
+
+        // Then
+        assertThat(isEnabled, is(equalTo(true)));
     }
 
     // Methods are accessed via reflection

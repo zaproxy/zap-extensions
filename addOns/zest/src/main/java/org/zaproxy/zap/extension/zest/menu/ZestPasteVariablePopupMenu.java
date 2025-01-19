@@ -103,7 +103,6 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
             TreeSet<String> sortedSet = new TreeSet<>(script.getZestScript().getVariableNames());
             for (String var : sortedSet) {
                 ExtensionPopupMenuItem piicm = new ZestPasteVariableMenu(script, lastInvoker, var);
-                piicm.setMenuIndex(this.getMenuIndex());
                 mainPopupMenuItems.add(piicm);
                 this.subMenus.add(piicm);
             }

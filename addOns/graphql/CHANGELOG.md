@@ -4,8 +4,42 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [0.26.0] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Depend on newer version of Common Library add-on (Issue 8016).
+- Maintenance changes.
+
+### Added
+- Fingerprinting checks for the following engines:
+    - pg_graphql
+    - tailcall
+    - Hot Chocolate
+    - Inigo
+- Support for importing an introspection query response from a file (Issue 8569).
+- If the Tech Detection (Wappalyzer) add-on is installed and a GraphQL engine is successfully fingerprinted, it is added to the Technology tab/data.
+
+## [0.25.0] - 2024-09-24
+### Changed
+- Dependency updates.
+
+## [0.24.0] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Dependency updates.
+
+## [0.23.0] - 2024-02-22
 ### Added
 - Video link in help for Automation Framework job.
+- Website alert links to the help page (Issue 8189).
+
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Fix graphql parameter injection in URL query.
 
 ## [0.22.0] - 2023-12-19
 ### Added
@@ -178,6 +212,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
   - Import a GraphQL Schema
   - Generate Queries from an imported Schema
 
+[0.26.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.26.0
+[0.25.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.25.0
+[0.24.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.24.0
+[0.23.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.23.0
 [0.22.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.20.0

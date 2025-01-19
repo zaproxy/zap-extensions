@@ -42,7 +42,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * Strict-Transport-Security Header Not Set passive scan rule
  * https://github.com/zaproxy/zaproxy/issues/1169
  */
-public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
+public class StrictTransportSecurityScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.stricttransportsecurity.";
     private static final int PLUGIN_ID = 10035;
@@ -192,7 +193,7 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
         return ALERT_TAGS;
     }
 
-    private String getAlertElement(VulnType currentVT, String element) {
+    private static String getAlertElement(VulnType currentVT, String element) {
         String elementValue = "";
         switch (currentVT) {
             case HSTS_MISSING:
@@ -233,7 +234,7 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
         return elementValue;
     }
 
-    private int getRisk(VulnType currentVT) {
+    private static int getRisk(VulnType currentVT) {
         switch (currentVT) {
             case HSTS_MISSING:
             case HSTS_MAX_AGE_DISABLED:
@@ -258,7 +259,7 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
      *     return {@code null}.
      * @see <a href="https://tools.ietf.org/html/rfc6797#section-8.5">RFC 6797 Section 8.5</a>
      */
-    private String getMetaHSTSEvidence(Source source) {
+    private static String getMetaHSTSEvidence(Source source) {
         List<Element> metaElements = source.getAllElements(HTMLElementName.META);
         String httpEquiv;
 

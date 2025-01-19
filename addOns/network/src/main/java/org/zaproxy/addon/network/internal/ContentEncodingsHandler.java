@@ -22,12 +22,14 @@ package org.zaproxy.addon.network.internal;
 import java.util.List;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMessage.HttpEncodingsHandler;
 import org.zaproxy.zap.network.HttpEncoding;
 import org.zaproxy.zap.network.HttpEncodingDeflate;
 import org.zaproxy.zap.network.HttpEncodingGzip;
 
-public class ContentEncodingsHandler /* TODO implements HttpEncodingsHandler */ {
+public class ContentEncodingsHandler implements HttpEncodingsHandler {
 
+    @Override
     public void handle(HttpHeader header, HttpBody body) {
         String encoding = header.getHeader(HttpHeader.CONTENT_ENCODING);
         if (encoding == null || encoding.isEmpty()) {

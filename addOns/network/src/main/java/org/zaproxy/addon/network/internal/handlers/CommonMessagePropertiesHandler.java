@@ -32,6 +32,8 @@ import org.zaproxy.addon.network.internal.ChannelAttributes;
  * <ul>
  *   <li>The sender address, obtained from the channel attribute {@link
  *       ChannelAttributes#REMOTE_ADDRESS}.
+ *   <li>The local address, obtained from the channel attribute {@link
+ *       ChannelAttributes#LOCAL_ADDRESS}.
  * </ul>
  */
 @Sharable
@@ -61,6 +63,9 @@ public class CommonMessagePropertiesHandler extends SimpleChannelInboundHandler<
         if (remoteAddress != null) {
             msg.getRequestHeader().setSenderAddress(remoteAddress.getAddress());
         }
+
+        msg.getRequestHeader()
+                .setLocalAddress(ctx.channel().attr(ChannelAttributes.LOCAL_ADDRESS).get());
 
         ctx.fireChannelRead(msg);
     }

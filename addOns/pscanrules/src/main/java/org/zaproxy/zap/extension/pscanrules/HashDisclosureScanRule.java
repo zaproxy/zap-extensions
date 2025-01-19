@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +41,11 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class HashDisclosureScanRule extends PluginPassiveScanner {
+public class HashDisclosureScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
+
+    private static final HashAlert MD4_MD5_HASH_ALERT =
+            new HashAlert("MD4 / MD5", Alert.RISK_LOW, Alert.CONFIDENCE_LOW);
 
     /** a map of a regular expression pattern to details of the Hash type found */
     static Map<Pattern, HashAlert> hashPatterns = new LinkedHashMap<>();
@@ -110,11 +115,11 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
                 Pattern.compile("\\$NT\\$[0-9a-f]{32}"),
                 new HashAlert("NTLM", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
 
-        // Mac OS X salted SHA-1
+        // Salted SHA-1 - MacOS X, Oracle, Tiger-192, Haval-192
         // Example: 0E6A48F765D0FFFFF6247FA80D748E615F91DD0C7431E4D9
         hashPatterns.put(
                 Pattern.compile("\\b[0-9A-F]{48}\\b"),
-                new HashAlert("Mac OSX salted SHA-1", Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM));
+                new HashAlert("Salted SHA-1", Alert.RISK_LOW, Alert.CONFIDENCE_LOW));
 
         // SHA hashes occur fairly frequently in various legitimate uses, and are not necessarily
         // indicative of an issue.
@@ -145,7 +150,7 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
         // indicative of an issue.
         hashPatterns.put(
                 Pattern.compile("(?<!jsessionid=)\\b[0-9a-f]{32}\\b", Pattern.CASE_INSENSITIVE),
-                new HashAlert("MD4 / MD5", Alert.RISK_LOW, Alert.CONFIDENCE_LOW));
+                MD4_MD5_HASH_ALERT);
 
         // TODO: for the main hash types, verify the value by hashing the parameters
         //  - if the hash value can be re-generated, then it is a "reflection" attack
@@ -184,7 +189,7 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
         String requestbody = msg.getRequestBody().toString();
         String[] requestparts = {requestheader, requestbody};
 
-        checkForHashes(msg, id, requestparts);
+        checkForHashes(requestparts);
     }
 
     /**
@@ -196,6 +201,9 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (!msg.getResponseHeader().isText()) {
+            return;
+        }
         if (ResourceIdentificationUtils.isJavaScript(msg)
                 && !AlertThreshold.LOW.equals(this.getAlertThreshold())) {
             return;
@@ -207,19 +215,11 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
         String responsebody = msg.getResponseBody().toString();
         String[] responseparts = {responseheader, responsebody};
 
-        checkForHashes(msg, id, responseparts);
+        checkForHashes(responseparts);
     }
 
-    /**
-     * checks for hashes in the given array of strings, which relate to the parameter message
-     *
-     * @param msg
-     * @param id
-     * @param haystacks
-     */
-    public void checkForHashes(HttpMessage msg, int id, String[] haystacks) {
+    public void checkForHashes(String[] haystacks) {
         // try each of the patterns in turn against the response.
-        String hashType = null;
         Iterator<Pattern> patternIterator = hashPatterns.keySet().iterator();
 
         int minimumConfidence = Alert.CONFIDENCE_LOW;
@@ -238,26 +238,20 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
             if (hashalert.getConfidence() < minimumConfidence) {
                 continue;
             }
-            hashType = hashalert.getDescription();
-            LOGGER.debug("Trying Hash Pattern: {} for hash type {}", hashPattern, hashType);
+            LOGGER.debug(
+                    "Trying Hash Pattern: {} for hash type {}",
+                    hashPattern,
+                    hashalert.getDescription());
             for (String haystack : haystacks) {
                 Matcher matcher = hashPattern.matcher(haystack);
                 while (matcher.find()) {
                     String evidence = matcher.group();
-                    LOGGER.debug("Found a match for hash type {} : {}", hashType, evidence);
-                    if (evidence != null && evidence.length() > 0) {
-                        // we found something
-                        newAlert()
-                                .setName(getName() + " - " + hashType)
-                                .setRisk(hashalert.getRisk())
-                                .setConfidence(hashalert.getConfidence())
-                                .setDescription(getDescription() + " - " + hashType)
-                                .setSolution(getSolution())
-                                .setReference(getReference())
-                                .setEvidence(evidence)
-                                .setCweId(200) // Information Exposure,
-                                .setWascId(13) // Information Leakage
-                                .raise();
+                    LOGGER.debug(
+                            "Found a match for hash type {} : {}",
+                            hashalert.getDescription(),
+                            evidence);
+                    if (evidence != null && !evidence.isEmpty()) {
+                        buildAlert(evidence, hashalert).raise();
                         // do NOT break at this point.. we need to find *all* the potential hashes
                         // in the response..
                     }
@@ -266,26 +260,35 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
         }
     }
 
+    private AlertBuilder buildAlert(String evidence, HashAlert hashAlert) {
+        return newAlert()
+                .setName(getName() + " - " + hashAlert.getDescription())
+                .setRisk(hashAlert.getRisk())
+                .setConfidence(hashAlert.getConfidence())
+                .setDescription(
+                        Constant.messages.getString(MESSAGE_PREFIX + "desc")
+                                + " - "
+                                + hashAlert.getDescription())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
+                .setEvidence(evidence)
+                .setCweId(200) // Information Exposure,
+                .setWascId(13); // Information Leakage
+    }
+
     @Override
     public int getPluginId() {
         return 10097;
     }
 
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("21232F297A57A5A743894A0E4A801FC3", MD4_MD5_HASH_ALERT).build());
     }
 
     static class HashAlert {

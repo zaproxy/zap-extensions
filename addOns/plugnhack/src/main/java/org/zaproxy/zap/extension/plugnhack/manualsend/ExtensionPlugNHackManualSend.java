@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.plugnhack.manualsend;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -34,7 +32,7 @@ import org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack;
 public class ExtensionPlugNHackManualSend extends ExtensionAdaptor {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(Arrays.asList(ExtensionPlugNHack.class));
+            List.of(ExtensionPlugNHack.class);
 
     private ExtensionPlugNHack extensionPlugNHack;
 

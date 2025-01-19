@@ -23,9 +23,9 @@ import java.io.IOException;
 import javax.script.ScriptException;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zest.core.v1.ZestScript;
@@ -59,7 +59,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
                 case "sequence": // ExtensionSequence.TYPE_SEQUENCE
                     ztype = Type.Active;
                     break;
-                case ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE:
+                case ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE:
                     ztype = Type.Passive;
                     break;
                 case ExtensionScript.TYPE_TARGETED:

@@ -8,6 +8,7 @@
 		<tocitem text="Mga Add On" tocid="addons">
 			<tocitem text="Ang Pagtukoy ng Teknolohiya" image="addon.wappalyzer.icon" target="addon.wappalyzer">
 				<tocitem text="API" target="addon.wappalyzer.api" />
+				<tocitem text="Options" target="addon.wappalyzer.options" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

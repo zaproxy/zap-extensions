@@ -39,7 +39,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 /*
  * passively scans requests for insecure authentication
  */
-public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
+public class InsecureAuthenticationScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
@@ -183,27 +184,8 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
                         digestInfo = authValues[1]; // info to output in the logging message.
                     }
 
-                    newAlert()
-                            .setName(
-                                    Constant.messages.getString(
-                                            "pscanrules.authenticationcredentialscaptured.name"))
-                            .setRisk(alertRisk)
-                            .setConfidence(alertConf)
-                            .setDescription(
-                                    Constant.messages.getString(
-                                            "pscanrules.authenticationcredentialscaptured.desc"))
-                            .setOtherInfo(extraInfo)
-                            .setSolution(
-                                    Constant.messages.getString(
-                                            "pscanrules.authenticationcredentialscaptured.soln"))
-                            .setReference(
-                                    Constant.messages.getString(
-                                            "pscanrules.authenticationcredentialscaptured.refs"))
-                            .setCweId(287) // CWE Id - Improper authentication
-                            .setWascId(1) // WASC Id - Insufficient authentication
-                            .raise();
+                    buildCapturedAlert(alertRisk, alertConf, extraInfo).raise();
 
-                    // and log it, without internationalising it.
                     LOGGER.info(
                             "Authentication Credentials were captured. [{}] [{}] uses insecure authentication mechanism [{}], revealing username [{}] and password/additional information [{}]",
                             method,
@@ -232,29 +214,9 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
         return Constant.messages.getString("pscanrules.insecureauthentication.name");
     }
 
-    public String getDescription() {
-        return Constant.messages.getString("pscanrules.insecureauthentication.desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString("pscanrules.insecureauthentication.soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString("pscanrules.insecureauthentication.refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 326; // CWE Id - Inadequate Encryption Strength
-    }
-
-    public int getWascId() {
-        return 4; // WASC Id - Insufficient Transport Layer Protection
     }
 
     @Override
@@ -269,18 +231,59 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
             for (String auth : authHeaders) {
                 if (auth.toLowerCase().indexOf("basic") > -1
                         || auth.toLowerCase().indexOf("digest") > -1) {
-                    newAlert()
-                            .setRisk(Alert.RISK_MEDIUM)
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setDescription(getDescription())
-                            .setSolution(getSolution())
-                            .setReference(getReference())
-                            .setEvidence(HttpHeader.WWW_AUTHENTICATE + ": " + auth)
-                            .setCweId(getCweId())
-                            .setWascId(getWascId())
-                            .raise();
+                    buildAlert(auth).raise();
                 }
             }
         }
+    }
+
+    private AlertBuilder buildCapturedAlert(int alertRisk, int alertConf, String extraInfo) {
+        return newAlert()
+                .setName(
+                        Constant.messages.getString(
+                                "pscanrules.authenticationcredentialscaptured.name"))
+                .setRisk(alertRisk)
+                .setConfidence(alertConf)
+                .setDescription(
+                        Constant.messages.getString(
+                                "pscanrules.authenticationcredentialscaptured.desc"))
+                .setOtherInfo(extraInfo)
+                .setSolution(
+                        Constant.messages.getString(
+                                "pscanrules.authenticationcredentialscaptured.soln"))
+                .setReference(
+                        Constant.messages.getString(
+                                "pscanrules.authenticationcredentialscaptured.refs"))
+                .setCweId(287) // CWE Id - Improper authentication
+                .setWascId(1) // WASC Id - Insufficient authentication
+                .setAlertRef(getPluginId() + "-1");
+    }
+
+    private AlertBuilder buildAlert(String auth) {
+        return newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(
+                        Constant.messages.getString("pscanrules.insecureauthentication.desc"))
+                .setSolution(Constant.messages.getString("pscanrules.insecureauthentication.soln"))
+                .setReference(Constant.messages.getString("pscanrules.insecureauthentication.refs"))
+                .setEvidence(HttpHeader.WWW_AUTHENTICATE + ": " + auth)
+                .setCweId(326) // CWE Id - Inadequate Encryption Strength
+                .setWascId(4) // WASC Id - Insufficient Transport Layer Protection
+                .setAlertRef(getPluginId() + "-2");
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildCapturedAlert(
+                                Alert.RISK_MEDIUM,
+                                Alert.CONFIDENCE_MEDIUM,
+                                "[POST] "
+                                        + "[http://www.example.com] uses insecure authentication mechanism [Digest], "
+                                        + "revealing username [admin] and additional information "
+                                        + "[username=\"admin\", realm=\"members only\"].")
+                        .build(),
+                buildAlert("Basic realm=\"Private\"").build());
     }
 }

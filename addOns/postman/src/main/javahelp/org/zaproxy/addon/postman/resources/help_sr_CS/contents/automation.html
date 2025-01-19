@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Postman Automation Framework Support
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Postman Automation Framework Support</H1>
+This add-on supports the Automation Framework.
+<br><br>
+The add-on can import Postman collections via a URL or local file.
+<br><br>
+The variables parameter works in the same way defined <a href="postman.html">here</a>.
+
+<H2>Job: postman</H2>
+The postman job allows you to import Postman collections via a URL or file.
+<pre>
+  - type: postman         # Postman collection import
+    parameters:
+      collectionFile:     # String: Local file containing the Postman collection, default: null, no collection will be imported
+      collectionUrl:      # String: URL containing the Postman collection, default: null, no collection will be imported
+      variables:          # String: Comma-separated list of variables as key-value pairs in the format <code>key1=value1,key2=value2,...</code>, these variables will have precedence over the collection ones
+</pre>
+
+</BODY>
+</HTML>

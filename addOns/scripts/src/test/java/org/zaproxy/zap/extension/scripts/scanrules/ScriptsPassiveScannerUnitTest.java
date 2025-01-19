@@ -51,15 +51,13 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
+import org.zaproxy.zap.extension.pscan.PassiveScanActions;
 import org.zaproxy.zap.extension.pscan.PassiveScanData;
-import org.zaproxy.zap.extension.pscan.PassiveScanTaskHelper;
 import org.zaproxy.zap.extension.script.ExtensionScript;
-import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.script.ScriptsCache;
 import org.zaproxy.zap.extension.script.ScriptsCache.CachedScript;
 import org.zaproxy.zap.extension.script.ScriptsCache.Configuration;
-import org.zaproxy.zap.extension.script.ScriptsCache.InterfaceErrorMessageProvider;
 import org.zaproxy.zap.extension.script.ScriptsCache.ScriptWrapperAction;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -67,7 +65,7 @@ import org.zaproxy.zap.testutils.TestUtils;
 /** Unit test for {@link ScriptsPassiveScanner}. */
 class ScriptsPassiveScannerUnitTest extends TestUtils {
 
-    private static final String SCRIPT_TYPE = ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE;
+    private static final String SCRIPT_TYPE = ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE;
     private static final Class<PassiveScript> TARGET_INTERFACE = PassiveScript.class;
 
     private ExtensionLoader extensionLoader;
@@ -130,18 +128,18 @@ class ScriptsPassiveScannerUnitTest extends TestUtils {
     void shouldAddTagsWithTaskHelper() {
         // Given
         String tag = "Tag";
-        PassiveScanTaskHelper taskHelper = mock(PassiveScanTaskHelper.class);
+        PassiveScanActions actions = mock(PassiveScanActions.class);
         HistoryReference href = mock(HistoryReference.class);
         when(message.getHistoryRef()).thenReturn(href);
         ScriptsPassiveScanner scriptsPassiveScanner = new ScriptsPassiveScanner();
         PassiveScanData passiveScanData = mock(PassiveScanData.class);
         when(passiveScanData.getMessage()).thenReturn(message);
         scriptsPassiveScanner.setHelper(passiveScanData);
-        scriptsPassiveScanner.setTaskHelper(taskHelper);
+        scriptsPassiveScanner.setPassiveScanActions(actions);
         // When
         scriptsPassiveScanner.addHistoryTag(tag);
         // Then
-        verify(taskHelper).addHistoryTag(href, tag);
+        verify(actions).addHistoryTag(href, tag);
     }
 
     @Test
@@ -176,12 +174,8 @@ class ScriptsPassiveScannerUnitTest extends TestUtils {
         Configuration<PassiveScript> configuration = argumentCaptor.getValue();
         assertThat(configuration.getScriptType(), is(equalTo(SCRIPT_TYPE)));
         assertThat(configuration.getTargetInterface(), is(equalTo(TARGET_INTERFACE)));
-        InterfaceErrorMessageProvider errorMessageProvider =
-                configuration.getInterfaceErrorMessageProvider();
-        assertThat(errorMessageProvider, is(not(nullValue())));
-        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
-        given(scriptWrapper.getName()).willReturn("Name");
-        assertThat(errorMessageProvider.getErrorMessage(scriptWrapper), is(not(nullValue())));
+        assertThat(configuration.getInterfaceProvider(), is(not(nullValue())));
+        assertThat(configuration.getInterfaceErrorMessageProvider(), is(nullValue()));
     }
 
     @Test
@@ -204,6 +198,16 @@ class ScriptsPassiveScannerUnitTest extends TestUtils {
                 ArgumentCaptor.forClass(ScriptsPassiveScanner.class);
         verify(script, times(1)).scan(argumentCaptor.capture(), eq(message), eq(source));
         assertThat(argumentCaptor.getValue(), is(sameInstance(scriptsPassiveScanner)));
+    }
+
+    @Test
+    void shouldReuseScriptsCacheWhenCopying() {
+        // Given
+        var scriptsPassiveScanner = new ScriptsPassiveScanner();
+        // When
+        scriptsPassiveScanner.copy();
+        // Then
+        verify(extensionScript).createScriptsCache(any());
     }
 
     @Test

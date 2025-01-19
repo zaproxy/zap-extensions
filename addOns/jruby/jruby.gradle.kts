@@ -12,7 +12,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("scripts") {
-                    version.set(">=45.0.0")
+                    version.set(">=45.2.0")
                 }
             }
         }

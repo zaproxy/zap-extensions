@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -32,15 +33,34 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.addon.oast.ExtensionOast;
 
-public class OutOfBandXssScanRule extends AbstractAppParamPlugin {
+public class OutOfBandXssScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_8");
     private static final int PLUGIN_ID = 40031;
     private static final Logger LOGGER = LogManager.getLogger(OutOfBandXssScanRule.class);
+
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A07_XSS,
+                                CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS,
+                                CommonAlertTag.WSTG_V42_INPV_02_STORED_XSS));
+        alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static final String SIMPLE_SCRIPT_XSS_ATTACK = "<script src=\"{0}\"></script>";
     private static final String END_TAG_SCRIPT_XSS_ATTACK = "</script><script src=\"{0}\">";
@@ -98,15 +118,7 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin {
 
     @Override
     public Map<String, String> getAlertTags() {
-        Map<String, String> alertTags =
-                new HashMap<>(
-                        CommonAlertTag.toMap(
-                                CommonAlertTag.OWASP_2021_A03_INJECTION,
-                                CommonAlertTag.OWASP_2017_A07_XSS,
-                                CommonAlertTag.WSTG_V42_INPV_01_REFLECTED_XSS,
-                                CommonAlertTag.WSTG_V42_INPV_02_STORED_XSS));
-        alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
-        return alertTags;
+        return ALERT_TAGS;
     }
 
     @Override
@@ -138,7 +150,7 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin {
                 scanWithExternalOastService(param);
             }
         } catch (Exception e) {
-            LOGGER.warn("Could not perform Out of Band XSS Attack.");
+            LOGGER.warn("Could not perform Out of Band XSS Attack:", e);
         }
     }
 

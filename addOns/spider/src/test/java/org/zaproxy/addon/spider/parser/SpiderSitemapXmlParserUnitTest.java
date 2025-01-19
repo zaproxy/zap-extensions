@@ -28,6 +28,8 @@ import static org.mockito.BDDMockito.given;
 
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /** Unit test for {@link SpiderSitemapXmlParser}. */
 class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils<SpiderSitemapXmlParser> {
@@ -155,52 +157,37 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils<SpiderSitemap
     }
 
     @Test
-    void shouldNotParseXmlMessageWithDoctype() {
+    void shouldNotParseXmlMessageWithDoctypeHtml() {
         // Given
-        messageWith("DoctypeSitemap.xml");
+        messageWith("DoctypeHtmlSitemap.xml");
         // When
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
     }
 
-    @Test
-    void shouldNotFindUrlsIfNoneDefinedInSitemap() {
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "NoUrlsSitemap.xml",
+                "UrlNoLocationSitemap.xml",
+                "UrlEmptyLocationSitemap.xml"
+            })
+    void shouldNotFindUrlsIfNoneDefinedInSitemap(String fileName) {
         // Given
-        messageWith("NoUrlsSitemap.xml");
+        messageWith(fileName);
         // When
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
-        assertThat(completelyParsed, is(equalTo(true)));
+        assertThat(completelyParsed, is(equalTo(false))); // Fall through to other parsers
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(0)));
     }
 
-    @Test
-    void shouldNotFindUrlsIfUrlHasNoLocationIsEmptyInSitemap() {
+    @ParameterizedTest
+    @ValueSource(strings = {"MultipleUrlsSitemap.xml", "NoXmlTag.xml"})
+    void shouldFindUrlsInValidSitemapXml(String fileName) throws Exception {
         // Given
-        messageWith("UrlNoLocationSitemap.xml");
-        // When
-        boolean completelyParsed = parser.parseResource(ctx);
-        // Then
-        assertThat(completelyParsed, is(equalTo(true)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(0)));
-    }
-
-    @Test
-    void shouldNotFindUrlsIfUrlLocationIsEmptyInSitemap() {
-        // Given
-        messageWith("UrlEmptyLocationSitemap.xml");
-        // When
-        boolean completelyParsed = parser.parseResource(ctx);
-        // Then
-        assertThat(completelyParsed, is(equalTo(true)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(0)));
-    }
-
-    @Test
-    void shouldFindUrlsInValidSitemapXml() throws Exception {
-        // Given
-        messageWith("MultipleUrlsSitemap.xml");
+        messageWith(fileName);
         // When
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
@@ -214,6 +201,39 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils<SpiderSitemap
                         "http://example.com/relative",
                         "ftp://example.com/",
                         "http://www.example.com/%C7"));
+    }
+
+    @Test
+    void shouldFindUrlsAndHandleEntities() throws Exception {
+        // Given
+        messageWith("WithHtmlEntities.xml");
+        // When
+        boolean completelyParsed = parser.parseResource(ctx);
+        // Then
+        assertThat(completelyParsed, is(equalTo(true)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
+        assertThat(
+                listener.getUrlsFound(),
+                contains("https://example.com/app/en/details?data=101920&lang=gen"));
+    }
+
+    @Test
+    void shouldFindUrlsInXhtmlLinkHrefs() throws Exception {
+        // Given
+        messageWith("WithXhtmlLinkHrefs.xml");
+        // When
+        boolean completelyParsed = parser.parseResource(ctx);
+        // Then
+        assertThat(completelyParsed, is(equalTo(true)));
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(5)));
+        assertThat(
+                listener.getUrlsFound(),
+                contains(
+                        "https://example.com/app/en/details?data=101920&lang=gen",
+                        "https://example.com/app/tw/details?data=101920&lang=gen",
+                        "https://example.com.cn/app/zh/details?data=101920&lang=gen",
+                        "https://example.com/app/tr/details?data=101920&lang=gen",
+                        "https://example.com/app/sv/details?data=101920&lang=gen"));
     }
 
     private void messageWith(String filename) {

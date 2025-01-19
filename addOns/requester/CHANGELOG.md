@@ -5,8 +5,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-## Added 
+
+
+## [7.8.0] - 2025-01-10
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [7.7.0] - 2024-06-28
+### Added
+- Allow to display a message in the editor dialogue.
+
+## [7.6.0] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [7.5.0] - 2024-03-25
+### Added 
 - Button to lowercase request header names (Issue 8176).
+- Support for menu weights (Issue 8369)
+
+### Changed
+- Manual request dialog to be opened with selected message on CTRL-M (Issue 8365)
+- Manual request dialog to be used instead of a separate Resend dialog.
 
 ## [7.4.0] - 2023-10-12
 ### Added
@@ -94,6 +114,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+[7.8.0]: https://github.com/zaproxy/zap-extensions/releases/requester-v7.8.0
+[7.7.0]: https://github.com/zaproxy/zap-extensions/releases/requester-v7.7.0
+[7.6.0]: https://github.com/zaproxy/zap-extensions/releases/requester-v7.6.0
+[7.5.0]: https://github.com/zaproxy/zap-extensions/releases/requester-v7.5.0
 [7.4.0]: https://github.com/zaproxy/zap-extensions/releases/requester-v7.4.0
 [7.3.0]: https://github.com/zaproxy/zap-extensions/releases/requester-v7.3.0
 [7.2.0]: https://github.com/zaproxy/zap-extensions/releases/requester-v7.2.0

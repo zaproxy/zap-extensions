@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import javax.swing.Icon;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
 @SuppressWarnings("serial")
@@ -38,11 +39,15 @@ public class PopupMenuResendMessage extends PopupMenuItemHttpMessageContainer {
 
         this.showResendDialogue = Objects.requireNonNull(showResendDialogue);
         setIcon(icon);
-        setMenuIndex(5);
     }
 
     @Override
     protected void performAction(HttpMessage message) {
         showResendDialogue.accept(message.cloneRequest());
+    }
+
+    @Override
+    public int getWeight() {
+        return MenuWeights.MENU_OPEN_REQUEST_WEIGHT;
     }
 }

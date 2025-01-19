@@ -35,7 +35,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
+public class RetrievedFromCacheScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.retrievedfromcache.";
     private static final int PLUGIN_ID = 10050;
@@ -86,14 +87,7 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
                                         "{} was served from a cache, due to presence of a 'HIT' in the 'X-Cache' response header",
                                         msg.getRequestHeader().getURI());
                                 // could be from HTTP/1.0 or HTTP/1.1. We don't know which.
-                                newAlert()
-                                        .setRisk(Alert.RISK_INFO)
-                                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                        .setDescription(getDescription())
-                                        .setSolution(getSolution())
-                                        .setReference(getReference())
-                                        .setEvidence(evidence)
-                                        .raise();
+                                buildAlert(evidence, false).raise();
                                 return;
                             }
                         }
@@ -128,24 +122,7 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
                         LOGGER.debug(
                                 "{} was served from a HTTP/1.1 cache, due to presence of a valid (non-negative decimal integer) 'Age' response header value",
                                 msg.getRequestHeader().getURI());
-                        newAlert()
-                                .setRisk(Alert.RISK_INFO)
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setDescription(getDescription())
-                                .setOtherInfo(
-                                        Constant.messages.getString(
-                                                MESSAGE_PREFIX
-                                                        + "extrainfo.http11ageheader")) // Other
-                                // info:
-                                // "Age"
-                                // header implies a
-                                // HTTP/1.1
-                                // compliant cache
-                                // server.
-                                .setSolution(getSolution())
-                                .setReference(getReference())
-                                .setEvidence(evidence)
-                                .raise();
+                        buildAlert(evidence, true).raise();
                         return;
                     }
                 }
@@ -154,6 +131,23 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
         } catch (Exception e) {
             LOGGER.error("An error occurred while checking if a URL was served from a cache", e);
         }
+    }
+
+    private AlertBuilder buildAlert(String evidence, boolean compliant) {
+        return newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
+                .setEvidence(evidence)
+                // If compliant Other Info: "Age" header implies a HTTP/1.1 compliant cache server.
+                .setOtherInfo(
+                        compliant
+                                ? Constant.messages.getString(
+                                        MESSAGE_PREFIX + "extrainfo.http11ageheader")
+                                : "")
+                .setAlertRef(PLUGIN_ID + (compliant ? "-2" : "-1"));
     }
 
     @Override
@@ -166,20 +160,15 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert("X-Cache: HIT, HIT", false).build(),
+                buildAlert("Age: 24", true).build());
     }
 }

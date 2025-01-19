@@ -42,6 +42,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.network.HttpSenderContext;
 import org.zaproxy.zap.network.HttpSenderImpl;
 
@@ -61,7 +62,7 @@ class HttpOnlySiteScanRuleUnitTest extends ActiveScannerTest<HttpOnlySiteScanRul
         // Then
         assertThat(cwe, is(equalTo(311)));
         assertThat(wasc, is(equalTo(4)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -69,8 +70,9 @@ class HttpOnlySiteScanRuleUnitTest extends ActiveScannerTest<HttpOnlySiteScanRul
                 tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
         assertThat(
-                tags.containsKey(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getTag()),
+                tags.containsKey(CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
@@ -78,8 +80,8 @@ class HttpOnlySiteScanRuleUnitTest extends ActiveScannerTest<HttpOnlySiteScanRul
                 tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
         assertThat(
-                tags.get(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getTag()),
-                is(equalTo(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getValue())));
+                tags.get(CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL.getValue())));
     }
 
     @Test
@@ -160,10 +162,12 @@ class HttpOnlySiteScanRuleUnitTest extends ActiveScannerTest<HttpOnlySiteScanRul
         Alert alert = alerts.get(0);
 
         Map<String, String> tags = alert.getTags();
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(tags, hasKey("CWE-311"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
-        assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL.getTag()));
+        assertThat(tags, hasKey(PolicyTag.QA_FULL.getTag()));
         assertThat(alert.getUri(), is(equalTo("http://example.com")));
         assertThat(alert.getOtherInfo(), containsString("https://example.com"));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));

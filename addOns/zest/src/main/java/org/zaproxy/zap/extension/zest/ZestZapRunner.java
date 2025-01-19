@@ -21,9 +21,11 @@ package org.zaproxy.zap.extension.zest;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.script.ScriptEngine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
@@ -44,6 +46,7 @@ import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.extension.ruleconfig.ExtensionRuleConfig;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
+import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptVars;
 import org.zaproxy.zest.core.v1.ZestAction;
@@ -87,6 +90,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     private List<Alert> alerts = new ArrayList<>();
 
+    private final ExtensionScript extensionScript;
     private ScriptUI scriptUI;
 
     public ZestZapRunner(
@@ -96,6 +100,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         this.extension = extension;
         this.extensionNetwork = extensionNetwork;
         this.wrapper = wrapper;
+        extensionScript = extension.getExtScript();
         this.scriptUI = extension.getExtScript().getScriptUI();
         this.setScriptEngineFactory(extension.getZestScriptEngineFactory());
 
@@ -105,6 +110,21 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         // Always proxy via ZAP
         ServerInfo serverInfo = extensionNetwork.getMainProxyServerInfo();
         this.setProxy(serverInfo.getAddress(), serverInfo.getPort());
+    }
+
+    @Override
+    public ScriptEngine getScriptEngine(String extension) {
+        String name = extensionScript.getEngineNameForExtension(extension);
+        if (name == null) {
+            return null;
+        }
+
+        try {
+            return extensionScript.getEngineWrapper(name).getEngine();
+        } catch (InvalidParameterException e) {
+            LOGGER.debug("Failed to get the engine.", e);
+        }
+        return null;
     }
 
     protected ExtensionNetwork getExtensionNetwork() {

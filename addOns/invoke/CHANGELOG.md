@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [16] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [15] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+### Added
+- Support for menu weights (Issue 8369)
+
 ## [14] - 2023-10-12
 ### Changed
 - Update minimum ZAP version to 2.14.0.
@@ -73,6 +84,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release as an add-on, previously bundled with ZAP core.
 
+[16]: https://github.com/zaproxy/zap-extensions/releases/invoke-v16
+[15]: https://github.com/zaproxy/zap-extensions/releases/invoke-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/invoke-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/invoke-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/invoke-v12

@@ -92,6 +92,8 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     private static final String CONFIRM_REMOVE_ELEM_KEY =
             AJAX_SPIDER_BASE_KEY + ".confirmRemoveElem";
 
+    private static final String ENABLE_EXTENSIONS_KEY = AJAX_SPIDER_BASE_KEY + ".enableExtensions";
+
     public static final String[] DEFAULT_ELEMS_NAMES = {
         "a",
         "button",
@@ -139,13 +141,15 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     public static final int DEFAULT_RELOAD_WAIT_TIME = 1000;
 
-    private static final String DEFAULT_BROWSER_ID = Browser.FIREFOX_HEADLESS.getId();
+    static final String DEFAULT_BROWSER_ID = Browser.FIREFOX_HEADLESS.getId();
 
     public static final boolean DEFAULT_CLICK_DEFAULT_ELEMS = true;
 
     public static final boolean DEFAULT_CLICK_ELEMS_ONCE = true;
 
     public static final boolean DEFAULT_RANDOM_INPUTS = true;
+
+    public static final boolean DEFAULT_ENABLE_EXTENSIONS = false;
 
     private static final String ALL_ALLOWED_RESOURCES_KEY =
             AJAX_SPIDER_BASE_KEY + ".allowedResources.allowedResource";
@@ -181,6 +185,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     private boolean randomInputs;
     private boolean confirmRemoveElem = true;
     private boolean showAdvancedDialog;
+    private boolean enableExtensions;
 
     private boolean confirmRemoveAllowedResource;
     private List<AllowedResource> allowedResources = Collections.emptyList();
@@ -211,7 +216,8 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        this.numberOfBrowsers = getInt(NUMBER_OF_BROWSERS_KEY, Constants.getDefaultThreadCount());
+        this.numberOfBrowsers =
+                getInt(NUMBER_OF_BROWSERS_KEY, Constants.getDefaultThreadCount() / 2);
         this.maxCrawlDepth = getInt(MAX_CRAWL_DEPTH_KEY, DEFAULT_MAX_CRAWL_DEPTH);
         this.maxCrawlStates = getInt(MAX_CRAWL_STATES_KEY, DEFAULT_CRAWL_STATES);
         this.maxDuration = getInt(MAX_DURATION_KEY, DEFAULT_MAX_DURATION);
@@ -232,6 +238,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         this.clickElemsOnce = getBoolean(CLICK_ELEMS_ONCE_KEY, DEFAULT_CLICK_ELEMS_ONCE);
         this.randomInputs = getBoolean(RANDOM_INPUTS_KEY, DEFAULT_RANDOM_INPUTS);
         this.showAdvancedDialog = getBoolean(SHOW_ADV_OPTIONS_KEY, false);
+        this.enableExtensions = getBoolean(ENABLE_EXTENSIONS_KEY, DEFAULT_ENABLE_EXTENSIONS);
 
         try {
             List<HierarchicalConfiguration> fields =
@@ -326,7 +333,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             case 4:
                 if (getInt(NUMBER_OF_BROWSERS_KEY, 1) == 1) {
                     // the old default
-                    this.setNumberOfBrowsers(Constants.getDefaultThreadCount());
+                    this.setNumberOfBrowsers(Constants.getDefaultThreadCount() / 2);
                 }
             case 5:
                 if (!getConfig().getKeys(ALL_ALLOWED_RESOURCES_KEY).hasNext()) {
@@ -472,6 +479,15 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     protected List<String> getElemsNames() {
         return enabledElemsNames;
+    }
+
+    public boolean isEnableExtensions() {
+        return enableExtensions;
+    }
+
+    public void setEnableExtensions(boolean enableExtensions) {
+        this.enableExtensions = enableExtensions;
+        getConfig().setProperty(ENABLE_EXTENSIONS_KEY, Boolean.valueOf(enableExtensions));
     }
 
     @ZapApiIgnore

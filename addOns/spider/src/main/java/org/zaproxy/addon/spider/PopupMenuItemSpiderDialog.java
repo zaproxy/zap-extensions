@@ -21,6 +21,7 @@ package org.zaproxy.addon.spider;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemSiteNodeContainer;
 
@@ -55,11 +56,6 @@ public class PopupMenuItemSpiderDialog extends PopupMenuItemSiteNodeContainer {
     }
 
     @Override
-    public int getParentMenuIndex() {
-        return ATTACK_MENU_INDEX;
-    }
-
-    @Override
     public void performAction(SiteNode node) {
         extension.showSpiderDialog(node);
     }
@@ -79,5 +75,15 @@ public class PopupMenuItemSpiderDialog extends PopupMenuItemSiteNodeContainer {
             default:
                 return true;
         }
+    }
+
+    @Override
+    public int getParentWeight() {
+        return MenuWeights.MENU_ATTACK_WEIGHT;
+    }
+
+    @Override
+    public int getWeight() {
+        return MenuWeights.MENU_ATTACK_SPIDER_WEIGHT;
     }
 }

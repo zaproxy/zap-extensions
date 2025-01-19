@@ -6,6 +6,55 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [0.35.0] - 2025-01-10
+### Added
+- Stats counter to the main toolbar button (Issue 8375).
+- Sequence data to JSON & HTML reports.
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Update automation job help.
+- Fields with default or missing values are omitted for the `report` job in saved Automation Framework plans.
+
+### Fixed
+- Do not log an error when the statistics do not have a resource message (Issue 8788).
+
+## [0.34.0] - 2024-10-07
+### Changed
+- Checkmarx rebrand.
+
+### Fixed
+- An issue where alert details were missing from some Risk and Confidence HTML reports (Issue 8460).
+
+## [0.33.0] - 2024-09-02
+### Changed
+- Maintenance changes related to Passive Scanner add-on (Issue 7959).
+
+## [0.32.0] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- The following reports now include the number of Sites tree nodes actively scanned:
+  - Traditional HTML with Requests and Responses
+
+## [0.31.0] - 2024-03-25
+### Changed
+- Tweaked OSF sponsorship links.
+
+### Fixed
+- Handle alerts without HTTP message gracefully (Issue 6880).
+- More issues with illegal XML characters in pdf reports (Issue 8330).
+
+## [0.30.0] - 2024-03-13
+### Changed
+- Added OSF sponsorship line to reports.
+
+## [0.29.0] - 2024-02-12
+### Fixed
+- Error message to give report name.
+- Issues with illegal XML characters in pdf reports (Issue 8330).
+- Corrected pdf report href from #olugin to #plugin.
+- Deprecated syntax in risk-confidence report.
+
 ## [0.28.0] - 2024-01-16
 ### Changed
 - Default to same dir as plan if none specified.
@@ -257,6 +306,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.35.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.35.0
+[0.34.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.34.0
+[0.33.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.33.0
+[0.32.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.32.0
+[0.31.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.31.0
+[0.30.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.30.0
+[0.29.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.29.0
 [0.28.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.28.0
 [0.27.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.27.0
 [0.26.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.26.0

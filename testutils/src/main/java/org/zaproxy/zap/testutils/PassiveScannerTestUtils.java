@@ -45,8 +45,8 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
+import org.zaproxy.zap.extension.pscan.PassiveScanActions;
 import org.zaproxy.zap.extension.pscan.PassiveScanData;
-import org.zaproxy.zap.extension.pscan.PassiveScanTaskHelper;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -60,7 +60,7 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
         implements ScanRuleTests {
 
     protected T rule;
-    protected PassiveScanTaskHelper helper;
+    protected PassiveScanActions actions;
     protected PassiveScanData passiveScanData;
     protected List<Alert> alertsRaised;
 
@@ -71,7 +71,7 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
         passiveScanData =
                 mock(PassiveScanData.class, withSettings().strictness(Strictness.LENIENT));
         alertsRaised = new ArrayList<>();
-        helper = mock(PassiveScanTaskHelper.class, withSettings().strictness(Strictness.LENIENT));
+        actions = mock(PassiveScanActions.class, withSettings().strictness(Strictness.LENIENT));
         doAnswer(
                         invocation -> {
                             Alert alert = invocation.getArgument(1);
@@ -80,11 +80,11 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
                             alertsRaised.add(alert);
                             return null;
                         })
-                .when(helper)
+                .when(actions)
                 .raiseAlert(any(), any());
 
         rule = createScanner();
-        rule.setTaskHelper(helper);
+        rule.setPassiveScanActions(actions);
 
         if (rule instanceof PluginPassiveScanner) {
             ((PluginPassiveScanner) rule).setHelper(passiveScanData);

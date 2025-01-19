@@ -35,7 +35,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** Big Redirects passive scan rule https://github.com/zaproxy/zaproxy/issues/1257 */
-public class BigRedirectsScanRule extends PluginPassiveScanner {
+public class BigRedirectsScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.bigredirects.";
     private static final int PLUGIN_ID = 10044;
@@ -99,7 +100,7 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
      * @param redirectURILength the length of the URI in the redirect response Location header
      * @return predictedResponseSize
      */
-    private int getPredictedResponseSize(int redirectURILength) {
+    private static int getPredictedResponseSize(int redirectURILength) {
         int predictedResponseSize = redirectURILength + 300;
         LOGGER.debug("Original Response Location Header URI Length: {}", redirectURILength);
         LOGGER.debug("Predicted Response Size: {}", predictedResponseSize);
@@ -110,7 +111,7 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
         return newAlert()
                 .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setSolution(getSolution())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setCweId(201)
                 .setWascId(13)
                 .setAlertRef(String.valueOf(PLUGIN_ID) + ref);
@@ -154,17 +155,8 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public String getHelpLink() {
-        return "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/#id-"
-                + getPluginId();
     }
 }

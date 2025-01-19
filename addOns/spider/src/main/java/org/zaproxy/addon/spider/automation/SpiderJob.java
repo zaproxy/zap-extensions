@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
@@ -48,8 +50,11 @@ import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.spider.ExtensionSpider2;
+import org.zaproxy.addon.spider.SpiderParam;
+import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
 import org.zaproxy.addon.spider.SpiderScan;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
@@ -137,6 +142,12 @@ public class SpiderJob extends AutomationJob {
                             getName(),
                             URLS_ADDED_STATS_KEY));
         }
+
+        if (getParameters().getRequestWaitTime() != null) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "spider.automation.error.requestWaitTime.deprecated", getName()));
+        }
     }
 
     @Override
@@ -175,7 +186,7 @@ public class SpiderJob extends AutomationJob {
         getExtSpider().setPanelSwitch(false);
 
         ContextWrapper context;
-        if (parameters.getContext() != null) {
+        if (StringUtils.isNotEmpty(parameters.getContext())) {
             context = env.getContextWrapper(parameters.getContext());
             if (context == null) {
                 progress.error(
@@ -189,7 +200,7 @@ public class SpiderJob extends AutomationJob {
         URI uri = null;
         String urlStr = parameters.getUrl();
         try {
-            if (urlStr != null) {
+            if (StringUtils.isNotEmpty(urlStr)) {
                 urlStr = env.replaceVars(urlStr);
                 uri = new URI(urlStr, true);
             }
@@ -421,6 +432,7 @@ public class SpiderJob extends AutomationJob {
         return data;
     }
 
+    @Getter
     public static class Data extends JobData {
         private Parameters parameters;
 
@@ -428,237 +440,35 @@ public class SpiderJob extends AutomationJob {
             super(job);
             this.parameters = parameters;
         }
-
-        public Parameters getParameters() {
-            return parameters;
-        }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
-        private String context;
-        private String user;
-        private String url;
-        private Integer maxDuration;
-        private Integer maxDepth;
-        private Integer maxChildren;
-        private Boolean acceptCookies;
-        private Boolean handleODataParametersVisited;
-        private String handleParameters;
-        private Integer maxParseSizeBytes;
-        private Boolean parseComments;
-        private Boolean parseGit;
-        private Boolean parseDsStore;
-        private Boolean parseRobotsTxt;
-        private Boolean parseSitemapXml;
-        private Boolean parseSVNEntries;
-        private Boolean postForm;
-        private Boolean processForm;
-        private Integer requestWaitTime;
-        private Boolean sendRefererHeader;
-        private Integer threadCount;
-        private String userAgent;
+        private String context = "";
+        private String user = "";
+        private String url = "";
+        private Integer maxDuration = 0;
+        private Integer maxDepth = 5;
+        private Integer maxChildren = 0;
+        private Boolean acceptCookies = true;
+        private Boolean handleODataParametersVisited = false;
+        private HandleParametersOption handleParameters = HandleParametersOption.USE_ALL;
+        private Integer maxParseSizeBytes = SpiderParam.DEFAULT_MAX_PARSE_SIZE_BYTES;
+        private Boolean parseComments = true;
+        private Boolean parseGit = false;
+        private Boolean parseDsStore = false;
+        private Boolean parseRobotsTxt = true;
+        private Boolean parseSitemapXml = true;
+        private Boolean parseSVNEntries = false;
+        private Boolean postForm = true;
+        private Boolean processForm = true;
+        private Boolean sendRefererHeader = true;
+        private Integer threadCount = Constants.getDefaultThreadCount();
+        private String userAgent = "";
         // These 2 fields are deprecated
         private Boolean failIfFoundUrlsLessThan;
         private Boolean warnIfFoundUrlsLessThan;
-
-        public Parameters() {
-            super();
-        }
-
-        public void setMaxDuration(int maxDuration) {
-            this.maxDuration = maxDuration;
-        }
-
-        public Integer getMaxDuration() {
-            return maxDuration;
-        }
-
-        public String getContext() {
-            return context;
-        }
-
-        public void setContext(String context) {
-            this.context = context;
-        }
-
-        public String getUser() {
-            return user;
-        }
-
-        public void setUser(String user) {
-            this.user = user;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-
-        public Integer getMaxDepth() {
-            return maxDepth;
-        }
-
-        public void setMaxDepth(Integer maxDepth) {
-            this.maxDepth = maxDepth;
-        }
-
-        public Integer getMaxChildren() {
-            return maxChildren;
-        }
-
-        public void setMaxChildren(Integer maxChildren) {
-            this.maxChildren = maxChildren;
-        }
-
-        public Boolean getAcceptCookies() {
-            return acceptCookies;
-        }
-
-        public void setAcceptCookies(Boolean acceptCookies) {
-            this.acceptCookies = acceptCookies;
-        }
-
-        public Boolean getHandleODataParametersVisited() {
-            return handleODataParametersVisited;
-        }
-
-        public void setHandleODataParametersVisited(Boolean handleODataParametersVisited) {
-            this.handleODataParametersVisited = handleODataParametersVisited;
-        }
-
-        public void setMaxDuration(Integer maxDuration) {
-            this.maxDuration = maxDuration;
-        }
-
-        public String getHandleParameters() {
-            return handleParameters;
-        }
-
-        public void setHandleParameters(String handleParameters) {
-            this.handleParameters = handleParameters;
-        }
-
-        public Integer getMaxParseSizeBytes() {
-            return maxParseSizeBytes;
-        }
-
-        public void setMaxParseSizeBytes(Integer maxParseSizeBytes) {
-            this.maxParseSizeBytes = maxParseSizeBytes;
-        }
-
-        public Boolean getParseComments() {
-            return parseComments;
-        }
-
-        public void setParseComments(Boolean parseComments) {
-            this.parseComments = parseComments;
-        }
-
-        public Boolean getParseGit() {
-            return parseGit;
-        }
-
-        public void setParseGit(Boolean parseGit) {
-            this.parseGit = parseGit;
-        }
-
-        public Boolean getParseDsStore() {
-            return parseDsStore;
-        }
-
-        public void setParseDsStore(Boolean parseDsStore) {
-            this.parseDsStore = parseDsStore;
-        }
-
-        public Boolean getParseRobotsTxt() {
-            return parseRobotsTxt;
-        }
-
-        public void setParseRobotsTxt(Boolean parseRobotsTxt) {
-            this.parseRobotsTxt = parseRobotsTxt;
-        }
-
-        public Boolean getParseSitemapXml() {
-            return parseSitemapXml;
-        }
-
-        public void setParseSitemapXml(Boolean parseSitemapXml) {
-            this.parseSitemapXml = parseSitemapXml;
-        }
-
-        public Boolean getParseSVNEntries() {
-            return parseSVNEntries;
-        }
-
-        public void setParseSVNEntries(Boolean parseSVNEntries) {
-            this.parseSVNEntries = parseSVNEntries;
-        }
-
-        public Boolean getPostForm() {
-            return postForm;
-        }
-
-        public void setPostForm(Boolean postForm) {
-            this.postForm = postForm;
-        }
-
-        public Boolean getProcessForm() {
-            return processForm;
-        }
-
-        public void setProcessForm(Boolean processForm) {
-            this.processForm = processForm;
-        }
-
-        public Integer getRequestWaitTime() {
-            return requestWaitTime;
-        }
-
-        public void setRequestWaitTime(Integer requestWaitTime) {
-            this.requestWaitTime = requestWaitTime;
-        }
-
-        public Boolean getSendRefererHeader() {
-            return sendRefererHeader;
-        }
-
-        public void setSendRefererHeader(Boolean sendRefererHeader) {
-            this.sendRefererHeader = sendRefererHeader;
-        }
-
-        public Integer getThreadCount() {
-            return threadCount;
-        }
-
-        public void setThreadCount(Integer threadCount) {
-            this.threadCount = threadCount;
-        }
-
-        public String getUserAgent() {
-            return userAgent;
-        }
-
-        public void setUserAgent(String userAgent) {
-            this.userAgent = userAgent;
-        }
-
-        public Boolean getFailIfFoundUrlsLessThan() {
-            return failIfFoundUrlsLessThan;
-        }
-
-        public void setFailIfFoundUrlsLessThan(Boolean failIfFoundUrlsLessThan) {
-            this.failIfFoundUrlsLessThan = failIfFoundUrlsLessThan;
-        }
-
-        public Boolean getWarnIfFoundUrlsLessThan() {
-            return warnIfFoundUrlsLessThan;
-        }
-
-        public void setWarnIfFoundUrlsLessThan(Boolean warnIfFoundUrlsLessThan) {
-            this.warnIfFoundUrlsLessThan = warnIfFoundUrlsLessThan;
-        }
+        private Integer requestWaitTime;
     }
 }

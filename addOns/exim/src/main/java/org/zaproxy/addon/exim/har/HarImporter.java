@@ -19,17 +19,16 @@
  */
 package org.zaproxy.addon.exim.har;
 
-import edu.umass.cs.benchlab.har.HarContent;
-import edu.umass.cs.benchlab.har.HarEntries;
-import edu.umass.cs.benchlab.har.HarEntry;
-import edu.umass.cs.benchlab.har.HarHeader;
-import edu.umass.cs.benchlab.har.HarLog;
-import edu.umass.cs.benchlab.har.HarResponse;
-import edu.umass.cs.benchlab.har.tools.HarFileReader;
+import de.sstoehr.harreader.HarReader;
+import de.sstoehr.harreader.HarReaderException;
+import de.sstoehr.harreader.model.HarEntry;
+import de.sstoehr.harreader.model.HarLog;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -37,13 +36,11 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.addon.exim.ExtensionExim;
-import org.zaproxy.zap.network.HttpResponseBody;
-import org.zaproxy.zap.utils.HarUtils;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
 
@@ -51,12 +48,33 @@ public class HarImporter {
 
     private static final Logger LOGGER = LogManager.getLogger(HarImporter.class);
     private static final String STATS_HAR_FILE = "import.har.file";
-    private static final String STATS_HAR_FILE_ERROR = "import.har.file.errors";
     private static final String STATS_HAR_FILE_MSG = "import.har.file.message";
     private static final String STATS_HAR_FILE_MSG_ERROR = "import.har.file.message.errors";
+    // The following list is ordered to hopefully match quickly
+    private static final List<String> ACCEPTED_VERSIONS =
+            List.of(
+                    HttpHeader.HTTP11,
+                    HttpHeader.HTTP2,
+                    "http/2.0",
+                    HttpHeader.HTTP10,
+                    "h3",
+                    "http/3",
+                    "http/3.0",
+                    HttpHeader.HTTP09);
+    private static final Predicate<String> CHECK_MISSING =
+            vers -> vers == null || vers.isEmpty() || vers.equalsIgnoreCase(HttpHeader.HTTP);
+    private static final Predicate<String> CHECK_H3 =
+            vers ->
+                    vers.equalsIgnoreCase("h3")
+                            || vers.equalsIgnoreCase("http/3")
+                            || vers.equalsIgnoreCase("http/3.0");
+
+    protected static final String STATS_HAR_FILE_ERROR = "import.har.file.errors";
+
+    private static ExtensionHistory extHistory;
+
     private ProgressPaneListener progressListener;
     private boolean success;
-    private static ExtensionHistory extHistory;
 
     public HarImporter(File file) {
         this(file, null);
@@ -64,14 +82,118 @@ public class HarImporter {
 
     public HarImporter(File file, ProgressPaneListener listener) {
         this.progressListener = listener;
-        importHarFile(file);
+        HarLog log = null;
+        try {
+            log = new HarReader().readFromFile(file).getLog();
+            importHarLog(log);
+        } catch (HarReaderException e) {
+            LOGGER.warn("Failed to read HAR file: {}\n{}", file.getAbsolutePath(), e.getMessage());
+            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_ERROR);
+            success = false;
+            completed();
+            return;
+        }
         completed();
     }
 
-    static List<HttpMessage> getHttpMessages(HarLog log) throws HttpMalformedHeaderException {
+    public HarImporter(HarLog harLog, ProgressPaneListener listener) {
+        this.progressListener = listener;
+        importHarLog(harLog);
+        completed();
+    }
+
+    private void importHarLog(HarLog log) {
+        processMessages(log);
+        Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE);
+        success = true;
+    }
+
+    private void processMessages(HarLog log) {
+        if (log == null) {
+            return;
+        }
+
+        List<HttpMessage> messages = null;
+
+        try {
+            messages = getHttpMessages(log);
+        } catch (HttpMalformedHeaderException e) {
+            LOGGER.warn("Failed to process HAR entries. {}", e.getMessage());
+            LOGGER.debug(e, e);
+            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_ERROR);
+            completed();
+            return;
+        }
+        int count = 0;
+        for (HttpMessage msg : messages) {
+            if (msg == null) {
+                updateProgress(
+                        ++count, Constant.messages.getString("exim.progress.invalidmessage"));
+                continue;
+            }
+            persistMessage(msg);
+            updateProgress(++count, msg.getRequestHeader().getURI().toString());
+        }
+    }
+
+    private static HarLog preProcessHarLog(HarLog log) {
+        List<HarEntry> entries =
+                log.getEntries().stream()
+                        .filter(HarImporter::entryIsNotLocalPrivate)
+                        .filter(HarImporter::entryHasUsableHttpVersion)
+                        .collect(Collectors.toList());
+        log.setEntries(entries);
+        return log;
+    }
+
+    private static boolean entryHasUsableHttpVersion(HarEntry entry) {
+        // Handle missing httpVersion (set http/1.1)
+        preProcessHttpVersion(
+                entry,
+                CHECK_MISSING.test(entry.getRequest().getHttpVersion()),
+                HttpHeader.HTTP11,
+                false);
+        preProcessHttpVersion(
+                entry,
+                CHECK_MISSING.test(entry.getResponse().getHttpVersion()),
+                HttpHeader.HTTP11,
+                true);
+        // Handle http/3 (set http/2)
+        preProcessHttpVersion(
+                entry, CHECK_H3.test(entry.getRequest().getHttpVersion()), HttpHeader.HTTP2, false);
+        preProcessHttpVersion(
+                entry, CHECK_H3.test(entry.getResponse().getHttpVersion()), HttpHeader.HTTP2, true);
+
+        if (!containsIgnoreCase(ACCEPTED_VERSIONS, entry.getRequest().getHttpVersion())
+                || !containsIgnoreCase(ACCEPTED_VERSIONS, entry.getResponse().getHttpVersion())) {
+            LOGGER.warn(
+                    "Message with unsupported HTTP version (Req version: {}, Resp version: {}) will be dropped: {}",
+                    entry.getRequest().getHttpVersion(),
+                    entry.getResponse().getHttpVersion(),
+                    entry.getRequest().getUrl());
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean entryIsNotLocalPrivate(HarEntry entry) {
+        String url = entry.getRequest().getUrl();
+        if (StringUtils.startsWithIgnoreCase(url, "about")
+                || StringUtils.startsWithIgnoreCase(url, "chrome")
+                || StringUtils.startsWithIgnoreCase(url, "edge")) {
+            LOGGER.debug("Skipping local private entry: {}", url);
+            return false;
+        }
+        return true;
+    }
+
+    protected static List<HttpMessage> getHttpMessages(HarLog log)
+            throws HttpMalformedHeaderException {
+        preProcessHarLog(log);
+
         List<HttpMessage> result = new ArrayList<>();
-        HarEntries entries = log.getEntries();
-        for (HarEntry entry : entries.getEntries()) {
+        List<HarEntry> entries = log.getEntries();
+        for (HarEntry entry : entries) {
             result.add(getHttpMessage(entry));
         }
         return result;
@@ -79,68 +201,35 @@ public class HarImporter {
 
     private static HttpMessage getHttpMessage(HarEntry harEntry)
             throws HttpMalformedHeaderException {
-        HttpMessage result = HarUtils.createHttpMessage(harEntry.getRequest());
-        setHttpResponse(harEntry.getResponse(), result);
-        return result;
-    }
-
-    private static void setHttpResponse(HarResponse harResponse, HttpMessage message)
-            throws HttpMalformedHeaderException {
-        StringBuilder strBuilderResHeader = new StringBuilder();
-
-        // empty responses without status code are possible
-        if (harResponse.getStatus() == 0) {
-            return;
-        }
-
-        strBuilderResHeader
-                .append(harResponse.getHttpVersion())
-                .append(' ')
-                .append(harResponse.getStatus())
-                .append(' ')
-                .append(harResponse.getStatusText())
-                .append("\r\n");
-
-        for (HarHeader harHeader : harResponse.getHeaders().getHeaders()) {
-            strBuilderResHeader
-                    .append(harHeader.getName())
-                    .append(": ")
-                    .append(harHeader.getValue())
-                    .append("\r\n");
-        }
-        strBuilderResHeader.append("\r\n");
-
-        HarContent harContent = harResponse.getContent();
-        message.setResponseHeader(new HttpResponseHeader(strBuilderResHeader.toString()));
-        message.setResponseFromTargetHost(true);
-        if (harContent != null) {
-            message.setResponseBody(new HttpResponseBody(harContent.getText()));
-        }
-    }
-
-    private void importHarFile(File file) {
         try {
-            processMessages(file);
-            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE);
-            success = true;
-        } catch (IOException e) {
+            return HarUtils.createHttpMessage(harEntry);
+        } catch (HttpMalformedHeaderException headerEx) {
             LOGGER.warn(
-                    Constant.messages.getString(
-                            ExtensionExim.EXIM_OUTPUT_ERROR, file.getAbsolutePath()));
-            LOGGER.warn(e);
-            Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_ERROR);
-            success = false;
+                    "Failed to create HTTP Request/Response Header for HAR entry.\n{}",
+                    headerEx.getMessage());
+            return null;
         }
     }
 
-    private void processMessages(File file) throws IOException {
-        List<HttpMessage> messages =
-                HarImporter.getHttpMessages(new HarFileReader().readHarFile(file));
-        int count = 1;
-        for (HttpMessage msg : messages) {
-            persistMessage(msg);
-            updateProgress(count, msg.getRequestHeader().getURI().toString());
-            count++;
+    private static boolean containsIgnoreCase(List<String> checkList, String candidate) {
+        return checkList.stream().anyMatch(e -> e.equalsIgnoreCase(candidate));
+    }
+
+    private static void preProcessHttpVersion(
+            HarEntry entry, boolean condition, String vers, boolean response) {
+        if (condition) {
+            if (response) {
+                entry.getResponse().setHttpVersion(vers);
+            } else {
+                entry.getRequest().setHttpVersion(vers);
+            }
+            LOGGER.info(
+                    "Setting {} version to {} for {}",
+                    response ? "response" : "request",
+                    response
+                            ? entry.getResponse().getHttpVersion()
+                            : entry.getRequest().getHttpVersion(),
+                    entry.getRequest().getUrl());
         }
     }
 

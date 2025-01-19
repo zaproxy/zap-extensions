@@ -65,7 +65,7 @@ import org.zaproxy.zap.model.Context;
  *
  * @author 70pointer
  */
-public class SessionFixationScanRule extends AbstractAppPlugin {
+public class SessionFixationScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
@@ -1317,7 +1317,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
      * @param cookieName
      * @return the HtmlParameter representing the cookie, or null if no matching cookie was found
      */
-    private HtmlParameter getResponseCookie(HttpMessage message, String cookieName) {
+    private static HtmlParameter getResponseCookie(HttpMessage message, String cookieName) {
         TreeSet<HtmlParameter> cookieBackParams = message.getResponseHeader().getCookieParams();
         if (cookieBackParams.isEmpty()) {
             // no cookies

@@ -34,7 +34,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** X-ChromeLogger-Data header information leak passive scan rule */
-public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
+public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.xchromeloggerdata.";
     private static final int PLUGIN_ID = 10052;
@@ -82,19 +83,7 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    private String getOtherInfo(String headerValue) {
+    private static String getOtherInfo(String headerValue) {
         try {
             byte[] decodedByteArray = Base64.getDecoder().decode(headerValue);
             return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.msg")
@@ -116,10 +105,10 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
         return newAlert()
                 .setRisk(Alert.RISK_MEDIUM)
                 .setConfidence(Alert.CONFIDENCE_HIGH)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(getOtherInfo(xcldField))
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(xcldField)
                 .setCweId(200)
                 .setWascId(13);

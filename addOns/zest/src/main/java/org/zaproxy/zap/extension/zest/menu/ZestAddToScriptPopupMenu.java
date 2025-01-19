@@ -25,6 +25,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
@@ -50,6 +51,11 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
     @Override
     public String getParentMenuName() {
         return Constant.messages.getString("zest.addto.popup", true);
+    }
+
+    @Override
+    public int getParentWeight() {
+        return MenuWeights.MENU_SCRIPT_ZEST_ADD_WEIGHT;
     }
 
     @Override
@@ -79,7 +85,6 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
         if (ze != null) {
             if (ze instanceof ZestConditional) {
                 ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(selNode);
-                piicm.setMenuIndex(this.getMenuIndex());
                 mainPopupMenuItems.add(piicm);
             }
         }
@@ -88,7 +93,6 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
             if (st.hasCapability(ScriptType.CAPABILITY_APPEND)) {
                 for (ScriptNode node : extension.getZestScriptNodes(st.getName())) {
                     ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(node);
-                    piicm.setMenuIndex(this.getMenuIndex());
                     mainPopupMenuItems.add(piicm);
                 }
             }

@@ -6,6 +6,105 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [62] - 2025-01-10
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Updated help with specific Category identifiers for use with the Custom Payloads add-on for rules:
+    - Application Error Disclosure
+    - Information Disclosure - Suspicious Comments
+    - Username Hash Found
+
+## [61] - 2024-09-24
+### Changed
+- Maintenance changes.
+- Rename Mac OSX salted SHA-1 in the Hash Disclosure scan rule to "Salted SHA-1", reduce the associated alerts to Low risk and Low confidence, to align with other SHA related patterns it will only be evaluated a Low Threshold. (Note such matches may indicate leaks related but not limited to: MacOS X, Oracle, Tiger-192, Haval-192) (Issue 8624).
+- The Insecure JSF ViewState now includes example alert functionality for documentation generation purposes (Issue 6119).
+- The Absence of Anti-CSRF Tokens scan rule now only considers GET requests at Low Threshold (Issue 7741).
+
+## [60] - 2024-09-02
+### Changed
+- Clarified Missing Anti-clickjacking Header description.
+- Depend on Passive Scanner add-on to include it by default (Issue 7959).
+- Re-examine Cache-control Directives scan rule now ignores cache-control for POST method requests (Issue 8592).
+### Fixed
+- Polyfill scan rule running slowly.
+- Only scan text responses for:
+  - Hash Disclosure
+  - Private IP Disclosure
+  - Username Hash Found
+- Performance improvements for:
+  - Cross-Domain JavaScript Source File Inclusion.
+  - Cross-Domain Misconfiguration.
+
+## [59] - 2024-07-24
+### Added
+- Polyfill scan rule, promoted from beta.
+
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Alert text for various rules has been updated to more consistently use periods and spaces in a uniform manner.
+- Typo in Polyfill.io script detection alert description.
+
+## [58] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- The library (htmlunit-csp) used by the Content Security Policy scan rule was updated to v4.0.0, which includes support for the wasm-unsafe-eval source expression.
+
+### Fixed
+- A typo in the Other Info of one of the Retrieved from Cache Alerts.
+
+## [57] - 2024-03-28
+### Changed
+- Use of HTTP for example URLs in the descriptions or other info details for the following rules have been updated to HTTPS (Issue 8262):
+    - Cookie Poisoning
+    - Open Redirect
+    - X-Debug-Token Information Leak
+
+## [56] - 2024-02-16
+
+### Added
+- Website alert links for Passive Scan Rules (Issue 8189).
+
+### Changed
+- Maintenance changes.
+- The following rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Timestamp Disclosure - Unix
+    - Hash Disclosure
+    - Cross-Domain Misconfiguration
+    - Weak Authentication Method
+    - Reverse Tabnabbing
+    - CSRF Countermeasures
+- The following scan rules now have alert references (Issue 7100):
+    - Weak Authentication Method
+- The references for Alerts from the following rules were also updated (Issue 8262):
+    - Timestamp Disclosure - Unix 
+    - Hash Disclosure
+    - View State Scan Rule 
+    - Weak Authentication Method
+
+## [55] - 2024-01-26
+### Changed
+- The Salvation2 library used by the CSP scan rule has been replaced by htmlunit-csp.
+- The following rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - HTTPS to HTTP Insecure Transition in Form Post
+    - HTTP to HTTPS Insecure Transition in Form Post
+    - Secure Pages Include Mixed Content
+    - User Controllable JavaScript Event (XSS)
+    - Cookie without SameSite Attribute
+    - X-Debug-Token Information Leak
+    - Retrieved from Cache
+- The following scan rules now have alert references (Issue 7100):
+    - Cookie without SameSite Attribute 
+    - Retrieved from Cache (raw text was also trimmed from one Alert reference (Issue 8262))
+
+### Fixed
+- An issue where Other Info on alerts for the following rules may have been hard to read (missing spaces or new lines):
+    - HTTPS to HTTP Insecure Transition in Form Post
+    - HTTP to HTTPS Insecure Transition in Form Post
+    - User Controllable JavaScript Event (XSS)
+
 ## [54] - 2024-01-16
 ### Changed
 - The Big Redirect scan rule will now also alert on responses that have multiple HREFs (idea from xnl-h4ck3r).
@@ -479,6 +578,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[62]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v62
+[61]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v61
+[60]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v60
+[59]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v59
+[58]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v58
+[57]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v57
+[56]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v56
+[55]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v52

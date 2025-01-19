@@ -24,7 +24,7 @@ zapAddOn {
                     version.set(">= 15.13.0")
                 }
                 register("commonlib") {
-                    version.set(">= 1.17.0 & < 2.0.0")
+                    version.set(">= 1.29.0 & < 2.0.0")
                 }
             }
         }
@@ -36,7 +36,7 @@ dependencies {
     zapAddOn("network")
     zapAddOn("selenium")
 
-    testImplementation("io.github.bonigarcia:webdrivermanager:5.0.3")
+    testImplementation("io.github.bonigarcia:webdrivermanager:5.7.0")
     testImplementation(project(":testutils"))
 }
 

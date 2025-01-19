@@ -29,7 +29,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** A class to passively scan responses for indications that this is a modern web application. */
-public class ModernAppDetectionScanRule extends PluginPassiveScanner {
+public class ModernAppDetectionScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.modernapp.";
@@ -84,15 +85,18 @@ public class ModernAppDetectionScanRule extends PluginPassiveScanner {
 
         if (evidence != null && evidence.length() > 0) {
             // we found something
-            newAlert()
-                    .setRisk(Alert.RISK_INFO)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setDescription(getDescription())
-                    .setOtherInfo(otherInfo)
-                    .setSolution(getSolution())
-                    .setEvidence(evidence)
-                    .raise();
+            buildAlert(otherInfo, evidence).raise();
         }
+    }
+
+    private AlertBuilder buildAlert(String otherInfo, String evidence) {
+        return newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setOtherInfo(otherInfo)
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setEvidence(evidence);
     }
 
     @Override
@@ -100,11 +104,12 @@ public class ModernAppDetectionScanRule extends PluginPassiveScanner {
         return 10109;
     }
 
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                Constant.messages.getString(MESSAGE_PREFIX + "other.self"),
+                                "<a href=\"link\" target=\"_self\">Link</a>")
+                        .build());
     }
 }

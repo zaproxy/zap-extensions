@@ -22,12 +22,15 @@ package org.zaproxy.zap.extension.pscanrules;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
@@ -62,6 +65,18 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
     }
 
     @Test
+    void shouldNotRaiseAlertWhenImageResponse() throws Exception {
+        // Given
+        String hashVal = "DD6433D07B73FC14A2A4D03C5A8FAA90";
+        HttpMessage msg = createMsg(hashVal);
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "image/jpeg");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
     void shouldRaiseAlertWhenResponseContainsLowerMd5Hash() throws Exception {
         // Given - Lower MD5
         String hashVal = "cc03e747a6afbbcbf8be7668acfebee5";
@@ -89,7 +104,7 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
     }
 
     @Test
-    void shouldRaiseAlertWhenResponseContainsOsxSha1AtLowThreshold() throws Exception {
+    void shouldRaiseAlertWhenJavascriptResponseContainsHashAtLowThreshold() throws Exception {
         // Given
         String hashVal = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFEE37";
         HttpMessage msg = createMsg(hashVal);
@@ -98,20 +113,21 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), is(1));
-        assertThat(alertsRaised.get(0).getName(), is("Hash Disclosure - Mac OSX salted SHA-1"));
+        assertThat(alertsRaised.get(0).getName(), startsWith("Hash Disclosure - "));
         assertThat(alertsRaised.get(0).getEvidence(), is(hashVal));
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_LOW)));
     }
 
     @ParameterizedTest
     @EnumSource(
             value = Plugin.AlertThreshold.class,
             names = {"HIGH", "MEDIUM"})
-    void shouldNotRaiseAlertWhenResponseContainsOsxSha1InJsAtNonLowThreshold(
+    void shouldNotRaiseAlertWhenJavascriptResponseContainsHashAtNonLowThreshold(
             AlertThreshold threshold) throws Exception {
         // Given
         String hashVal = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFEE37";
         HttpMessage msg = createMsg(hashVal);
-        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/javascript");
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/javascript");
         rule.setAlertThreshold(threshold);
         // When
         scanHttpResponseReceive(msg);
@@ -161,10 +177,25 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
                 is(equalTo(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getValue())));
     }
 
-    private HttpMessage createMsg(String hashVal) throws HttpMalformedHeaderException {
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
+    private static HttpMessage createMsg(String hashVal) throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/html");
         msg.setResponseBody("{\"hash\": \"" + hashVal + "\"}");
         return msg;
     }

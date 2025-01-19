@@ -6,6 +6,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [21] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+### Fixed
+- Handle exceptions while obtaining the XPath of an element.
+
+## [20] - 2024-12-23
+### Changed
+- Address deprecation warnings with newer Selenium version (4.27).
+- Include the whole HTTP message in the raised alerts.
+- Include the steps to reproduce the DOM XSS in the other info of the alert.
+- Do not request URLs explicitly excluded from the context or global excludes
+- Depend on newer version of Common Library add-on.
+
+### Fixed
+- Address false negatives through query parameters.
+
+### Added
+- Standardized Scan Policy related alert tags on the rule.
+
+## [19] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Maintenance changes.
+
 ## [18] - 2023-10-12
 ### Changed
 - Update minimum ZAP version to 2.14.0.
@@ -116,6 +142,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## 1 - 2015-08-24
 
 
+[21]: https://github.com/zaproxy/zap-extensions/releases/domxss-v21
+[20]: https://github.com/zaproxy/zap-extensions/releases/domxss-v20
+[19]: https://github.com/zaproxy/zap-extensions/releases/domxss-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/domxss-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/domxss-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/domxss-v16

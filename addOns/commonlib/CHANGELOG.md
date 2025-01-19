@@ -5,7 +5,62 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Replace the default Output panel with a tabbed version to allow multiple sources of output to be displayed in separate tabs.
 
+## [1.30.0] - 2025-01-09
+### Added
+- Add solutions to Insufficient Process Validation vulnerability (Issue 8056).
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Improve solution and add more references to 'Information Leakage' vulnerability (Issue 8056).
+
+## [1.29.0] - 2024-12-23
+### Changed
+- Dependency updates.
+- Let the Value Generator add-on provide the custom values through this add-on (Issue 8016).
+
+### Added
+- Policy tags for use with scan rules and the new Scan Policies add-on.
+
+### Fixed
+- Be more lenient with the input used for providing values, to prevent exceptions.
+
+## [1.28.0] - 2024-09-24
+### Changed
+- Maintenance changes.
+
+## [1.27.0] - 2024-09-02
+### Fixed
+- Address false positives/negatives when handling cookies without name value pair separator (Issue 8613).
+
+## [1.26.0] - 2024-05-10
+### Added
+- Include the Jackson Datatype: JSR310 library for other add-ons to use.
+
+## [1.25.0] - 2024-05-07
+### Added
+- Support for code and help links for script scan rules.
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Maintenance changes.
+
+## [1.24.0] - 2024-04-11
+### Added
+- Helper classes for scripts used as scan-rules (Issue 7105).
+
+## [1.23.0] - 2024-03-25
+### Added
+- Support for menu weights (Issue 8369)
+- Add solution to HTTP Response Smuggling alert (Issue 8056)
+
+### Changed
+- Maintenance changes.
+
+## [1.22.0] - 2024-01-26
+### Added
+- Add alert tag for scan rules that use time based tests.
 
 ## [1.21.0] - 2024-01-16
 ### Added
@@ -148,6 +203,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.30.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.30.0
+[1.29.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.29.0
+[1.28.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.28.0
+[1.27.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.27.0
+[1.26.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.26.0
+[1.25.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.25.0
+[1.24.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.24.0
+[1.23.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.23.0
+[1.22.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.22.0
 [1.21.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.21.0
 [1.20.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.20.0
 [1.19.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.19.0

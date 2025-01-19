@@ -31,7 +31,7 @@ zapAddOn {
 
 crowdin {
     configuration {
-        file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
+        tokens.put("%messagesPath%", "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/")
         tokens.put("%helpPath%", "")
     }
 }
@@ -48,10 +48,13 @@ spotless {
 }
 
 dependencies {
-    datanucleus("org.datanucleus:datanucleus-accessplatform-jdo-rdbms:6.0.4")
-    sqlite("org.xerial:sqlite-jdbc:3.42.0.0")
+    compileOnly(libs.log4j.core)
 
-    implementation("org.flywaydb:flyway-core:9.20.0")
+    datanucleus("org.datanucleus:datanucleus-accessplatform-jdo-rdbms:6.0.7")
+    sqlite("org.xerial:sqlite-jdbc:3.45.3.0")
 
+    implementation("org.flywaydb:flyway-core:9.22.3")
+
+    testImplementation(libs.log4j.core)
     testImplementation(project(":testutils"))
 }

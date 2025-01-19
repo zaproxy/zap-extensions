@@ -6,6 +6,94 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [70] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Updated help with specific Category identifiers for use with the Custom Payloads add-on for rules:
+    - Hidden File Finder
+    - User Agent Fuzzer
+- Now depends on minimum Common Library version 1.29.0.
+- Add the `OUT_OF_BAND` alert tag to the following scan rules:
+  - Server Side Template Injection (Blind)
+  - XML External Entity Attack
+- Cloud Metadata Attack scan rule is improved to support GCP, Azure, and OCI.
+- Remove double dot in skipped message of a scan rule that uses the Active Scan OAST service.
+
+### Fixed
+- A situation where the Server-Side Template Injection (SSTI) scan rule might result in false positives related to the Go payloads (Issue 8622).
+- False Positives in Cloud Metadata Attack scan rule (Issue 8514).
+
+### Added
+- Standardized Scan Policy related alert tags on the rule.
+
+## [69] - 2024-10-23
+### Changed
+- The XML External Entity Attack scan rule now include example alert functionality for documentation generation purposes (Issue 6119).
+
+### Fixed
+- Added more checks for valid .htaccess files to reduce false positives (Issue 7632).
+
+## [68] - 2024-09-24
+### Changed
+- Maintenance changes.
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Spring Actuator
+    - XSLT Injection
+    - XPath Injection
+
+### Fixed
+- Address false positives with Source Code Disclosure - CVE-2012-1823 scan rule, by not scanning binary responses and responses that already contain PHP source (Issue 8638).
+- Cross Site Scripting Rule false positives at medium threshold by matching the expected context (Issue 8640).
+
+## [67] - 2024-07-22
+
+### Changed
+- The following rules now includes example alert functionality for documentation generation purposes (Issue 6119), as well as now including Alert Tags (OWASP Top 10, WSTG, and updated CWE):
+    - Server Side Template Injection
+    - Server Side Template Injection (Blind)
+
+### Fixed
+- False positives in the Path Traversal rule.
+- Alert text for various rules has been updated to more consistently use periods and spaces in a uniform manner.
+- False Positives in the Remote File Inclusion rule (Issue 8561).
+
+## [66] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [65] - 2024-03-28
+### Changed
+- Change link to use HTTPS in other info of SQL Injection - SQLite (Issue 8262).
+
+## [64] - 2024-03-25
+### Changed
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Source Code Disclosure - CVE-2012-1823
+    - Remote Code Execution - CVE-2012-1823
+    - Server Side Include
+    - Cross Site Scripting (Reflected)
+- The Alerts from the Remote Code Execution - CVE-2012-1823 scan rule no longer have evidence duplicated in the Other Info field.
+- The GET for POST scan rule now uses a different comparison mechanism which should be more tolerant of unrelated response differences.
+
+## [63] - 2024-02-12
+### Changed
+- Maintenance changes.
+
+### Added
+- The SQL Injection scan rule now includes a MySQL/MariaDB generic error message.
+
+## [62] - 2024-01-26
+### Changed
+- The Source Code Disclosure - /WEB-INF Folder rule now includes example alert functionality for documentation generation purposes (Issue 6119).
+
+## [61] - 2024-01-24
+### Changed 
+- Update reference for Server Side Include (Issue 8262) 
+### Fixed
+- False positives on redirects for:
+  - Cloud Metadata (Issue 7710)
+  - Hidden Files
+
 ## [60] - 2024-01-16
 ### Changed
 - Leave data empty instead of adding "N/A" for the scan rules:
@@ -487,6 +575,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[70]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v70
+[69]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v69
+[68]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v68
+[67]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v67
+[66]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v66
+[65]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v65
+[64]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v64
+[63]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v63
+[62]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v62
+[61]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v61
 [60]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v60
 [59]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v59
 [58]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v58

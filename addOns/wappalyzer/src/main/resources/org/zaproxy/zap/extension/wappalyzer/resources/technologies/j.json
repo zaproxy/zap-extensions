@@ -5,8 +5,10 @@
     ],
     "cpe": "cpe:2.3:a:j2store:j2store:*:*:*:*:*:joomla\\!:*:*",
     "description": "J2Store is a Joomla shopping cart and ecommerce extension.",
-    "icon": "j2store.png",
-    "implies": "Joomla",
+    "icon": "j2store.svg",
+    "implies": [
+      "Joomla"
+    ],
     "js": {
       "j2storeURL": ""
     },
@@ -22,8 +24,10 @@
       71
     ],
     "description": "JANet is an affiliate marketing network.",
-    "dom": "img[src*='.j-a-net.jp'],img[data-src*='.j-a-net.jp']",
-    "icon": "JANet.png",
+    "dom": [
+      "img[src*='.j-a-net.jp'],img[data-src*='.j-a-net.jp']"
+    ],
+    "icon": "JANet.svg",
     "website": "https://j-a-net.jp"
   },
   "JAlbum": {
@@ -31,8 +35,10 @@
       7
     ],
     "description": "jAlbum is across-platform photo website software for creating and uploading galleries from images and videos.",
-    "icon": "JAlbum.png",
-    "implies": "Java",
+    "icon": "JAlbum.svg",
+    "implies": [
+      "Java"
+    ],
     "meta": {
       "generator": "JAlbum( [\\d.]+)?\\;version:\\1"
     },
@@ -54,12 +60,16 @@
       22
     ],
     "cpe": "cpe:2.3:a:redhat:jbossweb:*:*:*:*:*:*:*:*",
-    "excludes": "Apache Tomcat",
+    "excludes": [
+      "Apache Tomcat"
+    ],
     "headers": {
       "X-Powered-By": "JBossWeb(?:-([\\d.]+))?\\;version:\\1"
     },
     "icon": "JBoss Web.png",
-    "implies": "JBoss Application Server",
+    "implies": [
+      "JBoss Application Server"
+    ],
     "website": "https://jboss.org/jbossweb"
   },
   "JET Enterprise": {
@@ -76,12 +86,27 @@
     "cats": [
       25
     ],
-    "icon": "JS Charts.png",
+    "description": "JS Charts is a JavaScript-based tool for creating customizable charts, such as bar, pie, and line charts, with minimal coding required for integration into web projects.",
+    "icon": "JS Charts.svg",
     "js": {
       "JSChart": ""
     },
-    "scriptSrc": "jscharts.{0,32}\\.js",
+    "scriptSrc": [
+      "jscharts.{0,32}\\.js"
+    ],
     "website": "https://www.jscharts.com"
+  },
+  "JS.org": {
+    "cats": [
+      109
+    ],
+    "description": "JS.org is a provider of free subdomains for JavaScript-based projects.",
+    "dom": [
+      "link[href*='.js.org/'][rel='canonical']"
+    ],
+    "icon": "JSOrg.svg",
+    "oss": true,
+    "website": "https://js.org"
   },
   "JSEcoin": {
     "cats": [
@@ -92,7 +117,9 @@
     "js": {
       "jseMine": ""
     },
-    "scriptSrc": "^(?:https):?//load\\.jsecoin\\.com/load/",
+    "scriptSrc": [
+      "^(?:https):?//load\\.jsecoin\\.com/load/"
+    ],
     "website": "https://jsecoin.com/"
   },
   "JSS": {
@@ -101,10 +128,27 @@
       47
     ],
     "description": "JSS is an authoring tool for CSS which allows you to use JavaScript to describe styles in a declarative, conflict-free and reusable way.",
-    "dom": "style[data-jss]",
-    "icon": "JSS.png",
+    "dom": [
+      "style[data-jss]"
+    ],
+    "icon": "JSS.svg",
     "oss": true,
     "website": "https://cssinjs.org/"
+  },
+  "JSZip": {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:2.3:a:jszip_project:jszip:*:*:*:*:*:*:*:*",
+    "description": "JSZip is a JavaScript library that enables the creation, reading, and manipulation of zip files in a browser environment.",
+    "js": {
+      "JSZip.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "scriptSrc": [
+      "/jszip\\.min\\.js"
+    ],
+    "website": "https://stuk.github.io/jszip/"
   },
   "JShop": {
     "cats": [
@@ -126,7 +170,9 @@
       "JTLSHOP": ""
     },
     "description": "JTL Shop is an ecommerce product created by JTL Software company.",
-    "html": "(?:<input[^>]+name=\"JTLSHOP|<a href=\"jtl\\.php)",
+    "html": [
+      "(?:<input[^>]+name=\"JTLSHOP|<a href=\"jtl\\.php)"
+    ],
     "icon": "JTL Shop.svg",
     "website": "https://www.jtl-software.de/online-shopsystem"
   },
@@ -140,7 +186,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "checkout-button-.+/just-pay-button\\.js",
+    "scriptSrc": [
+      "checkout-button-.+/just-pay-button\\.js"
+    ],
     "website": "https://www.getjusto.com"
   },
   "JW Player": {
@@ -148,7 +196,9 @@
       14
     ],
     "description": "JW Player is a online video player with video engagement analytics, custom video player skins, and live video streaming capability.",
-    "dom": "div[data-video-provider*=jwplayer]",
+    "dom": [
+      "div[data-video-provider*=jwplayer]"
+    ],
     "icon": "JW Player.svg",
     "js": {
       "jwDefaults": "",
@@ -168,14 +218,47 @@
       "\\.jwpcdn\\.com"
     ],
     "website": "https://www.jwplayer.com",
-    "xhr": "\\.jwpsrv\\.com"
+    "xhr": [
+      "\\.jwpsrv\\.com"
+    ]
+  },
+  "Jade": {
+    "cats": [
+      19
+    ],
+    "description": "Jade is a templating engine primarily used for server-side templating in NodeJS.",
+    "icon": "Jade.svg",
+    "js": {
+      "JADE.components": ""
+    },
+    "website": "https://jade-lang.com"
+  },
+  "Jadu": {
+    "cats": [
+      1
+    ],
+    "description": "The Jadu Digital Platform provides the foundation of accessible, responsive and award-winning Websites, Forms, CRM and Portal solutions.",
+    "dom": [
+      "a[href*='www.jadu.net']"
+    ],
+    "headers": {
+      "Node": "jadu-web-1"
+    },
+    "icon": "jadu.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.jadu.net/"
   },
   "Jahia DX": {
     "cats": [
       1,
       47
     ],
-    "html": "<script id=\"staticAssetAggregatedJavascrip",
+    "html": [
+      "<script id=\"staticAssetAggregatedJavascrip"
+    ],
     "icon": "JahiaDX.svg",
     "website": "https://www.jahia.com/dx"
   },
@@ -183,11 +266,34 @@
     "cats": [
       1
     ],
-    "icon": "Jalios.png",
+    "description": "Jalios provides digital workplace solutions, including collaborative intranets, enterprise social networks, and document management systems, to enhance organizational communication and productivity.",
+    "icon": "Jalios.svg",
     "meta": {
       "generator": "Jalios"
     },
+    "pricing": [
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
     "website": "https://www.jalios.com"
+  },
+  "Jameda": {
+    "cats": [
+      72
+    ],
+    "description": "Jameda is an online appointment scheduling system for doctors, enabling patients to book medical consultations.",
+    "icon": "Jameda.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn1\\.jameda-elements\\.de/"
+    ],
+    "website": "https://www.jameda.de"
   },
   "Java": {
     "cats": [
@@ -209,7 +315,9 @@
       "X-Powered-By": "Servlet(?:\\/([\\d.]+))?\\;version:\\1"
     },
     "icon": "Java.svg",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "website": "https://www.oracle.com/technetwork/java/index-jsp-135475.html"
   },
   "JavaScript Infovis Toolkit": {
@@ -221,19 +329,25 @@
       "$jit": "",
       "$jit.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "jit(?:-yc)?\\.js",
+    "scriptSrc": [
+      "jit(?:-yc)?\\.js"
+    ],
     "website": "https://philogb.github.io/jit/"
   },
   "JavaServer Faces": {
     "cats": [
       18
     ],
-    "dom": "input[type='hidden'][name='javax.faces.ViewState']",
+    "dom": [
+      "input[type='hidden'][name='javax.faces.ViewState']"
+    ],
     "headers": {
       "X-Powered-By": "JSF(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "JavaServer Faces.png",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "website": "https://javaserverfaces.java.net"
   },
   "JavaServer Pages": {
@@ -244,7 +358,9 @@
       "X-Powered-By": "JSP(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "Java.svg",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "website": "https://www.oracle.com/technetwork/java/javaee/jsp/index.html"
   },
   "Javadoc": {
@@ -252,7 +368,9 @@
       4
     ],
     "description": "Javadoc is a tool used for generating Java code documentation in HTML format from Java source code.",
-    "html": "<!-- Generated by javadoc -->",
+    "html": [
+      "<!-- Generated by javadoc -->"
+    ],
     "icon": "Java.svg",
     "website": "https://docs.oracle.com/javase/8/docs/technotes/tools/windows/javadoc.html"
   },
@@ -268,7 +386,9 @@
       "<!-- Begin Jekyll SEO tag"
     ],
     "icon": "Jekyll.svg",
-    "implies": "Ruby",
+    "implies": [
+      "Ruby"
+    ],
     "js": {
       "SimpleJekyllSearch": ""
     },
@@ -286,29 +406,78 @@
     "headers": {
       "X-Jenkins": "([\\d.]+)\\;version:\\1"
     },
-    "html": "<span class=\"jenkins_ver\"><a href=\"https://jenkins\\.io/\">Jenkins ver\\. ([\\d.]+)\\;version:\\1",
+    "html": [
+      "<span class=\"jenkins_ver\"><a href=\"https://jenkins\\.io/\">Jenkins ver\\. ([\\d.]+)\\;version:\\1"
+    ],
     "icon": "Jenkins.png",
-    "implies": "Java",
+    "implies": [
+      "Java"
+    ],
     "js": {
       "jenkinsCIGlobal": "",
       "jenkinsRules": ""
     },
     "website": "https://jenkins.io/"
   },
+  "Jenny": {
+    "cats": [
+      52
+    ],
+    "description": "Jenny is a customer service chatbot platform.",
+    "icon": "Jenny.svg",
+    "js": {
+      "webpackJsonpget-jenny": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.getjenny\\.com/"
+    ],
+    "website": "https://www.getjenny.com"
+  },
+  "JetEngine": {
+    "cats": [
+      87
+    ],
+    "description": "JetEngine is a content plugin for WordPress that allows users to create custom post types, taxonomies, and meta boxes, offering flexibility in building complex websites without requiring coding skills.",
+    "icon": "JetEngine.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/wp-content/plugins/jet-engine/"
+    ],
+    "website": "https://crocoblock.com/plugins/jetengine"
+  },
   "Jetpack": {
     "cats": [
       87
     ],
     "description": "Jetpack is a popular WordPress plugin created by Automattic, the people behind WordPress.com.",
-    "dom": "link[href*='/wp-content/plugins/jetpack/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/jetpack/']"
+    ],
     "icon": "Jetpack.svg",
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/jetpack/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/plugins/jetpack/"
+    ],
     "website": "https://jetpack.com"
   },
   "Jetpack Boost": {
@@ -316,17 +485,25 @@
       87
     ],
     "description": "Jetpack Boost – Website Speed, Performance and Critical CSS.",
-    "dom": "style[id='jetpack-boost-critical-css']",
+    "dom": [
+      "style[id='jetpack-boost-critical-css']"
+    ],
     "icon": "Jetpack.svg",
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/jetpack-boost/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/plugins/jetpack-boost/"
+    ],
     "website": "https://jetpack.com"
   },
   "Jetshop": {
     "cats": [
       6
     ],
-    "html": "<(?:div|aside) id=\"jetshop-branding\">",
+    "html": [
+      "<(?:div|aside) id=\"jetshop-branding\">"
+    ],
     "icon": "Jetshop.png",
     "js": {
       "JetshopData": ""
@@ -337,11 +514,15 @@
     "cats": [
       22
     ],
+    "description": "Jetty is an open-source web server and servlet container known for its scalability and efficiency, supporting protocols like HTTP and WebSocket for various applications from development tools to cloud services.",
     "headers": {
       "Server": "Jetty(?:\\(([\\d\\.]*\\d+))?\\;version:\\1"
     },
-    "icon": "Jetty.png",
-    "implies": "Java",
+    "icon": "Jetty.svg",
+    "implies": [
+      "Java"
+    ],
+    "oss": true,
     "website": "https://www.eclipse.org/jetty"
   },
   "Jibres": {
@@ -363,7 +544,9 @@
     "meta": {
       "generator": "Jibres"
     },
-    "scriptSrc": "/jibres\\.js",
+    "scriptSrc": [
+      "/jibres\\.js"
+    ],
     "website": "https://jibres.com"
   },
   "Jilt App": {
@@ -376,7 +559,9 @@
     "js": {
       "jiltStorefrontParams.platform": "^shopify$"
     },
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "website": "https://community.shopify.com/c/shopify-apps/jilt-is-over-what-app-to-use-for-abandoned-carts-now/td-p/1575095"
   },
   "Jilt plugin": {
@@ -386,8 +571,12 @@
     ],
     "description": "Jilt plugin helps ecommerce store owners track and recover abandoned orders. Works seamlessly with Shopify and WooCommerce.",
     "icon": "Jilt.svg",
-    "requires": "WordPress",
-    "scriptSrc": "\\.jilt\\.com/.+/jilt\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "\\.jilt\\.com/.+/jilt\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/jilt-for-woocommerce"
   },
   "Jimdo": {
@@ -409,7 +598,9 @@
       "recurring"
     ],
     "saas": true,
-    "url": "\\.jimdo(?:site)?\\.com/",
+    "url": [
+      "\\.jimdo(?:site)?\\.com/"
+    ],
     "website": "https://www.jimdo.com"
   },
   "Jirafe": {
@@ -421,16 +612,22 @@
     "js": {
       "jirafe": ""
     },
-    "scriptSrc": "/jirafe\\.js",
+    "scriptSrc": [
+      "/jirafe\\.js"
+    ],
     "website": "https://docs.jirafe.com"
   },
   "Jitsi": {
     "cats": [
       52
     ],
+    "cpe": "cpe:2.3:a:jitsi:jitsi:*:*:*:*:*:*:*:*",
     "description": "Jitsi is a free and open-source multiplatform voice (VoIP), videoconferencing and instant messaging applications for the web platform.",
-    "icon": "Jitsi.png",
-    "scriptSrc": "lib-jitsi-meet.*\\.js",
+    "icon": "Jitsi.svg",
+    "oss": true,
+    "scriptSrc": [
+      "lib-jitsi-meet.*\\.js"
+    ],
     "website": "https://jitsi.org"
   },
   "Jive": {
@@ -451,8 +648,9 @@
     "cats": [
       52
     ],
+    "cpe": "cpe:2.3:a:jivochat:jivochat:*:*:*:*:*:*:*:*",
     "description": "JivoChat is a live chat solution for websites offering customizable web and mobile chat widgets.",
-    "icon": "JivoChat.png",
+    "icon": "JivoChat.svg",
     "js": {
       "jivo_api": "",
       "jivo_version": "([\\d.]+)\\;version:\\1"
@@ -463,7 +661,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.jivosite\\.com",
+    "scriptSrc": [
+      "\\.jivosite\\.com"
+    ],
     "website": "https://www.jivosite.com"
   },
   "Jivox": {
@@ -471,13 +671,17 @@
       76
     ],
     "description": "Jivox is a cloud-based, data-driven platform for delivering personalised digital advertising and marketing experiences at scale.",
-    "dom": "link[href*='.jivox.com']",
+    "dom": [
+      "link[href*='.jivox.com']"
+    ],
     "icon": "Jivox.svg",
     "pricing": [
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.jivox\\.com/",
+    "scriptSrc": [
+      "\\.jivox\\.com/"
+    ],
     "website": "https://jivox.com"
   },
   "JobAdder": {
@@ -485,14 +689,18 @@
       101
     ],
     "description": "JobAdder is a cloud-based recruitment management platform for staffing agencies and in-house corporate hiring teams.",
-    "dom": "a[href*='clientapps.jobadder.com/'], link[href*='jobadder.com']",
-    "icon": "JobAdder.png",
+    "dom": [
+      "a[href*='clientapps.jobadder.com/'], link[href*='jobadder.com']"
+    ],
+    "icon": "JobAdder.svg",
     "pricing": [
       "payg",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.jobadder\\.com/",
+    "scriptSrc": [
+      "\\.jobadder\\.com/"
+    ],
     "website": "https://jobadder.com"
   },
   "JobberBase": {
@@ -501,8 +709,10 @@
       101
     ],
     "description": "Jobberbase is an open-source job board platform that enables the creation of job sites.",
-    "icon": "JobberBase.png",
-    "implies": "PHP",
+    "icon": "JobberBase.svg",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "Jobber": ""
     },
@@ -517,8 +727,10 @@
       101
     ],
     "description": "Jobvite is an applicant tracking software and recruiting platform.",
-    "dom": "a[href*='.jobvite.com/']",
-    "icon": "Jobvite.png",
+    "dom": [
+      "a[href*='.jobvite.com/']"
+    ],
+    "icon": "Jobvite.svg",
     "js": {
       "Jobvite": ""
     },
@@ -530,13 +742,32 @@
     "saas": true,
     "website": "https://www.jobvite.com"
   },
+  "Jonas Club Software": {
+    "cats": [
+      53
+    ],
+    "description": "Jonas Club Software is a provider of club management solutions, facilitating relationship building with members, revenue growth, and cost reduction.",
+    "icon": "Jonas.svg",
+    "js": {
+      "jonasPrivacyPolicy": "",
+      "jonasPrivacyPolicyClassName": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://jonasclub.com"
+  },
   "JoomShopping": {
     "cats": [
       6
     ],
     "description": "JoomShopping is an open-source ecommerce plugin for Joomla.",
     "icon": "JoomShopping.png",
-    "implies": "Joomla",
+    "implies": [
+      "Joomla"
+    ],
     "js": {
       "joomshoppingVideoHtml5": ""
     },
@@ -544,21 +775,27 @@
     "pricing": [
       "onetime"
     ],
-    "scriptSrc": "/components/com_jshopping/",
+    "scriptSrc": [
+      "/components/com_jshopping/"
+    ],
     "website": "https://www.webdesigner-profi.de/joomla-webdesign/joomla-shop"
   },
   "Joomla": {
     "cats": [
       1
     ],
-    "cpe": "cpe:2.3:a:joomla:joomla:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:joomla:joomla\\!:*:*:*:*:*:*:*:*",
     "description": "Joomla is a free and open-source content management system for publishing web content.",
     "headers": {
       "X-Content-Encoded-By": "Joomla! ([\\d.]+)\\;version:\\1"
     },
-    "html": "(?:<div[^>]+id=\"wrapper_r\"|<(?:link|script)[^>]+(?:feed|components)/com_|<table[^>]+class=\"pill)\\;confidence:50",
+    "html": [
+      "(?:<div[^>]+id=\"wrapper_r\"|<(?:link|script)[^>]+(?:feed|components)/com_|<table[^>]+class=\"pill)\\;confidence:50"
+    ],
     "icon": "Joomla.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "Joomla": "",
       "jcomments": ""
@@ -567,8 +804,33 @@
       "generator": "Joomla!(?: ([\\d.]+))?\\;version:\\1"
     },
     "oss": true,
-    "url": "option=com_",
+    "url": [
+      "option=com_"
+    ],
     "website": "https://www.joomla.org/"
+  },
+  "Jotform": {
+    "cats": [
+      110
+    ],
+    "description": "Jotform is an online form builder that enables the creation of robust forms.",
+    "icon": "Jotform.svg",
+    "js": {
+      "JOTFORM_ENV": "",
+      "JotForm.FBCollectInformation": "",
+      "JotFormActions": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.jotform\\.com/"
+    ],
+    "website": "https://www.jotform.com"
   },
   "JouwWeb": {
     "cats": [
@@ -586,7 +848,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "(?:cdn)?\\.(?:jwwb|jouwweb)\\.nl/",
+    "scriptSrc": [
+      "(?:cdn)?\\.(?:jwwb|jouwweb)\\.nl/"
+    ],
     "website": "https://www.jouwweb.nl"
   },
   "JsObservable": {
@@ -604,9 +868,13 @@
     ],
     "description": "JsRender is the template library. The library is developed and maintained by Microsoft employee Boris Moore and is used in projects such as Outlook.com and Windows Azure.",
     "icon": "JsRender.svg",
-    "implies": "JsViews",
+    "implies": [
+      "JsViews"
+    ],
     "oss": true,
-    "scriptSrc": "([\\d\\.]+)?/jsrender(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "([\\d\\.]+)?/jsrender(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://www.jsviews.com/#jsrender"
   },
   "JsViews": {
@@ -620,7 +888,9 @@
       "JsRender"
     ],
     "oss": true,
-    "scriptSrc": "([\\d\\.]+)?/jsviews(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "([\\d\\.]+)?/jsviews(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://www.jsviews.com/#jsviews"
   },
   "Judge.me": {
@@ -638,7 +908,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.judge\\.me",
+    "scriptSrc": [
+      "cdn\\.judge\\.me"
+    ],
     "website": "https://judge.me"
   },
   "JuicyAds": {
@@ -646,7 +918,7 @@
       36
     ],
     "description": "JuicyAds is a legitimate advertising network that specializes in adult content.",
-    "icon": "JuicyAds.png",
+    "icon": "JuicyAds.svg",
     "js": {
       "adsbyjuicy": ""
     },
@@ -664,9 +936,13 @@
       92
     ],
     "description": "Jumbo is a page speed optimizer app for Shopify based sites.",
-    "icon": "Jumbo.png",
-    "implies": "Shopify",
-    "scriptSrc": "mt\\.tryjumbo\\.com",
+    "icon": "Jumbo.svg",
+    "implies": [
+      "Shopify"
+    ],
+    "scriptSrc": [
+      "mt\\.tryjumbo\\.com"
+    ],
     "website": "https://www.tryjumbo.com/"
   },
   "Jumio": {
@@ -674,7 +950,9 @@
       16
     ],
     "description": "Jumio is an online mobile payments and identity verification company that provides card and ID scanning and validation products for mobile and web transactions.",
-    "dom": "iframe[src*='.netverify.com/']",
+    "dom": [
+      "iframe[src*='.netverify.com/']"
+    ],
     "icon": "Jumio.svg",
     "pricing": [
       "payg",
@@ -724,7 +1002,9 @@
       "static\\.june\\.so/analytics\\.js/"
     ],
     "website": "https://june.so",
-    "xhr": "a\\.june\\.so"
+    "xhr": [
+      "a\\.june\\.so"
+    ]
   },
   "Junip": {
     "cats": [
@@ -741,9 +1021,13 @@
       "recurring",
       "payg"
     ],
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "saas": true,
-    "scriptSrc": "\\.juniphq\\.com/",
+    "scriptSrc": [
+      "\\.juniphq\\.com/"
+    ],
     "website": "https://junip.co"
   },
   "Juo": {
@@ -756,7 +1040,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.juo\\.io/",
+    "scriptSrc": [
+      "cdn\\.juo\\.io/"
+    ],
     "website": "https://get.juo.io"
   },
   "Juspay": {
@@ -770,6 +1056,21 @@
     },
     "website": "https://juspay.in"
   },
+  "Justia": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "SESSJUSTIA": ""
+    },
+    "description": "Justia is a lawyer-based content management system (CMS).",
+    "icon": "Justia.svg",
+    "js": {
+      "jmetadata": ""
+    },
+    "saas": true,
+    "website": "https://www.justia.com"
+  },
   "Justo": {
     "cats": [
       6
@@ -781,7 +1082,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.getjusto\\.com/",
+    "scriptSrc": [
+      "\\.getjusto\\.com/"
+    ],
     "website": "https://www.getjusto.com"
   },
   "Justuno": {
@@ -811,15 +1114,21 @@
     ],
     "description": "Justuno is a premium conversion marketing and analytics platform that provides retailers with powerful tools to increase conversions.",
     "icon": "Justuno.svg",
-    "implies": "Justuno",
+    "implies": [
+      "Justuno"
+    ],
     "pricing": [
       "freemium",
       "recurring",
       "low"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
-    "scriptSrc": "//scripttags\\.justuno\\.com/shopify_justuno",
+    "scriptSrc": [
+      "//scripttags\\.justuno\\.com/shopify_justuno"
+    ],
     "website": "https://apps.shopify.com/justuno-pop-ups-email-conversion"
   },
   "jComponent": {
@@ -827,11 +1136,15 @@
       12,
       59
     ],
-    "icon": "jComponent.png",
-    "implies": "jQuery",
+    "description": "jComponent is a platform offering open-source web components and icons for easy integration into web projects.",
+    "icon": "jComponent.svg",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "MAIN.version": "(.*)\\;version:\\1"
     },
+    "oss": true,
     "website": "https://componentator.com"
   },
   "jPlayer": {
@@ -840,14 +1153,20 @@
       59
     ],
     "description": "jPlayer is a cross-browser JavaScript library developed as a jQuery plugin which facilitates the embedding of web based media, notably HTML5 audio and video in addition to Adobe Flash based media.",
-    "icon": "jPlayer.png",
-    "implies": "jQuery",
+    "icon": "jPlayer.svg",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "jPlayerPlaylist": ""
     },
     "oss": true,
-    "scriptSrc": "/jquery\\.jplayer\\.min\\.js",
-    "scripts": "jquery\\.jplayer\\.min\\.js",
+    "scriptSrc": [
+      "/jquery\\.jplayer\\.min\\.js"
+    ],
+    "scripts": [
+      "jquery\\.jplayer\\.min\\.js"
+    ],
     "website": "https://jplayer.org"
   },
   "jQTouch": {
@@ -859,7 +1178,9 @@
     "js": {
       "jQT": ""
     },
-    "scriptSrc": "jqtouch.*\\.js",
+    "scriptSrc": [
+      "jqtouch.*\\.js"
+    ],
     "website": "https://jqtouch.com"
   },
   "jQuery": {
@@ -871,7 +1192,8 @@
     "icon": "jQuery.svg",
     "js": {
       "$.fn.jquery": "([\\d.]+)\\;version:\\1",
-      "jQuery.fn.jquery": "([\\d.]+)\\;version:\\1"
+      "jQuery.fn.jquery": "([\\d.]+)\\;version:\\1",
+      "jQuery.prototype.jquery": "([\\d.]+)\\;version:\\1"
     },
     "scriptSrc": [
       "jquery",
@@ -886,8 +1208,12 @@
     ],
     "description": "jQuery CDN is a way to include jQuery in your website without actually downloading and keeping it your website's folder.",
     "icon": "jQuery.svg",
-    "implies": "jQuery",
-    "scriptSrc": "code\\.jquery\\.com/",
+    "implies": [
+      "jQuery"
+    ],
+    "scriptSrc": [
+      "code\\.jquery\\.com/"
+    ],
     "website": "https://code.jquery.com/"
   },
   "jQuery DevBridge Autocomplete": {
@@ -896,7 +1222,9 @@
     ],
     "description": "Ajax Autocomplete for jQuery allows you to easily create autocomplete/autosuggest boxes for text input fields.",
     "icon": "jQuery.svg",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "$.devbridgeAutocomplete": "",
       "jQuery.devbridgeAutocomplete": ""
@@ -913,13 +1241,18 @@
     ],
     "description": "Query Migrate is a javascript library that allows you to preserve the compatibility of your jQuery code developed for versions of jQuery older than 1.9.",
     "icon": "jQuery.svg",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "jQuery.migrateVersion": "([\\d.]+)\\;version:\\1",
       "jQuery.migrateWarnings": "",
       "jqueryMigrate": ""
     },
-    "scriptSrc": "jquery[.-]migrate(?:-([\\d.]+))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2",
+    "scriptSrc": [
+      "jquery-migrate(?:\\.min)?(?:-)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+      "jquery-migrate(?:\\.min)?(?:-?((?:\\d+\\.)+\\d+))?(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://github.com/jquery/jquery-migrate"
   },
   "jQuery Mobile": {
@@ -928,11 +1261,16 @@
     ],
     "description": "jQuery Mobile is a HTML5-based user interface system designed to make responsive web sites and apps that are accessible on all smartphone, tablet and desktop devices.",
     "icon": "jQuery Mobile.svg",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "jQuery.mobile.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "jquery[.-]mobile(?:-([\\d.]))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2",
+    "scriptSrc": [
+      "jquery[.-]mobile(?:-([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
+      "jquery[.-]mobile(?:-)?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
+    ],
     "website": "https://jquerymobile.com"
   },
   "jQuery Modal": {
@@ -940,11 +1278,17 @@
       59
     ],
     "description": "jQuery Modal is an overlay dialog box or in other words, a popup window that is made to display on the top or 'overlayed' on the current page.",
-    "dom": "link[href*='jquery.modal.min.css']",
-    "icon": "jQuery Modal.png",
-    "implies": "jQuery",
+    "dom": [
+      "link[href*='jquery.modal.min.css']"
+    ],
+    "icon": "jQuery Modal.svg",
+    "implies": [
+      "jQuery"
+    ],
     "oss": true,
-    "scriptSrc": "jquery-modal/([\\d\\.]+)/jquery\\.modal\\.min\\.js\\;version:\\1",
+    "scriptSrc": [
+      "jquery-modal/([\\d\\.]+)/jquery\\.modal\\.min\\.js\\;version:\\1"
+    ],
     "website": "https://jquerymodal.com"
   },
   "jQuery Sparklines": {
@@ -952,8 +1296,12 @@
       25
     ],
     "description": "jQuery Sparklines is a plugin that generates sparklines (small inline charts) directly in the browser using data supplied either inline in the HTML, or via javascript.",
-    "implies": "jQuery",
-    "scriptSrc": "jquery\\.sparkline.*\\.js",
+    "implies": [
+      "jQuery"
+    ],
+    "scriptSrc": [
+      "jquery\\.sparkline.*\\.js"
+    ],
     "website": "https://omnipotent.net/jquery.sparkline/"
   },
   "jQuery UI": {
@@ -963,7 +1311,9 @@
     "cpe": "cpe:2.3:a:jquery:jquery_ui:*:*:*:*:*:*:*:*",
     "description": "jQuery UI is a collection of GUI widgets, animated visual effects, and themes implemented with jQuery, Cascading Style Sheets, and HTML.",
     "icon": "jQuery UI.svg",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "jQuery.ui.version": "^(.+)$\\;version:\\1"
     },
@@ -979,8 +1329,12 @@
       26
     ],
     "description": "jQuery PJAX is a plugin that uses AJAX and pushState.",
-    "html": "<div[^>]+data-pjax-container",
-    "implies": "jQuery",
+    "html": [
+      "<div[^>]+data-pjax-container"
+    ],
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "jQuery.pjax": ""
     },
@@ -989,7 +1343,10 @@
       "pjax-replace": "",
       "pjax-timeout": ""
     },
-    "scriptSrc": "jquery[.-]pjax(?:-([\\d.]))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2",
+    "scriptSrc": [
+      "jquery[.-]pjax(?:-([\\d.]+))?(?:\\.min)?\\.js\\;version:\\1",
+      "jquery[.-]pjax(?:-)?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
+    ],
     "website": "https://github.com/defunkt/jquery-pjax"
   },
   "jqPlot": {
@@ -997,8 +1354,12 @@
       25
     ],
     "icon": "jqPlot.png",
-    "implies": "jQuery",
-    "scriptSrc": "jqplot.*\\.js",
+    "implies": [
+      "jQuery"
+    ],
+    "scriptSrc": [
+      "jqplot.*\\.js"
+    ],
     "website": "https://www.jqplot.com"
   },
   "jsDelivr": {
@@ -1006,10 +1367,16 @@
       31
     ],
     "description": "JSDelivr is a free public CDN for open-source projects. It can serve web files directly from the npm registry and GitHub repositories without any configuration.",
-    "dom": "link[href*='cdn.jsdelivr.net']",
+    "dom": [
+      "link[href*='cdn.jsdelivr.net']"
+    ],
     "icon": "jsdelivr-icon.svg",
-    "scriptSrc": "cdn\\.jsdelivr\\.net",
+    "scriptSrc": [
+      "cdn\\.jsdelivr\\.net"
+    ],
     "website": "https://www.jsdelivr.com/",
-    "xhr": "cdn\\.jsdelivr\\.net"
+    "xhr": [
+      "cdn\\.jsdelivr\\.net"
+    ]
   }
 }

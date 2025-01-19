@@ -21,10 +21,12 @@ package org.zaproxy.zap.extension.replacer;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.matchesRegex;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_BODY_STR;
@@ -667,6 +669,50 @@ class ExtensionReplacerTest {
 
         // Then
         assertThat(msg.getRequestBody().toString(), equalTo("--TICKS--"));
+    }
+
+    @Test
+    void shouldReplaceReportToHeaderValuesInResponse() throws HttpMalformedHeaderException {
+        // Given
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Security-Policy-Report-Only: require-trusted-types-for 'script'; report-to https://csp.withgoogle.com/csp/apps-themes\r\n"
+                        + "Cross-Origin-Resource-Policy: cross-origin\r\n"
+                        + "Cross-Origin-Opener-Policy: same-origin; report-to=\"apps-themes\"\r\n"
+                        + "Report-To: {\"group\":\"apps-themes\",\"max_age\":2592000,\"endpoints\":[{\"url\":\"https://csp.withgoogle.com/csp/report-to/apps-themes\"}]}");
+        extensionReplacer.getParams().getRule(ReplacerParam.REPORT_TO_DESC);
+        extensionReplacer
+                .getParams()
+                .getRules()
+                .add(
+                        new ReplacerParamRule(
+                                ReplacerParam.REPORT_TO_DESC,
+                                ReplacerParamRule.MatchType.RESP_HEADER_STR,
+                                ReplacerParam.REPORT_TO_REGEX,
+                                true,
+                                ReplacerParam.REPORT_TO_REPLACEMENT,
+                                null,
+                                true));
+        // When
+        extensionReplacer.onHttpResponseReceive(msg, 0, null);
+        // Then
+        assertThat(
+                msg.getResponseHeader().getHeader("Cross-Origin-Opener-Policy"),
+                containsString(ReplacerParam.REPORT_TO_REPLACEMENT));
+        assertThat(
+                msg.getResponseHeader().getHeader("Cross-Origin-Opener-Policy"),
+                not(containsString("report-to")));
+        assertThat(
+                msg.getResponseHeader().getHeader("Content-Security-Policy-Report-Only"),
+                containsString(ReplacerParam.REPORT_TO_REPLACEMENT));
+        assertThat(
+                msg.getResponseHeader().getHeader("Content-Security-Policy-Report-Only"),
+                not(containsString("report-to")));
+        assertThat(msg.getResponseHeader().getHeader("Report-To"), is(nullValue()));
+        assertThat(
+                msg.getResponseHeader().getHeader(ReplacerParam.REPORT_TO_REPLACEMENT),
+                is(not(nullValue())));
     }
 
     private static ExtensionReplacer givenATokenProcessingReplacementRuleFor(

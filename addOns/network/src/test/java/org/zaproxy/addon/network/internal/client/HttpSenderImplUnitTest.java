@@ -103,6 +103,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.network.ClientCertificatesOptions;
 import org.zaproxy.addon.network.ConnectionOptions;
+import org.zaproxy.addon.network.common.HttpProxy;
 import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
 import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderApache;
@@ -261,6 +262,16 @@ class HttpSenderImplUnitTest {
                                         + version
                                         + " 200 OK\r\ncontent-length: 0\r\nconnection: keep-alive\r\n\r\n")
                 .flatMap(response -> sendAndReceiveMethods().map(sm -> arguments(response, sm)));
+    }
+
+    static Stream<Arguments> statusCodesForRetryAndSendAndReceiveMethods() {
+        var statusCodes = new ArrayList<Integer>();
+        for (int i = 200; i < 600; i++) {
+            statusCodes.add(i);
+        }
+        return statusCodes.stream()
+                .flatMap(
+                        statusCode -> sendAndReceiveMethods().map(sm -> arguments(statusCode, sm)));
     }
 
     @Nested
@@ -569,6 +580,139 @@ class HttpSenderImplUnitTest {
             for (HttpMessage receivedMessage : server.getReceivedMessages()) {
                 assertRequest(receivedMessage, requestMethod, requestBody);
             }
+        }
+
+        @Timeout(10)
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#statusCodesForRetryAndSendAndReceiveMethods")
+        void shouldNotBeRetriedOnAnyStatusCode(int statusCode, SenderMethod method)
+                throws Exception {
+            // Given
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        msg.setResponseHeader(
+                                "HTTP/1.1 "
+                                        + statusCode
+                                        + "\r\nretry-after: 3600\r\ncontent-length: 13\r\n\r\n");
+                        msg.getResponseBody().setBody("Response Body");
+                    });
+            // When
+            httpSender.sendAndReceive(message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(1));
+        }
+
+        @Test
+        void shouldBeSentWithExistingNtlmAuthentication() throws Exception {
+            // Given
+            AtomicInteger requestCount = new AtomicInteger();
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        var response = "HTTP/1.1 200 OK";
+
+                        int current = requestCount.getAndIncrement();
+                        if (current == 0) {
+                            response =
+                                    "HTTP/1.1 401 Unauthorized\n"
+                                            + "WWW-Authenticate: Negotiate\n"
+                                            + "WWW-Authenticate: NTLM\n";
+                        } else if (current == 1) {
+                            response =
+                                    "HTTP/1.1 401 Unauthorized\n"
+                                            + "WWW-Authenticate: NTLM TlRMTVNTUAACAAAAHAAcADgAAAAFgooCSahi6Sp2OccAAAAAAAAAAJAAkABUAAAACgBdWAAAAA9XAEkATgBEAEUAVgAyADMAMQAxAEUAVgBBAEwAAgAcAFcASQBOAEQARQBWADIAMwAxADEARQBWAEEATAABABwAVwBJAE4ARABFAFYAMgAzADEAMQBFAFYAQQBMAAQAHABXAGkAbgBEAGUAdgAyADMAMQAxAEUAdgBhAGwAAwAcAFcAaQBuAEQAZQB2ADIAMwAxADEARQB2AGEAbAAHAAgAs59Pa0JY2gEAAAAA\n";
+                        }
+                        msg.getResponseHeader().setMessage(response);
+                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
+                    });
+
+            HttpMessage initialRequest = createMessage(HttpRequestHeader.GET, "/");
+            String challenge = "NTLM TlRMTVNTUAABAAAAB4IIAAAAAAAAAAAAAAAAAAAAAAA=";
+            HttpMessage challengeRequest = createMessage(HttpRequestHeader.GET, "/");
+            challengeRequest.getRequestHeader().setHeader(HttpHeader.AUTHORIZATION, challenge);
+            String credentials =
+                    "NTLM TlRMTVNTUAADAAAAGAAYAF4AAAC8ALwAdgAAAAAAAABAAAAACAAIAEAAAAAWABYASAAAAAAAAAAAAAAABYIIAFUAcwBlAHIAVwBPAFIASwBTAFQAQQBUAEkATwBOAHizK+ek+7dlUzjnzJbXZRPGU9/At2s/Pl3sNL5zHWFfZkQYYCyprcMBAQAAAAAAAIBdvo1CWNoB4SlHsS/Dj0EAAAAAAgAcAFcASQBOAEQARQBWADIAMwAxADEARQBWAEEATAABABwAVwBJAE4ARABFAFYAMgAzADEAMQBFAFYAQQBMAAQAHABXAGkAbgBEAGUAdgAyADMAMQAxAEUAdgBhAGwAAwAcAFcAaQBuAEQAZQB2ADIAMwAxADEARQB2AGEAbAAHAAgAs59Pa0JY2gEAAAAA";
+            HttpMessage credentialsRequest = createMessage(HttpRequestHeader.GET, "/");
+            credentialsRequest.getRequestHeader().setHeader(HttpHeader.AUTHORIZATION, credentials);
+            // When
+            httpSender.sendAndReceive(initialRequest);
+            httpSender.sendAndReceive(challengeRequest);
+            httpSender.sendAndReceive(credentialsRequest);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(3));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(0)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(nullValue()));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(1)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo(challenge)));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(2)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo(credentials)));
+            assertThat(message.getResponseBody().toString(), is(not(equalTo(SERVER_RESPONSE))));
+        }
+
+        @Test
+        void shouldBeSentWithExistingIncorrectNtlmAuthentication() throws Exception {
+            // Given
+            AtomicInteger requestCount = new AtomicInteger();
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        var response =
+                                "HTTP/1.1 401 Unauthorized\n"
+                                        + "WWW-Authenticate: Negotiate\n"
+                                        + "WWW-Authenticate: NTLM\n";
+                        if (requestCount.getAndIncrement() == 1) {
+                            response =
+                                    "HTTP/1.1 401 Unauthorized\n"
+                                            + "WWW-Authenticate: NTLM TlRMTVNTUAACAAAAHAAcADgAAAAFgooCpgp96tbFDRsAAAAAAAAAAJAAkABUAAAACgBdWAAAAA9XAEkATgBEAEUAVgAyADMAMQAxAEUAVgBBAEwAAgAcAFcASQBOAEQARQBWADIAMwAxADEARQBWAEEATAABABwAVwBJAE4ARABFAFYAMgAzADEAMQBFAFYAQQBMAAQAHABXAGkAbgBEAGUAdgAyADMAMQAxAEUAdgBhAGwAAwAcAFcAaQBuAEQAZQB2ADIAMwAxADEARQB2AGEAbAAHAAgA2oCaJUNY2gEAAAAA";
+                        }
+                        msg.getResponseHeader().setMessage(response);
+                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
+                    });
+
+            HttpMessage initialRequest = createMessage(HttpRequestHeader.GET, "/");
+            String challenge = "NTLM TlRMTVNTUAABAAAAB4IIAAAAAAAAAAAAAAAAAAAAAAA=";
+            HttpMessage challengeRequest = createMessage(HttpRequestHeader.GET, "/");
+            challengeRequest.getRequestHeader().setHeader(HttpHeader.AUTHORIZATION, challenge);
+            String credentials =
+                    "NTLM TlRMTVNTUAADAAAAGAAYAFgAAAC8ALwAcAAAAAAAAABAAAAAAgACAEAAAAAWABYAQgAAAAAAAAAAAAAABYIIAFgAVwBPAFIASwBTAFQAQQBUAEkATwBOAP6yoXsqfSJ6sdpm5BsUKdLlurkW6n/9a5cWdamhy5bZRNgkApsZKiIBAQAAAAAAAIC+SixDWNoBSh9I+fDqnVEAAAAAAgAcAFcASQBOAEQARQBWADIAMwAxADEARQBWAEEATAABABwAVwBJAE4ARABFAFYAMgAzADEAMQBFAFYAQQBMAAQAHABXAGkAbgBEAGUAdgAyADMAMQAxAEUAdgBhAGwAAwAcAFcAaQBuAEQAZQB2ADIAMwAxADEARQB2AGEAbAAHAAgA2oCaJUNY2gEAAAAA";
+            HttpMessage credentialsRequest = createMessage(HttpRequestHeader.GET, "/");
+            credentialsRequest.getRequestHeader().setHeader(HttpHeader.AUTHORIZATION, credentials);
+            // When
+            httpSender.sendAndReceive(initialRequest);
+            httpSender.sendAndReceive(challengeRequest);
+            httpSender.sendAndReceive(credentialsRequest);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(3));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(0)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(nullValue()));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(1)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo(challenge)));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(2)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo(credentials)));
+            assertThat(message.getResponseBody().toString(), is(not(equalTo(SERVER_RESPONSE))));
         }
     }
 
@@ -1888,6 +2032,44 @@ class HttpSenderImplUnitTest {
         void shouldAuthenticateToServer() throws Exception {
             // Given
             message.setRequestingUser(user);
+            // When
+            httpSender.sendAndReceive(message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(2));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(0)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(nullValue()));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(1)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo("Basic dXNlcm5hbWU6cGFzc3dvcmQ=")));
+            assertResponseBody(message, SERVER_RESPONSE);
+        }
+
+        @Test
+        void shouldBasicAuthWithoutRealm() throws Exception {
+            // Given
+            message.setRequestingUser(user);
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        String authorization =
+                                msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
+                        if (authorization == null
+                                || !"Basic dXNlcm5hbWU6cGFzc3dvcmQ=".equals(authorization)) {
+                            msg.setResponseHeader("HTTP/1.1 401\r\nWWW-Authenticate: Basic\r\n");
+                            msg.getResponseHeader().setContentLength(0);
+                            return;
+                        }
+
+                        msg.setResponseHeader("HTTP/1.1 200\r\n");
+                        msg.setResponseBody(SERVER_RESPONSE);
+                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
+                    });
             // When
             httpSender.sendAndReceive(message);
             // Then

@@ -22,6 +22,18 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.addon.authhelper.client.ExtensionAuthhelperClient") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.authhelper.client"))
+                }
+                dependencies {
+                    addOns {
+                        register("client") {
+                            version.set(">=0.10.0")
+                        }
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
@@ -30,6 +42,9 @@ zapAddOn {
                 }
                 register("network") {
                     version.set(">=0.6.0")
+                }
+                register("pscan") {
+                    version.set(">= 0.1.0 & < 1.0.0")
                 }
                 register("selenium") {
                     version.set("15.*")
@@ -50,8 +65,10 @@ crowdin {
 dependencies {
     zapAddOn("commonlib")
     zapAddOn("network")
+    zapAddOn("pscan")
     zapAddOn("selenium")
     zapAddOn("spiderAjax")
+    zapAddOn("client")
 
     testImplementation(project(":testutils"))
 }

@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.quickstart.ajaxspider;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -28,6 +26,7 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.quickstart.ExtensionQuickStart;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
@@ -40,16 +39,10 @@ public class ExtensionQuickStartAjaxSpider extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionQuickStartAjaxSpider";
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionAjax.class, ExtensionSelenium.class, ExtensionPassiveScan2.class);
 
     private AjaxSpiderExplorer ase;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionAjax.class);
-        dependencies.add(ExtensionSelenium.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
 
     public ExtensionQuickStartAjaxSpider() {
         super(NAME);

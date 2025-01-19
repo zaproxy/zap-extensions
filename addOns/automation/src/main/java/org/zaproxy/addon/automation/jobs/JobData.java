@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.zaproxy.addon.automation.AutomationData;
@@ -37,7 +38,10 @@ public abstract class JobData extends AutomationData {
     @Override
     public boolean isDefaultValue(String name) {
         if ("name".equals(name)) {
-            return name.equals(getType());
+            return getName().equals(getType());
+        }
+        if ("enabled".equals(name)) {
+            return isEnabled();
         }
         return super.isDefaultValue(name);
     }
@@ -52,6 +56,15 @@ public abstract class JobData extends AutomationData {
 
     public void setName(String name) {
         this.job.setName(name);
+    }
+
+    @JsonInclude(value = JsonInclude.Include.ALWAYS)
+    public boolean isEnabled() {
+        return this.job.isEnabled();
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.job.setEnabled(enabled);
     }
 
     public List<AutomationData> getTests() {

@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.pscanrules.payloader;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -36,17 +34,12 @@ import org.zaproxy.zap.extension.pscanrules.UsernameIdorScanRule;
 public class ExtensionPayloader extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionPayloaderPscanRulesRelease";
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionCustomPayloads.class);
     private static ExtensionCustomPayloads ecp;
     private PayloadCategory idorCategory;
     private PayloadCategory errorCategory;
     private PayloadCategory suspiciousCommentsCategory;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionCustomPayloads.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
 
     public ExtensionPayloader() {
         super(NAME);

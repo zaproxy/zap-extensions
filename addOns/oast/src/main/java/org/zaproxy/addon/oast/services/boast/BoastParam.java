@@ -26,7 +26,7 @@ import org.zaproxy.zap.common.VersionedAbstractParam;
 
 public class BoastParam extends VersionedAbstractParam {
 
-    private static final int PARAM_CURRENT_VERSION = 1;
+    private static final int PARAM_CURRENT_VERSION = 2;
     private static final Logger LOGGER = LogManager.getLogger(BoastParam.class);
 
     private static final String PARAM_BASE_KEY = "oast.boast";
@@ -40,7 +40,7 @@ public class BoastParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        boastUri = getString(PARAM_BOAST_URI, "https://odiss.eu:1337/events");
+        boastUri = getString(PARAM_BOAST_URI, "https://odiss.eu:2096/events");
         setPollingFrequency(getInt(PARAM_POLLING_FREQUENCY, 60));
     }
 
@@ -79,5 +79,13 @@ public class BoastParam extends VersionedAbstractParam {
     }
 
     @Override
-    protected void updateConfigsImpl(int fileVersion) {}
+    protected void updateConfigsImpl(int fileVersion) {
+        switch (fileVersion) {
+            case 1:
+                String existingUri = getConfig().getString(PARAM_BOAST_URI);
+                if ("https://odiss.eu:1337/events".equals(existingUri)) {
+                    getConfig().clearProperty(PARAM_BOAST_URI);
+                }
+        }
+    }
 }

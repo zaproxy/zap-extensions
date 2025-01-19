@@ -33,15 +33,24 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -228,13 +237,16 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
         assertThat(httpMessagesSent, hasSize(greaterThan(0)));
     }
 
-    @Test
-    void shouldProcessAtMediumThresholdAndOutOfScope()
+    @ParameterizedTest
+    @EnumSource(
+            value = AlertThreshold.class,
+            names = {"MEDIUM", "LOW"})
+    void shouldProcessAtBelowHighThresholdAndOutOfScope(AlertThreshold threshold)
             throws HttpMalformedHeaderException, URIException {
         // Given
         HttpMessage msg = createMessage(false);
         rule.setConfig(new ZapXmlConfiguration());
-        rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        rule.setAlertThreshold(threshold);
         // Note: This Test leverages the context setup in a previous test
         rule.init(msg, parent);
         // When
@@ -243,40 +255,37 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
         assertThat(httpMessagesSent, hasSize(greaterThan(0)));
     }
 
-    @Test
-    void shouldProcessAtMediumThresholdAndInScope()
+    private static Stream<Arguments> provideNonLowThresholdsAndBooleans() {
+        return Stream.of(
+                Arguments.of(AlertThreshold.MEDIUM, true),
+                Arguments.of(AlertThreshold.MEDIUM, false),
+                Arguments.of(AlertThreshold.HIGH, true),
+                Arguments.of(AlertThreshold.HIGH, false));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideNonLowThresholdsAndBooleans")
+    void shouldNotProcessGetAtNonLowThresholdRegardlessOfScope(
+            AlertThreshold threshold, boolean inScope)
             throws HttpMalformedHeaderException, URIException {
         // Given
-        HttpMessage msg = createMessage(true);
+        HttpMessage msg = createMessage(inScope, HttpRequestHeader.GET);
         rule.setConfig(new ZapXmlConfiguration());
-        rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        rule.setAlertThreshold(threshold);
         // Note: This Test leverages the context setup in a previous test
         rule.init(msg, parent);
         // When
         this.rule.scan();
         // Then
-        assertThat(httpMessagesSent, hasSize(greaterThan(0)));
+        assertThat(httpMessagesSent, hasSize(0));
     }
 
-    @Test
-    void shouldProcessAtLowThresholdAndOutOfScope()
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldProcessGetAtLowThresholdRegardlessOfScope(boolean inScope)
             throws HttpMalformedHeaderException, URIException {
         // Given
-        HttpMessage msg = createMessage(false);
-        rule.setConfig(new ZapXmlConfiguration());
-        rule.setAlertThreshold(AlertThreshold.LOW);
-        // Note: This Test leverages the context setup in a previous test
-        rule.init(msg, parent);
-        // When
-        this.rule.scan();
-        // Then
-        assertThat(httpMessagesSent, hasSize(greaterThan(0)));
-    }
-
-    @Test
-    void shouldProcessAtLowThresholdAndInScope() throws HttpMalformedHeaderException, URIException {
-        // Given
-        HttpMessage msg = createMessage(true);
+        HttpMessage msg = createMessage(inScope, HttpRequestHeader.GET);
         rule.setConfig(new ZapXmlConfiguration());
         rule.setAlertThreshold(AlertThreshold.LOW);
         // Note: This Test leverages the context setup in a previous test
@@ -296,7 +305,7 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
         // Then
         assertThat(cwe, is(equalTo(352)));
         assertThat(wasc, is(equalTo(9)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -305,6 +314,8 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_SESS_05_CSRF.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
@@ -316,7 +327,26 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
                 is(equalTo(CommonAlertTag.WSTG_V42_SESS_05_CSRF.getValue())));
     }
 
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
     private HttpMessage createMessage(boolean isInScope)
+            throws URIException, HttpMalformedHeaderException {
+        return createMessage(isInScope, HttpRequestHeader.POST);
+    }
+
+    private HttpMessage createMessage(boolean isInScope, String method)
             throws URIException, HttpMalformedHeaderException {
         HttpMessage msg =
                 new HttpMessage() {
@@ -339,6 +369,7 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
                             } catch (HttpMalformedHeaderException e) {
                                 throw new RuntimeException(e);
                             }
+                            newMsg.getRequestHeader().setMethod(method);
                             newMsg.setRequestBody(this.getRequestBody().getBytes());
                         }
                         return newMsg;
@@ -355,7 +386,7 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
         return msg;
     }
 
-    private void setUpHttpSessionsParam() {
+    private static void setUpHttpSessionsParam() {
         HttpSessionsParam sessionOptions = new HttpSessionsParam();
         sessionOptions.load(new ZapXmlConfiguration());
         Model.getSingleton().getOptionsParam().addParamSet(sessionOptions);
@@ -363,14 +394,14 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
 
     private HttpMessage getAntiCSRFCompatibleMessage() throws HttpMalformedHeaderException {
         return getHttpMessage(
-                "GET",
+                "POST",
                 "/",
                 "<html><form><input type=\"hidden\" name=\"customAntiCSRF\" value="
                         + Math.random()
                         + "></input></form></html>");
     }
 
-    private HtmlParameter getCookieAs(String cookieName) {
+    private static HtmlParameter getCookieAs(String cookieName) {
         return new HtmlParameter(
                 HtmlParameter.Type.cookie, cookieName, "FF4F838FDA9E1974DEEB4020AB6127FD");
     }

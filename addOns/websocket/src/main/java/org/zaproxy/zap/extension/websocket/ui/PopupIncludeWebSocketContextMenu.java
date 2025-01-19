@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.websocket.ui;
 import java.awt.Component;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.popup.PopupMenuItemContextInclude;
 
@@ -38,6 +39,11 @@ public class PopupIncludeWebSocketContextMenu extends PopupMenuItemContextInclud
     }
 
     @Override
+    public int getParentWeight() {
+        return MenuWeights.MENU_INC_CHANNEL_CONTEXT_WEIGHT;
+    }
+
+    @Override
     public boolean isEnableForComponent(Component invoker) {
         String invokerName = invoker.getName();
         if (invokerName != null && invokerName.equals(WebSocketMessagesView.PANEL_NAME)) {
@@ -48,8 +54,10 @@ public class PopupIncludeWebSocketContextMenu extends PopupMenuItemContextInclud
     }
 
     @Override
-    protected ExtensionPopupMenuItem createPopupIncludeInContextMenu() {
-        return new PopupIncludeWebSocketInContextMenu();
+    protected ExtensionPopupMenuItem createPopupIncludeInContextMenu(int weight) {
+        PopupIncludeWebSocketInContextMenu menu = new PopupIncludeWebSocketInContextMenu();
+        menu.setWeight(weight);
+        return menu;
     }
 
     @Override

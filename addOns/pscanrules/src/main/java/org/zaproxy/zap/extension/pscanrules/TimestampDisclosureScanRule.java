@@ -50,7 +50,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class TimestampDisclosureScanRule extends PluginPassiveScanner {
+public class TimestampDisclosureScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     // We are only interested in events within a 10 year span
     private static final long EPOCH_Y2038 = 2147483647L;
@@ -173,19 +174,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                                 continue;
                             }
                         }
-                        newAlert()
-                                .setName(getName() + " - " + timestampType)
-                                .setRisk(getRisk())
-                                .setConfidence(Alert.CONFIDENCE_LOW)
-                                .setDescription(getDescription() + " - " + timestampType)
-                                .setParam(haystack.getName())
-                                .setOtherInfo(getExtraInfo(evidence, timestamp))
-                                .setSolution(getSolution())
-                                .setReference(getReference())
-                                .setEvidence(evidence)
-                                .setCweId(getCweId())
-                                .setWascId(getWascId())
-                                .raise();
+                        buildAlert(timestampType, evidence, haystack.getName(), timestamp).raise();
                         // do NOT break at this point.. we need to find *all* the potential
                         // timestamps in the response..
                     }
@@ -194,25 +183,28 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         }
     }
 
+    private AlertBuilder buildAlert(
+            String timestampType, String evidence, String param, Date timestamp) {
+        return newAlert()
+                .setName(getName() + " - " + timestampType)
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setDescription(
+                        Constant.messages.getString(MESSAGE_PREFIX + "desc")
+                                + " - "
+                                + timestampType)
+                .setParam(param)
+                .setOtherInfo(getExtraInfo(evidence, timestamp))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
+                .setEvidence(evidence)
+                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setWascId(13); // WASC Id - Info leakage
+    }
+
     @Override
     public int getPluginId() {
         return 10096;
-    }
-
-    public int getRisk() {
-        return Alert.RISK_LOW;
-    }
-
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     private static String getExtraInfo(String evidence, Date timestamp) {
@@ -225,12 +217,10 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
-        return 200; // CWE Id 200 - Information Exposure
-    }
-
-    public int getWascId() {
-        return 13; // WASC Id - Info leakage
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert("Unix", "1704114087", "registeredAt", new Date(1704114087)).build());
     }
 
     private static boolean containsIgnoreCase(List<String> list, String test) {

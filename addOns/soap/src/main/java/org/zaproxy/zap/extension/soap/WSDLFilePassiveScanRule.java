@@ -33,7 +33,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 /**
  * @author albertov91
  */
-public class WSDLFilePassiveScanRule extends PluginPassiveScanner {
+public class WSDLFilePassiveScanRule extends PluginPassiveScanner implements CommonScanRuleInfo {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "soap.wsdlfilepscan.";
@@ -80,7 +80,6 @@ public class WSDLFilePassiveScanRule extends PluginPassiveScanner {
                 .setDescription(getDescription())
                 .setOtherInfo(getOtherInfo())
                 .setSolution(getSolution())
-                .setReference(getReference())
                 .setEvidence(evidence)
                 .setWascId(13)
                 .raise();
@@ -108,12 +107,13 @@ public class WSDLFilePassiveScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public int getId() {
+        return getPluginId();
     }
 }

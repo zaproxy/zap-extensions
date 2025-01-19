@@ -4,8 +4,79 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [45.8.0] - 2025-01-10
+### Added
+- Report indirect script errors while the Automation Framework plans are running (Issue 8586).
+- Standardized Policy Tags to the base Scripts Active Scanner.
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Fields with default or missing values are omitted for the `script` job in saved Automation Framework plans.
+- Depends on an updated version of the Common Library add-on.
+- Depend on Passive Scanner add-on (Issue 7959).
+
+### Fixed
+- Correct auto-complete suggestions for parameters of Passive Rules.
+- Some script errors were not being propagated to the output correctly.
+
+## [45.7.0] - 2024-10-07
+### Fixed
+- Reuse script cache for all passive scan threads to avoid recompilation of Passive Rules scripts.
+- Address a concurrency issue when using Graal.js Passive Rules scripts as first-class scan rules.
+- Handle gracefully the inability to force stop the running standalone script in newer Java versions.
+
+## [45.6.0] - 2024-09-02
+### Removed
+- Remove the active and passive script templates, superseded by the ones provided by the GraalVM JavaScript add-on.
+
+## [45.5.0] - 2024-07-22
+### Added
+- Provide the `script` API on newer ZAP versions.
+
+### Fixed
+- Handle missing "references" field in the script metadata correctly.
+
+## [45.4.0] - 2024-05-16
+### Added
+- Support for Automation Framework loaddir action, which loads all of the scripts under the specified directory.
+
+### Changed
+- File parameter to `source`, `file` will still work.
+
+## [45.3.0] - 2024-05-07
+### Added
+- Support for code and help links for script scan rules.
+
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Allow to set raw parameter values from Active Rules, by calling `as.setEscapedParam(HttpMessage msg, String param, String value)`.
+
+## [45.2.0] - 2024-04-11
+### Added
+- Active and Passive Scripts with a `getMetadata()` function are now treated as first-class scan rules (Issue 7105).
+
+### Fixed
+- Error when trying to run an unsupported script type through the Automation Framework.
+- The "Scripts Passive Scanner" scan rule was being loaded twice.
+
+## [45.1.0] - 2024-03-25
+### Added
+- Support for menu weights (Issue 8369)
+
+### Fixed
+- Propagate script errors to the Automation Framework when running them.
+
+## [45.0.0] - 2024-02-12
 ### Added
 - The scan rule functionality of scripts was moved from the ZAP core to this add-on (Related to Issue 7105).
+
+### Changed
+- Maintenance changes.
+
+### Fixed
+- The save button was not enabled for new scripts upon creation.
 
 ## [44] - 2023-12-19
 ### Changed
@@ -287,6 +358,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.8.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.8.0
+[45.7.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.7.0
+[45.6.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.6.0
+[45.5.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.5.0
+[45.4.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.4.0
+[45.3.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.3.0
+[45.2.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.2.0
+[45.1.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.1.0
+[45.0.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.0.0
 [44]: https://github.com/zaproxy/zap-extensions/releases/scripts-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/scripts-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/scripts-v42

@@ -23,6 +23,7 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import fi.iki.elonen.NanoHTTPD;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -72,7 +74,7 @@ class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjectionScanR
         // Then
         assertThat(cwe, is(equalTo(94)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(8)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -82,6 +84,11 @@ class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjectionScanR
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.SEQUENCE.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
@@ -207,9 +214,10 @@ class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjectionScanR
         assertThat(alertsRaised.get(0).getParam(), equalTo("years"));
         boolean evidenceOnEvaluationResults = false;
         for (String result : evaluationResults) {
-            if (alertsRaised.get(0).getEvidence().contains(result))
+            if (alertsRaised.get(0).getEvidence().contains(result)) {
                 evidenceOnEvaluationResults = true;
+            }
         }
-        assert (evidenceOnEvaluationResults);
+        assertTrue(evidenceOnEvaluationResults);
     }
 }

@@ -27,11 +27,13 @@ import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -143,9 +145,8 @@ class RemoteCodeExecutionCve20121823ScanRuleUnitTest
                         consumeBody(session);
 
                         StringBuilder strBuilder = new StringBuilder("Nothing echoed...\n");
-                        for (int i = 0; i < 50; i++) {
-                            strBuilder.append(" response content...\n");
-                        }
+                        strBuilder.append(" response content...\n".repeat(50));
+
                         return newFixedLengthResponse(strBuilder.toString());
                     }
                 });
@@ -182,7 +183,6 @@ class RemoteCodeExecutionCve20121823ScanRuleUnitTest
                                         + "',$colm);echo join(\"\n\",$colm);die();?>")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo(body)));
     }
 
     @Test
@@ -228,7 +228,6 @@ class RemoteCodeExecutionCve20121823ScanRuleUnitTest
                                         + "',$colm);echo join(\"\n\",$colm);die();?>")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo(body)));
     }
 
     @Test
@@ -259,7 +258,7 @@ class RemoteCodeExecutionCve20121823ScanRuleUnitTest
         // Then
         assertThat(cwe, is(equalTo(20)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
@@ -270,6 +269,7 @@ class RemoteCodeExecutionCve20121823ScanRuleUnitTest
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ.getTag()),
                 is(equalTo(true)));
         assertThat(tags.containsKey("CVE-2012-1823"), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));
@@ -279,6 +279,20 @@ class RemoteCodeExecutionCve20121823ScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     private abstract static class RceResponse extends NanoServerHandler {

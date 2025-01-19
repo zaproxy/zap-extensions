@@ -33,12 +33,12 @@ import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.openapi.AbstractServerTest;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.network.RequesterListener;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
-import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Test that the value generator and formats are properly handled. */
@@ -49,8 +49,8 @@ class OpenApiValueGeneratorFormatsTest extends AbstractServerTest {
         // Given
         this.nano.addHandler(new PlainResponseServerHandler());
 
-        ValueGenerator vg =
-                new ValueGenerator() {
+        ValueProvider valueProvider =
+                new ValueProvider() {
                     @Override
                     public String getValue(
                             URI uri,
@@ -72,14 +72,14 @@ class OpenApiValueGeneratorFormatsTest extends AbstractServerTest {
                         getHtml(
                                 "openapi_formats.yaml",
                                 new String[][] {{"PORT", String.valueOf(nano.getListeningPort())}}),
-                        vg);
+                        valueProvider);
         List<HttpMessage> accessedMessages = new ArrayList<>();
         RequesterListener listener = (message, initiator) -> accessedMessages.add(message);
 
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         requestor.addListener(listener);
         // When
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
         // Then
         HttpMessage message = accessedMessages.get(0);
         assertThat(

@@ -177,6 +177,24 @@ class EventStreamProxyUnitTest extends BaseEventStreamTest {
     }
 
     @Test
+    void shouldProcessEmptyLastEventIdWithEventData() throws IOException {
+        // Given
+        final String eventStream = "data: blub\nid:\nevent: welcome";
+
+        BufferedWriter writer = mock(BufferedWriter.class);
+        EventStreamProxy proxy = new EventStreamProxy(getMockHttpMessage(), null, writer, null);
+
+        // When
+        ServerSentEvent event = proxy.processEvent(eventStream);
+
+        // Then
+        assertThat(event.getData(), is("blub"));
+        assertThat(event.getEventType(), is("welcome"));
+        assertThat(event.getLastEventId(), is(""));
+        assertThat(event.getRawEvent(), is(eventStream));
+    }
+
+    @Test
     void shouldRemoveFirstWhitespaceFromLineAfterColon() throws IOException {
         // Given
         final String eventStream = "data:  third event";

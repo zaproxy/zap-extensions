@@ -4,11 +4,29 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [23] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Fields with default or missing values are omitted for the `alertFilter` job in saved Automation Framework plans.
+- Depend on Passive Scanner add-on (Issue 7959).
+
+## [22] - 2024-10-07
+### Fixed
+- Handle deleted alerts gracefully.
+
+## [21] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [20] - 2024-04-02
 ### Added
 - Video link in help for Automation Framework job.
 
 ### Changed
 - Reword label in the automation job to prevent any confusion between the Alert Filters and the Alerts.
+- Maintenance changes.
 
 ## [19] - 2023-11-16
 ### Changed
@@ -131,6 +149,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[23]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v23
+[22]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v22
+[21]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v21
+[20]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v17

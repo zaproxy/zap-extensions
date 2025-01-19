@@ -10,29 +10,37 @@ Active Scan Rules - Beta
 <h1>Active Scan Rules - Beta</h1>
 The following beta status active scan rules are included in this add-on:
 
-<h2>Backup File Disclosure</h2>
+<h2 id="id-10095">Backup File Disclosure</h2>
 Scans for commonly-named backup copies of files on the web server, which may reveal sensitive information.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/BackupFileDisclosureScanRule.java">BackupFileDisclosureScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10095/">10095</a>.
 
-<h2>Cookie Slack Detector</h2>
+<h2 id="id-90027">Cookie Slack Detector</h2>
 Tests cookies to detect if some have no effect on response size when omitted, especially cookies containing the name "session" or "userid".
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SlackerCookieDetector.java">SlackerCookieDetector.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90027/">90027</a>.
 
-<h2>CORS Header</h2>
+<h2 id="id-40040">CORS Header</h2>
 This rule attempts to identify CORS headers and also CORS misconfiguration. The CORS is considered as misconfigured when it allows all origins, origins with weaker protocols and null origin.<br>
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CorsScanRule.java">CorsScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40040/">40040</a>.
 
-<h2>Cross-Domain Misconfiguration</h2>
+<h2 id="id-20016">Cross-Domain Misconfiguration</h2>
 Checks if the web server is configured to allow Cross Domain access, from a malicious
 third party service, for instance. Currently checks for wildcards in Adobe's crossdomain.xml, and in
 SilverLight's clientaccesspolicy.xml. 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CrossDomainScanRule.java">CrossDomainScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/20016/">20016</a>.
 
-<h2>CSRF Token</h2>
+<h2 id="id-20012">CSRF Token</h2>
 Scans HTML based messages for the existence of Anti-CSRF tokens. <br>
 Alerts on requests which do not appear to contain Anti-CSRF tokens.<br>
 At HIGH alert threshold only scans messages which are in scope.<br>
@@ -41,26 +49,36 @@ Post 2.5.0 you can specify a comma separated list of identifiers in the
 Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
 Only use this feature to ignore FORMs that you know are safe, for example search forms.
 <p>
+Note: GET requests are only evaluated at Low Threshold.
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CsrfTokenScanRule.java">CsrfTokenScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/20012/">20012</a>.
 
-<h2>Exponential Entity Expansion (Billion Laughs Attack)</h2>
+<h2 id="id-40044">Exponential Entity Expansion (Billion Laughs Attack)</h2>
 This rule attempts to identify the "Billion Laughs" vulnerability in servers that accept XML or YAML files.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ExponentialEntityExpansionScanRule.java">ExponentialEntityExpansionScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40044/">40044</a>.
 
-<h2>Expression Language Injection</h2>
+<h2 id="id-90025">Expression Language Injection</h2>
 Checks if the web application is subject to Expression Language (EL) injection attacks, which occur
 when an application fails to sufficiently neutralize special elements that could modify the intended EL 
 statement before it is executed.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ExpressionLanguageInjectionScanRule.java">ExpressionLanguageInjectionScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90025/">90025</a>.
 
-<h2>HTTP Only Site</h2>
+<h2 id="id-10106">HTTP Only Site</h2>
 This active scan rule checks whether an HTTP site is served under HTTPS.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpOnlySiteScanRule.java">HttpOnlySiteScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10106/">10106</a>.
 
-<h2>HttPoxy - Proxy Header Misuse</h2>
+<h2 id="id-10107">HttPoxy - Proxy Header Misuse</h2>
 This active scan rule checks whether a site is using the HTTP Proxy header specified in the request.<br>
 It sets up an HTTP proxy which listens to all interfaces on a randomly assigned free port.
 It then sends a series of requests to the target server with the HTTP Proxy header set to each of the available
@@ -70,42 +88,49 @@ If a request is received on the new port then the server is very likely to be vu
 if a firewall prevents incoming connections then this rule will not work. 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttPoxyScanRule.java">HttPoxyScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10107/">10107</a>.
 
-<h2>HTTPS Content Available via HTTP</h2>
+<h2 id="id-10047">HTTPS Content Available via HTTP</h2>
 This active scan rule attempts to access content that was originally accessed via HTTPS (SSL/TLS) via HTTP.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpsAsHttpScanRule.java">HttpsAsHttpScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10047/">10047</a>.
 
-<h2>HTTP Parameter Pollution (HPP)</h2>
+<h2 id="id-20014">HTTP Parameter Pollution (HPP)</h2>
 Supplying duplicate or numerous HTTP parameters with the same name may cause an application or website
 to interpret values in unintended ways. By leveraging these effects, a malicious individual
 may be able to bypass input validation, trigger errors or modify internal variable values. 
 There are difference in treatment of duplicate parameters impacting both clients (browsers) and servers.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpParameterPollutionScanRule.java">HttpParameterPollutionScanRule.java</a> 
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/20014/">20014</a>.
 
-<h2>Insecure HTTP Method</h2>
+<h2 id="id-90028">Insecure HTTP Method</h2>
 Detects (and exploits, depending on the scan settings) known insecure HTTP methods enabled for the URL. It considers PUT/PATCH as insecure methods by default, but allows them if they return structured data like JSON or XML in response.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/InsecureHttpMethodScanRule.java">InsecureHttpMethodScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90028/">90028</a>.
 
-<h2>Integer Overflow Error</h2>
+<h2 id="id-30003">Integer Overflow Error</h2>
 Looks for indicators of integer overflows in compiled code that causes the web server to crash.  It does 
 this by putting out multiple strings of integers designed to try and stimulate bad responses.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/IntegerOverflowScanRule.java">IntegerOverflowScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/30003/">30003</a>.
 
-<h2>Java Spring Actuators</h2>
-This rule attempts to identify if the Spring Actuators are enabled. Tests for the default /actuator/health route in the application.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SpringActuatorScanRule.java">SpringActuatorScanRule.java</a>
-
-<h2>Out of Band XSS</h2>
+<h2 id="id-40031">Out of Band XSS</h2>
 This rule attempts to discover Out-of-band XSS vulnerabilities.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/OutOfBandXssScanRule.java">OutOfBandXssScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40031/">40031</a>.
 
-<h2>Proxy Disclosure</h2>
+<h2 id="id-40025">Proxy Disclosure</h2>
 Attempts to detect and fingerprint proxy server(s). This information helps a potential attacker to determine:
 <ul>
 <li>A list of targets for an attack against the application.</li>
@@ -114,19 +139,26 @@ Attempts to detect and fingerprint proxy server(s). This information helps a pot
 </ul>
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ProxyDisclosureScanRule.java">ProxyDisclosureScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40025/">40025</a>.
 
-<h2>Relative Path Confusion</h2>
+<h2 id="id-10051">Relative Path Confusion</h2>
 Tests if the web server is configured to serve responses to ambiguous URLs in a manner that is likely to lead to confusion about the correct "relative path" for the URL. 
 If resources (CSS, images, etc.) are references in the response using relative, rather than absolute URLs. In an attack, if the web browser parses the "cross-content" response in a permissive manner, or can be tricked into 
 permissively parsing the "cross-content" response, using techniques such as framing, then the web browser may be fooled into interpreting HTML as CSS (or other content types), leading to an XSS vulnerability.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/RelativePathConfusionScanRule.java">RelativePathConfusionScanRule.java</a>
-<h2>Session Fixation</h2>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10051/">10051</a>.
+
+<h2 id="id-40013">Session Fixation</h2>
 Session Fixation may be possible. If this issue occurs with a login URL (where the user authenticates themselves to the application), then the URL may be given by an attacker, along with a fixed session id, to a victim, in order to later assume the identity of the victim using the given session id. If the issue occurs with a non-login page, the URL and fixed session id may only be used by an attacker to track an unauthenticated user's actions. If the vulnerability occurs on a cookie field or a form field (POST parameter) rather than on a URL (GET) parameter, then some other vulnerability may also be required in order to set the cookie field on the victim's browser, to allow the vulnerability to be exploited.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SessionFixationScanRule.java">SessionFixationScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40013/">40013</a>.
 
-<h2>ShellShock - CVE-2014-6271</h2>
+<h2 id="id-10048">ShellShock - CVE-2014-6271</h2>
 
 This rule perform 2 attacks to detect servers vulnerable to CVE-2014-6271 aka ShellShock.<br>
 The first is a simple reflected attack and the second is a time based attack.<br>
@@ -134,39 +166,54 @@ The first is a simple reflected attack and the second is a time based attack.<br
 Post 2.5.0 you can change the length of time used for the attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/ShellShockScanRule.java">ShellShockScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10048/">10048</a>.
 
-<h2>Source Code Disclosure - SVN</h2>
+<h2 id="id-42">Source Code Disclosure - SVN</h2>
 Uses Subversion source code repository metadata to scan for files containing source code on the web server.<br>
 At LOW alert threshold the rule will require less evidence to identify potential code, which could result in more false positives.<br>
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureSvnScanRule.java">SourceCodeDisclosureSvnScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/42/">42</a>.
 
-<h2>Source Code Disclosure - File Inclusion</h2>
+<h2 id="id-43">Source Code Disclosure - File Inclusion</h2>
 Uses local file inclusion techniques to scan for files containing source code on the web server.
+Skips messages which originally resulted in a client or server error response status code.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureFileInclusionScanRule.java">SourceCodeDisclosureFileInclusionScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/43/">43</a>.
 
-<h2>Source Code Disclosure - Git</h2>
+<h2 id="id-41">Source Code Disclosure - Git</h2>
 Uses Git source code repository metadata to scan for files containing source code on the web server.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureGitScanRule.java">SourceCodeDisclosureGitScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/41/">41</a>.
 
-<h2>Server Side Request Forgery</h2>
+<h2 id="id-40046">Server Side Request Forgery</h2>
 This rule attempts to find Server Side Request Forgery vulnerabilities by injecting out-of-band payloads in request parameters.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SsrfScanRule.java">SsrfScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40046/">40046</a>.
 
-<h2>Text4shell (CVE-2022-42889)</h2>
+<h2 id="id-40047">Text4shell (CVE-2022-42889)</h2>
 This rule attempts to discover the Text4shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2022-42889">CVE-2022-42889</a>) vulnerability.
 It relies on the OAST add-on to generate out-of-band payloads and verify DNS interactions.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/Text4ShellScanRule.java">Text4ShellScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40047/">40047</a>.
 
-<h2>Username Enumeration</h2>
+<h2 id="id-40023">Username Enumeration</h2>
 It may be possible to enumerate usernames, based on differing HTTP responses when valid and invalid usernames are provided. This would greatly increase the probability of success of password brute-forcing attacks against the system. Note that false positives may sometimes be minimised by increasing the 'Attack Strength' Option in ZAP.  Please manually check the 'Other Info' field to confirm if this is actually an issue.
 This rule is skipped if there are no contexts defined that use Form-based Authentication, and only runs against the URL identified as the login URL of a context.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/UsernameEnumerationScanRule.java">UsernameEnumerationScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40023/">40023</a>.
 
 </body>
 </html>

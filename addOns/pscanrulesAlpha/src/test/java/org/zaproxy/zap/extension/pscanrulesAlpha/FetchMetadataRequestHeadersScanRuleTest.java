@@ -229,7 +229,7 @@ class FetchMetadataRequestHeadersScanRuleTest
         return new FetchMetadataRequestHeadersScanRule();
     }
 
-    private String generateRequestForMissingCase(String missingHeader) {
+    private static String generateRequestForMissingCase(String missingHeader) {
         switch (missingHeader) {
             case "Sec-Fetch-Site":
                 return HTTP_METHOD + SFM_VALID_HEADER + SFD_VALID_HEADER + SFU_VALID_HEADER;
@@ -248,7 +248,7 @@ class FetchMetadataRequestHeadersScanRuleTest
         }
     }
 
-    private String generateRequestForInvalidCase(String invalidHeader) {
+    private static String generateRequestForInvalidCase(String invalidHeader) {
         switch (invalidHeader) {
             case "Sec-Fetch-Site":
                 return HTTP_METHOD

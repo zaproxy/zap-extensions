@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.ascanrules.payloader;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -35,16 +33,11 @@ import org.zaproxy.zap.extension.custompayloads.PayloadCategory;
 public class ExtensionPayloader extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionPayloaderAscanRules";
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionCustomPayloads.class);
     private static ExtensionCustomPayloads ecp;
     private PayloadCategory uaCategory;
     private PayloadCategory hfCategory;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionCustomPayloads.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
 
     public ExtensionPayloader() {
         super(NAME);

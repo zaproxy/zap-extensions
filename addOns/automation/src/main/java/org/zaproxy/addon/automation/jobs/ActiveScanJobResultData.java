@@ -41,12 +41,15 @@ public class ActiveScanJobResultData extends JobResultData {
 
     private Map<Integer, RuleData> ruleDataMap = new HashMap<>();
     private Map<Integer, Alert> alertDataMap = new HashMap<>();
+    private int numberScannedNodes;
 
     public ActiveScanJobResultData(String jobName, ActiveScan activeScan) {
         super(jobName);
 
         RuleData data;
         for (HostProcess hp : activeScan.getHostProcesses()) {
+            numberScannedNodes += hp.getTestTotalCount();
+
             for (Plugin plugin : hp.getCompleted()) {
                 data =
                         ruleDataMap.computeIfAbsent(
@@ -69,6 +72,10 @@ public class ActiveScanJobResultData extends JobResultData {
                 LOGGER.error("Could not read alert with id {} from the database : {}", id, e);
             }
         }
+    }
+
+    public int getNumberScannedNodes() {
+        return numberScannedNodes;
     }
 
     public RuleData getRuleData(int ruleId) {

@@ -23,8 +23,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -39,7 +41,7 @@ class XDebugTokenScanRuleUnitTest extends PassiveScannerTest<XDebugTokenScanRule
         return new XDebugTokenScanRule();
     }
 
-    private HttpMessage createMessage() throws HttpMalformedHeaderException {
+    private static HttpMessage createMessage() throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");
@@ -74,6 +76,20 @@ class XDebugTokenScanRuleUnitTest extends PassiveScannerTest<XDebugTokenScanRule
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_ERRH_01_ERR.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_ERRH_01_ERR.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // THen
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     @Test

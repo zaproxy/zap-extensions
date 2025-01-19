@@ -20,16 +20,12 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
-import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -42,9 +38,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.addon.commonlib.timing.TimingUtils;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
-import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -60,43 +54,16 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
     // Prefix for internationalised messages used by this rule
     private static final String MESSAGE_PREFIX = "ascanalpha.mongodb.";
     // Constants
-    private static final String RULE_SLEEP_TIME = RuleConfigParam.RULE_COMMON_SLEEP_TIME;
     private static final String ALL_DATA_ATTACK = "alldata";
     private static final String CRASH_ATTACK = "crash";
-    private static final String SLEEP_ATTACK = "sleep";
     private static final String JSON_ATTACK = "json";
     private static final String AUTH_BYPASS_ATTACK = "authbypass";
     private static final String JSON_TOKEN = "$ZAP";
-    private static final int BLIND_REQUEST_LIMIT = 4;
-    private static final int DEFAULT_TIME_SLEEP_SEC = 5;
-    private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
-    private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
     // Packages of attack rules
     private static final String[] ALL_DATA_PARAM_INJECTION =
             new String[] {"[$ne]", "[$regex]", "[$gt]", "[$eq]"};
     private static final String[] ALL_DATA_VALUE_INJECTION = new String[] {"", ".*", "0", ""};
     private static final String[] CRASH_INJECTION = new String[] {"\"", "'", "//", "});", ");"};
-    private static final String[] SLEEP_INJECTION = {
-        // Attacking $where clause
-        // function() { var x = md5( some_input ); return this.password == x;}
-        "\"); sleep({0}); print(\"",
-        "'; sleep({0}); print(\'",
-        "0); sleep({0}); print(\"",
-        // function() { var x = this.value == some_input; return x;}
-        "'; sleep({0}); var x='",
-        "\"; sleep({0}); var x=\"",
-        "0; sleep({0})",
-        // function() { return this.value == some_input }
-        "zap' || sleep({0}) && 'zap'=='zap",
-        "zap\" || sleep({0}) && \"zap\"==\"zap",
-        "0 || sleep({0})",
-        // function() { return this.value == some_function(some_imput) }
-        "zap') || sleep({0}) && hex_md5('zap",
-        "zap\") || sleep({0}) && md5(\"zap",
-        "0)  || sleep({0})",
-        // Attacking mapReduce clause (only for old versions of mongodb)
-        "_id);}, function(inj) { sleep({0});return 1;}, { out: 'x'}); db.injection.mapReduce(function() { emit(1,1"
-    };
     private static final String[][] JSON_INJECTION = {{"$ne", "0"}, {"$gt", ""}, {"$regex", ".*"}};
     // Log prints
     private static final String JSON_EX_LOG = "trying to convert the payload in json format";
@@ -108,7 +75,7 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
                     CommonAlertTag.OWASP_2021_A03_INJECTION,
                     CommonAlertTag.OWASP_2017_A01_INJECTION,
                     CommonAlertTag.WSTG_V42_INPV_05_SQLI);
-    private int timeSleepSeconds;
+
     // Error messages that addressing to a well-known vulnerability
     private final Pattern[] errorPatterns = {
         Pattern.compile(
@@ -120,7 +87,6 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
     private boolean isJsonPayload;
     private boolean doAllDataScan;
     private boolean doCrashScan;
-    private boolean doTimedScan;
     private boolean doJsonScan;
     private boolean getMoreConfidence;
     private boolean doAuthBypass;
@@ -186,20 +152,11 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
 
     @Override
     public void init() {
-        try {
-            timeSleepSeconds = this.getConfig().getInt(RULE_SLEEP_TIME, DEFAULT_TIME_SLEEP_SEC);
-        } catch (ConversionException e) {
-            LOGGER.debug(
-                    "Invalid value for '{}': {}",
-                    RULE_SLEEP_TIME,
-                    this.getConfig().getString(RULE_SLEEP_TIME));
-        }
         LOGGER.debug("Initialising MongoDB penetration tests");
         switch (this.getAttackStrength()) {
             case LOW:
                 doCrashScan = false;
                 doAllDataScan = true;
-                doTimedScan = true;
                 doJsonScan = true;
                 getMoreConfidence = false;
                 doAuthBypass = true;
@@ -207,7 +164,6 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
             default:
                 doCrashScan = true;
                 doAllDataScan = true;
-                doTimedScan = true;
                 doJsonScan = true;
                 getMoreConfidence = true;
                 doAuthBypass = true;
@@ -328,88 +284,7 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
                 }
             }
         }
-        // injection attack to $Where and $mapReduce clauses
-        // The $where clause executes associated JS function one time for each tuple --> sleep time
-        // = interval * nTuples
-        if (!isBingo && doTimedScan) {
-            if (isStop()) {
-                LOGGER.debug(STOP_LOG);
-                return;
-            }
-            LOGGER.debug("Starting with the javascript code injection payloads:");
-            int index = 0;
-            while (index < SLEEP_INJECTION.length) {
-                if (isStop()) {
-                    LOGGER.debug(STOP_LOG);
-                    return;
-                }
-                String sleepPayload = SLEEP_INJECTION[index];
-                AtomicReference<HttpMessage> message = new AtomicReference<>();
-                String paramValue = sleepPayload.replace("{0}", String.valueOf(timeSleepSeconds));
-                LOGGER.debug("Trying with the value: {}", sleepPayload);
 
-                TimingUtils.RequestSender requestSender =
-                        x -> {
-                            HttpMessage timedMsg = getNewMsg();
-                            message.set(timedMsg);
-                            String finalPayload =
-                                    value + sleepPayload.replace("{0}", String.valueOf(x));
-                            setParameter(timedMsg, param, finalPayload);
-                            LOGGER.debug("Testing [{}] = [{}]", param, finalPayload);
-
-                            // send the request and retrieve the response
-                            sendAndReceive(timedMsg, false);
-                            return TimeUnit.MILLISECONDS.toSeconds(timedMsg.getTimeElapsedMillis());
-                        };
-
-                boolean isInjectable;
-                try {
-                    try {
-                        // use TimingUtils to detect a response to sleep payloads
-                        isInjectable =
-                                TimingUtils.checkTimingDependence(
-                                        BLIND_REQUEST_LIMIT,
-                                        timeSleepSeconds,
-                                        requestSender,
-                                        TIME_CORRELATION_ERROR_RANGE,
-                                        TIME_SLOPE_ERROR_RANGE);
-                    } catch (SocketException ex) {
-                        LOGGER.debug(
-                                "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
-                                ex.getClass().getName(),
-                                ex.getMessage(),
-                                message.get().getRequestHeader().getURI());
-                        continue; // Something went wrong, move to next blind iteration
-                    }
-
-                    if (isInjectable) {
-                        // We Found IT!
-                        LOGGER.debug(
-                                "[NOSQL Injection Found] on parameter [{}] with value [{}]",
-                                param,
-                                paramValue);
-
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setParam(param)
-                                .setAttack(paramValue)
-                                // just attach this alert to the last sent message
-                                .setMessage(message.get())
-                                .setOtherInfo(getExtraInfo(SLEEP_ATTACK))
-                                .raise();
-                        isBingo = true;
-                        break;
-                    }
-                } catch (IOException ex) {
-                    LOGGER.warn(
-                            "Mongo DB Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
-                            param,
-                            paramValue,
-                            ex);
-                }
-                index++;
-            }
-        }
         // json query injection
         if (!isBingo && doJsonScan && isJsonPayload) {
             LOGGER.debug("Starting with the json injection payloads:");

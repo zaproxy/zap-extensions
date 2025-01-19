@@ -123,7 +123,6 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
                         extension
                                 .getDialogManager()
                                 .showZestLoopDialog(parent, children, stmt, za, true, false));
-        menu.setMenuIndex(this.getMenuIndex());
         View.getSingleton().getPopupList().add(menu);
     }
 

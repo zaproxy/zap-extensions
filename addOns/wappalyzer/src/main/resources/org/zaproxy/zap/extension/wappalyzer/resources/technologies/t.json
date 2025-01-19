@@ -3,9 +3,15 @@
     "cats": [
       6
     ],
-    "html": "<a href=\"http://www\\.tsoft\\.com\\.tr\" target=\"_blank\" title=\"T-Soft E-ticaret Sistemleri\">",
-    "icon": "Tsoft.png",
-    "website": "https://www.tsoft.com.tr/"
+    "description": "T-Soft is a technology company specializing in ecommerce platform development and management.",
+    "dom": [
+      "a[href*='.tsoft.com.tr'][target='_blank'][title='T-Soft E-ticaret Sistemleri']"
+    ],
+    "html": [
+      "<a href=\"http://www\\.tsoft\\.com\\.tr\" target=\"_blank\" title=\"T-Soft E-ticaret Sistemleri\">"
+    ],
+    "icon": "Tsoft.svg",
+    "website": "https://www.tsoft.com.tr"
   },
   "T1 Comercios": {
     "cats": [
@@ -78,7 +84,7 @@
       9
     ],
     "description": "TCAdmin is the game hosting control panel.",
-    "icon": "TCAdmin.png",
+    "icon": "TCAdmin.svg",
     "js": {
       "TCAdmin": ""
     },
@@ -89,14 +95,36 @@
     ],
     "website": "https://www.tcadmin.com"
   },
+  "TDO Software": {
+    "cats": [
+      53
+    ],
+    "description": "TDO is a practice management software designed for endodontists to build a modern office environment.",
+    "dom": [
+      "link[href*='//tdosites.com'][rel='dns-prefetch']"
+    ],
+    "icon": "TDOSoftware.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "tdosites\\.com/"
+    ],
+    "website": "https://wwww.tdo4endo.com"
+  },
   "TDesign": {
     "cats": [
       66
     ],
     "description": "TDesign launched by Tencent contains rich and reusable design component resources, such as color system, text system, motion design, etc.",
-    "dom": ".t-button__text, .t-layout",
+    "dom": [
+      ".t-button__text, .t-layout"
+    ],
     "icon": "TDesign.svg",
-    "scriptSrc": "tdesign\\.gtimg\\.com/",
+    "scriptSrc": [
+      "tdesign\\.gtimg\\.com/"
+    ],
     "website": "https://tdesign.tencent.com"
   },
   "THG Ingenuity": {
@@ -104,7 +132,7 @@
       6
     ],
     "description": "THG Ingenuity is completely unique in that it's both a peer-to-peer ecommerce retailer and a service provider to global cross-border commerce operations.",
-    "icon": "THG Ingenuity.png",
+    "icon": "THG Ingenuity.svg",
     "pricing": [
       "poa"
     ],
@@ -119,8 +147,10 @@
       95
     ],
     "description": "THRON is a digital asset management platform that provides a centralised hub for storing, organising, and distributing digital assets like images, videos, and documents.",
-    "dom": "link[href*='.thron.com/'], img[src*='.thron.com/']",
-    "icon": "THRON.png",
+    "dom": [
+      "link[href*='.thron.com/'], img[src*='.thron.com/']"
+    ],
+    "icon": "THRON.svg",
     "js": {
       "THRONPlayer": "",
       "thronHlsJs": ""
@@ -131,6 +161,39 @@
     "saas": true,
     "website": "https://www.thron.com"
   },
+  "TIEIT": {
+    "cats": [
+      32,
+      53
+    ],
+    "description": "TIEIT is an all-in-one platform offering integrated tools for sales, marketing, customer service, billing, subscriptions, and scheduling, designed to streamline business operations in a unified solution.",
+    "icon": "TIEIT.svg",
+    "saas": true,
+    "scripts": [
+      "app\\.tieit\\.io"
+    ],
+    "website": "https://www.tieit.ai"
+  },
+  "TITANPush": {
+    "cats": [
+      32
+    ],
+    "description": "TITANPush is a platform offering tools that assist brands in increasing sales through their websites and improving customer communication without requiring programming knowledge.",
+    "icon": "TITANPush.svg",
+    "js": {
+      "titanPush": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.titanpush\\.com"
+    ],
+    "website": "https://www.titanpush.com"
+  },
   "TN Express Web": {
     "cats": [
       1
@@ -140,7 +203,9 @@
     },
     "description": "Tessitura is an enterprise application to manage activities in ticketing, fundraising, customer relationship management, and marketing.",
     "icon": "tessitura.svg",
-    "implies": "Tessitura",
+    "implies": [
+      "Tessitura"
+    ],
     "website": "https://www.tessituranetwork.com"
   },
   "TNS Payments": {
@@ -148,8 +213,10 @@
       41
     ],
     "description": "TNS Payments, is designed to deliver payment transaction information to banks, merchants, processors and other payment institutions.",
-    "icon": "tnsi.png",
-    "scriptSrc": "secure\\.ap\\.tnspayments\\.com",
+    "icon": "tnsi.svg",
+    "scriptSrc": [
+      "secure\\.ap\\.tnspayments\\.com"
+    ],
     "website": "https://tnsi.com/products/payments/"
   },
   "TRISOshop": {
@@ -157,7 +224,9 @@
       6
     ],
     "description": "TRISOshop is an ecommerce platform.",
-    "dom": "a[href*='www.trisoshop.pl'][target='_blank']",
+    "dom": [
+      "a[href*='www.trisoshop.pl'][target='_blank']"
+    ],
     "icon": "TRISOshop.svg",
     "pricing": [
       "low",
@@ -192,7 +261,9 @@
       36
     ],
     "description": "TVSquared is a cross-platform TV ad measurement, analytics and optimisation platform.",
-    "dom": "link[href*='.tvsquared.com']",
+    "dom": [
+      "link[href*='.tvsquared.com']"
+    ],
     "icon": "TVSquared.png",
     "js": {
       "TV2Track": "",
@@ -211,11 +282,18 @@
     "cookies": {
       "TWIKISID": ""
     },
+    "cpe": "cpe:2.3:a:twiki:twiki:*:*:*:*:*:*:*:*",
     "description": "TWiki is an open-source wiki and application platform.",
-    "html": "<img [^>]*(?:title|alt)=\"This site is powered by the TWiki collaboration platform",
-    "icon": "TWiki.png",
-    "implies": "Perl",
-    "scriptSrc": "(?:TWikiJavascripts|twikilib(?:\\.min)?\\.js)",
+    "html": [
+      "<img [^>]*(?:title|alt)=\"This site is powered by the TWiki collaboration platform"
+    ],
+    "icon": "TWiki.svg",
+    "implies": [
+      "Perl"
+    ],
+    "scriptSrc": [
+      "(?:TWikiJavascripts|twikilib(?:\\.min)?\\.js)"
+    ],
     "website": "https://twiki.org"
   },
   "TYPO3 CMS": {
@@ -224,9 +302,16 @@
     ],
     "cpe": "cpe:2.3:a:typo3:typo3:*:*:*:*:*:*:*:*",
     "description": "TYPO3 is a free and open-source Web content management system written in PHP.",
-    "dom": "link[href*='typo3conf'], link[href*='typo3temp'], img[src*='typo3conf'], img[src*='typo3temp']",
+    "dom": [
+      "link[href*='typo3conf'], link[href*='typo3temp'], img[src*='typo3conf'], img[src*='typo3temp']"
+    ],
     "icon": "TYPO3.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
+    "js": {
+      "webpackChunkTYPO3Webpack": ""
+    },
     "meta": {
       "generator": "TYPO3\\s+(?:CMS\\s+)?(?:[\\d.]+)?(?:\\s+CMS)?"
     },
@@ -234,8 +319,12 @@
     "probe": {
       "/typo3/sysext/core/Resources/Public/Images/typo3_orange.svg": ""
     },
-    "scriptSrc": "^/?typo3(?:conf|temp)/",
-    "url": "/typo3/",
+    "scriptSrc": [
+      "^/?typo3(?:conf|temp)/"
+    ],
+    "url": [
+      "/typo3/"
+    ],
     "website": "https://typo3.org/"
   },
   "Tabarnapp": {
@@ -251,9 +340,13 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
-    "scriptSrc": "cdn\\.tabarn\\.app/",
+    "scriptSrc": [
+      "cdn\\.tabarn\\.app/"
+    ],
     "website": "https://tabarnapp.com"
   },
   "Tabby": {
@@ -268,7 +361,9 @@
       "TabbyPromo": ""
     },
     "saas": true,
-    "scriptSrc": "checkout\\.tabby\\.ai",
+    "scriptSrc": [
+      "checkout\\.tabby\\.ai"
+    ],
     "website": "https://tabby.ai/"
   },
   "TableBooker": {
@@ -289,7 +384,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "reservations\\.tablebooker\\.\\w+/",
+    "scriptSrc": [
+      "reservations\\.tablebooker\\.\\w+/"
+    ],
     "website": "https://www.tablebooker.com"
   },
   "TableCheck": {
@@ -305,7 +402,9 @@
       }
     },
     "icon": "TableCheck.svg",
-    "scriptSrc": "tc_widget\\.js",
+    "scriptSrc": [
+      "tc_widget\\.js"
+    ],
     "website": "https://www.tablecheck.com"
   },
   "TablePress": {
@@ -313,11 +412,25 @@
       87
     ],
     "description": "TablePress is a free and open source plugin for the WordPress publishing platform. It enables you to create and manage tables on your website, without any coding knowledge.",
-    "dom": "link[href*='/wp-content/plugins/tablepress/']",
-    "icon": "TablePress.png",
+    "dom": [
+      "link[href*='/wp-content/plugins/tablepress/']"
+    ],
+    "icon": "TablePress.svg",
     "oss": true,
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://tablepress.org"
+  },
+  "Tablesorter": {
+    "cats": [
+      59
+    ],
+    "description": "Flexible client-side table sorting.",
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)[-\\/](?:dist\\/js\\/)?)?(?:jquery\\.)?tablesorter(?:[\\.\\/]pager)?(?:-custom-controls)?(?:\\.widgets)?(?:\\.min)?\\.js\\;version:\\1"
+    ],
+    "website": "https://mottie.github.io/tablesorter/"
   },
   "Taboola": {
     "cats": [
@@ -344,9 +457,29 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.taboola\\.com",
+    "scriptSrc": [
+      "\\.taboola\\.com"
+    ],
     "website": "https://www.taboola.com",
-    "xhr": "\\.taboola\\.com"
+    "xhr": [
+      "\\.taboola\\.com"
+    ]
+  },
+  "Tabulator": {
+    "cats": [
+      59
+    ],
+    "description": "Tabulator is a JavaScript tool for creating interactive tables and data grids.",
+    "icon": "Tabulator.svg",
+    "js": {
+      "Tabulator": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://tabulator.info/"
   },
   "Tachyons": {
     "cats": [
@@ -372,15 +505,19 @@
       100
     ],
     "description": "Tada offers interactive website popups that allow Shopify merchants to collect more emails and increase sales by engaging website visitors through gamification.",
-    "icon": "Tada.png",
-    "implies": "Shopify",
+    "icon": "Tada.svg",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "freemium",
       "payg",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.trytada\\.com/",
+    "scriptSrc": [
+      "cdn\\.trytada\\.com/"
+    ],
     "website": "https://trytada.com"
   },
   "TagPro": {
@@ -396,7 +533,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "tagpro\\.adpromedia\\.net/",
+    "scriptSrc": [
+      "tagpro\\.adpromedia\\.net/"
+    ],
     "website": "https://tagpro.adpromedia.net"
   },
   "Tagboard": {
@@ -404,14 +543,18 @@
       96
     ],
     "description": "Tagboard is a platform which allows users to aggregate data from major social networking websites and embed, repost and redisplay it on various media.",
-    "dom": "iframe[src*='.tagboard.com/']",
+    "dom": [
+      "iframe[src*='.tagboard.com/']"
+    ],
     "icon": "Tagboard.svg",
     "pricing": [
       "high",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.tagboard\\.com/",
+    "scriptSrc": [
+      "\\.tagboard\\.com/"
+    ],
     "website": "https://tagboard.com"
   },
   "Tagembed": {
@@ -420,7 +563,9 @@
       5
     ],
     "description": "Tagembed is a social media aggregator that collects and displays engaging user-generated content from any social media network such as Instagram, Facebook, Twitter, Youtube, Tiktok, Google Reviews, Airbnb, and 18+ networks.",
-    "dom": "script[data-src*='widget.tagembed.com/']",
+    "dom": [
+      "script[data-src*='widget.tagembed.com/']"
+    ],
     "icon": "Tagembed.svg",
     "js": {
       "TagembedWidget": ""
@@ -431,7 +576,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "//widget\\.tagembed\\.com/",
+    "scriptSrc": [
+      "//widget\\.tagembed\\.com/"
+    ],
     "website": "https://tagembed.com"
   },
   "Taggbox": {
@@ -453,14 +600,52 @@
       "\\.taggbox\\.com",
       "taggbox\\.com/app/js/embed\\.min\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
     ],
-    "url": "\\.taggbox\\.com",
+    "url": [
+      "\\.taggbox\\.com"
+    ],
     "website": "https://taggbox.com/"
+  },
+  "Tagshop": {
+    "cats": [
+      90
+    ],
+    "description": "Tagshop is a platform that allows ecommerce brands to create, collect, and integrate user-generated content on product pages, social ads, and emails, thereby increasing sales.",
+    "dom": [
+      "div[view-url*='app.taggshop.io/']"
+    ],
+    "icon": "Tagshop.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.taggshop\\.io/"
+    ],
+    "website": "https://tagshop.ai/"
+  },
+  "Tagtoo": {
+    "cats": [
+      36
+    ],
+    "description": "Tagtoo is an ad platform that provides businesses with digital advertising solutions, specializing in targeted display and programmatic ads to help brands reach their audience more across various online channels.",
+    "icon": "Tagtoo.svg",
+    "js": {
+      "tagtoo_advertiser_id": "",
+      "tagtoo_ga": "",
+      "tagtoo_s": ""
+    },
+    "saas": true,
+    "website": "https://tagtoo.com"
   },
   "Taiga": {
     "cats": [
       13
     ],
-    "icon": "Taiga.png",
+    "description": "Taiga is an open-source agile project management software that supports Scrum and Kanban methodologies for cross-functional teams.",
+    "icon": "Taiga.svg",
     "implies": [
       "Django",
       "AngularJS"
@@ -468,6 +653,12 @@
     "js": {
       "taigaConfig": ""
     },
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
     "website": "https://taiga.io"
   },
   "Tail": {
@@ -480,27 +671,40 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.tailtarget\\.com/",
+    "scriptSrc": [
+      "\\.tailtarget\\.com/"
+    ],
     "website": "https://www.tail.digital"
   },
   "Tailwind CSS": {
     "cats": [
       66
     ],
-    "css": "--tw-(?:rotate|translate|space-x|text-opacity|border-opacity)",
+    "css": [
+      "--tw-(?:rotate|translate|space-x|text-opacity|border-opacity)"
+    ],
     "description": "Tailwind is a utility-first CSS framework.",
     "dom": {
       "link[rel='stylesheet'][href*='tailwind']": {
         "attributes": {
           "href": "tailwindcss[@|/](?:\\^)?([\\d.]+)(?:/[a-z]+)?/(?:tailwind|base|components|utilities)(?:\\.min)?\\.css\\;version:\\1"
         }
+      },
+      "style": {
+        "text": "/\\/\\*! tailwindcss v([\\d.]+) \\| MIT License \\| https:\\/\\/tailwindcss\\.com\\*\\/\\;version:\\1"
       }
     },
     "icon": "tailwindcss.svg",
     "js": {
+      "hexToTailwindColorVar": "",
       "tailwind": ""
     },
-    "scriptSrc": "\\.tailwindcss(?:tailwind-config-cdn)?\\.(?:com|js)",
+    "meta": {
+      "application-name": "^Tailwind CSS$"
+    },
+    "scriptSrc": [
+      "\\.tailwindcss(?:tailwind-config-cdn)?\\.(?:com|js)"
+    ],
     "website": "https://tailwindcss.com/"
   },
   "TakeDrop": {
@@ -508,8 +712,10 @@
       6
     ],
     "description": "TakeDrop is an ecommerce platform.",
-    "dom": "img[src*='main.takedropstorage.com']",
-    "icon": "TakeDrop.png",
+    "dom": [
+      "img[src*='main.takedropstorage.com']"
+    ],
+    "icon": "TakeDrop.svg",
     "js": {
       "webpackJsonptakedrop-react": ""
     },
@@ -519,6 +725,60 @@
     ],
     "saas": true,
     "website": "https://takedrop.pl"
+  },
+  "Talex": {
+    "cats": [
+      6
+    ],
+    "description": "Talex is a Swedish ecommerce platform.",
+    "icon": "Talex.svg",
+    "meta": {
+      "Author": "Talex Webshop,"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.talex.se"
+  },
+  "Talk-Me": {
+    "cats": [
+      52
+    ],
+    "description": "Talk-Me is a chat system designed to enhance sales growth by facilitating customer communication, offering a range of tools to help businesses find new clients through their websites.",
+    "icon": "TalkMe.svg",
+    "js": {
+      "MeTalk": "",
+      "TalkMe": "",
+      "TalkMeIsInitialized": "",
+      "TalkMeSetup": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://talk-me.ru"
+  },
+  "TalkJS": {
+    "cats": [
+      52
+    ],
+    "description": "TalkJS is a platform that enables user-to-user messaging within marketplaces or platforms.",
+    "icon": "TalkJS.svg",
+    "js": {
+      "Talk.v": "^(.+)$\\;version:\\1",
+      "_talkjs_locales": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://talkjs.com"
   },
   "Talkable": {
     "cats": [
@@ -537,6 +797,27 @@
     "saas": true,
     "website": "https://www.talkable.com"
   },
+  "Talkdesk": {
+    "cats": [
+      52,
+      53
+    ],
+    "description": "Talkdesk is a platform providing modern AI-powered customer service solutions.",
+    "icon": "Talkdesk.svg",
+    "js": {
+      "TalkdeskChatSDK": "",
+      "webpackChunkTalkdeskChatSDK": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.talkdeskapp\\.com/"
+    ],
+    "website": "https://www.talkdesk.com"
+  },
   "Tallentor": {
     "cats": [
       10
@@ -548,7 +829,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "tallentor\\.com/js/script_tracker\\.js",
+    "scriptSrc": [
+      "tallentor\\.com/js/script_tracker\\.js"
+    ],
     "website": "https://tallentor.com"
   },
   "Tallentor Widget": {
@@ -586,15 +869,23 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "//tally\\.so/",
+    "scriptSrc": [
+      "//tally\\.so/"
+    ],
     "website": "https://tally.so/"
   },
   "Tamago": {
     "cats": [
-      5
+      41
     ],
-    "html": "<link [^>]*href=\"http://tamago\\.temonalab\\.com",
-    "icon": "Tamago.png",
+    "description": "Tamago is a Japanese subscription management platform by Temonalab for optimizing recurring billing services.",
+    "dom": [
+      "link[href*='tamago.temonalab.com']"
+    ],
+    "html": [
+      "<link [^>]*href=\"http://tamago\\.temonalab\\.com"
+    ],
+    "icon": "Tamago.svg",
     "website": "https://tamago.temonalab.com"
   },
   "Tamara": {
@@ -608,8 +899,24 @@
       "TamaraProductWidget": ""
     },
     "saas": true,
-    "scriptSrc": "cdn\\.tamara\\.co",
+    "scriptSrc": [
+      "cdn\\.tamara\\.co"
+    ],
     "website": "https://tamara.co/"
+  },
+  "Tangiblee": {
+    "cats": [
+      105
+    ],
+    "description": "Tangiblee is an enterprise-ready, immersive shopping and augmented reality ecommerce platform.",
+    "icon": "Tangiblee.svg",
+    "js": {
+      "globalTangiblee": "",
+      "tangiblee": "",
+      "tangibleeScriptLoaded": ""
+    },
+    "saas": true,
+    "website": "https://www.tangiblee.com"
   },
   "Tangled Network": {
     "cats": [
@@ -623,19 +930,36 @@
     "headers": {
       "X-Hosting-Provider": "Tangled Network"
     },
-    "icon": "atws.png",
+    "icon": "atws.svg",
     "pricing": [
       "low",
       "recurring"
     ],
     "website": "https://tanglednetwork.com"
   },
+  "Tap Payments": {
+    "cats": [
+      41
+    ],
+    "description": "Tap Payments is a company based in KSA provides payment services to merchants.",
+    "dom": [
+      "iframe[src*='checkout.payments.tap.company/']"
+    ],
+    "icon": "Tap Payments.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.tap.company"
+  },
   "Tapad": {
     "cats": [
       36
     ],
     "description": "Tapad is a venture-funded startup company that develops and markets software and services for cross-device advertising and content delivery.",
-    "dom": "link[href*='pixel.tapad.com'], img[src*='pixel.tapad.com']",
+    "dom": [
+      "link[href*='pixel.tapad.com'], img[src*='pixel.tapad.com']"
+    ],
     "icon": "Tapad.svg",
     "pricing": [
       "poa"
@@ -648,7 +972,9 @@
       19
     ],
     "description": "Tapcart is a mobile commerce SaaS platform that integrates directly with Shopify.",
-    "dom": "a[href*='tapcart.app'][target='_blank']",
+    "dom": [
+      "a[href*='tapcart.app'][target='_blank']"
+    ],
     "icon": "Tapcart.svg",
     "js": {
       "tapcartwebBanner": ""
@@ -657,9 +983,13 @@
       "mid",
       "recurring"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
-    "scriptSrc": "cdn\\.tapcart\\.com/",
+    "scriptSrc": [
+      "cdn\\.tapcart\\.com/"
+    ],
     "website": "https://tapcart.com"
   },
   "Tapfiliate": {
@@ -676,7 +1006,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.tapfiliate\\.com/",
+    "scriptSrc": [
+      "\\.tapfiliate\\.com/"
+    ],
     "website": "https://tapfiliate.com"
   },
   "Target2Sell": {
@@ -685,8 +1017,48 @@
     ],
     "description": "Target2Sell is a personalisation solution for ecommerce sites.",
     "icon": "Target2Sell.png",
-    "scriptSrc": "static\\.target2sell\\.com",
+    "scriptSrc": [
+      "static\\.target2sell\\.com"
+    ],
     "website": "https://www.target2sell.com/"
+  },
+  "TargetBay": {
+    "cats": [
+      6,
+      32
+    ],
+    "description": "TargetBay is an all-in-one ecommerce marketing platform.",
+    "icon": "TargetBay.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "poa",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.targetbay\\.com"
+    ],
+    "website": "https://targetbay.com"
+  },
+  "Tars": {
+    "cats": [
+      52
+    ],
+    "description": "Tars is a platform for creating chatbots without programming knowledge.",
+    "dom": [
+      "link[href*='api.hellotars.com/']"
+    ],
+    "icon": "Tars.svg",
+    "js": {
+      "tarsWidget": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "api\\.hellotars\\.com/"
+    ],
+    "website": "https://hellotars.com/"
   },
   "Tatari": {
     "cats": [
@@ -713,7 +1085,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "//embed\\.tawk\\.to",
+    "scriptSrc": [
+      "//embed\\.tawk\\.to"
+    ],
     "website": "https://tawk.to"
   },
   "Teachable": {
@@ -724,7 +1098,7 @@
       "_gat_teachableTracker": "\\d+"
     },
     "description": "Teachable is a learning management system or LMS platform.",
-    "icon": "Teachable.png",
+    "icon": "Teachable.svg",
     "js": {
       "isTeachable": "\\;confidence:50",
       "teachableIcons": "\\;confidence:50",
@@ -738,7 +1112,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.teachablecdn\\.com",
+    "scriptSrc": [
+      "\\.teachablecdn\\.com"
+    ],
     "website": "https://teachable.com"
   },
   "Teads": {
@@ -747,9 +1123,13 @@
     ],
     "description": "Teads is a technology provider that sells ads on publisher websites.",
     "icon": "Teads.svg",
-    "scriptSrc": "teads\\.tv",
+    "scriptSrc": [
+      "teads\\.tv"
+    ],
     "website": "https://www.teads.com",
-    "xhr": "\\.teads\\.tv"
+    "xhr": [
+      "\\.teads\\.tv"
+    ]
   },
   "Tealium": {
     "cats": [
@@ -757,9 +1137,11 @@
       97
     ],
     "description": "Tealium provides a sales enterprise tag management system and marketing software.",
-    "icon": "Tealium.png",
+    "icon": "Tealium.svg",
     "js": {
-      "TEALIUMENABLED": ""
+      "TEALIUMENABLED": "",
+      "TealiumUtils": "",
+      "__tealium_twc_switch": ""
     },
     "pricing": [
       "mid",
@@ -770,6 +1152,9 @@
       "^(?:https?:)?//tags\\.tiqcdn\\.com/",
       "/tealium/utag\\.js$"
     ],
+    "scripts": [
+      "tealium_js_path"
+    ],
     "website": "https://tealium.com"
   },
   "Tealium AudienceStream": {
@@ -777,13 +1162,17 @@
       86
     ],
     "description": "Tealium AudienceStream is an omnichannel customer segmentation and real-time action engine.",
-    "dom": "link[href*='.tealiumiq.com']",
-    "icon": "Tealium.png",
+    "dom": [
+      "link[href*='.tealiumiq.com']"
+    ],
+    "icon": "Tealium.svg",
     "pricing": [
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.tealiumiq\\.com",
+    "scriptSrc": [
+      "\\.tealiumiq\\.com"
+    ],
     "website": "https://tealium.com/products/audiencestream"
   },
   "Tealium Consent Management": {
@@ -791,8 +1180,10 @@
       67
     ],
     "description": "Tealium Consent Management adds consent and data privacy support.",
-    "dom": "script#__tealiumGDPRecScript,div#__tealiumGDPRecModal",
-    "icon": "Tealium.png",
+    "dom": [
+      "script#__tealiumGDPRecScript,div#__tealiumGDPRecModal"
+    ],
+    "icon": "Tealium.svg",
     "website": "https://docs.tealium.com/platforms/getting-started/consent-management"
   },
   "TeamBrain": {
@@ -800,8 +1191,10 @@
       5
     ],
     "description": "TeamBrain is a knowledge management solution which allows to use a self-learning dynamic FAQ on a website or widget on the bottom right of any page.",
-    "dom": "link[href*='//teambrain.app/']",
-    "icon": "TeamBrain.png",
+    "dom": [
+      "link[href*='//teambrain.app/']"
+    ],
+    "icon": "TeamBrain.svg",
     "js": {
       "TeamBrainExternalApp": ""
     },
@@ -817,7 +1210,9 @@
       44
     ],
     "description": "TeamCity is a build management and continuous integration server from JetBrains.",
-    "html": "<span class=\"versionTag\"><span class=\"vWord\">Version</span> ([\\d\\.]+)\\;version:\\1",
+    "html": [
+      "<span class=\"versionTag\"><span class=\"vWord\">Version</span> ([\\d\\.]+)\\;version:\\1"
+    ],
     "icon": "TeamCity.svg",
     "implies": [
       "Apache Tomcat",
@@ -832,6 +1227,84 @@
       "application-name": "TeamCity"
     },
     "website": "https://www.jetbrains.com/teamcity/"
+  },
+  "TeamLinkt": {
+    "cats": [
+      13
+    ],
+    "description": "Teamlinkt is a software facilitating team management, enabling users to track progress, assign tasks, and coordinate activities.",
+    "icon": "TeamLinkt.svg",
+    "meta": {
+      "author": "^TeamLinkt$"
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://teamlinkt.com"
+  },
+  "TeamSystem Commerce": {
+    "cats": [
+      6
+    ],
+    "headers": {
+      "X-Powered-By": "(?:Storeden|TeamSystem Commerce)"
+    },
+    "icon": "storeden.svg",
+    "website": "https://www.teamsystemcommerce.com/"
+  },
+  "TeamUnify": {
+    "cats": [
+      53
+    ],
+    "description": "TeamUnify is an all-in-one swim platform that simplifies swim team management.",
+    "icon": "TeamUnify.svg",
+    "js": {
+      "TeamUnifyUpdateSubsystem": ""
+    },
+    "meta": {
+      "author": "^TeamUnify$"
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.teamunify.com"
+  },
+  "TeamUp": {
+    "cats": [
+      72
+    ],
+    "description": "TeamUp is fitness management software catering to boutique gyms, studios, and fitness boxes worldwide.",
+    "dom": [
+      "a[href*='//goteamup.com/']"
+    ],
+    "icon": "TeamUp.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://goteamup.com"
+  },
+  "TeamViewer": {
+    "cats": [
+      37,
+      45
+    ],
+    "description": "TeamViewer is a network and IT systems uptime monitoring service, formerly known as Monitis.",
+    "icon": "TeamViewer.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "rum\\.monitis\\.com/"
+    ],
+    "website": "https://monitis.com"
   },
   "Teamtailor": {
     "cats": [
@@ -871,10 +1344,86 @@
       "Sass",
       "PHP"
     ],
-    "requires": "Cart Functionality",
+    "requires": [
+      "Cart Functionality"
+    ],
     "saas": true,
-    "scripts": "\\.tebexLogin",
+    "scripts": [
+      "\\.tebexLogin"
+    ],
     "website": "https://www.tebex.io"
+  },
+  "TechTarget": {
+    "cats": [
+      4
+    ],
+    "description": "TechTarget is a resource providing technology professionals and buyers with the technical information required to perform in their roles.",
+    "icon": "TechTarget.svg",
+    "js": {
+      "loadTechTarget": "",
+      "techtargetic.client": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.techtarget\\.com/"
+    ],
+    "website": "https://www.techtarget.com"
+  },
+  "Teeinblue": {
+    "cats": [
+      76
+    ],
+    "description": "Teeinblue is a personalization tool tailored for print-on-demand merchants using Shopify.",
+    "icon": "TeeinBlue.svg",
+    "js": {
+      "TEEINBLUE_LOADED": "",
+      "teeinblue": "",
+      "teeinblueShop": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "sdk\\.teeinblue\\.com"
+    ],
+    "website": "https://teeinblue.com"
+  },
+  "Tekion": {
+    "cats": [
+      6
+    ],
+    "description": "Tekion is an end-to-end cloud automotive platform.",
+    "icon": "Tekion.svg",
+    "saas": true,
+    "scripts": [
+      "\\.tekioncloud\\.com"
+    ],
+    "website": "https://tekion.com"
+  },
+  "TeleportHQ": {
+    "cats": [
+      51
+    ],
+    "description": "TeleportHQ is a front-end development platform featuring a visual builder and headless content modeling capabilities.",
+    "dom": [
+      "link[href*='/@teleporthq/teleport-custom-scripts/']"
+    ],
+    "icon": "TeleportHq.svg",
+    "implies": [
+      "React"
+    ],
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://teleporthq.io"
   },
   "Telescope": {
     "cats": [
@@ -895,7 +1444,9 @@
       10
     ],
     "icon": "tajs.png",
-    "scriptSrc": "tajs\\.qq\\.com/stats",
+    "scriptSrc": [
+      "tajs\\.qq\\.com/stats"
+    ],
     "website": "https://ta.qq.com/"
   },
   "Tencent Cloud": {
@@ -911,7 +1462,9 @@
     "pricing": [
       "payg"
     ],
-    "scriptSrc": "\\.tencent-cloud\\.(?:cn|com)/",
+    "scriptSrc": [
+      "\\.tencent-cloud\\.(?:cn|com)/"
+    ],
     "website": "https://intl.cloud.tencent.com"
   },
   "Tencent QQ": {
@@ -919,7 +1472,9 @@
       52
     ],
     "description": "Tencent QQ also known as QQ, is an instant messaging software service and web portal developed by the Chinese tech giant Tencent.",
-    "dom": "a[href*='tencent://message/']",
+    "dom": [
+      "a[href*='tencent://message/']"
+    ],
     "icon": "Tencent QQ.svg",
     "website": "https://im.qq.com"
   },
@@ -935,6 +1490,59 @@
     ],
     "website": "https://007.qq.com/"
   },
+  "Tend": {
+    "cats": [
+      10
+    ],
+    "description": "Tend is a conversion optimization tool designed to analyze visitor behavior and identify areas of interaction on websites.",
+    "icon": "Tend.svg",
+    "js": {
+      "tend.event": "",
+      "tendKey": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://tend.io"
+  },
+  "Tendenci": {
+    "cats": [
+      1
+    ],
+    "description": "Tendenci is a platform that provides resources for managing and organizing website content without requiring knowledge of HTML or complex programming tools.",
+    "icon": "Tendenci.svg",
+    "meta": {
+      "generator": "^Tendenci$"
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.tendenci.com"
+  },
+  "Tender Support": {
+    "cats": [
+      53
+    ],
+    "description": "Tender Support is a customer service software offering essential tools to enhance customer support.",
+    "icon": "TenderSupport.svg",
+    "js": {
+      "Tender": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.tenderapp\\.com/"
+    ],
+    "website": "https://tenderapp.com"
+  },
   "Tengine": {
     "cats": [
       22
@@ -946,13 +1554,38 @@
     "icon": "Tengine.png",
     "website": "https://tengine.taobao.org"
   },
+  "Terminalfour": {
+    "cats": [
+      1
+    ],
+    "description": "Terminalfour is a digital engagement and web content management platform for higher education.",
+    "icon": "Terminalfour.svg",
+    "meta": {
+      "generator": "TERMINALFOUR"
+    },
+    "website": "https://www.terminalfour.com"
+  },
+  "Terminus": {
+    "cats": [
+      32
+    ],
+    "description": "Terminus is a platform that helps identify target audiences, deliver relevant messages across multiple channels, integrate sales teams throughout the revenue process, and measure performance across all activities.",
+    "icon": "Terminus.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.terminus\\.services/"
+    ],
+    "website": "https://terminus.com"
+  },
   "Termly": {
     "cats": [
       67
     ],
     "description": "Termly provides free website policy resources and web-based policy creation software.",
     "icon": "termly.svg",
-    "scriptSrc": "app\\.termly\\.io/embed\\.min\\.js",
+    "scriptSrc": [
+      "app\\.termly\\.io/embed\\.min\\.js"
+    ],
     "website": "https://termly.io/"
   },
   "Tern": {
@@ -960,12 +1593,16 @@
       100
     ],
     "description": "Tern is a plug and play ecommerce app, built for Shopify, that offers merchants the ability to provide a seamless trade-in service.",
-    "icon": "Tern.png",
+    "icon": "Tern.svg",
     "pricing": [
       "payg"
     ],
-    "requires": "Shopify",
-    "scriptSrc": "live\\.tern-returns\\.eastsideapps\\.io/",
+    "requires": [
+      "Shopify"
+    ],
+    "scriptSrc": [
+      "live\\.tern-returns\\.eastsideapps\\.io/"
+    ],
     "website": "https://www.tern.eco"
   },
   "TerriaJS": {
@@ -973,15 +1610,20 @@
       35
     ],
     "description": "TerriaJS is an open-source framework for web-based geospatial catalogue explorers.",
-    "dom": "html[class*='terria']",
-    "icon": "TerriaJS.png",
+    "dom": [
+      "html[class*='terria']"
+    ],
+    "icon": "TerriaJS.svg",
+    "oss": true,
     "website": "https://terria.io/"
   },
   "Tessitura": {
     "cats": [
       53
     ],
-    "html": "<!--[^>]+Tessitura Version: (\\d*\\.\\d*\\.\\d*)?\\;version:\\1",
+    "html": [
+      "<!--[^>]+Tessitura Version: (\\d*\\.\\d*\\.\\d*)?\\;version:\\1"
+    ],
     "icon": "tessitura.svg",
     "implies": [
       "Microsoft ASP.NET",
@@ -1005,8 +1647,41 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.testfreaks\\.com/",
+    "scriptSrc": [
+      "\\.testfreaks\\.com/"
+    ],
     "website": "https://www.testfreaks.com"
+  },
+  "Testflow": {
+    "cats": [
+      16
+    ],
+    "description": "Testflow is a platform that digitizes manual workflows for test centers while ensuring secure patient data management in compliance with data protection regulations.",
+    "icon": "Testflow.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.testflow\\.eu"
+    ],
+    "website": "https://testflow.eu"
+  },
+  "Testimonial Robot": {
+    "cats": [
+      90
+    ],
+    "description": "Testimonial Robot is a testimonials and customer review platform.",
+    "icon": "TestimonialRobot.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.testimonialrobot\\.com/"
+    ],
+    "website": "https://testimonialrobot.com"
   },
   "Texthelp": {
     "cats": [
@@ -1014,14 +1689,35 @@
     ],
     "description": "TextHelp is a literacy, accessibility and dyslexia software developer for people with reading and writing difficulties.",
     "icon": "Texthelp.svg",
-    "scriptSrc": "browsealoud\\.com/.*/browsealoud\\.js",
+    "scriptSrc": [
+      "browsealoud\\.com/.*/browsealoud\\.js"
+    ],
     "website": "https://www.texthelp.com/en-gb/products/browsealoud/"
+  },
+  "Textline": {
+    "cats": [
+      53
+    ],
+    "description": "Textline is a business texting platform designed for customer support, sales, marketing, and logistics teams to streamline communication and improve workflow efficiency.",
+    "icon": "Textline.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.textline\\.com/"
+    ],
+    "website": "https://www.textline.com"
   },
   "Textpattern CMS": {
     "cats": [
       1
     ],
-    "icon": "Textpattern CMS.png",
+    "cpe": "cpe:2.3:a:textpattern:textpattern:*:*:*:*:*:*:*:*",
+    "description": "Textpattern CMS is an open-source content management system (CMS) that uses a tag-based template language and supports multiple languages.",
+    "icon": "Textpattern CMS.svg",
     "implies": [
       "PHP",
       "MySQL"
@@ -1029,7 +1725,50 @@
     "meta": {
       "generator": "Textpattern"
     },
+    "oss": true,
     "website": "https://textpattern.com"
+  },
+  "Thanx": {
+    "cats": [
+      84
+    ],
+    "description": "Thanx is a platform that captures insights, retains loyal fans, sends highly-targeted campaigns, and measures results in real revenue.",
+    "icon": "Thanx.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.thanx\\.com/"
+    ],
+    "website": "https://www.thanx.com"
+  },
+  "Thawte": {
+    "cats": [
+      70
+    ],
+    "certIssuer": "Thawte",
+    "description": "Thawte is a provider of SSL certificates, offering a site seal as a visual indicator of website security.",
+    "icon": "Thawte.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.thawte.com"
+  },
+  "The AdsLab": {
+    "cats": [
+      32,
+      36
+    ],
+    "description": "The AdsLab is a tool that enables users to target, track, and convert their desired audience effectively.",
+    "icon": "TheAdsLab.svg",
+    "saas": true,
+    "scriptSrc": [
+      "app\\.theadslab\\.io/"
+    ],
+    "website": "https://www.theadslab.io"
   },
   "The Arena Group": {
     "cats": [
@@ -1064,8 +1803,10 @@
       87
     ],
     "description": "The Events Calendar is a free event management plugin for WordPress.",
-    "dom": "link[href*='/wp-content/plugins/the-events-calendar/']",
-    "icon": "The Events Calendar.png",
+    "dom": [
+      "link[href*='/wp-content/plugins/the-events-calendar/']"
+    ],
+    "icon": "The Events Calendar.svg",
     "js": {
       "TribeCalendar": "",
       "tribe_l10n_datatables": ""
@@ -1075,8 +1816,12 @@
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/the-events-calendar(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/plugins/the-events-calendar(?:-pro)?/"
+    ],
     "website": "https://theeventscalendar.com"
   },
   "The Hotels Network": {
@@ -1098,8 +1843,22 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.thehotelsnetwork\\.com/",
+    "scriptSrc": [
+      "\\.thehotelsnetwork\\.com/"
+    ],
     "website": "https://thehotelsnetwork.com"
+  },
+  "The Monetyzer": {
+    "cats": [
+      36
+    ],
+    "description": "The Monetyzer is a global advertising platform for publishers.",
+    "icon": "TheMonetyzer.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.themoneytizer\\.com/"
+    ],
+    "website": "https://www.themoneytizer.com"
   },
   "The SEO Framework": {
     "cats": [
@@ -1107,14 +1866,18 @@
       87
     ],
     "description": "The SEO Framework is the only WordPress plugin that can intelligently generate critical SEO meta tags by reading your WordPress environment.",
-    "html": "<!--[^>]+The SEO Framework by Sybre Waaijer",
+    "html": [
+      "<!--[^>]+The SEO Framework by Sybre Waaijer"
+    ],
     "icon": "The SEO Framework.svg",
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
     "website": "https://theseoframework.com"
   },
@@ -1134,8 +1897,12 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/make(?:-child)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/make(?:-child)?/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://thethemefoundry.com/wordpress-themes/make"
   },
   "The.com": {
@@ -1155,13 +1922,14 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "the-dotcom-public-cdn\\.s3\\.amazonaws\\.com/",
+    "scriptSrc": [
+      "the-dotcom-public-cdn\\.s3\\.amazonaws\\.com/"
+    ],
     "website": "https://www.the.com"
   },
   "Theatre.js": {
     "cats": [
-      25,
-      59
+      25
     ],
     "description": "Theatre.js is a javascript animation library with a professional motion design toolset.",
     "icon": "Theatre.js.svg",
@@ -1203,12 +1971,16 @@
       1,
       6
     ],
-    "html": "<(?:link|style|script)[^>]+/assets/frontOffice/",
-    "icon": "Thelia.png",
+    "description": "Thelia is an open-source ecommerce platform based on the Symfony framework, designed for creating customized and scalable ecommerce sites.",
+    "html": [
+      "<(?:link|style|script)[^>]+/assets/frontOffice/"
+    ],
+    "icon": "Thelia.svg",
     "implies": [
       "PHP",
       "Symfony"
     ],
+    "oss": true,
     "website": "https://thelia.net"
   },
   "Theme Freesia Edge": {
@@ -1216,7 +1988,7 @@
       80
     ],
     "description": "Edge is a responsive blogger WordPress theme by Theme Freesia.",
-    "icon": "Theme Freesia.png",
+    "icon": "Theme Freesia.svg",
     "js": {
       "edge_slider_value": ""
     },
@@ -1224,8 +1996,12 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/edge(?:-plus)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/edge(?:-plus)?/"
+    ],
     "website": "https://themefreesia.com/themes/edge"
   },
   "Theme Freesia Photograph": {
@@ -1233,13 +2009,17 @@
       80
     ],
     "description": "Photograph is a WordPress theme exclusively built for photographer, blogger, portfolio, photography agency or photo studio websites.",
-    "icon": "Theme Freesia.png",
+    "icon": "Theme Freesia.svg",
     "pricing": [
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/photograph(?:-plus)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/photograph(?:-plus)?/"
+    ],
     "website": "https://themefreesia.com/themes/Photograph"
   },
   "Theme Freesia ShoppingCart": {
@@ -1247,7 +2027,7 @@
       80
     ],
     "description": "ShoppingCart is a WordPress theme especially build for store and ecommerce by Theme Freesia.",
-    "icon": "Theme Freesia.png",
+    "icon": "Theme Freesia.svg",
     "js": {
       "shoppingcart_slider_value": ""
     },
@@ -1255,8 +2035,12 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/shoppingcart(?:-plus)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/shoppingcart(?:-plus)?/"
+    ],
     "website": "https://themefreesia.com/themes/shoppingcart"
   },
   "Theme Horse Attitude": {
@@ -1264,14 +2048,20 @@
       80
     ],
     "description": "Attitude is a simple, clean and responsive retina ready WordPress theme by Theme Horse.",
-    "dom": "link[href*='/wp-content/themes/attitude-pro/']",
-    "icon": "Theme Horse.png",
+    "dom": [
+      "link[href*='/wp-content/themes/attitude-pro/']"
+    ],
+    "icon": "Theme Horse.svg",
     "pricing": [
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/attitude(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/attitude(?:-pro)?/"
+    ],
     "website": "https://www.themehorse.com/themes/attitude"
   },
   "Theme Horse NewsCard": {
@@ -1279,14 +2069,20 @@
       80
     ],
     "description": "NewsCard is a multi-purpose magazine/news WordPress theme by Theme Horse.",
-    "dom": "link[href*='/wp-content/themes/newscard-pro/']",
-    "icon": "Theme Horse.png",
+    "dom": [
+      "link[href*='/wp-content/themes/newscard-pro/']"
+    ],
+    "icon": "Theme Horse.svg",
     "pricing": [
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/newscard(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/newscard(?:-pro)?/"
+    ],
     "website": "https://www.themehorse.com/themes/newscard"
   },
   "Theme Vision Agama": {
@@ -1303,8 +2099,12 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/agama(?:-pro)?/.+functions\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/agama(?:-pro)?/.+functions\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://theme-vision.com/agama"
   },
   "Theme4Press Evolve": {
@@ -1312,7 +2112,7 @@
       80
     ],
     "description": "Theme4Press Evolve is an multipurpose and minimal WordPress theme.",
-    "icon": "Theme4Press.png",
+    "icon": "Theme4Press.svg",
     "js": {
       "evolve_js_local_vars": ""
     },
@@ -1320,8 +2120,12 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/evolve(?:-plus)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/evolve(?:-plus)?/"
+    ],
     "website": "https://theme4press.com/evolve-multipurpose-wordpress-theme"
   },
   "ThemeGrill Accelerate": {
@@ -1329,16 +2133,22 @@
       80
     ],
     "description": "ThemeGrill Accelerate is free minimal WordPress theme.",
-    "dom": "link#accelerate_style-css",
-    "icon": "ThemeGrill.png",
+    "dom": [
+      "link#accelerate_style-css"
+    ],
+    "icon": "ThemeGrill.svg",
     "pricing": [
       "freemium",
       "low",
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/accelerate(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/accelerate(?:-pro)?/"
+    ],
     "website": "https://themegrill.com/themes/accelerate"
   },
   "ThemeGrill Cenote": {
@@ -1346,16 +2156,22 @@
       80
     ],
     "description": "ThemeGrill Cenote is a creative blogging WordPress theme, fully compatible with WooCommerce and popular page builders.",
-    "dom": "link[href*='/wp-content/themes/cenote/'], link[href*='/wp-content/themes/cenote-pro/']",
-    "icon": "ThemeGrill.png",
+    "dom": [
+      "link[href*='/wp-content/themes/cenote/'], link[href*='/wp-content/themes/cenote-pro/']"
+    ],
+    "icon": "ThemeGrill.svg",
     "pricing": [
       "freemium",
       "low",
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/cenote(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/cenote(?:-pro)?/"
+    ],
     "website": "https://themegrill.com/themes/cenote"
   },
   "ThemeGrill ColorMag": {
@@ -1363,16 +2179,22 @@
       80
     ],
     "description": "ThemeGrill ColorMag is most popular magazine-newspaper style WordPress theme.",
-    "dom": "link#colormag_style-css",
-    "icon": "ThemeGrill.png",
+    "dom": [
+      "link#colormag_style-css"
+    ],
+    "icon": "ThemeGrill.svg",
     "pricing": [
       "freemium",
       "low",
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/colormag(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/colormag(?:-pro)?/"
+    ],
     "website": "https://themegrill.com/themes/colormag"
   },
   "ThemeGrill Flash": {
@@ -1380,16 +2202,22 @@
       80
     ],
     "description": "ThemeGrill Flash is one of the most flexible multipurpose WordPress themes.",
-    "dom": "link[href='/wp-content/themes/flash']",
-    "icon": "ThemeGrill.png",
+    "dom": [
+      "link[href='/wp-content/themes/flash']"
+    ],
+    "icon": "ThemeGrill.svg",
     "pricing": [
       "freemium",
       "low",
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/flash(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/flash(?:-pro)?/"
+    ],
     "website": "https://themegrill.com/themes/flash"
   },
   "ThemeGrill Radiate": {
@@ -1397,8 +2225,10 @@
       80
     ],
     "description": "ThemeGrill Radiate is a simple and minimal WordPress theme focused on blogging.",
-    "dom": "link#radiate-style-css",
-    "icon": "ThemeGrill.png",
+    "dom": [
+      "link#radiate-style-css"
+    ],
+    "icon": "ThemeGrill.svg",
     "js": {
       "radiateScriptParam": ""
     },
@@ -1408,8 +2238,12 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/radiate(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/radiate(?:-pro)?/"
+    ],
     "website": "https://themegrill.com/themes/radiate"
   },
   "ThemeGrill Spacious": {
@@ -1417,8 +2251,10 @@
       80
     ],
     "description": "ThemeGrill Spacious is beautiful small to medium business responsive WordPress theme.",
-    "dom": "link#spacious_style-css",
-    "icon": "ThemeGrill.png",
+    "dom": [
+      "link#spacious_style-css"
+    ],
+    "icon": "ThemeGrill.svg",
     "js": {
       "spacious_slider_value": ""
     },
@@ -1428,8 +2264,12 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/spacious(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/spacious(?:-pro)?/"
+    ],
     "website": "https://themegrill.com/themes/spacious"
   },
   "ThemeGrill eStore": {
@@ -1437,8 +2277,10 @@
       80
     ],
     "description": "ThemeGrill eStore is one of the most popular WooCommerce integrated WordPress themes.",
-    "icon": "ThemeGrill.png",
-    "implies": "Cart Functionality",
+    "icon": "ThemeGrill.svg",
+    "implies": [
+      "Cart Functionality"
+    ],
     "meta": {
       "generator": "eStore v\\.([\\d\\.]+)\\;version:\\1"
     },
@@ -1448,8 +2290,12 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/e(?:s|S)tore(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/e(?:s|S)tore(?:-pro)?/"
+    ],
     "website": "https://themegrill.com/themes/estore"
   },
   "ThemeIsle Menu Icons": {
@@ -1457,9 +2303,13 @@
       87
     ],
     "description": "ThemeIsle Menu Icons plugin gives you the ability to add icons to your menu items, similar to the look of the latest dashboard menu.",
-    "dom": "link[href*='/wp-content/plugins/menu-icons/']",
-    "icon": "ThemeIsle.png",
-    "requires": "WordPress",
+    "dom": [
+      "link[href*='/wp-content/plugins/menu-icons/']"
+    ],
+    "icon": "ThemeIsle.svg",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/menu-icons"
   },
   "ThemeZee Donovan": {
@@ -1467,7 +2317,7 @@
       80
     ],
     "description": "ThemeZee Donovan is a flexible, yet easy-to-use blogging WordPress theme.",
-    "icon": "ThemeZee.png",
+    "icon": "ThemeZee.svg",
     "js": {
       "donovanScreenReaderText": "",
       "donovan_menu_title": ""
@@ -1478,8 +2328,12 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/donovan/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/donovan/"
+    ],
     "website": "https://themezee.com/themes/donovan"
   },
   "ThemeZee Poseidon": {
@@ -1487,7 +2341,7 @@
       80
     ],
     "description": "ThemeZee Poseidon is an elegant designed WordPress theme featuring a splendid fullscreen image slideshow.",
-    "icon": "ThemeZee.png",
+    "icon": "ThemeZee.svg",
     "js": {
       "poseidonScreenReaderText": ""
     },
@@ -1497,8 +2351,12 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/poseidon/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/poseidon/"
+    ],
     "website": "https://themezee.com/themes/poseidon"
   },
   "ThemeZee Wellington": {
@@ -1506,7 +2364,7 @@
       80
     ],
     "description": "Wellington is a clean and simple magazine WordPress theme by ThemeZee.",
-    "icon": "ThemeZee.png",
+    "icon": "ThemeZee.svg",
     "js": {
       "wellingtonScreenReaderText": ""
     },
@@ -1516,8 +2374,12 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/wellington/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/wellington/"
+    ],
     "website": "https://themezee.com/themes/wellington"
   },
   "Themeansar Newsberg": {
@@ -1525,14 +2387,20 @@
       80
     ],
     "description": "Themeansar Newsberg is a fast, clean, modern-looking, responsive news magazine WordPress theme.",
-    "dom": "link#newsberg-style-css",
-    "excludes": "Themeansar Newsup",
+    "dom": [
+      "link#newsberg-style-css"
+    ],
+    "excludes": [
+      "Themeansar Newsup"
+    ],
     "icon": "Themeansar.png",
     "pricing": [
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://themeansar.com/free-themes/newsberg"
   },
   "Themeansar Newsup": {
@@ -1545,8 +2413,12 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/newsup(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/newsup(?:-pro)?/"
+    ],
     "website": "https://themeansar.com/free-themes/newsup"
   },
   "Themebeez Cream Magazine": {
@@ -1554,7 +2426,7 @@
       80
     ],
     "description": "Cream Magazine is a news and magazine WordPress theme by Themebeez.",
-    "icon": "Themebeez.png",
+    "icon": "Themebeez.svg",
     "js": {
       "cream_magazine_script_obj": ""
     },
@@ -1562,7 +2434,9 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://themebeez.com/themes/cream-magazine"
   },
   "Themebeez Orchid Store": {
@@ -1570,7 +2444,7 @@
       80
     ],
     "description": "Orchid Store is a clean, flexible, stylish and dynamic ecommerce WordPress theme by Themebeez.",
-    "icon": "Themebeez.png",
+    "icon": "Themebeez.svg",
     "js": {
       "orchid_store_obj": ""
     },
@@ -1578,8 +2452,12 @@
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/orchid-store(?:-child)?/.+bundle\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/orchid-store(?:-child)?/.+bundle\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://themebeez.com/themes/orchid-store"
   },
   "Themegraphy Graphy": {
@@ -1587,13 +2465,17 @@
       80
     ],
     "description": "Themegraphy Graphy is now compatible with WordPress 5.0 and Gutenberg blog-oriented WordPress theme.",
-    "icon": "Themegraphy.png",
+    "icon": "Themegraphy.svg",
     "pricing": [
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/graphy(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/graphy(?:-pro)?/"
+    ],
     "website": "https://themegraphy.com/wordpress-themes/graphy"
   },
   "Themes4Wp Bulk": {
@@ -1601,13 +2483,17 @@
       80
     ],
     "description": "Themes4Wp Bulk is a modern and responsive multipurpose WordPress theme.",
-    "icon": "Themes4Wp.png",
+    "icon": "Themes4Wp.svg",
     "pricing": [
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/bulk(?:-pro)?/.+customscript\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/bulk(?:-pro)?/.+customscript\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://themes4wp.com/theme/bulk"
   },
   "ThemezHut Bam": {
@@ -1615,13 +2501,17 @@
       80
     ],
     "description": "ThemezHut Bam is a great flexible WordPress theme for blogging sites.",
-    "icon": "ThemezHut.png",
+    "icon": "ThemezHut.svg",
     "pricing": [
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/bam(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/bam(?:-pro)?/"
+    ],
     "website": "https://themezhut.com/themes/bam"
   },
   "ThemezHut HitMag": {
@@ -1629,13 +2519,17 @@
       80
     ],
     "description": "ThemezHut HitMag is a stylish and powerful WordPress theme crafted for magazines, newspapers or personal blogs.",
-    "icon": "ThemezHut.png",
+    "icon": "ThemezHut.svg",
     "pricing": [
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/hitmag(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/hitmag(?:-pro)?/"
+    ],
     "website": "https://themezhut.com/themes/hitmag"
   },
   "Themonic Iconic One": {
@@ -1643,14 +2537,18 @@
       80
     ],
     "description": "Themonic Iconic One is a premium quality WordPress theme with pixel perfect typography and responsiveness and is built for speed.",
-    "icon": "Themonic.png",
+    "icon": "Themonic.svg",
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/iconic-one(?:-[\\w]+)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/iconic-one(?:-[\\w]+)?/"
+    ],
     "website": "https://themonic.com/iconic-one"
   },
   "Thesis": {
@@ -1667,7 +2565,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "thix\\.ttsep\\.com/",
+    "scriptSrc": [
+      "thix\\.ttsep\\.com/"
+    ],
     "website": "https://www.thesistesting.com"
   },
   "ThimPress Course Review": {
@@ -1675,12 +2575,16 @@
       87
     ],
     "description": "Course Review is a WordPress plugin by ThimPress. Course Review gives students the opportunity to evaluate and provide feedback in order to improve the course.",
-    "dom": "link[href*='/wp-content/plugins/learnpress-course-review/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/learnpress-course-review/']"
+    ],
     "icon": "ThimPress.svg",
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/plugins/learnpress-course-review"
   },
   "ThimPress Course Wishlist": {
@@ -1688,7 +2592,9 @@
       87
     ],
     "description": "Course Wishlist is a WordPress plugin by ThimPress. Course Wishlist bring wishlist feature for LearnPress.",
-    "dom": "link[href*='/wp-content/plugins/learnpress-wishlist/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/learnpress-wishlist/']"
+    ],
     "icon": "ThimPress.svg",
     "pricing": [
       "freemium"
@@ -1704,7 +2610,9 @@
       87
     ],
     "description": "Gradebook is a WordPress plugin by ThimPress. Gradebook add-on for LearnPress makes it easier to track the students learning progress and result.",
-    "dom": "link[href*='/wp-content/plugins/learnpress-gradebook/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/learnpress-gradebook/']"
+    ],
     "icon": "ThimPress.svg",
     "pricing": [
       "onetime"
@@ -1721,14 +2629,20 @@
       21
     ],
     "description": "LearnPress is a WordPress LMS plugin by ThimPress.",
-    "dom": "link[href*='/wp-content/plugins/learnpress/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/learnpress/']"
+    ],
     "icon": "ThimPress.svg",
     "pricing": [
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/learnpress/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/plugins/learnpress/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://wordpress.org/plugins/learnpress"
   },
   "Thimatic": {
@@ -1737,13 +2651,15 @@
       100
     ],
     "description": "Thimatic is a Shopify app for product reviews.",
-    "icon": "Thimatic.png",
+    "icon": "Thimatic.svg",
     "pricing": [
       "low",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "thimatic-apps\\.com/product_review/.*?v=([\\d.]+)\\;version:\\1",
+    "scriptSrc": [
+      "thimatic-apps\\.com/product_review/.*?v=([\\d.]+)\\;version:\\1"
+    ],
     "website": "https://thimatic-apps.com/"
   },
   "Think Up Themes Consulting": {
@@ -1751,14 +2667,20 @@
       80
     ],
     "description": "Think Up Themes Consulting is a multipurpose WordPress theme that is available for free download and also offers a pro version.",
-    "dom": "link#consulting-style-css",
-    "icon": "Think Up Themes.png",
+    "dom": [
+      "link#consulting-style-css"
+    ],
+    "icon": "Think Up Themes.svg",
     "pricing": [
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/consulting(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/consulting(?:-pro)?/"
+    ],
     "website": "https://www.thinkupthemes.com/themes/consulting"
   },
   "Think Up Themes Minamaze": {
@@ -1766,14 +2688,20 @@
       80
     ],
     "description": "Think Up Themes Minamaze is a multipurpose WordPress theme that is available for free download and also offers a pro version.",
-    "dom": "link#minamaze-style-css",
-    "icon": "Think Up Themes.png",
+    "dom": [
+      "link#minamaze-style-css"
+    ],
+    "icon": "Think Up Themes.svg",
     "pricing": [
       "freemium",
       "onetime"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/minamaze(?:-pro)?/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/minamaze(?:-pro)?/"
+    ],
     "website": "https://www.thinkupthemes.com/themes/minamaze"
   },
   "ThinkPHP": {
@@ -1789,7 +2717,9 @@
       "X-Powered-By": "ThinkPHP"
     },
     "icon": "ThinkPHP.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "oss": true,
     "website": "https://www.thinkphp.cn"
   },
@@ -1811,8 +2741,37 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn(?:-themes)?\\.thinkific\\.com",
+    "scriptSrc": [
+      "cdn(?:-themes)?\\.thinkific\\.com"
+    ],
     "website": "https://www.thinkific.com"
+  },
+  "Thinking Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Thinking Chat is an automated lead capture and chat solution.",
+    "icon": "ThinkingChat.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.thinkingchat\\.com/"
+    ],
+    "website": "https://thinkingchat.com"
+  },
+  "Thor-Media": {
+    "cats": [
+      36
+    ],
+    "description": "Thor-Media is a Russian-based affiliate advertising system that connects advertisers with affiliates for performance-based marketing campaigns.",
+    "saas": true,
+    "scriptSrc": [
+      "t\\.thor-media\\.ru/"
+    ],
+    "website": "https://thor-media.ru"
   },
   "ThreatMetrix": {
     "cats": [
@@ -1820,12 +2779,14 @@
       83
     ],
     "description": "LexisNexis ThreatMetrix is an enterprise solution for online risk and fraud protection ('digital identity intelligence and digital authentication').",
-    "icon": "threatmetrix.png",
+    "icon": "threatmetrix.svg",
     "pricing": [
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.online-metrix\\.net",
+    "scriptSrc": [
+      "\\.online-metrix\\.net"
+    ],
     "website": "https://risk.lexisnexis.com/products/threatmetrix"
   },
   "Three.js": {
@@ -1833,14 +2794,18 @@
       25
     ],
     "description": "Three.js is a cross-browser JavaScript library and application programming interface used to create and display animated 3D computer graphics in a web browser using WebGL.",
-    "dom": "canvas[data-engine*='three.js']",
+    "dom": [
+      "canvas[data-engine*='three.js']"
+    ],
     "icon": "Three.js.svg",
     "js": {
       "THREE.REVISION": "^(.+)$\\;version:\\1",
       "__THREE__": "^(.+)$\\;version:\\1"
     },
     "oss": true,
-    "scriptSrc": "three(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "three(?:\\.min)?\\.js"
+    ],
     "website": "https://threejs.org"
   },
   "Threekit": {
@@ -1861,21 +2826,43 @@
     "saas": true,
     "website": "https://www.threekit.com"
   },
+  "Thrinacia": {
+    "cats": [
+      111
+    ],
+    "description": "Thrinacia is a scalable Enterprise SaaS crowdfunding engine that enables the operation of custom white-labeled crowdfunding websites.",
+    "icon": "Thrinacia.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.thrinacia\\.com/"
+    ],
+    "website": "https://www.thrinacia.com"
+  },
   "Thrive Apprentice": {
     "cats": [
       87,
       21
     ],
     "description": "Thrive Apprentice is a WordPress plugin for creating online courses and also a membership plugin.",
-    "dom": "link[href*='/wp-content/plugins/thrive-apprentice/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/thrive-apprentice/']"
+    ],
     "icon": "Thrive.svg",
     "pricing": [
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/thrive-apprentice/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/thrive-apprentice/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://thrivethemes.com/apprentice/"
   },
   "Thrive Architect": {
@@ -1884,15 +2871,21 @@
       51
     ],
     "description": "Thrive Architect is the visual page builder for WordPress.",
-    "dom": "link[href*='/wp-content/plugins/thrive-visual-editor/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/thrive-visual-editor/']"
+    ],
     "icon": "Thrive.svg",
     "pricing": [
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/thrive-visual-editor/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/thrive-visual-editor/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://thrivethemes.com/architect/"
   },
   "Thrive Comments": {
@@ -1900,15 +2893,21 @@
       87
     ],
     "description": "Thrive Comments plugin replaces the standard WordPress comments from your website.",
-    "dom": "link[href*='/wp-content/plugins/thrive-comments/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/thrive-comments/']"
+    ],
     "icon": "Thrive.svg",
     "pricing": [
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/thrive-comments/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/thrive-comments/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://thrivethemes.com/comments/"
   },
   "Thrive Leads": {
@@ -1916,15 +2915,21 @@
       87
     ],
     "description": "Thrive Leads is an all-in-one email list building plugin for WordPress.",
-    "dom": "link[href*='/wp-content/plugins/thrive-leads/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/thrive-leads/']"
+    ],
     "icon": "Thrive.svg",
     "pricing": [
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/thrive-leads/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/thrive-leads/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://thrivethemes.com/leads/"
   },
   "Thrive Quiz Builder": {
@@ -1932,15 +2937,21 @@
       87
     ],
     "description": "Thrive Quiz Builder is a powerful WordPress plugin that can help you to create quizzes for your website or blog.",
-    "dom": "link[href*='/wp-content/plugins/thrive-quiz-builder/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/thrive-quiz-builder/']"
+    ],
     "icon": "Thrive.svg",
     "pricing": [
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/thrive-quiz-builder/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/thrive-quiz-builder/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://thrivethemes.com/quizbuilder"
   },
   "Thrive Ultimatum": {
@@ -1948,15 +2959,21 @@
       87
     ],
     "description": "Thrive Ultimatum is a WordPress scarcity marketing plugin with built-in templates and campaign tracking tools from developer Thrive Themes.",
-    "dom": "link[href*='/wp-content/plugins/thrive-ultimatum/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/thrive-ultimatum/']"
+    ],
     "icon": "Thrive.svg",
     "pricing": [
       "low",
       "recurring"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/thrive-ultimatum/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": [
+      "/wp-content/plugins/thrive-ultimatum/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://thrivethemes.com/ultimatum/"
   },
   "ThriveCart": {
@@ -1973,16 +2990,23 @@
       "onetime"
     ],
     "saas": true,
-    "scriptSrc": "thrivecart\\.js",
+    "scriptSrc": [
+      "thrivecart\\.js"
+    ],
     "website": "https://thrivecart.com"
   },
   "Ticimax": {
     "cats": [
       6
     ],
-    "icon": "Ticimax.png",
+    "description": "Ticimax provides ecommerce infrastructure services.",
+    "icon": "Ticimax.svg",
+    "js": {
+      "ticimaxApi": "",
+      "ticimaxServices": ""
+    },
     "scriptSrc": [
-      "cdn\\.ticimax\\.com/"
+      "cdn\\.ticimax\\.(?:com|cloud)/"
     ],
     "website": "https://www.ticimax.com"
   },
@@ -1990,7 +3014,9 @@
     "cats": [
       6
     ],
-    "html": "<link[^>]*tictail\\.com",
+    "html": [
+      "<link[^>]*tictail\\.com"
+    ],
     "icon": "tictail.png",
     "website": "https://tictail.com"
   },
@@ -2002,9 +3028,12 @@
       8
     ],
     "description": "TiddlyWiki is an open-source notebook for capturing, organising and sharing complex information.",
-    "html": "<[^>]*type=[^>]text\\/vnd\\.tiddlywiki",
-    "icon": "TiddlyWiki.png",
+    "html": [
+      "<[^>]*type=[^>]text\\/vnd\\.tiddlywiki"
+    ],
+    "icon": "TiddlyWiki.svg",
     "js": {
+      "__tiddlywiki_cpl__": "",
       "tiddler": ""
     },
     "meta": {
@@ -2013,6 +3042,7 @@
       "generator": "^TiddlyWiki$",
       "tiddlywiki-version": "^(.+)$\\;version:\\1"
     },
+    "oss": true,
     "website": "https://tiddlywiki.com"
   },
   "Tidio": {
@@ -2030,7 +3060,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "code\\.tidio\\.co",
+    "scriptSrc": [
+      "code\\.tidio\\.co"
+    ],
     "website": "https://www.tidio.com"
   },
   "Tiendanube": {
@@ -2054,14 +3086,36 @@
       62
     ],
     "description": "Tiiny Host is a web hosting service for static sites with support for custom domains, SSL, password protection, and built-in analytics.",
-    "icon": "Tiiny Host.png",
+    "icon": "Tiiny Host.svg",
     "pricing": [
       "low",
       "recurring",
       "freemium"
     ],
-    "scriptSrc": "(?://|\\.)tiiny\\.(?:host|site)/",
+    "scriptSrc": [
+      "(?://|\\.)tiiny\\.(?:host|site)/"
+    ],
     "website": "https://tiiny.host"
+  },
+  "TikShop": {
+    "cats": [
+      100
+    ],
+    "description": "TikShop is a tool that integrates TikTok accounts with Shopify stores, allowing for the creation of shoppable feeds to facilitate quicker product promotion and sales directly through TikTok.",
+    "icon": "TikShop.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.tikshop\\.co/"
+    ],
+    "website": "https://tikshop.co"
   },
   "TikTok Pixel": {
     "cats": [
@@ -2079,7 +3133,9 @@
       "TiktokAnalyticsObject": ""
     },
     "website": "https://ads.tiktok.com",
-    "xhr": "analytics\\.tiktok\\.com"
+    "xhr": [
+      "analytics\\.tiktok\\.com"
+    ]
   },
   "Tiki Wiki CMS Groupware": {
     "cats": [
@@ -2090,11 +3146,14 @@
       13
     ],
     "description": "Tiki Wiki is a free and open-source wiki-based content management system and online office suite written primarily in PHP.",
-    "icon": "Tiki Wiki CMS Groupware.png",
+    "icon": "Tiki Wiki CMS Groupware.svg",
     "meta": {
       "generator": "^Tiki"
     },
-    "scriptSrc": "(?:/|_)tiki",
+    "oss": true,
+    "scriptSrc": [
+      "(?:/|_)tiki"
+    ],
     "website": "https://tiki.org"
   },
   "Tiktak Pro": {
@@ -2118,22 +3177,41 @@
       1
     ],
     "description": "Tilda is a web design tool.",
-    "html": "<link[^>]* href=[^>]+tilda(?:cdn|\\.ws|-blocks)",
+    "html": [
+      "<link[^>]* href=[^>]+tilda(?:cdn|\\.ws|-blocks)"
+    ],
     "icon": "Tilda.svg",
     "pricing": [
       "low",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "tilda(?:cdn|\\.ws|-blocks)",
+    "scriptSrc": [
+      "tilda(?:cdn|\\.ws|-blocks)"
+    ],
     "website": "https://tilda.cc"
+  },
+  "Tiled": {
+    "cats": [
+      53
+    ],
+    "description": "Tiled is a microapp platform proven to drive engagement and deliver insight.",
+    "dom": [
+      "iframe[src*='s.tiled.co/']"
+    ],
+    "icon": "Tiled.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.tiled.co"
   },
   "Tiledesk": {
     "cats": [
       52
     ],
     "description": "Tiledesk is the full-stack open-source Live Chat with built-in Chatbots, written in Node.js and Angular.",
-    "icon": "Tiledesk.png",
+    "icon": "Tiledesk.svg",
     "js": {
       "Tiledesk": "",
       "tileDeskAsyncInit": "",
@@ -2150,6 +3228,22 @@
     "saas": true,
     "website": "https://tiledesk.com"
   },
+  "Tiller": {
+    "cats": [
+      55
+    ],
+    "description": "Tiller is a tool that automatically tracks your spending, balances, and budgets in flexible spreadsheets owned by you.",
+    "icon": "Tiller.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.by\\.tiller\\.co/"
+    ],
+    "website": "https://www.tillerhq.com"
+  },
   "Timeplot": {
     "cats": [
       25
@@ -2158,7 +3252,9 @@
     "js": {
       "Timeplot": ""
     },
-    "scriptSrc": "timeplot.*\\.js",
+    "scriptSrc": [
+      "timeplot.*\\.js"
+    ],
     "website": "https://www.simile-widgets.org/timeplot/"
   },
   "Timify": {
@@ -2175,8 +3271,26 @@
       "freemium",
       "recurring"
     ],
-    "scriptSrc": "\\.timify\\.com/",
+    "scriptSrc": [
+      "\\.timify\\.com/"
+    ],
     "website": "https://www.timify.com"
+  },
+  "Tint Wiz": {
+    "cats": [
+      53
+    ],
+    "description": "Tint Wiz is a customer management platform designed to streamline operations, increase sales and provide exceptional service to customers.",
+    "dom": [
+      "iframe[src*='app.tintwiz.com/']"
+    ],
+    "icon": "TintWiz.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://tintwiz.com"
   },
   "Tiny Slider": {
     "cats": [
@@ -2185,7 +3299,9 @@
     "description": "Tiny Slider is a vanilla javascript slider for all purposes.",
     "icon": "default.svg",
     "oss": true,
-    "scriptSrc": "(?:/([\\d\\.]+)/min/)?tiny-slider(?:\\.min)?\\.js\\;version:\\1",
+    "scriptSrc": [
+      "(?:/([\\d\\.]+)/min/)?tiny-slider(?:\\.min)?\\.js\\;version:\\1"
+    ],
     "website": "https://github.com/ganlanyuan/tiny-slider"
   },
   "TinyMCE": {
@@ -2199,7 +3315,9 @@
       "tinyMCE.majorVersion": "([\\d.]+)\\;version:\\1",
       "tinymce": ""
     },
-    "scriptSrc": "/tiny_?mce(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "/tiny_?mce(?:\\.min)?\\.js"
+    ],
     "website": "https://www.tiny.cloud/tinymce/"
   },
   "Tinybird": {
@@ -2221,18 +3339,34 @@
     ],
     "website": "https://www.tinybird.co/"
   },
+  "Tinycon": {
+    "cats": [
+      59,
+      66
+    ],
+    "description": "A library for manipulating a websites favicon.",
+    "oss": true,
+    "scriptSrc": [
+      "tinycon(?:\\.min)?\\.js"
+    ],
+    "website": "https://github.com/tommoor/tinycon"
+  },
   "Tippy.js": {
     "cats": [
       59
     ],
     "description": "Tippy.js is the complete tooltip, popover, dropdown, and menu solution for the web, powered by Popper.",
-    "dom": "style[data-tippy-stylesheet]",
+    "dom": [
+      "style[data-tippy-stylesheet]"
+    ],
     "icon": "Tippy.js.svg",
     "js": {
       "tippy.defaultProps": ""
     },
     "oss": true,
-    "scriptSrc": "/tippy\\.js(?:@|/)?([\\d\\.]+)?\\;version:\\1",
+    "scriptSrc": [
+      "/tippy\\.js(?:@|/)?([\\d\\.]+)?\\;version:\\1"
+    ],
     "website": "https://atomiks.github.io/tippyjs"
   },
   "Tipsa": {
@@ -2241,7 +3375,9 @@
     ],
     "description": "TIPSA is a parcel delivery company in Spain, Portugal and Andorra.",
     "icon": "Tipsa.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bTipsa\\b"
     ],
@@ -2253,7 +3389,9 @@
       71
     ],
     "description": "Tiqets provides a complete overview of a city - museums, attractions, zoos, canal cruises, concerts. Publishers joined to the Tiqets affiliate program can receive 6% commission during our 30-day cookie window from completed total bookings resulting from featuring links to Tiqets products and content across their brand: blog/website, social media, newsletters, etc.",
-    "dom": "a[href*='.tiqets.com/'][target='_blank'], iframe[src*='.tiqets.com/']",
+    "dom": [
+      "a[href*='.tiqets.com/'][target='_blank'], iframe[src*='.tiqets.com/']"
+    ],
     "icon": "Tiqets.svg",
     "js": {
       "__TIQETS_LOADER_REINIT": ""
@@ -2287,6 +3425,22 @@
     },
     "website": "https://titan360.com"
   },
+  "Tix": {
+    "cats": [
+      104
+    ],
+    "description": "Tix is a system designed for managing event tickets, allowing users to organize, distribute, and track tickets.",
+    "icon": "Tix.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.secure-tix\\.com/"
+    ],
+    "website": "https://www.tix.com"
+  },
   "Tolt": {
     "cats": [
       71
@@ -2303,7 +3457,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.tolt\\.io/",
+    "scriptSrc": [
+      "\\.tolt\\.io/"
+    ],
     "website": "https://tolt.io"
   },
   "TomTom Maps": {
@@ -2316,14 +3472,19 @@
       "tomtom.Map": ""
     },
     "saas": true,
-    "scriptSrc": "api\\.tomtom\\.com",
+    "scriptSrc": [
+      "api\\.tomtom\\.com"
+    ],
     "website": "https://www.tomtom.com",
-    "xhr": "api\\.tomtom\\.com"
+    "xhr": [
+      "api\\.tomtom\\.com"
+    ]
   },
   "TomatoCart": {
     "cats": [
       6
     ],
+    "cpe": "cpe:2.3:a:tomatocart:tomatocart:*:*:*:*:*:*:*:*",
     "icon": "TomatoCart.png",
     "js": {
       "AjaxShoppingCart": ""
@@ -2332,6 +3493,112 @@
       "generator": "TomatoCart"
     },
     "website": "https://tomatocart.com"
+  },
+  "Tomi.ai": {
+    "cats": [
+      32
+    ],
+    "description": "Tomi.ai is a predictive marketing platform.",
+    "icon": "Tomi.svg",
+    "js": {
+      "tomi.track": ""
+    },
+    "pricing": [
+      "high",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://tomi.ai"
+  },
+  "Tomis": {
+    "cats": [
+      32
+    ],
+    "description": "Tomis is a digital marketing tour operator, specialising in promoting travel services through online channels.",
+    "dom": [
+      "script#tomis_script-js"
+    ],
+    "icon": "Tomis.svg",
+    "js": {
+      "TOMIS": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "tomis-bot\\.firebaseapp\\.com/"
+    ],
+    "website": "https://tomis.tech"
+  },
+  "Tontine": {
+    "cats": [
+      74
+    ],
+    "description": "Tontine is an A/B price testing platform built specifically for high-growth Shopify merchants focused on optimizing their profit margins.",
+    "icon": "Tontine.svg",
+    "js": {
+      "TontineApp.tontineAnalytics": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "website": "https://www.tontine.ai"
+  },
+  "Toolbx": {
+    "cats": [
+      6
+    ],
+    "description": "Toolbx is a platform that helps independent building suppliers streamline payments, simplify accounts receivable, grow online sales, and enhance customer experience.",
+    "icon": "Toolbx.svg",
+    "js": {
+      "toolbxPixel": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.toolbx.com/"
+  },
+  "Tooltip": {
+    "cats": [
+      52
+    ],
+    "description": "Tooltip is a web-based in-app messaging suite designed to enhance user engagement and communication within applications.",
+    "icon": "Tooltip.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.tooltip\\.io/"
+    ],
+    "website": "https://tooltip.io"
+  },
+  "Top Producer": {
+    "cats": [
+      53
+    ],
+    "description": "Top Producer is an all-in-one business management platform, tailored for real estate as a CRM solution.",
+    "icon": "TopProducer.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "static\\.topproducerwebsite\\.com/"
+    ],
+    "website": "https://www.topproducer.com"
   },
   "TornadoServer": {
     "cats": [
@@ -2347,10 +3614,11 @@
     "cats": [
       6
     ],
+    "description": "TotalCode is an omnichannel and ecommerce platform designed to streamline sales and inventory management across various sales channels.",
     "headers": {
       "X-Powered-By": "^TotalCode$"
     },
-    "icon": "TotalCode.png",
+    "icon": "TotalCode.svg",
     "website": "https://www.totalcode.com"
   },
   "Totango": {
@@ -2420,32 +3688,46 @@
     "cats": [
       13
     ],
+    "cookies": {
+      "trac_form_token": "",
+      "trac_session": ""
+    },
+    "description": "Trac is an enhanced wiki and issue tracking system for software development projects, using a minimalistic approach to web-based software project management.",
+    "dom": [
+      "link[type*='text/x-trac-wiki']"
+    ],
     "html": [
       "<a id=\"tracpowered",
       "Powered by <a href=\"[^\"]*\"><strong>Trac(?:[ /]([\\d.]+))?\\;version:\\1"
     ],
-    "icon": "Trac.png",
-    "implies": "Python",
+    "icon": "Trac.svg",
+    "implies": [
+      "Python"
+    ],
     "website": "https://trac.edgewall.org"
   },
   "Track123": {
     "cats": [
-      99,
-      100
+      100,
+      99
     ],
     "description": "Track123 is a product under Lingxing, founded in September 2021, with a focus on providing all-in-one tracking and management services for cross-border sellers.",
     "icon": "Track123.svg",
     "js": {
-      "api_base":"https://www.track123.com",
+      "api_base": "https://www.track123.com",
       "track123": ""
     },
     "pricing": [
       "freemium",
       "payg"
     ],
-    "requires": "Shopify",
+    "requires": [
+      "Shopify"
+    ],
     "saas": true,
-    "scriptSrc": "track123\\.com\\/common\\/checkout-script-loader\\.js",
+    "scriptSrc": [
+      "track123\\.com\\/common\\/checkout-script-loader\\.js"
+    ],
     "website": "https://www.track123.com"
   },
   "TrackJs": {
@@ -2458,8 +3740,30 @@
       "TrackJs": "",
       "trackJs": ""
     },
-    "scriptSrc": "cdn\\.trackjs\\.com",
+    "scriptSrc": [
+      "cdn\\.trackjs\\.com"
+    ],
     "website": "https://trackjs.com"
+  },
+  "Trackboxx": {
+    "cats": [
+      10
+    ],
+    "description": "Trackboxx is a GDPR-compliant web analysis tool that operates without using cookies, providing data privacy while offering detailed website insights.",
+    "icon": "Trackboxx.svg",
+    "js": {
+      "trackboxx": ""
+    },
+    "pricing": [
+      "low",
+      "payg",
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.trackboxx\\.info"
+    ],
+    "website": "https://trackboxx.com"
   },
   "Trackify X": {
     "cats": [
@@ -2467,15 +3771,36 @@
       10
     ],
     "description": "Trackify X is a pixel engine that helps merchants backup their pixel data and manage multiple pixels.",
-    "icon": "Trackify X.png",
-    "implies": "Shopify",
+    "icon": "Trackify X.svg",
+    "implies": [
+      "Shopify"
+    ],
     "pricing": [
       "low",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "trackifyx\\.redretarget\\.com/",
+    "scriptSrc": [
+      "trackifyx\\.redretarget\\.com/"
+    ],
     "website": "https://trackifyapp.com"
+  },
+  "TradePending": {
+    "cats": [
+      6
+    ],
+    "description": "TradePending, formerly known as SnapCell, is a software platform for automotive digital retailing, offering car dealers tools to enhance rapport, increase sales, drive upsell, and improve customer satisfaction through reliable and straightforward video marketing.",
+    "js": {
+      "TradePendingPlugin": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.tradepending\\.com"
+    ],
+    "website": "https://tradepending.com"
   },
   "Tradedoubler": {
     "cats": [
@@ -2491,7 +3816,9 @@
       }
     },
     "icon": "Tradedoubler.svg",
-    "scriptSrc": "swrap\\.tradedoubler\\.com",
+    "scriptSrc": [
+      "swrap\\.tradedoubler\\.com"
+    ],
     "website": "https://www.tradedoubler.com/"
   },
   "TradingView": {
@@ -2499,7 +3826,9 @@
       25
     ],
     "description": "TradingView is used to show world chart, chats and trades markets.",
-    "dom": "iframe[src*='.tradingview.com/']",
+    "dom": [
+      "iframe[src*='.tradingview.com/']"
+    ],
     "icon": "trading_view.svg",
     "pricing": [
       "low",
@@ -2529,14 +3858,33 @@
       36
     ],
     "description": "TrafficStars is a self-served ad network and ad exchange that operates mainly in adult-related verticals.",
-    "dom": "img[src*='tsyndicate.com/'], a[href*='trafficstars.com']",
-    "icon": "TrafficStars.png",
+    "dom": [
+      "img[src*='tsyndicate.com/'], a[href*='trafficstars.com']"
+    ],
+    "icon": "TrafficStars.svg",
     "pricing": [
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.tsyndicate\\.com/",
+    "scriptSrc": [
+      "\\.tsyndicate\\.com/"
+    ],
     "website": "https://trafficstars.com"
+  },
+  "Trak": {
+    "cats": [
+      10
+    ],
+    "description": "Trak is a customer analytics platform designed for startups.",
+    "icon": "Trak.svg",
+    "js": {
+      "trak.custom_event": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.trak.io"
   },
   "Transcend": {
     "cats": [
@@ -2559,8 +3907,10 @@
       100
     ],
     "description": "Transcy is a Shopify translation app. Transcy allows you to translate your whole store content into target languages to reach different nation shoppers.",
-    "icon": "Transcy.png",
-    "implies": "Shopify",
+    "icon": "Transcy.svg",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "_transcy": "",
       "transcy_apiURI": "",
@@ -2578,7 +3928,9 @@
     "cats": [
       12
     ],
-    "icon": "transifex.png",
+    "cpe": "cpe:2.3:a:transifex:transifex:*:*:*:*:*:*:*:*",
+    "description": "Transifex is a cloud-based platform for managing the translation and localization of digital content.",
+    "icon": "transifex.svg",
     "js": {
       "Transifex.live.lib_version": "(.+)\\;version:\\1"
     },
@@ -2589,7 +3941,9 @@
       5
     ],
     "description": "Transistor.fm is a podcast host, distribution and management platform.",
-    "dom": "iframe[src*='.transistor.fm/']",
+    "dom": [
+      "iframe[src*='.transistor.fm/']"
+    ],
     "icon": "Transistor.fm.svg",
     "pricing": [
       "low",
@@ -2605,8 +3959,12 @@
     ],
     "description": "Translate WordPress is a website translator plugin which can translate any website to any language automatically. Translate WordPress plugin is now a part of GTranslate family.",
     "icon": "GTranslate.svg",
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/google-language-translator/.+scripts\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/plugins/google-language-translator/.+scripts\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
     "website": "https://gtranslate.io"
   },
   "Transmart": {
@@ -2614,7 +3972,9 @@
       99
     ],
     "description": "Transmart is a shipping company in Turkey.",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bTransmart\\b"
     ],
@@ -2625,13 +3985,15 @@
       6
     ],
     "description": "Tray is an all-in-one ecommerce platform from Brazil.",
-    "icon": "tray.png",
+    "icon": "tray.svg",
     "pricing": [
       "low",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "tcdn\\.com\\.br",
+    "scriptSrc": [
+      "tcdn\\.com\\.br"
+    ],
     "website": "https://www.tray.com.br"
   },
   "Trbo": {
@@ -2654,7 +4016,9 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.trbo\\.com",
+    "scriptSrc": [
+      "\\.trbo\\.com"
+    ],
     "website": "https://www.trbo.com"
   },
   "Treasure Data": {
@@ -2662,7 +4026,9 @@
       97
     ],
     "description": "Treasure Data is the only enterprise customer data platform.",
-    "dom": "link[href*='.treasuredata.com']",
+    "dom": [
+      "link[href*='.treasuredata.com']"
+    ],
     "icon": "Treasure Data.svg",
     "js": {
       "Treasure.version": "(.+)\\;version:\\1"
@@ -2671,8 +4037,38 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.treasuredata\\.com/",
+    "scriptSrc": [
+      "cdn\\.treasuredata\\.com/"
+    ],
     "website": "https://www.treasuredata.com"
+  },
+  "Tremor": {
+    "cats": [
+      59
+    ],
+    "description": "Tremor is an open-source library for building charts and dashboards using React components, designed on top of Tailwind CSS.",
+    "dom": [
+      "div[tremor-id*='tremor-raw'], div[class*='text-tremor-']"
+    ],
+    "icon": "Tremor.svg",
+    "oss": true,
+    "website": "https://tremor.so"
+  },
+  "Trendemon": {
+    "cats": [
+      76
+    ],
+    "description": "Trendemon is a web personalization and account-based orchestration solution.",
+    "icon": "Trendemon.svg",
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "assets\\.trendemon\\.com/"
+    ],
+    "website": "https://trendemon.com"
   },
   "Trengo": {
     "cats": [
@@ -2688,7 +4084,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.widget\\.trengo\\.eu/",
+    "scriptSrc": [
+      "\\.widget\\.trengo\\.eu/"
+    ],
     "website": "https://trengo.com"
   },
   "Triggerbee": {
@@ -2706,7 +4104,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "t\\.myvisitors\\.se",
+    "scriptSrc": [
+      "t\\.myvisitors\\.se"
+    ],
     "website": "https://triggerbee.com"
   },
   "Trinity Audio": {
@@ -2725,7 +4125,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "//trinitymedia\\.ai/",
+    "scriptSrc": [
+      "//trinitymedia\\.ai/"
+    ],
     "website": "https://www.trinityaudio.ai"
   },
   "Tripadviser.Widget": {
@@ -2734,7 +4136,9 @@
     ],
     "description": "Tripadvisor embed reviews widget.",
     "icon": "Tripadviser.Widget.svg",
-    "scriptSrc": "tripadvisor\\.[\\w]+/WidgetEmbed",
+    "scriptSrc": [
+      "tripadvisor\\.[\\w]+/WidgetEmbed"
+    ],
     "website": "https://www.tripadvisor.com/Widgets"
   },
   "Triple Whale": {
@@ -2749,7 +4153,9 @@
     ],
     "saas": true,
     "website": "https://triplewhale.com/",
-    "xhr": "triplewhale-pixel\\.web\\.app"
+    "xhr": [
+      "triplewhale-pixel\\.web\\.app"
+    ]
   },
   "TripleLift": {
     "cats": [
@@ -2763,14 +4169,32 @@
         }
       }
     },
-    "icon": "TripleLift.png",
+    "icon": "TripleLift.svg",
     "pricing": [
       "low",
       "recurring"
     ],
     "saas": true,
     "website": "https://triplelift.com",
-    "xhr": "\\.3lift\\.com"
+    "xhr": [
+      "\\.3lift\\.com"
+    ]
+  },
+  "Triptease": {
+    "cats": [
+      93
+    ],
+    "description": "Triptease is a SaaS that provides digital tools that create better experiences and relationships between hotels and guests.",
+    "icon": "Triptease.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.triptease\\.io/"
+    ],
+    "website": "https://www.triptease.com"
   },
   "Tritac Katana Commerce": {
     "cats": [
@@ -2788,12 +4212,24 @@
     "saas": true,
     "website": "https://www.tritac.com/nl/producten/katana-commerce/"
   },
+  "Trivago": {
+    "cats": [
+      29
+    ],
+    "description": "Trivago is a hotel search and booking engine that allows users to compare accommodation options and prices from various travel websites, helping them find the best deals.",
+    "icon": "Trivago.svg",
+    "saas": true,
+    "scriptSrc": [
+      "www\\.trivago\\.it"
+    ],
+    "website": "https://www.trivago.com"
+  },
   "Trix": {
     "cats": [
       24
     ],
     "description": "Trix is an open-source project from Basecamp, the creators of Ruby on Rails.",
-    "icon": "trix.png",
+    "icon": "trix.svg",
     "js": {
       "Trix.VERSION": "^(.+)$\\;version:\\1"
     },
@@ -2804,17 +4240,33 @@
       6
     ],
     "description": "Trove (formerly Yerdle) builds white-label technology and end-to-end operations for ecommerce platforms.",
-    "dom": "img[src*='res.cloudinary.com/yerdle']",
+    "dom": [
+      "img[src*='res.cloudinary.com/yerdle']"
+    ],
     "headers": {
       "x-trove-app-name": "",
       "x-trove-country-code": "",
       "x-trove-order-uuid": "",
       "x-yerdle-app-name": ""
     },
-    "icon": "trove.png",
+    "icon": "trove.svg",
     "saas": true,
     "website": "https://trove.co",
-    "xhr": "reware-production\\.yerdlesite\\.com"
+    "xhr": [
+      "reware-production\\.yerdlesite\\.com"
+    ]
+  },
+  "Trovit": {
+    "cats": [
+      10
+    ],
+    "description": "Trovit is a platform that provides analytics on homes, cars, and jobs.",
+    "icon": "Trovit.svg",
+    "js": {
+      "TrovitAnalyticsObject": ""
+    },
+    "saas": true,
+    "website": "https://www.trovit.com"
   },
   "TruValidate": {
     "cats": [
@@ -2838,13 +4290,15 @@
       76
     ],
     "description": "True Fit is a data-driven personalisation platform for footwear and apparel retailers.",
-    "icon": "True Fit.png",
+    "icon": "True Fit.svg",
     "pricing": [
       "low",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.truefitcorp\\.com/(?:.+/([\\d\\.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "cdn\\.truefitcorp\\.com/(?:.+/([\\d\\.]+))?\\;version:\\1"
+    ],
     "website": "https://www.truefit.com"
   },
   "TrueCommerce": {
@@ -2853,7 +4307,9 @@
     ],
     "description": "TrueCommerce is an eCommerce platform.",
     "icon": "Truecommerce.svg",
-    "scriptSrc": "cdn\\.nexternal\\.com/",
+    "scriptSrc": [
+      "cdn\\.nexternal\\.com/"
+    ],
     "website": "https://www.truecommerce.com"
   },
   "Truepush": {
@@ -2873,8 +4329,10 @@
       72
     ],
     "description": "Trumba offers web-hosted event calendar software for publishing online, interactive, calendars of events.",
-    "dom": "a[href*='www.trumba.com/calendars/']",
-    "icon": "Trumba.png",
+    "dom": [
+      "a[href*='www.trumba.com/calendars/']"
+    ],
+    "icon": "Trumba.svg",
     "js": {
       "$Trumba": "",
       "$Trumba.version": "([\\d\\.]+)\\;version:\\1",
@@ -2893,7 +4351,9 @@
     ],
     "description": "Trunkrs is a Dutch parcel delivery service.",
     "icon": "Trunkrs.svg",
-    "requiresCategory": 6,
+    "requiresCategory": [
+      6
+    ],
     "text": [
       "\\bTrunkrs\\b"
     ],
@@ -2905,7 +4365,9 @@
     ],
     "description": "TrustArc provides software and services to help corporations update their privacy management processes so they comply with government laws and best practices.",
     "icon": "TrustArc.svg",
-    "scriptSrc": "consent\\.trustarc\\.com",
+    "scriptSrc": [
+      "consent\\.trustarc\\.com"
+    ],
     "website": "https://trustarc.com"
   },
   "TrustYou": {
@@ -2935,7 +4397,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "widgets\\.trustedshops\\.com/",
+    "scriptSrc": [
+      "widgets\\.trustedshops\\.com/"
+    ],
     "website": "https://www.trustedshops.co.uk"
   },
   "Trustindex": {
@@ -2943,7 +4407,9 @@
       90
     ],
     "description": "Trustindex is a review management tool that helps businesses effectively manage and monitor customer reviews.",
-    "dom": "link[href*='.trustindex.io/']",
+    "dom": [
+      "link[href*='.trustindex.io/']"
+    ],
     "icon": "Trustindex.svg",
     "js": {
       "Trustindex": ""
@@ -2954,6 +4420,23 @@
     ],
     "saas": true,
     "website": "https://www.trustindex.io"
+  },
+  "Trustmaker": {
+    "cats": [
+      32
+    ],
+    "description": "Trustmaker is a platform that provides customizable social proof messages, FOMO campaign tools, and Conversion Rate Optimization (CRO) solutions.",
+    "icon": "Trustmaker.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.getcue\\.app/"
+    ],
+    "website": "https://thetrustmaker.com"
   },
   "Trustpilot": {
     "cats": [
@@ -2970,7 +4453,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.trustpilot\\.com",
+    "scriptSrc": [
+      "\\.trustpilot\\.com"
+    ],
     "website": "https://business.trustpilot.com"
   },
   "Trustspot": {
@@ -2978,12 +4463,14 @@
       90
     ],
     "description": "TrustSpot provides a solution to capture ratings & reviews, video testimonials, photos, social experiences, and product Q&A.",
-    "icon": "Trustspot.png",
+    "icon": "Trustspot.svg",
     "js": {
       "trustspot_key": ""
     },
     "saas": true,
-    "scriptSrc": "trustspot\\.io",
+    "scriptSrc": [
+      "trustspot\\.io"
+    ],
     "website": "https://trustspot.io/"
   },
   "Trustvox": {
@@ -3020,21 +4507,74 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "\\.trynow\\.net/shopify/([\\d\\.]+)/\\;version:\\1",
+    "scriptSrc": [
+      "\\.trynow\\.net/shopify/([\\d\\.]+)/\\;version:\\1"
+    ],
     "website": "https://www.trynow.io"
+  },
+  "Tula": {
+    "cats": [
+      53,
+      72
+    ],
+    "cookies": {
+      "_tulayoga_session": ""
+    },
+    "description": "Tula is a web-based yoga studio software facilitating management of payments, memberships, calendar sharing, registrations, credit tracking, attendance recording, and more for studio owners.",
+    "icon": "TulaSoftware.svg",
+    "js": {
+      "Tula": "",
+      "TulaSpinner": "",
+      "TulaUtil": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://tulasoftware.com"
   },
   "Tumblr": {
     "cats": [
       11
     ],
     "description": "Tumblr is a microblogging and social networking website. The service allows users to post multimedia and other content to a short-form blog.",
+    "dom": [
+      "iframe[src*='tumblr.com']"
+    ],
     "headers": {
       "X-Tumblr-User": ""
     },
-    "html": "<iframe src=\"[^>]+tumblr\\.com",
-    "icon": "Tumblr.png",
-    "url": "^https?://(?:www\\.)?[^/]+\\.tumblr\\.com/",
+    "html": [
+      "<iframe src=\"[^>]+tumblr\\.com"
+    ],
+    "icon": "Tumblr.svg",
+    "url": [
+      "^https?://(?:www\\.)?[^/]+\\.tumblr\\.com/"
+    ],
     "website": "https://www.tumblr.com"
+  },
+  "Tunosite": {
+    "cats": [
+      51
+    ],
+    "description": "Tunosite is a web app builder for startups and business with combining content, membership, and discussions in one place, under your own brand with no coding skills required.",
+    "dom": [
+      "link[href*='app.tunosite.com']"
+    ],
+    "icon": "Tunosite.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.tunosite\\.com"
+    ],
+    "website": "https://tunosite.com"
   },
   "Turbo": {
     "cats": [
@@ -3057,7 +4597,9 @@
       "Turbolinks": ""
     },
     "oss": true,
-    "scriptSrc": "turolinks\\.js",
+    "scriptSrc": [
+      "turolinks\\.js"
+    ],
     "website": "https://github.com/turbolinks/turbolinks"
   },
   "TurfJS": {
@@ -3071,7 +4613,9 @@
       "turf.point": "",
       "turf.random": ""
     },
-    "scriptSrc": "(turf@[\\d.]+)?/?turf\\.min\\.js",
+    "scriptSrc": [
+      "(turf@[\\d.]+)?/?turf\\.min\\.js"
+    ],
     "website": "https://turfjs.org/"
   },
   "Twenty Eleven": {
@@ -3079,12 +4623,16 @@
       80
     ],
     "description": "Twenty Eleven is the default WordPress theme for 2011.",
-    "dom": "link[href*='/wp-content/themes/twentyeleven/']",
+    "dom": [
+      "link[href*='/wp-content/themes/twentyeleven/']"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/themes/twentyeleven"
   },
   "Twenty Fifteen": {
@@ -3092,13 +4640,19 @@
       80
     ],
     "description": "Twenty Fifteen is the default WordPress theme for 2015.",
-    "dom": "link#twentyfifteen-style-css",
+    "dom": [
+      "link#twentyfifteen-style-css"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/twentyfifteen/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/twentyfifteen/"
+    ],
     "website": "https://wordpress.org/themes/twentyfifteen"
   },
   "Twenty Fourteen": {
@@ -3106,13 +4660,19 @@
       80
     ],
     "description": "Twenty Fourteen is the default WordPress theme for 2014.",
-    "dom": "link#twentyfourteen-style-css, style#twentyfourteen-lato-css",
+    "dom": [
+      "link#twentyfourteen-style-css, style#twentyfourteen-lato-css"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/twentyfourteen/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/twentyfourteen/"
+    ],
     "website": "https://wordpress.org/themes/twentyfourteen"
   },
   "Twenty Nineteen": {
@@ -3120,13 +4680,19 @@
       80
     ],
     "description": "Twenty Nineteen is the default WordPress theme for 2019.",
-    "dom": "link#twentynineteen-style-css",
+    "dom": [
+      "link#twentynineteen-style-css"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/twentynineteen/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/twentynineteen/"
+    ],
     "website": "https://wordpress.org/themes/twentynineteen"
   },
   "Twenty Seventeen": {
@@ -3134,7 +4700,9 @@
       80
     ],
     "description": "Twenty Seventeen is the default WordPress theme for 2017.",
-    "dom": "link#twentyseventeen-style-css",
+    "dom": [
+      "link#twentyseventeen-style-css"
+    ],
     "icon": "WordPress.svg",
     "js": {
       "twentyseventeenScreenReaderText": ""
@@ -3142,8 +4710,12 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/twentyseventeen/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/twentyseventeen/"
+    ],
     "website": "https://wordpress.org/themes/twentyseventeen"
   },
   "Twenty Sixteen": {
@@ -3151,13 +4723,19 @@
       80
     ],
     "description": "Twenty Sixteen is the default WordPress theme for 2016.",
-    "dom": "link#twentysixteen-style-css",
+    "dom": [
+      "link#twentysixteen-style-css"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/twentysixteen/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/twentysixteen/"
+    ],
     "website": "https://wordpress.org/themes/twentysixteen"
   },
   "Twenty Ten": {
@@ -3165,13 +4743,19 @@
       80
     ],
     "description": "Twenty Ten is the default WordPress theme for 2010.",
-    "dom": "link[href*='/wp-content/themes/twentyten/']",
+    "dom": [
+      "link[href*='/wp-content/themes/twentyten/']"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/twentyten/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/twentyten/"
+    ],
     "website": "https://wordpress.org/themes/twentyten"
   },
   "Twenty Thirteen": {
@@ -3179,13 +4763,19 @@
       80
     ],
     "description": "Twenty Thirteen is the default WordPress theme for 2013.",
-    "dom": "link#twentythirteen-style-css",
+    "dom": [
+      "link#twentythirteen-style-css"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/twentythirteen/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/twentythirteen/"
+    ],
     "website": "https://wordpress.org/themes/twentythirteen"
   },
   "Twenty Twelve": {
@@ -3193,13 +4783,19 @@
       80
     ],
     "description": "Twenty Twelve is the default WordPress theme for 2012.",
-    "dom": "link#twentytwelve-style-css",
+    "dom": [
+      "link#twentytwelve-style-css"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/twentytwelve/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/twentytwelve/"
+    ],
     "website": "https://wordpress.org/themes/twentytwelve"
   },
   "Twenty Twenty": {
@@ -3207,7 +4803,9 @@
       80
     ],
     "description": "Twenty Twenty is the default WordPress theme for 2020.",
-    "dom": "link#twentytwenty-style-css",
+    "dom": [
+      "link#twentytwenty-style-css"
+    ],
     "icon": "WordPress.svg",
     "js": {
       "twentytwenty": ""
@@ -3215,8 +4813,12 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/twentytwenty/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/twentytwenty/"
+    ],
     "website": "https://wordpress.org/themes/twentytwenty"
   },
   "Twenty Twenty-One": {
@@ -3224,7 +4826,9 @@
       80
     ],
     "description": "Twenty Twenty-One is the default WordPress theme for 2021.",
-    "dom": "link#twenty-twenty-one-style-css",
+    "dom": [
+      "link#twenty-twenty-one-style-css"
+    ],
     "icon": "WordPress.svg",
     "js": {
       "twentytwentyoneCollapseMenuOnClickOutside": "",
@@ -3233,8 +4837,12 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/twentytwentyone/",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/twentytwentyone/"
+    ],
     "website": "https://wordpress.org/themes/twentytwentyone"
   },
   "Twenty Twenty-Three": {
@@ -3254,7 +4862,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/themes/twentytwentythree"
   },
   "Twenty Twenty-Two": {
@@ -3275,7 +4885,9 @@
     "pricing": [
       "freemium"
     ],
-    "requires": "WordPress",
+    "requires": [
+      "WordPress"
+    ],
     "website": "https://wordpress.org/themes/twentytwentytwo"
   },
   "TwicPics": {
@@ -3311,13 +4923,16 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": ".+\\.twic\\.pics",
+    "scriptSrc": [
+      ".+\\.twic\\.pics"
+    ],
     "website": "https://www.twicpics.com"
   },
   "Twik": {
     "cats": [
       76
     ],
+    "cpe": "cpe:2.3:a:twiki:twiki:-:*:*:*:*:*:*:*",
     "description": "Twik provides a automated, no-configuration business intelligence & personalization automation engine.",
     "icon": "Twik.svg",
     "js": {
@@ -3329,7 +4944,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.twik\\.io",
+    "scriptSrc": [
+      "cdn\\.twik\\.io"
+    ],
     "website": "https://www.twik.io/"
   },
   "Twikoo": {
@@ -3337,12 +4954,14 @@
       15
     ],
     "description": "Twikoo is a simple, safe, free comment system.",
-    "icon": "Twikoo.png",
+    "icon": "Twikoo.svg",
     "js": {
       "twikoo.version": "^([\\d\\.]+)$\\;version:\\1"
     },
     "oss": true,
-    "scriptSrc": "/twikoo/dist/twikoo\\.all\\.min\\.js",
+    "scriptSrc": [
+      "/twikoo/dist/twikoo\\.all\\.min\\.js"
+    ],
     "website": "https://twikoo.js.org"
   },
   "Twilight CMS": {
@@ -3374,7 +4993,9 @@
       "X-Powered-By": "TwistPHP"
     },
     "icon": "TwistPHP.png",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "website": "https://twistphp.com"
   },
   "TwistedWeb": {
@@ -3393,10 +5014,13 @@
       14
     ],
     "description": "Twitch is an American video live streaming service that focuses on video game live streaming, including broadcasts of esports competitions.",
-    "dom": "iframe[src*='player\\.twitch\\.tv']",
+    "dom": [
+      "iframe[src*='player\\.twitch\\.tv']"
+    ],
     "icon": "Twitch.svg",
     "js": {
-      "Twitch.Player": ""
+      "Twitch.Embed": "",
+      "twitchPlayer": ""
     },
     "website": "https://dev.twitch.tv/docs/embed/video-and-clips/"
   },
@@ -3406,7 +5030,9 @@
     ],
     "description": "Twitter is a 'microblogging' system that allows you to send and receive short posts called tweets.",
     "icon": "Twitter.svg",
-    "scriptSrc": "//platform\\.twitter\\.com/widgets\\.js",
+    "scriptSrc": [
+      "//platform\\.twitter\\.com/widgets\\.js"
+    ],
     "website": "https://twitter.com"
   },
   "Twitter Ads": {
@@ -3422,7 +5048,9 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "static\\.ads-twitter\\.com/uwt\\.js",
+    "scriptSrc": [
+      "static\\.ads-twitter\\.com/uwt\\.js"
+    ],
     "website": "https://ads.twitter.com"
   },
   "Twitter Analytics": {
@@ -3435,7 +5063,9 @@
       "freemium"
     ],
     "saas": true,
-    "scriptSrc": "analytics\\.twitter\\.com",
+    "scriptSrc": [
+      "analytics\\.twitter\\.com"
+    ],
     "website": "https://analytics.twitter.com"
   },
   "Twitter Emoji (Twemoji)": {
@@ -3448,18 +5078,24 @@
       "twemoji.base": "twemoji\\.maxcdn\\.com/v/([\\d\\.]+)/\\;version:\\1"
     },
     "oss": true,
-    "scriptSrc": "twemoji(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "twemoji(?:\\.min)?\\.js"
+    ],
     "website": "https://twitter.github.io/twemoji/"
   },
   "Twitter Flight": {
     "cats": [
       12
     ],
-    "icon": "Twitter Flight.png",
-    "implies": "jQuery",
+    "description": "Twitter Flight is a lightweight, component-based JavaScript framework for building web applications.",
+    "icon": "Twitter Flight.svg",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "flight": ""
     },
+    "oss": true,
     "website": "https://flightjs.github.io/"
   },
   "Twitter typeahead.js": {
@@ -3467,11 +5103,15 @@
       59
     ],
     "icon": "Twitter typeahead.js.png",
-    "implies": "jQuery",
+    "implies": [
+      "jQuery"
+    ],
     "js": {
       "typeahead": ""
     },
-    "scriptSrc": "(?:typeahead|bloodhound)\\.(?:jquery|bundle)?(?:\\.min)?\\.js",
+    "scriptSrc": [
+      "(?:typeahead|bloodhound)\\.(?:jquery|bundle)?(?:\\.min)?\\.js"
+    ],
     "website": "https://twitter.github.io/typeahead.js"
   },
   "TypeDoc": {
@@ -3479,8 +5119,10 @@
       4
     ],
     "description": "TypeDoc is an API documentation generator for TypeScript projects.",
-    "icon": "TypeDoc.png",
-    "implies": "TypeScript",
+    "icon": "TypeDoc.svg",
+    "implies": [
+      "TypeScript"
+    ],
     "oss": true,
     "website": "https://typedoc.org"
   },
@@ -3489,11 +5131,13 @@
       11
     ],
     "description": "Typepad is a blog hosting service.",
-    "icon": "TypePad.png",
+    "icon": "TypePad.svg",
     "meta": {
       "generator": "typepad"
     },
-    "url": "typepad\\.com",
+    "url": [
+      "typepad\\.com"
+    ],
     "website": "https://www.typepad.com"
   },
   "TypeScript": {
@@ -3509,16 +5153,21 @@
     "cats": [
       11
     ],
+    "cpe": "cpe:2.3:a:typecho:typecho:*:*:*:*:*:*:*:*",
     "description": "Typecho is a PHP Blogging Platform.",
     "icon": "typecho.svg",
-    "implies": "PHP",
+    "implies": [
+      "PHP"
+    ],
     "js": {
       "TypechoComment": ""
     },
     "meta": {
       "generator": "Typecho( [\\d.]+)?\\;version:\\1"
     },
-    "url": "/admin/login\\.php?referer=http%3A%2F%2F",
+    "url": [
+      "/admin/login\\.php?referer=http%3A%2F%2F"
+    ],
     "website": "https://typecho.org/"
   },
   "Typed.js": {
@@ -3527,16 +5176,36 @@
     ],
     "description": "Typed.js is a library that types. It is designed to create typewriter-style animations with ease.",
     "oss": true,
-    "scriptSrc": "typed(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "scriptSrc": [
+      "typed(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
     "website": "https://mattboldt.com/demos/typed-js/"
+  },
+  "Typeflo": {
+    "cats": [
+      50
+    ],
+    "description": "Typeflo is a platform that simplifies blogging by allowing users to create websites directly from Google Docs, offering features such as analytics, custom domains, and theme customization.",
+    "icon": "Typeflo.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "analytics\\.typeflo\\.io/"
+    ],
+    "website": "https://typeflo.io"
   },
   "Typeform": {
     "cats": [
       73
     ],
     "description": "Typeform is a Spanish online software as a service (SaaS) company that specialises in online form building and online surveys.",
-    "dom": "link[href*='.typeform.com/']",
-    "icon": "Typeform.png",
+    "dom": [
+      "link[href*='.typeform.com/']"
+    ],
+    "icon": "Typeform.svg",
     "js": {
       "tf.createPopover": "",
       "tf.createWidget": ""
@@ -3546,7 +5215,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "embed\\.typeform\\.com/",
+    "scriptSrc": [
+      "embed\\.typeform\\.com/"
+    ],
     "website": "https://www.typeform.com"
   },
   "Typekit": {
@@ -3554,7 +5225,9 @@
       17
     ],
     "description": "Typekit is an online service which offers a subscription library of fonts.",
-    "html": "<link [^>]*href=\"[^\"]+use\\.typekit\\.(?:net|com)",
+    "html": [
+      "<link [^>]*href=\"[^\"]+use\\.typekit\\.(?:net|com)"
+    ],
     "icon": "Typekit.png",
     "js": {
       "Typekit.config.js": "^(.+)$\\;version:\\1"
@@ -3564,8 +5237,21 @@
       "freemium",
       "recurring"
     ],
-    "scriptSrc": "use\\.typekit\\.com",
+    "scriptSrc": [
+      "use\\.typekit\\.com"
+    ],
     "website": "https://typekit.com"
+  },
+  "Typer.js": {
+    "cats": [
+      59
+    ],
+    "description": "Typer.js is a JavaScript library for creating a fully configurable typing effect in HTML.",
+    "oss": true,
+    "scriptSrc": [
+      "unpkg\\.com/typer-dot-js@([\\d\\.]+)/typer\\.js\\;version:\\1"
+    ],
+    "website": "https://github.com/straversi/Typer.js"
   },
   "Typof": {
     "cats": [
@@ -3575,14 +5261,16 @@
       "typof_session": "\\;confidence:50"
     },
     "description": "Typof is an ecommerce platform for artisans that allows to create a premium website and sell items directly to the consumer.",
-    "icon": "Typof.png",
+    "icon": "Typof.svg",
     "pricing": [
       "freemium",
       "recurring",
       "low"
     ],
     "saas": true,
-    "scriptSrc": "portal/js/typof\\.js\\;confidence:50",
+    "scriptSrc": [
+      "portal/js/typof\\.js\\;confidence:50"
+    ],
     "website": "https://typof.com"
   },
   "Tyslo EasySell": {
@@ -3590,8 +5278,10 @@
       100
     ],
     "description": "Tyslo EasySell replaces default Shopify checkout process by embedding (or popup) a simple order form on the product or cart page.",
-    "icon": "Tyslo EasySell.png",
-    "implies": "Shopify",
+    "icon": "Tyslo EasySell.svg",
+    "implies": [
+      "Shopify"
+    ],
     "js": {
       "openTysloForm": "",
       "tysloApplyDiscount": "",
@@ -3605,6 +5295,28 @@
     ],
     "saas": true,
     "website": "https://tyslo.com"
+  },
+  "theMarketer": {
+    "cats": [
+      32,
+      84
+    ],
+    "cookies": {
+      "themarketerbackend_session": ""
+    },
+    "description": "theMarketer is a marketing platform that includes a loyalty program.",
+    "icon": "theMarketer.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "t\\.themarketer\\.com/"
+    ],
+    "website": "https://themarketer.com"
   },
   "theTradeDesk": {
     "cats": [
@@ -3627,9 +5339,13 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.adsrvr\\.org/",
+    "scriptSrc": [
+      "\\.adsrvr\\.org/"
+    ],
     "website": "https://www.thetradedesk.com",
-    "xhr": "adsvr\\.org"
+    "xhr": [
+      "adsvr\\.org"
+    ]
   },
   "thttpd": {
     "cats": [
@@ -3641,6 +5357,20 @@
     },
     "icon": "thttpd.png",
     "website": "https://acme.com/software/thttpd"
+  },
+  "timeago": {
+    "cats": [
+      59
+    ],
+    "description": "Timeago is a jQuery plugin that makes it easy to support automatically updating fuzzy timestamps.",
+    "js": {
+      "timeago": ""
+    },
+    "oss": true,
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/)?(?:jquery\\.)?[Tt]imeago(?:_mkdocs_material)?(?:\\.full)?(?:\\.locales)?(?:\\.native)?(?:\\.min)?\\.js\\;version:\\1"
+    ],
+    "website": "https://timeago.yarp.com/"
   },
   "toastr": {
     "cats": [
@@ -3658,11 +5388,15 @@
     "cats": [
       18
     ],
+    "description": "Total.js is a versatile platform offering open-source JavaScript/Node.js libraries and tools for both server-side and client-side web development.",
     "headers": {
       "X-Powered-By": "^total\\.js"
     },
-    "icon": "total.js.png",
-    "implies": "Node.js",
+    "icon": "total.js.svg",
+    "implies": [
+      "Node.js"
+    ],
+    "oss": true,
     "website": "https://totaljs.com"
   }
 }

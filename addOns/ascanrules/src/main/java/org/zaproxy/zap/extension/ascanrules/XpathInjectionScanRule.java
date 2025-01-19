@@ -20,6 +20,9 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +32,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
@@ -84,11 +88,25 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin
         "xmlXPathEval: evaluation failed",
         "Expression must evaluate to a node-set."
     };
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION,
-                    CommonAlertTag.WSTG_V42_INPV_09_XPATH);
+
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION,
+                                CommonAlertTag.WSTG_V42_INPV_09_XPATH));
+        alertTags.put(PolicyTag.API.getTag(), "");
+        alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     // Get WASC Vulnerability description
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_39");
@@ -199,13 +217,7 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin
                                 paramName,
                                 evilPayload);
 
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_HIGH)
-                                .setParam(paramName)
-                                .setAttack(evilPayload)
-                                .setEvidence(errorString)
-                                .setMessage(msg)
-                                .raise();
+                        createAlert(paramName, evilPayload, errorString).setMessage(msg).raise();
 
                         // All done. No need to look for vulnerabilities on subsequent
                         // parameters on the same request (to reduce performance impact)
@@ -231,5 +243,18 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin
                 return;
             }
         }
+    }
+
+    private AlertBuilder createAlert(String param, String payload, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setParam(param)
+                .setAttack(payload)
+                .setEvidence(evidence);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("foo", XPATH_PAYLOADS[0], XPATH_ERRORS[0]).build());
     }
 }

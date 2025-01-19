@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -33,6 +35,8 @@ import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
+import org.zaproxy.addon.commonlib.http.ComparableResponse;
 
 /**
  * Active scan rule which checks whether or not POST requests with parameters are accepted as GET
@@ -43,11 +47,22 @@ public class GetForPostScanRule extends AbstractAppPlugin implements CommonActiv
     private static final Logger LOGGER = LogManager.getLogger(GetForPostScanRule.class);
     private static final String MESSAGE_PREFIX = "ascanrules.getforpost.";
     private static final int PLUGIN_ID = 10058;
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                    CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS);
+
+    // The required similarity ratio to consider GET and POST responses to be the same.
+    private static final double REQUIRED_SIMILARITY = 0.95;
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                                CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS));
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public int getId() {
@@ -116,7 +131,10 @@ public class GetForPostScanRule extends AbstractAppPlugin implements CommonActiv
             return;
         }
 
-        if (newRequest.getResponseBody().equals(baseMsg.getResponseBody())) {
+        ComparableResponse baseMsgComparableResponse = createComparableResponse(baseMsg);
+        ComparableResponse newMsgComparableResponse = createComparableResponse(newRequest);
+        if (baseMsgComparableResponse.compareWith(newMsgComparableResponse)
+                >= REQUIRED_SIMILARITY) {
             buildAlert(newRequest.getRequestHeader().getPrimeHeader())
                     .setUri(baseMsg.getRequestHeader().getURI().toString())
                     .setMessage(newRequest)
@@ -126,6 +144,14 @@ public class GetForPostScanRule extends AbstractAppPlugin implements CommonActiv
 
     private AlertBuilder buildAlert(String evidence) {
         return newAlert().setConfidence(Alert.CONFIDENCE_HIGH).setEvidence(evidence);
+    }
+
+    private static ComparableResponse createComparableResponse(HttpMessage msg) {
+        return new ComparableResponse(
+                msg.getResponseHeader().getStatusCode(),
+                msg.getResponseBody().toString(),
+                Map.of(),
+                "");
     }
 
     @Override

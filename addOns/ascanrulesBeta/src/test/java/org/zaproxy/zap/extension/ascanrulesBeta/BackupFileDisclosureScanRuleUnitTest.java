@@ -28,14 +28,17 @@ import static org.hamcrest.Matchers.is;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -297,7 +300,7 @@ class BackupFileDisclosureScanRuleUnitTest extends ActiveScannerTest<BackupFileD
         // Then
         assertThat(cwe, is(equalTo(530)));
         assertThat(wasc, is(equalTo(34)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -307,6 +310,7 @@ class BackupFileDisclosureScanRuleUnitTest extends ActiveScannerTest<BackupFileD
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_CONF_04_BACKUP_FILES.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
@@ -316,6 +320,28 @@ class BackupFileDisclosureScanRuleUnitTest extends ActiveScannerTest<BackupFileD
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CONF_04_BACKUP_FILES.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CONF_04_BACKUP_FILES.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getAttack(), is(equalTo("https://example.com/profile.asp.old")));
+        assertThat(
+                alert.getOtherInfo(),
+                is(
+                        equalTo(
+                                "A backup of [https://example.com/profile.asp] is available at"
+                                        + " [https://example.com/profile.asp.old]")));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     private static class ForbiddenResponseWithReqPath extends NanoServerHandler {

@@ -47,7 +47,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author Michael Kruglos (@michaelkruglos)
  */
-public class PiiScanRule extends PluginPassiveScanner {
+public class PiiScanRule extends PluginPassiveScanner implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.pii.";
@@ -180,7 +180,7 @@ public class PiiScanRule extends PluginPassiveScanner {
                 .setWascId(13); // WASC-13: Information Leakage
     }
 
-    private String getBinRecString(BinRecord binRec) {
+    private static String getBinRecString(BinRecord binRec) {
         StringBuilder recString = new StringBuilder(75);
         recString
                 .append(Constant.messages.getString(MESSAGE_PREFIX + "bin.field"))

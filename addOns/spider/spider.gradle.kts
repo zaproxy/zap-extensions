@@ -1,3 +1,4 @@
+import me.champeau.gradle.japicmp.JapicmpTask
 import org.zaproxy.gradle.addon.AddOnStatus
 
 description = "Spider used for automatically finding URIs on a site."
@@ -17,7 +18,7 @@ zapAddOn {
                     version.set(">=0.3.0")
                 }
                 register("commonlib") {
-                    version.set(">= 1.17.0 & < 2.0.0")
+                    version.set(">= 1.29.0 & < 2.0.0")
                 }
             }
         }
@@ -61,6 +62,18 @@ dependencies {
     implementation("io.kaitai:kaitai-struct-runtime:0.10")
 
     testImplementation(project(":testutils"))
+}
+
+val japicmp by tasks.existing(JapicmpTask::class) {
+    packageExcludes = listOf("org.zaproxy.addon.spider.automation")
+    methodExcludes =
+        listOf(
+            "org.zaproxy.addon.spider.PopupMenuItemSpiderDialog#getParentMenuIndex()",
+            "org.zaproxy.addon.spider.SpiderParam#getRequestWaitTime()",
+            "org.zaproxy.addon.spider.SpiderParam#setRequestWaitTime(int)",
+            "org.zaproxy.addon.spider.parser.ParseContext#ParseContext(org.zaproxy.addon.spider.SpiderParam," +
+                "org.zaproxy.zap.model.ValueGenerator,org.parosproxy.paros.network.HttpMessage,java.lang.String,int)",
+        )
 }
 
 spotless {

@@ -21,11 +21,14 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
@@ -46,8 +49,6 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
-import org.zaproxy.zap.utils.FontUtils;
-import org.zaproxy.zap.utils.FontUtils.Size;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.LayoutHelper;
 
@@ -70,9 +71,9 @@ public class QuickStartPanel extends AbstractPanel {
     private DefaultExplorePanel defaultExplorePanel;
     private QuickStartSubPanel explorePanel;
     private JXPanel newsPanel;
-    private JLabel topTitle;
 
     private NewsItem newsItem;
+    private static ImageIcon zapByCxIcon;
 
     public QuickStartPanel(ExtensionQuickStart extension) {
         super();
@@ -102,13 +103,8 @@ public class QuickStartPanel extends AbstractPanel {
         this.add(jScrollPane, BorderLayout.CENTER);
 
         panelContent.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
-
-        topTitle = new JLabel(Constant.messages.getString("quickstart.top.panel.title"));
-        topTitle.setBackground(panelContent.getBackground());
-        topTitle.setFont(FontUtils.getFont(Size.much_larger));
-        topTitle.setHorizontalAlignment(SwingConstants.CENTER);
         panelContent.add(
-                topTitle,
+                new TitlePanel(Constant.messages.getString("quickstart.top.panel.title")),
                 LayoutHelper.getGBC(
                         0,
                         panelY,
@@ -117,7 +113,7 @@ public class QuickStartPanel extends AbstractPanel {
                         0.0D,
                         GridBagConstraints.BOTH,
                         GridBagConstraints.CENTER,
-                        new Insets(0, 0, 0, 0)));
+                        new Insets(5, 5, 5, 5)));
         panelContent.add(
                 QuickStartHelper.getWrappedLabel("quickstart.top.panel.message1"),
                 LayoutHelper.getGBC(0, ++panelY, 4, 1.0D, new Insets(5, 5, 5, 5)));
@@ -144,13 +140,39 @@ public class QuickStartPanel extends AbstractPanel {
         getLearnMorePanel();
     }
 
+    public static ImageIcon getZapByCxIcon() {
+        if (zapByCxIcon == null) {
+            zapByCxIcon =
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    QuickStartPanel.class.getResource(
+                                            ExtensionQuickStart.RESOURCES
+                                                    + "/ZAP_by_Checkmarx_logo.png")));
+        }
+        return zapByCxIcon;
+    }
+
+    protected static JLabel getOsfImageLabel() {
+        JLabel label = new JLabel();
+        label.setIcon(getZapByCxIcon());
+        label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        label.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        Stats.incCounter("stats.ui.link.cx");
+                        DesktopUtils.openUrlInBrowser("https://checkmarx.com/");
+                    }
+                });
+        return label;
+    }
+
     @Override
     public void updateUI() {
         super.updateUI();
         if (panelContent != null) {
             SwingUtilities.updateComponentTreeUI(panelContent);
             Color color = QuickStartBackgroundPanel.getBackgroundColor(true);
-            topTitle.setBackground(color);
             buttonPanel.setBackground(color);
 
             SwingUtilities.updateComponentTreeUI(attackPanel);
@@ -305,17 +327,6 @@ public class QuickStartPanel extends AbstractPanel {
 
         JXPanel innerPanel = new QuickStartBackgroundPanel();
 
-        CloseButton closeButton = new CloseButton();
-        JPanel closePanel = new QuickStartBackgroundPanel();
-        closePanel.add(new JLabel(""), LayoutHelper.getGBC(0, 0, 1, 1.0D)); // Spacer
-        closePanel.add(closeButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
-        closeButton.setVerticalAlignment(SwingConstants.TOP);
-        closeButton.addActionListener(
-                e -> {
-                    newsPanel.setVisible(false);
-                    extension.getQuickStartParam().setClearedNewsItem(newsItem.getId());
-                });
-
         JButton newsLearnMoreButton =
                 new JButton(Constant.messages.getString("quickstart.button.news"));
         newsLearnMoreButton.addActionListener(
@@ -333,7 +344,20 @@ public class QuickStartPanel extends AbstractPanel {
                 LayoutHelper.getGBC(0, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
         innerPanel.add(
                 newsLearnMoreButton, LayoutHelper.getGBC(1, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
-        innerPanel.add(closeButton, LayoutHelper.getGBC(2, 0, 1, 0.0D));
+
+        if (!newsItem.isFixed()) {
+            CloseButton closeButton = new CloseButton();
+            JPanel closePanel = new QuickStartBackgroundPanel();
+            closePanel.add(new JLabel(""), LayoutHelper.getGBC(0, 0, 1, 1.0D)); // Spacer
+            closePanel.add(closeButton, LayoutHelper.getGBC(1, 0, 1, 0.0D));
+            closeButton.setVerticalAlignment(SwingConstants.TOP);
+            closeButton.addActionListener(
+                    e -> {
+                        newsPanel.setVisible(false);
+                        extension.getQuickStartParam().setClearedNewsItem(newsItem.getId());
+                    });
+            innerPanel.add(closeButton, LayoutHelper.getGBC(2, 0, 1, 0.0D));
+        }
 
         newsPanel.add(
                 new JLabel(""),

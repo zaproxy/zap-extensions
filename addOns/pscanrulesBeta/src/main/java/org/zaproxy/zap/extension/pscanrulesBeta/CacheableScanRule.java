@@ -75,7 +75,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class CacheableScanRule extends PluginPassiveScanner {
+public class CacheableScanRule extends PluginPassiveScanner implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX_STORABILITY_CACHEABILITY =
             "pscanbeta.storabilitycacheability.";
@@ -692,7 +692,7 @@ public class CacheableScanRule extends PluginPassiveScanner {
         }
     }
 
-    private Long extractAgeValue(String directiveToken, int tokenLength) {
+    private static Long extractAgeValue(String directiveToken, int tokenLength) {
         int commaLocation = directiveToken.indexOf(",", tokenLength);
         return Long.parseLong(
                 directiveToken.substring(
@@ -760,8 +760,6 @@ public class CacheableScanRule extends PluginPassiveScanner {
                 .setName(Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "name"))
                 .setDescription(
                         Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "desc"))
-                .setSolution(
-                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "soln"))
                 .setReference(
                         Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "refs"));
     }

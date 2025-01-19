@@ -24,17 +24,23 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.Box;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellRenderer;
 import org.jdesktop.swingx.JXTable;
@@ -42,8 +48,10 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.renderer.MappedValue;
 import org.jdesktop.swingx.renderer.StringValues;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.utils.TableExportButton;
 import org.zaproxy.zap.view.ZapToggleButton;
@@ -69,6 +77,7 @@ public class TechPanel extends AbstractPanel {
 
     private TableExportButton<JXTable> exportButton = null;
     private ZapToggleButton enableButton = null;
+    private JButton optionsButton;
 
     private static final Icon TRANSPARENT_ICON =
             new Icon() {
@@ -103,7 +112,7 @@ public class TechPanel extends AbstractPanel {
                         .getView()
                         .getMenuShortcutKeyStroke(
                                 KeyEvent.VK_T,
-                                KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
+                                InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK,
                                 false));
         this.setMnemonic(Constant.messages.getChar("wappalyzer.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
@@ -115,11 +124,11 @@ public class TechPanel extends AbstractPanel {
      *
      * @return javax.swing.JPanel
      */
-    private javax.swing.JPanel getPanelCommand() {
+    private JPanel getPanelCommand() {
         if (panelCommand == null) {
 
-            panelCommand = new javax.swing.JPanel();
-            panelCommand.setLayout(new java.awt.GridBagLayout());
+            panelCommand = new JPanel();
+            panelCommand.setLayout(new GridBagLayout());
             panelCommand.setName("Params");
 
             GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
@@ -127,17 +136,17 @@ public class TechPanel extends AbstractPanel {
 
             gridBagConstraints1.gridx = 0;
             gridBagConstraints1.gridy = 0;
-            gridBagConstraints1.insets = new java.awt.Insets(2, 2, 2, 2);
-            gridBagConstraints1.anchor = java.awt.GridBagConstraints.NORTHWEST;
-            gridBagConstraints1.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            gridBagConstraints1.insets = new Insets(2, 2, 2, 2);
+            gridBagConstraints1.anchor = GridBagConstraints.NORTHWEST;
+            gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraints1.weightx = 1.0D;
             gridBagConstraints2.gridx = 0;
             gridBagConstraints2.gridy = 1;
             gridBagConstraints2.weightx = 1.0;
             gridBagConstraints2.weighty = 1.0;
-            gridBagConstraints2.fill = java.awt.GridBagConstraints.BOTH;
-            gridBagConstraints2.insets = new java.awt.Insets(0, 0, 0, 0);
-            gridBagConstraints2.anchor = java.awt.GridBagConstraints.NORTHWEST;
+            gridBagConstraints2.fill = GridBagConstraints.BOTH;
+            gridBagConstraints2.insets = new Insets(0, 0, 0, 0);
+            gridBagConstraints2.anchor = GridBagConstraints.NORTHWEST;
 
             panelCommand.add(this.getPanelToolbar(), gridBagConstraints1);
             panelCommand.add(getJScrollPane(), gridBagConstraints2);
@@ -145,15 +154,14 @@ public class TechPanel extends AbstractPanel {
         return panelCommand;
     }
 
-    private javax.swing.JToolBar getPanelToolbar() {
+    private JToolBar getPanelToolbar() {
         if (panelToolbar == null) {
 
-            panelToolbar = new javax.swing.JToolBar();
+            panelToolbar = new JToolBar();
             panelToolbar.setEnabled(true);
             panelToolbar.setFloatable(false);
             panelToolbar.setRollover(true);
-            panelToolbar.setPreferredSize(new java.awt.Dimension(800, 30));
-            panelToolbar.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+            panelToolbar.setPreferredSize(new Dimension(800, 30));
             panelToolbar.setName("WappTechToolbar");
 
             panelToolbar.add(
@@ -163,6 +171,7 @@ public class TechPanel extends AbstractPanel {
             panelToolbar.add(getEnableToggleButton());
 
             panelToolbar.add(Box.createHorizontalGlue());
+            panelToolbar.add(getOptionsButton());
         }
         return panelToolbar;
     }
@@ -171,7 +180,6 @@ public class TechPanel extends AbstractPanel {
         if (jScrollPane == null) {
             jScrollPane = new JScrollPane();
             jScrollPane.setViewportView(getTechTable());
-            jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
         }
         return jScrollPane;
     }
@@ -214,16 +222,15 @@ public class TechPanel extends AbstractPanel {
                                         Icon icon = ((Application) item).getIcon();
                                         return icon != null ? icon : TRANSPARENT_ICON;
                                     }),
-                            JLabel.LEADING);
+                            SwingConstants.LEADING);
             techTable.setDefaultRenderer(Application.class, renderer);
 
             techTable.setName(PANEL_NAME);
-            techTable.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
             techTable.setDoubleBuffered(true);
             techTable.addMouseListener(
-                    new java.awt.event.MouseAdapter() {
+                    new MouseAdapter() {
                         @Override
-                        public void mousePressed(java.awt.event.MouseEvent e) {
+                        public void mousePressed(MouseEvent e) {
 
                             if (SwingUtilities.isRightMouseButton(e)) {
 
@@ -331,14 +338,14 @@ public class TechPanel extends AbstractPanel {
                             Constant.messages.getString("wappalyzer.toolbar.toggle.state.enabled"),
                             true);
             enableButton.setIcon(
-                    new ImageIcon(
+                    DisplayUtils.getScaledIcon(
                             TechPanel.class.getResource(
                                     ExtensionWappalyzer.RESOURCE + "/off.png")));
             enableButton.setToolTipText(
                     Constant.messages.getString(
                             "wappalyzer.toolbar.toggle.state.disabled.tooltip"));
             enableButton.setSelectedIcon(
-                    new ImageIcon(
+                    DisplayUtils.getScaledIcon(
                             TechPanel.class.getResource(ExtensionWappalyzer.RESOURCE + "/on.png")));
             enableButton.setSelectedToolTipText(
                     Constant.messages.getString("wappalyzer.toolbar.toggle.state.enabled.tooltip"));
@@ -358,5 +365,25 @@ public class TechPanel extends AbstractPanel {
                     });
         }
         return enableButton;
+    }
+
+    private JButton getOptionsButton() {
+        if (optionsButton == null) {
+            optionsButton = new JButton();
+            optionsButton.setToolTipText(
+                    Constant.messages.getString("wappalyzer.toolbar.options.name"));
+            optionsButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            TechPanel.class.getResource("/resource/icon/16/041.png")));
+
+            optionsButton.addActionListener(
+                    e ->
+                            Control.getSingleton()
+                                    .getMenuToolsControl()
+                                    .options(
+                                            Constant.messages.getString(
+                                                    "wappalyzer.optionspanel.name")));
+        }
+        return optionsButton;
     }
 }

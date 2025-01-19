@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +39,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
+public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** the logger. it logs stuff. */
     private static final Logger LOGGER =
@@ -122,20 +123,11 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
                 // The CORS misconfig could still allow an attacker to access the data returned from
                 // an unauthenticated API, which is protected by some other form of security, such
                 // as IP address white-listing, for instance.
-                newAlert()
-                        .setRisk(getRisk())
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setDescription(getDescription())
-                        .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"))
-                        .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
-                        .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
-                        .setEvidence(
+
+                buildAlert(
                                 extractEvidence(
                                         msg.getResponseHeader().toString(),
-                                        HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN,
-                                        corsAllowOriginValue))
-                        .setCweId(getCweId())
-                        .setWascId(getWascId())
+                                        HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN))
                         .raise();
             }
 
@@ -145,33 +137,27 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
         }
     }
 
-    private static String extractEvidence(String header, String headerName, String headerContents) {
-        Pattern pattern =
-                Pattern.compile(
-                        Pattern.quote(headerName) + ".*" + Pattern.quote(headerContents) + ".*",
-                        Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(header);
-        if (matcher.find()) {
-            return matcher.group();
-        }
-        return "";
+    private AlertBuilder buildAlert(String evidence) {
+        return newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "extrainfo"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
+                .setEvidence(evidence)
+                .setCweId(264) // CWE 264: Permissions, Privileges, and Access Controls
+                .setWascId(14); // WASC-14: Server Misconfiguration
     }
 
-    public int getRisk() {
-        return Alert.RISK_MEDIUM;
+    private static String extractEvidence(String header, String headerName) {
+        int start = header.toLowerCase(Locale.ROOT).indexOf(headerName);
+        return header.substring(start, header.indexOf("\r", start));
     }
 
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 264; // CWE 264: Permissions, Privileges, and Access Controls
-    }
-
-    public int getWascId() {
-        return 14; // WASC-14: Server Misconfiguration
     }
 
     /**
@@ -184,12 +170,8 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
         return 10098;
     }
 
-    /**
-     * get the description of the alert
-     *
-     * @return
-     */
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("access-control-allow-origin: *").build());
     }
 }

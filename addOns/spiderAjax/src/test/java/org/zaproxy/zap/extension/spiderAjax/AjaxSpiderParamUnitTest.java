@@ -164,7 +164,7 @@ class AjaxSpiderParamUnitTest {
             // When
             param.load(configuration);
             // Then
-            assertThat(param.getNumberOfBrowsers(), is(equalTo(10)));
+            assertThat(param.getNumberOfBrowsers(), is(equalTo(5)));
         }
     }
 
@@ -179,7 +179,7 @@ class AjaxSpiderParamUnitTest {
             // When
             param.load(configuration);
             // Then
-            assertThat(param.getNumberOfBrowsers(), is(equalTo(10)));
+            assertThat(param.getNumberOfBrowsers(), is(equalTo(5)));
         }
     }
 

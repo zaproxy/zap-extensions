@@ -68,7 +68,6 @@ public class SpiderJobDialog extends StandardFieldsDialog {
     private static final String PARSE_SVN_PARAM = "spider.automation.dialog.parsessvn";
     private static final String POST_FORM_PARAM = "spider.automation.dialog.postform";
     private static final String PROCESS_FORM_PARAM = "spider.automation.dialog.processform";
-    private static final String REQ_WAIT_TIME_PARAM = "spider.automation.dialog.reqwaittime";
     private static final String SEND_REFERER_PARAM = "spider.automation.dialog.sendreferer";
     private static final String THREAD_COUNT_PARAM = "spider.automation.dialog.threadcount";
     private static final String USER_AGENT_PARAM = "spider.automation.dialog.useragent";
@@ -156,12 +155,6 @@ public class SpiderJobDialog extends StandardFieldsDialog {
                 JobUtils.unBox(this.job.getParameters().getMaxParseSizeBytes()));
         this.addNumberField(
                 2,
-                REQ_WAIT_TIME_PARAM,
-                0,
-                Integer.MAX_VALUE,
-                JobUtils.unBox(this.job.getParameters().getRequestWaitTime()));
-        this.addNumberField(
-                2,
                 THREAD_COUNT_PARAM,
                 0,
                 Integer.MAX_VALUE,
@@ -193,12 +186,8 @@ public class SpiderJobDialog extends StandardFieldsDialog {
                     }
                 };
 
-        SpiderParam.HandleParametersOption hpo = null;
         if (this.job.getParameters().getHandleParameters() != null) {
-            hpo =
-                    SpiderParam.HandleParametersOption.valueOf(
-                            this.job.getParameters().getHandleParameters());
-            handleParamsModel.setSelectedItem(hpo);
+            handleParamsModel.setSelectedItem(this.job.getParameters().getHandleParameters());
         }
         this.addComboField(2, HANDLE_PARAMS_PARAM, handleParamsModel);
         Component acField = this.getField(HANDLE_PARAMS_PARAM);
@@ -243,7 +232,6 @@ public class SpiderJobDialog extends StandardFieldsDialog {
                 || params.getParseSVNEntries() != null
                 || params.getPostForm() != null
                 || params.getProcessForm() != null
-                || params.getRequestWaitTime() != null
                 || params.getSendRefererHeader() != null
                 || params.getThreadCount() != null
                 || params.getUserAgent() != null;
@@ -282,7 +270,6 @@ public class SpiderJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setParseSVNEntries(this.getBoolValue(PARSE_SVN_PARAM));
             this.job.getParameters().setPostForm(this.getBoolValue(POST_FORM_PARAM));
             this.job.getParameters().setProcessForm(this.getBoolValue(PROCESS_FORM_PARAM));
-            this.job.getParameters().setRequestWaitTime(this.getIntValue(REQ_WAIT_TIME_PARAM));
             this.job.getParameters().setSendRefererHeader(this.getBoolValue(SEND_REFERER_PARAM));
             this.job.getParameters().setUserAgent(this.getStringValue(USER_AGENT_PARAM));
 
@@ -290,7 +277,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
             if (hpoObj instanceof SpiderParam.HandleParametersOption) {
                 SpiderParam.HandleParametersOption hpo =
                         (SpiderParam.HandleParametersOption) hpoObj;
-                this.job.getParameters().setHandleParameters(hpo.name());
+                this.job.getParameters().setHandleParameters(hpo);
             }
 
         } else {
@@ -305,7 +292,6 @@ public class SpiderJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setParseSVNEntries(null);
             this.job.getParameters().setPostForm(null);
             this.job.getParameters().setProcessForm(null);
-            this.job.getParameters().setRequestWaitTime(null);
             this.job.getParameters().setSendRefererHeader(null);
             this.job.getParameters().setUserAgent(null);
             this.job.getParameters().setHandleParameters(null);

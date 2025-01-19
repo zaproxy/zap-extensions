@@ -37,7 +37,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * A port from a Watcher passive scanner (http://websecuritytool.codeplex.com/) rule {@code
  * CasabaSecurity.Web.Watcher.Checks.CheckPasvCharsetMismatch}
  */
-public class CharsetMismatchScanRule extends PluginPassiveScanner {
+public class CharsetMismatchScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.charsetmismatch.";
@@ -212,7 +213,7 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner {
     // FIX: This will match Atom and RSS feeds now, which set text/html but
     // use &lt;?xml&gt; in content
 
-    private boolean isResponseHTML(HttpMessage message, Source source) {
+    private static boolean isResponseHTML(HttpMessage message, Source source) {
         String contentType = message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
         if (contentType == null) {
             return false;
@@ -223,12 +224,12 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner {
                 || contentType.indexOf("application/xhtml") != -1;
     }
 
-    private boolean isResponseXML(HttpMessage message, Source source) {
+    private static boolean isResponseXML(HttpMessage message, Source source) {
         // Return true if source or response is identified as XML
         return source.isXML() || message.getResponseHeader().isXml();
     }
 
-    private String getBodyContentCharset(String bodyContentType) {
+    private static String getBodyContentCharset(String bodyContentType) {
         // preconditions
         assert bodyContentType != null;
 
@@ -302,7 +303,7 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner {
         return 15; // WASC-15: Application Misconfiguration
     }
 
-    private String getExtraInfo(
+    private static String getExtraInfo(
             String firstCharset, String secondCharset, MismatchType mismatchType) {
 
         String extraInfo = "";

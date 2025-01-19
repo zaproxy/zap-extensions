@@ -50,7 +50,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * Checks content for private IP V4 addresses as well as Amazon EC2 private hostnames (for example,
  * ip-10-34-56-78).
  */
-public class InfoPrivateAddressDisclosureScanRule extends PluginPassiveScanner {
+public class InfoPrivateAddressDisclosureScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.infoprivateaddressdisclosure.";
@@ -133,33 +134,16 @@ public class InfoPrivateAddressDisclosureScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }
 
-    public int getCweId() {
-        return 200; // CWE Id 200 - Information Exposure
-    }
-
-    public int getWascId() {
-        return 13; // WASC Id - Info leakage
-    }
-
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (!msg.getResponseHeader().isText()) {
+            return;
+        }
         String host = msg.getRequestHeader().getHostName();
 
         String txtBody = msg.getResponseBody().toString();
@@ -191,18 +175,14 @@ public class InfoPrivateAddressDisclosureScanRule extends PluginPassiveScanner {
 
     private AlertBuilder createAlert(String otherInfo, String evidence) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(otherInfo)
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
-    }
-
-    public int getRisk() {
-        return Alert.RISK_LOW;
+                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setWascId(13); // WASC Id - Info leakage
     }
 }

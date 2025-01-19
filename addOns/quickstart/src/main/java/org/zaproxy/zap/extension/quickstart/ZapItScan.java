@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.quickstart;
 
-import com.gargoylesoftware.htmlunit.HttpHeader;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -42,10 +41,11 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.network.HttpRedirectionValidator;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.Stats;
@@ -105,10 +105,10 @@ public class ZapItScan {
         }
 
         // Wait for passive scan to complete
-        ExtensionPassiveScan extPscan =
+        ExtensionPassiveScan2 extPscan =
                 Control.getSingleton()
                         .getExtensionLoader()
-                        .getExtension(ExtensionPassiveScan.class);
+                        .getExtension(ExtensionPassiveScan2.class);
         while (extPscan.getRecordsToScan() > 0) {
             try {
                 Thread.sleep(200);

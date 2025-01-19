@@ -19,7 +19,9 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
@@ -59,14 +62,17 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin
                     ".*(<\\?=.+?\\?>).*",
                     Pattern.MULTILINE | Pattern.DOTALL); // PHP "echo short tag"
     private static final String CVE = "CVE-2012-1823";
-    private static final Map<String, String> ALERT_TAGS = new HashMap<>();
+    private static final Map<String, String> ALERT_TAGS;
 
     static {
-        ALERT_TAGS.putAll(
-                CommonAlertTag.toMap(
-                        CommonAlertTag.OWASP_2021_A06_VULN_COMP,
-                        CommonAlertTag.OWASP_2017_A09_VULN_COMP));
-        CommonAlertTag.putCve(ALERT_TAGS, CVE);
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                                CommonAlertTag.OWASP_2017_A09_VULN_COMP));
+        CommonAlertTag.putCve(alertTags, CVE);
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
     /**
@@ -120,11 +126,16 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin
     public void scan() {
         try {
 
-            if (!getBaseMsg().getResponseHeader().isText()) {
+            if (!getBaseMsg().getResponseHeader().isText()
+                    || ResourceIdentificationUtils.responseContainsControlChars(getBaseMsg())) {
                 return; // Ignore images, pdfs, etc.
             }
             if (getAlertThreshold() != AlertThreshold.LOW
                     && ResourceIdentificationUtils.isJavaScript(getBaseMsg())) {
+                return;
+            }
+
+            if (isEvidenceInOriginalResponse()) {
                 return;
             }
             // at Low or Medium strength, do not attack URLs which returned "Not Found"
@@ -169,18 +180,7 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin
                         sourceCode = matcher2.group(1);
                     }
 
-                    // bingo.
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setDescription(
-                                    Constant.messages.getString(
-                                            "ascanrules.sourcecodedisclosurecve-2012-1823.desc"))
-                            .setOtherInfo(sourceCode)
-                            .setSolution(
-                                    Constant.messages.getString(
-                                            "ascanrules.sourcecodedisclosurecve-2012-1823.soln"))
-                            .setMessage(attackmsg)
-                            .raise();
+                    buildAlert(sourceCode).setMessage(attackmsg).raise();
                 }
             }
         } catch (Exception e) {
@@ -189,6 +189,25 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin
                     e.getMessage(),
                     e);
         }
+    }
+
+    private boolean isEvidenceInOriginalResponse() {
+        var response = getBaseMsg().getResponseBody().toString();
+        String responseBodyDecoded = new Source(response).getRenderer().toString();
+        return PHP_PATTERN1.matcher(responseBodyDecoded).matches()
+                || PHP_PATTERN2.matcher(responseBodyDecoded).matches();
+    }
+
+    private AlertBuilder buildAlert(String otherInfo) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(
+                        Constant.messages.getString(
+                                "ascanrules.sourcecodedisclosurecve-2012-1823.desc"))
+                .setOtherInfo(otherInfo)
+                .setSolution(
+                        Constant.messages.getString(
+                                "ascanrules.sourcecodedisclosurecve-2012-1823.soln"));
     }
 
     private static URI createAttackUri(URI originalURI, String attackParam) {
@@ -227,5 +246,10 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("<?php $x=0; echo '<h1>Welcome!</h1>'; ?>").build());
     }
 }

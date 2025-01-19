@@ -665,13 +665,13 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
-        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(6)));
         assertThat(
                 listener.getUrlsFound(),
                 contains(
                         "http://example.com/sample",
                         "http://example2.com/test/p/string/fullUrl",
                         "http://example.com/sample/with/base/tag",
+                        "http://example.com/sample/.absolute-dotted",
                         "http://string.example.com:8443/inline/string",
                         "http://example.com/dot-prefix/inline/string",
                         "http://example.com/dot-dot-prefix/inline/string"));

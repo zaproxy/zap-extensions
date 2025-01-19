@@ -21,7 +21,10 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,22 +35,30 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.Server;
 
-public class HttPoxyScanRule extends AbstractAppPlugin {
+public class HttPoxyScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanbeta.httpoxy.";
 
     private static final int PLUGIN_ID = 10107;
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A06_VULN_COMP,
-                    CommonAlertTag.OWASP_2017_A09_VULN_COMP);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                                CommonAlertTag.OWASP_2017_A09_VULN_COMP));
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static final Logger LOGGER = LogManager.getLogger(HttPoxyScanRule.class);
 
@@ -142,13 +153,10 @@ public class HttPoxyScanRule extends AbstractAppPlugin {
 
                     if (listener.isMsgReceived()) {
                         // the server is vulnerable
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_HIGH)
-                                .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                                .setAttack(HttpFieldsNames.PROXY + ": " + hostPort)
-                                .setOtherInfo(
-                                        Constant.messages.getString(
-                                                MESSAGE_PREFIX + "otherinfo", listener.getMsgUrl()))
+                        buildAlert(
+                                        hostPort,
+                                        getBaseMsg().getRequestHeader().getURI().toString(),
+                                        listener.getMsgUrl())
                                 .setMessage(newRequest)
                                 .raise();
 
@@ -160,6 +168,21 @@ public class HttPoxyScanRule extends AbstractAppPlugin {
         } catch (Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
+    }
+
+    private AlertBuilder buildAlert(String hostPort, String baseUrl, String url) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setUri(baseUrl)
+                .setAttack(HttpFieldsNames.PROXY + ": " + hostPort)
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", url));
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert("192.168.0.11:1080", "http://example.com/", "http://192.168.0.11:1080/")
+                        .build());
     }
 
     private class HttpoxyListener implements HttpMessageHandler {

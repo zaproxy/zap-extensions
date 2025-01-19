@@ -16,7 +16,7 @@ For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-z
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleFilePassiveScanRule.java">ExampleFilePassiveScanRule.java</a>
 
-<h2>Base64 Disclosure</h2>
+<h2 id="id-10094">Base64 Disclosure</h2>
 <ul>
  <li><b>ASP.NET ViewState Disclosure:</b> An ASP.NET ViewState was disclosed by the application/web server</li>
  <li><b>ASP.NET ViewState Integrity:</b> The application does not use a Message Authentication Code (MAC) to protect the integrity of the ASP.NET ViewState, which can be tampered with by a malicious client</li>
@@ -24,7 +24,8 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 </ul>
 <strong>Note:</strong> At Low Threshold all occurrences within each response will be included.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/Base64Disclosure.java">Base64Disclosure.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/Base64Disclosure.java">Base64Disclosure.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10094/">10094</a>.
 
 <h2>Example Passive Scan Rule: Denial of Service</h2>
 This implements a very simple example passive scan rule.<br>
@@ -32,7 +33,7 @@ For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-z
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanRule.java">ExampleSimplePassiveScanRule.java</a>
 
-<h2>Fetch Metadata Request Headers Scan Rule</h2>
+<h2 id="id-90005">Fetch Metadata Request Headers Scan Rule</h2>
 Fetch Metadata Request headers are HTTP request headers that provide additional information about a request's origin.
 This additional information helps the server to implement resource isolation policy, allowing external sites to request only
 those resources that are intended for sharing, and that are used appropriately. This approach can help mitigate common
@@ -76,7 +77,20 @@ Sec-Fetch-User is only sent for requests initiated by user activation.
  <li><b>Sec-Fetch-User Header Has an Invalid Value</b></li>
 </ul>
 <p>
- Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FetchMetadataRequestHeadersScanRule.java">FetchMetadataRequestHeadersScanRule.java</a>
+ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FetchMetadataRequestHeadersScanRule.java">FetchMetadataRequestHeadersScanRule.java</a><br>
+ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90005/">90005</a>.
+
+<h2 id="id-110009">Full Path Disclosure Scan Rule</h2>
+<p>A Full Path Disclosure vulnerability is where the path to the root of the application providing valuable information for attackers.
+Examples of Full Path Disclosure Vulnerabilities are : /home/omg/htdocs/file/ or C:\Users\username\server\
+</p>
+<p>The attacker could use this path to steal credentials or other private information. For more information visit : <a href="https://owasp.org/www-community/attacks/Full_Path_Disclosure">OWASP article.</a></p>
+
+<p>Latest code:
+ <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FullPathDisclosureScanRule.java">FullPathDisclosureScanRule.java</a>
+ <br>
+ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/110009/">110009</a>.
+</p>
 
 </body>
 </html>

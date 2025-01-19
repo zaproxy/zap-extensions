@@ -5,6 +5,87 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Allow to log browser's `console.log`, done at DEBUG level with the name `org.zaproxy.webdriver`.
+
+### Changed
+- Use WebDriver BiDi with Chrome.
+
+## [15.32.0] - 2025-01-10
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [15.31.0] - 2024-12-23
+### Changed
+- Update Selenium to version 4.27.0.
+- Use WebDriver BiDi with Firefox.
+
+## [15.30.0] - 2024-09-24
+### Changed
+- Update Selenium to version 4.25.0.
+- Update script template:
+  - selenium/Selenium default template.js - update documentation.
+
+## [15.29.0] - 2024-09-02
+### Added
+- Link to "no browser" FAQ in warning messages.
+
+### Changed
+- Update Selenium to version 4.24.0.
+
+## [15.28.0] - 2024-08-12
+### Changed
+- Update Selenium to version 4.23.1.
+
+## [15.27.0] - 2024-07-22
+### Changed
+- Update Selenium to version 4.23.0.
+
+## [15.26.0] - 2024-06-21
+### Changed
+- Update Selenium to version 4.22.0.
+
+## [15.25.0] - 2024-05-31
+### Changed
+- Ensure the specified WebDriver is executable always.
+
+## [15.24.0] - 2024-05-21
+### Changed
+- Update Selenium to version 4.21.0.
+
+## [15.23.0] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [15.22.0] - 2024-04-26
+### Changed
+- Update Selenium to version 4.20.0.
+
+## [15.21.0] - 2024-04-02
+### Changed
+- Update Selenium to version 4.19.1.
+
+## [15.20.0] - 2024-03-28
+### Added
+- Support for menu weights (Issue 8369).
+
+### Changed
+- Update Selenium to version 4.19.0.
+- Update HtmlUnit to major version 3.
+
+### Fixed
+- A typo on the intro page in the add-on's help.
+
+## [15.19.0] - 2024-02-22
+### Changed
+- Update Selenium to version 4.18.1.
+- Maintenance changes.
+
+## [15.18.0] - 2024-01-26
+### Changed
+- Update Selenium to version 4.17.0.
+
+## [15.17.0] - 2024-01-18
 ### Changed
 - Update Selenium to version 4.16.1.
 
@@ -201,6 +282,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.32.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.32.0
+[15.31.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.31.0
+[15.30.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.30.0
+[15.29.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.29.0
+[15.28.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.28.0
+[15.27.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.27.0
+[15.26.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.26.0
+[15.25.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.25.0
+[15.24.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.24.0
+[15.23.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.23.0
+[15.22.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.22.0
+[15.21.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.21.0
+[15.20.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.20.0
+[15.19.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.19.0
+[15.18.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.18.0
+[15.17.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.17.0
 [15.16.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.16.0
 [15.15.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.15.0
 [15.14.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.14.0

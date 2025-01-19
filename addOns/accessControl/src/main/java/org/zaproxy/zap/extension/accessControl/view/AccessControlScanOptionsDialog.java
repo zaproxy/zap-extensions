@@ -79,7 +79,6 @@ public class AccessControlScanOptionsDialog extends StandardFieldsDialog {
         this.addTableField(FIELD_USERS, usersSelectTable);
         this.addCheckBoxField(FIELD_RAISE_ALERTS, true);
         this.addComboField(FIELD_ALERTS_RISK, Alert.MSG_RISK, Alert.MSG_RISK[Alert.RISK_HIGH]);
-        this.addPadding();
     }
 
     @Override

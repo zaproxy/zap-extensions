@@ -4,6 +4,39 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [44] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Depend on newer version of Common Library add-on (Issue 8016).
+- Fields with default or missing values are omitted for the `openapi` job in saved Automation Framework plans.
+
+## [43] - 2024-09-23
+### Added
+- Allow to import the OpenAPI definitions with a user (Issue 7739).
+- Honour context exclusions when importing (Issue 8021).
+
+### Fixed
+- Allow to select the contexts of the Automation Framework plan when configuring the job.
+- Correctly handle empty context name in the Automation Framework job.
+
+## [42] - 2024-07-04
+
+### Changed
+- Workaround issue loading fully resolved definitions that are too large by trying to use the original definition only (Issue 8193).
+
+## [41] - 2024-05-10
+### Changed
+- Rely on Common Library add-on for use of Jackson library.
+
+## [40] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Maintenance changes.
+- Dependency updates.
+
+## [39] - 2024-01-26
 ### Added
 - Video link in help for Automation Framework job.
 
@@ -301,6 +334,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[44]: https://github.com/zaproxy/zap-extensions/releases/openapi-v44
+[43]: https://github.com/zaproxy/zap-extensions/releases/openapi-v43
+[42]: https://github.com/zaproxy/zap-extensions/releases/openapi-v42
+[41]: https://github.com/zaproxy/zap-extensions/releases/openapi-v41
+[40]: https://github.com/zaproxy/zap-extensions/releases/openapi-v40
+[39]: https://github.com/zaproxy/zap-extensions/releases/openapi-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/openapi-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/openapi-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/openapi-v36

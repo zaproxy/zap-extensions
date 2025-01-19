@@ -45,7 +45,7 @@ import org.zaproxy.addon.commonlib.http.HttpDateUtils;
  */
 class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
 
-    private HttpMessage createMessage() throws URIException {
+    private static HttpMessage createMessage() throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setMethod("GET");
         requestHeader.setURI(new URI("https://example.com/fred/", false));
@@ -55,7 +55,7 @@ class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
         return msg;
     }
 
-    private HttpMessage createMessageBasicAuthorization() throws URIException {
+    private static HttpMessage createMessageBasicAuthorization() throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setMethod("GET");
         requestHeader.setURI(new URI("https://example.com/fred/", false));

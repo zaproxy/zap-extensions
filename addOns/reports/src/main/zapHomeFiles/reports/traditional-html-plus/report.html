@@ -10,16 +10,23 @@
 <script th:src="${resources + '/Chart.min.js'}"
 	src="resources/Chart.min.js" type="text/javascript"></script>
 <script type="text/javascript">
-    function showHide(id) {
-        showHideElement(id + "reqh");
-        showHideElement(id + "reqb");
-        showHideElement(id + "resph");
-        showHideElement(id + "respb");
+    function showHide(id, blockDisplay) {
+        showHideElement(id + "reqh", blockDisplay);
+        showHideElement(id + "reqb", blockDisplay);
+        showHideElement(id + "resph", blockDisplay);
+        showHideElement(id + "respb", blockDisplay);
+        showHideElement(id + "reqrh", blockDisplay);
+        showHideElement(id + "reqrb", blockDisplay);
+        showHideElement(id + "resprh", blockDisplay);
+        showHideElement(id + "resprb", blockDisplay);
+        showHideElement(id + "reqhdr", blockDisplay);
+        showHideElement(id + "resphdr", blockDisplay);
     }
-    function showHideElement(id) {
+    function showHideElement(id, blockDisplay) {
         var x = document.getElementById(id);
+        var displayType = blockDisplay ? "block" : "table-cell";
         if (x.style.display === "none") {
-            x.style.display = "block";
+            x.style.display = displayType;
         } else {
             x.style.display = "none";
         }
@@ -31,8 +38,8 @@
 <body>
 	<h1>
 		<!-- The ZAP Logo -->
-		<img th:src="${resources + '/zap32x32.png'}"
-			src="resources/zap32x32.png" alt="">
+		<img th:src="${resources + '/zap-by-checkmarx.png'}"
+			src="resources/zap-by-checkmarx.png" alt="">
 		<th:block th:text="${reportTitle}">Report Title</th:block>
 	</h1>
 	<p />
@@ -49,6 +56,9 @@
 	<h3>
 		<th:block th:text="#{report.zapVersion(${zapVersion})}">ZAP Version</th:block>
 	</h3>
+	<h4>
+		ZAP by <a href="https://checkmarx.com/">Checkmarx</a>
+	</h4>
 	<th:block th:if="${reportData.isIncludeSection('chart')}">
 		<canvas id="summaryChart" width="550" height="300"
 			style="border: 1px solid"></canvas>
@@ -118,6 +128,62 @@
 		<div class="spacer-lg"></div>
 	</th:block>
 
+	<th:block th:if="${reportData.isIncludeSection('sequencedetails')}">
+		<th:block
+			th:if="${reportData.reportObjects.get('seqAScanData') != null}">
+			<h3 th:text="#{report.sequences.summary.name}">Summary of
+				Sequences</h3>
+			<p class="smallnote" th:text="#{report.sequences.summary.note}">Summary
+				Note</p>
+
+			<th:block
+				th:each="seq, seqState: ${reportData.reportObjects.get('seqAScanData').seqData}">
+				<table class="summary100">
+					<tr>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+					</tr>
+					<th:block th:each="step, stepState: ${seq.getSteps()}"
+						th:with="stepId=('step-' + ${seqState.index} + ${stepState.index})">
+						<th:block
+							th:if="${stepState.index} % 10 == 0 or ${stepState.index} == 0">
+							<tr>
+						</th:block>
+						<td th:if="${stepState.index} == 0">
+							<a 
+								th:href="'#' + ${seq.sequenceName}"
+								th:text="${seq.sequenceName}">sequenceName</a>
+						</td>
+						<td th:if="${stepState.index} != 0 and ${stepState.index} % 10 == 0">&nbsp</td>
+						<td th:class="(${step.isPass()} ? 'pass' : 'fail')"
+							th:with="riskLvl=(${step.getHighestAlert()})">
+						<a class="alwayswhite"
+							th:href="'#' + ${stepId}"
+							th:text="' ' + (${stepState.index} + 1)">step</a>
+						<span th:if="${riskLvl &gt; 0}"
+							th:class="'alert-' + ${step.getHighestAlert() + 'a'}"
+							th:text="' - '">flag</span><span
+				 				th:text="(${riskLvl &gt; 0} ? ${helper.getRiskString(riskLvl)} : '')">risk</span>
+						</td>
+						<th:block
+							th:if="(${stepState.index} + 1) % 10 == 0 or ${stepState.last}">
+							</tr>
+						</th:block>
+					</th:block>
+				</table>
+			</th:block>
+		</th:block>
+	</th:block>
+
 	<th:block th:if="${reportData.isIncludeSection('instancecount')}">
 		<h3 th:text="#{report.alerts.list}">Alerts</h3>
 		<table class="alerts">
@@ -167,9 +233,9 @@
 				</th:block>
 			</th:block>
 			<th:block
-				th:if="${reportData.reportObjects.get('passiveScanData') != null}">
+				th:if="${reportData.reportObjects.get('passiveScanData2') != null}">
 				<th:block
-					th:each="pscan : ${reportData.reportObjects.get('passiveScanData').allRuleData}">
+					th:each="pscan : ${reportData.reportObjects.get('passiveScanData2').allRuleData}">
 					<tr th:if="${alertCountsByRule.get(pscan.id) == null}">
 						<td><a
 							th:href="${'https://www.zaproxy.org/docs/alerts/' + pscan.id + '/'}"
@@ -186,6 +252,11 @@
 	</th:block>
 
 	<h2 th:text="#{report.sites.title}">Sites</h2>
+
+	<strong>Number of Sites tree nodes actively scanned:</strong>
+	<th:block
+		th:text="${reportData.reportObjects.get('activeScanData') != null ? reportData.reportObjects.get('activeScanData').numberScannedNodes : 0}">42</th:block>
+
 	<th:block th:each="site: ${reportData.sites}">
 		<h3 th:text="${site}">Site</h3>
 		<th:block th:if="${reportData.isIncludeSection('statistics')}">
@@ -365,18 +436,18 @@
 						<td th:text="${instance.userObject.otherinfo}" width="80%">Other
 							Info</td>
 					</tr>
-					<tr>
+					<tr data-th-if="${instance.userObject.message}">
 						<td width="20%" class="indent2">
 							<div th:id="${'alert-' + instance.userObject.alertId}">
 								<a
-									th:onclick="'showHide(\'alert-' + ${instance.userObject.alertId} + '\');'"
+									th:onclick="'showHide(\'alert-' + ${instance.userObject.alertId} + '\', true);'"
 									th:href="'#alert-' + ${instance.userObject.alertId}"
 									th:text="#{report.alerts.detail.showhide}">Show/hide</a>
 							</div>
 						</td>
 						<td width="80%"></td>
 					</tr>
-					<tr>
+					<tr data-th-if="${instance.userObject.message}">
 						<td width="20%" class="indent2"><th:block
 								th:text="#{report.alerts.detail.request.header}">Request Header</th:block>
 							<th:block
@@ -393,7 +464,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr>
+					<tr data-th-if="${instance.userObject.message}">
 						<td width="20%" class="indent2"><th:block
 								th:text="#{report.alerts.detail.request.body}">Request Body</th:block>
 							<th:block
@@ -410,7 +481,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr>
+					<tr data-th-if="${instance.userObject.message}">
 						<td width="20%" class="indent2"><th:block
 								th:text="#{report.alerts.detail.response.header}">Response Header</th:block>
 							<th:block
@@ -427,7 +498,7 @@
 							</div>
 						</td>
 					</tr>
-					<tr>
+					<tr data-th-if="${instance.userObject.message}">
 						<td width="20%" class="indent2"><th:block
 								th:text="#{report.alerts.detail.response.body}">Response Body</th:block>
 							<th:block
@@ -510,6 +581,155 @@
 			<div class="spacer"></div>
 		</th:block>
 	</th:block>
+
+	<th:block th:if="${reportData.isIncludeSection('sequencedetails')}">
+		<th:block
+			th:if="${reportData.reportObjects.get('seqAScanData') != null}">
+			<h3 th:text="#{report.sequences.details.name}">Sequences Details</h3>
+			<p class="smallnote" th:text="#{report.sequences.details.note}">details
+				note</p>
+
+			<th:block
+				th:each="seq, seqState: ${reportData.reportObjects.get('seqAScanData').seqData}">
+
+				<h4 th:id="${seq.sequenceName}" th:text="${seq.sequenceName}">sequenceName</h4>
+				<div class="lm2">
+					<th:block th:each="step, stepState: ${seq.getSteps()}" th:with="stepId=('step-' + ${seqState.index} + ${stepState.index})">
+
+						<h4 th:id="${stepId}">
+							<th:block
+								th:text="#{report.sequences.step.label} + ' ' + ${stepState.index + 1} + ': ' + ${step.getOriginalMsg().getRequestHeader().getMethod()} + ' - '">sequence heading</th:block>
+							<a
+								th:href="${step.getOriginalMsg().getRequestHeader().getURI().toString()}"
+								th:text="${step.getOriginalMsg().getRequestHeader().getURI().toString()}">URL</a>
+						</h4>
+
+						<div class="lm2">
+
+							<span th:text="#{report.sequences.step.result}">Result</span> <span
+								th:text="${step.getResult()}">result</span><br> <span
+								th:if="${step.getAlerts().size() &gt; 0}"
+								th:text="#{report.sequences.step.alerts}">Alerts</span>
+							<div class="lm2" th:if="${step.getAlerts().size() &gt; 0}">
+								<th:block th:each="alert: ${step.getAlerts()}">
+									<span th:class="'alert-' + ${alert.getRisk() + 'b'}">&nbsp;<span>
+											<a th:href="'#plugin-' + ${alert.getPluginId()}"
+											th:text="${alert.getName()}" href="#plugin-pluginId">Alert
+												Name</a>
+									</span></span>
+								</th:block>
+							</div>
+
+							<table class="summary80">
+								<th colspan="2" th:text="#{report.sequences.step.original}" style="width: 50%">Original</th>
+								<th colspan="2" th:text="#{report.sequences.step.replay}" style="width: 50%">Replay</th>
+								<tr>
+									<td th:text="#{report.sequences.step.req.header}">reqHdr</td>
+									<td
+										th:text="${step.getOriginalMsg().getRequestHeader().toString().length()}">origReqHdrSize</td>
+									<td th:text="#{report.sequences.step.req.header}">reqHdr</td>
+									<td
+										th:text="${step.getReplayMsg().getRequestHeader().toString().length()}">replayReqHdrSize</td>
+								</tr>
+								<tr>
+									<td th:text="#{report.sequences.step.req.body}">reqBody</td>
+									<td
+										th:text="${step.getOriginalMsg().getRequestBody().length()}">origReqBodySize</td>
+									<td th:text="#{report.sequences.step.req.body}">reqBody</td>
+									<td th:text="${step.getReplayMsg().getRequestBody().length()}">replayReqBodySize</td>
+								</tr>
+								<tr>
+									<td th:text="#{report.sequences.step.resp.header}">respHdr</td>
+									<td
+										th:text="${step.getOriginalMsg().getResponseHeader().toString().length()}">origRespHdrSize</td>
+									<td th:text="#{report.sequences.step.resp.header}">respHdr</td>
+									<td
+										th:text="${step.getReplayMsg().getResponseHeader().toString().length()}">replayRespHdrSize</td>
+								</tr>
+								<tr>
+									<td th:text="#{report.sequences.step.resp.body}">respBody</td>
+									<td
+										th:text="${step.getOriginalMsg().getResponseBody().length()}">origRespBodySize</td>
+									<td th:text="#{report.sequences.step.resp.body}">respBody</td>
+									<td th:text="${step.getReplayMsg().getResponseBody().length()}">replayRespBodySize</td>
+								</tr>
+							</table>
+
+							<table class="summary80">
+								<td colspan="2" th:id="${stepId}" style="text-align: center; width: 50%"><a
+									th:onclick="'showHide(\'step-' + ${seqState.index} + ${stepState.index} + '\', false);'"
+									th:href="'#' + ${stepId}"
+									th:text="#{report.sequences.step.showhide}">Show/hide</a></td>
+								<tr>
+									<td colspan="2" th:id="${stepId} + 'reqhdr'"
+										style="display: none; text-align: center;"
+										th:text="#{report.sequences.step.request}">Request</td>
+								</tr>
+								<tr>
+									<td th:id="${stepId} + 'reqh'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getOriginalMsg().getRequestHeader().toString(), '\n')}">
+											<th:block th:text="${desc}">Orig Request Header</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+									<td th:id="${stepId} + 'reqrh'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getReplayMsg().getRequestHeader().toString(), '\n')}">
+											<th:block th:text="${desc}">Replay Request Header</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+								</tr>
+								<tr>
+									<td th:id="${stepId} + 'reqb'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getOriginalMsg().getRequestBody().toString(), '\n')}">
+											<th:block th:text="${desc}">Original Request Body</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+									<td th:id="${stepId} + 'reqrb'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getReplayMsg().getRequestBody().toString(), '\n')}">
+											<th:block th:text="${desc}">Replay Request Body</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+								</tr>
+								<tr>
+									<td colspan="2" th:id="${stepId} + 'resphdr'"
+										style="display: none; text-align: center;"
+										th:text="#{report.sequences.step.response}">Response</td>
+								</tr>
+								<tr>
+									<td th:id="${stepId} + 'resph'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getOriginalMsg().getResponseHeader().toString(), '\n')}">
+											<th:block th:text="${desc}">Orig Response Header</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+									<td th:id="${stepId} + 'resprh'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getReplayMsg().getResponseHeader().toString(), '\n')}">
+											<th:block th:text="${desc}">Replay Response Header</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+								</tr>
+								<tr>
+									<td th:id="${stepId} + 'respb'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getOriginalMsg().getResponseBody().toString(), '\n')}">
+											<th:block th:text="${desc}">Orig Response Body</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+									<td th:id="${stepId} + 'resprb'" style="display: none;"><th:block
+											th:each="desc, state: ${#strings.arraySplit(step.getReplayMsg().getResponseBody().toString(), '\n')}">
+											<th:block th:text="${desc}">Replay Response Body</th:block>
+											<br th:if="${!state.last}" />
+										</th:block></td>
+								</tr>
+							</table>
+						</div>
+						<div class="spacer"></div>
+					</th:block>
+				</div>
+			</th:block>
+
+			<div class="spacer-lg"></div>
+
+		</th:block>
+	</th:block>
+
 </body>
 </html>
 

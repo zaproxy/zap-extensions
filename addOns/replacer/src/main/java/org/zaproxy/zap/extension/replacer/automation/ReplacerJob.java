@@ -32,6 +32,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
@@ -67,6 +71,16 @@ public class ReplacerJob extends AutomationJob {
                             .getExtension(ExtensionReplacer.class);
         }
         return extReplacer;
+    }
+
+    @Override
+    public boolean applyCustomParameter(String name, String value) {
+        if ("deleteAllRules".equals(name)) {
+            // Applied when the job is executed.
+            return true;
+        }
+
+        return super.applyCustomParameter(name, value);
     }
 
     @Override
@@ -323,49 +337,25 @@ public class ReplacerJob extends AutomationJob {
         }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
         private Boolean deleteAllRules;
-
-        public Boolean getDeleteAllRules() {
-            return deleteAllRules;
-        }
-
-        public void setDeleteAllRules(Boolean deleteAllRules) {
-            this.deleteAllRules = deleteAllRules;
-        }
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class RuleData extends AutomationData {
-        private String description;
-        private String url;
+        private String description = "";
+        private String url = "";
         private String matchType;
-        private String matchString;
-        private Boolean matchRegex;
-        private String replacementString;
-        private Boolean tokenProcessing;
-        private Integer[] initiators;
-
-        public RuleData() {}
-
-        public RuleData(
-                String description,
-                String url,
-                String matchType,
-                String matchString,
-                Boolean matchRegex,
-                String replacementString,
-                Boolean tokenProcessing,
-                Integer[] initiators) {
-            super();
-            this.description = description;
-            this.url = url;
-            this.matchType = matchType;
-            this.matchString = matchString;
-            this.matchRegex = matchRegex;
-            this.replacementString = replacementString;
-            this.tokenProcessing = tokenProcessing;
-            this.initiators = initiators;
-        }
+        private String matchString = "";
+        private boolean matchRegex = false;
+        private String replacementString = "";
+        private Boolean tokenProcessing = false;
+        private Integer[] initiators = new Integer[] {};
 
         public RuleData(RuleData data) {
             this.description = data.description;
@@ -376,70 +366,6 @@ public class ReplacerJob extends AutomationJob {
             this.replacementString = data.replacementString;
             this.tokenProcessing = data.tokenProcessing;
             this.initiators = data.initiators;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-
-        public String getMatchType() {
-            return matchType;
-        }
-
-        public void setMatchType(String matchType) {
-            this.matchType = matchType;
-        }
-
-        public String getMatchString() {
-            return matchString;
-        }
-
-        public void setMatchString(String matchString) {
-            this.matchString = matchString;
-        }
-
-        public Boolean isMatchRegex() {
-            return matchRegex;
-        }
-
-        public void setMatchRegex(Boolean matchRegex) {
-            this.matchRegex = matchRegex;
-        }
-
-        public String getReplacementString() {
-            return replacementString;
-        }
-
-        public void setReplacementString(String replacementString) {
-            this.replacementString = replacementString;
-        }
-
-        public Integer[] getInitiators() {
-            return initiators;
-        }
-
-        public void setInitiators(Integer[] initiators) {
-            this.initiators = initiators;
-        }
-
-        public Boolean getTokenProcessing() {
-            return tokenProcessing;
-        }
-
-        public void setTokenProcessing(Boolean tokenProcessing) {
-            this.tokenProcessing = tokenProcessing;
         }
     }
 }

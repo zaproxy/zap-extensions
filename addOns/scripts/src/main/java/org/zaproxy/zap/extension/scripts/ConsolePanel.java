@@ -105,9 +105,6 @@ public class ConsolePanel extends AbstractPanel {
                 Constant.messages.getString("scripts.changed.replace")
             };
 
-    // TODO: Remove after this add-on depends on ZAP 2.15.0
-    private final Object scriptLock = new Object();
-
     private Map<ScriptWrapper, Integer> scriptWrapperToOffset = new HashMap<>();
 
     private static final Logger LOGGER = LogManager.getLogger(ConsolePanel.class);
@@ -153,9 +150,7 @@ public class ConsolePanel extends AbstractPanel {
         if (script == null) {
             return false;
         }
-        synchronized (scriptLock) {
-            return script.hasChangedOnDisk();
-        }
+        return script.hasChangedOnDisk();
     }
 
     private void startPollingForChanges() {
@@ -214,9 +209,7 @@ public class ConsolePanel extends AbstractPanel {
                     () -> {
                         if (getSaveOrReplaceScriptChoice() == JOptionPane.YES_OPTION) {
                             try {
-                                synchronized (scriptLock) {
-                                    extension.getExtScript().saveScript(script);
-                                }
+                                extension.getExtScript().saveScript(script);
                             } catch (IOException e) {
                                 LOGGER.error(e.getMessage(), e);
                             }
@@ -652,10 +645,6 @@ public class ConsolePanel extends AbstractPanel {
         }
     }
 
-    Object getScriptLock() {
-        return scriptLock;
-    }
-
     /**
      * Updates the state of the command panel for the given {@code script}.
      *
@@ -829,7 +818,11 @@ public class ConsolePanel extends AbstractPanel {
                 }
                 // Yes, its deprecated, but there are no alternatives, and we have to be able to
                 // stop scripts
-                stop();
+                try {
+                    stop();
+                } catch (UnsupportedOperationException e) {
+                    LOGGER.warn("Unable to force stop the script.");
+                }
             }
         }
     }

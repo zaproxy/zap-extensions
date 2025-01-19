@@ -9,7 +9,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.17.0 & < 2.0.0")
+                    version.set(">= 1.29.0 & < 2.0.0")
                 }
             }
         }
@@ -39,6 +39,19 @@ zapAddOn {
                     }
                 }
             }
+
+            register("org.zaproxy.addon.graphql.techdetection.ExtensionTechDetectionGraphQl") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.graphql.techdetection"))
+                }
+                dependencies {
+                    addOns {
+                        register("wappalyzer") {
+                            version.set(">= 21.44.0")
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -61,12 +74,9 @@ dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
     zapAddOn("spider")
+    zapAddOn("wappalyzer")
 
-    implementation("com.graphql-java:graphql-java:21.3")
-    implementation(libs.log4j.slf4j2) {
-        // Provided by ZAP.
-        exclude(group = "org.apache.logging.log4j")
-    }
+    implementation("com.graphql-java:graphql-java:22.3")
 
     testImplementation(project(":testutils"))
     testImplementation(libs.log4j.core)

@@ -21,21 +21,29 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.Mockito;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
@@ -45,7 +53,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.anticsrf.AntiCsrfParam;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -53,7 +60,6 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
 
     private ExtensionAntiCSRF extensionAntiCSRFMock;
     private List<String> antiCsrfTokenNames;
-    private AntiCsrfParam antiCsrfParam;
     private HttpMessage msg;
 
     @BeforeEach
@@ -63,15 +69,17 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         antiCsrfTokenNames.add("csrfToken");
         antiCsrfTokenNames.add("csrf-token");
 
-        extensionAntiCSRFMock = mock(ExtensionAntiCSRF.class);
-        Mockito.lenient()
-                .when(extensionAntiCSRFMock.getAntiCsrfTokenNames())
-                .thenReturn(antiCsrfTokenNames);
+        extensionAntiCSRFMock =
+                mock(ExtensionAntiCSRF.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionAntiCSRFMock.getAntiCsrfTokenNames()).willReturn(antiCsrfTokenNames);
+        given(extensionAntiCSRFMock.isAntiCsrfToken(any()))
+                .willAnswer(
+                        invocation -> {
+                            return antiCsrfTokenNames.contains(
+                                    invocation.getArgument(0, String.class));
+                        });
         OptionsParam options = Model.getSingleton().getOptionsParam();
         options.load(new ZapXmlConfiguration());
-        antiCsrfParam = new AntiCsrfParam();
-        options.addParamSet(antiCsrfParam);
-        antiCsrfParam.setPartialMatchingEnabled(false);
         rule.setExtensionAntiCSRF(extensionAntiCSRFMock);
         rule.setCsrfIgnoreList("");
         rule.setCSRFIgnoreAttName("");
@@ -97,12 +105,8 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(352)));
-        assertThat(wasc, is(equalTo(9)));
         assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
@@ -121,6 +125,20 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_SESS_05_CSRF.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_SESS_05_CSRF.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     @Test
@@ -237,35 +255,6 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
-    }
-
-    @ParameterizedTest
-    @CsvSource({"0, true", "1, false"})
-    void shouldRaiseAlertOrNotBasedOnPartialMatchWhenThereIsOnlyOneFormWithKnownCsrfTokenUsingName(
-            int expectedAlerts, boolean partialMatchingEnabled) {
-        // Given
-        antiCsrfParam.setPartialMatchingEnabled(partialMatchingEnabled);
-        msg.setResponseBody(
-                "<html><head></head><body><form id=\"form_name\"><input type=\"text\" name=\"csrf-token-597zyx\"/><input type=\"submit\"/></form></body></html>");
-        // When
-        scanHttpResponseReceive(msg);
-        // Then
-        assertEquals(expectedAlerts, alertsRaised.size());
-    }
-
-    @ParameterizedTest
-    @CsvSource({"0, true", "1, false"})
-    void
-            shouldRaiseAlertOrNotBasedOnPartialMatchWhenThereIsOnlyOneFormWithKnownCsrfTokenUsingAttribute(
-                    int expectedAlerts, boolean partialMatchingEnabled) {
-        // Given
-        antiCsrfParam.setPartialMatchingEnabled(partialMatchingEnabled);
-        msg.setResponseBody(
-                "<html><head></head><body><form id=\"form_name\"><input type=\"text\" id=\"csrf-token-597zyx\"/><input type=\"submit\"/></form></body></html>");
-        // When
-        scanHttpResponseReceive(msg);
-        // Then
-        assertEquals(expectedAlerts, alertsRaised.size());
     }
 
     @Test
@@ -444,24 +433,30 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         assertEquals(1, alertsRaised.size());
     }
 
-    @Test
-    void shouldRaiseAlertWhenThresholdMediumAndMessageOutOfScope() throws URIException {
+    @ParameterizedTest
+    @EnumSource(
+            value = AlertThreshold.class,
+            names = {"MEDIUM", "LOW"})
+    void shouldRaiseAlertBelowHighThresholdAndOutOfScope(AlertThreshold threshold)
+            throws URIException {
         // Given
         rule.setCSRFIgnoreAttName("ignore");
         HttpMessage msg = createScopedMessage(false);
         // When
         rule.setConfig(new ZapXmlConfiguration());
-        rule.setAlertThreshold(AlertThreshold.MEDIUM);
+        rule.setAlertThreshold(threshold);
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
     }
 
-    @Test
-    void shouldRaiseAlertWhenThresholdLowAndMessageOutOfScope() throws URIException {
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldRaiseAlertOnGetAtLowThresholdRegardlessOfScope(boolean isInScope)
+            throws URIException {
         // Given
         rule.setCSRFIgnoreAttName("ignore");
-        HttpMessage msg = createScopedMessage(false);
+        HttpMessage msg = createScopedMessage(isInScope, HttpRequestHeader.GET);
         // When
         rule.setConfig(new ZapXmlConfiguration());
         rule.setAlertThreshold(AlertThreshold.LOW);
@@ -470,12 +465,40 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         assertEquals(1, alertsRaised.size());
     }
 
+    private static Stream<Arguments> provideNonLowThresholdsAndBooleans() {
+        return Stream.of(
+                Arguments.of(AlertThreshold.MEDIUM, true),
+                Arguments.of(AlertThreshold.MEDIUM, false),
+                Arguments.of(AlertThreshold.HIGH, true),
+                Arguments.of(AlertThreshold.HIGH, false));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideNonLowThresholdsAndBooleans")
+    void shouldNotRaiseAlertOnGetAtNonLowThresholdRegardlessOfScope(
+            AlertThreshold threshold, boolean isInScope) throws URIException {
+        // Given
+        rule.setCSRFIgnoreAttName("ignore");
+        HttpMessage msg = createScopedMessage(isInScope, HttpRequestHeader.GET);
+        // When
+        rule.setConfig(new ZapXmlConfiguration());
+        rule.setAlertThreshold(threshold);
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
     void formWithoutAntiCsrfToken() {
         msg.setResponseBody(
                 "<html><head></head><body><form id=\"no_csrf_token\"><input type=\"text\"/><input type=\"submit\"/></form></body></html>");
     }
 
-    private HttpMessage createScopedMessage(boolean isInScope) throws URIException {
+    private static HttpMessage createScopedMessage(boolean isInScope) throws URIException {
+        return createScopedMessage(isInScope, HttpRequestHeader.POST);
+    }
+
+    private static HttpMessage createScopedMessage(boolean isInScope, String method)
+            throws URIException {
         HttpMessage newMsg =
                 new HttpMessage() {
                     @Override
@@ -484,6 +507,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
                     }
                 };
         newMsg.getRequestHeader().setURI(new URI("http://", "localhost", "/", ""));
+        newMsg.getRequestHeader().setMethod(method);
         newMsg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/html");
         newMsg.setResponseBody(
                 "<html><head></head><body>"

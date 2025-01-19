@@ -6,6 +6,211 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [120] - 2025-01-15
+### Changed
+- Update ChromeDriver to 132.0.6834.83.
+
+## [119] - 2025-01-10
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [118] - 2025-01-08
+### Changed
+- Update ChromeDriver to 131.0.6778.264.
+
+## [117] - 2024-12-19
+### Changed
+- Update ChromeDriver to 131.0.6778.204.
+
+## [116] - 2024-12-04
+### Changed
+- Update ChromeDriver to 131.0.6778.87.
+
+## [115] - 2024-11-20
+### Changed
+- Update ChromeDriver to 131.0.6778.85.
+
+## [114] - 2024-11-13
+### Changed
+- Update ChromeDriver to 131.0.6778.69.
+
+## [113] - 2024-11-07
+### Changed
+- Update ChromeDriver to 130.0.6723.116.
+
+## [112] - 2024-11-06
+### Changed
+- Update ChromeDriver to 130.0.6723.93.
+
+## [111] - 2024-10-30
+### Changed
+- Update ChromeDriver to 130.0.6723.91.
+
+## [110] - 2024-10-23
+### Changed
+- Update ChromeDriver to 130.0.6723.69.
+
+## [109] - 2024-10-16
+### Changed
+- Update ChromeDriver to 130.0.6723.58.
+
+## [108] - 2024-10-10
+### Changed
+- Update ChromeDriver to 129.0.6668.100.
+
+## [107] - 2024-10-09
+### Changed
+- Update ChromeDriver to 129.0.6668.91.
+
+## [106] - 2024-10-03
+### Changed
+- Update ChromeDriver to 129.0.6668.89.
+
+## [105] - 2024-09-25
+### Changed
+- Update ChromeDriver to 129.0.6668.70.
+
+## [104] - 2024-09-18
+### Changed
+- Update ChromeDriver to 129.0.6668.58.
+
+## [103] - 2024-09-11
+### Changed
+- Update ChromeDriver to 128.0.6613.137.
+
+## [102] - 2024-09-03
+### Changed
+- Update ChromeDriver to 128.0.6613.119.
+
+## [101] - 2024-08-29
+### Changed
+- Update ChromeDriver to 128.0.6613.86.
+
+## [100] - 2024-08-22
+### Changed
+- Update ChromeDriver to 128.0.6613.84.
+
+## [99] - 2024-08-14
+### Changed
+- Update ChromeDriver to 127.0.6533.119.
+
+## [98] - 2024-08-07
+### Changed
+- Update ChromeDriver to 127.0.6533.99.
+- Update geckodriver to 0.35.0.
+
+## [97] - 2024-07-31
+### Changed
+- Update ChromeDriver to 127.0.6533.88.
+
+## [96] - 2024-07-24
+### Changed
+- Update ChromeDriver to 127.0.6533.72.
+
+## [95] - 2024-07-18
+### Changed
+- Update ChromeDriver to 126.0.6478.182.
+
+## [94] - 2024-07-17
+### Changed
+- Update ChromeDriver to 126.0.6478.127.
+
+## [93] - 2024-06-25
+### Changed
+- Update ChromeDriver to 126.0.6478.126.
+
+## [92] - 2024-06-21
+### Changed
+- Update ChromeDriver to 126.0.6478.63.
+
+## [91] - 2024-06-14
+### Changed
+- Update ChromeDriver to 126.0.6478.61.
+
+## [90] - 2024-06-12
+### Changed
+- Update ChromeDriver to 126.0.6478.55.
+
+## [89] - 2024-05-31
+### Changed
+- Update ChromeDriver to 125.0.6422.141.
+
+## [88] - 2024-05-25
+### Changed
+- Update ChromeDriver to 125.0.6422.78.
+
+## [87] - 2024-05-22
+### Changed
+- Update ChromeDriver to 125.0.6422.76.
+
+## [86] - 2024-05-16
+### Changed
+- Update ChromeDriver to 125.0.6422.60.
+
+## [85] - 2024-05-14
+### Changed
+- Update ChromeDriver to 124.0.6367.207.
+
+## [84] - 2024-05-10
+### Changed
+- Update ChromeDriver to 124.0.6367.201.
+
+## [83] - 2024-05-08
+### Changed
+- Update ChromeDriver to 124.0.6367.155.
+
+## [82] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [81] - 2024-04-26
+### Changed
+- Update ChromeDriver to 124.0.6367.91.
+
+## [80] - 2024-04-23
+### Changed
+- Update ChromeDriver to 124.0.6367.60.
+
+## [79] - 2024-04-11
+### Changed
+- Update ChromeDriver to 123.0.6312.122.
+
+## [78] - 2024-04-05
+### Changed
+- Update ChromeDriver to 123.0.6312.105.
+
+## [77] - 2024-03-28
+### Changed
+- Update ChromeDriver to 123.0.6312.86.
+
+## [76] - 2024-03-21
+### Changed
+- Update ChromeDriver to 123.0.6312.58.
+
+## [75] - 2024-03-13
+### Changed
+- Update ChromeDriver to 122.0.6261.128.
+
+## [74] - 2024-03-08
+### Changed
+- Update ChromeDriver to 122.0.6261.111.
+
+## [73] - 2024-02-29
+### Changed
+- Update ChromeDriver to 122.0.6261.94.
+
+## [72] - 2024-02-23
+### Changed
+- Update ChromeDriver to 122.0.6261.69.
+
+## [71] - 2024-02-22
+### Changed
+- Update ChromeDriver to 122.0.6261.57.
+
+## [70] - 2024-01-24
+### Changed
+- Update ChromeDriver to 121.0.6167.85.
+
 ## [69] - 2024-01-03
 ### Changed
 - Update geckodriver to 0.34.0. Previous version included 0.33.0.
@@ -14,25 +219,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update geckodriver to 0.34.0.
 
-
-
 ## [67] - 2023-12-19
 ### Changed
 - Update ChromeDriver to 120.0.6099.109.
-
-
 
 ## [66] - 2023-12-07
 ### Changed
 - Update ChromeDriver to 120.0.6099.71.
 
-
-
 ## [65] - 2023-11-01
 ### Changed
 - Update ChromeDriver to 119.0.6045.105.
-
-
 
 ## [64] - 2023-10-12
 ### Changed
@@ -43,13 +240,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update ChromeDriver to 117.0.5938.149.
 
-
-
 ## [62] - 2023-09-22
 ### Changed
 - Update ChromeDriver to 117.0.5938.92.
-
-
 
 ## [61] - 2023-09-19
 ### Added
@@ -59,25 +252,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update ChromeDriver to 117.0.5938.88.
 
-
-
 ## [59] - 2023-09-13
 ### Changed
 - Update ChromeDriver to 117.0.5938.62.
-
-
 
 ## [58] - 2023-08-16
 ### Changed
 - Update ChromeDriver to 116.0.5845.96.
 
-
-
 ## [57] - 2023-08-09
 ### Changed
 - Update ChromeDriver to 115.0.5790.170.
-
-
 
 ## [56] - 2023-07-11
 ### Changed
@@ -327,6 +512,57 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27 IE 3.0.0
 
+[120]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v120
+[119]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v119
+[118]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v118
+[117]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v117
+[116]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v116
+[115]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v115
+[114]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v114
+[113]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v113
+[112]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v112
+[111]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v111
+[110]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v110
+[109]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v109
+[108]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v108
+[107]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v107
+[106]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v106
+[105]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v105
+[104]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v104
+[103]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v103
+[102]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v102
+[101]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v101
+[100]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v100
+[99]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v99
+[98]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v98
+[97]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v97
+[96]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v96
+[95]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v95
+[94]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v94
+[93]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v93
+[92]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v92
+[91]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v91
+[90]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v90
+[89]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v89
+[88]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v88
+[87]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v87
+[86]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v86
+[85]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v85
+[84]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v84
+[83]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v83
+[82]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v82
+[81]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v81
+[80]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v80
+[79]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v79
+[78]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v78
+[77]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v77
+[76]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v76
+[75]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v75
+[74]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v74
+[73]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v73
+[72]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v72
+[71]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v71
+[70]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v70
 [69]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v69
 [68]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v68
 [67]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v67

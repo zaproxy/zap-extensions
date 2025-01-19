@@ -2,12 +2,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Technology Detection - Wappalyzer</title>
+<title>Technology Detection</title>
 </head>
 <body>
-<h1>Deteção de Tecnologia usando o Wappalyzer</h1>
+<h1>Technology Detection</h1>
 <p>
-The Technology Detection add-on uses the Wappalyzer rules to detect the technologies used by applications.<p>
+The Technology Detection add-on uses various patterns and finger prints to detect the technologies used by applications.<p>
 Ele funciona de maneira muito semelhante aos complementos do navegador Wappalyzer com as seguintes exceções:
 <ul>
 <li>Ele não usa as 'variáveis JavaScript Globais' porque são difíceis de testar sem um navegador 'completo'</li>
@@ -15,6 +15,7 @@ Ele funciona de maneira muito semelhante aos complementos do navegador Wappalyze
 <li>It does not match technologies on the basis of DOM properties as some properties are set by JavaScript in the browser after the response has passed through ZAP</li>
 <li>Ele permite que você veja as 'provas' usadas para detectar as tecnologias</li>
 </ul>
+
 <h2>Aba de tecnologia</h2>
 Esta aba mostra todas as tecnologias detectadas no site selecionado.<br>
 Clicando com o botão direito em uma tecnologia irá exibir o menu 'Mostrar provas' com todos os regexes usados para detectá-la.<br>
@@ -22,19 +23,25 @@ Selecting a regex will switch to the 'Search' tab and search through the history
 the menu will not be displayed.
 <p>
 Beside the site selection drop down is an Export button which can be used to export a CSV (comma separated values) file based on the
-table information currently being displayed. There is also a toggle button which allows users to easily Enable/Disable the Wappalyzer
-passive scanner.
+table information currently being displayed.
 <p>
-The toolbar includes an enable/disable toggle button which controls whether the technology detection passive scan rule is functioning or not. 
-This enabled state is persisted between ZAP sessions.
+The toolbar also includes:
+<ul>
+  <li>An enable/disable toggle button which controls whether the technology detection passive scan rule is functioning or not. This enabled state is persisted between ZAP sessions.</li>
+<ul>
 
 <h2>Reporting</h2>
 
 Technology data is available to reports via the 
-<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/WappalyzerJobResultData.java">WappalyzerJobResultData</a> class.
+<a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/wappalyzer/src/main/java/org/zaproxy/zap/extension/wappalyzer/automation/TechJobResultData.java">TechJobResultData</a> class.
 
 <h2>External Links</h2>
 <table>
+<tr>
+	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+	<td><a href="https://github.com/enthec/webappanalyzer">Enthec Webappanalyzer</a></td>
+	<td>This project is a continuation of the iconic Wappalyzer that went private in August 2023.</td>
+</tr>
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td><a href="https://www.wappalyzer.com/">https://www.wappalyzer.com/</a></td>
@@ -43,12 +50,7 @@ Technology data is available to reports via the
 <tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 	<td>https://github.com/wappalyzer/wappalyzer</td>
-	<td>As of early August 2023 the The Wappalyzer Repository is no longer public.</td>
-</tr>
-<tr>
-	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="https://github.com/enthec/webappanalyzer">Enthec Webappanalyzer</a></td>
-	<td>This project is a continuation of the iconic Wappalyzer that went private in August 2023.</td>
+	<td>As of early August 2023 the Wappalyzer Repository is no longer public.</td>
 </tr>
 </table>
 

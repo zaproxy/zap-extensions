@@ -31,9 +31,9 @@ import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.automation.jobs.ActiveScanJob;
-import org.zaproxy.addon.automation.jobs.ActiveScanJob.Rule;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -47,7 +47,7 @@ public class AddAscanRuleDialog extends StandardFieldsDialog {
     private static final String THRESHOLD_PARAM = "automation.dialog.addrule.threshold";
     private static final String STRENGTH_PARAM = "automation.dialog.addrule.strength";
 
-    private ActiveScanJob.Rule rule;
+    private PolicyDefinition.Rule rule;
     private int tableIndex;
     private AscanRulesTableModel model;
     private Map<String, Plugin> nameToPlugin = new HashMap<>();
@@ -57,8 +57,10 @@ public class AddAscanRuleDialog extends StandardFieldsDialog {
         this(model, null, -1);
     }
 
-    public AddAscanRuleDialog(AscanRulesTableModel model, ActiveScanJob.Rule rule, int tableIndex)
+    public AddAscanRuleDialog(
+            AscanRulesTableModel model, PolicyDefinition.Rule rule, int tableIndex)
             throws ConfigurationException {
+        // This dimension will not make a difference, pack is called below
         super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(300, 150));
         this.rule = rule;
         this.model = model;
@@ -107,6 +109,7 @@ public class AddAscanRuleDialog extends StandardFieldsDialog {
         this.addComboField(STRENGTH_PARAM, allstrengths, strengthName);
 
         this.addPadding();
+        pack();
     }
 
     @Override

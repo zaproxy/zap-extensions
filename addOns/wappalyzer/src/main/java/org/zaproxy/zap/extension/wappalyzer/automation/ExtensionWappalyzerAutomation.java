@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.wappalyzer.automation;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -34,16 +32,10 @@ public class ExtensionWappalyzerAutomation extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionWappalyzerAutomation";
 
-    private WappalyzerJob job;
+    private TechJob job;
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionWappalyzer.class);
-        dependencies.add(ExtensionAutomation.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionWappalyzer.class, ExtensionAutomation.class);
 
     public ExtensionWappalyzerAutomation() {
         super(NAME);
@@ -59,7 +51,7 @@ public class ExtensionWappalyzerAutomation extends ExtensionAdaptor {
         super.hook(extensionHook);
         ExtensionAutomation extAuto =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
-        job = new WappalyzerJob();
+        job = new TechJob();
         extAuto.registerAutomationJob(job);
     }
 

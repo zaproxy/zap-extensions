@@ -21,25 +21,39 @@ The following alpha status active scan rules are included in this add-on:
 Подробнее см .:
 <a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/"> Взлом ZAP, часть 4: правила активного сканирования </a> .
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanRule.java"> ExampleSimpleActiveScanRule.java </a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleSimpleActiveScanRule.java">ExampleSimpleActiveScanRule.java</a>
 
-<h2> Внедрение LDAP </h2>
-Возможно внедрение LDAP.  Злоумышленник может обойти элементы управления аутентификацией, а также просмотреть и изменить произвольные данные в каталоге LDAP. 
+<h2 id="id-40015">LDAP Injection</h2>
+LDAP Injection may be possible. Злоумышленник может обойти элементы управления аутентификацией, а также просмотреть и изменить произвольные данные в каталоге LDAP. 
+Skips messages which originally resulted in a client or server error response status code.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java"> LdapInjectionScanRule.java </a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40015/">40015</a>.
 
-<h2> Внедрение NoSQL - MongoDB </h2>
-Это правило пытается идентифицировать уязвимости, связанные с внедрением NoSQL в MongoDB.  Он пытается предпринять различные типы атак, в том числе: логические, основанные на ошибках, основанные на времени и обход аутентификации.  
-Он также будет пытаться использовать полезные данные, специфичные для параметра JSON, если сканирование настроено на включение вариантов параметров JSON. 
+<h2 id="id-40033">NoSQL Injection - MongoDB</h2>
+This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities. Он пытается предпринять различные типы атак, в том числе: логические, основанные на ошибках, основанные на времени и обход аутентификации.  
+It does not include time based attacks. Он также будет пытаться использовать полезные данные, специфичные для параметра JSON, если сканирование настроено на включение вариантов параметров JSON. 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40033/">40033</a>.
 
-<h2>Web Cache Deception</h2>
+<h2 id="id-90039">NoSQL Injection - MongoDB (Time Based)</h2>
+This rule attempts to identify MongoDB specific NoSQL Injection vulnerabilities using only time based attacks.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionTimingScanRule.java">MongoDbInjectionTimingScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90039/">90039</a>.
+
+<h2 id="id-40039">Web Cache Deception</h2>
 This rule attempts to identify Web Cache Deception vulnerabilities. It checks whether a static path appended to original URIs can be used to leak sensitive user information or not.
 <ul>
     <li>User must be authenticated before using this rule</li>
 </ul>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/WebCacheDeceptionScanRule.java">WebCacheDeceptionScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40039/">40039</a>.
 
 </body>
 </html>

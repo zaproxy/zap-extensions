@@ -57,7 +57,6 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
-import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReportData;
 import org.zaproxy.addon.reports.ReportHelper;
@@ -617,6 +616,7 @@ class SarifReportIntegrationUnitTest {
         return context;
     }
 
+    @SuppressWarnings("removal")
     private static ReportData createTestReportDataWithAlerts(Template template)
             throws URIException, HttpMalformedHeaderException {
         ReportData reportData = new ReportData();
@@ -627,7 +627,9 @@ class SarifReportIntegrationUnitTest {
         reportData.setIncludeAllRisks(true);
 
         List<PluginPassiveScanner> list = new ArrayList<>();
-        PassiveScanJobResultData pscanData = new PassiveScanJobResultData("passiveScan-wait", list);
+        var pscanData =
+                new org.zaproxy.addon.automation.jobs.PassiveScanJobResultData(
+                        "passiveScan-wait", list);
         reportData.addReportObjects(pscanData.getKey(), pscanData);
 
         AlertNode rootAlertNode =

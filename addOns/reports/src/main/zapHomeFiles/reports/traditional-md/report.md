@@ -1,5 +1,7 @@
 # [(${reportTitle})]
 
+ZAP by [Checkmarx](https://checkmarx.com/).
+
 [#th:block th:if="${reportData.isIncludeSection('alertcount')}"]
 ## [(#{report.alerts.summary})]
 

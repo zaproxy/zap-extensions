@@ -28,13 +28,16 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.client.internal.ClientNode;
+import org.zaproxy.addon.client.internal.ClientSideComponent;
+import org.zaproxy.addon.client.internal.ReportedElement;
+import org.zaproxy.addon.client.internal.ReportedEvent;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
-import org.zaproxy.zap.utils.ThreadUtils;
 
 public class ClientIntegrationAPI extends ApiImplementor {
     private static final String PREFIX = "client";
@@ -88,36 +91,31 @@ public class ClientIntegrationAPI extends ApiImplementor {
         if (url instanceof String) {
             String urlStr = (String) url;
             if (!ExtensionClientIntegration.isApiUrl(urlStr)) {
-                ThreadUtils.invokeAndWaitHandled(
-                        () -> {
-                            ClientNode node =
-                                    this.extension.getOrAddClientNode(urlStr, false, false);
-                            ClientSideDetails details = node.getUserObject();
-                            boolean wasVisited = details.isVisited();
-                            ClientSideComponent component = new ClientSideComponent(json);
-                            boolean componentAdded = details.addComponent(component);
-                            if (!wasVisited || componentAdded) {
-                                details.setVisited(true);
-                                this.extension.clientNodeChanged(node);
-                            }
-                            if (component.isStorageEvent()) {
-                                String storageUrl = node.getSite() + component.getTypeForDisplay();
-                                ClientNode storageNode =
-                                        this.extension.getOrAddClientNode(storageUrl, false, true);
-                                ClientSideDetails storageDetails = storageNode.getUserObject();
-                                storageDetails.setStorage(true);
-                                storageDetails.addComponent(component);
-                                this.extension.clientNodeChanged(storageNode);
-                            }
-                        });
+                ClientNode node = this.extension.getOrAddClientNode(urlStr, false, false);
+                ClientSideComponent component = new ClientSideComponent(json);
+                extension.addComponentToNode(node, component);
+                if (component.isStorageEvent()) {
+                    String storageUrl = node.getSite() + component.getTypeForDisplay();
+                    extension.addComponentToNode(
+                            this.extension.getOrAddClientNode(storageUrl, false, true), component);
+                }
             }
         } else {
             LOGGER.debug("Not got url:(: {}", url);
         }
         Object href = json.get("href");
         if (href instanceof String && ((String) href).toLowerCase(Locale.ROOT).startsWith("http")) {
-            ThreadUtils.invokeAndWaitHandled(
-                    () -> this.extension.getOrAddClientNode((String) href, false, false));
+            extension.getOrAddClientNode((String) href, false, false);
+        }
+    }
+
+    private void handleReportEvent(JSONObject json) {
+        ReportedEvent event = new ReportedEvent(json);
+        if (event.getUrl() == null || !ExtensionClientIntegration.isApiUrl(event.getUrl())) {
+            this.extension.addReportedObject(event);
+            if (event.getUrl() != null) {
+                extension.setVisited(event.getUrl());
+            }
         }
     }
 
@@ -136,11 +134,7 @@ public class ClientIntegrationAPI extends ApiImplementor {
                 String eventJson = this.getParam(params, PARAM_EVENT_JSON, "");
                 LOGGER.debug("Got event: {}", eventJson);
                 json = JSONObject.fromObject(eventJson);
-                ReportedEvent event = new ReportedEvent(json);
-                if (event.getUrl() == null
-                        || !ExtensionClientIntegration.isApiUrl(event.getUrl())) {
-                    this.extension.addReportedObject(event);
-                }
+                handleReportEvent(json);
                 break;
 
             case ACTION_REPORT_ZEST_STATEMENT:
@@ -198,7 +192,7 @@ public class ClientIntegrationAPI extends ApiImplementor {
             } else if (body.startsWith(PARAM_EVENT_JSON)) {
                 JSONObject json = decodeParam(body, PARAM_EVENT_JSON);
                 LOGGER.debug("Got event: {}", json);
-                this.extension.addReportedObject(new ReportedEvent(json));
+                handleReportEvent(json);
             } else if (body.startsWith(PARAM_STATEMENT_JSON)) {
                 try {
                     this.extension.addZestStatement(decodeParamString(body, PARAM_STATEMENT_JSON));

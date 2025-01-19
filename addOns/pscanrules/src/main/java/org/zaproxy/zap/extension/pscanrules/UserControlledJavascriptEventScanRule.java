@@ -40,7 +40,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * Port for the Watcher passive scanner (http://websecuritytool.codeplex.com/) rule {@code
  * CasabaSecurity.Web.Watcher.Checks.CheckPasvUserControlledJavascriptEvent}
  */
-public class UserControlledJavascriptEventScanRule extends PluginPassiveScanner {
+public class UserControlledJavascriptEventScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String[] JAVASCRIPT_EVENTS =
             new String[] {
@@ -144,7 +145,12 @@ public class UserControlledJavascriptEventScanRule extends PluginPassiveScanner 
         String[] split = attribute.getValue().split("[;=,:]");
         for (String s : split) {
             if (s.equalsIgnoreCase(param.getValue())) {
-                raiseAlert(msg, id, htmlElement, attribute, param);
+                buildAlert(
+                                msg.getRequestHeader().getURI().toString(),
+                                attribute.getName(),
+                                attribute.getValue(),
+                                param)
+                        .raise();
             }
         }
     }
@@ -155,7 +161,7 @@ public class UserControlledJavascriptEventScanRule extends PluginPassiveScanner 
 
     // TODO: these methods have been extracted from CharsetMismatchScanner
     // I think we should create helper methods for them
-    private boolean isResponseHTML(HttpMessage message) {
+    private static boolean isResponseHTML(HttpMessage message) {
         String contentType = message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
         if (contentType == null) {
             return false;
@@ -166,23 +172,24 @@ public class UserControlledJavascriptEventScanRule extends PluginPassiveScanner 
                 || contentType.indexOf("application/xhtml") != -1;
     }
 
-    private void raiseAlert(
-            HttpMessage msg,
-            int id,
-            Element htmlElement,
-            Attribute htmlAttribute,
-            HtmlParameter param) {
-        newAlert()
+    private AlertBuilder buildAlert(
+            String url, String attribute, String attributeValue, HtmlParameter param) {
+        return newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_LOW)
-                .setDescription(getDescriptionMessage())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setParam(param.getName())
-                .setOtherInfo(getExtraInfoMessage(msg, htmlAttribute, param))
-                .setSolution(getSolutionMessage())
-                .setReference(getReferenceMessage())
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "extrainfo",
+                                url,
+                                attribute,
+                                attributeValue,
+                                param.getValue()))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setCweId(20) // CWE-20: Improper Input Validation
-                .setWascId(20) // WASC-20: Improper Input Handling
-                .raise();
+                .setWascId(20); // WASC-20: Improper Input Handling
     }
 
     @Override
@@ -195,29 +202,14 @@ public class UserControlledJavascriptEventScanRule extends PluginPassiveScanner 
         return ALERT_TAGS;
     }
 
-    /*
-     * Rule-associated messages
-     */
-
-    private String getDescriptionMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolutionMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReferenceMessage() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    private String getExtraInfoMessage(
-            HttpMessage msg, Attribute htmlAttribute, HtmlParameter param) {
-        return Constant.messages.getString(
-                MESSAGE_PREFIX + "extrainfo",
-                msg.getRequestHeader().getURI().toString(),
-                htmlAttribute.getName(),
-                htmlAttribute.getValue(),
-                param.getValue());
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "http://example.com/i.php?place=moon&name=Foo",
+                                "onerror",
+                                "foo",
+                                new HtmlParameter(HtmlParameter.Type.url, "name", "foo"))
+                        .build());
     }
 }

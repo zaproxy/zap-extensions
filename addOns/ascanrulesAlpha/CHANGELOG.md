@@ -4,7 +4,26 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Maintenance changes.
 
+## [48] - 2024-09-02
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+### Fixed
+- Alert text for various rules has been updated to more consistently use periods and spaces in a uniform manner.
+- Potential false positives in the LDAP Injection scan rule when the original message resulted in an error to start with (Issue 8519).
+
+## [47] - 2024-03-28
+### Changed
+- References for the LDAP Injection scan rule's Alerts were updated (Issue 8262).
+
+## [46] - 2024-01-26
+### Changed
+- Move MongoDB time based tests to its own scan rule, NoSQL Injection - MongoDB (Time Based) with ID 90039 (Issue 7341).
+- Depend on newer version of Common Library add-on.
 
 ## [45] - 2024-01-16
 ### Changed
@@ -364,6 +383,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[48]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v48
+[47]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v47
+[46]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v43

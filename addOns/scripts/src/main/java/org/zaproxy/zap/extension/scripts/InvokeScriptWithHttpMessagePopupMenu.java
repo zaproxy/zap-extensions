@@ -25,6 +25,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
@@ -83,7 +84,6 @@ public class InvokeScriptWithHttpMessagePopupMenu extends PopupMenuItemHttpMessa
         for (ScriptWrapper script :
                 extension.getExtScript().getScripts(ExtensionScript.TYPE_TARGETED)) {
             ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(script);
-            piicm.setMenuIndex(this.getMenuIndex());
             mainPopupMenuItems.add(piicm);
         }
     }
@@ -95,5 +95,10 @@ public class InvokeScriptWithHttpMessagePopupMenu extends PopupMenuItemHttpMessa
     @Override
     public boolean isSafe() {
         return true;
+    }
+
+    @Override
+    public int getParentWeight() {
+        return MenuWeights.MENU_SCRIPT_INVOKE_WEIGHT;
     }
 }

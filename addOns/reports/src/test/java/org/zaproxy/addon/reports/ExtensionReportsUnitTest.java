@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
@@ -78,15 +79,21 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
+import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.sequence.StdActiveScanRunner.SequenceStepData;
+import org.zaproxy.zap.extension.sequence.automation.SequenceAScanJobResultData;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class ExtensionReportsUnitTest extends TestUtils {
+
+    private static final String ILLEGAL_XML_CHRS = "\u0000\u0013";
+    // FIXME change everything that uses this to use ILLEGAL_XML_CHRS - these places currently fail
+    private static final String NOT_ILLEGAL_XML_CHRS = "";
 
     private static final String HTML_REPORT_ALERT_SUMMARY_SECTION = "alertcount";
     private static final String HTML_REPORT_INSTANCE_SUMMARY_SECTION = "instancecount";
@@ -216,26 +223,48 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(counts.get(2), is(equalTo(4)));
     }
 
-    private AlertNode newAlertNode(
-            int pluginId, int level, String name, String uri, int childCount) {
-        Alert alert = new Alert(pluginId);
-        alert.setUri(uri);
-        alert.setDescription("Foo-Desc");
-        alert.setSolution("Foo-Sol");
-        alert.setOtherInfo("Foo-Other");
+    private static HttpMessage newMsg(String uri) {
         try {
-            alert.setMessage(new HttpMessage(new URI(uri, true)));
+            HttpMessage msg = new HttpMessage(new URI(uri + ILLEGAL_XML_CHRS, true));
+            msg.getRequestHeader().setHeader("Test", "Foo-Header" + ILLEGAL_XML_CHRS);
+            msg.getRequestBody().setBody(ILLEGAL_XML_CHRS);
+            msg.getResponseHeader().setHeader("Test", "Foo-Header" + ILLEGAL_XML_CHRS);
+            msg.getResponseBody().setBody(ILLEGAL_XML_CHRS);
+            return msg;
         } catch (URIException | HttpMalformedHeaderException | NullPointerException e) {
             throw new RuntimeException(e);
         }
-        AlertNode alertNode = new AlertNode(level, name);
+    }
+
+    private static AlertNode newAlertNode(
+            int pluginId, int level, String name, String uri, int childCount) {
+        Alert alert = new Alert(pluginId);
+        setAlertData(uri, alert);
+        AlertNode alertNode = new AlertNode(level, name + ILLEGAL_XML_CHRS);
         alertNode.setUserObject(alert);
         for (int i = 0; i < childCount; i++) {
-            AlertNode childNode = new AlertNode(level, name);
-            childNode.setUserObject(new Alert(pluginId));
+            AlertNode childNode = new AlertNode(level, name + ILLEGAL_XML_CHRS);
+            Alert childAlert = new Alert(pluginId);
+            setAlertData(uri, childAlert);
+            childNode.setUserObject(childAlert);
             alertNode.add(childNode);
         }
         return alertNode;
+    }
+
+    private static void setAlertData(String uri, Alert alert) {
+        alert.setUri(uri + ILLEGAL_XML_CHRS);
+        alert.setName("Foo-name" + ILLEGAL_XML_CHRS);
+        alert.setDescription("Foo-Desc" + ILLEGAL_XML_CHRS);
+        alert.setSolution("Foo-Sol" + ILLEGAL_XML_CHRS);
+        alert.setOtherInfo("Foo-Other" + ILLEGAL_XML_CHRS);
+
+        alert.setEvidence("Foo-evid" + ILLEGAL_XML_CHRS);
+        alert.setReference("Foo-ref" + ILLEGAL_XML_CHRS);
+        alert.setAttack("Foo-attack" + ILLEGAL_XML_CHRS);
+
+        alert.setParam("Foo-param" + ILLEGAL_XML_CHRS);
+        alert.setMessage(newMsg(uri));
     }
 
     @Test
@@ -522,7 +551,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(ExtensionReports.isIncluded(reportData, alertNode3), is(equalTo(false)));
     }
 
-    private ReportData getTestReportData() {
+    private static ReportData getTestReportData() {
         ReportData reportData = new ReportData();
         AlertNode root = new AlertNode(0, "Test");
         reportData.setAlertTreeRootNode(root);
@@ -641,12 +670,14 @@ class ExtensionReportsUnitTest extends TestUtils {
 
     @ParameterizedTest
     @ValueSource(strings = {"traditional-html-plus"})
+    @SuppressWarnings("removal")
     void shouldIncludePassingRulesSectionInReport(String reportName) throws Exception {
         // Given
         ExtensionReports extRep = new ExtensionReports();
         ReportData reportData = getTestReportData();
-        PassiveScanJobResultData pscanData =
-                new PassiveScanJobResultData("test", new ArrayList<>());
+        var pscanData =
+                new org.zaproxy.addon.automation.jobs.PassiveScanJobResultData(
+                        "test", new ArrayList<>());
         reportData.addReportObjects(pscanData.getKey(), pscanData);
         File f = File.createTempFile("zap.reports.test", "x");
         Template template = getTemplateFromYamlFile(reportName);
@@ -711,6 +742,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         return node;
     }
 
+    @SuppressWarnings("removal")
     private static ReportData getTestReportDataWithAlerts()
             throws URIException, HttpMalformedHeaderException {
         ReportData reportData = new ReportData();
@@ -719,7 +751,9 @@ class ExtensionReportsUnitTest extends TestUtils {
         reportData.setIncludeAllConfidences(true);
         reportData.setIncludeAllRisks(true);
         List<PluginPassiveScanner> list = new ArrayList<>();
-        PassiveScanJobResultData pscanData = new PassiveScanJobResultData("passiveScan-wait", list);
+        var pscanData =
+                new org.zaproxy.addon.automation.jobs.PassiveScanJobResultData(
+                        "passiveScan-wait", list);
         reportData.addReportObjects(pscanData.getKey(), pscanData);
 
         AlertNode root = new AlertNode(0, "Test");
@@ -754,7 +788,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         return str.replaceFirst("generated=\".*\"", "generated=\"DATE\"")
                 .replaceFirst("@generated\": \".*\"", "@generated\": \"DATE\"")
                 .replaceAll("basic-.*/", "dir")
-                .replaceAll("[\\n\\r\\t]", "");
+                .replaceAll("[\\n\\r\\t ]+", " ");
     }
 
     @ParameterizedTest
@@ -884,6 +918,468 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(json.getString("@generated").length(), is(greaterThan(20)));
         assertThat(site.size(), is(equalTo(1)));
         checkAlert(site.getJSONObject(0));
+    }
+
+    private static File generateReportWithSequence(Template template, File f)
+            throws IOException, DocumentException {
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = new ReportData();
+        reportData.setTitle("Test Title");
+        reportData.setDescription("Test Description");
+        reportData.setIncludeAllConfidences(true);
+        reportData.setIncludeAllRisks(true);
+
+        AlertNode root = new AlertNode(0, "Test");
+        reportData.setAlertTreeRootNode(root);
+
+        List<JobResultData> list = new ArrayList<>();
+        SequenceAScanJobResultData seqData = new SequenceAScanJobResultData("Test Job");
+        List<SequenceStepData> steps = new ArrayList<>();
+        steps.add(
+                new SequenceStepData(
+                        1,
+                        true,
+                        "Pass",
+                        new ArrayList<Integer>(),
+                        newMsg("https://www.example.com/step1"),
+                        newMsg("https://www.example.com/step1")));
+        steps.add(
+                new SequenceStepData(
+                        2,
+                        false,
+                        "Fail",
+                        Arrays.asList(2, 4),
+                        newMsg("https://www.example.com/step2"),
+                        newMsg("https://www.example.com/step2")));
+        seqData.addSequenceData("Seq name", steps);
+        list.add(seqData);
+        reportData.addReportObjects(seqData.getKey(), seqData);
+
+        return extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+    }
+
+    @Test
+    void shouldGenerateValidSequenceJsonReport() throws Exception {
+        // Given
+        Template template = getTemplateFromYamlFile("traditional-json");
+        String fileName = "basic-traditional-json";
+        File f = File.createTempFile(fileName, template.getExtension());
+
+        // When
+        File r = generateReportWithSequence(template, f);
+        String report = new String(Files.readAllBytes(r.toPath()));
+        JSONObject json = JSONObject.fromObject(report);
+        JSONArray site = json.getJSONArray("site");
+        JSONArray sequences = json.getJSONArray("sequences");
+
+        // Then
+        assertThat(json.getString("@version"), is(equalTo("Dev Build")));
+        assertThat(json.getString("@generated").length(), is(greaterThan(20)));
+        assertThat(site.size(), is(equalTo(0)));
+        assertThat(sequences.size(), is(equalTo(1)));
+        assertThat(sequences.getJSONObject(0).getString("name"), is(equalTo("Seq name")));
+        assertThat(sequences.getJSONObject(0).getJSONArray("steps").size(), is(equalTo(2)));
+
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(0).getString("step"),
+                is(equalTo("1")));
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(0).getString("pass"),
+                is(equalTo("true")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getString("resultDetails"),
+                is(equalTo("Pass")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONArray("alertIds")
+                        .size(),
+                is(equalTo(0)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("original")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step1")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("original")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step1")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .containsKey("request-header"),
+                is(false));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .containsKey("request-body"),
+                is(false));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .containsKey("response-header"),
+                is(false));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .containsKey("response-body"),
+                is(false));
+
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(1).getString("step"),
+                is(equalTo("2")));
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(1).getString("pass"),
+                is(equalTo("false")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getString("resultDetails"),
+                is(equalTo("Fail")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONArray("alertIds")
+                        .size(),
+                is(equalTo(2)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONArray("alertIds")
+                        .getInt(0),
+                is(equalTo(2)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONArray("alertIds")
+                        .getInt(1),
+                is(equalTo(4)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("original")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step2")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("original")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step2")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .containsKey("request-header"),
+                is(false));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .containsKey("request-body"),
+                is(false));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .containsKey("response-header"),
+                is(false));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .containsKey("response-body"),
+                is(false));
+    }
+
+    @Test
+    void shouldGenerateValidSequenceJsonPlusReport() throws Exception {
+        // Given
+        Template template = getTemplateFromYamlFile("traditional-json-plus");
+        String fileName = "basic-traditional-json-plus";
+        File f = File.createTempFile(fileName, template.getExtension());
+
+        // When
+        File r = generateReportWithSequence(template, f);
+
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        JSONObject json = JSONObject.fromObject(report);
+        JSONArray site = json.getJSONArray("site");
+        JSONArray sequences = json.getJSONArray("sequences");
+
+        // Then
+        assertThat(json.getString("@version"), is(equalTo("Dev Build")));
+        assertThat(json.getString("@generated").length(), is(greaterThan(20)));
+        assertThat(site.size(), is(equalTo(0)));
+        assertThat(sequences.size(), is(equalTo(1)));
+        assertThat(sequences.getJSONObject(0).getString("name"), is(equalTo("Seq name")));
+        assertThat(sequences.getJSONObject(0).getJSONArray("steps").size(), is(equalTo(2)));
+
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(0).getString("step"),
+                is(equalTo("1")));
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(0).getString("pass"),
+                is(equalTo("true")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getString("resultDetails"),
+                is(equalTo("Pass")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONArray("alertIds")
+                        .size(),
+                is(equalTo(0)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("original")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step1")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("original")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step1")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("request-header"),
+                is(not(nullValue())));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("request-body"),
+                is(not(nullValue())));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("response-header"),
+                is(not(nullValue())));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(0)
+                        .getJSONObject("replay")
+                        .getString("response-body"),
+                is(not(nullValue())));
+
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(1).getString("step"),
+                is(equalTo("2")));
+        assertThat(
+                sequences.getJSONObject(0).getJSONArray("steps").getJSONObject(1).getString("pass"),
+                is(equalTo("false")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getString("resultDetails"),
+                is(equalTo("Fail")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONArray("alertIds")
+                        .size(),
+                is(equalTo(2)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONArray("alertIds")
+                        .getInt(0),
+                is(equalTo(2)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONArray("alertIds")
+                        .getInt(1),
+                is(equalTo(4)));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("original")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step2")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("original")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("uri"),
+                is(equalTo("https://www.example.com/step2")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("method"),
+                is(equalTo("GET")));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("request-header"),
+                is(not(nullValue())));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("request-body"),
+                is(not(nullValue())));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("response-header"),
+                is(not(nullValue())));
+        assertThat(
+                sequences
+                        .getJSONObject(0)
+                        .getJSONArray("steps")
+                        .getJSONObject(1)
+                        .getJSONObject("replay")
+                        .getString("response-body"),
+                is(not(nullValue())));
     }
 
     @Test
@@ -1195,6 +1691,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         File f = File.createTempFile("zap.reports.test", "x");
         Template template = getTemplateFromYamlFile(reportName);
         // When
+        reportData.setSections(template.getSections());
         File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
         String report = new String(Files.readAllBytes(r.toPath()));
         // Then
@@ -1203,7 +1700,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(logEvents, not(hasItem(startsWith("ERROR"))));
     }
 
-    private ReportData setupReportData() {
+    private static ReportData setupReportData() {
         ReportData reportData = getTestReportData();
         AlertNode root = new AlertNode(0, "Alerts");
         root.add(newAlertNode(1, Alert.RISK_HIGH, "Alert High 1", "https://www.example.com", 1));
@@ -1215,14 +1712,21 @@ class ExtensionReportsUnitTest extends TestUtils {
                         "Alert Low 2",
                         "https://www.example.com",
                         8));
+        // Cover cases where the HTTP message is missing.
+        AlertNode noMsgAlertNode =
+                newAlertNode(
+                        4, Alert.RISK_HIGH, "Alert No HTTP Message", "https://www.example.com", 2);
+        noMsgAlertNode.getUserObject().setMessage(null);
+        noMsgAlertNode.getChildAt(0).getUserObject().setMessage(null);
+        root.add(noMsgAlertNode);
+
         reportData.setAlertTreeRootNode(root);
         String site1 = "https://www.example.com";
-        reportData.setSites(List.of(site1));
+        reportData.setSites(List.of(site1 + NOT_ILLEGAL_XML_CHRS));
         reportData.setIncludeAllConfidences(true);
         reportData.setIncludeAllRisks(true);
-        reportData.setDescription("");
-        reportData.addSection("alerts");
-        reportData.addSection("appendix");
+        reportData.setDescription("desc" + ILLEGAL_XML_CHRS);
+        reportData.setContexts(new ArrayList<>());
         return reportData;
     }
 
@@ -1257,8 +1761,10 @@ class ExtensionReportsUnitTest extends TestUtils {
 
             generateTestFile("high-level-report");
             generateTestFile("traditional-json");
+            generateTestFile("traditional-json-plus");
             generateTestFile("traditional-md");
             generateTestFile("traditional-xml");
+            generateTestFile("traditional-xml-plus");
             generateTestFile("traditional-html");
             generateTestFile("traditional-html-plus");
 

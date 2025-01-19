@@ -254,6 +254,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
         script.setDescription(this.getStringValue(FIELD_DESC));
         script.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
         script.setEnabled(getBoolValue(FIELD_ENABLED));
+        script.setChanged(true);
 
         extension.getExtScript().addScript(script);
     }

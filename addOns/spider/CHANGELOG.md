@@ -5,8 +5,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [0.13.0] - 2025-01-10
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Depend on newer version of Common Library add-on (Issue 8016).
+- Updated automation framework documentation and templates for `spider` job to reflect changes to the default value of threadCount parameter
+- Fields with default or missing values are omitted for the `spider` job in saved Automation Framework plans.
+
+### Removed
+- Remove non-functional option "request wait time" from the API and Automation Framework.
+
+## [0.12.0] - 2024-09-23
+### Added
+- Allow the parsers to obtain the context and user being used by/in the current spidering scan (Issue 8021 and 7739).
+
+### Changed
+- Maintenance changes.
+
+## [0.11.0] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+### Added
+- Support for menu weights (Issue 8369)
+### Fixed
+- Fix grammatical error in help content.
+
+## [0.10.0] - 2024-02-12
+### Changed
+- Skip parsing of empty SVGs.
+- Maintenance changes.
+- Setting "Query Parameters Handling" via automation framework should now be more forgiving as to the case of the values (enums).
+
+### Fixed
+- Ensure issues in one parser don't break the whole parsing process.
+- Fix exception that happened with absolute dotted URLs in inlined content.
+
+## [0.9.0] - 2024-01-26
 ### Added
 - Video link in help for Automation Framework job.
+
+### Changed
+- The sitemap.xml parser will now accept and process a greater range of possible file content (Issue 8299).
 
 ## [0.8.0] - 2023-12-19
 ### Changed
@@ -76,6 +118,11 @@ The following table illustrates the changes versus the previous core release(s) 
 |                                                                                                                                         | SVG image files are parsed to identify HREF attributes and extract/resolve any contained links. (Issue 4984)                                                                                                        |
 |                                                                                                                                         | Irrelevant Parameters - Allows to manage the parameters that should be removed when canonicalising the URLs found. The session token names defined in the HTTP Sessions options are taken into account and removed (Issue 4388). |
 
+[0.13.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.13.0
+[0.12.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.12.0
+[0.11.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.11.0
+[0.10.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.10.0
+[0.9.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.8.0
 [0.7.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.6.0

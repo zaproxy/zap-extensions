@@ -7,7 +7,10 @@ zapAddOn {
     addOnStatus.set(AddOnStatus.BETA)
 
     manifest {
-        author.set("ZAP Dev Team plus Joanna Bona, Nathalie Bouchahine, Artur Grzesica, Mohammad Kamar, Markus Kiss, Michal Materniak, Marcin Spiewak, and SDA SE Open Industry Solutions")
+        author.set(
+            "ZAP Dev Team plus Joanna Bona, Nathalie Bouchahine, Artur Grzesica, Mohammad Kamar, " +
+                "Markus Kiss, Michal Materniak, Marcin Spiewak, and SDA SE Open Industry Solutions",
+        )
         url.set("https://www.zaproxy.org/docs/desktop/addons/openapi-support/")
         extensions {
             register("org.zaproxy.zap.extension.openapi.automation.ExtensionOpenApiAutomation") {
@@ -29,7 +32,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("spider") {
-                            version.set(">=0.1.0")
+                            version.set(">=0.12.0")
                         }
                     }
                 }
@@ -38,7 +41,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.17.0 & < 2.0.0")
+                    version.set(">= 1.29.0 & < 2.0.0")
                 }
             }
         }
@@ -62,16 +65,24 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("spider")
 
-    implementation("io.swagger.parser.v3:swagger-parser:2.1.19")
-    implementation("io.swagger:swagger-compat-spec-parser:1.0.68") {
+    implementation("io.swagger.parser.v3:swagger-parser:2.1.23") {
+        // Provided by commonlib add-on:
+        exclude(group = "com.fasterxml.jackson")
+        exclude(group = "com.fasterxml.jackson.core")
+        exclude(group = "com.fasterxml.jackson.dataformat")
+        exclude(group = "com.fasterxml.jackson.datatype")
+    }
+    implementation("io.swagger:swagger-compat-spec-parser:1.0.71") {
+        // Provided by commonlib add-on:
+        exclude(group = "com.fasterxml.jackson")
+        exclude(group = "com.fasterxml.jackson.core")
+        exclude(group = "com.fasterxml.jackson.dataformat")
+        exclude(group = "com.fasterxml.jackson.datatype")
         // Not needed:
         exclude(group = "com.github.java-json-tools", module = "json-schema-validator")
         exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
-    implementation(libs.log4j.slf4j2) {
-        // Provided by ZAP.
-        exclude(group = "org.apache.logging.log4j")
-    }
+    implementation(libs.log4j.slf4j2)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(libs.log4j.core)

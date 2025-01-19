@@ -7,6 +7,21 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## Unreleased
 
 
+## [0.11.0] - 2025-01-10
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- To handle automation class changes.
+- Depend on newer version of Passive Scanner add-on (Issue 7959).
+
+## [0.10.0] - 2024-09-02
+### Changed
+- Use the Passive Scanner add-on for the Automation Framework passive scan jobs (Issue 7959).
+
+## [0.9.0] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Maintenance changes.
+
 ## [0.8.0] - 2023-10-12
 ### Changed
 - Update minimum ZAP version to 2.14.0.
@@ -58,6 +73,9 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Allow retesting for the presence/absence of certain alerts using the Automation Framework.
 
 
+[0.11.0]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.11.0
+[0.10.0]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.10.0
+[0.9.0]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.8.0
 [0.7.0]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.6.0

@@ -36,7 +36,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 /**
  * X-Powered-By Information Leak passive scan rule https://github.com/zaproxy/zaproxy/issues/1169
  */
-public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner {
+public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.xpoweredbyheaderinfoleak.";
     private static final String HEADER_NAME = "X-Powered-By";
@@ -68,7 +69,7 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner {
      * @param msg Response Http message
      * @return boolean status of existence
      */
-    private boolean isXPoweredByHeaderExist(HttpMessage msg) {
+    private static boolean isXPoweredByHeaderExist(HttpMessage msg) {
         return !msg.getResponseHeader().getHeaderValues(HEADER_NAME).isEmpty();
     }
 
@@ -78,7 +79,7 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner {
      * @param msg Response Http message
      * @return list of the matched headers
      */
-    private List<String> getXPoweredByHeaders(HttpMessage msg) {
+    private static List<String> getXPoweredByHeaders(HttpMessage msg) {
         List<String> matchedHeaders = new ArrayList<>();
         String headers = msg.getResponseHeader().toString();
         String[] headerElements = headers.split("\\r\\n");
@@ -106,15 +107,15 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner {
             alertOtherInfo = sb.toString();
         }
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(alertOtherInfo)
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(alertEvidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setWascId(13); // WASC Id - Info leakage
     }
 
     @Override
@@ -122,38 +123,14 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner {
         return PLUGIN_ID;
     }
 
-    public int getRisk() {
-        return Alert.RISK_LOW;
-    }
-
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 200; // CWE Id 200 - Information Exposure
-    }
-
-    public int getWascId() {
-        return 13; // WASC Id - Info leakage
     }
 
     @Override

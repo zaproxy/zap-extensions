@@ -34,7 +34,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** X-Debug-Token passive scan rule https://github.com/zaproxy/zaproxy/issues/2452 */
-public class XDebugTokenScanRule extends PluginPassiveScanner {
+public class XDebugTokenScanRule extends PluginPassiveScanner implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.xdebugtoken.";
     private static final int PLUGIN_ID = 10056;
@@ -56,30 +56,29 @@ public class XDebugTokenScanRule extends PluginPassiveScanner {
 
         // Check "Link" variant first as it's of greater concern/convenience.
         if (responseHasHeader(msg, X_DEBUG_TOKEN_LINK_HEADER)) {
-            raiseAlert(msg, getHeaders(msg, X_DEBUG_TOKEN_LINK_HEADER).get(0));
+            buildAlert(getHeaders(msg, X_DEBUG_TOKEN_LINK_HEADER).get(0)).raise();
             return;
         }
         // Check non-Link variant
         if (responseHasHeader(msg, X_DEBUG_TOKEN_HEADER)) {
-            raiseAlert(msg, getHeaders(msg, X_DEBUG_TOKEN_HEADER).get(0));
+            buildAlert(getHeaders(msg, X_DEBUG_TOKEN_HEADER).get(0)).raise();
             return;
         }
 
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
     }
 
-    private void raiseAlert(HttpMessage msg, String evidence) {
-        newAlert()
-                .setRisk(getRisk())
+    private AlertBuilder buildAlert(String evidence) {
+        return newAlert()
+                .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_HIGH)
-                .setDescription(getDescription())
-                .setOtherInfo(getOtherInfo())
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
     }
 
     /**
@@ -89,7 +88,7 @@ public class XDebugTokenScanRule extends PluginPassiveScanner {
      * @param header the name of the header field being looked for
      * @return boolean status of existence
      */
-    private boolean responseHasHeader(HttpMessage msg, String header) {
+    private static boolean responseHasHeader(HttpMessage msg, String header) {
         return !msg.getResponseHeader().getHeaderValues(header).isEmpty();
     }
 
@@ -100,7 +99,7 @@ public class XDebugTokenScanRule extends PluginPassiveScanner {
      * @param header the name of the header field(s) to be collected
      * @return list of the matched headers
      */
-    private List<String> getHeaders(HttpMessage msg, String header) {
+    private static List<String> getHeaders(HttpMessage msg, String header) {
         List<String> matchedHeaders = new ArrayList<>();
         String headers = msg.getResponseHeader().toString();
         String[] headerElements = headers.split("\\r\\n");
@@ -120,29 +119,9 @@ public class XDebugTokenScanRule extends PluginPassiveScanner {
         return PLUGIN_ID;
     }
 
-    public int getRisk() {
-        return Alert.RISK_LOW;
-    }
-
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
-    }
-
-    public String getOtherInfo() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo");
-    }
-
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     @Override
@@ -156,5 +135,10 @@ public class XDebugTokenScanRule extends PluginPassiveScanner {
 
     public int getWascId() {
         return 13; // WASC Id - Info leakage
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("X-Debug-Token-Link: /_profiler/97b958").build());
     }
 }
