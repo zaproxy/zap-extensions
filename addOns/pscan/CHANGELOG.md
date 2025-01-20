@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Correct help configuration to work with any language.
+- Maintenance changes.
 
 ### Fixed
 - Fix broken link the help page.

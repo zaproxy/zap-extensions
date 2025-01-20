@@ -106,8 +106,10 @@ public class PassiveScanApi extends ApiImplementor {
         this.addApiView(new ApiView(VIEW_SCANNERS));
         ApiView currentRule = new ApiView(VIEW_CURRENT_RULE);
         currentRule.setDeprecated(true);
-        currentRule.setDeprecatedDescription(
-                Constant.messages.getString("pscan.api.view.currentRule.deprecated"));
+        if (Constant.messages != null) {
+            currentRule.setDeprecatedDescription(
+                    Constant.messages.getString("pscan.api.view.currentRule.deprecated"));
+        }
         this.addApiView(currentRule);
         this.addApiView(new ApiView(VIEW_CURRENT_TASKS));
         this.addApiView(new ApiView(VIEW_MAX_ALERTS_PER_RULE));
