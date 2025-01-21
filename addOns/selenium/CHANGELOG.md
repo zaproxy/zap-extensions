@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Use WebDriver BiDi with Chrome.
+- Update Selenium to version 4.28.0.
 
 ## [15.32.0] - 2025-01-10
 ### Changed
