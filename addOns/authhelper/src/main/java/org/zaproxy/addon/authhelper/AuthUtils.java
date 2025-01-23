@@ -36,7 +36,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
@@ -143,15 +142,24 @@ public class AuthUtils {
     }
 
     static WebElement getUserField(List<WebElement> inputElements) {
-        List<WebElement> filteredList =
-                displayed(inputElements)
+        List<WebElement> filteredList = displayed(inputElements).toList();
+        if (filteredList.size() == 1) {
+            LOGGER.debug(
+                    "Choosing only displayed field: name={} id={}",
+                    filteredList.get(0).getDomAttribute("name"),
+                    filteredList.get(0).getDomAttribute("id"));
+            return filteredList.get(0);
+        }
+
+        filteredList =
+                filteredList.stream()
                         .filter(
                                 elem ->
                                         "text".equalsIgnoreCase(elem.getDomAttribute("type"))
                                                 || "email"
                                                         .equalsIgnoreCase(
                                                                 elem.getDomAttribute("type")))
-                        .collect(Collectors.toList());
+                        .toList();
 
         if (!filteredList.isEmpty()) {
             if (filteredList.size() > 1) {
