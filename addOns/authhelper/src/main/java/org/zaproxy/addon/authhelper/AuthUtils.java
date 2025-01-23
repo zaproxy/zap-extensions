@@ -37,6 +37,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -143,7 +144,7 @@ public class AuthUtils {
 
     static WebElement getUserField(List<WebElement> inputElements) {
         List<WebElement> filteredList =
-                inputElements.stream()
+                displayed(inputElements)
                         .filter(
                                 elem ->
                                         "text".equalsIgnoreCase(elem.getDomAttribute("type"))
@@ -180,6 +181,10 @@ public class AuthUtils {
         return null;
     }
 
+    private static Stream<WebElement> displayed(List<WebElement> elements) {
+        return elements.stream().filter(WebElement::isDisplayed);
+    }
+
     static boolean attributeContains(WebElement we, String attribute, String[] strings) {
         String att = we.getDomAttribute(attribute);
         if (att == null) {
@@ -195,12 +200,10 @@ public class AuthUtils {
     }
 
     static WebElement getPasswordField(List<WebElement> inputElements) {
-        for (WebElement element : inputElements) {
-            if ("password".equalsIgnoreCase(element.getDomAttribute("type"))) {
-                return element;
-            }
-        }
-        return null;
+        return displayed(inputElements)
+                .filter(element -> "password".equalsIgnoreCase(element.getDomAttribute("type")))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
