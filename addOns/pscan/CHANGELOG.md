@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Correct help configuration to work with any language.
 - Maintenance changes.
+- Clarified passiveScan-wait > maxDuration documentation.
 
 ### Fixed
 - Fix broken link the help page.
