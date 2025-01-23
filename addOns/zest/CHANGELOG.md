@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Use ZAP for launching Firefox and Chrome.
+- Update Zest library to 0.23.0:
+  - Update Selenium to version 4.28.0.
+  - Update minimum Java version to 17.
 
 ## [48.0.0] - 2025-01-10
 ### Added
