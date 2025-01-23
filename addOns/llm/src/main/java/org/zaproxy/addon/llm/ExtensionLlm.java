@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2024 The ZAP Development Team
+ * Copyright 2025 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
  */
 package org.zaproxy.addon.llm;
 
-import java.awt.event.KeyEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -65,14 +65,20 @@ public class ExtensionLlm extends ExtensionAdaptor {
     }
 
     @Override
+    public void init() {
+        super.init();
+        llmOptionsParam = getOptionsParam();
+    }
+
+    @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
         if (hasView()) {
+            getView().getOptionsDialog().addParamPanel(ROOT, getOptionsPanel(), true);
+            extensionHook.addOptionsParamSet(getOptionsParam());
             extensionHook.getHookMenu().addImportMenuItem(getMenuLLM());
             extensionHook.getHookMenu().addPopupMenuItem(getCheckLlmMenu());
-            extensionHook.addOptionsParamSet(getOptionsParam());
-            getView().getOptionsDialog().addParamPanel(ROOT, getOptionsPanel(), true);
 
             extensionHook.addSessionListener(
                     new SessionChangedListener() {
@@ -111,10 +117,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
 
     private ZapMenuItem getMenuLLM() {
         if (menuLLM == null) {
-            menuLLM =
-                    new ZapMenuItem(
-                            "llm.topmenu.import.importOpenAPI",
-                            getView().getMenuShortcutKeyStroke(KeyEvent.VK_J, 0, false));
+            menuLLM = new ZapMenuItem("llm.topmenu.import.importOpenAPI");
             menuLLM.setToolTipText(
                     Constant.messages.getString("llm.topmenu.import.importOpenAPI.tooltip"));
             menuLLM.addActionListener(
@@ -142,7 +145,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
 
     private LlmOptionsPanel getOptionsPanel() {
         if (llmOptionsPanel == null) {
-            llmOptionsPanel = new LlmOptionsPanel();
+            llmOptionsPanel = new LlmOptionsPanel(this);
         }
         return llmOptionsPanel;
     }
@@ -152,5 +155,22 @@ public class ExtensionLlm extends ExtensionAdaptor {
             llmOptionsParam = new LlmOptionsParam();
         }
         return llmOptionsParam;
+    }
+
+    public boolean isConfigured() {
+        if (!StringUtils.isEmpty(this.llmOptionsParam.getApiKey())) return true;
+        return false;
+    }
+
+    @Override
+    public void optionsLoaded() {
+        super.optionsLoaded();
+        boolean enabled = !StringUtils.isEmpty(this.llmOptionsParam.getApiKey());
+        setLLMExtEnabled(enabled);
+    }
+
+    public void setLLMExtEnabled(boolean enable) {
+        getMenuLLM().setEnabled(enable);
+        getCheckLlmMenu().setEnabled(enable);
     }
 }

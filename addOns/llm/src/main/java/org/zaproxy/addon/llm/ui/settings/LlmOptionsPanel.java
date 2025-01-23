@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2017 The ZAP Development Team
+ * Copyright 2025 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,15 +27,18 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.zaproxy.addon.llm.ExtensionLlm;
 
 public class LlmOptionsPanel extends AbstractParamPanel {
 
     private static final Logger LOGGER = LogManager.getLogger(LlmOptionsPanel.class);
+    private ExtensionLlm extensionLlm;
 
     private static final long serialVersionUID = -2690686914494943483L;
 
@@ -44,8 +47,9 @@ public class LlmOptionsPanel extends AbstractParamPanel {
 
     private JComboBox<String> llmModelsComboBox;
 
-    public LlmOptionsPanel() {
+    public LlmOptionsPanel(ExtensionLlm extensionLlm) {
         super();
+        this.extensionLlm = extensionLlm;
         this.initComponents();
     }
 
@@ -67,18 +71,18 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         layout.setAutoCreateContainerGaps(true);
 
         layout.setHorizontalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                layout.createSequentialGroup()
                         .addGroup(
-                                layout.createSequentialGroup()
+                                layout.createParallelGroup(
+                                                GroupLayout.Alignment.TRAILING) // Align labels
                                         .addComponent(llmApiKey)
-                                        .addComponent(this.apiKeyTextField))
-                        .addGroup(
-                                layout.createSequentialGroup()
                                         .addComponent(llmendpoint)
-                                        .addComponent(this.llmendpointTextField))
+                                        .addComponent(llmModelsLabel))
                         .addGroup(
-                                layout.createSequentialGroup()
-                                        .addComponent(llmModelsLabel)
+                                layout.createParallelGroup(
+                                                GroupLayout.Alignment.LEADING) // Align input fields
+                                        .addComponent(this.apiKeyTextField)
+                                        .addComponent(this.llmendpointTextField)
                                         .addComponent(this.llmModelsComboBox)));
 
         layout.setVerticalGroup(
@@ -92,9 +96,7 @@ public class LlmOptionsPanel extends AbstractParamPanel {
                                         .addComponent(llmendpoint)
                                         .addComponent(this.llmendpointTextField))
                         .addGroup(
-                                layout.createParallelGroup(
-                                                GroupLayout.Alignment
-                                                        .BASELINE)
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(llmModelsLabel)
                                         .addComponent(this.llmModelsComboBox)));
     }
@@ -120,11 +122,19 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         param.setApiKey(this.apiKeyTextField.getText());
         param.setEndpoint(this.llmendpointTextField.getText());
         param.setModelName(this.llmModelsComboBox.getSelectedItem().toString());
+        this.extensionLlm.setLLMExtEnabled(true);
     }
 
     @Override
     public void validateParam(Object object) throws Exception {
         String endpoint = this.llmendpointTextField.getText();
+        String ApiKey = this.apiKeyTextField.getText();
+
+        if (StringUtils.isEmpty(ApiKey)) {
+            throw new IllegalArgumentException(
+                    Constant.messages.getString("llm.options.apikey.error.undefinded"));
+        }
+
         java.net.HttpURLConnection connection = null;
 
         try {

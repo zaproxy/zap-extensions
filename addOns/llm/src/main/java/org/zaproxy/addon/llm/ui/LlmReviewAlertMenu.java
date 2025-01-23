@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2024 The ZAP Development Team
+ * Copyright 2025 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ package org.zaproxy.addon.llm.ui;
 
 import java.awt.Component;
 import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
@@ -33,6 +35,7 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
 
     private static final long serialVersionUID = 1L;
     private ExtensionLlm extensionLlm;
+    private static final Logger LOGGER = LogManager.getLogger(LlmReviewAlertMenu.class);
 
     public LlmReviewAlertMenu(ExtensionLlm ext) {
         super(Constant.messages.getString("llm.menu.review.title"), true);
@@ -65,7 +68,11 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (super.isEnableForComponent(invoker)) {
-            setEnabled(true);
+            if (!extensionLlm.isConfigured()) {
+                setEnabled(false);
+            } else {
+                setEnabled(true);
+            }
             return true;
         }
         return false;
