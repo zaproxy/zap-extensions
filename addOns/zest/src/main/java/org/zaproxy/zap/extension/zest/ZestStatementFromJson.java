@@ -23,6 +23,7 @@ import net.sf.json.JSONObject;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
 import org.zaproxy.zest.core.v1.ZestClientElementClick;
 import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
+import org.zaproxy.zest.core.v1.ZestClientElementSubmit;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
 import org.zaproxy.zest.core.v1.ZestClientSwitchToFrame;
 import org.zaproxy.zest.core.v1.ZestClientWindowClose;
@@ -30,15 +31,13 @@ import org.zaproxy.zest.core.v1.ZestClientWindowResize;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestStatementFromJson {
-    private static final String type = "zestScript";
-    private static final String I18N_PREFIX = "client.type.";
+
     private static final String ELEMENT_TYPE = "elementType";
     private static final String WINDOW_HANDLE = "windowHandle";
     private static final String BROWSER_TYPE = "browserType";
     private static final String HEADLESS = "headless";
     private static final String CAPABILITIES = "capabilities";
     private static final String URL = "url";
-    private static final String INDEX = "index";
     private static final String TYPE = "type";
     private static final String ELEMENT = "element";
     private static final String VALUE = "value";
@@ -52,6 +51,7 @@ public class ZestStatementFromJson {
     private static final String ZEST_CLIENT_LAUNCH = "ZestClientLaunch";
     private static final String ZEST_CLIENT_ELEMENT_CLICK = "ZestClientElementClick";
     private static final String ZEST_CLIENT_ELEMENT_SEND_KEYS = "ZestClientElementSendKeys";
+    private static final String ZEST_CLIENT_ELEMENT_SUBMIT = "ZestClientElementSubmit";
     private static final String ZEST_CLIENT_ELEMENT_CLEAR = "ZestClientElementClear";
     private static final String ZEST_CLIENT_WINDOW_CLOSE = "ZestClientWindowClose";
     private static final String ZEST_CLIENT_SWITCH_TO_FRAME = "ZestClientSwitchToFrame";
@@ -59,8 +59,7 @@ public class ZestStatementFromJson {
 
     public static ZestStatement createZestStatementFromJson(JSONObject json) throws Exception {
         ZestStatement stmt = null;
-        if (json.containsKey(ELEMENT_TYPE) && json.containsKey(INDEX)) {
-            int index = json.getInt(INDEX);
+        if (json.containsKey(ELEMENT_TYPE)) {
             String elementType = json.getString(ELEMENT_TYPE);
             switch (elementType) {
                 case ZEST_CLIENT_LAUNCH:
@@ -90,6 +89,14 @@ public class ZestStatementFromJson {
                                             json.getString(TYPE),
                                             json.getString(ELEMENT),
                                             json.getString(VALUE));
+                    break;
+                case ZEST_CLIENT_ELEMENT_SUBMIT:
+                    stmt =
+                            (ZestStatement)
+                                    new ZestClientElementSubmit(
+                                            json.getString(WINDOW_HANDLE),
+                                            json.getString(TYPE),
+                                            json.getString(ELEMENT));
                     break;
                 case ZEST_CLIENT_ELEMENT_CLEAR:
                     stmt =
@@ -124,8 +131,10 @@ public class ZestStatementFromJson {
                                             json.getInt(Y_VALUE));
                     break;
                 default:
-                    throw new Exception("Element Type Not found");
+                    throw new Exception("Element type not found " + elementType);
             }
+        } else {
+            throw new Exception("Element not recognised " + json.toString());
         }
         return stmt;
     }
