@@ -675,7 +675,9 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     }
 
     void addZestStatement(String stmt) throws Exception {
+        LOGGER.debug("Got zest statement: {}", stmt);
         if (clientHandler == null) {
+            LOGGER.debug("Ignoring zest statement as no clientHandler");
             return;
         }
         clientHandler.addZestStatement(stmt);
