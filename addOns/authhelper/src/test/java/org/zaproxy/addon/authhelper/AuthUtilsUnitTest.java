@@ -137,6 +137,42 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldReturnSingleFieldAsUserField() throws Exception {
+        // Given
+        List<WebElement> inputElements = new ArrayList<>();
+        // Starting form with just username with custom input type.
+        inputElements.add(new TestWebElement("input", "customtype"));
+
+        // When
+        WebElement field = AuthUtils.getUserField(inputElements);
+
+        // Then
+        assertThat(field, is(notNullValue()));
+        assertThat(field.getDomAttribute("type"), is(equalTo("customtype")));
+        assertThat(field.isDisplayed(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldReturnDisplayedSingleFieldAsUserField() throws Exception {
+        // Given
+        List<WebElement> inputElements = new ArrayList<>();
+        // Some other form, not displayed.
+        TestWebElement inputField = new TestWebElement("input", "text");
+        inputField.setDisplayed(false);
+        inputElements.add(inputField);
+        // Starting form with just username with custom input type, displayed.
+        inputElements.add(new TestWebElement("input", "customtype"));
+
+        // When
+        WebElement field = AuthUtils.getUserField(inputElements);
+
+        // Then
+        assertThat(field, is(notNullValue()));
+        assertThat(field.getDomAttribute("type"), is(equalTo("customtype")));
+        assertThat(field.isDisplayed(), is(equalTo(true)));
+    }
+
+    @Test
     void shouldReturnUserEmailField() throws Exception {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
