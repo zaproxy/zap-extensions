@@ -36,5 +36,6 @@ public class SimpleJsonCookieDir extends TestAuthDirectory {
         this.addPage(new SimpleJsonCookieProtectedPage(server, "page1.html"));
         this.addPage(new SimpleJsonCookieProtectedPage(server, "page2.html"));
         this.addPage(new SimpleJsonCookieProtectedPage(server, "page3.html"));
+        this.addPage(new SimpleJsonCookieProtectedPage(server, "s3cr3t.html"));
     }
 }
