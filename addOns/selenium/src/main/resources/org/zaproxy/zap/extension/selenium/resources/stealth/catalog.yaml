@@ -1,0 +1,89 @@
+---
+
+chrome.app:
+  browsers:
+    - chrome
+    - chrome-headless
+  type: evaluateOnNewDocument
+  source: https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/evasions/chrome.app/index.js
+  file: chrome.app.js
+
+chrome.csi:
+  browsers:
+    - chrome
+    - chrome-headless
+  type: evaluateOnNewDocument
+  source: https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/evasions/chrome.csi/index.js
+  file: chrome.csi.js
+
+chrome.loadtimes:
+  browsers:
+    - chrome
+    - chrome-headless
+  type: evaluateOnNewDocument
+  source: https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/evasions/chrome.loadTimes/index.js
+  file: chrome.loadtimes.js
+
+chrome.runtime:
+  browsers:
+    - chrome
+    - chrome-headless
+  type: evaluateOnNewDocument
+  source: https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/evasions/chrome.runtime/index.js
+  file: chrome.runtime.js
+
+iframe.contentwindow:
+  type: evaluateOnNewDocument
+  source: https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/evasions/iframe.contentWindow/index.js
+  file: iframe.contentwindow.js
+
+media.codecs:
+  type: evaluateOnNewDocument
+  source: https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/evasions/media.codecs/index.js
+  file: media.codecs.js
+
+navigator.hardwareconcurrency:
+  type: evaluateOnNewDocument
+  source: https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/evasions/navigator.hardwareConcurrency/index.js
+  file: navigator.hardwareconcurrency.js
+
+navigator.permissions:
+  type: evaluateOnNewDocument
+  source: https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/evasions/navigator.permissions/index.js
+  file: navigator.permissions.js
+
+navigator.plugins:
+  browsers:
+    - chrome
+    - chrome-headless
+  type: evaluateOnNewDocument
+  source: https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/evasions/navigator.plugins/index.js
+  file: navigator.plugins.js
+
+navigator.webdriver:
+  type: evaluateOnNewDocument
+  source: https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/evasions/navigator.webdriver/index.js
+  file: navigator.webdriver.js
+
+navigator.vendor:
+  type: evaluateOnNewDocument
+  source: https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/evasions/navigator.vendor/index.js
+  file: navigator.vendor.js
+
+webgl.vendor:
+  type: evaluateOnNewDocument
+  source: https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/evasions/webgl.vendor/index.js
+  file: webgl.vendor.js
+
+window.cdc:
+  browsers:
+    - chrome
+    - chrome-headless
+  type: evaluateOnNewDocument
+  source: https://github.com/ultrafunkamsterdam/undetected-chromedriver/undetected_chromedriver/__init__.py
+  file: window.cdc.js
+
+window.outerdimensions:
+  type: evaluateOnNewDocument
+  source: https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/evasions/window.outerdimensions/index.js
+  file: window.outerdimensions.js
