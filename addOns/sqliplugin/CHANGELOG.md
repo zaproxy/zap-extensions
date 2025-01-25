@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.16.0.
 - Maintenance changes.
+- The scan rule now has the "TEST_TIMING" alert tag.
 
 ## [15] - 2021-10-20
 ### Fixed
