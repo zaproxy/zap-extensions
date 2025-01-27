@@ -144,21 +144,19 @@ public class AuthUtils {
     static WebElement getUserField(List<WebElement> inputElements) {
         List<WebElement> filteredList = displayed(inputElements).toList();
         if (filteredList.size() == 1) {
-            LOGGER.debug(
-                    "Choosing only displayed field: name={} id={}",
-                    filteredList.get(0).getDomAttribute("name"),
-                    filteredList.get(0).getDomAttribute("id"));
-            return filteredList.get(0);
+            WebElement element = filteredList.get(0);
+            logFieldElement("Choosing only displayed", element);
+            return element;
         }
 
         filteredList =
                 filteredList.stream()
                         .filter(
-                                elem ->
-                                        "text".equalsIgnoreCase(elem.getDomAttribute("type"))
-                                                || "email"
-                                                        .equalsIgnoreCase(
-                                                                elem.getDomAttribute("type")))
+                                elem -> {
+                                    String type = getAttribute(elem, "type");
+                                    return "text".equalsIgnoreCase(type)
+                                            || "email".equalsIgnoreCase(type);
+                                })
                         .toList();
 
         if (!filteredList.isEmpty()) {
@@ -168,25 +166,34 @@ public class AuthUtils {
                 for (WebElement we : filteredList) {
                     if (attributeContains(we, "id", USERNAME_FIELD_INDICATORS)
                             || attributeContains(we, "name", USERNAME_FIELD_INDICATORS)) {
-                        LOGGER.debug(
-                                "Choosing 'best' user field: name={} id={}",
-                                we.getDomAttribute("name"),
-                                we.getDomAttribute("id"));
+                        logFieldElement("Choosing 'best' user", we);
                         return we;
                     }
-                    LOGGER.debug(
-                            "Not yet choosing user field: name={} id={}",
-                            we.getDomAttribute("name"),
-                            we.getDomAttribute("id"));
+                    logFieldElement("Not yet choosing user", we);
                 }
             }
-            LOGGER.debug(
-                    "Choosing first user field: name={} id={}",
-                    filteredList.get(0).getDomAttribute("name"),
-                    filteredList.get(0).getDomAttribute("id"));
-            return filteredList.get(0);
+
+            WebElement element = filteredList.get(0);
+            logFieldElement("Choosing first user", element);
+            return element;
         }
         return null;
+    }
+
+    private static void logFieldElement(String prefix, WebElement element) {
+        LOGGER.debug(
+                "{} field: name={} id={}",
+                prefix,
+                getAttribute(element, "name"),
+                getAttribute(element, "id"));
+    }
+
+    private static String getAttribute(WebElement element, String name) {
+        String value = element.getDomAttribute(name);
+        if (value != null) {
+            return value;
+        }
+        return element.getDomProperty(name);
     }
 
     private static Stream<WebElement> displayed(List<WebElement> elements) {
@@ -194,7 +201,7 @@ public class AuthUtils {
     }
 
     static boolean attributeContains(WebElement we, String attribute, String[] strings) {
-        String att = we.getDomAttribute(attribute);
+        String att = getAttribute(we, attribute);
         if (att == null) {
             return false;
         }
@@ -209,7 +216,7 @@ public class AuthUtils {
 
     static WebElement getPasswordField(List<WebElement> inputElements) {
         return displayed(inputElements)
-                .filter(element -> "password".equalsIgnoreCase(element.getDomAttribute("type")))
+                .filter(element -> "password".equalsIgnoreCase(getAttribute(element, "type")))
                 .findFirst()
                 .orElse(null);
     }
