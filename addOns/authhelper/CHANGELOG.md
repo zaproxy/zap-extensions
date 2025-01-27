@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.18.0] - 2025-01-27
 ### Changed
 - Ignore non-displayed fields when selecting the user name and password.
 - Use single displayed field for user name, e.g. multi step login.
@@ -125,6 +125,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.18.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.18.0
 [0.17.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.17.0
 [0.16.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.16.0
 [0.15.1]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.15.1
