@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Ignore non-displayed fields when selecting the user name and password.
 - Use single displayed field for user name, e.g. multi step login.
 
+### Fixed
+- Input fields that do not explicitly declare their type were no longer being chosen by the Browser Based Authentication.
+
 ## [0.17.0] - 2025-01-09
 ### Changed
 - Update minimum ZAP version to 2.16.0.
