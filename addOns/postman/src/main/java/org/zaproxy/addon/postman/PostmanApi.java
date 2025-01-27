@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.postman;
 
+import java.io.IOException;
 import net.sf.json.JSONObject;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -54,9 +55,22 @@ public class PostmanApi extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
+        PostmanParser parser = new PostmanParser();
+
         switch (name) {
             case ACTION_IMPORT_FILE:
+                try {
+                    parser.importFromFile(params.getString(PARAM_FILE), "", false);
+                } catch (IllegalArgumentException | IOException e) {
+                    throw new ApiException(ApiException.Type.BAD_EXTERNAL_DATA);
+                }
+                break;
             case ACTION_IMPORT_URL:
+                try {
+                    parser.importFromUrl(params.getString(PARAM_URL), "", false);
+                } catch (IllegalArgumentException | IOException e) {
+                    throw new ApiException(ApiException.Type.BAD_EXTERNAL_DATA);
+                }
                 break;
 
             default:
