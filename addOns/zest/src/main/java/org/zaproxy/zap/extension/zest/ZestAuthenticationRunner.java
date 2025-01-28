@@ -94,6 +94,16 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
         return new String[] {USERNAME, PASSWORD};
     }
 
+    private HttpMessageHandler handler;
+
+    public void registerHandler(HttpMessageHandler handler) {
+        if (handler != null) {
+            LOGGER.debug(
+                    "ZestAuthRunner register handler: {}", handler.getClass().getCanonicalName());
+        }
+        this.handler = handler;
+    }
+
     @Override
     public HttpMessage authenticate(
             AuthenticationHelper helper,
@@ -110,7 +120,7 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
                         getExtensionNetwork()
                                 .createHttpProxy(
                                         helper.getHttpSender(),
-                                        new ZestMessageHandler(this, helper));
+                                        new ZestMessageHandler(this, helper, handler));
                 int port = proxyServer.start(PROXY_ADDRESS, Server.ANY_PORT);
                 this.setProxy(PROXY_ADDRESS, port);
             }
@@ -175,10 +185,13 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
 
         private final ZestBasicRunner runner;
         private final AuthenticationHelper helper;
+        private final HttpMessageHandler handler;
 
-        private ZestMessageHandler(ZestBasicRunner runner, AuthenticationHelper helper) {
+        private ZestMessageHandler(
+                ZestBasicRunner runner, AuthenticationHelper helper, HttpMessageHandler handler) {
             this.runner = runner;
             this.helper = helper;
+            this.handler = handler;
         }
 
         @Override
@@ -199,6 +212,14 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
                     ZestVariables.RESPONSE_URL, msg.getRequestHeader().getURI().toString());
             runner.setVariable(ZestVariables.RESPONSE_HEADER, msg.getResponseHeader().toString());
             runner.setVariable(ZestVariables.RESPONSE_BODY, msg.getResponseBody().toString());
+
+            if (handler != null) {
+                handler.handleMessage(ctx, msg);
+            }
         }
+    }
+
+    public ZestScriptWrapper getScript() {
+        return script;
     }
 }

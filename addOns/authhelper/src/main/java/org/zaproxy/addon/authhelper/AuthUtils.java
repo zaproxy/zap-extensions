@@ -606,7 +606,8 @@ public class AuthUtils {
         return findSessionTokenSource(token, -1);
     }
 
-    static SessionManagementRequestDetails findSessionTokenSource(String token, int firstId) {
+    public static SessionManagementRequestDetails findSessionTokenSource(
+            String token, int firstId) {
         ExtensionHistory extHist = AuthUtils.getExtension(ExtensionHistory.class);
         int lastId = extHist.getLastHistoryId();
         if (firstId == -1) {
