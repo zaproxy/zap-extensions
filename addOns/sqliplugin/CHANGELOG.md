@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.16.0.
 - Maintenance changes.
+- Changed ResponseMatcher to ComparableResponse for assessing similarity between responses. 
 
 ## [15] - 2021-10-20
 ### Fixed
