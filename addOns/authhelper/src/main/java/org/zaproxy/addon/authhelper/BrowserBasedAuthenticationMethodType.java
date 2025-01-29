@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.swing.ImageIcon;
@@ -62,6 +63,9 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
+import org.zaproxy.addon.authhelper.internal.AuthenticationStep.ValidationResult;
+import org.zaproxy.addon.authhelper.internal.StepsPanel;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderContextApache;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
@@ -109,6 +113,8 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             CONTEXT_CONFIG_AUTH_BROWSER + ".loginpagewait";
     private static final String CONTEXT_CONFIG_AUTH_BROWSER_BROWSERID =
             CONTEXT_CONFIG_AUTH_BROWSER + ".browserid";
+    private static final String CONTEXT_CONFIG_AUTH_BROWSER_STEP =
+            CONTEXT_CONFIG_AUTH_BROWSER + ".steps.step";
 
     /* API related constants and methods. */
     private static final String PARAM_BROWSER_ID = "browserId";
@@ -261,6 +267,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         private String loginPageUrl;
         private String browserId = DEFAULT_BROWSER_ID;
         private int loginPageWait = DEFAULT_PAGE_WAIT;
+        private List<AuthenticationStep> authenticationSteps = List.of();
 
         public BrowserBasedAuthenticationMethod() {}
 
@@ -268,6 +275,8 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             this.loginPageUrl = method.loginPageUrl;
             this.browserId = method.browserId;
             this.loginPageWait = method.loginPageWait;
+            authenticationSteps =
+                    method.getAuthenticationSteps().stream().map(AuthenticationStep::new).toList();
         }
 
         @Override
@@ -316,6 +325,15 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             this.loginPageWait = loginPageWait;
         }
 
+        public List<AuthenticationStep> getAuthenticationSteps() {
+            return authenticationSteps;
+        }
+
+        public void setAuthenticationSteps(List<AuthenticationStep> authenticationSteps) {
+            this.authenticationSteps =
+                    authenticationSteps == null ? List.of() : authenticationSteps;
+        }
+
         @Override
         public WebSession authenticate(
                 SessionManagementMethod sessionManagementMethod,
@@ -359,7 +377,8 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                             loginPageUrl,
                             userCreds.getUsername(),
                             userCreds.getPassword(),
-                            loginPageWait)) {
+                            loginPageWait,
+                            authenticationSteps)) {
                         // Wait until the authentication request is identified
                         for (int i = 0; i < AuthUtils.getWaitLoopCount(); i++) {
                             if (authMsg != null) {
@@ -445,6 +464,36 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         public void replaceUserDataInPollRequest(HttpMessage msg, User user) {
             user.processMessageToMatchAuthenticatedSession(msg);
         }
+
+        public void toMap(Map<String, Object> map) {
+            map.put(
+                    "steps",
+                    authenticationSteps.stream().sorted().map(AuthenticationStep::toMap).toList());
+        }
+
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        public void fromMap(Map<String, Object> map) {
+            Object object = map.get("steps");
+            if (object instanceof List steps) {
+                List<AuthenticationStep> loadedSteps = new ArrayList<>();
+                steps.forEach(
+                        e -> {
+                            if (!(e instanceof Map)) {
+                                return;
+                            }
+
+                            AuthenticationStep step =
+                                    AuthenticationStep.fromMap((Map<String, Object>) e);
+                            if (AuthenticationStep.validate(null, step, loadedSteps)
+                                    == ValidationResult.VALID) {
+                                step.setOrder(loadedSteps.size() + 1);
+                                loadedSteps.add(step);
+                            }
+                        });
+
+                authenticationSteps = loadedSteps;
+            }
+        }
     }
 
     @Override
@@ -512,6 +561,21 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                 // Ignore
             }
         }
+
+        try {
+            List<AuthenticationStep> loaded =
+                    session
+                            .getContextDataStrings(
+                                    contextId, RecordContext.TYPE_AUTH_METHOD_FIELD_4)
+                            .stream()
+                            .map(AuthenticationStep::decode)
+                            .filter(Objects::nonNull)
+                            .toList();
+            method.setAuthenticationSteps(loaded);
+        } catch (Exception e) {
+            LOGGER.error("An error occurred while loading the data:", e);
+        }
+
         return method;
     }
 
@@ -533,6 +597,14 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                 contextId,
                 RecordContext.TYPE_AUTH_METHOD_FIELD_3,
                 Integer.toString(method.loginPageWait));
+
+        try {
+            List<String> data =
+                    method.authenticationSteps.stream().map(AuthenticationStep::encode).toList();
+            session.setContextData(contextId, RecordContext.TYPE_AUTH_METHOD_FIELD_4, data);
+        } catch (Exception e) {
+            LOGGER.error("An error occurred while persisting the data:", e);
+        }
     }
 
     @Override
@@ -548,6 +620,10 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         config.setProperty(CONTEXT_CONFIG_AUTH_BROWSER_LOGINPAGEURL, method.loginPageUrl);
         config.setProperty(CONTEXT_CONFIG_AUTH_BROWSER_BROWSERID, method.browserId);
         config.setProperty(CONTEXT_CONFIG_AUTH_BROWSER_LOGINPAGEWAIT, method.loginPageWait);
+
+        method.authenticationSteps.stream()
+                .map(AuthenticationStep::encode)
+                .forEach(e -> config.addProperty(CONTEXT_CONFIG_AUTH_BROWSER_STEP, e));
     }
 
     @Override
@@ -573,6 +649,18 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         }
         try {
             method.setLoginPageWait(config.getInt(CONTEXT_CONFIG_AUTH_BROWSER_LOGINPAGEWAIT));
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
+        }
+
+        try {
+            List<AuthenticationStep> steps =
+                    config.getList(CONTEXT_CONFIG_AUTH_BROWSER_STEP).stream()
+                            .map(Object::toString)
+                            .map(AuthenticationStep::decode)
+                            .filter(Objects::nonNull)
+                            .toList();
+            method.setAuthenticationSteps(steps);
         } catch (Exception e) {
             throw new ConfigurationException(e);
         }
@@ -723,6 +811,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         private ZapTextField loginUrlField;
         private JComboBox<BrowserUI> browserCombo;
         private ZapNumberSpinner loginUrlWait;
+        private StepsPanel stepsPanel;
 
         public BrowserBasedAuthenticationMethodOptionsPanel(Context context) {
             this.setLayout(new GridBagLayout());
@@ -813,6 +902,9 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             loginWaitLabel.setLabelFor(loginUrlWait);
             this.add(loginWaitLabel, LayoutHelper.getGBC(0, 3, 1, 1.0d, 0.0d));
             this.add(loginUrlWait, LayoutHelper.getGBC(1, 3, 1, 1.0d, 0.0d));
+
+            stepsPanel = new StepsPanel(View.getSingleton().getSessionDialog(), false);
+            add(stepsPanel.getPanel(), LayoutHelper.getGBC(0, 4, 2, 1.0d, 1.0d));
         }
 
         @Override
@@ -832,6 +924,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     .setBrowserId(
                             ((BrowserUI) browserCombo.getSelectedItem()).getBrowser().getId());
             getMethod().setLoginPageWait(loginUrlWait.getValue());
+            authenticationMethod.setAuthenticationSteps(stepsPanel.getSteps());
         }
 
         @Override
@@ -842,6 +935,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             ((BrowsersComboBoxModel) this.browserCombo.getModel())
                     .setSelectedBrowser(this.authenticationMethod.getBrowserId());
             this.loginUrlWait.setValue(authenticationMethod.getLoginPageWait());
+            stepsPanel.setSteps(authenticationMethod.getAuthenticationSteps());
         }
 
         @Override
