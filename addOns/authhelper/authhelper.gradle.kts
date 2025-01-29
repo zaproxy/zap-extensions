@@ -74,5 +74,7 @@ dependencies {
     zapAddOn("client")
     zapAddOn("zest")
 
+    implementation("com.github.bastiaanjansen:otp-java:2.1.0")
+
     testImplementation(project(":testutils"))
 }

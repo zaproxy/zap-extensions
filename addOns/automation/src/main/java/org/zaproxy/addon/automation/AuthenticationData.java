@@ -20,6 +20,7 @@
 package org.zaproxy.addon.automation;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -174,6 +175,14 @@ public class AuthenticationData extends AutomationData {
             JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_URL, authMethod);
             JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_WAIT, authMethod);
             JobUtils.addPrivateField(parameters, PARAM_BROWSER_ID, authMethod);
+
+            try {
+                Method method = authMethod.getClass().getMethod("toMap", Map.class);
+                method.invoke(authMethod, parameters);
+            } catch (Exception e) {
+                LOGGER.error("An error occurred while saving steps:", e);
+            }
+
         } else if (authMethod != null
                 && authMethod
                         .getClass()
@@ -212,6 +221,8 @@ public class AuthenticationData extends AutomationData {
                                     Constant.messages.getString(
                                             BAD_FIELD_ERROR_MSG, PARAM_PORT, data));
                         }
+                        break;
+                    case "steps":
                         break;
                     default:
                         if (!(entry.getValue() instanceof String)) {
@@ -441,6 +452,13 @@ public class AuthenticationData extends AutomationData {
                                         AuthenticationData.PARAM_LOGIN_PAGE_WAIT,
                                         loginPageWait);
                             }
+                        }
+
+                        try {
+                            Method method = am.getClass().getMethod("fromMap", Map.class);
+                            method.invoke(am, getParameters());
+                        } catch (Exception e) {
+                            LOGGER.error("An error occurred while reading steps:", e);
                         }
 
                         reloadAuthenticationMethod(am, progress);

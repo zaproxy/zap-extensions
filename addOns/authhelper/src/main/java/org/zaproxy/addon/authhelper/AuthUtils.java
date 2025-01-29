@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -61,6 +62,7 @@ import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
+import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
@@ -237,7 +239,8 @@ public class AuthUtils {
             String loginPageUrl,
             String username,
             String password,
-            int waitInSecs) {
+            int waitInSecs,
+            List<AuthenticationStep> steps) {
         wd.get(loginPageUrl);
         sleep(50);
         if (demoMode) {
@@ -247,15 +250,47 @@ public class AuthUtils {
         WebElement userField = null;
         WebElement pwdField = null;
         boolean userAdded = false;
+        boolean pwdAdded = false;
+
+        Iterator<AuthenticationStep> it = steps.stream().sorted().iterator();
+        for (; it.hasNext(); ) {
+            AuthenticationStep step = it.next();
+            if (!step.isEnabled()) {
+                continue;
+            }
+
+            if (step.getType() == AuthenticationStep.Type.AUTO_STEPS) {
+                break;
+            }
+
+            WebElement element = step.execute(wd, username, password);
+
+            switch (step.getType()) {
+                case USERNAME:
+                    userField = element;
+                    userAdded = true;
+                    break;
+
+                case PASSWORD:
+                    pwdField = element;
+                    pwdAdded = true;
+                    break;
+
+                default:
+            }
+
+            sleep(demoMode ? 2000 : TIME_TO_SLEEP_IN_MSECS);
+        }
 
         for (int i = 0; i < getWaitLoopCount(); i++) {
+            if ((userField != null || userAdded) && pwdField != null) {
+                break;
+            }
+
             List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
             userField = getUserField(inputElements);
             pwdField = getPasswordField(inputElements);
 
-            if ((userField != null || userAdded) && pwdField != null) {
-                break;
-            }
             if (i > 1 && userField != null && pwdField == null && !userAdded) {
                 // Handle pages which require you to submit the username first
                 LOGGER.debug("Submitting just user field on {}", loginPageUrl);
@@ -280,10 +315,12 @@ public class AuthUtils {
                 }
             }
             try {
-                LOGGER.debug("Submitting password field on {}", wd.getCurrentUrl());
-                pwdField.sendKeys(password);
-                if (demoMode) {
-                    sleep(2000);
+                if (!pwdAdded) {
+                    LOGGER.debug("Submitting password field on {}", wd.getCurrentUrl());
+                    pwdField.sendKeys(password);
+                    if (demoMode) {
+                        sleep(2000);
+                    }
                 }
                 pwdField.sendKeys(Keys.RETURN);
             } catch (Exception e) {
@@ -299,6 +336,17 @@ public class AuthUtils {
                     sleep(2000);
                 }
                 pwdField.sendKeys(Keys.RETURN);
+            }
+
+            for (; it.hasNext(); ) {
+                AuthenticationStep step = it.next();
+                if (!step.isEnabled()) {
+                    continue;
+                }
+
+                step.execute(wd, username, password);
+
+                sleep(demoMode ? 2000 : TIME_TO_SLEEP_IN_MSECS);
             }
 
             incStatsCounter(loginPageUrl, AUTH_FOUND_FIELDS_STATS);
@@ -811,7 +859,8 @@ public class AuthUtils {
                     bbaMethod.getLoginPageUrl(),
                     userCreds.getUsername(),
                     userCreds.getPassword(),
-                    bbaMethod.getLoginPageWait());
+                    bbaMethod.getLoginPageWait(),
+                    bbaMethod.getAuthenticationSteps());
         }
     }
 
