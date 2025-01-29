@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -72,16 +71,16 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
 
     // Per:
     // https://developers.google.com/web/fundamentals/security/csp#policy_applies_to_a_wide_variety_of_resources as of 20200618
+    // 20250131 "base-uri" is not included. Per MDN if it isn't specified then the <base> value is
+    // used, if no base value then location.href "plugin-types" is not included, the directive has
+    // been deprecated. "report-uri" is not included as it has no literal impact. "sandbox" does not
+    // fallback, but excluding it does not necessarily make anything 'more' vulnerable, it's use
+    // simply allows more detailed control of what embedded content can do.
     private static final List<String> DIRECTIVES_WITHOUT_FALLBACK =
-            Arrays.asList(
-                    "base-uri",
-                    "form-action",
-                    "frame-ancestors",
-                    "plugin-types",
-                    "report-uri",
-                    "sandbox");
+            List.of("form-action", "frame-ancestors");
+
     private static final List<String> ALLOWED_DIRECTIVES =
-            Arrays.asList(
+            List.of(
                     // TODO: Remove once https://github.com/shapesecurity/salvation/issues/232 is
                     // addressed
                     "require-trusted-types-for", "trusted-types");
