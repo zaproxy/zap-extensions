@@ -9,6 +9,7 @@
     <mapID target="authhelper.auth-req-id" url="contents/auth-req-id.html" />
     <mapID target="authhelper.autodetect-auth" url="contents/autodetect-auth.html" />
     <mapID target="authhelper.browser-auth" url="contents/browser-auth.html" />
+    <mapID target="authhelper.client-script-auth" url="contents/client-script.html" />
     <mapID target="authhelper.session-mgmt-id" url="contents/session-mgmt-id.html" />
     <mapID target="authhelper.autodetect-session" url="contents/autodetect-session.html" />
     <mapID target="authhelper.session-header" url="contents/session-header.html" />
