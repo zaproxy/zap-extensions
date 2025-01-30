@@ -41,6 +41,7 @@ public class ExtensionAuthhelperClient extends ExtensionAdaptor {
     private static final Logger LOGGER = LogManager.getLogger(ExtensionAuthhelperClient.class);
 
     private BrowserBasedAuthHandler authHandler;
+    private ClientScriptBasedAuthHandler scriptAuthHandler;
 
     protected static final ClientScriptBasedAuthenticationMethodType CLIENT_SCRIPT_BASED_AUTH_TYPE =
             new ClientScriptBasedAuthenticationMethodType();
@@ -64,6 +65,9 @@ public class ExtensionAuthhelperClient extends ExtensionAdaptor {
         super.hook(extensionHook);
         authHandler = new BrowserBasedAuthHandler();
         getClientExtension().addAuthenticationHandler(authHandler);
+
+        scriptAuthHandler = new ClientScriptBasedAuthHandler();
+        getClientExtension().addAuthenticationHandler(scriptAuthHandler);
     }
 
     private static ExtensionClientIntegration getClientExtension() {
@@ -84,6 +88,7 @@ public class ExtensionAuthhelperClient extends ExtensionAdaptor {
     @Override
     public void unload() {
         getClientExtension().removeAuthenticationHandler(authHandler);
+        getClientExtension().removeAuthenticationHandler(scriptAuthHandler);
         ExtensionAuthentication extAuth = AuthUtils.getExtension(ExtensionAuthentication.class);
 
         if (extAuth != null) {
