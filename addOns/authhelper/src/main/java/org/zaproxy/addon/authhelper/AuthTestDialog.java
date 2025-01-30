@@ -246,6 +246,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
 
     private void authenticate() {
         StatsListener statsListener = null;
+        boolean demoMode = getBoolValue(DEMO_LABEL);
         try {
             this.diagnosticField.setText("");
             ext.enableAuthDiagCollector(true);
@@ -305,7 +306,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
             } catch (Exception e) {
                 // Ignore - not yet supported so will default to "poll"
             }
-            if (this.getBoolValue(DEMO_LABEL)) {
+            if (demoMode) {
                 AuthUtils.setDemoMode(true);
             }
 
@@ -419,7 +420,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
             if (statsListener != null) {
                 Stats.removeListener(statsListener);
             }
-            if (this.getBoolValue(DEMO_LABEL)) {
+            if (demoMode) {
                 AuthUtils.setDemoMode(false);
             }
             ext.enableAuthDiagCollector(false);
