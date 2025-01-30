@@ -43,6 +43,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.parosproxy.paros.CommandLine;
@@ -739,6 +741,45 @@ class ContextWrapperUnitTest {
         assertThat(
                 env.getContextWrappers().get(1).getData().getUsers().get(1).getCredential("key"),
                 is("654321"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"123456", "'123456'", "\"123456\""})
+    void shouldLoadPasswordsOfDifferentDataType(String password) {
+        // Given
+        String contextStr =
+                """
+                env:
+                  contexts:
+                    - name: context
+                      urls:
+                      - http://www.example.com
+                      users:
+                      - name: user
+                        credentials:
+                          username: user
+                          password: %s
+                """
+                        .formatted(password);
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getUsers()
+                        .get(0)
+                        .getCredential(UserData.PASSWORD_CREDENTIAL),
+                is("123456"));
     }
 
     @Test

@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Fixed
+- Correctly load numeric user passwords.
 - Address malformed HTML in the help.
 - Correct default value of `threadPerHost` property of the `activeScan-config` job's help.
 

@@ -198,6 +198,7 @@ public class ContextWrapper {
                                                 "automation.error.context.baduser", userObj));
                             } else {
                                 UserData ud = new UserData();
+                                forceCredentialsStringType(userObj);
                                 JobUtils.applyParamsToObject(
                                         (LinkedHashMap<?, ?>) userObj, ud, "users", null, progress);
                                 if (env.getUser(ud.getName()) != null) {
@@ -230,6 +231,21 @@ public class ContextWrapper {
         if (data.getUrls().isEmpty()) {
             progress.error(
                     Constant.messages.getString("automation.error.context.nourl", contextData));
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private void forceCredentialsStringType(Object userObj) {
+        Object credentials = ((LinkedHashMap) userObj).get("credentials");
+        if (credentials instanceof LinkedHashMap) {
+            ((LinkedHashMap) credentials)
+                    .replaceAll(
+                            (k, v) -> {
+                                if (v instanceof Number) {
+                                    return v.toString();
+                                }
+                                return v;
+                            });
         }
     }
 
