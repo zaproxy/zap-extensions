@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Address malformed HTML in the help.
 - Correct default value of `threadPerHost` property of the `activeScan-config` job's help.
+- Ensure the value zero is saved to the automation plan in the statistics test.
 
 ### Added
 - Added support for Client Script Authentication when the Ajax Spider is used in conjunction with the Auth Helper add-on.
