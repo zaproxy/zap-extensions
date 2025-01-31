@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -38,7 +37,6 @@ import javax.swing.JPanel;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXComboBox;
@@ -46,10 +44,9 @@ import org.jdesktop.swingx.decorator.FontHighlighter;
 import org.jdesktop.swingx.renderer.DefaultListRenderer;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.authhelper.internal.ClientSideHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.zap.authentication.AbstractAuthenticationMethodOptionsPanel;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
@@ -81,75 +78,13 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
     private ExtensionScript extensionScript;
 
-    private HttpMessageHandler handler;
-    private HttpMessage authMsg;
-    private HttpMessage fallbackMsg;
-    private int firstHrefId;
+    private ClientSideHandler handler;
 
     public ClientScriptBasedAuthenticationMethodType() {}
 
     private HttpMessageHandler getHandler(Context context) {
         if (handler == null) {
-            handler =
-                    (ctx, msg) -> {
-                        if (ctx.isFromClient()) {
-                            return;
-                        }
-
-                        AuthenticationHelper.addAuthMessageToHistory(msg);
-
-                        if (HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod())
-                                && context.isIncluded(msg.getRequestHeader().getURI().toString())) {
-                            // Record the last in scope POST as a fallback
-                            fallbackMsg = msg;
-                        }
-
-                        SessionManagementRequestDetails smReqDetails = null;
-                        Map<String, SessionToken> sessionTokens =
-                                AuthUtils.getResponseSessionTokens(msg);
-                        if (!sessionTokens.isEmpty()) {
-                            authMsg = msg;
-                            smReqDetails =
-                                    new SessionManagementRequestDetails(
-                                            authMsg,
-                                            new ArrayList<>(sessionTokens.values()),
-                                            Alert.CONFIDENCE_HIGH);
-                        } else {
-                            Set<SessionToken> reqSessionTokens =
-                                    AuthUtils.getRequestSessionTokens(msg);
-                            if (!reqSessionTokens.isEmpty()) {
-                                // The request has at least one auth token we missed - try
-                                // to find one of them
-                                for (SessionToken st : reqSessionTokens) {
-                                    smReqDetails =
-                                            AuthUtils.findSessionTokenSource(
-                                                    st.getValue(), firstHrefId);
-                                    if (smReqDetails != null) {
-                                        authMsg = smReqDetails.getMsg();
-                                        LOGGER.debug(
-                                                "Session token found in href {}",
-                                                authMsg.getHistoryRef().getHistoryId());
-                                        break;
-                                    }
-                                }
-                            }
-
-                            if (authMsg != null && View.isInitialised()) {
-                                String hrefId = "?";
-                                if (msg.getHistoryRef() != null) {
-                                    hrefId = "" + msg.getHistoryRef().getHistoryId();
-                                }
-                                AuthUtils.logUserMessage(
-                                        Level.INFO,
-                                        Constant.messages.getString(
-                                                "authhelper.auth.method.browser.output.sessionid",
-                                                hrefId));
-                            }
-                        }
-                        if (firstHrefId == 0 && msg.getHistoryRef() != null) {
-                            firstHrefId = msg.getHistoryRef().getHistoryId();
-                        }
-                    };
+            handler = new ClientSideHandler(context);
         }
         return handler;
     }
@@ -388,12 +323,13 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
             // Wait until the authentication request is identified
             for (int i = 0; i < AuthUtils.getWaitLoopCount(); i++) {
-                if (authMsg != null) {
+                if (handler.getAuthMsg() != null) {
                     break;
                 }
                 AuthUtils.sleep(AuthUtils.TIME_TO_SLEEP_IN_MSECS);
             }
 
+            HttpMessage authMsg = handler.getAuthMsg();
             if (authMsg != null) {
                 // Update the session as it may have changed
                 WebSession session = sessionManagementMethod.extractWebSession(authMsg);
@@ -411,7 +347,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             }
 
             // We don't expect this to work, but it will prevent some NPEs
-            return sessionManagementMethod.extractWebSession(fallbackMsg);
+            return sessionManagementMethod.extractWebSession(handler.getFallbackMsg());
         }
 
         @Override
