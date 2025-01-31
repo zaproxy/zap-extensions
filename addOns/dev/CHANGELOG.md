@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.9.0] - 2025-01-31
 ### Added
 - Link which is only shown if a localStorage item is set, for testing in browser spider authentication.
 
@@ -70,6 +70,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.9.0]: https://github.com/zaproxy/zap-extensions/releases/dev-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/dev-v0.8.0
 [0.7.0]: https://github.com/zaproxy/zap-extensions/releases/dev-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/dev-v0.6.0
