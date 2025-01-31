@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -52,7 +51,6 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.RecordContext;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -60,16 +58,14 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep.ValidationResult;
+import org.zaproxy.addon.authhelper.internal.ClientSideHandler;
 import org.zaproxy.addon.authhelper.internal.StepsPanel;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderContextApache;
-import org.zaproxy.addon.network.server.HttpMessageHandler;
-import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.authentication.AbstractAuthenticationMethodOptionsPanel;
 import org.zaproxy.zap.authentication.AbstractCredentialsOptionsPanel;
@@ -131,10 +127,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
     private int proxyPort;
     private Server proxy;
 
-    private HttpMessageHandler handler;
-    private HttpMessage authMsg;
-    private HttpMessage fallbackMsg;
-    private int firstHrefId;
+    private ClientSideHandler handler;
 
     private static List<Server> proxies = new ArrayList<>();
 
@@ -149,73 +142,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
     private Server getProxy(Context context) {
         if (proxy == null) {
             ExtensionNetwork extNet = AuthUtils.getExtension(ExtensionNetwork.class);
-
-            handler =
-                    new HttpMessageHandler() {
-
-                        @Override
-                        public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
-                            if (ctx.isFromClient()) {
-                                return;
-                            }
-
-                            AuthenticationHelper.addAuthMessageToHistory(msg);
-
-                            if (HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod())
-                                    && context.isIncluded(
-                                            msg.getRequestHeader().getURI().toString())) {
-                                // Record the last in scope POST as a fallback
-                                fallbackMsg = msg;
-                            }
-
-                            SessionManagementRequestDetails smReqDetails = null;
-                            Map<String, SessionToken> sessionTokens =
-                                    AuthUtils.getResponseSessionTokens(msg);
-                            if (!sessionTokens.isEmpty()) {
-                                authMsg = msg;
-                                smReqDetails =
-                                        new SessionManagementRequestDetails(
-                                                authMsg,
-                                                new ArrayList<>(sessionTokens.values()),
-                                                Alert.CONFIDENCE_HIGH);
-                            } else {
-                                Set<SessionToken> reqSessionTokens =
-                                        AuthUtils.getRequestSessionTokens(msg);
-                                if (!reqSessionTokens.isEmpty()) {
-                                    // The request has at least one auth token we missed - try
-                                    // to find one of them
-                                    for (SessionToken st : reqSessionTokens) {
-                                        smReqDetails =
-                                                AuthUtils.findSessionTokenSource(
-                                                        st.getValue(), firstHrefId);
-                                        if (smReqDetails != null) {
-                                            authMsg = smReqDetails.getMsg();
-                                            LOGGER.debug(
-                                                    "Session token found in href {}",
-                                                    authMsg.getHistoryRef().getHistoryId());
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                if (authMsg != null && View.isInitialised()) {
-                                    String hrefId = "?";
-                                    if (msg.getHistoryRef() != null) {
-                                        hrefId = "" + msg.getHistoryRef().getHistoryId();
-                                    }
-                                    AuthUtils.logUserMessage(
-                                            Level.INFO,
-                                            Constant.messages.getString(
-                                                    "authhelper.auth.method.browser.output.sessionid",
-                                                    hrefId));
-                                }
-                            }
-                            if (firstHrefId == 0 && msg.getHistoryRef() != null) {
-                                firstHrefId = msg.getHistoryRef().getHistoryId();
-                            }
-                        }
-                    };
-
+            handler = new ClientSideHandler(context);
             proxy = extNet.createHttpProxy(getHttpSender(), handler);
         }
         return proxy;
@@ -340,7 +267,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                 AuthenticationCredentials credentials,
                 User user)
                 throws UnsupportedAuthenticationCredentialsException {
-            authMsg = null;
+            handler.resetAuthMsg();
             if (this.loginPageWait > 0) {
                 AuthUtils.setTimeToWaitMs(TimeUnit.SECONDS.toMillis(loginPageWait));
             }
@@ -381,7 +308,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                             authenticationSteps)) {
                         // Wait until the authentication request is identified
                         for (int i = 0; i < AuthUtils.getWaitLoopCount(); i++) {
-                            if (authMsg != null) {
+                            if (handler.getAuthMsg() != null) {
                                 break;
                             }
                             AuthUtils.sleep(AuthUtils.TIME_TO_SLEEP_IN_MSECS);
@@ -393,6 +320,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     }
                 }
 
+                HttpMessage authMsg = handler.getAuthMsg();
                 if (authMsg != null) {
                     // Update the session as it may have changed
                     for (int i = 0; i < AuthUtils.getWaitLoopCount(); i++) {
@@ -449,7 +377,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                             + "\n");
 
             // We don't expect this to work, but it will prevent some NPEs
-            return sessionManagementMethod.extractWebSession(fallbackMsg);
+            return sessionManagementMethod.extractWebSession(handler.getFallbackMsg());
         }
 
         @Override
