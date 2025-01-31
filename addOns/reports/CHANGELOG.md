@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- Caps fixed for Section Selections of the Report Generation Template found at Report (menu bar) > Generate Report > Template (tab) > Sections (Issue 2000).
 
 ## [0.35.0] - 2025-01-10
 ### Added
