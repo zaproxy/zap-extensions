@@ -105,12 +105,15 @@ class Base64DisclosureUnitTest extends PassiveScannerTest<Base64Disclosure> {
         assertThat(vsAlert.getName(), is(equalTo("ASP.NET ViewState Disclosure")));
         assertThat(vsAlert.getRisk(), is(equalTo(Alert.RISK_INFO)));
         assertThat(vsAlert.getAlertRef(), is(equalTo("10094-1")));
+        assertThat(vsAlert.getCweId(), is(equalTo(319)));
         assertThat(maclessAlert.getName(), is(equalTo("ASP.NET ViewState Integrity")));
         assertThat(maclessAlert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(maclessAlert.getAlertRef(), is(equalTo("10094-2")));
+        assertThat(maclessAlert.getCweId(), is(equalTo(642)));
         assertThat(base64Alert.getName(), is(equalTo("Base64 Disclosure")));
         assertThat(base64Alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
         assertThat(base64Alert.getAlertRef(), is(equalTo("10094-3")));
+        assertThat(base64Alert.getCweId(), is(equalTo(319)));
     }
 
     private static HttpMessage createMessage() throws Exception {

@@ -325,7 +325,7 @@ public class Base64Disclosure extends PluginPassiveScanner implements CommonPass
         return newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setCweId(200) // Information Exposure,
+                .setCweId(319) // CWE-319: Cleartext Transmission of Sensitive Information
                 .setWascId(13) // Information Leakage
                 .setAlertRef(getPluginId() + alertRef);
     }
