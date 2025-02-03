@@ -361,6 +361,20 @@
     ],
     "website": "https://www.ctt.pt"
   },
+  "CUE": {
+    "cats": [
+      1
+    ],
+    "description": "CUE is a unified media enterprise platform tailored for news media organizations seeking efficiency and revenue growth in the media market.",
+    "icon": "CUE.svg",
+    "pricing": [
+      "poa"
+    ],
+    "scripts": [
+      "\\.cue\\.cloud"
+    ],
+    "website": "https://www.stibodx.com/"
+  },
   "Caast.tv": {
     "cats": [
       5
@@ -1259,6 +1273,29 @@
     ],
     "website": "https://www.cartkit.com"
   },
+  "CartPops": {
+    "cats": [
+      6
+    ],
+    "description": "CartPops is a conversion-optimized AJAX fly-out cart solution for WooCommerce that replaces the traditional cart page and is compatible with any theme.",
+    "icon": "CartPops.svg",
+    "implies": [
+      "WooCommerce"
+    ],
+    "js": {
+      "CartPops.drawer": "",
+      "CartPopsConfig": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "website": "https://cartpops.com"
+  },
   "CartStack": {
     "cats": [
       98
@@ -1508,6 +1545,24 @@
       "\\bCeleritas\\b"
     ],
     "website": "https://celeritastransporte.com"
+  },
+  "Cellxpert": {
+    "cats": [
+      71
+    ],
+    "description": "Cellxpert is a SaaS platform for affiliate and partner program management, providing tools for tracking, reporting, and optimizing performance-based marketing campaigns.",
+    "dom": [
+      "link[href*='.cellxpert.com/']"
+    ],
+    "icon": "Cellxpert.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.cellxpert\\.com/"
+    ],
+    "website": "https://www.cellxpert.com"
   },
   "Celum": {
     "cats": [
@@ -1951,6 +2006,22 @@
     ],
     "website": "https://www.chatbot.com"
   },
+  "ChatFood": {
+    "cats": [
+      52
+    ],
+    "description": "ChatFood is a platform providing mobile ordering tailored for hospitality brands.",
+    "icon": "ChatFood.svg",
+    "js": {
+      "ChatFoodWidget": "",
+      "ChatFoodWidgetClient": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.chatfood.io"
+  },
   "ChatGen": {
     "cats": [
       52
@@ -2062,6 +2133,25 @@
     ],
     "website": "https://chatango.com"
   },
+  "Chatbaby": {
+    "cats": [
+      52
+    ],
+    "description": "Chatbaby is a service for creating custom ChatGPT chatbots tailored to website content.",
+    "icon": "Chatbaby.svg",
+    "js": {
+      "$$chatbaby": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.chatbaby\\.co/"
+    ],
+    "website": "https://chatbaby.co"
+  },
   "Chatbase": {
     "cats": [
       52
@@ -2114,6 +2204,48 @@
       "cdn\\.chatify\\.com/"
     ],
     "website": "https://www.chatify.com"
+  },
+  "Chative": {
+    "cats": [
+      52
+    ],
+    "description": "Chative is a platform that provides live chat and chatbot solutions for real-time customer interactions.",
+    "icon": "Chative.svg",
+    "js": {
+      "Chative.app_id": "",
+      "ChativeApi": "",
+      "ChativeEvents": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.chative\\.io/"
+    ],
+    "website": "https://chative.io"
+  },
+  "Chatlio": {
+    "cats": [
+      52
+    ],
+    "description": "Chatlio is a live chat solution that integrates with Slack, enabling real-time communication and customer support directly within the Slack platform.",
+    "icon": "Chatlio.svg",
+    "js": {
+      "ChatlioReact": "",
+      "ChatlioReactDOM": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "w\\.chatlio\\.com/"
+    ],
+    "website": "https://chatlio.com"
   },
   "Chatlyn": {
     "cats": [
@@ -2195,6 +2327,26 @@
       "getchatt\\.com"
     ],
     "website": "https://getchatt.com"
+  },
+  "Chatway": {
+    "cats": [
+      52
+    ],
+    "description": "Chatway is a live chat tool for websites, designed to facilitate customer engagement through real-time conversations.",
+    "icon": "Chatway.svg",
+    "js": {
+      "$chatway": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.chatway\\.app/"
+    ],
+    "website": "https://chatway.app"
   },
   "Chatwoot": {
     "cats": [
@@ -2911,6 +3063,19 @@
     ],
     "website": "https://www.classy.org/"
   },
+  "Clear": {
+    "cats": [
+      16
+    ],
+    "description": "Clear is a platform that offers secure identity verification.",
+    "icon": "Clear.svg",
+    "js": {
+      "ClearMe.Environments": "",
+      "clearMeClientID": ""
+    },
+    "saas": true,
+    "website": "https://www.clearme.com"
+  },
   "ClearSale": {
     "cats": [
       10
@@ -3308,6 +3473,22 @@
     "saas": true,
     "website": "https://www.clicksign.com"
   },
+  "Clickskeks": {
+    "cats": [
+      67
+    ],
+    "description": "Clickskeks is an all-in-one cookie consent management platform for businesses.",
+    "icon": "Clickskeks.svg",
+    "js": {
+      "Clickskeks": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.clickskeks.at/"
+  },
   "Clicktripz": {
     "cats": [
       36
@@ -3358,6 +3539,24 @@
       "static\\.getclicky\\.com"
     ],
     "website": "https://getclicky.com"
+  },
+  "Client Chat Live": {
+    "cats": [
+      52
+    ],
+    "description": "Client Chat Live is a tool that converts website visitors into clients through live chat functionality.",
+    "dom": [
+      "link[href*='platform.clientchatlive.com/']"
+    ],
+    "icon": "ClientChatLive.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.clientchatlive\\.com/"
+    ],
+    "website": "https://clientchatlive.com"
   },
   "ClientJS": {
     "cats": [
@@ -3616,8 +3815,12 @@
     "cpe": "cpe:2.3:a:cloudflare:cloudflare:*:*:*:*:*:*:*:*",
     "description": "Cloudflare is a web-infrastructure and website-security company, providing content-delivery-network services, DDoS mitigation, Internet security, and distributed domain-name-server services.",
     "dns": {
-      "NS": "\\.cloudflare\\.com",
-      "SOA": "\\.cloudflare\\.com"
+      "NS": [
+        "\\.cloudflare\\.com"
+      ],
+      "SOA": [
+        "\\.cloudflare\\.com"
+      ]
     },
     "dom": [
       "img[src*='//cdn.cloudflare']"
@@ -3914,6 +4117,24 @@
     ],
     "website": "https://clutch.co/content/add-review-widget-your-website"
   },
+  "CmonSite": {
+    "cats": [
+      6
+    ],
+    "description": "CmonSite is a French-based platform for building websites and ecommerce stores.",
+    "icon": "CmonSite.svg",
+    "js": {
+      "BASEURL": "www\\.cmonsite\\.fr",
+      "CmonSite.CookieManagement": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.cmonsite.fr"
+  },
   "CoConstruct": {
     "cats": [
       19
@@ -4030,6 +4251,9 @@
       "exp_tracker": ""
     },
     "cpe": "cpe:2.3:a:codeigniter:codeigniter:*:*:*:*:*:*:*:*",
+    "dom": [
+      "input[name*='ci_csrf_token']"
+    ],
     "html": [
       "<input[^>]+name=\"ci_csrf_token\""
     ],
@@ -5030,7 +5254,9 @@
     ],
     "description": "Contabo is a German hosting provider, previously known by the name Giga-International.",
     "dns": {
-      "SOA": "\\.contabo\\.net"
+      "SOA": [
+        "\\.contabo\\.net"
+      ]
     },
     "icon": "Contabo.svg",
     "pricing": [
@@ -5955,6 +6181,9 @@
     ],
     "cpe": "cpe:2.3:a:coppermine-gallery:coppermine_photo_gallery:*:*:*:*:*:*:*:*",
     "description": "Coppermine is an open-source image gallery application.",
+    "dom": [
+      "link[href*='/coppermine.css'][rel='stylesheet']"
+    ],
     "html": [
       "<!--Coppermine Photo Gallery ([\\d.]+)\\;version:\\1"
     ],

@@ -580,8 +580,12 @@
     ],
     "description": "VentraIP is the largest privately owned web host and domain name registrar in Australia.",
     "dns": {
-      "NS": "\\.(?:nameserver|hostingplatform)\\.net\\.au",
-      "SOA": "\\.(?:nameserver|hostingplatform)\\.net\\.au"
+      "NS": [
+        "\\.(?:nameserver|hostingplatform)\\.net\\.au"
+      ],
+      "SOA": [
+        "\\.(?:nameserver|hostingplatform)\\.net\\.au"
+      ]
     },
     "icon": "VentraIP.svg",
     "pricing": [
@@ -706,7 +710,9 @@
     ],
     "description": "Vercel is a cloud platform for static frontends and serverless functions.",
     "dns": {
-      "SOA": "\\.vercel-dns\\.com"
+      "SOA": [
+        "\\.vercel-dns\\.com"
+      ]
     },
     "headers": {
       "server": "^now|Vercel$",
@@ -1332,6 +1338,23 @@
       "api\\.vhx\\.tv"
     ]
   },
+  "Vimos": {
+    "cats": [
+      32
+    ],
+    "description": "Vimos is a marketing SaaS specializing in marketing automation.",
+    "icon": "Vimos.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.vimos\\.io/"
+    ],
+    "website": "https://vimos.io"
+  },
   "Vincere": {
     "cats": [
       101
@@ -1644,6 +1667,17 @@
     "saas": true,
     "website": "https://visitor.chat"
   },
+  "VisitorVille": {
+    "cats": [
+      10
+    ],
+    "description": "VisitorVille is a tool that visualizes website visitors as a SimCity-like map, providing an interactive way to analyze traffic and user behavior.",
+    "saas": true,
+    "scriptSrc": [
+      "www\\.visitorville\\.com/"
+    ],
+    "website": "http://visitorville.com"
+  },
   "Viskan": {
     "cats": [
       6
@@ -1788,7 +1822,10 @@
     ],
     "description": "Vite is a rapid development tool for modern web projects.",
     "dom": [
-      "script#vite-legacy-polyfill, script#vite-legacy-entry, link[href*='vite.svg'][rel='icon']"
+      "script#vite-legacy-polyfill",
+      "script#vite-legacy-entry",
+      "link[href*='vite.svg'][rel='icon']",
+      "script[id^='vite-plugin-']"
     ],
     "icon": "vite.svg",
     "js": {
@@ -2274,7 +2311,9 @@
     ],
     "description": "Vultr is a cloud computing service provider.",
     "dns": {
-      "NS": "\\.vultr\\.com"
+      "NS": [
+        "\\.vultr\\.com"
+      ]
     },
     "icon": "Vultr.svg",
     "website": "https://www.vultr.com"
