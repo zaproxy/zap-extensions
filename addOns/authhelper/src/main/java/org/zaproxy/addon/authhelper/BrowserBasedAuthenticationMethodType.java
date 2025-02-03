@@ -267,7 +267,9 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                 AuthenticationCredentials credentials,
                 User user)
                 throws UnsupportedAuthenticationCredentialsException {
-            handler.resetAuthMsg();
+            if (handler != null) {
+                handler.resetAuthMsg();
+            }
             if (this.loginPageWait > 0) {
                 AuthUtils.setTimeToWaitMs(TimeUnit.SECONDS.toMillis(loginPageWait));
             }
