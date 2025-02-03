@@ -263,6 +263,10 @@
       7
     ],
     "description": "Gallery is an open-source web based photo album organiser.",
+    "dom": [
+      "div[id*='gsNavBar']",
+      "div[class*='gcBorder1']"
+    ],
     "html": [
       "<div id=\"gsNavBar\" class=\"gcBorder1\">",
       "<a href=\"http://gallery\\.sourceforge\\.net\"><img[^>]+Powered by Gallery\\s*(?:(?:v|Version)\\s*([0-9.]+))?\\;version:\\1"
@@ -466,7 +470,7 @@
     "html": [
       "<a [^>]*onclick=\"gemius_hit"
     ],
-    "icon": "Gemius.png",
+    "icon": "Gemius.svg",
     "js": {
       "gemius_hit": "",
       "gemius_init": "",
@@ -483,6 +487,9 @@
   "GeneXus": {
     "cats": [
       27
+    ],
+    "dom": [
+      "link[id^='gxtheme_css_reference']"
     ],
     "html": [
       "<link[^>]+?id=\"gxtheme_css_reference\""
@@ -758,6 +765,18 @@
       "GSFN": ""
     },
     "website": "https://getsatisfaction.com/corp/"
+  },
+  "GetAuto": {
+    "cats": [
+      6
+    ],
+    "description": "GetAuto is a platform offering an inventory of used cars available for purchase.",
+    "dom": [
+      "link[href*='cdn.getauto.com/']"
+    ],
+    "icon": "GetAuto.svg",
+    "saas": true,
+    "website": "https://getauto.com"
   },
   "GetButton": {
     "cats": [
@@ -1852,8 +1871,12 @@
     ],
     "description": "GoDaddy is used as a web host and domain registrar.",
     "dns": {
-      "NS": "\\.domaincontrol\\.com",
-      "SOA": "\\.domaincontrol\\.com"
+      "NS": [
+        "\\.domaincontrol\\.com"
+      ],
+      "SOA": [
+        "\\.domaincontrol\\.com"
+      ]
     },
     "icon": "GoDaddy.svg",
     "pricing": [
@@ -3607,7 +3630,9 @@
     },
     "description": "Gumroad is a self-publishing digital marketplace platform to sell digital services such as books, memberships, courses and other digital services.",
     "dns": {
-      "CNAME": "\\.gumroad\\.com"
+      "CNAME": [
+        "\\.gumroad\\.com"
+      ]
     },
     "dom": [
       "iframe[src^='https://gumroad.com/l/']"

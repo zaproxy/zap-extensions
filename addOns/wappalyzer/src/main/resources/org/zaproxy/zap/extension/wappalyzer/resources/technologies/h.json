@@ -431,6 +431,22 @@
     ],
     "website": "https://www.happyfox.com/live-chat"
   },
+  "HappySync": {
+    "cats": [
+      32
+    ],
+    "description": "HappySync is a Korean-developed tool designed for marketing automation and conversion optimization.",
+    "icon": "HappySync.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.happysync\\.io/"
+    ],
+    "website": "https://www.happysync.io"
+  },
   "Haptik": {
     "cats": [
       52
@@ -723,8 +739,12 @@
     ],
     "description": "Helhost is a web hosting provider and internet domain registrar from Democratic Republic of Congo.",
     "dns": {
-      "NS": "\\.helhost\\.com",
-      "SOA": "\\.helhost\\.com"
+      "NS": [
+        "\\.helhost\\.com"
+      ],
+      "SOA": [
+        "\\.helhost\\.com"
+      ]
     },
     "headers": {
       "x-powered-by": "Helhost"
@@ -1093,8 +1113,12 @@
     ],
     "description": "Hetzner provides dedicated hosting, shared web hosting, virtual private servers, managed servers, domain names, SSL certificates, storage boxes, and cloud.",
     "dns": {
-      "NS": "\\.ns\\.hetzner\\.com",
-      "SOA": "\\.hetzner\\.com"
+      "NS": [
+        "\\.ns\\.hetzner\\.com"
+      ],
+      "SOA": [
+        "\\.hetzner\\.com"
+      ]
     },
     "headers": {
       "Server": "HeRay",
@@ -1778,7 +1802,9 @@
     ],
     "description": "HostEurope is a European website hosting, email and domain name registrar company headquartered Hayes, West London.",
     "dns": {
-      "SOA": "\\.hosteurope\\.com"
+      "SOA": [
+        "\\.hosteurope\\.com"
+      ]
     },
     "icon": "HostEurope.svg",
     "pricing": [
@@ -1793,7 +1819,9 @@
     ],
     "description": "Hostens is a web hosting company specialising in hosting services, virtual private server hosting, and the domain name or transition.",
     "dns": {
-      "SOA": "\\.hostens\\.com"
+      "SOA": [
+        "\\.hostens\\.com"
+      ]
     },
     "icon": "Hostens.svg",
     "pricing": [
@@ -1808,7 +1836,9 @@
     ],
     "description": "HostGator is a Houston-based provider of shared, reseller, virtual private server, and dedicated web hosting with an additional presence in Austin, Texas.",
     "dns": {
-      "SOA": "\\.hostgator\\.com"
+      "SOA": [
+        "\\.hostgator\\.com"
+      ]
     },
     "icon": "Hostgator.svg",
     "pricing": [
@@ -1823,7 +1853,9 @@
     ],
     "description": "Hosting Ukraine is a web hosting provider and internet domain registrar.",
     "dns": {
-      "SOA": "ns\\d+\\.ukraine\\.com\\.ua"
+      "SOA": [
+        "ns\\d+\\.ukraine\\.com\\.ua"
+      ]
     },
     "icon": "Hosting Ukraine.png",
     "pricing": [
@@ -1839,7 +1871,9 @@
     "cpe": "cpe:2.3:a:hostinger:hostinger:*:*:*:*:*:*:*:*",
     "description": "Hostinger is an employee-owned Web hosting provider and internet domain registrar.",
     "dns": {
-      "SOA": "\\.(?:dns-parking|hostinger)\\.com"
+      "SOA": [
+        "\\.(?:dns-parking|hostinger)\\.com"
+      ]
     },
     "headers": {
       "platform": "hostinger"
@@ -1894,7 +1928,9 @@
     ],
     "description": "Hostiq is a web hosting provider and internet domain registrar.",
     "dns": {
-      "SOA": "\\.hostiq\\.ua"
+      "SOA": [
+        "\\.hostiq\\.ua"
+      ]
     },
     "icon": "Hostiq.png",
     "pricing": [
@@ -1926,7 +1962,9 @@
     ],
     "description": "Hostpoint is a Switzerland-based web hosting company.",
     "dns": {
-      "SOA": "\\.hostpoint\\.ch"
+      "SOA": [
+        "\\.hostpoint\\.ch"
+      ]
     },
     "icon": "Hostpoint.svg",
     "pricing": [

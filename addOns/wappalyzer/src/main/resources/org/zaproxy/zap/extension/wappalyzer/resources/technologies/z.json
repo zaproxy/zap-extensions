@@ -274,6 +274,22 @@
     ],
     "website": "https://zenplanner.com"
   },
+  "Zenbooker": {
+    "cats": [
+      72
+    ],
+    "description": "Zenbooker is a system that enables users to book appointments or reservations online.",
+    "icon": "Zenbooker.svg",
+    "js": {
+      "Zenbooker.BadgeWidget": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://zenbooker.com"
+  },
   "Zenchef": {
     "cats": [
       93
@@ -867,6 +883,22 @@
       "\\.pagesense\\.(?:cn|io)?"
     ],
     "website": "https://www.zoho.com/pagesense/"
+  },
+  "Zoho Sites": {
+    "cats": [
+      51
+    ],
+    "description": "Zoho Sites is an all-in-one platform designed to help businesses create websites.",
+    "icon": "Zoho.svg",
+    "meta": {
+      "generator": "^Zoho Sites ([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.zoho.com/sites/"
   },
   "Zoko": {
     "cats": [

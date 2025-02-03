@@ -39,6 +39,18 @@
     ],
     "website": "https://q4mobile.github.io/q4widgets-jquery-ui/doc_html/q4.cookieMonster.html"
   },
+  "QForm": {
+    "cats": [
+      110
+    ],
+    "description": "QForm is a tool for designing and managing customizable forms for data collection and processing.",
+    "icon": "QForm.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.qform(?:24\\.com|\\.io)/"
+    ],
+    "website": "https://qform.io"
+  },
   "QUIC.cloud": {
     "cats": [
       92,
@@ -47,7 +59,9 @@
     ],
     "description": "QUIC.cloud is a content delivery network (CDN) and optimisation service that uses the QUIC protocol, a next-generation internet transport protocol developed by Google, to deliver content faster and more securely over the internet.",
     "dns": {
-      "SOA": "\\.quicns\\.(?:net|com)"
+      "SOA": [
+        "\\.quicns\\.(?:net|com)"
+      ]
     },
     "icon": "QUIC.cloud.svg",
     "pricing": [
@@ -497,6 +511,25 @@
     ],
     "website": "https://queue-it.com"
   },
+  "Quform": {
+    "cats": [
+      110
+    ],
+    "description": "Quform is a WordPress plugin designed for building and managing forms.",
+    "icon": "Quform.svg",
+    "js": {
+      "Quform.captchaRefreshFormQueue": "",
+      "QuformRecaptchaLoaded": ""
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "website": "https://www.quform.com"
+  },
   "Quick.CMS": {
     "cats": [
       1
@@ -741,6 +774,24 @@
     ],
     "saas": true,
     "website": "https://www.qukasoft.com"
+  },
+  "Qumra": {
+    "cats": [
+      6
+    ],
+    "description": "Qumra is a platform that enables users to create ecommerce websites without requiring any programming knowledge.",
+    "icon": "Qumra.svg",
+    "js": {
+      "Qumra.cart": "",
+      "__qumra__": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.qumra.cloud"
   },
   "Quoli": {
     "cats": [

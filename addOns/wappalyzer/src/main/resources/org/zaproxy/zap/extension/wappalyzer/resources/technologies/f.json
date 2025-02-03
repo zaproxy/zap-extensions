@@ -41,6 +41,9 @@
       29
     ],
     "description": "FAST ESP is a service-oriented architecture development platform which is geared towards production searchable indexes. It provided a flexible framework for creating ETL applications for efficient indexing of searchable content.",
+    "dom": [
+      "form[id^='fastsearch']"
+    ],
     "html": [
       "<form[^>]+id=\"fastsearch\""
     ],
@@ -52,6 +55,9 @@
       29
     ],
     "description": "FAST Search for SharePoint is the search engine for Microsoft's SharePoint collaboration platform. Its purpose is helping SharePoint users locate and retrieve stored enterprise content.",
+    "dom": [
+      "input[name*='ParametricSearch']"
+    ],
     "html": [
       "<input[^>]+ name=\"ParametricSearch"
     ],
@@ -64,6 +70,18 @@
       "Pages/SearchResults\\.aspx\\?k="
     ],
     "website": "https://sharepoint.microsoft.com/en-us/product/capabilities/search/Pages/Fast-Search.aspx"
+  },
+  "FC2 Analyzer": {
+    "cats": [
+      10
+    ],
+    "description": "FC2 Analyzer is a platform designed to track and analyze affiliate system performance, providing insights into traffic, conversions, and revenue metrics.",
+    "icon": "FC2Analyzer.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.fc2\\.com/"
+    ],
+    "website": "https://fc2.com"
   },
   "FMG Suite": {
     "cats": [
@@ -395,6 +413,9 @@
       72
     ],
     "description": "FareHarbor is an booking and schedule management solution intended for tour and activity companies.",
+    "dom": [
+      "iframe[src*='fareharbor']"
+    ],
     "html": [
       "<iframe[^>]+fareharbor"
     ],
@@ -457,7 +478,9 @@
     ],
     "description": "FastComet is a hosting service company from San Francisco, California.",
     "dns": {
-      "SOA": "\\.fcomet\\.com"
+      "SOA": [
+        "\\.fcomet\\.com"
+      ]
     },
     "icon": "FastComet.svg",
     "pricing": [
@@ -472,6 +495,9 @@
       41
     ],
     "description": "FastSpring is a digital ecommerce platform that helps software and SaaS companies manage payments, subscriptions, tax compliance, and fraud prevention globally.",
+    "dom": [
+      "form[action*='sites.fastspring.com']"
+    ],
     "html": [
       "<a [^>]*href=\"https?://sites\\.fastspring\\.com",
       "<form [^>]*action=\"https?://sites\\.fastspring\\.com"
@@ -606,6 +632,11 @@
       41
     ],
     "description": "Fat Zebra provides a process of accepting credit card payments online.",
+    "dom": [
+      "iframe[src*='paynow.pmnts.io']",
+      "form[action*='paynow.pmnts.io']",
+      "iframe[src*='FatZebraFrame']"
+    ],
     "html": [
       "<(?:iframe|img|form)[^>]+paynow\\.pmnts\\.io",
       "<(?:iframe)[^>]+FatZebraFrame"
@@ -1409,6 +1440,9 @@
     ],
     "cpe": "cpe:2.3:a:flarum:flarum:*:*:*:*:*:*:*:*",
     "description": "Flarum is a discussion platform.",
+    "dom": [
+      "div[id*='flarum-loading']"
+    ],
     "html": [
       "<div id=\"flarum-loading\""
     ],
@@ -1850,6 +1884,25 @@
     ],
     "saas": true,
     "website": "https://flowplayer.com"
+  },
+  "Fluid Player": {
+    "cats": [
+      14
+    ],
+    "description": "Fluid Player is an open-source HTML5 video player.",
+    "icon": "FluidPlayer.svg",
+    "js": {
+      "fluidPlayer": "",
+      "webpackChunkfluid_player": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "scriptSrc": [
+      "cdn\\.fluidplayer\\.com"
+    ],
+    "website": "https://www.fluidplayer.com"
   },
   "Flurry Analytics": {
     "cats": [
@@ -2790,6 +2843,22 @@
     "saas": true,
     "website": "https://getframes.io"
   },
+  "Framework7": {
+    "cats": [
+      26
+    ],
+    "description": "Framework7 is a mobile HTML framework designed for creating iOS and Android applications with a native-like user experience.",
+    "icon": "Framework7.svg",
+    "js": {
+      "Framework7.Component": ""
+    },
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://framework7.io"
+  },
   "France Express": {
     "cats": [
       99
@@ -3492,7 +3561,9 @@
     ],
     "description": "Funding Choices is a messaging tool that can help you comply with the EU General Data Protection Regulation (GDPR), and recover lost revenue from ad blocking users.",
     "dns": {
-      "SOA": "fundingchoicesmessages"
+      "SOA": [
+        "fundingchoicesmessages"
+      ]
     },
     "dom": [
       ".fc-consent-root, iframe[name='googlefcLoaded'], iframe[name='googlefcPresent'], .fc-dialog, .fc-choice-dialog"
