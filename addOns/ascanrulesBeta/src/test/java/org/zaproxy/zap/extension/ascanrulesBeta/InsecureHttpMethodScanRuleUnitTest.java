@@ -114,7 +114,7 @@ class InsecureHttpMethodScanRuleUnitTest extends ActiveScannerTest<InsecureHttpM
         int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(200)));
+        assertThat(cwe, is(equalTo(749)));
         assertThat(wasc, is(equalTo(45)));
         assertThat(tags.size(), is(equalTo(5)));
         assertThat(
