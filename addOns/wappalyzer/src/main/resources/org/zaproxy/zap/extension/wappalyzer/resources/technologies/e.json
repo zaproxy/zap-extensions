@@ -252,6 +252,22 @@
     "saas": true,
     "website": "https://www.oclc.org/en/ezproxy.html"
   },
+  "EarlyParrot": {
+    "cats": [
+      94
+    ],
+    "description": "EarlyParrot is a referral marketing platform that supports coaches, course creators, and event hosts in expanding launches, webinars, and email lists through effective referral strategies.",
+    "icon": "EarlyParrot.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.earlyparrot\\.com"
+    ],
+    "website": "https://www.earlyparrot.com"
+  },
   "EaselJS": {
     "cats": [
       59
@@ -512,6 +528,24 @@
       "\\bEasylog\\b"
     ],
     "website": "https://www.easylog.com.br"
+  },
+  "Easysize": {
+    "cats": [
+      6
+    ],
+    "description": "Easysize is a system that provides clothing size recommendations to enhance fit and reduce sizing errors.",
+    "icon": "Easysize.svg",
+    "js": {
+      "EasySize": "",
+      "EasySizeDebugEnable": "",
+      "EasySizeParametersDebug": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.easysize.me"
   },
   "Ebasnet": {
     "cats": [
@@ -1622,6 +1656,25 @@
     ],
     "website": "https://emberjs.com"
   },
+  "Emojicom": {
+    "cats": [
+      73
+    ],
+    "description": "Emojicom is a tool for collecting feedback through emojis, enabling the capture of visitors' emotions.",
+    "icon": "Emojicom.svg",
+    "js": {
+      "$emojicom": "",
+      "EMOJICOM_BASE_PATH": "cdn\\.emojicom\\.io/",
+      "emojicom": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://emojicom.io"
+  },
   "Emotion": {
     "cats": [
       12,
@@ -2136,6 +2189,10 @@
     "cats": [
       25
     ],
+    "dom": [
+      "link[href*='epoch.css']",
+      "link[href*='epoch.min.css']"
+    ],
     "html": [
       "<link[^>]+?href=\"[^\"]+epoch(?:\\.min)?\\.css"
     ],
@@ -2331,10 +2388,14 @@
       12,
       59
     ],
+    "dom": [
+      "[class*='e-control'][class~='e-lib']"
+    ],
     "html": [
       "<[^>]+ class ?= ?\"(?:e-control|[^\"]+ e-control)(?: )[^\"]* e-lib\\b"
     ],
     "icon": "Syncfusion.svg",
+    "oss": true,
     "website": "https://www.syncfusion.com/javascript-ui-controls"
   },
   "Estore Compare": {
@@ -2530,6 +2591,26 @@
     ],
     "website": "https://www.everflow.io"
   },
+  "Everviz": {
+    "cats": [
+      10
+    ],
+    "description": "Everviz is an online tool for creating interactive charts and maps, enabling data visualization with customizable features.",
+    "icon": "Everviz.svg",
+    "js": {
+      "everviz.beforePrint": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.everviz\\.com/"
+    ],
+    "website": "https://www.everviz.com"
+  },
   "EveryAction": {
     "cats": [
       111
@@ -2555,6 +2636,9 @@
       72
     ],
     "description": "Eveve is a restaurant table booking widget.",
+    "dom": [
+      "iframe[src*='.eveve.com']"
+    ],
     "html": [
       "<iframe[^>]*[\\w]+\\.eveve\\.com"
     ],
@@ -3397,8 +3481,16 @@
       "<img [^>]*src=\"[^/]*//[^/]*eway\\.com"
     ],
     "icon": "eway.svg",
+    "js": {
+      "eWAY.eventHandler": "",
+      "eWAYUtils": "",
+      "ewayVars": ""
+    },
     "scriptSrc": [
       "secure\\.ewaypayments\\.com"
+    ],
+    "scripts": [
+      "api\\.ewaypayments\\.com"
     ],
     "website": "https://www.eway.com.au/"
   },

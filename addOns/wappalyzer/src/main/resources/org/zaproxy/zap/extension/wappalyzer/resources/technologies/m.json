@@ -211,6 +211,10 @@
     ],
     "cpe": "cpe:2.3:a:modx:modx_revolution:*:*:*:*:*:*:*:*",
     "description": "MODX (originally MODx) is an open source content management system and web application framework for publishing content on the World Wide Web and intranets.",
+    "dom": [
+      "form[id*='ajaxSearch_form']",
+      "input[id*='ajaxSearch_input']"
+    ],
     "headers": {
       "X-Powered-By": "^MODX"
     },
@@ -555,6 +559,19 @@
     },
     "oss": true,
     "website": "https://github.com/magewirephp/magewire"
+  },
+  "Magic UI": {
+    "cats": [
+      66
+    ],
+    "description": "Magic UI is a UI library featuring open-source animated components built with React, TypeScript, Tailwind CSS, and Framer Motion.",
+    "dom": [
+      "iframe[src*='.magicui.design']",
+      "a[href*='magicui.design'] > video[src*='cdn.magicui.design']"
+    ],
+    "icon": "MagicUI.svg",
+    "oss": true,
+    "website": "https://magicui.design/"
   },
   "Magisto": {
     "cats": [
@@ -1825,6 +1842,18 @@
     ],
     "website": "https://mapp.sa"
   },
+  "Matchi": {
+    "cats": [
+      72
+    ],
+    "description": "Matchi is a platform for racket sports enthusiasts to search, book, and play tennis, badminton, table tennis, squash, or padel.",
+    "icon": "Matchi.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.matchi\\.com/"
+    ],
+    "website": "https://www.matchi.se"
+  },
   "Material Design Lite": {
     "cats": [
       66
@@ -1901,7 +1930,9 @@
     "icon": "Matomo.svg",
     "js": {
       "Matomo": "",
-      "Piwik": ""
+      "Piwik": "",
+      "matomoSitesIDS": "",
+      "matomoTrackPage": ""
     },
     "meta": {
       "apple-itunes-app": "app-id=737216887",
@@ -2907,6 +2938,25 @@
     ],
     "website": "https://mginex.com"
   },
+  "Miappi": {
+    "cats": [
+      96
+    ],
+    "description": "Miappi is a user-generated content platform designed to build trust and boost sales for brands.",
+    "dom": [
+      "script[data-src*='web.miappi.com']"
+    ],
+    "icon": "Miappi.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "web\\.miappi\\.com/"
+    ],
+    "website": "https://miappi.com"
+  },
   "MichiJS": {
     "cats": [
       47
@@ -3454,6 +3504,35 @@
     "saas": true,
     "website": "https://mintlify.com"
   },
+  "Mintox": {
+    "cats": [
+      53
+    ],
+    "description": "Mintox is a business software designed to streamline operations and enhance efficiency.",
+    "icon": "Mintox.svg",
+    "js": {
+      "MintoxJS": "",
+      "mintoxPaging": "",
+      "mintoxTrim": ""
+    },
+    "meta": {
+      "author": "^Mintox"
+    },
+    "saas": true,
+    "website": "https://www.mintox.com"
+  },
+  "Mirador": {
+    "cats": [
+      95
+    ],
+    "description": "Mirador is a platform designed to enhance customer acquisition, streamline digital loan applications, and enable intelligent product routing and digitization.",
+    "icon": "Mirador.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.miradorfin\\.com"
+    ],
+    "website": "https://www.miradortech.com"
+  },
   "Mirai": {
     "cats": [
       53
@@ -3558,7 +3637,9 @@
     ],
     "description": "Mittwald is a web hosting agency, established in 2003 in Espelkamp, Germany",
     "dns": {
-      "SOA": "ns\\d+\\.agenturserver\\.(?:de|co|it)"
+      "SOA": [
+        "ns\\d+\\.agenturserver\\.(?:de|co|it)"
+      ]
     },
     "icon": "Mittwald.svg",
     "pricing": [
@@ -4011,6 +4092,27 @@
     ],
     "website": "https://mokka.ro"
   },
+  "Molin AI": {
+    "cats": [
+      53
+    ],
+    "description": "Molin AI is a multilingual tool that reduces support volume by 70%, recommends relevant products to shoppers, and uses up-to-date information from client websites to enhance store revenue.",
+    "icon": "MolinAI.svg",
+    "js": {
+      "__INIT_MOLIN_SHOP_AI": "",
+      "__INIT_MOLIN_SHOP_AI_OPTIONS": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.molin\\.ai/"
+    ],
+    "website": "https://molin.ai"
+  },
   "Mollie": {
     "cats": [
       41
@@ -4295,6 +4397,22 @@
     ],
     "website": "https://www.mono.net/en"
   },
+  "Monocle": {
+    "cats": [
+      32
+    ],
+    "description": "Monocle is an AI-powered platform that optimizes incentives to boost profits while maintaining brand equity and margins.",
+    "icon": "Monocle.svg",
+    "js": {
+      "monocle.config": "",
+      "monocle_popup_id_variants": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.usemonocle\\.com/"
+    ],
+    "website": "https://www.usemonocle.com"
+  },
   "Monsido": {
     "cats": [
       10,
@@ -4433,6 +4551,22 @@
     "saas": true,
     "website": "https://www.mooveagency.com/wordpress/gdpr-cookie-compliance-plugin"
   },
+  "Moovin": {
+    "cats": [
+      6
+    ],
+    "description": "Moovin is an ecommerce platform.",
+    "icon": "Moovin.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.moovin\\.(com|store)"
+    ],
+    "website": "https://moovin.com.br"
+  },
   "Mopinion": {
     "cats": [
       13
@@ -4548,6 +4682,9 @@
       1
     ],
     "cpe": "cpe:2.3:a:motocms:motocms:*:*:*:*:*:*:*:*",
+    "dom": [
+      "link[href*='/mt-content/assets/styles.css']"
+    ],
     "html": [
       "<link [^>]*href=\"[^>]*\\/mt-content\\/[^>]*\\.css"
     ],
@@ -4727,6 +4864,20 @@
       "_content/MudBlazor/MudBlazor\\.min\\.js"
     ],
     "website": "https://mudblazor.com/"
+  },
+  "Mul-Pay": {
+    "cats": [
+      41
+    ],
+    "description": "Mul-Pay is a payment gateway platform from Japan.",
+    "js": {
+      "Multipayment.config": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "static\\.mul-pay\\.jp/"
+    ],
+    "website": "https://static.mul-pay.jp"
   },
   "Mulberry": {
     "cats": [
@@ -5064,6 +5215,21 @@
       "myhkplayerlist": ""
     },
     "website": "https://myhkw.cn"
+  },
+  "Myli": {
+    "cats": [
+      90
+    ],
+    "description": "Myli is a platform enhancing customer experience, streamlining reputation management, and facilitating consumer acquisition.",
+    "icon": "Myli.svg",
+    "js": {
+      "myli_push.geolocate": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "cdn-app\\.myli\\.io/"
+    ],
+    "website": "https://www.myli.io"
   },
   "Mynetcap": {
     "cats": [

@@ -1,4 +1,16 @@
 {
+  "S&P Global Mobility": {
+    "cats": [
+      10
+    ],
+    "description": "S&P Global Mobility, formerly Dataium is a platform that analyzes online automotive shopping behavior.",
+    "icon": "S&PGlobalMobility.svg",
+    "saas": true,
+    "scriptSrc": [
+      "vcu\\.collserve\\.com"
+    ],
+    "website": "https://www.spglobal.com/mobility/en/index.html"
+  },
   "S-COREpion": {
     "cats": [
       1
@@ -136,6 +148,25 @@
       "www\\.semrush\\.com"
     ],
     "website": "https://www.semrush.com"
+  },
+  "SEO Manager": {
+    "cats": [
+      29
+    ],
+    "description": "SEO Manager is a platform that optimizes Shopify websites to enhance search engine visibility and improve organic traffic.",
+    "icon": "SEOManager.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.seomanager\\.com/"
+    ],
+    "website": "https://venntov.com/pages/seo-manager"
   },
   "SEOAnt": {
     "cats": [
@@ -550,7 +581,9 @@
     ],
     "description": "Saba.Host is a total web-hosting solutions. It provides shared hosting, WordPress hosting, dedicated server, virtual private server (VPS), SSL and more.",
     "dns": {
-      "SOA": "\\.saba\\.host"
+      "SOA": [
+        "\\.saba\\.host"
+      ]
     },
     "icon": "Saba.Host.svg",
     "pricing": [
@@ -717,8 +750,12 @@
     ],
     "description": "Sakura Internet is a web hosting provider that has been operating for almost 30 years.",
     "dns": {
-      "NS": "\\.gslbN\\.sakura\\.ne\\.jp",
-      "SOA": "tech\\.sakura\\.ad\\.jp"
+      "NS": [
+        "\\.gslbN\\.sakura\\.ne\\.jp"
+      ],
+      "SOA": [
+        "tech\\.sakura\\.ad\\.jp"
+      ]
     },
     "icon": "Sakura Internet.svg",
     "pricing": [
@@ -1650,6 +1687,21 @@
     ],
     "website": "https://sindresorhus.com/screenfull/"
   },
+  "Screets": {
+    "cats": [
+      52
+    ],
+    "description": "Screets is a chat widget compatible with WordPress, HTML, and PHP websites.",
+    "icon": "Screets.svg",
+    "js": {
+      "screetsxi.appid": ""
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "saas": true,
+    "website": "https://screets.com"
+  },
   "Scrivito": {
     "cats": [
       1
@@ -1875,6 +1927,18 @@
     ],
     "website": "https://searchspring.com"
   },
+  "Seated": {
+    "cats": [
+      104
+    ],
+    "description": "Seated is a platform offering a ticketing system for live events and live streams.",
+    "icon": "Seated.svg",
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.seated\\.com/"
+    ],
+    "website": "https://www.seated.com"
+  },
   "Secomapp": {
     "cats": [
       100
@@ -2075,7 +2139,7 @@
     "scriptSrc": [
       "@segment/consent-manager@([\\d.]+)\\;version:\\1"
     ],
-    "website": "https://segment.com/blog/how-to-build-consent-management-into-your-site-in-less-than-a-week"
+    "website": "https://segment.com/"
   },
   "SegmentStream": {
     "cats": [
@@ -2098,6 +2162,7 @@
   },
   "Segmentify": {
     "cats": [
+      29,
       97,
       76
     ],
@@ -3090,6 +3155,22 @@
     ],
     "website": "https://sharpay.io"
   },
+  "Sharper MMS": {
+    "cats": [
+      19
+    ],
+    "description": "Sharper MMS is a provider of marina management services, focusing on operations and maintenance for marina facilities.",
+    "icon": "SharperMMS.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "api\\.sharpermms\\.com"
+    ],
+    "website": "https://sharpermms.com"
+  },
   "SheerID": {
     "cats": [
       19
@@ -3321,6 +3402,29 @@
     ],
     "saas": true,
     "website": "https://www.shippypro.com"
+  },
+  "Shipup": {
+    "cats": [
+      99
+    ],
+    "description": "Shipup is a system that enables users to track shipping packages, providing real-time updates on delivery status and location.",
+    "icon": "Shipup.svg",
+    "js": {
+      "ShipupETA": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.shipup\\.co/"
+    ],
+    "scripts": [
+      "shipup\\.co"
+    ],
+    "website": "https://www.shipup.co"
   },
   "Shoefitr.io": {
     "cats": [
@@ -3949,6 +4053,24 @@
     "saas": true,
     "website": "https://www.shopistry.com/"
   },
+  "Shopix": {
+    "cats": [
+      6
+    ],
+    "description": "Shopix is a visual search tool for ecommerce that allows users to find products by uploading images.",
+    "icon": "Shopix.svg",
+    "js": {
+      "shopixAnalytics": ""
+    },
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.shopixai\\.com/"
+    ],
+    "website": "https://shopixai.com"
+  },
   "Shoplazza": {
     "cats": [
       6
@@ -4355,8 +4477,10 @@
       "Symfony"
     ],
     "js": {
+      "_shopwareAnalytics": "",
       "mollie_javascript_use_shopware": "",
-      "shopStudioGoogleTagManagerCloudGtagCallback": "\\;confidence:50"
+      "shopStudioGoogleTagManagerCloudGtagCallback": "\\;confidence:50",
+      "shopwareAnalytics": ""
     },
     "meta": {
       "application-name": "Shopware"
@@ -5256,8 +5380,12 @@
     ],
     "description": "SiteGround is a web hosting service.",
     "dns": {
-      "NS": "ns\\d+\\.c\\d+\\.sgvps\\.net",
-      "SOA": "\\.siteground\\.net"
+      "NS": [
+        "ns\\d+\\.c\\d+\\.sgvps\\.net"
+      ],
+      "SOA": [
+        "\\.siteground\\.net"
+      ]
     },
     "headers": {
       "host-header": "192fc2e7e50945beb8231a492d6a8024|b7440e60b07ee7b8044761568fab26e8|624d5be7be38418a3e2a818cc8b7029b|6b7412fb82ca5edfd0917e3957f05d89"
@@ -5926,6 +6054,21 @@
       "cdn\\.skio\\.com/"
     ],
     "website": "https://skio.com"
+  },
+  "Skitter": {
+    "cats": [
+      59
+    ],
+    "description": "Skitter is a jQuery-based slider system.",
+    "icon": "Skitter.svg",
+    "oss": true,
+    "requires": [
+      "jQuery"
+    ],
+    "scriptSrc": [
+      "/jquery\\.skitter\\.min\\.js"
+    ],
+    "website": "https://skitter-slider.net"
   },
   "Skolengo": {
     "cats": [
@@ -6790,16 +6933,10 @@
       "snipcart-cart": ""
     },
     "description": "Snipcart is a shopping cart platform that can be integrated into any website with simple HTML and JavaScript.",
-    "dom": {
-      "div#snipcart": {
-        "text": ""
-      },
-      "link[href*='snipcart.css']": {
-        "attributes": {
-          "href": ""
-        }
-      }
-    },
+    "dom": [
+      "div[id^='snipcart']",
+      "link[href*='snipcart.css']"
+    ],
     "icon": "Snipcart.svg",
     "pricing": [
       "payg"
@@ -7390,7 +7527,7 @@
       "SonarRequest": ""
     },
     "meta": {
-      "application-name": "^SonarQubes$"
+      "application-name": "^SonarQube$"
     },
     "scriptSrc": [
       "^/js/bundles/sonar\\.js?v=([\\d.]+)$\\;version:\\1"
@@ -7842,6 +7979,32 @@
     ],
     "website": "https://speedimize.io"
   },
+  "SpeedyCache": {
+    "cats": [
+      87,
+      23
+    ],
+    "description": "SpeedyCache is a WordPress plugin for optimizing page load times and caching efficiency.",
+    "dom": [
+      "link[href*='/wp-content/cache/speedycache/']"
+    ],
+    "headers": {
+      "x-speedycache-source": ""
+    },
+    "icon": "SpeedyCache.svg",
+    "js": {
+      "speedycachell": ""
+    },
+    "pricing": [
+      "freemium",
+      "low"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": false,
+    "website": "https://speedycache.com"
+  },
   "Spektrix": {
     "cats": [
       53
@@ -7856,6 +8019,25 @@
       "\\.spektrix\\.com/"
     ],
     "website": "https://www.spektrix.com"
+  },
+  "Spexo Addons": {
+    "cats": [
+      87
+    ],
+    "description": "Spexo Addons is a tool offering essential features for Elementor, enhancing website design and functionality in a single solution.",
+    "icon": "SpexoAddons.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/plugins/sastra-essential-addons-for-elementor/"
+    ],
+    "website": "https://spexoaddons.com/"
   },
   "Sphinx": {
     "cats": [
@@ -9765,7 +9947,9 @@
     ],
     "description": "Strato is an internet hosting service provider headquartered in Berlin, Germany which provide dedicated server hosting, a website builder and a cloud storage services.",
     "dns": {
-      "SOA": "\\.strato-rz\\.de"
+      "SOA": [
+        "\\.strato-rz\\.de"
+      ]
     },
     "icon": "Strato.svg",
     "pricing": [
@@ -9905,10 +10089,13 @@
     "cpe": "cpe:2.3:a:stripe:stripe:*:*:*:*:*:*:*:*",
     "description": "Stripe offers online payment processing for internet businesses as well as fraud prevention, invoicing and subscription management.",
     "dns": {
-      "TXT": "stripe-verification="
+      "TXT": [
+        "stripe-verification="
+      ]
     },
     "dom": [
-      "a[href*='billing.stripe.com'][target='_blank']"
+      "a[href*='billing.stripe.com']",
+      "a[href*='checkout.stripe.com']"
     ],
     "html": [
       "<input[^>]+data-stripe"
@@ -10664,7 +10851,8 @@
     ],
     "description": "Svelte is a free and open-source front end compiler created by Rich Harris and maintained by the Svelte core team members.",
     "dom": [
-      "link[href*='/svelte/']"
+      "link[href*='/svelte/']",
+      "main[class^='svelte-']"
     ],
     "icon": "Svelte.svg",
     "js": {
@@ -11141,6 +11329,22 @@
       "syncfusion(?:\\.com)?(?:\\/ej\\d)?(?:-[base|input|buttons|lists|calendars]+)?(?:\\/dist)?(?:\\/global)?(?:\\/ej\\d)?(?:-[base|input|buttons|lists|calendars]+)?(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
     ],
     "website": "https://www.syncfusion.com"
+  },
+  "Synctrack": {
+    "cats": [
+      6
+    ],
+    "description": "Synctrack is a platform that helps merchants improve the shopping experience and post-sale processes, including payment syncing and delivery tracking, to enhance revenue and customer loyalty.",
+    "icon": "Synctrack.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "apps\\.synctrack\\.io/"
+    ],
+    "website": "https://synctrack.io"
   },
   "Syndeca": {
     "cats": [

@@ -32,6 +32,27 @@
     "saas": true,
     "website": "https://ugc-creative.com/"
   },
+  "UI Avenue": {
+    "cats": [
+      10,
+      91
+    ],
+    "description": "UI Avenue is a data tracking and analytics software for Shopify.",
+    "icon": "UIAvenue.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scripts": [
+      "analytics\\.uiavenue\\.ca"
+    ],
+    "website": "https://www.uiavenue.ca"
+  },
   "UIKit": {
     "cats": [
       66
@@ -67,7 +88,9 @@
     ],
     "description": "UKFast is a business-to-business internet hosting company based in Manchester, UK.",
     "dns": {
-      "SOA": "\\.ukfast\\.net"
+      "SOA": [
+        "\\.ukfast\\.net"
+      ]
     },
     "icon": "UKFast.png",
     "pricing": [

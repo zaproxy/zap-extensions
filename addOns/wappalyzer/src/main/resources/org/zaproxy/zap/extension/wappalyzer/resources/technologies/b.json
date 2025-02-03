@@ -395,6 +395,20 @@
     ],
     "website": "https://bambuser.com"
   },
+  "Banana Splash": {
+    "cats": [
+      32
+    ],
+    "description": "Banana Splash is a mobile lead generation system designed to help businesses attract and capture potential customer information.",
+    "saas": true,
+    "scriptSrc": [
+      "my\\.banana-splash\\.com/"
+    ],
+    "scripts": [
+      "my\\.banana-splash\\.com"
+    ],
+    "website": "https://www.banana-splash.com"
+  },
   "BandsInTown Events Widget": {
     "cats": [
       5
@@ -629,6 +643,20 @@
     },
     "saas": true,
     "website": "https://batch.com"
+  },
+  "Batchbook": {
+    "cats": [
+      53
+    ],
+    "description": "Batchbook is a customer relationship management (CRM) tool designed for small businesses.",
+    "dom": [
+      "iframe[src*='.batchbook.com']"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.batchbook\\.com"
+    ],
+    "website": "https://batchbook.com"
   },
   "Batflat": {
     "cats": [
@@ -904,6 +932,18 @@
       "segment\\.prod\\.bidr\\.io"
     ],
     "website": "https://www.beeswax.com/"
+  },
+  "Behzi": {
+    "cats": [
+      51
+    ],
+    "description": "Behzi is an all-in-one Iranian platform providing services such as event organization, tours, school registrations, and store discounts.",
+    "icon": "Behzi.svg",
+    "meta": {
+      "generator": "^Behzi$"
+    },
+    "saas": true,
+    "website": "https://behzi.com"
   },
   "Bench": {
     "cats": [
@@ -1975,13 +2015,16 @@
       11
     ],
     "description": "Blogger is a blog-publishing service that allows multi-user blogs with time-stamped entries.",
-    "icon": "Blogger.png",
+    "icon": "Blogger.svg",
     "implies": [
       "Python"
     ],
     "meta": {
       "generator": "^Blogger$"
     },
+    "scripts": [
+      "blogger\\.googleusercontent\\.com"
+    ],
     "url": [
       "^https?://[^/]+\\.(?:blogspot|blogger)\\.com"
     ],
@@ -2172,8 +2215,12 @@
     ],
     "description": "Bluehost is a large web host known for its WordPress expertise, variety of “one-stop-shop” services, and bargain prices.",
     "dns": {
-      "NS": "\\.bluehost\\.com",
-      "SOA": "\\.bluehost\\.com"
+      "NS": [
+        "\\.bluehost\\.com"
+      ],
+      "SOA": [
+        "\\.bluehost\\.com"
+      ]
     },
     "headers": {
       "host-header": "c2hhcmVkLmJsdWVob3N0LmNvbQ=="
@@ -3109,6 +3156,9 @@
     "cats": [
       59
     ],
+    "dom": [
+      "link[href*='bootstrap-table.min.css']"
+    ],
     "html": [
       "<link[^>]+href=\"[^>]*bootstrap-table(?:\\.min)?\\.css"
     ],
@@ -3225,6 +3275,26 @@
       "cdn\\.botpenguin\\.com/"
     ],
     "website": "https://botpenguin.com"
+  },
+  "BotStar": {
+    "cats": [
+      52
+    ],
+    "description": "BotStar is a platform for creating chatbots for websites and messaging applications.",
+    "icon": "BotStar.svg",
+    "js": {
+      "BotStar.appId": "",
+      "BotStarApi": "",
+      "BotStarUp": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://botstar.com"
   },
   "BotUp": {
     "cats": [
@@ -4165,6 +4235,10 @@
       "Bugzilla_login_request_cookie": ""
     },
     "cpe": "cpe:2.3:a:mozilla:bugzilla:*:*:*:*:*:*:*:*",
+    "dom": [
+      "main[id*='bugzilla-body']",
+      "span[id*='information'][class*='header_addl_info']"
+    ],
     "html": [
       "href=\"enter_bug\\.cgi\">",
       "<main id=\"bugzilla-body\"",

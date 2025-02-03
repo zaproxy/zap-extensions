@@ -452,6 +452,24 @@
     ],
     "website": "https://neatab.com"
   },
+  "Nebula Sites": {
+    "cats": [
+      51,
+      88
+    ],
+    "description": "Nebula Sites is a platform that allows users to create, host, and manage websites.",
+    "dom": [
+      "link[ns^='Nebula Sites']"
+    ],
+    "icon": "NebulaSites.svg",
+    "pricing": [
+      "freemium",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://nebulasites.org"
+  },
   "Neexa": {
     "cats": [
       52
@@ -824,6 +842,18 @@
     ],
     "saas": true,
     "website": "https://newrelic.com"
+  },
+  "New UI": {
+    "cats": [
+      66
+    ],
+    "description": "New UI is a framework designed for developing user interfaces for SaaS applications and websites.",
+    "icon": "NewUI.svg",
+    "saas": true,
+    "scripts": [
+      "data-new-ui-theme"
+    ],
+    "website": "https://new-ui.com/"
   },
   "NewStore": {
     "cats": [
@@ -1831,6 +1861,24 @@
     ],
     "saas": true,
     "website": "https://www.nuvemshop.com.br"
+  },
+  "Nuxt UI": {
+    "cats": [
+      66
+    ],
+    "description": "Nuxt UI is a customizable UI library designed for Nuxt.",
+    "dom": [
+      "style[id*='nuxt-ui-']"
+    ],
+    "icon": "Nuxt.js.svg",
+    "pricing": [
+      "onetime"
+    ],
+    "requires": [
+      "Nuxt.js"
+    ],
+    "saas": true,
+    "website": "https://ui.nuxt.com"
   },
   "Nuxt.js": {
     "cats": [

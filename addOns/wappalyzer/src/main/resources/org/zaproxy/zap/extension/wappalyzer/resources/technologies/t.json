@@ -924,8 +924,12 @@
     ],
     "description": "Tangled Network provides a managed services in website devleopment, web and database hosting and domain registration, with a focus on everything managed for small and medium sized businesses.",
     "dns": {
-      "NS": "\\.tanglednetwork\\.com",
-      "SOA": "\\.tanglednetwork\\.com"
+      "NS": [
+        "\\.tanglednetwork\\.com"
+      ],
+      "SOA": [
+        "\\.tanglednetwork\\.com"
+      ]
     },
     "headers": {
       "X-Hosting-Provider": "Tangled Network"
@@ -1553,6 +1557,21 @@
     },
     "icon": "Tengine.png",
     "website": "https://tengine.taobao.org"
+  },
+  "TerMed": {
+    "cats": [
+      72
+    ],
+    "description": "TerMed is a platform that simplifies online booking of medical appointments.",
+    "icon": "TerMed.svg",
+    "saas": true,
+    "scriptSrc": [
+      "api\\.termed\\.de"
+    ],
+    "scripts": [
+      "api\\.termed\\.de"
+    ],
+    "website": "https://www.termed.de"
   },
   "Terminalfour": {
     "cats": [
@@ -3441,6 +3460,20 @@
     ],
     "website": "https://www.tix.com"
   },
+  "TogetherJS": {
+    "cats": [
+      59
+    ],
+    "description": "TogetherJS is an open-source JavaScript library by Mozilla that integrates collaboration tools and features into websites.",
+    "icon": "TogetherJS.svg",
+    "js": {
+      "TogetherJS": "",
+      "TogetherJSConfig_cloneClicks": "",
+      "TogetherJSConfig_toolName": ""
+    },
+    "oss": true,
+    "website": "https://togetherjs.com"
+  },
   "Tolt": {
     "cats": [
       71
@@ -3967,6 +4000,27 @@
     ],
     "website": "https://gtranslate.io"
   },
+  "TranslatePress": {
+    "cats": [
+      87
+    ],
+    "description": "TranslatePress is a WordPress plugin that simplifies website translation, enabling multilingual functionality to enhance global traffic.",
+    "icon": "TranslatePress.svg",
+    "js": {
+      "trp_el": "",
+      "trp_ls_shortcode_width": "",
+      "trp_ls_shortcodes": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "website": "https://translatepress.com"
+  },
   "Transmart": {
     "cats": [
       99
@@ -4345,6 +4399,25 @@
     "saas": true,
     "website": "https://www.trumba.com"
   },
+  "Trumpia": {
+    "cats": [
+      32
+    ],
+    "cookies": {
+      "TrumpiaReferer": ""
+    },
+    "description": "Trumpia is a marketing platform that supports multiple channels, including mobile, email, social media, voice, and chat marketing.",
+    "icon": "Trumpia.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.trumpia\\.com/"
+    ],
+    "website": "https://www.trumpia.com"
+  },
   "Trunkrs": {
     "cats": [
       99
@@ -4369,6 +4442,25 @@
       "consent\\.trustarc\\.com"
     ],
     "website": "https://trustarc.com"
+  },
+  "TrustPulse": {
+    "cats": [
+      32
+    ],
+    "description": "TrustPulse is a marketing tool that enables marketers to drive more conversions and sales by leveraging the power of social proof and fear of missing out.",
+    "dom": [
+      "link[href*='.trstplse.com']"
+    ],
+    "icon": "TrustPulse.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.trstplse\\.com/"
+    ],
+    "website": "https://trustpulse.com"
   },
   "TrustYou": {
     "cats": [
@@ -4617,6 +4709,24 @@
       "(turf@[\\d.]+)?/?turf\\.min\\.js"
     ],
     "website": "https://turfjs.org/"
+  },
+  "Tutor LMS": {
+    "cats": [
+      21
+    ],
+    "description": "Tutor LMS is an all-in-one learning management system.",
+    "icon": "TutorLMS.svg",
+    "js": {
+      "tutorElementorData": "",
+      "tutor_prevent_copy": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "saas": true,
+    "website": "https://tutorlms.com"
   },
   "Twenty Eleven": {
     "cats": [

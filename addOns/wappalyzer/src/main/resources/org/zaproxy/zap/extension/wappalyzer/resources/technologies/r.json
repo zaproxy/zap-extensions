@@ -119,7 +119,9 @@
     ],
     "description": "REG.RU is a web hosting provider and internet domain registrar.",
     "dns": {
-      "SOA": "(?:\\.hosting)?\\.reg\\.ru"
+      "SOA": [
+        "(?:\\.hosting)?\\.reg\\.ru"
+      ]
     },
     "icon": "REG.RU.svg",
     "pricing": [
@@ -1876,6 +1878,23 @@
     ],
     "website": "https://reflektion.com"
   },
+  "Reform": {
+    "cats": [
+      110
+    ],
+    "description": "Reform is a conversion-focused form builder designed to optimize data collection.",
+    "icon": "Reform.svg",
+    "js": {
+      "Reform": "",
+      "ReformHandlers": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.reform.app"
+  },
   "Refundid": {
     "cats": [
       102
@@ -2081,7 +2100,9 @@
     ],
     "description": "Render Better is automated site speed and core web vital optimisation platform for Shopify.",
     "dns": {
-      "CNAME": "\\.renderbetter\\.app"
+      "CNAME": [
+        "\\.renderbetter\\.app"
+      ]
     },
     "icon": "renderbetter.svg",
     "js": {
@@ -2622,6 +2643,19 @@
       "^https://retool\\.[\\d\\w\\-]+\\.(?:com|io)/"
     ],
     "website": "https://retool.com"
+  },
+  "Retrina Builder": {
+    "cats": [
+      51
+    ],
+    "description": "Retrina Builder is a drag-and-drop page builder for OpenCart that enables website creation without requiring coding skills.",
+    "dom": [
+      "link[href*='/retrina-builder.min.css']",
+      "link[href*='/retrina_builder_custom.css']"
+    ],
+    "icon": "RetrinaBuilder.svg",
+    "saas": true,
+    "website": "https://retrina.com/ronixa-product"
   },
   "Return Prime": {
     "cats": [
@@ -3531,6 +3565,22 @@
     ],
     "saas": true,
     "website": "https://www.robly.com"
+  },
+  "Robofy": {
+    "cats": [
+      52
+    ],
+    "description": "Robofy is a platform providing AI chatbots for websites, enabling the creation of custom ChatGPT models trained on user-specific content.",
+    "icon": "Robofy.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.robofy\\.ai/"
+    ],
+    "website": "https://www.robofy.ai"
   },
   "Rock Content": {
     "cats": [

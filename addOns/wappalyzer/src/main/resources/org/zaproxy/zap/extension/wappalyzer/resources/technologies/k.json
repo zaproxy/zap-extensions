@@ -62,8 +62,12 @@
     ],
     "description": "KMK is a company that offers ecommerce software technology in C2C, B2B, B2C areas.",
     "dns": {
-      "NS": "ns\\d\\.kmkhosting\\.net",
-      "SOA": "ns\\d\\.kmkhosting\\.net"
+      "NS": [
+        "ns\\d\\.kmkhosting\\.net"
+      ],
+      "SOA": [
+        "ns\\d\\.kmkhosting\\.net"
+      ]
     },
     "dom": [
       "a[href*='.kmk.net.tr/'][target='_blank'], div#kmkCopyright"
@@ -2006,6 +2010,21 @@
     ],
     "saas": true,
     "website": "https://kuroco.app"
+  },
+  "KuronekoServer CDN": {
+    "cats": [
+      31
+    ],
+    "description": "KuronekoServer CDN is a distributed content delivery network utilizing VPS and Cloudflare to enhance performance and reliability.",
+    "dom": [
+      "link[href*='cdn.krnk.org/']"
+    ],
+    "icon": "KuronekoServerCDN.svg",
+    "saas": true,
+    "scripts": [
+      "cdn\\.krnk\\.org/"
+    ],
+    "website": "https://cdn.krnk.org"
   },
   "Kustomer": {
     "cats": [

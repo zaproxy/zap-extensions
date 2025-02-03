@@ -170,6 +170,9 @@
       "JTLSHOP": ""
     },
     "description": "JTL Shop is an ecommerce product created by JTL Software company.",
+    "dom": [
+      "input[name*='JTLSHOP']"
+    ],
     "html": [
       "(?:<input[^>]+name=\"JTLSHOP|<a href=\"jtl\\.php)"
     ],
@@ -255,6 +258,9 @@
     "cats": [
       1,
       47
+    ],
+    "dom": [
+      "script#staticAssetAggregatedJavascrip"
     ],
     "html": [
       "<script id=\"staticAssetAggregatedJavascrip"
@@ -403,6 +409,9 @@
     ],
     "cpe": "cpe:2.3:a:jenkins:jenkins:*:*:*:*:*:*:*:*",
     "description": "Jenkins is an open-source automation tool written in Java with plugins built for Continuous Integration (CI) purposes.",
+    "dom": [
+      "span.jenkins_ver > a[href='https://jenkins.io/']"
+    ],
     "headers": {
       "X-Jenkins": "([\\d.]+)\\;version:\\1"
     },
@@ -804,6 +813,9 @@
       "generator": "Joomla!(?: ([\\d.]+))?\\;version:\\1"
     },
     "oss": true,
+    "scriptSrc": [
+      "(?:^|/)(feed/com_|components/com_)"
+    ],
     "url": [
       "option=com_"
     ],

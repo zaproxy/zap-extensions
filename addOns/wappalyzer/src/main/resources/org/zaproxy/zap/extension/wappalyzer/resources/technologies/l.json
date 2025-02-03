@@ -337,6 +337,23 @@
       "events\\.launchdarkly\\.com"
     ]
   },
+  "LaunchNotes": {
+    "cats": [
+      85
+    ],
+    "description": "LaunchNotes is a platform that aligns teams with product development and release pipelines while keeping users informed and engaged with product updates.",
+    "icon": "LaunchNotes.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.launchnotes\\.com/"
+    ],
+    "website": "https://launchnotes.com"
+  },
   "Launchrock": {
     "cats": [
       51,
@@ -954,7 +971,9 @@
     ],
     "description": "Leaseweb is an Infrastructure-as-a-Service (IaaS) provider offering dedicated servers, CDN, cloud hosting and hybrid cloud on a global network.",
     "dns": {
-      "SOA": "\\.leaseweb\\.nl"
+      "SOA": [
+        "\\.leaseweb\\.nl"
+      ]
     },
     "icon": "Leaseweb.svg",
     "pricing": [
@@ -1056,6 +1075,9 @@
       18
     ],
     "description": "Leptos is a full-stack, isomorphic Rust web framework leveraging fine-grained reactivity to build declarative user interfaces.",
+    "dom": [
+      "link[id^='leptos']"
+    ],
     "html": [
       "<!--hk=_.*"
     ],
@@ -1710,7 +1732,7 @@
       "onLinkedInLoad": ""
     },
     "scriptSrc": [
-      "platform\\.linkedin\\.com/(?:.*)?in\\.js(?:\\?version)?([\\d.]+)?\\;version:\\1"
+      "platform\\.linkedin\\.com/(?:.*)?(?:in\\.js(?:\\?version)?([\\d.]+)?|litms/utag/[^?]+\\.js(?:\\?cb=[\\d]+)?)"
     ],
     "website": "https://www.linkedin.com/developers"
   },
@@ -1778,7 +1800,9 @@
     ],
     "description": "Liquid Web is a US-based host offering premium managed web hosting solutions.",
     "dns": {
-      "SOA": "\\.liquidweb\\.com"
+      "SOA": [
+        "\\.liquidweb\\.com"
+      ]
     },
     "headers": {
       "x-lw-cache": ""
@@ -2754,7 +2778,9 @@
       103
     ],
     "dns": {
-      "TXT": "loom-verification"
+      "TXT": [
+        "loom-verification"
+      ]
     },
     "icon": "Loom.svg",
     "pricing": [
@@ -3104,6 +3130,21 @@
     "oss": true,
     "website": "https://lume.land"
   },
+  "Lumino": {
+    "cats": [
+      10
+    ],
+    "description": "Lumino is a data platform that helps Shopify brands optimize marketing, conversions, and user experience by leveraging data.",
+    "icon": "Lumino.svg",
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scripts": [
+      "api\\.getlumino\\.ai"
+    ],
+    "website": "https://getlumino.ai"
+  },
   "Lumio": {
     "cats": [
       10
@@ -3210,6 +3251,22 @@
       "(?:((?:\\d+\\.)+\\d+)\\/)?lunr(?:-store)?(?:-en)?(?:\\.min)?\\.js"
     ],
     "website": "https://lunrjs.com/"
+  },
+  "Luveedu Cloud": {
+    "cats": [
+      88
+    ],
+    "description": "Luveedu Cloud is a domain and web hosting platform.",
+    "icon": "LuveeduCloud.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.luveedu\\.com/"
+    ],
+    "website": "https://cloud.luveedu.com"
   },
   "Lychee": {
     "cats": [

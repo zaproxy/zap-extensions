@@ -73,6 +73,23 @@
     "icon": "YaBB.png",
     "website": "https://www.yabbforum.com"
   },
+  "YachtSys": {
+    "cats": [
+      72
+    ],
+    "description": "YachtSys is a booking management system.",
+    "icon": "YachtSys.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "apps\\.yachtsys\\.com/"
+    ],
+    "website": "https://www.yachtsys.com"
+  },
   "Yahoo Advertising": {
     "cats": [
       36,
@@ -143,8 +160,12 @@
     ],
     "description": "YalinHost is a web hosting service provider.",
     "dns": {
-      "NS": "\\.yalinhost\\.com",
-      "SOA": "\\.yalinhost\\.com"
+      "NS": [
+        "\\.yalinhost\\.com"
+      ],
+      "SOA": [
+        "\\.yalinhost\\.com"
+      ]
     },
     "icon": "YalinHost.svg",
     "website": "https://yalinhost.com"

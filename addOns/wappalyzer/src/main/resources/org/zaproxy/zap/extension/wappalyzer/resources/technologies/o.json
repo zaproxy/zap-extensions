@@ -37,8 +37,12 @@
     ],
     "description": "OVHcloud is a global, cloud provider delivering hosted private cloud, public cloud, and dedicated server solutions.",
     "dns": {
-      "NS": "\\d+\\.ovh\\.net",
-      "SOA": "\\d+\\.ovh\\.net"
+      "NS": [
+        "\\d+\\.ovh\\.net"
+      ],
+      "SOA": [
+        "\\d+\\.ovh\\.net"
+      ]
     },
     "headers": {
       "x-iplb-request-id": ""
@@ -953,7 +957,9 @@
     ],
     "description": "One.com is a Denmark-based company offering bargain-priced WordPress and shared web hosting plans.",
     "dns": {
-      "SOA": "ns\\d+\\.one\\.com"
+      "SOA": [
+        "ns\\d+\\.one\\.com"
+      ]
     },
     "icon": "One.com.svg",
     "pricing": [
@@ -1121,7 +1127,9 @@
     },
     "description": "OneTrust is a cloud-based data privacy management compliance platform.",
     "dns": {
-      "TXT": "onetrust-domain-verification="
+      "TXT": [
+        "onetrust-domain-verification="
+      ]
     },
     "icon": "OneTrust.svg",
     "scriptSrc": [
@@ -1192,6 +1200,19 @@
       "app\\.onlim\\.com/"
     ],
     "website": "https://onlim.com"
+  },
+  "Onsen UI": {
+    "cats": [
+      26
+    ],
+    "description": "Onsen UI is an open-source HTML5 hybrid app framework offering mobile UI components for PhoneGap and Cordova development.",
+    "icon": "OnsenUI.svg",
+    "oss": true,
+    "saas": true,
+    "scriptSrc": [
+      "(/.*onsen.*min\\.js|.*angular-onsenui\\.min\\.js)"
+    ],
+    "website": "https://onsen.io"
   },
   "Ookla Speedtest Custom": {
     "cats": [
