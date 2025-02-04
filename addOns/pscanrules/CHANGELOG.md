@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- Removed lack of "report-uri" or "plugin-types" from "CSP: Wildcard Directive" alerts when missing. plugin-types is deprecated and report-uri has no impact for this issue. (Issue 8700)
 
 ## [62] - 2025-01-10
 ### Changed
