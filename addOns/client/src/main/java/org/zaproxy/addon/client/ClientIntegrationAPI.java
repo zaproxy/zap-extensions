@@ -21,6 +21,9 @@ package org.zaproxy.addon.client;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
@@ -42,11 +45,13 @@ import org.zaproxy.zap.extension.api.ApiResponseElement;
 public class ClientIntegrationAPI extends ApiImplementor {
     private static final String PREFIX = "client";
 
+    private static final String ACTION_EXPORT_CLIENT_MAP = "exportClientMap";
     private static final String ACTION_REPORT_OBJECT = "reportObject";
     private static final String ACTION_REPORT_EVENT = "reportEvent";
     private static final String ACTION_REPORT_ZEST_STATEMENT = "reportZestStatement";
     private static final String ACTION_REPORT_ZEST_SCRIPT = "reportZestScript";
 
+    private static final String PARAM_EXPORT_PATH = "pathYaml";
     private static final String PARAM_OBJECT_JSON = "objectJson";
     private static final String PARAM_EVENT_JSON = "eventJson";
     private static final String PARAM_STATEMENT_JSON = "statementJson";
@@ -60,12 +65,16 @@ public class ClientIntegrationAPI extends ApiImplementor {
 
     public ClientIntegrationAPI(ExtensionClientIntegration extension) {
         this.extension = extension;
+
         this.addApiAction(new ApiAction(ACTION_REPORT_OBJECT, new String[] {PARAM_OBJECT_JSON}));
         this.addApiAction(new ApiAction(ACTION_REPORT_EVENT, new String[] {PARAM_EVENT_JSON}));
         this.addApiAction(
                 new ApiAction(ACTION_REPORT_ZEST_STATEMENT, new String[] {PARAM_STATEMENT_JSON}));
         this.addApiAction(
                 new ApiAction(ACTION_REPORT_ZEST_SCRIPT, new String[] {PARAM_SCRIPT_JSON}));
+
+        this.addApiAction(
+                new ApiAction(ACTION_EXPORT_CLIENT_MAP, new String[] {PARAM_EXPORT_PATH}));
 
         callbackUrl =
                 API.getInstance().getCallBackUrl(this, HttpHeader.SCHEME_HTTPS + API.API_DOMAIN);
@@ -137,6 +146,14 @@ public class ClientIntegrationAPI extends ApiImplementor {
                         this.getParam(params, PARAM_STATEMENT_JSON, ""));
                 case ACTION_REPORT_ZEST_SCRIPT -> this.extension.addZestStatement(
                         this.getParam(params, PARAM_SCRIPT_JSON, ""));
+                case ACTION_EXPORT_CLIENT_MAP -> {
+                    String exportPath = this.getParam(params, PARAM_EXPORT_PATH, "");
+                    Path path = Paths.get(exportPath);
+                    if (!Files.isWritable(path.getParent()) || !exportPath.endsWith(".yaml")) {
+                        throw new IllegalArgumentException("Invalid export path: " + exportPath);
+                    }
+                    this.extension.exportClientMap(exportPath);
+                }
                 default -> throw new ApiException(ApiException.Type.BAD_ACTION);
             }
         } catch (ApiException e) {
