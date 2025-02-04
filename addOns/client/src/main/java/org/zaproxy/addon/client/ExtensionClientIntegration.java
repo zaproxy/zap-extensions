@@ -807,6 +807,14 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         return this.spiderScanController.getScan(id);
     }
 
+    public SpiderScanController getSpiderScanController() {
+        return spiderScanController;
+    }
+
+    public User getSelectedUser() {
+        return spiderDialog.getSelectedUser();
+    }
+
     public void stopScan(int id) {
         this.spiderScanController.stopScan(id);
     }

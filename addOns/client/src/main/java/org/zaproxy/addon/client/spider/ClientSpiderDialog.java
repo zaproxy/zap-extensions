@@ -189,7 +189,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         return null;
     }
 
-    private User getSelectedUser() {
+    public User getSelectedUser() {
         Context context = this.getSelectedContext();
         if (context != null && extUserMgmt != null) {
             String userName = this.getStringValue(FIELD_USER);
