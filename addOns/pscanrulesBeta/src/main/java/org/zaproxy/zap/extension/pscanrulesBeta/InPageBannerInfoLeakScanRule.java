@@ -94,7 +94,8 @@ public class InPageBannerInfoLeakScanRule extends PluginPassiveScanner
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence) // Evidence - Return the in page banner
-                .setCweId(200) // CWE Id: 200 - Information Exposure
+                .setCweId(497) //  CWE-497: Exposure of Sensitive System Information to an
+                // Unauthorized Control Sphere
                 .setWascId(13); // WASC Id: 13 - Information Leakage
     }
 
