@@ -160,7 +160,7 @@ class InPageBannerInfoLeakScanRuleUnitTest
     }
 
     @Test
-    void shouldReturnExmpectedNumberOfExmapleAlerts() {
+    void shouldReturnExpectedNumberOfExampleAlerts() {
         // Given / When
         List<Alert> alerts = rule.getExampleAlerts();
         // Then
