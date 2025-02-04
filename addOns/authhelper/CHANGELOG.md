@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.19.0] - 2025-02-04
 ### Added
 - Added support for Client Script Authentication when used in conjunction with the Ajax Spider add-on or the Client Spider via the Client Side Integration add-on.
 - Add support for custom authentication steps in Browser Based Authentication.
@@ -133,6 +133,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.19.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.19.0
 [0.18.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.18.0
 [0.17.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.17.0
 [0.16.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.16.0
