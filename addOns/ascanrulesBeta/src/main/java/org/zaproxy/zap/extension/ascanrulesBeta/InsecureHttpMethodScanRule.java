@@ -149,7 +149,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
             String thirdpartyHost = "www.google.com";
             int thirdpartyPort = 80;
             Pattern thirdPartyContentPattern =
-                    Pattern.compile("<title.*Google.*/title>", Pattern.CASE_INSENSITIVE);
+                    Pattern.compile("<title.*{1,10}Google.{1,25}/title>", Pattern.CASE_INSENSITIVE);
 
             // send an OPTIONS message, and see what the server reports. Do
             // not try any methods not listed in those results.
