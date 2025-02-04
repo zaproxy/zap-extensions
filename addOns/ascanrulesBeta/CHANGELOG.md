@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Replace usage of CWE-200 for the Insecure HTTP Method scan rule (Issue 8714).
 
 ## [57] - 2025-01-15
 ### Changed

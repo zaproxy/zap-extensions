@@ -336,7 +336,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
 
     @Override
     public int getCweId() {
-        return 200; // Information Exposure (primarily via TRACK / TRACE)
+        return 749; // CWE-749: Exposed Dangerous Method or Function
     }
 
     @Override
