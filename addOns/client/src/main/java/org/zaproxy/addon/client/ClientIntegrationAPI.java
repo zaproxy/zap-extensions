@@ -152,7 +152,11 @@ public class ClientIntegrationAPI extends ApiImplementor {
                     if (!Files.isWritable(path.getParent()) || !exportPath.endsWith(".yaml")) {
                         throw new IllegalArgumentException("Invalid export path: " + exportPath);
                     }
-                    this.extension.exportClientMap(exportPath);
+                    if (!this.extension.exportClientMap(exportPath)) {
+                        throw new ApiException(
+                                ApiException.Type.INTERNAL_ERROR,
+                                "Failed to export client map: " + exportPath);
+                    }
                 }
                 default -> throw new ApiException(ApiException.Type.BAD_ACTION);
             }
