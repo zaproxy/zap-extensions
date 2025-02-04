@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Firefox to recorder.
+- Added support for custom script authentication.
 
 ### Changed
 - Record script order to be alphabetical.
