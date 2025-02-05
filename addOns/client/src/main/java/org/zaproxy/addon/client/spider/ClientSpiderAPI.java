@@ -30,8 +30,8 @@ import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
+import org.zaproxy.zap.extension.api.ApiView;
 import org.zaproxy.zap.model.Context;
-import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ApiUtils;
 
 public class ClientSpiderAPI extends ApiImplementor {
@@ -46,6 +46,12 @@ public class ClientSpiderAPI extends ApiImplementor {
     /** The Constant ACTION_STOP_SCAN that defines the action of stopping a pending scan. */
     private static final String ACTION_STOP_SCAN = "stop";
 
+    /**
+     * The Constant VIEW_STATUS that defines the view which describes the current status of the
+     * scan.
+     */
+    private static final String VIEW_STATUS = "status";
+
     /** The Constant PARAM_URL that defines the parameter defining the url of the scan. */
     private static final String PARAM_URL = "url";
 
@@ -56,7 +62,7 @@ public class ClientSpiderAPI extends ApiImplementor {
     private static final String PARAM_SUBTREE_ONLY = "subtreeOnly";
 
     /** The client extension. */
-    private ExtensionClientIntegration extension;
+    private final ExtensionClientIntegration extension;
 
     @Override
     public String getPrefix() {
@@ -85,6 +91,9 @@ public class ClientSpiderAPI extends ApiImplementor {
                         }));
 
         this.addApiAction(new ApiAction(ACTION_STOP_SCAN, null, new String[] {PARAM_SCAN_ID}));
+
+        // Register the views
+        this.addApiView(new ApiView(VIEW_STATUS, null, new String[] {PARAM_SCAN_ID}));
     }
 
     @Override
@@ -117,8 +126,6 @@ public class ClientSpiderAPI extends ApiImplementor {
                     }
                 }
 
-                User user = extension.getSelectedUser();
-
                 ClientOptions options = this.extension.getClientParam();
                 options.setMaxChildren(maxChildren);
 
@@ -128,7 +135,7 @@ public class ClientSpiderAPI extends ApiImplementor {
                                     url,
                                     options,
                                     context,
-                                    user,
+                                    null,
                                     getParam(params, PARAM_SUBTREE_ONLY, false));
                     return new ApiResponseElement(name, Integer.toString(scanId));
                 } catch (URIException e) {
@@ -147,6 +154,24 @@ public class ClientSpiderAPI extends ApiImplementor {
         return ApiResponseElement.OK;
     }
 
+    @Override
+    public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
+        ApiResponse result;
+        if (VIEW_STATUS.equals(name)) {
+            ClientSpider scan = this.getClientSpiderScan(params);
+            int progress;
+            if (scan.isStopped()) {
+                progress = 100;
+            } else {
+                progress = scan.getProgress();
+            }
+            result = new ApiResponseElement(name, Integer.toString(progress));
+        } else {
+            throw new ApiException(ApiException.Type.BAD_VIEW);
+        }
+        return result;
+    }
+
     /**
      * Returns the specified GenericScanner2 or the last scan available.
      *
@@ -160,7 +185,7 @@ public class ClientSpiderAPI extends ApiImplementor {
         ClientSpider spiderScan;
         int id = getParam(params, PARAM_SCAN_ID, -1);
         if (id == -1) {
-            spiderScan = this.extension.getSpiderScanController().getLastScan();
+            spiderScan = this.extension.getLastScan();
         } else {
             spiderScan = extension.getScan(id);
         }
