@@ -886,9 +886,10 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     public boolean exportClientMap(String path) {
         File file = new File(path);
+        boolean result = false;
         try (Writer fileWriter = new FileWriter(file, false)) {
             ClientMapWriter.exportClientMap(fileWriter, clientTree);
-            return true;
+            result = true;
         } catch (IOException | UncheckedIOException e) {
             LOGGER.warn(
                     "An error occurred while exporting the Client Map: {}",
@@ -900,9 +901,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                                 Constant.messages.getString(
                                         "client.tree.export.error", file.getAbsolutePath()));
             }
-            return false;
-        } finally {
-            Stats.incCounter(STATS_EXPORT_CLIENTMAP);
         }
+        Stats.incCounter(STATS_EXPORT_CLIENTMAP);
+        return result;
     }
 }
