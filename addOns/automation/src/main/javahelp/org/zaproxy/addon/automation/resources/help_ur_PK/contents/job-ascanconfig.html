@@ -21,7 +21,7 @@ This job configures the active scanner, for custom active scans (e.g. Sequence).
       defaultPolicy:                       # String: The name of the default scan policy to use, default: Default Policy
       handleAntiCSRFTokens:                # Bool: If set then automatically handle anti CSRF tokens, default: false
       injectPluginIdInHeader:              # Bool: If set then the relevant rule ID will be injected into the X-ZAP-Scan-ID header of each request, default: false
-      threadPerHost:                       # Int: The max number of threads per host, default: 2
+      threadPerHost:                       # Int: The max number of threads per host, default: 2 * Number of available processor cores
     inputVectors:                          # The input vectors used during the active scan.
       urlQueryStringAndDataDrivenNodes:    # Configures the scanning of query parameters and DDNs.
          enabled:                          # Bool: If query parameters and DDNs scanning should be enabled. Default: true

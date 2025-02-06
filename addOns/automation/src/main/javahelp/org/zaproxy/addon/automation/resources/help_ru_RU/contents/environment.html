@@ -27,7 +27,7 @@ env:                                   # The environment, mandatory
       includePaths:                    # An optional list of regexes to include
       excludePaths:                    # An optional list of regexes to exclude
       authentication:
-        method:                        # String, one of 'manual', 'http', 'form', 'json' or 'script'
+        method:                        # String, one of 'manual', 'http', 'form', 'json', 'script', "autodetect", "browser", or "client"
         parameters:                    # May include any required for scripts. All of the parameters support vars except for the port 
           hostname:                    # String, only for 'http' authentication
           port:                        # Int, only for 'http' authentication
@@ -65,9 +65,9 @@ env:                                   # The environment, mandatory
           password:                    # String, the password to use when authenticating, vars supported
   vars:                                # List of 0 or more custom variables to be used throughout the config file
     myVarOne: CustomConfigVarOne       # Can be used as ${myVarOne} anywhere throughout the config
-    myVarTwo: ${myVarOne}.VarTwo       # Can refer other vars    
+    myVarTwo: ${myVarOne}.VarTwo       # Can refer other vars
   parameters:
-    failOnError: true                  # If set exit on an error         
+    failOnError: true                  # If set exit on an error
     failOnWarning: false               # If set exit on a warning
     continueOnFailure: false           # Continue running all jobs, even if one fails
     progressToStdout: true             # If set will write job progress to stdout
