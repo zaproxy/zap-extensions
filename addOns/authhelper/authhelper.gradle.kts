@@ -74,7 +74,10 @@ dependencies {
     zapAddOn("client")
     zapAddOn("zest")
 
-    implementation("com.github.bastiaanjansen:otp-java:2.1.0")
+    implementation("com.github.bastiaanjansen:otp-java:2.1.0") {
+        // Provided by ZAP.
+        exclude(group = "commons-codec", module = "commons-codec")
+    }
 
     testImplementation(project(":testutils"))
 }
