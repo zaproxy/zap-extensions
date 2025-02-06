@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [0.13.0] - 2025-02-04
 ### Added
-- Added support for Client Script Authentication when installed in conjunction with the Authentication Helper add-on. 
+- Added support for Client Script Authentication when installed in conjunction with the Authentication Helper add-on.
+- Add an API action to export the Client Map.
 
 ## [0.12.0] - 2025-01-24
 ### Fixed
