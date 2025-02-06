@@ -1,4 +1,4 @@
-description = "An extension to leverage LLM within ZAP."
+description = "An add-on to leverage LLM within ZAP."
 
 zapAddOn {
     addOnName.set("LLM Extension")

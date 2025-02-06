@@ -46,14 +46,11 @@ import org.zaproxy.zap.view.ZapMenuItem;
  */
 public class ExtensionLlm extends ExtensionAdaptor {
 
-    private static final Logger LOGGER = LogManager.getLogger(ExtensionLlm.class);
-
     public static final String NAME = "ExtensionLlm";
     protected static final String PREFIX = "llm";
     private static final String[] ROOT = {};
 
     private ZapMenuItem menuLLM;
-    private AbstractPanel statusPanel;
     private ImportDialog importDialog;
     private LlmReviewAlertMenu llmReviewAlertMenu;
     private LlmOptionsParam llmOptionsParam;
@@ -74,31 +71,32 @@ public class ExtensionLlm extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (hasView()) {
-            getView().getOptionsDialog().addParamPanel(ROOT, getOptionsPanel(), true);
-            extensionHook.addOptionsParamSet(getOptionsParam());
-            extensionHook.getHookMenu().addImportMenuItem(getMenuLLM());
-            extensionHook.getHookMenu().addPopupMenuItem(getCheckLlmMenu());
+        extensionHook.getHookView().addOptionPanel(getOptionsPanel());
+        extensionHook.addOptionsParamSet(getOptionsParam());
+        extensionHook.getHookMenu().addImportMenuItem(getMenuLLM());
+        extensionHook.getHookMenu().addPopupMenuItem(getCheckLlmMenu());
 
-            extensionHook.addSessionListener(
-                    new SessionChangedListener() {
-                        @Override
-                        public void sessionAboutToChange(Session session) {
-                            if (importDialog != null) {
-                                importDialog.clearFields();
-                            }
+        extensionHook.addSessionListener(
+                new SessionChangedListener() {
+                    @Override
+                    public void sessionAboutToChange(Session session) {
+                        if (importDialog != null) {
+                            importDialog.clearFields();
                         }
+                    }
 
-                        @Override
-                        public void sessionChanged(Session session) {}
+                    @Override
+                    public void sessionChanged(Session session) {
+                    }
 
-                        @Override
-                        public void sessionScopeChanged(Session session) {}
+                    @Override
+                    public void sessionScopeChanged(Session session) {
+                    }
 
-                        @Override
-                        public void sessionModeChanged(Control.Mode mode) {}
-                    });
-        }
+                    @Override
+                    public void sessionModeChanged(Control.Mode mode) {
+                    }
+                });
     }
 
     @Override
@@ -158,8 +156,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
     }
 
     public boolean isConfigured() {
-        if (!StringUtils.isEmpty(this.llmOptionsParam.getApiKey())) return true;
-        return false;
+        return StringUtils.isNotEmpty(this.llmOptionsParam.getApiKey());
     }
 
     @Override

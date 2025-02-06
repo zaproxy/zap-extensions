@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.llm.communication.HttpRequest;
 import org.zaproxy.addon.llm.communication.HttpRequestList;
@@ -44,8 +45,8 @@ public class Requestor {
     public String getResponseBody(HttpRequest httpRequest) throws IOException {
         HttpMessage httpMessage = new HttpMessage();
         httpMessage.setRequestHeader(
-                httpRequest.getMethod() + " " + httpRequest.geturl() + " HTTP/1.1");
-
+                String.format("%s %s %s", httpRequest.getMethod(), httpRequest.getUrl(), HttpRequestHeader.HTTP11)
+        );
         sender.sendAndReceive(httpMessage, true);
 
         return httpMessage.getResponseBody().toString();
@@ -58,7 +59,8 @@ public class Requestor {
                 HttpMessage httpMessage = new HttpMessage();
 
                 httpMessage.setRequestHeader(
-                        httpRequest.getMethod() + " " + httpRequest.geturl() + " HTTP/1.1");
+                        String.format("%s %s %s", httpRequest.getMethod(), httpRequest.getUrl(), HttpRequestHeader.HTTP11)
+                );
 
                 for (Map.Entry<String, String> header : httpRequest.getHeaders().entrySet()) {
                     httpMessage.getRequestHeader().setHeader(header.getKey(), header.getValue());

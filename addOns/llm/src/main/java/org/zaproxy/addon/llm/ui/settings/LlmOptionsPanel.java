@@ -32,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.addon.llm.ExtensionLlm;
 
@@ -112,13 +113,11 @@ public class LlmOptionsPanel extends AbstractParamPanel {
                 ((OptionsParam) object).getParamSet(LlmOptionsParam.class);
         this.apiKeyTextField.setText(Objects.toString(llmOptionsParam.getApiKey(), ""));
         this.llmendpointTextField.setText(Objects.toString(llmOptionsParam.getEndpoint(), ""));
-        // this.llmModelsComboBox : already selected value
     }
 
     @Override
     public void saveParam(Object object) {
-        final OptionsParam options = (OptionsParam) object;
-        final LlmOptionsParam param = options.getParamSet(LlmOptionsParam.class);
+        final LlmOptionsParam param = ((OptionsParam) object).getParamSet(LlmOptionsParam.class);
         param.setApiKey(this.apiKeyTextField.getText());
         param.setEndpoint(this.llmendpointTextField.getText());
         param.setModelName(this.llmModelsComboBox.getSelectedItem().toString());
@@ -128,9 +127,9 @@ public class LlmOptionsPanel extends AbstractParamPanel {
     @Override
     public void validateParam(Object object) throws Exception {
         String endpoint = this.llmendpointTextField.getText();
-        String ApiKey = this.apiKeyTextField.getText();
+        String apiKey = this.apiKeyTextField.getText();
 
-        if (StringUtils.isEmpty(ApiKey)) {
+        if (StringUtils.isEmpty(apiKey)) {
             throw new IllegalArgumentException(
                     Constant.messages.getString("llm.options.apikey.error.undefinded"));
         }
@@ -140,13 +139,12 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         try {
             URL url = new URL(endpoint);
             connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
+            connection.setRequestMethod(HttpRequestHeader.GET);
             connection.setConnectTimeout(5000); // Set timeout as per your need
             connection.setReadTimeout(5000); // Set timeout as per your need
-            int responseCode = connection.getResponseCode();
         } catch (Exception e) {
             // Endpoint is not reachable
-            LOGGER.error("Failed to reach the LLM endpoint : HTTP error code : " + e.getMessage());
+            LOGGER.error("Failed to reach the LLM endpoint: HTTP error code: {}", e.getMessage());
             throw new IllegalArgumentException(
                     Constant.messages.getString("llm.options.endpoint.error.unreachable"));
         } finally {

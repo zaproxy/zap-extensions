@@ -65,11 +65,11 @@ public class HttpRequest {
         this.method = method;
     }
 
-    public String geturl() {
+    public String getUrl() {
         return url;
     }
 
-    public void seturl(String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
