@@ -888,7 +888,6 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         File file = new File(path);
         try (Writer fileWriter = new FileWriter(file, false)) {
             ClientMapWriter.exportClientMap(fileWriter, clientTree);
-            Stats.incCounter(STATS_EXPORT_CLIENTMAP);
             return true;
         } catch (IOException | UncheckedIOException e) {
             LOGGER.warn(
@@ -902,6 +901,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                                         "client.tree.export.error", file.getAbsolutePath()));
             }
             return false;
+        } finally {
+            Stats.incCounter(STATS_EXPORT_CLIENTMAP);
         }
     }
 }
