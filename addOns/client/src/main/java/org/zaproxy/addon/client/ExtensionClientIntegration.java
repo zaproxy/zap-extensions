@@ -613,8 +613,13 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     }
 
     private void decPscanCount() {
-        if (hasView() && this.pscanStatus.getScanCount() > 0) {
-            ThreadUtils.invokeLater(pscanStatus::decScanCount);
+        if (hasView()) {
+            ThreadUtils.invokeLater(
+                    () -> {
+                        if (pscanStatus.getScanCount() > 0) {
+                            pscanStatus.decScanCount();
+                        }
+                    });
         }
     }
 
