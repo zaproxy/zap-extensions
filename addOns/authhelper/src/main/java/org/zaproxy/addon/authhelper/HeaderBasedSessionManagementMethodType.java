@@ -42,6 +42,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
+import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod;
 import org.zaproxy.addon.network.internal.client.LegacyUtils;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.extension.api.ApiDynamicActionImplementor;
@@ -56,6 +57,7 @@ import org.zaproxy.zap.session.AbstractSessionManagementMethodOptionsPanel;
 import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.session.SessionManagementMethodType;
 import org.zaproxy.zap.session.WebSession;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ApiUtils;
 import org.zaproxy.zap.utils.EncodingUtils;
 import org.zaproxy.zap.utils.Pair;
@@ -152,6 +154,10 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                 headers.add(new Pair<>(hc.first, replaceTokens(hc.second, tokens)));
             }
 
+            User user = msg.getRequestingUser();
+            if (user != null) {
+                return new HttpHeaderBasedSession(headers, user.getCorrespondingHttpState());
+            }
             return new HttpHeaderBasedSession(headers);
         }
 
@@ -212,6 +218,8 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                     } catch (Exception e) {
                         LOGGER.error(e.getMessage(), e);
                     }
+                } else if (am instanceof ClientScriptBasedAuthenticationMethod) {
+                    // Nothing to do
                 } else if (context.getAuthenticationMethod() == null) {
                     LOGGER.debug("processMessageToMatchSession no auth type set");
                 } else {
@@ -260,7 +268,11 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
         }
 
         public HttpHeaderBasedSession(List<Pair<String, String>> headers) {
-            super("HTTP Header Based Session " + generatedNameIndex++, new HttpState());
+            this(headers, new HttpState());
+        }
+
+        public HttpHeaderBasedSession(List<Pair<String, String>> headers, HttpState httpState) {
+            super("HTTP Header Based Session " + generatedNameIndex++, httpState);
             this.headers = headers;
         }
 

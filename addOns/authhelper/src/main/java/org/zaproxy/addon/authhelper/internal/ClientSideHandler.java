@@ -51,6 +51,10 @@ public final class ClientSideHandler implements HttpMessageHandler {
         this.context = context;
     }
 
+    private boolean isPost(HttpMessage msg) {
+        return HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod());
+    }
+
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
 
@@ -60,16 +64,24 @@ public final class ClientSideHandler implements HttpMessageHandler {
 
         AuthenticationHelper.addAuthMessageToHistory(msg);
 
-        if (HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod())
-                && context.isIncluded(msg.getRequestHeader().getURI().toString())) {
+        if (isPost(msg) && context.isIncluded(msg.getRequestHeader().getURI().toString())) {
             // Record the last in scope POST as a fallback
             fallbackMsg = msg;
+        }
+
+        if (authMsg != null && isPost(authMsg) && !isPost(msg)) {
+            // We have a better candidate
+            return;
         }
 
         SessionManagementRequestDetails smReqDetails = null;
         Map<String, SessionToken> sessionTokens = AuthUtils.getResponseSessionTokens(msg);
         if (!sessionTokens.isEmpty()) {
             authMsg = msg;
+            LOGGER.debug(
+                    "Session token found in href {} {}",
+                    authMsg.getHistoryRef().getHistoryId(),
+                    isPost(msg));
             smReqDetails =
                     new SessionManagementRequestDetails(
                             authMsg,

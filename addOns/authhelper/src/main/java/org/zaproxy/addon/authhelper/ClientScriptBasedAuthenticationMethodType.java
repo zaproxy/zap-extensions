@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -45,6 +47,7 @@ import org.jdesktop.swingx.renderer.DefaultListRenderer;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.internal.ClientSideHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
@@ -67,7 +70,10 @@ import org.zaproxy.zap.utils.EncodingUtils;
 import org.zaproxy.zap.utils.ZapHtmlLabel;
 import org.zaproxy.zap.view.DynamicFieldsPanel;
 import org.zaproxy.zap.view.LayoutHelper;
+import org.zaproxy.zest.core.v1.ZestActionSleep;
+import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthenticationMethodType {
 
@@ -259,6 +265,27 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             return null;
         }
 
+        private Set<String> getClientClosedWindowHandles(ZestScript zestScript) {
+            return zestScript.getStatements().stream()
+                    .filter(ZestClientWindowClose.class::isInstance)
+                    .map(ZestClientWindowClose.class::cast)
+                    .map(ZestClientWindowClose::getWindowHandle)
+                    .collect(Collectors.toSet());
+        }
+
+        protected void appendCloseStatements(ZestScript zestScript) {
+            ZestStatement last = zestScript.getLast();
+            if (!(last instanceof ZestClientWindowClose)) {
+                // Potentially need to add at least one close statement
+                Set<String> handles = zestScript.getClientWindowHandles();
+                handles.removeAll(this.getClientClosedWindowHandles(zestScript));
+                if (!handles.isEmpty()) {
+                    zestScript.add(new ZestActionSleep(2000));
+                    handles.forEach(h -> zestScript.add(new ZestClientWindowClose(h, 1)));
+                }
+            }
+        }
+
         @Override
         public WebSession authenticate(
                 SessionManagementMethod sessionManagementMethod,
@@ -295,15 +322,19 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                     setLoggedOutIndicatorPattern(scriptV2.getLoggedOutIndicator());
                 }
 
-                if (authScript instanceof ZestAuthenticationRunner zestScript) {
-                    zestScript.registerHandler(getHandler(user.getContext()));
+                if (authScript instanceof ZestAuthenticationRunner zestRunner) {
+                    zestRunner.registerHandler(getHandler(user.getContext()));
+                    appendCloseStatements(zestRunner.getScript().getZestScript());
                 } else {
                     LOGGER.warn("Expected authScript to be a Zest script");
                     return null;
                 }
 
+                HttpSender sender = getHttpSender();
+                sender.setUser(user);
+
                 authScript.authenticate(
-                        new AuthenticationHelper(getHttpSender(), sessionManagementMethod, user),
+                        new AuthenticationHelper(sender, sessionManagementMethod, user),
                         this.paramValues,
                         cred);
             } catch (Exception e) {
@@ -364,7 +395,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                     AuthenticationMethod.TOKEN_PREFIX
                             + kv.getKey()
                             + AuthenticationMethod.TOKEN_POSTFIX,
-                    kv.getValue());
+                    kv.getValue() == null ? "" : kv.getValue());
         }
         return map;
     }
