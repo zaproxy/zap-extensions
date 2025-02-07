@@ -32,6 +32,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
+import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.authentication.AuthenticationHelper;
 import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
@@ -118,9 +119,14 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
             if (hasClientStatements()) {
                 proxyServer =
                         getExtensionNetwork()
-                                .createHttpProxy(
-                                        helper.getHttpSender(),
-                                        new ZestMessageHandler(this, helper, handler));
+                                .createHttpServer(
+                                        HttpServerConfig.builder()
+                                                .setHttpSender(helper.getHttpSender())
+                                                .setHttpMessageHandler(
+                                                        new ZestMessageHandler(
+                                                                this, helper, handler))
+                                                .setServeZapApi(true)
+                                                .build());
                 int port = proxyServer.start(PROXY_ADDRESS, Server.ANY_PORT);
                 this.setProxy(PROXY_ADDRESS, port);
             }
