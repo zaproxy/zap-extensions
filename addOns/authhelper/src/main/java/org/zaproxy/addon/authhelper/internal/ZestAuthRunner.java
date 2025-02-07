@@ -25,6 +25,7 @@ import org.openqa.selenium.WebDriver;
 import org.zaproxy.zest.core.v1.ZestClient;
 import org.zaproxy.zest.core.v1.ZestClientFailException;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
+import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.impl.ZestBasicRunner;
 
@@ -53,6 +54,9 @@ public class ZestAuthRunner extends ZestBasicRunner {
                     "handleClient client launch, registering {}", clientLaunch.getWindowHandle());
             this.webDriver.get(clientLaunch.getUrl());
             return clientLaunch.getWindowHandle();
+        } else if (client instanceof ZestClientWindowClose) {
+            // We don't want to close the window as the browser lifecycle is managed externally
+            return null;
         }
         return super.handleClient(script, client);
     }

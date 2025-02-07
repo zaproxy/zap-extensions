@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Reduce add-on size.
+- Improved session management detection.
+
+### Fixed
+- Maintain the correct cookie state when using client script authentication.
+- Do not close windows when running client auth in the spiders.
+- Always close all of the windows when running client auth not in the spiders.
 
 ## [0.19.0] - 2025-02-04
 ### Added
