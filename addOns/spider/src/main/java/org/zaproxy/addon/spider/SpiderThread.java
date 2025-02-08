@@ -171,6 +171,7 @@ public class SpiderThread extends ScanThread implements SpiderListener {
 
     @Override
     public void stopScan() {
+        // a big deal
         if (spider != null) {
             spider.stop();
         }
@@ -197,6 +198,10 @@ public class SpiderThread extends ScanThread implements SpiderListener {
 
     @Override
     public void pauseScan() {
+        // this is problematic
+
+        LOGGER.debug("pausing yoyo");
+
         if (spider != null) {
             spider.pause();
         }
