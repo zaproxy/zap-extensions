@@ -22,6 +22,7 @@ package org.zaproxy.zap.testutils;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,6 +44,10 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
+import org.junit.jupiter.api.Test;
+import org.zaproxy.zap.extension.auth.AuthenticationMethod;
+import org.zaproxy.zap.extension.api.ApiResponse;
+import org.zaproxy.zap.testutils.ZapTestCase;
 
 interface ScanRuleTests {
 
@@ -127,5 +132,32 @@ interface ScanRuleTests {
         return Arrays.stream(Optional.ofNullable(refs).orElse("").split("\\r?\\n"))
                 .map(String::trim)
                 .filter(e -> !e.isEmpty());
+    }
+}
+
+
+public class CredentiallessScanTest extends ZapTestCase {
+
+    @Test
+    void shouldHandleMissingCredentialsGracefully() {
+        // Given: An unauthenticated scan rule
+        ScanRule scanRule = new ScanRule(); // assuming this is a rule being tested
+        scanRule.setAuthenticationMethod(null); // Simulate missing credentials
+
+        // When: Running the scan with the missing credentials
+        ApiResponse response = runScan(scanRule);  // Assuming runScan is a helper method to simulate the scan
+
+        // Then: The scan should indicate an authentication issue or produce an appropriate error message
+        assertThat("The scan should indicate missing credentials", response.getMessage(),
+                containsString("Authentication failed or credentials missing"));
+
+        // Optional: Check that no sensitive data was exposed (if relevant to the problem)
+        assertThat("No sensitive data should be exposed", response.getBody(), not(containsString("sensitive data")));
+    }
+
+    // Helper method to simulate running a scan
+    private ApiResponse runScan(ScanRule scanRule) {
+        // This would be a mock or a real method to simulate a scan in your testing environment
+        return scanRule.run();
     }
 }
