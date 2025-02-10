@@ -19,15 +19,18 @@
  */
 package org.zaproxy.addon.automation;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +39,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.zaproxy.addon.automation.ContextWrapper.UserData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethodType;
@@ -107,6 +111,10 @@ public class AuthenticationData extends AutomationData {
     public AuthenticationData() {}
 
     public AuthenticationData(Context context) {
+        this(context, List.of());
+    }
+
+    public AuthenticationData(Context context, List<UserData> users) {
         AuthenticationMethod authMethod = context.getAuthenticationMethod();
         if (authMethod instanceof HttpAuthenticationMethod) {
             HttpAuthenticationMethod httpAuthMethod = (HttpAuthenticationMethod) authMethod;
@@ -183,6 +191,8 @@ public class AuthenticationData extends AutomationData {
                 LOGGER.error("An error occurred while saving steps:", e);
             }
 
+            totpMethodToUser(parameters, users);
+
         } else if (authMethod != null
                 && authMethod
                         .getClass()
@@ -195,6 +205,71 @@ public class AuthenticationData extends AutomationData {
         if (authMethod != null) {
             setVerification(new VerificationData(context));
         }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void totpMethodToUser(
+            Map<String, Object> parameters, List<ContextWrapper.UserData> users) {
+        if (users == null || users.isEmpty()) {
+            return;
+        }
+
+        var user = users.get(0);
+        Object data = parameters.get("steps");
+        if (!(data instanceof List steps)) {
+            return;
+        }
+
+        for (Iterator<?> it = steps.iterator(); it.hasNext(); ) {
+            Map<String, Object> object = (Map<String, Object>) it.next();
+            if (isTotpType(object)) {
+                user.getInternalCredentials()
+                        .setTotp(
+                                JsonMapper.builder()
+                                        .build()
+                                        .convertValue(
+                                                object.remove("totp"), UserData.TotpData.class));
+                return;
+            }
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static Map<String, Object> totpUserToMethod(
+            Map<String, Object> parameters, List<ContextWrapper.UserData> users) {
+        if (users == null) {
+            return parameters;
+        }
+
+        var totpData =
+                users.stream()
+                        .map(ContextWrapper.UserData::getInternalCredentials)
+                        .map(ContextWrapper.UserData.Credentials::getTotp)
+                        .filter(Objects::nonNull)
+                        .findFirst()
+                        .orElse(null);
+        if (totpData == null) {
+            return parameters;
+        }
+
+        Object data = parameters.get("steps");
+        if (!(data instanceof List steps)) {
+            return parameters;
+        }
+
+        for (Iterator<?> it = steps.iterator(); it.hasNext(); ) {
+            Map<String, Object> object = (Map<String, Object>) it.next();
+            if (isTotpType(object)) {
+                object.put(
+                        "totp",
+                        JsonMapper.builder().build().convertValue(totpData, LinkedHashMap.class));
+            }
+        }
+        return parameters;
+    }
+
+    private static boolean isTotpType(Map<String, Object> object) {
+        return "TOTP_FIELD".equals(object.get("type"));
     }
 
     public AuthenticationData(Object data, AutomationProgress progress) {
@@ -242,6 +317,14 @@ public class AuthenticationData extends AutomationData {
 
     public void initContextAuthentication(
             Context context, AutomationProgress progress, AutomationEnvironment env) {
+        initContextAuthentication(context, progress, env, List.of());
+    }
+
+    public void initContextAuthentication(
+            Context context,
+            AutomationProgress progress,
+            AutomationEnvironment env,
+            List<ContextWrapper.UserData> users) {
         if (getMethod() != null) {
             ExtensionAuthentication extAuth = null;
             if (Control.getSingleton() != null) {
@@ -456,7 +539,7 @@ public class AuthenticationData extends AutomationData {
 
                         try {
                             Method method = am.getClass().getMethod("fromMap", Map.class);
-                            method.invoke(am, getParameters());
+                            method.invoke(am, totpUserToMethod(getParameters(), users));
                         } catch (Exception e) {
                             LOGGER.error("An error occurred while reading steps:", e);
                         }

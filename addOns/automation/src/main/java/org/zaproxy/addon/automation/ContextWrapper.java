@@ -19,6 +19,10 @@
  */
 package org.zaproxy.addon.automation;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -91,7 +95,6 @@ public class ContextWrapper {
         this.data.setSessionManagement(new SessionManagementData(context));
         this.data.setTechnology(new TechnologyData(context));
         this.data.setStructure(new StructureData(context));
-        this.data.setAuthentication(new AuthenticationData(context));
 
         if (getExtUserMgmt() != null) {
             ArrayList<UserData> users = new ArrayList<>();
@@ -128,6 +131,7 @@ public class ContextWrapper {
                 this.getData().setUsers(users);
             }
         }
+        this.data.setAuthentication(new AuthenticationData(context, getData().getUsers()));
     }
 
     public ContextWrapper(
@@ -198,6 +202,7 @@ public class ContextWrapper {
                                                 "automation.error.context.baduser", userObj));
                             } else {
                                 UserData ud = new UserData();
+                                readTotpData(ud, userObj);
                                 forceCredentialsStringType(userObj);
                                 JobUtils.applyParamsToObject(
                                         (LinkedHashMap<?, ?>) userObj, ud, "users", null, progress);
@@ -231,6 +236,28 @@ public class ContextWrapper {
         if (data.getUrls().isEmpty()) {
             progress.error(
                     Constant.messages.getString("automation.error.context.nourl", contextData));
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void readTotpData(UserData ud, Object userObj) {
+        Object credentials = ((LinkedHashMap) userObj).get("credentials");
+        if (!(credentials instanceof LinkedHashMap map)) {
+            return;
+        }
+
+        Object data = map.remove("totp");
+        if (!(data instanceof LinkedHashMap)) {
+            return;
+        }
+
+        try {
+            ud.getInternalCredentials()
+                    .setTotp(
+                            JsonMapper.builder()
+                                    .build()
+                                    .convertValue(data, UserData.TotpData.class));
+        } catch (Exception e) {
         }
     }
 
@@ -342,7 +369,9 @@ public class ContextWrapper {
             getData().getSessionManagement().initContextSessionManagement(context, progress, env);
         }
         if (getData().getAuthentication() != null) {
-            getData().getAuthentication().initContextAuthentication(context, progress, env);
+            getData()
+                    .getAuthentication()
+                    .initContextAuthentication(context, progress, env, getData().getUsers());
         }
         if (getData().getTechnology() != null) {
             getData().getTechnology().initContextTechnology(context, progress);
@@ -452,7 +481,7 @@ public class ContextWrapper {
         public static final String PASSWORD_CREDENTIAL = "password";
 
         private String name;
-        private Map<String, String> credentials = new HashMap<>();
+        private Credentials credentials = new Credentials();
 
         public UserData() {}
 
@@ -462,8 +491,8 @@ public class ContextWrapper {
 
         public UserData(String name, String username, String password) {
             this.name = name;
-            this.credentials.put(USERNAME_CREDENTIAL, username);
-            this.credentials.put(PASSWORD_CREDENTIAL, password);
+            this.credentials.getParameters().put(USERNAME_CREDENTIAL, username);
+            this.credentials.getParameters().put(PASSWORD_CREDENTIAL, password);
         }
 
         public String getName() {
@@ -476,24 +505,54 @@ public class ContextWrapper {
 
         public void setUsername(String username) {
             // Required for backwards compatibility
-            this.credentials.put(USERNAME_CREDENTIAL, username);
+            this.credentials.getParameters().put(USERNAME_CREDENTIAL, username);
         }
 
         public void setPassword(String password) {
             // Required for backwards compatibility
-            this.credentials.put(PASSWORD_CREDENTIAL, password);
+            this.credentials.getParameters().put(PASSWORD_CREDENTIAL, password);
         }
 
+        @JsonIgnore
         public Map<String, String> getCredentials() {
-            return credentials;
+            return credentials.getParameters();
         }
 
         public String getCredential(String key) {
-            return this.credentials.get(key);
+            return this.credentials.getParameters().get(key);
         }
 
         public void setCredentials(Map<String, String> credentials) {
-            this.credentials = credentials;
+            this.credentials.setParameters(credentials);
+        }
+
+        @JsonGetter("credentials")
+        public Credentials getInternalCredentials() {
+            return credentials;
+        }
+
+        @Getter
+        @Setter
+        public static class Credentials {
+
+            @JsonAnyGetter private Map<String, String> parameters = new HashMap<>();
+
+            private TotpData totp;
+
+            @JsonIgnore
+            public Map<String, String> getParameters() {
+                return parameters;
+            }
+        }
+
+        @Getter
+        @Setter
+        public static class TotpData {
+
+            private String secret;
+            private int period;
+            private int digits;
+            private String algorithm;
         }
     }
 
