@@ -45,7 +45,6 @@ public class ScriptJob extends AutomationJob {
 
     public static final String JOB_NAME = "script";
     public static final String PARAM_ACTION = "action";
-    public static final String PARAM_SCRIPT_NAME = "scriptName";
     protected static final Map<String, Function<ScriptJobParameters, ScriptAction>> ACTIONS =
             new HashMap<String, Function<ScriptJobParameters, ScriptAction>>() {
                 private static final long serialVersionUID = 1L;
@@ -144,14 +143,6 @@ public class ScriptJob extends AutomationJob {
     @Override
     public ScriptJobParameters getParameters() {
         return parameters;
-    }
-
-    @Override
-    public Map<String, String> getCustomConfigParameters() {
-        Map<String, String> map = super.getCustomConfigParameters();
-        map.put(PARAM_ACTION, "");
-        map.put(PARAM_SCRIPT_NAME, "");
-        return map;
     }
 
     @Override
