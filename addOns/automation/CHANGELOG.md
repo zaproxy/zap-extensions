@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [0.46.0] - 2025-02-10
 ### Changed
 - Read (and write) the TOTP data from user's credentials in the automation plan.
