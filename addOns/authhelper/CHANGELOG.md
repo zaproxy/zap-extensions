@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.21.0] - 2025-02-10
 ### Fixed
 - Delays identifying verification due to tests being performed on too many unlikely URLs (such as images).
 
@@ -147,6 +147,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.21.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.19.0
 [0.18.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.18.0
