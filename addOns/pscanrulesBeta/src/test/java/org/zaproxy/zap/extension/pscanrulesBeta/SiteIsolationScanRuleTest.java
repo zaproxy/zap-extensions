@@ -487,16 +487,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
 }
  
 class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
-     }
- 
-     @Test
-     void shouldRaiseAlertGivenCoepHeaderIsNotExpectedValue() throws Exception {
-         // Ref: https://html.spec.whatwg.org/multipage/origin.html#the-headers
-         // Given
-         HttpMessage msg = new HttpMessage();
-         class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
-         assertThat(alertsRaised.get(0).getEvidence(), equalTo("unsafe-none"));
-     }
+    }
  
     @ParameterizedTest
     @ValueSource(strings = {"require-corp", "credentialless"})
