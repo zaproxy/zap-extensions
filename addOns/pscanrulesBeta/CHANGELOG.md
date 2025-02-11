@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Replace usage of CWE-200 for the In Page Banner Information Leak scan rule (Issue 8731).
 - Add support for 'credentialless' COEP value in Site Isolation Scan (Issue 8840).
+
 ## [42] - 2025-01-15
 ### Changed
 - Update minimum ZAP version to 2.16.0.
