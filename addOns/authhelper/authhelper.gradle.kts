@@ -34,6 +34,21 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.addon.authhelper.report.ExtensionAuthhelperReport") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.authhelper.report"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">=0.45.0")
+                        }
+                        register("reports") {
+                            version.set(">=0.36.0")
+                        }
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
@@ -66,12 +81,14 @@ crowdin {
 }
 
 dependencies {
+    zapAddOn("automation")
     zapAddOn("commonlib")
     zapAddOn("network")
     zapAddOn("pscan")
     zapAddOn("selenium")
     zapAddOn("spiderAjax")
     zapAddOn("client")
+    zapAddOn("reports")
     zapAddOn("zest")
 
     implementation("com.github.bastiaanjansen:otp-java:2.1.0") {

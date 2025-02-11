@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -291,6 +292,18 @@ public class AutomationPlan {
 
     public Date getFinished() {
         return finished;
+    }
+
+    public String toYaml() throws IOException {
+        try (StringWriter writer = new StringWriter()) {
+            Data data = new Data();
+            data.setEnv(this.env.getData());
+            for (AutomationJob job : this.jobs) {
+                data.addJob(job.getData());
+            }
+            writer.append(writeObjectAsString(data));
+            return writer.toString();
+        }
     }
 
     public boolean save() throws FileNotFoundException, JsonProcessingException {

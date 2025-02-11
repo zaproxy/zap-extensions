@@ -1,0 +1,8 @@
+name: Authentication Report - JSON
+format: JSON
+mode: TEXT
+extension: json
+sections:
+ - summary
+ - afenv
+ - statistics
