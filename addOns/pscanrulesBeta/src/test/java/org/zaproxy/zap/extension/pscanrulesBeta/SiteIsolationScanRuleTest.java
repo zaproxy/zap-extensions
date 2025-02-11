@@ -20,8 +20,8 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -317,7 +317,7 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     }
 
     @Test
-    void shouldRaiseAlertGivenCoepHeaderIsNotEqualsToRequireCorp() throws Exception {
+    void shouldRaiseAlertGivenCoepHeaderIsNotExpectedValue() throws Exception {
         // Ref: https://html.spec.whatwg.org/multipage/origin.html#the-headers
         // Given
         HttpMessage msg = new HttpMessage();
@@ -339,6 +339,30 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
                 alertsRaised.get(0).getParam(),
                 equalTo(SiteIsolationScanRule.CoepHeaderScanRule.HEADER));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("unsafe-none"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"require-corp", "credentialless"})
+    void shouldNotRaiseAlertGivenCoepHeaderIsAnExpectedValue(String directive) throws Exception {
+        // Ref: https://html.spec.whatwg.org/multipage/origin.html#the-headers
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET / HTTP/1.1");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Content-Type: text/html; charset=iso-8859-1\r\n"
+                        + "Cross-Origin-Resource-Policy: same-origin\r\n"
+                        + "Cross-Origin-Embedder-Policy: "
+                        + directive
+                        + "\r\n"
+                        + "Cross-Origin-Opener-Policy: same-origin\r\n");
+        given(passiveScanData.isSuccess(any())).willReturn(true);
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test
@@ -485,35 +509,3 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         return new SiteIsolationScanRule();
     }
 }
- 
-class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
-         assertThat(alertsRaised.get(0).getEvidence(), equalTo("unsafe-none"));
-     }
- 
-    @ParameterizedTest
-    @ValueSource(strings = {"require-corp", "credentialless"})
-    void shouldNotRaiseAlertGivenCoepHeaderIsAnExpectedValue(String directive) throws Exception {
-        // Ref: https://html.spec.whatwg.org/multipage/origin.html#the-headers
-        // Given
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET / HTTP/1.1");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                         + "Content-Type: text/html; charset=iso-8859-1\r\n"
-                         + "Cross-Origin-Resource-Policy: same-origin\r\n"
-                         + "Cross-Origin-Embedder-Policy: "
-                         + directive
-                         + "\r\n"
-                         + "Cross-Origin-Opener-Policy: same-origin\r\n");
-         given(passiveScanData.isSuccess(any())).willReturn(true);
-
-         // When
-         scanHttpResponseReceive(msg);
-
-         // Then
-         assertThat(alertsRaised, is(empty()));
-     }
-
-     @Test
-     void shouldRaiseAlertGivenCoopHeaderIsMissing() throws Exception {
-         // Given
