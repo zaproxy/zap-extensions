@@ -234,10 +234,10 @@ public class SiteIsolationScanRule extends PluginPassiveScanner
                 alerts.addAll(
                         filterReportHeader(coepHeader)
                                .filter(
-+                                        header ->
-+                                                !"require-corp".equalsIgnoreCase(header)
-+                                                        && !"credentialless"
-+                                                                .equalsIgnoreCase(header))
+                                        header ->
+                                                !"require-corp".equalsIgnoreCase(header)
+                                                        && !"credentialless"
+                                                                .equalsIgnoreCase(header))
                                 .map(this::alert)
                                 .collect(Collectors.toList()));
             }
