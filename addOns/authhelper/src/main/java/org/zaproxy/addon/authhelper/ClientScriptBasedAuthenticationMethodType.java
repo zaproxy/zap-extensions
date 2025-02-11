@@ -287,6 +287,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         }
 
         @Override
+        @SuppressWarnings("try")
         public WebSession authenticate(
                 SessionManagementMethod sessionManagementMethod,
                 AuthenticationCredentials credentials,
@@ -333,10 +334,16 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 HttpSender sender = getHttpSender();
                 sender.setUser(user);
 
-                authScript.authenticate(
-                        new AuthenticationHelper(sender, sessionManagementMethod, user),
-                        this.paramValues,
-                        cred);
+                try (AuthenticationDiagnostics diags =
+                        new AuthenticationDiagnostics(
+                                METHOD_IDENTIFIER, user.getContextId(), user.getId())) {
+                    diags.insertDiagnostics(zestRunner.getScript().getZestScript());
+
+                    authScript.authenticate(
+                            new AuthenticationHelper(sender, sessionManagementMethod, user),
+                            this.paramValues,
+                            cred);
+                }
             } catch (Exception e) {
                 // Catch Exception instead of ScriptException and IOException because script engine
                 // implementations might throw other exceptions on script errors (e.g.

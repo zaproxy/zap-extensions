@@ -97,7 +97,7 @@ import org.zaproxy.zap.view.NodeSelectDialog;
 
 public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodType {
 
-    private static final int METHOD_IDENTIFIER = 6;
+    public static final int METHOD_IDENTIFIER = 6;
 
     private static final String API_METHOD_NAME = "browserBasedAuthentication";
 
@@ -303,6 +303,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     if (AuthUtils.authenticateAsUser(
                             wd,
                             context,
+                            user,
                             loginPageUrl,
                             userCreds.getUsername(),
                             userCreds.getPassword(),
