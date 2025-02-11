@@ -233,7 +233,7 @@ public class SiteIsolationScanRule extends PluginPassiveScanner
                 // unsafe-none is the default value. It disables COEP checks.
                 alerts.addAll(
                         filterReportHeader(coepHeader)
-                               .filter(
+                                .filter(
                                         header ->
                                                 !"require-corp".equalsIgnoreCase(header)
                                                         && !"credentialless"
