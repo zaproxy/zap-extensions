@@ -92,11 +92,6 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
             return;
         }
 
-        if (!AlertThreshold.LOW.equals(getAlertThreshold())
-                && HttpRequestHeader.GET.equals(msg.getRequestHeader().getMethod())) {
-            return;
-        }
-
         // need to do this if we are to be able to get an element's parent. Do it as early as
         // possible in the logic
         source.fullSequentialParse();
@@ -117,8 +112,6 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
             // Loop through all of the FORM tags
             LOGGER.debug("Found {} forms", formElements.size());
 
-            int numberOfFormsPassed = 0;
-
             List<String> ignoreList = new ArrayList<>();
             String ignoreConf = getCSRFIgnoreList();
             if (ignoreConf != null && !ignoreConf.isEmpty()) {
@@ -133,12 +126,21 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
             String ignoreAttName = getCSRFIgnoreAttName();
             String ignoreAttValue = getCSRFIgnoreAttValue();
 
+            int formIdx = 0;
             for (Element formElement : formElements) {
                 LOGGER.debug(
                         "FORM [{}] has parent [{}]", formElement, formElement.getParentElement());
+                ++formIdx;
+
+                String formMethod = formElement.getAttributeValue("method");
+                formMethod = formMethod == null ? HttpRequestHeader.GET : formMethod;
+                if (!AlertThreshold.LOW.equals(getAlertThreshold())
+                        && HttpRequestHeader.GET.equalsIgnoreCase(formMethod)) {
+                    continue;
+                }
                 StringBuilder sbForm = new StringBuilder();
                 SortedSet<String> elementNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-                ++numberOfFormsPassed;
+
                 // if the form has no parent, it is pretty likely invalid HTML,
                 // so we will not report
                 // any alerts on it.
@@ -162,7 +164,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
                 }
 
                 List<Element> inputElements = formElement.getAllElements(HTMLElementName.INPUT);
-                sbForm.append("[Form " + numberOfFormsPassed + ": \"");
+                sbForm.append("[Form " + formIdx + ": \"");
                 boolean foundCsrfToken = false;
 
                 if (inputElements != null && !inputElements.isEmpty()) {
