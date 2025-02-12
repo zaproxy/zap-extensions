@@ -20,6 +20,9 @@
 package org.zaproxy.addon.pscan;
 
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,6 +43,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.pscan.internal.AddOnScanRulesLoader;
 import org.zaproxy.addon.pscan.internal.DefaultStatsListener;
 import org.zaproxy.addon.pscan.internal.PassiveScannerOptions;
+import org.zaproxy.addon.pscan.internal.RegexAutoTagScanner;
 import org.zaproxy.addon.pscan.internal.ScanRuleManager;
 import org.zaproxy.addon.pscan.internal.StatsPassiveScanner;
 import org.zaproxy.addon.pscan.internal.scanner.PassiveScanController;
@@ -192,6 +196,18 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
         passiveScanEnabled = true;
         getPassiveScanController();
+    }
+
+    /**
+     * Gets the tags used for auto tagging.
+     *
+     * @return a sorted set with the tags, never {@code null}.
+     * @since 0.2.0
+     */
+    public SortedSet<String> getAutoTaggingTags() {
+        return options.getAutoTagScanners().stream()
+                .map(RegexAutoTagScanner::getConf)
+                .collect(Collectors.toCollection(TreeSet<String>::new));
     }
 
     /**
