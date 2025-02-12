@@ -141,13 +141,13 @@ public class ReportJob extends AutomationJob {
 
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
-        ReportData reportData = new ReportData();
 
         String templateName = this.getParameters().getTemplate();
         if (StringUtils.isEmpty(templateName)) {
             templateName = ReportParam.DEFAULT_TEMPLATE;
         }
         Template template = getExtReport().getTemplateByConfigName(templateName);
+        ReportData reportData = new ReportData(templateName);
 
         if (template == null) {
             progress.error(

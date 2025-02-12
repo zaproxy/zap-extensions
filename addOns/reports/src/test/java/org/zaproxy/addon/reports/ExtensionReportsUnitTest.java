@@ -552,7 +552,7 @@ class ExtensionReportsUnitTest extends TestUtils {
     }
 
     private static ReportData getTestReportData() {
-        ReportData reportData = new ReportData();
+        ReportData reportData = new ReportData("test");
         AlertNode root = new AlertNode(0, "Test");
         reportData.setAlertTreeRootNode(root);
         addSites(reportData);
@@ -745,7 +745,7 @@ class ExtensionReportsUnitTest extends TestUtils {
     @SuppressWarnings("removal")
     private static ReportData getTestReportDataWithAlerts()
             throws URIException, HttpMalformedHeaderException {
-        ReportData reportData = new ReportData();
+        ReportData reportData = new ReportData("test");
         reportData.setTitle("Test Title");
         reportData.setDescription("Test Description");
         reportData.setIncludeAllConfidences(true);
@@ -923,7 +923,7 @@ class ExtensionReportsUnitTest extends TestUtils {
     private static File generateReportWithSequence(Template template, File f)
             throws IOException, DocumentException {
         ExtensionReports extRep = new ExtensionReports();
-        ReportData reportData = new ReportData();
+        ReportData reportData = new ReportData("test");
         reportData.setTitle("Test Title");
         reportData.setDescription("Test Description");
         reportData.setIncludeAllConfidences(true);

@@ -98,7 +98,7 @@ public class ExtensionReports extends ExtensionAdaptor {
     private Map<String, Template> templateMap;
     private ReportParam reportParam;
 
-    private ReportDataHandler reportDataHandler;
+    private List<ReportDataHandler> reportDataHandlers = new ArrayList<>();
 
     public ExtensionReports() {
         super(NAME);
@@ -346,7 +346,7 @@ public class ExtensionReports extends ExtensionAdaptor {
         if (template == null) {
             throw new IllegalArgumentException("Unknown template: " + templateName);
         }
-        ReportData reportData = new ReportData();
+        ReportData reportData = new ReportData(templateName);
         reportData.setTitle(title);
         reportData.setDescription(description);
         reportData.setSites(sites);
@@ -398,9 +398,7 @@ public class ExtensionReports extends ExtensionAdaptor {
             context.setVariable("zapVersion", Constant.PROGRAM_VERSION);
             context.setVariable("programName", Constant.PROGRAM_NAME_SHORT);
 
-            if (reportDataHandler != null) {
-                reportDataHandler.handle(reportData);
-            }
+            reportDataHandlers.forEach(rdh -> rdh.handle(reportData));
 
             if ("PDF".equals(template.getFormat())) {
                 if (reportFilename.toLowerCase().endsWith(".pdf")) {
@@ -483,8 +481,35 @@ public class ExtensionReports extends ExtensionAdaptor {
         }
     }
 
+    /**
+     * Set (add) a class which can be used to add more data to reports.
+     *
+     * @param reportDataHandler
+     * @deprecated 0.36.0
+     */
+    @Deprecated(forRemoval = true, since = "0.36.0")
     public void setReportDataHandler(ReportDataHandler reportDataHandler) {
-        this.reportDataHandler = reportDataHandler;
+        this.addReportDataHandler(reportDataHandler);
+    }
+
+    /**
+     * Add a ReportDataHandler which can be used to add more data to reports.
+     *
+     * @param reportDataHandler the ReportDataHandler
+     * @since 0.36.0
+     */
+    public void addReportDataHandler(ReportDataHandler reportDataHandler) {
+        this.reportDataHandlers.add(reportDataHandler);
+    }
+
+    /**
+     * Remove a ReportDataHandler.
+     *
+     * @param reportDataHandler the ReportDataHandler
+     * @since 0.36.0
+     */
+    public void removeReportDataHandler(ReportDataHandler reportDataHandler) {
+        this.reportDataHandlers.remove(reportDataHandler);
     }
 
     public interface ReportDataHandler {

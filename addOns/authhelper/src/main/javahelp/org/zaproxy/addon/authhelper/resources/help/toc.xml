@@ -16,6 +16,7 @@
 				<tocitem text="Header Based Session Management" target="authhelper.session-header"/>
 				<tocitem text="Verification Identification" target="authhelper.verification-id"/>
 				<tocitem text="Authentication Tester Dialog" target="authhelper.auth-tester"/>
+				<tocitem text="Report Templates" target="authhelper.report-templates"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>
