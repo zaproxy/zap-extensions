@@ -20,8 +20,8 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,7 +42,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -57,6 +56,10 @@ import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCountermeasuresScanRule> {
+
+    private static List<String> POSTS = List.of("POST", "post", "pOst");
+    private static List<String> GETS = List.of("GET", "get", "gEt");
+    private static List<Boolean> BOOLS = List.of(true, false);
 
     private ExtensionAntiCSRF extensionAntiCSRFMock;
     private List<String> antiCsrfTokenNames;
@@ -84,6 +87,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         rule.setCsrfIgnoreList("");
         rule.setCSRFIgnoreAttName("");
         rule.setCSRFIgnoreAttValue("");
+        rule.setAlertThreshold(AlertThreshold.MEDIUM);
 
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));
@@ -176,7 +180,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     void shouldNotRaiseAlertIfFormHasNoParent() {
         // Given
         msg.setResponseBody(
-                "<form id=\"no_csrf_token\"><input type=\"text\"/><input type=\"submit\"/></form>");
+                "<form id=\"no_csrf_token\" method=\"POST\"><input type=\"text\"/><input type=\"submit\"/></form>");
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -192,7 +196,8 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(9, alertsRaised.get(0).getWascId());
-        assertEquals("<form id=\"no_csrf_token\">", alertsRaised.get(0).getEvidence());
+        assertEquals(
+                "<form id=\"no_csrf_token\" method=\"POST\">", alertsRaised.get(0).getEvidence());
     }
 
     @Test
@@ -200,7 +205,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // Given
         msg.setResponseBody(
                 "<html><head></head><body>"
-                        + "<form id=\"no_csrf_token\">"
+                        + "<form id=\"no_csrf_token\" method=\"POST\">"
                         + "    <input type=\"text\" id=\"Cat\"/>"
                         + "    <input type=\"text\" id=\"car\"/>"
                         + "    <input type=\"text\" id=\"Bat\"/>"
@@ -224,7 +229,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // Given
         msg.setResponseBody(
                 "<html><head></head><body>"
-                        + "<form id=\"no_csrf_token\">"
+                        + "<form id=\"no_csrf_token\" method=\"post\">"
                         + "    <input type=\"text\" id=\"Id\"/>"
                         + "    <input type=\"text\" id=\"username\"/>"
                         + "    <input type=\"text\" id=\"Key\"/>"
@@ -250,7 +255,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     void shouldNotRaiseAlertWhenThereIsOnlyOneFormWithFirstKnownCSRFTokenUsingName() {
         // Given
         msg.setResponseBody(
-                "<html><head></head><body><form id=\"form_name\"><input type=\"text\" name=\"token\"/><input type=\"submit\"/></form></body></html>");
+                "<html><head></head><body><form id=\"form_name\"  method=\"POST\"><input type=\"text\" name=\"token\"/><input type=\"submit\"/></form></body></html>");
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -261,7 +266,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     void shouldNotRaiseAlertWhenThereIsOnlyOneFormWithAKnownCSRFTokenUsingId() {
         // Given
         msg.setResponseBody(
-                "<html><head></head><body><form id=\"form_name\"><input type=\"text\" id=\"token\"/><input type=\"submit\"/></form></body></html>");
+                "<html><head></head><body><form id=\"form_name\"  method=\"POST\"><input type=\"text\" id=\"token\"/><input type=\"submit\"/></form></body></html>");
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -272,7 +277,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     void shouldNotRaiseAlertWhenThereIsOnlyOneFormWithSecondKnownCSRFTokenUsingName() {
         // Given
         msg.setResponseBody(
-                "<html><head></head><body><form id=\"form_name\"><input type=\"text\" name=\"csrfToken\"/><input type=\"submit\"/></form></body></html>");
+                "<html><head></head><body><form id=\"form_name\"  method=\"POST\"><input type=\"text\" name=\"csrfToken\"/><input type=\"submit\"/></form></body></html>");
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -284,14 +289,39 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // Given
         msg.setResponseBody(
                 "<html><head></head><body>"
-                        + "<form id=\"second_form\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
-                        + "<form id=\"first_form\"><input type=\"text\" name=\"csrfToken\"/><input type=\"submit\"/></form>"
+                        + "<form id=\"second_form\" method=\"PoST\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+                        + "<form id=\"first_form\" method=\"POST\"><input type=\"text\" name=\"csrfToken\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertEquals(alertsRaised.get(0).getEvidence(), "<form id=\"second_form\">");
+        assertEquals(
+                alertsRaised.get(0).getEvidence(), "<form id=\"second_form\" method=\"PoST\">");
+    }
+
+    @Test
+    void
+            shouldRaiseOneAlertForOneFormWhenOtherFormHasAKnownCSRFTokenAndFormsAreSkippedDueToNonPostMethod() {
+        // Given
+        msg.setResponseBody(
+                "<html><head></head><body>"
+                        + "<form id=\"first_form\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+                        + "<form id=\"second_form\" method=\"PoST\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+                        + "<form id=\"third_form\" method=\"GET\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+                        + "<form id=\"fourth_form\" method=\"POST\"><input type=\"text\" name=\"csrfToken\"/><input type=\"submit\"/></form>"
+                        + "</body></html>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertEquals(
+                alertsRaised.get(0).getEvidence(), "<form id=\"second_form\" method=\"PoST\">");
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        equalTo(
+                                "No known Anti-CSRF token [token, csrfToken, csrf-token] was found in the following HTML form: [Form 2: \"name\" ].")));
     }
 
     @Test
@@ -299,14 +329,15 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // Given
         msg.setResponseBody(
                 "<html><head></head><body>"
-                        + "<form id=\"first_form\"><input type=\"text\" name=\"csrfToken\"/><input type=\"submit\"/></form>"
-                        + "<form id=\"second_form\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+                        + "<form id=\"first_form\" method=\"POST\"><input type=\"text\" name=\"csrfToken\"/><input type=\"submit\"/></form>"
+                        + "<form id=\"second_form\" method=\"POST\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
-        assertEquals(alertsRaised.get(0).getEvidence(), "<form id=\"second_form\">");
+        assertEquals(
+                alertsRaised.get(0).getEvidence(), "<form id=\"second_form\" method=\"POST\">");
     }
 
     @Test
@@ -314,18 +345,19 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // Given
         msg.setResponseBody(
                 "<html><head></head><body>"
-                        + "<form id=\"zeroth_form\" action=\"someaction\"><input type=\"text\" name=\"zero\"/><input type=\"submit\"/></form>"
-                        + "<form id=\"first_form\"><input type=\"text\" name=\"csrfToken\"/><input type=\"submit\"/></form>"
-                        + "<form id=\"second_form\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+                        + "<form id=\"zeroth_form\" method=\"POST\" action=\"someaction\"><input type=\"text\" name=\"zero\"/><input type=\"submit\"/></form>"
+                        + "<form id=\"first_form\" method=\"POST\"><input type=\"text\" name=\"csrfToken\"/><input type=\"submit\"/></form>"
+                        + "<form id=\"second_form\" method=\"POST\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(2, alertsRaised.size());
         assertEquals(
-                "<form id=\"zeroth_form\" action=\"someaction\">",
+                "<form id=\"zeroth_form\" method=\"POST\" action=\"someaction\">",
                 alertsRaised.get(0).getEvidence());
-        assertEquals("<form id=\"second_form\">", alertsRaised.get(1).getEvidence());
+        assertEquals(
+                "<form id=\"second_form\" method=\"POST\">", alertsRaised.get(1).getEvidence());
     }
 
     @Test
@@ -335,7 +367,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
 
         msg.setResponseBody(
                 "<html><head></head><body>"
-                        + "<form id=\"ignoredName\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+                        + "<form id=\"ignoredName\" method=\"POST\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
         scanHttpResponseReceive(msg);
@@ -350,7 +382,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
 
         msg.setResponseBody(
                 "<html><head></head><body>"
-                        + "<form name=\"otherName\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+                        + "<form name=\"otherName\" method=\"POST\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
         scanHttpResponseReceive(msg);
@@ -365,7 +397,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
 
         msg.setResponseBody(
                 "<html><head></head><body>"
-                        + "<form name=\"someName\" data-no-csrf><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+                        + "<form name=\"someName\" method=\"POST\" data-no-csrf><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
         scanHttpResponseReceive(msg);
@@ -382,7 +414,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
 
         msg.setResponseBody(
                 "<html><head></head><body>"
-                        + "<form name=\"someName\" data-no-csrf=\"data-no-csrf\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+                        + "<form name=\"someName\" method=\"POST\" data-no-csrf=\"data-no-csrf\"><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
         scanHttpResponseReceive(msg);
@@ -398,7 +430,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
 
         msg.setResponseBody(
                 "<html><head></head><body>"
-                        + "<form name=\"someName\" data-no-csrf><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+                        + "<form name=\"someName\" method=\"POST\" data-no-csrf><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         // When
         scanHttpResponseReceive(msg);
@@ -450,13 +482,30 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         assertEquals(1, alertsRaised.size());
     }
 
+    private static Stream<Arguments> createMethodAndScopeBoolean() {
+        List<Arguments> args = new ArrayList<>();
+        args.addAll(getListForMethod(POSTS));
+        args.addAll(getListForMethod(GETS));
+        return args.stream();
+    }
+
+    private static List<Arguments> getListForMethod(List<String> methods) {
+        List<Arguments> args = new ArrayList<>();
+        for (String method : methods) {
+            for (boolean bool : BOOLS) {
+                args.add(Arguments.of(method, bool));
+            }
+        }
+        return args;
+    }
+
     @ParameterizedTest
-    @ValueSource(booleans = {true, false})
-    void shouldRaiseAlertOnGetAtLowThresholdRegardlessOfScope(boolean isInScope)
+    @MethodSource("createMethodAndScopeBoolean")
+    void shouldRaiseAlertOnGetAtLowThresholdRegardlessOfScope(String method, boolean isInScope)
             throws URIException {
         // Given
         rule.setCSRFIgnoreAttName("ignore");
-        HttpMessage msg = createScopedMessage(isInScope, HttpRequestHeader.GET);
+        HttpMessage msg = createScopedMessage(isInScope, method);
         // When
         rule.setConfig(new ZapXmlConfiguration());
         rule.setAlertThreshold(AlertThreshold.LOW);
@@ -465,32 +514,35 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         assertEquals(1, alertsRaised.size());
     }
 
-    private static Stream<Arguments> provideNonLowThresholdsAndBooleans() {
-        return Stream.of(
-                Arguments.of(AlertThreshold.MEDIUM, true),
-                Arguments.of(AlertThreshold.MEDIUM, false),
-                Arguments.of(AlertThreshold.HIGH, true),
-                Arguments.of(AlertThreshold.HIGH, false));
+    /* Returns Arguments based on method string, scope boolean, and threshold */
+    private static Stream<Arguments> createGetMethodAndScopeBooleanThresholdsMediumAndHigh() {
+        List<Arguments> args = new ArrayList<>();
+        List<AlertThreshold> thresholds = List.of(AlertThreshold.MEDIUM, AlertThreshold.HIGH);
+        thresholds.forEach(
+                t ->
+                        getListForMethod(GETS)
+                                .forEach(a -> args.add(Arguments.of(a.get()[0], a.get()[1], t))));
+        return args.stream();
     }
 
     @ParameterizedTest
-    @MethodSource("provideNonLowThresholdsAndBooleans")
+    @MethodSource("createGetMethodAndScopeBooleanThresholdsMediumAndHigh")
     void shouldNotRaiseAlertOnGetAtNonLowThresholdRegardlessOfScope(
-            AlertThreshold threshold, boolean isInScope) throws URIException {
+            String method, boolean isInScope, AlertThreshold threshold) throws URIException {
         // Given
         rule.setCSRFIgnoreAttName("ignore");
-        HttpMessage msg = createScopedMessage(isInScope, HttpRequestHeader.GET);
+        HttpMessage msg = createScopedMessage(isInScope, method);
         // When
         rule.setConfig(new ZapXmlConfiguration());
         rule.setAlertThreshold(threshold);
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised, hasSize(0));
+        assertThat(alertsRaised, is(empty()));
     }
 
     void formWithoutAntiCsrfToken() {
         msg.setResponseBody(
-                "<html><head></head><body><form id=\"no_csrf_token\"><input type=\"text\"/><input type=\"submit\"/></form></body></html>");
+                "<html><head></head><body><form id=\"no_csrf_token\" method=\"POST\"><input type=\"text\"/><input type=\"submit\"/></form></body></html>");
     }
 
     private static HttpMessage createScopedMessage(boolean isInScope) throws URIException {
@@ -507,11 +559,12 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
                     }
                 };
         newMsg.getRequestHeader().setURI(new URI("http://", "localhost", "/", ""));
-        newMsg.getRequestHeader().setMethod(method);
         newMsg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/html");
         newMsg.setResponseBody(
                 "<html><head></head><body>"
-                        + "<form name=\"someName\" data-no-csrf><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
+                        + "<form name=\"someName\" method=\""
+                        + method
+                        + "\" data-no-csrf><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
                         + "</body></html>");
         return newMsg;
     }
