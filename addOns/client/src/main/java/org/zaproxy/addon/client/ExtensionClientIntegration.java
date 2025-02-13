@@ -889,16 +889,18 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         }
     }
 
-    public void exportClientMap(String path) {
+    public boolean exportClientMap(String path, boolean isApi) {
         File file = new File(path);
+        boolean result = false;
         try (Writer fileWriter = new FileWriter(file, false)) {
             ClientMapWriter.exportClientMap(fileWriter, clientTree);
+            result = true;
         } catch (IOException | UncheckedIOException e) {
             LOGGER.warn(
                     "An error occurred while exporting the Client Map: {}",
                     file.getAbsolutePath(),
                     e);
-            if (hasView()) {
+            if (hasView() && !isApi) {
                 this.getView()
                         .showWarningDialog(
                                 Constant.messages.getString(
@@ -906,5 +908,10 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             }
         }
         Stats.incCounter(STATS_EXPORT_CLIENTMAP);
+        return result;
+    }
+
+    public boolean exportClientMap(String path) {
+        return exportClientMap(path, false);
     }
 }
