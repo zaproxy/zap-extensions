@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Passive Scanner Add-on
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Passive Scanner Add-on</H1>
+An add-on that provides core passive scanning capabilities.
+
+<p>
+	This add-on supports the <a href="automation.html">Automation Framework</a>.
+</p>
+
+<H2>Passive Scan</H1>
+<p>
+ZAP by default passively scans all messages (e.g. HTTP, WebSocket) sent to the web application being tested.<br>
+Passive scanning does not change the messages in any way and is therefore safe to use.<br>
+Scanning is performed in the background to ensure that it does not slow down the exploration of an application.
+</p>
+<p>
+The (main) behaviour of the passive scanner can be configured using the <a href="options/scanner.html">Options Passive Scanner Screen</a>.
+</p>
+<p>
+Passive scanning can also be used for automatically adding <a href="https://www.zaproxy.org/docs/desktop/start/features/tags/">tags</a>
+and raising <a href="https://www.zaproxy.org/docs/desktop/start/features/alerts/">alerts</a> for potential issues.<br>
+A set of rules for automatic tagging are provided by default. These can be changed, deleted or
+added to via the <a href="options/tags.html">Options Passive Scan Tags screen</a>.
+</p>
+
+<p>
+The alerts raised by passive scan rules can be configured using the <a href="options/rules.html">Options Passive Scan Rules screen</a>.
+</p>
+
+<H2>Official Videos</H2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td><a href="https://play.sonatype.com/watch/vDWpoYjHi7fSLYFDQPWgMF">ZAP In Ten: Passive Scanning</a> (10:27)</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td><a href="https://play.vidyard.com/HfENJ3GJB3zbD6sMscDrjD">ZAP In Ten: Passive Scan Scripts</a> (11:53)</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+<td><a href="https://www.youtube.com/watch?v=Rx42kyrB0nk">Deep Dive: Passive Scanning</a> (27:35)</td></tr>
+</table>
+
+<H2>See also</H2>
+<table>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="api.html">Passive Scanner API</a></td>
+		<td>for more details about the Passive Scanner API</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="options/options.html">Options</a></td>
+		<td>for the provided options screens</td>
+	</tr>
+</table>
+
+</BODY>
+</HTML>
