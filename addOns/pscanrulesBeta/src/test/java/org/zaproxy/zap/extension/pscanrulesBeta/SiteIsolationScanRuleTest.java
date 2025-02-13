@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
@@ -318,16 +319,8 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
 
     @Test
     void shouldRaiseAlertGivenCoepHeaderIsNotExpectedValue() throws Exception {
-        // Ref: https://html.spec.whatwg.org/multipage/origin.html#the-headers
         // Given
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET / HTTP/1.1");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Content-Type: text/html; charset=iso-8859-1\r\n"
-                        + "Cross-Origin-Resource-Policy: same-origin\r\n"
-                        + "Cross-Origin-Embedder-Policy: unsafe-none\r\n"
-                        + "Cross-Origin-Opener-Policy: same-origin\r\n");
+        HttpMessage msg = getCoepMessage("unsafe-none");
         given(passiveScanData.isSuccess(any())).willReturn(true);
 
         // When
@@ -344,18 +337,8 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
     @ParameterizedTest
     @ValueSource(strings = {"require-corp", "credentialless"})
     void shouldNotRaiseAlertGivenCoepHeaderIsAnExpectedValue(String directive) throws Exception {
-        // Ref: https://html.spec.whatwg.org/multipage/origin.html#the-headers
         // Given
-        HttpMessage msg = new HttpMessage();
-        msg.setRequestHeader("GET / HTTP/1.1");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Content-Type: text/html; charset=iso-8859-1\r\n"
-                        + "Cross-Origin-Resource-Policy: same-origin\r\n"
-                        + "Cross-Origin-Embedder-Policy: "
-                        + directive
-                        + "\r\n"
-                        + "Cross-Origin-Opener-Policy: same-origin\r\n");
+        HttpMessage msg = getCoepMessage(directive);
         given(passiveScanData.isSuccess(any())).willReturn(true);
 
         // When
@@ -363,6 +346,22 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
 
         // Then
         assertThat(alertsRaised, is(empty()));
+    }
+
+    private static HttpMessage getCoepMessage(String directive)
+            throws HttpMalformedHeaderException {
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET / HTTP/1.1");
+        msg.setResponseHeader(
+                """
+                HTTP/1.1 200 OK\r
+                Content-Type: text/html; charset=iso-8859-1\r
+                Cross-Origin-Resource-Policy: same-origin\r
+                Cross-Origin-Embedder-Policy: %s\r
+                Cross-Origin-Opener-Policy: same-origin
+                """
+                        .formatted(directive));
+        return msg;
     }
 
     @Test
