@@ -15,4 +15,5 @@
     <mapID target="authhelper.session-header" url="contents/session-header.html" />
     <mapID target="authhelper.verification-id" url="contents/verification-id.html" />
     <mapID target="authhelper.auth-tester" url="contents/auth-tester.html" />
+    <mapID target="authhelper.report-templates" url="contents/reports.html" />
 </map>
