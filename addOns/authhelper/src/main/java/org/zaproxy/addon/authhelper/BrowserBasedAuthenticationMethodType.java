@@ -384,9 +384,10 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
         @Override
         public ApiResponse getApiResponseRepresentation() {
-            Map<String, String> values = new HashMap<>();
+            Map<String, Object> values = new HashMap<>();
             values.put(PARAM_LOGIN_PAGE_URL, loginPageUrl);
             values.put(PARAM_BROWSER_ID, browserId);
+            values.put(PARAM_LOGIN_PAGE_WAIT, loginPageWait);
             return new AuthMethodApiResponseRepresentation<>(values);
         }
 
@@ -625,17 +626,19 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     method.setLoginPageUrl(
                             ApiUtils.getNonEmptyStringParam(params, PARAM_LOGIN_PAGE_URL));
 
-                    String browserId = ApiUtils.getOptionalStringParam(null, PARAM_BROWSER_ID);
+                    String browserId = ApiUtils.getOptionalStringParam(params, PARAM_BROWSER_ID);
                     if (!StringUtils.isEmpty(browserId)) {
                         method.setBrowserId(browserId);
                     }
 
                     String loginPageWaitStr =
-                            ApiUtils.getOptionalStringParam(null, PARAM_LOGIN_PAGE_WAIT);
+                            ApiUtils.getOptionalStringParam(params, PARAM_LOGIN_PAGE_WAIT);
                     if (!StringUtils.isEmpty(loginPageWaitStr)) {
                         method.setLoginPageWait(Integer.parseInt(loginPageWaitStr));
                     }
 
+                } catch (ApiException e) {
+                    throw e;
                 } catch (Exception e) {
                     throw new ApiException(ApiException.Type.INTERNAL_ERROR, e.getMessage());
                 }
