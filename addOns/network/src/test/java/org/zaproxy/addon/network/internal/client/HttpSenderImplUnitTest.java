@@ -34,6 +34,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
@@ -962,9 +963,11 @@ class HttpSenderImplUnitTest {
             assertThat(message.getResponseHeader().toString(), is(equalTo(responseHeader)));
             assertThat(message.getResponseBody().toString(), is(equalTo("")));
             assertThat(message.getUserObject(), is(instanceOf(Map.class)));
-            assertThat(
-                    (Map<?, ?>) message.getUserObject(),
-                    hasEntry("connection.closed", Boolean.TRUE));
+            @SuppressWarnings("unchecked")
+            Map<Object, Object> properties = (Map<Object, Object>) message.getUserObject();
+            assertThat(properties, hasEntry("connection.closed", Boolean.TRUE));
+            // Should be mutable.
+            assertDoesNotThrow(() -> properties.put("Something", "Value"));
         }
 
         @ParameterizedTest
