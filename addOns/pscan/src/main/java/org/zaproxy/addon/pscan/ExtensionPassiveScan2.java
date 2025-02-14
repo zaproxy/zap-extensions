@@ -177,6 +177,8 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
     @Override
     public void init() {
+        options = new PassiveScannerOptions();
+
         setScanRuleManager(scanRuleManagerProxy);
         setPassiveController(passiveControllerProxy);
 
@@ -263,7 +265,6 @@ public class ExtensionPassiveScan2 extends ExtensionAdaptor {
 
     @Override
     public void hook(ExtensionHook extensionHook) {
-        options = new PassiveScannerOptions();
         extensionHook.addOptionsParamSet(options);
 
         if (hasView()) {
