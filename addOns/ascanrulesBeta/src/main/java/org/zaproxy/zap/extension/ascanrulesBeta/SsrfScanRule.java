@@ -143,7 +143,7 @@ public class SsrfScanRule extends AbstractAppParamPlugin implements CommonActive
                 scanWithExternalOastService(param);
             }
         } catch (Exception e) {
-            LOGGER.warn("Could not perform SSRF Attack.");
+            LOGGER.warn("Could not perform SSRF Attack: {}", e.getMessage());
         }
     }
 
