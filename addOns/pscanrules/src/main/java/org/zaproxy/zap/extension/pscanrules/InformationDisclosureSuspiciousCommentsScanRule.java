@@ -193,8 +193,9 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(detail)
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
-                .setCweId(200) // CWE Id 200 - Information Exposure)
-                .setWascId(13) // WASC Id - Info leakage)
+                // CWE-615: Inclusion of Sensitive Information in Source Code Comments
+                .setCweId(615)
+                .setWascId(13) // WASC Id - Info leakage
                 .setEvidence(evidence);
     }
 

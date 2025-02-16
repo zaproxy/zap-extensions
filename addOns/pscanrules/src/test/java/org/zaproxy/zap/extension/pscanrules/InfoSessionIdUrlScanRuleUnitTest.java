@@ -113,6 +113,7 @@ class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdU
         assertThat(alert1.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
         assertThat(alert1.getParam(), is(equalTo("jsessionid")));
         assertThat(alert1.getEvidence(), is(equalTo("1A530637289A03B07199A44E8D531427")));
+        assertThat(alert1.getCweId(), is(equalTo(598)));
         assertThat(alert1.getAlertRef(), is(equalTo(rule.getPluginId() + "-1")));
 
         Alert alert2 = alerts.get(1);
@@ -120,12 +121,14 @@ class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdU
         assertThat(alert2.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
         assertThat(
                 alert2.getEvidence(), is(equalTo("jsessionid=1A530637289A03B07199A44E8D531427")));
+        assertThat(alert1.getCweId(), is(equalTo(598)));
         assertThat(alert2.getAlertRef(), is(equalTo(rule.getPluginId() + "-2")));
 
         Alert alert3 = alerts.get(2);
         assertThat(alert3.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertThat(alert3.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alert3.getEvidence(), is(equalTo("www.example.org")));
+        assertThat(alert1.getCweId(), is(equalTo(598)));
         assertThat(alert3.getAlertRef(), is(equalTo(rule.getPluginId() + "-3")));
     }
 

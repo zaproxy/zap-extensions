@@ -156,6 +156,8 @@ class ServerHeaderInfoLeakScanRuleUnitTest
         assertThat(alerts.size(), is(equalTo(2)));
         assertThat(countLows, is(equalTo(1L)));
         assertThat(countInfos, is(equalTo(1L)));
+        assertThat(alerts.get(0).getCweId(), is(equalTo(497)));
+        assertThat(alerts.get(1).getCweId(), is(equalTo(497)));
     }
 
     @Test

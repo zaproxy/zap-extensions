@@ -80,6 +80,7 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
         assertThat(tags.size(), is(equalTo(3)));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getCweId(), is(equalTo(497)));
     }
 
     @Test

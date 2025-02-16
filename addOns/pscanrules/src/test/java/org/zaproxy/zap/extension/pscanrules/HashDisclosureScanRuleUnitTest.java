@@ -183,6 +183,7 @@ class HashDisclosureScanRuleUnitTest extends PassiveScannerTest<HashDisclosureSc
         List<Alert> alerts = rule.getExampleAlerts();
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
+        assertThat(alerts.get(0).getCweId(), is(equalTo(497)));
     }
 
     @Test

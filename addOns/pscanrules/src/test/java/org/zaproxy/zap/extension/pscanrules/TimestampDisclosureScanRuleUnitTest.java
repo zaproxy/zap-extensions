@@ -81,6 +81,7 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
         Alert alert = alerts.get(0);
         assertThat(alert.getName(), is(equalTo("Timestamp Disclosure - Unix")));
         assertThat(alert.getParam(), is(equalTo("registeredAt")));
+        assertThat(alert.getCweId(), is(equalTo(497)));
     }
 
     @Test

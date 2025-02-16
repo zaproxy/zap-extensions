@@ -70,7 +70,9 @@ public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setEvidence(evidence)
-                .setCweId(200)
+                // CWE-497: Exposure of Sensitive System Information to an Unauthorized Control
+                // Sphere
+                .setCweId(497)
                 .setWascId(13);
     }
 

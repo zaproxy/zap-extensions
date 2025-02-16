@@ -7,6 +7,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - The Absence of Anti-CSRF Tokens scan rule now only considers forms with GET method at Low Threshold. (Forms submitted via GET, not forms delivered via GET.)
 
+### Changed
+- Replace usage of CWE-200 for the following rules (Issue 8712):
+    - Application Error Disclosure (Issue 8716)
+    - HTTP Server Response Header
+    - Hash Disclosure
+    - Information Disclosure - Debug Error Messages
+    - Information Disclosure - Sensitive Information in HTTP Referrer Header
+    - Information Disclosure - Sensitive Information in URL
+    - Information Disclosure - Suspicious Comments
+    - Private IP Disclosure
+    - Server Leaks Information via "X-Powered-By" HTTP Response Header
+    - Session ID in URL Rewrite
+    - Timestamp Disclosure
+    - X-Backend-Server Header Information Leak
+    - X-ChromeLogger-Data (XCOLD) Header Information Leak
+    - X-Debug-Token Information Leak
+
 ## [62] - 2025-01-10
 ### Changed
 - Update minimum ZAP version to 2.16.0.
