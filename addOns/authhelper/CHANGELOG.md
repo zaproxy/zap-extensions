@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Persist diagnostics to the session for Client Script and Browser Based Authentication methods.
+
 ### Fixed
 - Correctly read the API parameters when setting up Browser Based Authentication.
 
