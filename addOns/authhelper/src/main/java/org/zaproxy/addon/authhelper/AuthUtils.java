@@ -48,6 +48,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -143,7 +144,8 @@ public class AuthUtils {
         return getTimeToWaitMs() / TIME_TO_SLEEP_IN_MSECS;
     }
 
-    static WebElement getUserField(List<WebElement> inputElements) {
+    static WebElement getUserField(
+            WebDriver wd, List<WebElement> inputElements, WebElement passwordField) {
         List<WebElement> filteredList = displayed(inputElements).toList();
         if (filteredList.size() == 1) {
             WebElement element = filteredList.get(0);
@@ -163,11 +165,15 @@ public class AuthUtils {
 
         if (!filteredList.isEmpty()) {
             if (filteredList.size() > 1) {
+                WebElement foundField = findFormUsernameField(wd, filteredList, passwordField);
+                if (foundField != null) {
+                    return foundField;
+                }
+
                 LOGGER.warn("Found more than one potential user field : {}", filteredList);
                 // Try to identify the best one
                 for (WebElement we : filteredList) {
-                    if (attributeContains(we, "id", USERNAME_FIELD_INDICATORS)
-                            || attributeContains(we, "name", USERNAME_FIELD_INDICATORS)) {
+                    if (isUsernameField(we)) {
                         logFieldElement("Choosing 'best' user", we);
                         return we;
                     }
@@ -178,6 +184,51 @@ public class AuthUtils {
             WebElement element = filteredList.get(0);
             logFieldElement("Choosing first user", element);
             return element;
+        }
+        return null;
+    }
+
+    private static WebElement findFormUsernameField(
+            WebDriver wd, List<WebElement> elements, WebElement field) {
+        if (field == null) {
+            return null;
+        }
+
+        WebElement form = getParentForm(wd, field);
+        if (form == null) {
+            return null;
+        }
+
+        List<WebElement> formFields =
+                elements.stream().filter(e -> form.equals(getParentForm(wd, e))).toList();
+
+        if (formFields.size() == 1) {
+            WebElement element = formFields.get(0);
+            logFieldElement("Choosing form user", element);
+            return element;
+        }
+
+        for (WebElement we : formFields) {
+            if (isUsernameField(we)) {
+                logFieldElement("Choosing 'best' form user", we);
+                return we;
+            }
+            logFieldElement("Not yet choosing form user", we);
+        }
+
+        WebElement element = formFields.get(0);
+        logFieldElement("Choosing first form user", element);
+        return element;
+    }
+
+    private static boolean isUsernameField(WebElement element) {
+        return attributeContains(element, "id", USERNAME_FIELD_INDICATORS)
+                || attributeContains(element, "name", USERNAME_FIELD_INDICATORS);
+    }
+
+    private static WebElement getParentForm(WebDriver wd, WebElement element) {
+        if (wd instanceof JavascriptExecutor je) {
+            return (WebElement) je.executeScript("return arguments[0].form", element);
         }
         return null;
     }
@@ -288,8 +339,8 @@ public class AuthUtils {
             }
 
             List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
-            userField = getUserField(inputElements);
             pwdField = getPasswordField(inputElements);
+            userField = getUserField(wd, inputElements, pwdField);
 
             if (i > 1 && userField != null && pwdField == null && !userAdded) {
                 // Handle pages which require you to submit the username first

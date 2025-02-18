@@ -96,5 +96,6 @@ dependencies {
         exclude(group = "commons-codec", module = "commons-codec")
     }
 
+    testImplementation("io.github.bonigarcia:selenium-jupiter:5.1.1")
     testImplementation(project(":testutils"))
 }
