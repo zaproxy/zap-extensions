@@ -97,7 +97,7 @@ import org.zaproxy.zap.view.NodeSelectDialog;
 
 public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodType {
 
-    private static final int METHOD_IDENTIFIER = 6;
+    public static final int METHOD_IDENTIFIER = 6;
 
     private static final String API_METHOD_NAME = "browserBasedAuthentication";
 
@@ -191,6 +191,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
     public class BrowserBasedAuthenticationMethod extends AuthenticationMethod {
 
+        private boolean diagnostics;
         private String loginPageUrl;
         private String browserId = DEFAULT_BROWSER_ID;
         private int loginPageWait = DEFAULT_PAGE_WAIT;
@@ -199,6 +200,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         public BrowserBasedAuthenticationMethod() {}
 
         public BrowserBasedAuthenticationMethod(BrowserBasedAuthenticationMethod method) {
+            diagnostics = method.diagnostics;
             this.loginPageUrl = method.loginPageUrl;
             this.browserId = method.browserId;
             this.loginPageWait = method.loginPageWait;
@@ -224,6 +226,14 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         @Override
         public AuthenticationMethodType getType() {
             return new BrowserBasedAuthenticationMethodType(httpSender);
+        }
+
+        public boolean isDiagnostics() {
+            return diagnostics;
+        }
+
+        public void setDiagnostics(boolean diagnostics) {
+            this.diagnostics = diagnostics;
         }
 
         public String getLoginPageUrl() {
@@ -301,8 +311,10 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                                     proxyPort);
 
                     if (AuthUtils.authenticateAsUser(
+                            diagnostics,
                             wd,
                             context,
+                            user,
                             loginPageUrl,
                             userCreds.getUsername(),
                             userCreds.getPassword(),

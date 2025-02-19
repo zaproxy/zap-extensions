@@ -51,6 +51,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.Extension;
@@ -226,16 +227,42 @@ public class AuthUtils {
     /**
      * Authenticate as the given user, by filling in and submitting the login form
      *
+     * @param diagnostics {@code true} if diagnostics should be recorded, {@code false} otherwise.
      * @param wd the WebDriver controlling the browser
      * @param context the context which is being used for authentication
+     * @param user the user which is being used for authentication
      * @param loginPageUrl the URL of the login page
      * @param username the username
      * @param password the password
      * @return true if the login form was successfully submitted.
      */
     public static boolean authenticateAsUser(
+            boolean diagnostics,
             WebDriver wd,
             Context context,
+            User user,
+            String loginPageUrl,
+            String username,
+            String password,
+            int waitInSecs,
+            List<AuthenticationStep> steps) {
+
+        try (AuthenticationDiagnostics diags =
+                new AuthenticationDiagnostics(
+                        diagnostics,
+                        BrowserBasedAuthenticationMethodType.METHOD_IDENTIFIER,
+                        context.getId(),
+                        user.getId())) {
+            return authenticateAsUserImpl(
+                    diags, wd, context, user, loginPageUrl, username, password, waitInSecs, steps);
+        }
+    }
+
+    public static boolean authenticateAsUserImpl(
+            AuthenticationDiagnostics diags,
+            WebDriver wd,
+            Context context,
+            User user,
             String loginPageUrl,
             String username,
             String password,
@@ -243,6 +270,8 @@ public class AuthUtils {
             List<AuthenticationStep> steps) {
         wd.get(loginPageUrl);
         sleep(50);
+        diags.recordStep(
+                wd, Constant.messages.getString("authhelper.auth.method.diags.steps.start"));
         if (demoMode) {
             sleep(2000);
         }
@@ -264,6 +293,7 @@ public class AuthUtils {
             }
 
             WebElement element = step.execute(wd, username, password);
+            diags.recordStep(wd, step.getDescription());
 
             switch (step.getType()) {
                 case USERNAME:
@@ -295,10 +325,16 @@ public class AuthUtils {
                 // Handle pages which require you to submit the username first
                 LOGGER.debug("Submitting just user field on {}", loginPageUrl);
                 userField.sendKeys(username);
+                diags.recordStep(
+                        wd,
+                        Constant.messages.getString("authhelper.auth.method.diags.steps.username"));
                 if (demoMode) {
                     sleep(2000);
                 }
                 userField.sendKeys(Keys.RETURN);
+                diags.recordStep(
+                        wd,
+                        Constant.messages.getString("authhelper.auth.method.diags.steps.return"));
                 if (demoMode) {
                     sleep(2000);
                 }
@@ -310,6 +346,9 @@ public class AuthUtils {
             if (!userAdded) {
                 LOGGER.debug("Entering user field on {}", wd.getCurrentUrl());
                 userField.sendKeys(username);
+                diags.recordStep(
+                        wd,
+                        Constant.messages.getString("authhelper.auth.method.diags.steps.username"));
                 if (demoMode) {
                     sleep(2000);
                 }
@@ -318,24 +357,40 @@ public class AuthUtils {
                 if (!pwdAdded) {
                     LOGGER.debug("Submitting password field on {}", wd.getCurrentUrl());
                     pwdField.sendKeys(password);
+                    diags.recordStep(
+                            wd,
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.diags.steps.password"));
                     if (demoMode) {
                         sleep(2000);
                     }
                 }
                 pwdField.sendKeys(Keys.RETURN);
+                diags.recordStep(
+                        wd,
+                        Constant.messages.getString("authhelper.auth.method.diags.steps.return"));
             } catch (Exception e) {
                 // Handle the case where the password field was present but hidden / disabled
                 LOGGER.debug("Handling hidden password field on {}", wd.getCurrentUrl());
                 userField.sendKeys(Keys.RETURN);
+                diags.recordStep(
+                        wd,
+                        Constant.messages.getString("authhelper.auth.method.diags.steps.return"));
                 if (demoMode) {
                     sleep(2000);
                 }
                 sleep(TIME_TO_SLEEP_IN_MSECS);
                 pwdField.sendKeys(password);
+                diags.recordStep(
+                        wd,
+                        Constant.messages.getString("authhelper.auth.method.diags.steps.password"));
                 if (demoMode) {
                     sleep(2000);
                 }
                 pwdField.sendKeys(Keys.RETURN);
+                diags.recordStep(
+                        wd,
+                        Constant.messages.getString("authhelper.auth.method.diags.steps.return"));
             }
 
             for (; it.hasNext(); ) {
@@ -345,9 +400,12 @@ public class AuthUtils {
                 }
 
                 step.execute(wd, username, password);
+                diags.recordStep(wd, step.getDescription());
 
                 sleep(demoMode ? 2000 : TIME_TO_SLEEP_IN_MSECS);
             }
+            diags.recordStep(
+                    wd, Constant.messages.getString("authhelper.auth.method.diags.steps.finish"));
 
             incStatsCounter(loginPageUrl, AUTH_FOUND_FIELDS_STATS);
             incStatsCounter(loginPageUrl, AUTH_BROWSER_PASSED_STATS);
@@ -360,6 +418,10 @@ public class AuthUtils {
                     // its a good option.
                     wd.get(wd.getCurrentUrl());
                     AuthUtils.sleep(TimeUnit.SECONDS.toMillis(1));
+                    diags.recordStep(
+                            wd,
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.diags.steps.refresh"));
                 }
             }
             return true;
@@ -828,6 +890,7 @@ public class AuthUtils {
         private BrowserBasedAuthenticationMethod bbaMethod;
         private UsernamePasswordAuthenticationCredentials userCreds;
         private Context context;
+        private User user;
 
         AuthenticationBrowserHook(Context context, String userName) {
             this(context, getUser(context, userName));
@@ -835,6 +898,7 @@ public class AuthUtils {
 
         AuthenticationBrowserHook(Context context, User user) {
             this.context = context;
+            this.user = user;
             AuthenticationMethod method = context.getAuthenticationMethod();
             if (!(method instanceof BrowserBasedAuthenticationMethod)) {
                 throw new IllegalStateException("Unsupported method " + method.getType().getName());
@@ -854,8 +918,10 @@ public class AuthUtils {
             LOGGER.debug(
                     "AuthenticationBrowserHook - authenticating as {}", userCreds.getUsername());
             AuthUtils.authenticateAsUser(
+                    bbaMethod.isDiagnostics(),
                     ssutils.getWebDriver(),
                     context,
+                    user,
                     bbaMethod.getLoginPageUrl(),
                     userCreds.getUsername(),
                     userCreds.getPassword(),
