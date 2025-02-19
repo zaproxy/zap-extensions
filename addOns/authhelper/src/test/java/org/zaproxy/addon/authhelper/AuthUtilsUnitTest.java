@@ -19,12 +19,18 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
+import io.github.bonigarcia.seljup.BrowsersTemplate.Browser;
+import io.github.bonigarcia.seljup.SeleniumJupiter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,16 +41,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 import lombok.Setter;
 import org.apache.commons.httpclient.URI;
 import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.parosproxy.paros.network.HttpHeader;
@@ -54,6 +66,7 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.Pair;
 
@@ -106,7 +119,7 @@ class AuthUtilsUnitTest extends TestUtils {
         inputElements.add(new TestWebElement("input", "checkbox"));
 
         // When
-        WebElement field = AuthUtils.getUserField(inputElements);
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
 
         // Then
         assertThat(field, is(notNullValue()));
@@ -124,7 +137,7 @@ class AuthUtilsUnitTest extends TestUtils {
         inputElements.add(new TestWebElement("input", "checkbox"));
 
         // When
-        WebElement field = AuthUtils.getUserField(inputElements);
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
 
         // Then
         assertThat(field, is(notNullValue()));
@@ -147,7 +160,7 @@ class AuthUtilsUnitTest extends TestUtils {
         inputElements.add(new TestWebElement("input", "password"));
 
         // When
-        WebElement field = AuthUtils.getUserField(inputElements);
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
 
         // Then
         assertThat(field, is(notNullValue()));
@@ -163,7 +176,7 @@ class AuthUtilsUnitTest extends TestUtils {
         inputElements.add(new TestWebElement("input", "customtype"));
 
         // When
-        WebElement field = AuthUtils.getUserField(inputElements);
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
 
         // Then
         assertThat(field, is(notNullValue()));
@@ -183,7 +196,7 @@ class AuthUtilsUnitTest extends TestUtils {
         inputElements.add(new TestWebElement("input", "customtype"));
 
         // When
-        WebElement field = AuthUtils.getUserField(inputElements);
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
 
         // Then
         assertThat(field, is(notNullValue()));
@@ -200,7 +213,7 @@ class AuthUtilsUnitTest extends TestUtils {
         inputElements.add(new TestWebElement("input", "checkbox"));
 
         // When
-        WebElement field = AuthUtils.getUserField(inputElements);
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
 
         // Then
         assertThat(field, is(notNullValue()));
@@ -217,7 +230,7 @@ class AuthUtilsUnitTest extends TestUtils {
         inputElements.add(new TestWebElement("input", "checkbox"));
 
         // When
-        WebElement field = AuthUtils.getUserField(inputElements);
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
 
         // Then
         assertThat(field, is(notNullValue()));
@@ -234,7 +247,7 @@ class AuthUtilsUnitTest extends TestUtils {
         inputElements.add(new TestWebElement("input", "checkbox"));
 
         // When
-        WebElement field = AuthUtils.getUserField(inputElements);
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
 
         // Then
         assertThat(field, is(notNullValue()));
@@ -250,7 +263,7 @@ class AuthUtilsUnitTest extends TestUtils {
         inputElements.add(new TestWebElement("input", "checkbox"));
 
         // When
-        WebElement field = AuthUtils.getUserField(inputElements);
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
 
         // Then
         assertThat(field, is(nullValue()));
@@ -745,6 +758,117 @@ class AuthUtilsUnitTest extends TestUtils {
         // Then
         assertThat(st1, is(notNullValue()));
         assertThat(st2, is(nullValue()));
+    }
+
+    static class BrowserTest extends TestUtils {
+
+        @RegisterExtension static SeleniumJupiter seleniumJupiter = new SeleniumJupiter();
+
+        private String url;
+        private Supplier<String> pageContent = () -> "";
+
+        @BeforeAll
+        static void setup() {
+            seleniumJupiter.addBrowsers(
+                    new Browser(
+                            "firefox",
+                            null,
+                            null,
+                            new String[] {"-headless"},
+                            new String[] {"remote.active-protocols=1"},
+                            Map.of("webSocketUrl", true)));
+        }
+
+        @BeforeEach
+        void setupEach() throws IOException {
+            startServer();
+
+            String path = "/test";
+            url = "http://localhost:" + nano.getListeningPort() + path;
+            nano.addHandler(
+                    new NanoServerHandler(path) {
+                        @Override
+                        protected Response serve(IHTTPSession session) {
+                            return newFixedLengthResponse(pageContent.get());
+                        }
+                    });
+        }
+
+        @AfterEach
+        void cleanupEach() {
+            stopServer();
+        }
+
+        @TestTemplate
+        void shouldReturnUserFieldCommonToPasswordForm(WebDriver wd) {
+            // Given
+            pageContent =
+                    () ->
+                            """
+                                <input type="text" name="randomA" />
+                                <form>
+                                <input type="text" name="randomB">
+                                <input type="password" name="passw">
+                                <input type="text" name="user">
+                                </form>
+                             """;
+            wd.get(url);
+            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            WebElement pwdField = AuthUtils.getPasswordField(inputElements);
+            // When
+            WebElement field = AuthUtils.getUserField(wd, inputElements, pwdField);
+
+            // Then
+            assertThat(field, is(notNullValue()));
+            assertThat(field.getDomAttribute("name"), is(equalTo("user")));
+        }
+
+        @TestTemplate
+        void shouldReturnOnlyFieldCommonToPasswordForm(WebDriver wd) {
+            // Given
+            pageContent =
+                    () ->
+                            """
+                                <input type="text" name="randomA" />
+                                <form>
+                                <input type="text" name="randomB">
+                                <input type="password" name="passw">
+                                </form>
+                             """;
+            wd.get(url);
+            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            WebElement pwdField = AuthUtils.getPasswordField(inputElements);
+            // When
+            WebElement field = AuthUtils.getUserField(wd, inputElements, pwdField);
+
+            // Then
+            assertThat(field, is(notNullValue()));
+            assertThat(field.getDomAttribute("name"), is(equalTo("randomB")));
+        }
+
+        @TestTemplate
+        void shouldReturnFirstOfManyFieldsCommonToPasswordForm(WebDriver wd) {
+            // Given
+            pageContent =
+                    () ->
+                            """
+                                <input type="text" name="randomA" />
+                                <form>
+                                <input type="password" name="passw">
+                                <input type="text" name="randomB">
+                                <input type="text" name="randomC">
+                                </form>
+                             """;
+            wd.get(url);
+            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            WebElement pwdField = AuthUtils.getPasswordField(inputElements);
+            // When
+            WebElement field = AuthUtils.getUserField(wd, inputElements, pwdField);
+
+            // Then
+            assertThat(field, is(notNullValue()));
+            assertThat(field.getDomAttribute("name"), is(equalTo("randomB")));
+        }
     }
 
     class TestWebElement implements WebElement {
