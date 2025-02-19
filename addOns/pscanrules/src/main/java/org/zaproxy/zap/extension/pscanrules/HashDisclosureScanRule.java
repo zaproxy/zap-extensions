@@ -272,7 +272,9 @@ public class HashDisclosureScanRule extends PluginPassiveScanner
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
-                .setCweId(200) // Information Exposure,
+                // CWE-497: Exposure of Sensitive System Information to an Unauthorized Control
+                // Sphere
+                .setCweId(497)
                 .setWascId(13); // Information Leakage
     }
 

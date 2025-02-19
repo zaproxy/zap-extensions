@@ -117,7 +117,7 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
         assertThat(tags.size(), is(equalTo(6)));
-        assertThat(tags, hasKey("CWE-200"));
+        assertThat(tags, hasKey("CWE-550"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_ERRH_01_ERR.getTag()));
@@ -125,6 +125,7 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
         assertThat(tags, hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getCweId(), is(equalTo(550)));
     }
 
     @Test

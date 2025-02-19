@@ -80,7 +80,7 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setEvidence(evidence)
-                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setCweId(1295) // CWE-1295: Debug Messages Revealing Unnecessary Information
                 .setWascId(13); // WASC Id - Info leakage
     }
 

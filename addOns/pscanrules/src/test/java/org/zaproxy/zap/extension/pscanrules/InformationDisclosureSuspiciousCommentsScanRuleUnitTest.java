@@ -350,9 +350,10 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
                                         "\\bFIXME\\b",
                                         "<!-- FixMe: cookie: root=true; Secure -->"))));
         assertThat(alert.getEvidence(), is(equalTo("FixMe")));
+        assertThat(alert.getCweId(), is(equalTo(615)));
         Map<String, String> tags = alert.getTags();
         assertThat(tags.size(), is(equalTo(5)));
-        assertThat(tags, hasKey("CWE-200"));
+        assertThat(tags, hasKey("CWE-615"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK.getTag()));

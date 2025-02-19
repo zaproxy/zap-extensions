@@ -166,7 +166,8 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
         Map<String, String> tags1 = alert.getTags();
         assertThat(tags1.size(), is(equalTo(4)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
-        assertThat(tags1, hasKey("CWE-200"));
+        assertThat(alert.getCweId(), is(equalTo(532)));
+        assertThat(tags1, hasKey("CWE-532"));
         assertThat(
                 tags1.containsKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
                 is(equalTo(true)));

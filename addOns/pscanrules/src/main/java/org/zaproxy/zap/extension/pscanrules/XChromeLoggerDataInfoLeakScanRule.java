@@ -110,7 +110,7 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(xcldField)
-                .setCweId(200)
+                .setCweId(532) // CWE-532: Insertion of Sensitive Information into Log File
                 .setWascId(13);
     }
 

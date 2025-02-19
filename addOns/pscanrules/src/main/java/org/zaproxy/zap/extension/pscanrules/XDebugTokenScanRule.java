@@ -130,7 +130,7 @@ public class XDebugTokenScanRule extends PluginPassiveScanner implements CommonP
     }
 
     public int getCweId() {
-        return 200; // CWE Id 200 - Information Exposure
+        return 489; // CWE-489: Active Debug Code
     }
 
     public int getWascId() {

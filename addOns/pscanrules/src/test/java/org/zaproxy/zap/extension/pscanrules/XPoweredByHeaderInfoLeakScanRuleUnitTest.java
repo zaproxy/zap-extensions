@@ -79,6 +79,7 @@ class XPoweredByHeaderInfoLeakScanRuleUnitTest
         Alert alert = alerts.get(0);
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getCweId(), is(equalTo(497)));
     }
 
     @Test

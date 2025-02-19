@@ -111,6 +111,7 @@ class XBackendServerInformationLeakScanRuleUnitTest
         Alert alert = alerts.get(0);
         assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
         assertThat(alert.getEvidence(), equalTo(HEADER_VALUE));
+        assertThat(alert.getCweId(), is(equalTo(497)));
         assertThat(
                 alert.getSolution(), equalTo(Constant.messages.getString(MESSAGE_PREFIX + "soln")));
         assertThat(

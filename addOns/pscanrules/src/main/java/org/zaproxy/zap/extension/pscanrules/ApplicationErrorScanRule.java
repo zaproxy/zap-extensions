@@ -188,7 +188,8 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setEvidence(evidence)
-                .setCweId(200)
+                // CWE-550: Server-generated Error Message Containing Sensitive Information
+                .setCweId(550)
                 .setWascId(13);
     }
 

@@ -340,7 +340,7 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setParam(param)
                 .setEvidence(evidence)
-                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setCweId(598) // CWE-598: Use of GET Request Method With Sensitive Query Strings
                 .setWascId(13) // WASC Id - Info leakage
                 .setAlertRef(getPluginId() + alertRef);
     }

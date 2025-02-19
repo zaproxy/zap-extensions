@@ -129,7 +129,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
                 .setRisk(Alert.RISK_INFO)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
-                .setCweId(200) // CWE Id 200 - Information Exposure
+                .setCweId(598) // CWE-598: Use of GET Request Method With Sensitive Query Strings
                 .setWascId(13) // WASC Id - Info leakage
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setOtherInfo(other)
