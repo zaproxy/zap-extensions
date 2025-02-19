@@ -889,7 +889,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         }
     }
 
-    public boolean exportClientMap(String path, boolean isApi) {
+    protected boolean exportClientMap(String path, boolean isApi) {
         File file = new File(path);
         boolean result = false;
         try (Writer fileWriter = new FileWriter(file, false)) {

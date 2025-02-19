@@ -212,27 +212,25 @@ public class ClientIntegrationAPI extends ApiImplementor {
         try {
             Path path = Paths.get(exportPath).toAbsolutePath().normalize();
 
-            // Check directory exists and is writable
             Path parentDir = path.getParent();
-            if (parentDir == null || !Files.exists(parentDir)) {
+            if (parentDir == null || Files.notExists(parentDir)) {
                 throw new ApiException(
                         ApiException.Type.ILLEGAL_PARAMETER,
                         "Export directory does not exist: " + parentDir);
             }
 
-            // Check file is writable (or can be created if doesn't exist)
+            if (!Files.isWritable(parentDir)) {
+                throw new ApiException(
+                        ApiException.Type.ILLEGAL_PARAMETER,
+                        "Export directory is not writable: " + parentDir);
+            }
+
             if (Files.exists(path) && !Files.isWritable(path)) {
                 throw new ApiException(
                         ApiException.Type.ILLEGAL_PARAMETER,
                         "Export file is not writable: " + path);
             }
 
-            // Validate file extension
-            if (!exportPath.toLowerCase().endsWith(".yaml")) {
-                throw new ApiException(
-                        ApiException.Type.ILLEGAL_PARAMETER,
-                        "Export file must have .yaml extension");
-            }
         } catch (InvalidPathException e) {
             throw new ApiException(
                     ApiException.Type.ILLEGAL_PARAMETER, "Invalid export path: " + exportPath);
