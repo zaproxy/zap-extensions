@@ -236,7 +236,9 @@ public class AuthenticationData extends AutomationData {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static Map<String, Object> totpUserToMethod(
-            Map<String, Object> parameters, List<ContextWrapper.UserData> users) {
+            Map<String, Object> parameters,
+            List<ContextWrapper.UserData> users,
+            AutomationEnvironment env) {
         if (users == null) {
             return parameters;
         }
@@ -260,9 +262,10 @@ public class AuthenticationData extends AutomationData {
         for (Iterator<?> it = steps.iterator(); it.hasNext(); ) {
             Map<String, Object> object = (Map<String, Object>) it.next();
             if (isTotpType(object)) {
-                object.put(
-                        "totp",
-                        JsonMapper.builder().build().convertValue(totpData, LinkedHashMap.class));
+                Map<String, Object> totpMap =
+                        JsonMapper.builder().build().convertValue(totpData, LinkedHashMap.class);
+                totpMap.replaceAll((k, v) -> env.replaceVars(v));
+                object.put("totp", totpMap);
             }
         }
         return parameters;
@@ -539,7 +542,7 @@ public class AuthenticationData extends AutomationData {
 
                         try {
                             Method method = am.getClass().getMethod("fromMap", Map.class);
-                            method.invoke(am, totpUserToMethod(getParameters(), users));
+                            method.invoke(am, totpUserToMethod(getParameters(), users, env));
                         } catch (Exception e) {
                             LOGGER.error("An error occurred while reading steps:", e);
                         }
