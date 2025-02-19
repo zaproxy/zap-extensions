@@ -550,8 +550,8 @@ public class ContextWrapper {
         public static class TotpData {
 
             private String secret;
-            private int period;
-            private int digits;
+            private String period;
+            private String digits;
             private String algorithm;
         }
     }
