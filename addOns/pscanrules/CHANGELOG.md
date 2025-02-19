@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - X-Backend-Server Header Information Leak
     - X-ChromeLogger-Data (XCOLD) Header Information Leak
     - X-Debug-Token Information Leak
+- Removed lack of "report-uri" or "plugin-types" from "CSP: Wildcard Directive" alerts when missing. plugin-types is deprecated and report-uri has no impact for this issue. (Issue 8700)
 
 ## [62] - 2025-01-10
 ### Changed

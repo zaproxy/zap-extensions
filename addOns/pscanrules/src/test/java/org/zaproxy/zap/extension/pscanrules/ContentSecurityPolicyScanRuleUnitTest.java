@@ -42,6 +42,7 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 class ContentSecurityPolicyScanRuleUnitTest
         extends PassiveScannerTest<ContentSecurityPolicyScanRule> {
 
+    // Note: This policy does not include sandbox, report-uri, or plugin-types
     private static final String REASONABLE_POLICY =
             "default-src 'self'; script-src 'self' "
                     + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
@@ -647,6 +648,30 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
                 is(equalTo("Warnings:\nThe prefetch-src directive has been deprecated\n")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                // No form-action
+                "default-src 'self'; script-src 'self' "
+                        + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
+                        + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
+                        + "fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self';",
+                // No frame-ancestors
+                "default-src 'self'; script-src 'self' "
+                        + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
+                        + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
+                        + "fonts.gstatic.com; worker-src 'self'; form-action 'none'"
+            })
+    void shouldAlertWhenMissingRelevantDirectiveWithoutFallback(String policy) {
+        // Given
+        HttpMessage msg = createHttpMessage("", policy);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(equalTo(1)));
+        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
     }
 
     private static HttpMessage createHttpMessageWithReasonableCsp(String cspHeaderName) {
