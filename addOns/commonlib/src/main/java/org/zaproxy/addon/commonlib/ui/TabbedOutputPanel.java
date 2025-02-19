@@ -22,6 +22,7 @@ package org.zaproxy.addon.commonlib.ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -34,6 +35,9 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.DefaultCaret;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.parosproxy.paros.Constant;
@@ -47,6 +51,7 @@ import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.TimeStampUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.view.OutputSource;
+import org.zaproxy.zap.view.OverlayIcon;
 import org.zaproxy.zap.view.TabbedPanel2;
 import org.zaproxy.zap.view.ZapToggleButton;
 
@@ -77,15 +82,19 @@ public class TabbedOutputPanel extends OutputPanel {
             getImageIcon("/org/zaproxy/addon/commonlib/resources/ui-scroll-pane.png");
     private static final ImageIcon SCROLL_LOCK_ENABLED_ICON =
             getImageIcon("/org/zaproxy/addon/commonlib/resources/ui-scroll-lock-pane.png");
+    private static final ImageIcon GREEN_BADGE_CORNER_ICON =
+            getImageIcon("/org/zaproxy/addon/commonlib/resources/green-badge-corner.png");
 
     private final TabbedPanel2 tabbedPanel;
 
     private final Map<String, ZapTextArea> txtOutputs;
     private final Map<String, OutputSource> registeredOutputSources;
+    private final Map<String, ChangeListener> outputSourceChangeListeners;
 
     public TabbedOutputPanel() {
         txtOutputs = new HashMap<>();
         registeredOutputSources = new HashMap<>();
+        outputSourceChangeListeners = new HashMap<>();
 
         setLayout(new BorderLayout());
         setName(Constant.messages.getString("commonlib.output.panel.title"));
@@ -124,6 +133,10 @@ public class TabbedOutputPanel extends OutputPanel {
             txtOutputs.remove(source.getName());
         }
         registeredOutputSources.remove(source.getName());
+        ChangeListener listener = outputSourceChangeListeners.remove(source.getName());
+        if (listener != null) {
+            tabbedPanel.removeChangeListener(listener);
+        }
     }
 
     private void addNewOutputSource(String name) {
@@ -138,12 +151,18 @@ public class TabbedOutputPanel extends OutputPanel {
         var outputPanel = new AbstractPanel();
         outputPanel.setName(name);
         outputPanel.setLayout(new BorderLayout());
-        if (attributes.containsKey(ATTRIBUTE_ICON)
-                && attributes.get(ATTRIBUTE_ICON) instanceof Icon) {
-            outputPanel.setIcon((Icon) attributes.get(ATTRIBUTE_ICON));
-        }
+        Icon icon =
+                attributes.containsKey(ATTRIBUTE_ICON)
+                                && attributes.get(ATTRIBUTE_ICON) instanceof Icon
+                        ? (Icon) attributes.get(ATTRIBUTE_ICON)
+                        : DOC_ICON;
+        outputPanel.setIcon(icon);
 
-        ZapTextArea txtOutput = buildOutputTextArea();
+        ChangeListener changeListener = e -> markTabRead(outputPanel, icon);
+        tabbedPanel.addChangeListener(changeListener);
+        outputSourceChangeListeners.put(name, changeListener);
+
+        ZapTextArea txtOutput = buildOutputTextArea(outputPanel, icon);
         JToolBar toolBar = buildToolbar(txtOutput, attributes);
         outputPanel.add(toolBar, BorderLayout.PAGE_START);
         var jScrollPane = new JScrollPane();
@@ -157,7 +176,7 @@ public class TabbedOutputPanel extends OutputPanel {
         txtOutputs.put(name, txtOutput);
     }
 
-    private static ZapTextArea buildOutputTextArea() {
+    private ZapTextArea buildOutputTextArea(AbstractPanel outputPanel, Icon icon) {
         var txtOutput = new ZapTextArea();
         txtOutput.setEditable(false);
         txtOutput.setLineWrap(true);
@@ -174,6 +193,11 @@ public class TabbedOutputPanel extends OutputPanel {
                         showPopupMenuIfTriggered(e);
                     }
 
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        markTabRead(outputPanel, icon);
+                    }
+
                     private void showPopupMenuIfTriggered(java.awt.event.MouseEvent e) {
                         if (e.isPopupTrigger()) {
                             View.getSingleton()
@@ -182,7 +206,47 @@ public class TabbedOutputPanel extends OutputPanel {
                         }
                     }
                 });
+
+        // Mark tab unread with a green dot when there's new text
+        // Note that OverlayIcon only supports ImageIcons so this will not work for regular Icons
+        // However, most (all?) icons in ZAP are ImageIcons so we should probably be fine
+        if (icon instanceof ImageIcon imageIcon) {
+            var overlayIcon = new OverlayIcon(imageIcon);
+            overlayIcon.add(GREEN_BADGE_CORNER_ICON);
+            txtOutput
+                    .getDocument()
+                    .addDocumentListener(
+                            new DocumentListener() {
+                                @Override
+                                public void insertUpdate(DocumentEvent e) {
+                                    if (outputPanel.getIcon() != overlayIcon) {
+                                        setTabIcon(outputPanel, overlayIcon);
+                                    }
+                                }
+
+                                @Override
+                                public void removeUpdate(DocumentEvent e) {}
+
+                                @Override
+                                public void changedUpdate(DocumentEvent e) {}
+                            });
+        }
+
         return txtOutput;
+    }
+
+    private void markTabRead(AbstractPanel outputPanel, Icon originalIcon) {
+        if (outputPanel.isShowing() && outputPanel.equals(tabbedPanel.getSelectedComponent())) {
+            setTabIcon(outputPanel, originalIcon);
+        }
+    }
+
+    private void setTabIcon(AbstractPanel outputPanel, Icon icon) {
+        outputPanel.setIcon(icon);
+        int index = tabbedPanel.indexOfComponent(outputPanel);
+        if (index != -1) {
+            tabbedPanel.setIconAt(index, icon);
+        }
     }
 
     private static JToolBar buildToolbar(ZapTextArea txtOutput, Map<String, Object> attributes) {
@@ -269,6 +333,8 @@ public class TabbedOutputPanel extends OutputPanel {
 
     @Override
     public void clear() {
+        outputSourceChangeListeners.values().forEach(tabbedPanel::removeChangeListener);
+        outputSourceChangeListeners.clear();
         tabbedPanel.removeAll();
         txtOutputs.clear();
         addNewOutputSource(DEFAULT_OUTPUT_SOURCE_NAME);
