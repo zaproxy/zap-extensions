@@ -520,7 +520,7 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
     @EnumSource(
             value = AlertThreshold.class,
             names = {"MEDIUM", "LOW"})
-    void shouldRaiseAlertBelowHighThresholdOnTimeStampInJavascriptFiles(AlertThreshold threshold)
+    void shouldRaiseAlertBelowHighThresholdOnTimeStampInJavaScriptFiles(AlertThreshold threshold)
             throws URIException {
         // Given
         Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
