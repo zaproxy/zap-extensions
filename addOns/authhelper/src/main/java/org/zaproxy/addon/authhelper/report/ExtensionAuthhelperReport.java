@@ -106,7 +106,7 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                 pass,
                 "auth.summary." + key,
                 Constant.messages.getString(
-                        "authhelper.authreport." + key + (pass ? ".pass" : ".fail")));
+                        "authhelper.authreport.summary." + key + (pass ? ".pass" : ".fail")));
     }
 
     private static Context getFirstAuthConfiguredContext(ReportData reportData) {
@@ -156,7 +156,7 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
 
                     addSummaryItem(
                             ard,
-                            "summary.auth",
+                            "auth",
                             inMemoryStats.getStat(hostname, AuthenticationHelper.AUTH_SUCCESS_STATS)
                                     != null);
 
@@ -168,8 +168,8 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                                         hostname, AuthUtils.AUTH_BROWSER_PASSED_STATS);
 
                         if (passedCount != null) {
-                            addSummaryItem(ard, "summary.username", true);
-                            addSummaryItem(ard, "summary.password", true);
+                            addSummaryItem(ard, "username", true);
+                            addSummaryItem(ard, "password", true);
                         } else {
                             Long noUserCount =
                                     inMemoryStats.getStat(
@@ -178,8 +178,8 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                                     inMemoryStats.getStat(
                                             hostname, AuthUtils.AUTH_NO_PASSWORD_FIELD_STATS);
 
-                            addSummaryItem(ard, "summary.username", noUserCount != null);
-                            addSummaryItem(ard, "summary.password", noPwdCount != null);
+                            addSummaryItem(ard, "username", noUserCount != null);
+                            addSummaryItem(ard, "password", noPwdCount != null);
                         }
                     }
 
@@ -194,19 +194,19 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                 }
 
             } else {
-                addSummaryItem(ard, "summary.stats", false);
+                addSummaryItem(ard, "stats", false);
             }
 
             addSummaryItem(
                     ard,
-                    "summary.session",
+                    "session",
                     !(authContext.getSessionManagementMethod()
                             instanceof
                             AutoDetectSessionManagementMethodType
                                     .AutoDetectSessionManagementMethod));
             addSummaryItem(
                     ard,
-                    "summary.verif",
+                    "verif",
                     !(AuthCheckingStrategy.AUTO_DETECT.equals(
                             authContext.getAuthenticationMethod().getAuthCheckingStrategy())));
 
