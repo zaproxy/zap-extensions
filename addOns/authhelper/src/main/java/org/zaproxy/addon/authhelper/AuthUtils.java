@@ -37,6 +37,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
@@ -51,6 +52,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -89,15 +91,43 @@ public class AuthUtils {
 
     public static final String[] HEADERS = {HttpHeader.AUTHORIZATION};
     public static final String[] JSON_IDS = {"accesstoken", "token"};
-    private static final String[] USERNAME_FIELD_INDICATORS = {
-        "email", "signinname", "uname", "user"
-    };
+    private static final List<String> USERNAME_FIELD_INDICATORS =
+            List.of("email", "signinname", "uname", "user", "name", "nome", "nombre");
+    /* A selection of the most common login label links - just European languages for now - more suggestions appreciated */
+    protected static List<String> LOGIN_LABELS_P1 =
+            List.of(
+                    "login",
+                    "log in",
+                    "log-in",
+                    "signin",
+                    "sign in",
+                    "sign-in",
+                    "iniciar sesión", // Spanish: login
+                    "acceder", // Spanish: sign in
+                    "connexion", // French: login
+                    "se connecter", // French: sign in
+                    "anmeldung", // German: login
+                    "einloggen", // German: sign in
+                    "accesso", // Italian: login
+                    "accedi", // Italian: sign in
+                    "entrar", // Portuguese: sign in (login is login;)
+                    "inloggen", // Dutch: login
+                    "aanmelden" // Dutch: sign in
+                    );
+
+    /* Less likely labels, but still worth trying */
+    protected static List<String> LOGIN_LABELS_P2 =
+            List.of("account", "signup", "sign up", "sign-up");
 
     private static final int MIN_SESSION_COOKIE_LENGTH = 10;
 
     private static int MAX_NUM_RECORDS_TO_CHECK = 200;
 
     public static final int TIME_TO_SLEEP_IN_MSECS = 100;
+
+    private static final int DEMO_SLEEP_IN_MSECS = 2000;
+
+    private static final int AUTH_PAGE_SLEEP_IN_MSECS = 2000;
 
     private static final Logger LOGGER = LogManager.getLogger(AuthUtils.class);
 
@@ -145,6 +175,12 @@ public class AuthUtils {
     }
 
     static WebElement getUserField(
+            WebDriver wd, List<WebElement> inputElements, WebElement passwordField) {
+        return ignoreSeleniumExceptions(
+                () -> getUserFieldInternal(wd, inputElements, passwordField));
+    }
+
+    private static WebElement getUserFieldInternal(
             WebDriver wd, List<WebElement> inputElements, WebElement passwordField) {
         List<WebElement> filteredList = displayed(inputElements).toList();
         if (filteredList.size() == 1) {
@@ -253,7 +289,7 @@ public class AuthUtils {
         return elements.stream().filter(WebElement::isDisplayed);
     }
 
-    static boolean attributeContains(WebElement we, String attribute, String[] strings) {
+    static boolean attributeContains(WebElement we, String attribute, List<String> strings) {
         String att = getAttribute(we, attribute);
         if (att == null) {
             return false;
@@ -268,10 +304,36 @@ public class AuthUtils {
     }
 
     static WebElement getPasswordField(List<WebElement> inputElements) {
-        return displayed(inputElements)
-                .filter(element -> "password".equalsIgnoreCase(getAttribute(element, "type")))
-                .findFirst()
-                .orElse(null);
+        return ignoreSeleniumExceptions(
+                () ->
+                        displayed(inputElements)
+                                .filter(
+                                        element ->
+                                                "password"
+                                                        .equalsIgnoreCase(
+                                                                getAttribute(element, "type")))
+                                .findFirst()
+                                .orElse(null));
+    }
+
+    /**
+     * Executes the given supplier and ignores specific exceptions.
+     *
+     * @param supplier The function to execute.
+     * @param exceptions The exceptions to ignore.
+     * @return The result of the function or null if an exception is ignored.
+     */
+    public static <T> T ignoreSeleniumExceptions(Supplier<T> supplier) {
+        try {
+            return supplier.get();
+        } catch (WebDriverException e) {
+            // Ignore all selenium exceptions, especially StaleElementReferenceException
+            LOGGER.debug(e.getMessage(), e);
+        } catch (Exception e) {
+            // These might be more relevant?
+            LOGGER.warn(e.getMessage(), e);
+        }
+        return null;
     }
 
     /**
@@ -292,10 +354,51 @@ public class AuthUtils {
             String password,
             int waitInSecs,
             List<AuthenticationStep> steps) {
+
+        // Try with the given URL
         wd.get(loginPageUrl);
+        boolean auth =
+                internalAuthenticateAsUser(
+                        wd, context, loginPageUrl, username, password, waitInSecs, steps);
+
+        if (auth) {
+            return true;
+        }
+
+        // Try to find a login link - loop through the sets in priority order
+        for (List<String> labelList : List.of(LOGIN_LABELS_P1, LOGIN_LABELS_P2)) {
+            wd.get(loginPageUrl);
+            sleep(AUTH_PAGE_SLEEP_IN_MSECS);
+            List<WebElement> links = LoginLinkDetector.getLoginLinks(wd, labelList);
+            if (!links.isEmpty()) {
+                // Only try the first as we're only likely to get 1, and once we follow that then
+                // subsequent links will be invalid. This may change based on real world feedback of
+                // course.
+                links.get(0).click();
+                sleep(AUTH_PAGE_SLEEP_IN_MSECS);
+                auth =
+                        internalAuthenticateAsUser(
+                                wd, context, loginPageUrl, username, password, waitInSecs, steps);
+                if (auth) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean internalAuthenticateAsUser(
+            WebDriver wd,
+            Context context,
+            String loginPageUrl,
+            String username,
+            String password,
+            int waitInSecs,
+            List<AuthenticationStep> steps) {
+
         sleep(50);
         if (demoMode) {
-            sleep(2000);
+            sleep(DEMO_SLEEP_IN_MSECS);
         }
 
         WebElement userField = null;
@@ -330,7 +433,7 @@ public class AuthUtils {
                 default:
             }
 
-            sleep(demoMode ? 2000 : TIME_TO_SLEEP_IN_MSECS);
+            sleep(demoMode ? DEMO_SLEEP_IN_MSECS : TIME_TO_SLEEP_IN_MSECS);
         }
 
         for (int i = 0; i < getWaitLoopCount(); i++) {
@@ -347,11 +450,11 @@ public class AuthUtils {
                 LOGGER.debug("Submitting just user field on {}", loginPageUrl);
                 userField.sendKeys(username);
                 if (demoMode) {
-                    sleep(2000);
+                    sleep(DEMO_SLEEP_IN_MSECS);
                 }
                 userField.sendKeys(Keys.RETURN);
                 if (demoMode) {
-                    sleep(2000);
+                    sleep(DEMO_SLEEP_IN_MSECS);
                 }
                 userAdded = true;
             }
@@ -362,7 +465,7 @@ public class AuthUtils {
                 LOGGER.debug("Entering user field on {}", wd.getCurrentUrl());
                 userField.sendKeys(username);
                 if (demoMode) {
-                    sleep(2000);
+                    sleep(DEMO_SLEEP_IN_MSECS);
                 }
             }
             try {
@@ -370,7 +473,7 @@ public class AuthUtils {
                     LOGGER.debug("Submitting password field on {}", wd.getCurrentUrl());
                     pwdField.sendKeys(password);
                     if (demoMode) {
-                        sleep(2000);
+                        sleep(DEMO_SLEEP_IN_MSECS);
                     }
                 }
                 pwdField.sendKeys(Keys.RETURN);
@@ -379,12 +482,12 @@ public class AuthUtils {
                 LOGGER.debug("Handling hidden password field on {}", wd.getCurrentUrl());
                 userField.sendKeys(Keys.RETURN);
                 if (demoMode) {
-                    sleep(2000);
+                    sleep(DEMO_SLEEP_IN_MSECS);
                 }
                 sleep(TIME_TO_SLEEP_IN_MSECS);
                 pwdField.sendKeys(password);
                 if (demoMode) {
-                    sleep(2000);
+                    sleep(DEMO_SLEEP_IN_MSECS);
                 }
                 pwdField.sendKeys(Keys.RETURN);
             }
@@ -397,7 +500,7 @@ public class AuthUtils {
 
                 step.execute(wd, username, password);
 
-                sleep(demoMode ? 2000 : TIME_TO_SLEEP_IN_MSECS);
+                sleep(demoMode ? DEMO_SLEEP_IN_MSECS : TIME_TO_SLEEP_IN_MSECS);
             }
 
             incStatsCounter(loginPageUrl, AUTH_FOUND_FIELDS_STATS);
