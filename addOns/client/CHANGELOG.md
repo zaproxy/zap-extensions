@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Added Client Spider API.
+
 ### Fixed
 - Correct Client Passive Scan Queue counter, which could be showing one when none left.
 - Correctly fill input elements when spidering (Issue 8851).
