@@ -6,21 +6,21 @@
 	[#th:block th:if="${reportData.isIncludeSection('summary')}"]
 	,"summaryItems": [[#th:block th:each="sumItem, sumState: ${rptData.getSummaryItems()}"][#th:block th:if="${! sumState.first}"],[/th:block]
 		{
-			"description": "[(${sumItem.description})]",
-			"passed": "[(${sumItem.passed})]",
-			"key": "[(${sumItem.key})]"
+			"description": [[${sumItem.description}]],
+			"passed": [[${sumItem.passed}]],
+			"key": [[${sumItem.key}]]
 		}[/th:block]
 	]
 	[/th:block]
 	[#th:block th:if="${reportData.isIncludeSection('afenv')}"]
-	,"afEnv": "[(${rptData.getAfEnv()})]"
+	,"afEnv": [[${rptData.getAfEnv()}]]
 	[/th:block]
 	[#th:block th:if="${reportData.isIncludeSection('statistics')}"]
 	,"statistics": [[#th:block th:each="statItem, statState: ${rptData.getStatistics()}"][#th:block th:if="${! statState.first}"],[/th:block]
 		{
-			"key": "[(${statItem.key})]",
-			"scope": "[(${statItem.scope})]",
-			"value": "[(${statItem.value})]"
+			"key": [[${statItem.key}]],
+			"scope": [[${statItem.scope}]],
+			"value": [[${statItem.value}]]
 		}[/th:block]
 	]
 	[/th:block]
