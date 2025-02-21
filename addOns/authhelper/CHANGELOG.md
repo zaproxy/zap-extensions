@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Correctly read the API parameters when setting up Browser Based Authentication.
+- Tweaked auth report output to ensure that values are properly escaped.
 
 ## [0.22.0] - 2025-02-12
 ### Added

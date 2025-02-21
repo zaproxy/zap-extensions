@@ -30,9 +30,12 @@ import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -118,7 +121,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         assertThat(json.getString("@programName"), is(equalTo("ZAP")));
         assertThat(json.getString("@version"), is(equalTo("Test Build")));
         assertThat(json.getString("@generated").length(), is(greaterThan(20)));
-        assertThat(json.getString("afEnv"), is(equalTo("")));
+        assertThat(json.getString("afEnv"), is(equalTo("null")));
         assertThat(summaryItems.size(), is(equalTo(0)));
         assertThat(statistics.size(), is(equalTo(0)));
     }
@@ -156,7 +159,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
             password: test@test.com
             username: test123
           name: test""";
-        ard.setAfEnv(StringEscapeUtils.escapeJson(afEnv));
+        ard.setAfEnv(afEnv);
         ard.addSummaryItem(true, "summary.1", "First Item");
         ard.addSummaryItem(false, "summary.2", "Second Item");
         ard.addStatsItem("stats.auth.1", "global", 123);
@@ -195,6 +198,47 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         assertThat(statistics.getJSONObject(2), is(notNullValue()));
         assertThat(statistics.getJSONObject(2).getString("key"), is(equalTo("stats.other.2")));
         assertThat(statistics.getJSONObject(2).getInt("value"), is(equalTo(5678)));
+    }
+
+    @Test
+    void shouldGenerateFilledAuthJsonReportHandlingSpecialCharacters() throws Exception {
+        // Given
+        ExtensionReports extRep = new ExtensionReports();
+        String templateName = "auth-report-json";
+        Template template = getTemplateFromYamlFile(templateName);
+        File f = File.createTempFile(templateName, template.getExtension());
+        ReportData reportData = getGenericReportData(templateName);
+        reportData.setSections(template.getSections());
+        AuthReportData ard = new AuthReportData();
+        reportData.addReportObjects("authdata", ard);
+
+        ard.setSite("https://www.example.com");
+        String afEnv =
+                """
+                  env:
+                  contexts:
+                      name: 'some "quote" name'
+                """;
+        ard.setAfEnv(afEnv);
+        ard.addSummaryItem(true, "summary.1", "Bob's \"Item\"");
+        ard.addSummaryItem(true, "summary.\"2\"", "Foo bar");
+        ard.addStatsItem("stats.auth.1", "foo \"random\" bar", 123);
+        ard.addStatsItem("stats.foo.oops \"foo\" bar", "global", 0);
+        // When
+        File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        // Then
+        LocalDateTime localDateTime = LocalDateTime.now();
+        ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.systemDefault());
+        String current = zonedDateTime.format(DateTimeFormatter.RFC_1123_DATE_TIME);
+        String expected =
+                "{\n\t\"@programName\": \"ZAP\",\n\t\"@version\": \"Test Build\",\n\t\"@generated\": \"@@@replace@@@\",\n\t\"site\":  \"https:\\/\\/www.example.com\"\n\t\n\t,\"summaryItems\": [\n\t\t{\n\t\t\t\"description\": \"Bob's \\\"Item\\\"\",\n\t\t\t\"passed\": true,\n\t\t\t\"key\": \"summary.1\"\n\t\t},\n\t\t{\n\t\t\t\"description\": \"Foo bar\",\n\t\t\t\"passed\": true,\n\t\t\t\"key\": \"summary.\\\"2\\\"\"\n\t\t}\n\t]\n\t\n\t\n\t,\"afEnv\": \"  env:\\n  contexts:\\n      name: 'some \\\"quote\\\" name'\\n\"\n\t\n\t\n\t,\"statistics\": [\n\t\t{\n\t\t\t\"key\": \"stats.auth.1\",\n\t\t\t\"scope\": \"foo \\\"random\\\" bar\",\n\t\t\t\"value\": 123\n\t\t},\n\t\t{\n\t\t\t\"key\": \"stats.foo.oops \\\"foo\\\" bar\",\n\t\t\t\"scope\": \"global\",\n\t\t\t\"value\": 0\n\t\t}\n\t]\n\t\n}\n"
+                        .replace("@@@replace@@@", current);
+        report =
+                report.replaceAll(
+                        "[a-zA-Z]{3}, \\d{1,2} [a-zA-Z]{3} \\d{4} \\d{2}:\\d{2}:\\d{2}", current);
+        assertThat(report, is(equalTo(expected)));
     }
 
     static Template getTemplateFromYamlFile(String templateName) throws Exception {
