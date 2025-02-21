@@ -502,13 +502,18 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
         assertEquals(0, alertsRaised.size());
     }
 
-    @Test
-    void shouldNotRaiseAlertOnTimeStampInJavaScriptFilesAtHighThreshold() throws Exception {
-        // Given
+    private static HttpMessage createJavaScriptReponseWithTimeStamp() throws URIException {
         Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
         String strTestDate = String.valueOf(testDate.getEpochSecond());
         HttpMessage msg = createMessage(strTestDate);
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "javascript");
+        return msg;
+    }
+
+    @Test
+    void shouldNotRaiseAlertOnTimeStampInJavaScriptFilesAtHighThreshold() throws Exception {
+        // Given
+        HttpMessage msg = createJavaScriptReponseWithTimeStamp();
         rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
         scanHttpResponseReceive(msg);
@@ -523,10 +528,7 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
     void shouldRaiseAlertBelowHighThresholdOnTimeStampInJavaScriptFiles(AlertThreshold threshold)
             throws URIException {
         // Given
-        Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
-        String strTestDate = String.valueOf(testDate.getEpochSecond());
-        HttpMessage msg = createMessage(strTestDate);
-        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "javascript");
+        HttpMessage msg = createJavaScriptReponseWithTimeStamp();
         rule.setAlertThreshold(threshold);
         // When
         scanHttpResponseReceive(msg);
