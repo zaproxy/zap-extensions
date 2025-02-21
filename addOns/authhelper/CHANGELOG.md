@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Prefer form related fields in Browser Based Authentication for the selection of username field.
+- Tweaked the auth report summary keys.
 
 ### Fixed
 - Correctly read the API parameters when setting up Browser Based Authentication.

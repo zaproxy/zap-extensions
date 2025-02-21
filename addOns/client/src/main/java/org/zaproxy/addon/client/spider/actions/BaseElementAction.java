@@ -91,7 +91,7 @@ abstract class BaseElementAction implements SpiderAction {
             return;
         }
 
-        String type = input.getDomAttribute("type");
+        String type = getAttribute(input, "type");
         if (type == null) {
             Stats.incCounter(statsPrefix + ".input.notype");
             return;
@@ -101,11 +101,11 @@ abstract class BaseElementAction implements SpiderAction {
                 valueProvider.getValue(
                         uri,
                         action,
-                        input.getDomAttribute("name"),
-                        input.getDomAttribute("value"),
+                        getAttribute(input, "name"),
+                        getAttribute(input, "value"),
                         List.of(),
                         Map.of(),
-                        Map.of("Control Type", type));
+                        Map.of("Control Type", getControlType(type), "type", type));
 
         try {
             input.sendKeys(value);
@@ -114,6 +114,18 @@ abstract class BaseElementAction implements SpiderAction {
             Stats.incCounter(statsPrefix + ".input." + type + ".exception");
             LOGGER.debug("An error occurred while filling form input:", e);
         }
+    }
+
+    private static String getAttribute(WebElement element, String name) {
+        String value = element.getDomAttribute(name);
+        if (value != null) {
+            return value;
+        }
+        return element.getDomProperty(name);
+    }
+
+    private static String getControlType(String type) {
+        return !"password".equalsIgnoreCase(type) && !"file".equalsIgnoreCase(type) ? "text" : type;
     }
 
     protected static String getTagName(Map<String, String> data) {
