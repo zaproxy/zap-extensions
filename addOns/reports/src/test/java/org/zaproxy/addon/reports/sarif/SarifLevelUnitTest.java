@@ -22,6 +22,7 @@ package org.zaproxy.addon.reports.sarif;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Locale;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -41,7 +42,7 @@ class SarifLevelUnitTest {
         SarifLevel expectedSarifLevel = SarifLevel.valueOf(enumName);
 
         /* execute */
-        SarifLevel toTest = SarifLevel.fromAlertRisk(alertRisk);
+        SarifLevel toTest = SarifLevel.fromAlertRisk(alertRisk, Alert.CONFIDENCE_MEDIUM);
 
         /* test */
         assertEquals(expectedSarifLevel, toTest);
@@ -51,5 +52,15 @@ class SarifLevelUnitTest {
     @EnumSource(value = SarifLevel.class)
     void getValueJustRepresentsLowerCasedNameOfEnum(SarifLevel level) {
         assertEquals(level.name().toLowerCase(Locale.ROOT), level.getValue());
+    }
+
+    @Test
+    void shouldReturnNoneIfAlertFalsePositive() {
+        // Given / When
+        SarifLevel toTest =
+                SarifLevel.fromAlertRisk(Alert.RISK_HIGH, Alert.CONFIDENCE_FALSE_POSITIVE);
+
+        // Then
+        assertEquals(SarifLevel.NONE, toTest);
     }
 }

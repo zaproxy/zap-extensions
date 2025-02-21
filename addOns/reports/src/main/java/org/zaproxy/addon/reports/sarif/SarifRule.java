@@ -45,7 +45,7 @@ public class SarifRule implements Comparable<SarifRule> {
     }
 
     public SarifLevel getDefaultLevel() {
-        return SarifLevel.fromAlertRisk(alert.getRisk());
+        return SarifLevel.fromAlertRisk(alert.getRisk(), alert.getConfidence());
     }
 
     public String getId() {

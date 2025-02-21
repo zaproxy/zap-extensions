@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Include correct alert instances in Traditional JSON Report with requests and responses (Issue 8861).
+- Bug where false positives were included in Sarif reports with their original alert level.
 
 ## [0.36.0] - 2025-02-12
 ### Changed
