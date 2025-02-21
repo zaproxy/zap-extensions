@@ -98,7 +98,7 @@ public class SarifResult implements Comparable<SarifResult> {
 
             SarifResult result = new SarifResult();
             /* base parts */
-            result.level = SarifLevel.fromAlertRisk(alert.getRisk());
+            result.level = SarifLevel.fromAlertRisk(alert.getRisk(), alert.getConfidence());
             result.pluginId = alert.getPluginId();
 
             String messageText =
