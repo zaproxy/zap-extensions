@@ -477,6 +477,7 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10035/">10035</a>.
 <H2 id="id-10096">Timestamp Disclosure</H2>
 A timestamp was disclosed by the application/web server.<br>
 At HIGH threshold this rule does not alert on potential timestamps that are not within a range of plus or minus one year.<br>
+At HIGH threshold this rule ignores timestamps in JavaScript files.<br>
 At MEDIUM threshold this rule does not alert on potential timestamps beyond 10 years.<br>
 At all thresholds, this rule will not alert on timestamps beyond the Y2038 epoch edge.<br>
 
