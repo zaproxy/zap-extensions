@@ -41,7 +41,7 @@ class SarifLevelUnitTest {
         SarifLevel expectedSarifLevel = SarifLevel.valueOf(enumName);
 
         /* execute */
-        SarifLevel toTest = SarifLevel.fromAlertRisk(alertRisk);
+        SarifLevel toTest = SarifLevel.fromAlertRisk(alertRisk, Alert.CONFIDENCE_MEDIUM);
 
         /* test */
         assertEquals(expectedSarifLevel, toTest);
@@ -51,5 +51,14 @@ class SarifLevelUnitTest {
     @EnumSource(value = SarifLevel.class)
     void getValueJustRepresentsLowerCasedNameOfEnum(SarifLevel level) {
         assertEquals(level.name().toLowerCase(Locale.ROOT), level.getValue());
+    }
+
+    void shouldReturnNoneIfAlertFalsePositive() {
+        // Given / When
+        SarifLevel toTest =
+                SarifLevel.fromAlertRisk(Alert.RISK_HIGH, Alert.CONFIDENCE_FALSE_POSITIVE);
+
+        // Then
+        assertEquals(SarifLevel.NONE, toTest);
     }
 }
