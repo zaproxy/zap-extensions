@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - The Absence of Anti-CSRF Tokens scan rule now only considers forms with GET method at Low Threshold. (Forms submitted via GET, not forms delivered via GET.)
+- The Information Disclosure - Suspicious Comments scan rule:
+    - Should now be less false positive prone on JavaScript findings (Issues 6622 & 6736).
+    - Now skips obvious font requests even if their content type is text/html or text related.
 
 ### Changed
 - Replace usage of CWE-200 for the following rules (Issue 8712):
