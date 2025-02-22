@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
@@ -34,6 +35,7 @@ import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -42,6 +44,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.model.Tech;
@@ -169,6 +172,13 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo("c:/")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        equalTo(
+                                "While the evidence field indicates Windows, the rule actually "
+                                        + "checked that the response contains matches for all of the "
+                                        + "following: Windows, Program Files.")));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
@@ -187,6 +197,13 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo("/")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        equalTo(
+                                "While the evidence field indicates etc, the rule actually "
+                                        + "checked that the response contains matches for all of the "
+                                        + "following: proc, etc, boot, tmp, home.")));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
@@ -205,6 +222,13 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo("/")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(
+                        equalTo(
+                                "While the evidence field indicates etc, the rule actually "
+                                        + "checked that the response contains matches for all of the "
+                                        + "following: proc, etc, boot, tmp, home.")));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
@@ -278,6 +302,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         // Then
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-2")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(emptyString()));
     }
 
     @Test
@@ -294,6 +319,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         // Then
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-1")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(emptyString()));
     }
 
     @ParameterizedTest
@@ -314,6 +340,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-5")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(emptyString()));
     }
 
     @Test
@@ -360,6 +387,47 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/styles.css", "/code.js"})
+    void shouldSkipIfReqPathIsCssOrJs(String path) throws Exception {
+        // Given
+        rule.init(getHttpMessage(path + "?p=v"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(equalTo(0)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"/styles/, text/css", "/code, text/javascript"})
+    void shouldSkipIfResponseIsCssOfJs(String path, String contentType) throws Exception {
+        // Given
+        HttpMessage msg = getHttpMessage(path + "?p=v");
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, contentType);
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(equalTo(0)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "etc root tmp bin boot dev home mnt opt proc",
+                "Program Files Users Windows"
+            })
+    void shouldSkipIfResponseHasEvidenceToStartWith(String content) throws Exception {
+        // Given
+        HttpMessage msg = getHttpMessage("/?p=v");
+        msg.setResponseBody(content);
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(equalTo(0)));
     }
 
     private abstract static class ListDirsOnAttack extends NanoServerHandler {
