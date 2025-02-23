@@ -89,7 +89,9 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
 
         // No problem here since by default the cookie is
         // scoped to the origin, not including subdomains
-        if (cookieDomain == null || cookieDomain.isEmpty()) return false;
+        if (cookieDomain == null || cookieDomain.isEmpty()) {
+            return false;
+        }
 
         cookieDomain = cookieDomain.toLowerCase();
         originDomain = originDomain.toLowerCase();
