@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Fixed
-- Refactored CookieLooselyScopedScanRule to comply with the latest RFC standards and streamline the loosely scoped cookie check (Issue 8863).
+- Refactored Loosely Scoped Cookie to comply with the latest RFC standards and streamline the loosely scoped cookie check (Issue 8863).
 - The Absence of Anti-CSRF Tokens scan rule now only considers forms with GET method at Low Threshold. (Forms submitted via GET, not forms delivered via GET.)
 - The Information Disclosure - Suspicious Comments scan rule:
     - Should now be less false positive prone on JavaScript findings (Issues 6622 & 6736).
