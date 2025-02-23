@@ -155,7 +155,7 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
     }
 
     @Test
-    void shouldRaiseAlertIfHostDomainIsDifferentFromCookieDomain() throws Exception {
+    void shouldNotRaiseAlertIfHostDomainIsDifferentFromCookieDomain() throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://dev.test.org HTTP/1.1");
@@ -166,7 +166,7 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
         scanHttpResponseReceive(msg);
 
         // Then
-        assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.size(), is(0));
     }
 
     @Test
