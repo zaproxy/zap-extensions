@@ -70,7 +70,7 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
             }
         }
 
-        // raise alert if have found any loosely scoped cookies
+        // raise an alert if any loosely scoped cookies were found
         if (!looselyScopedCookies.isEmpty()) {
             buildAlert(host, looselyScopedCookies).raise();
         }

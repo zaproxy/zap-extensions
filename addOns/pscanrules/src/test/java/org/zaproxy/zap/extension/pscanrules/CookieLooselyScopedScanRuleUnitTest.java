@@ -243,6 +243,34 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
     }
 
     @Test
+    void shouldNotRaiseAlertForExactMatchIgnoringLeadingDot() throws Exception {
+        // Given
+        HttpMessage msg = createBasicMessage();
+        msg.setRequestHeader("GET http://test.com HTTP/1.1");
+        msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=.test.com;");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
+    void shouldRaiseAlertForNestedSubdomainIfCookieDomainIsHigherOrder() throws Exception {
+        // Given
+        HttpMessage msg = createBasicMessage();
+        msg.setRequestHeader("GET http://deep.sub.example.com HTTP/1.1");
+        msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=example.com;");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+    }
+
+    @Test
     void shouldScanCookieDomainWithJustTld() throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
