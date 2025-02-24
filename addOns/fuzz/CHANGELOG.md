@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [13.15.0] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [13.14.0] - 2024-10-07
+### Changed
+- Maintenance changes.
+- Replace library used for regex payload generation, to address performance and compatibility issues.
+
 ## [13.13.0] - 2024-05-07
 ### Added
 - Support for menu weights (Issue 8369)
@@ -213,6 +222,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[13.15.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.15.0
+[13.14.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.14.0
 [13.13.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.13.0
 [13.12.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.12.0
 [13.11.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.11.0

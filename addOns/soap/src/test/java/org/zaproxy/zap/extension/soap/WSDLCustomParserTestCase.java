@@ -53,12 +53,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.model.ValueGenerator;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.testutils.TestUtils;
 
 class WSDLCustomParserTestCase extends TestUtils {
 
-    private ValueGenerator valueGenerator;
+    private ValueProvider valueProvider;
     private Supplier<Date> dateSupplier;
     private String wsdlContent;
     private WSDLCustomParser parser;
@@ -70,9 +70,9 @@ class WSDLCustomParserTestCase extends TestUtils {
         Path wsdlPath = getResourcePath("resources/test.wsdl");
         wsdlContent = new String(Files.readAllBytes(wsdlPath), StandardCharsets.UTF_8);
 
-        valueGenerator = mock(ValueGenerator.class);
+        valueProvider = mock(ValueProvider.class);
         dateSupplier = mock(Supplier.class, withSettings().strictness(Strictness.LENIENT));
-        parser = new WSDLCustomParser(() -> valueGenerator, null, dateSupplier);
+        parser = new WSDLCustomParser(() -> valueProvider, null, dateSupplier);
     }
 
     @Test
@@ -115,7 +115,7 @@ class WSDLCustomParserTestCase extends TestUtils {
     @ParameterizedTest
     @EmptySource
     @ValueSource(strings = {"generated"})
-    void addParameterShouldUseValueGeneratorWhenAvailable(String genValue) {
+    void addParameterShouldUseValueProviderWhenAvailable(String genValue) {
         // Given
         String path = "CelsiusToFahrenheit/Celsius";
         String paramType = "s:string";
@@ -124,7 +124,7 @@ class WSDLCustomParserTestCase extends TestUtils {
         fieldAttributes.put("Control Type", "TEXT");
         fieldAttributes.put("type", name);
 
-        when(valueGenerator.getValue(
+        when(valueProvider.getValue(
                         eq(null),
                         eq(null),
                         eq(name),
@@ -151,7 +151,7 @@ class WSDLCustomParserTestCase extends TestUtils {
                 "dateTime, 2023-11-21T05:16:40+0000",
                 "something, ''"
             })
-    void shouldGenerateAppropriateDefaultValueForValueGenerator(
+    void shouldGenerateAppropriateDefaultValueForValueProvider(
             String paramType, String expectedDefaultValue) {
         // Given
         ArgumentCaptor<String> defaultValueArgCaptor = ArgumentCaptor.forClass(String.class);
@@ -160,7 +160,7 @@ class WSDLCustomParserTestCase extends TestUtils {
         parser.addParameter("", paramType, "", null);
 
         // Then
-        verify(valueGenerator)
+        verify(valueProvider)
                 .getValue(
                         any(), any(), any(), defaultValueArgCaptor.capture(), any(), any(), any());
         assertThat(defaultValueArgCaptor.getValue(), is(equalTo(expectedDefaultValue)));

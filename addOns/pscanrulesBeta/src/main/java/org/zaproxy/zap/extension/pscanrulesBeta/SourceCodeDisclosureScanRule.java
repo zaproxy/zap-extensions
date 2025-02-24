@@ -692,9 +692,12 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner
                 .setName(getName() + " - " + programmingLanguage)
                 .setRisk(Alert.RISK_MEDIUM)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription() + " - " + programmingLanguage)
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setDescription(
+                        Constant.messages.getString(MESSAGE_PREFIX + "desc")
+                                + " - "
+                                + programmingLanguage)
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
                 .setCweId(540) // Information Exposure Through Source Code
                 .setWascId(13); // WASC-13: Information Leakage
@@ -713,17 +716,5 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    private String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 }

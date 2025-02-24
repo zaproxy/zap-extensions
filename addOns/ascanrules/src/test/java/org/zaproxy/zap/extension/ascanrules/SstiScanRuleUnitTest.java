@@ -47,6 +47,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -237,6 +238,37 @@ class SstiScanRuleUnitTest extends ActiveScannerTest<SstiScanRule> {
     }
 
     @Test
+    void shouldReportGoBasedSsti() throws NullPointerException, IOException {
+        String test = "/shouldReportGoBasedSsti/";
+        // Given
+        nano.addHandler(createGoHandler(test, true));
+        HttpMessage msg = getHttpMessage(test + "?name=test");
+        rule.setConfig(new ZapXmlConfiguration());
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+    }
+
+    @Test
+    void shouldNotReportGoBasedSstiWhenDirectiveEchoed() throws NullPointerException, IOException {
+        String test = "/shouldNotReportGoBasedSstiWhenDirectiveEchoed/";
+        // Given
+        nano.addHandler(createGoHandler(test, false));
+        HttpMessage msg = getHttpMessage(test + "?name=test");
+        rule.setConfig(new ZapXmlConfiguration());
+        rule.setAttackStrength(Plugin.AttackStrength.MEDIUM);
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
     void shouldReturnExpectedMappings() {
         // Given / When
         int cwe = rule.getCweId();
@@ -245,7 +277,7 @@ class SstiScanRuleUnitTest extends ActiveScannerTest<SstiScanRule> {
         // Then
         assertThat(cwe, is(equalTo(1336)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(10)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -254,6 +286,12 @@ class SstiScanRuleUnitTest extends ActiveScannerTest<SstiScanRule> {
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_18_SSTI.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.SEQUENCE.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
@@ -320,5 +358,36 @@ class SstiScanRuleUnitTest extends ActiveScannerTest<SstiScanRule> {
         } else {
             throw new IllegalArgumentException("invalid template code");
         }
+    }
+
+    private NanoServerHandler createGoHandler(String path, boolean stripPrint) {
+        return new NanoServerHandler(path) {
+            @Override
+            protected Response serve(IHTTPSession session) {
+                String name = getFirstParamValue(session, "name");
+                String response;
+                if (name != null) {
+                    if (!name.contains("print")) {
+                        return newFixedLengthResponse(getHtml("sstiscanrule/NoInput.html"));
+                    }
+                    try {
+                        if (name.contains("print")) {
+                            name = name.replaceAll("[^A-Za-z0-9]+", "");
+                            name = stripPrint ? name.replace("print", "") : name;
+                        }
+                        name = templateRenderMock("{", "}", name);
+                        response =
+                                getHtml(
+                                        "sstiscanrule/Rendered.html",
+                                        new String[][] {{"name", name}});
+                    } catch (IllegalArgumentException e) {
+                        response = getHtml("sstiscanrule/ErrorPage.html");
+                    }
+                } else {
+                    response = getHtml("sstiscanrule/NoInput.html");
+                }
+                return newFixedLengthResponse(response);
+            }
+        };
     }
 }

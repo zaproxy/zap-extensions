@@ -17,7 +17,34 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("spiderAjax") {
-                            version.set(">=23.15.0")
+                            version.set(">=23.22.0")
+                        }
+                    }
+                }
+            }
+            register("org.zaproxy.addon.authhelper.client.ExtensionAuthhelperClient") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.authhelper.client"))
+                }
+                dependencies {
+                    addOns {
+                        register("client") {
+                            version.set(">=0.11.0")
+                        }
+                    }
+                }
+            }
+            register("org.zaproxy.addon.authhelper.report.ExtensionAuthhelperReport") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.authhelper.report"))
+                }
+                dependencies {
+                    addOns {
+                        register("automation") {
+                            version.set(">=0.45.0")
+                        }
+                        register("reports") {
+                            version.set(">=0.36.0")
                         }
                     }
                 }
@@ -31,8 +58,14 @@ zapAddOn {
                 register("network") {
                     version.set(">=0.6.0")
                 }
+                register("pscan") {
+                    version.set(">= 0.1.0 & < 1.0.0")
+                }
                 register("selenium") {
                     version.set("15.*")
+                }
+                register("zest") {
+                    version.set(">=48.2.0")
                 }
             }
         }
@@ -48,10 +81,21 @@ crowdin {
 }
 
 dependencies {
+    zapAddOn("automation")
     zapAddOn("commonlib")
     zapAddOn("network")
+    zapAddOn("pscan")
     zapAddOn("selenium")
     zapAddOn("spiderAjax")
+    zapAddOn("client")
+    zapAddOn("reports")
+    zapAddOn("zest")
 
+    implementation("com.github.bastiaanjansen:otp-java:2.1.0") {
+        // Provided by ZAP.
+        exclude(group = "commons-codec", module = "commons-codec")
+    }
+
+    testImplementation("io.github.bonigarcia:selenium-jupiter:5.1.1")
     testImplementation(project(":testutils"))
 }

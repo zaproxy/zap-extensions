@@ -23,7 +23,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -49,6 +48,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentMatcher;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -238,15 +239,6 @@ class ActiveScanJobUnitTest {
         // Then
         assertThat(params.containsKey("threadPerHost"), is(equalTo(true)));
         assertTrue(Integer.parseInt(params.get("threadPerHost")) > 0);
-    }
-
-    @Test
-    void shouldNotNpeOnNullThreads() throws MalformedURLException {
-        // Given / When
-        ActiveScanJob.Parameters params = new ActiveScanJob.Parameters();
-
-        // Then
-        assertThat(params.getThreadPerHost(), is(nullValue()));
     }
 
     private static class ScannerParamWrapper {
@@ -445,7 +437,7 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
-    void shouldReturnScanPolicyForDefaultData() throws MalformedURLException {
+    void shouldReturnNullScanPolicyForEmptyData() {
         // Given
         ActiveScanJob job = new ActiveScanJob();
         AutomationProgress progress = new AutomationProgress();
@@ -455,12 +447,64 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
+
+        // Then
+        assertThat(policy, is(equalTo(null)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = AttackStrength.class,
+            mode = EnumSource.Mode.EXCLUDE,
+            names = {"DEFAULT"})
+    void shouldReturnScanPolicyIfOnlyDefaultStrength(AttackStrength attackStrength) {
+        // Given
+        ActiveScanJob job = new ActiveScanJob();
+        AutomationProgress progress = new AutomationProgress();
+        LinkedHashMap<String, LinkedHashMap<?, ?>> data = new LinkedHashMap<>();
+        LinkedHashMap<String, String> policyDefn = new LinkedHashMap<>();
+        policyDefn.put("defaultStrength", attackStrength.name());
+        data.put("policyDefinition", policyDefn);
+
+        // When
+        job.setJobData(data);
+        job.verifyParameters(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
+
+        // Then
+        assertThat(policy, is(notNullValue()));
+        assertThat(policy.getDefaultStrength(), is(attackStrength));
+        assertThat(policy.getDefaultThreshold(), is(AlertThreshold.MEDIUM));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = AlertThreshold.class,
+            mode = EnumSource.Mode.EXCLUDE,
+            names = {"DEFAULT"})
+    void shouldReturnScanPolicyIfOnlyDefaultThreshold(AlertThreshold alertThreshold) {
+        // Given
+        ActiveScanJob job = new ActiveScanJob();
+        AutomationProgress progress = new AutomationProgress();
+        LinkedHashMap<String, LinkedHashMap<?, ?>> data = new LinkedHashMap<>();
+        LinkedHashMap<String, String> policyDefn = new LinkedHashMap<>();
+        policyDefn.put("defaultThreshold", alertThreshold.name());
+        data.put("policyDefinition", policyDefn);
+
+        // When
+        job.setJobData(data);
+        job.verifyParameters(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
         assertThat(policy.getDefaultStrength(), is(AttackStrength.MEDIUM));
-        assertThat(policy.getDefaultThreshold(), is(AlertThreshold.MEDIUM));
+        assertThat(policy.getDefaultThreshold(), is(alertThreshold));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
@@ -479,7 +523,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -502,7 +546,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -538,7 +582,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -581,7 +625,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        ScanPolicy policy = job.getScanPolicy(progress);
+        ScanPolicy policy = job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(policy, is(notNullValue()));
@@ -623,7 +667,7 @@ class ActiveScanJobUnitTest {
         // When
         job.setJobData(data);
         job.verifyParameters(progress);
-        job.getScanPolicy(progress);
+        job.getData().getPolicyDefinition().getScanPolicy(null, progress);
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));

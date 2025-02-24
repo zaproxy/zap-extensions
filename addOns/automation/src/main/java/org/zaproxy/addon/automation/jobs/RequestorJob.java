@@ -27,6 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
@@ -339,33 +343,27 @@ public class RequestorJob extends AutomationJob {
         }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
         private String user;
-
-        public Parameters() {}
-
-        public String getUser() {
-            return user;
-        }
-
-        public void setUser(String user) {
-            this.user = user;
-        }
     }
 
+    @Getter
+    @Setter
     public static class Request extends AutomationData {
         private String url;
-        private String name;
+        private String name = "";
         private String method;
-        private String httpVersion;
-        private List<Header> headers;
-        private String data;
+        private String httpVersion = HttpHeader.HTTP11;
+        private List<Header> headers = List.of();
+        private String data = "";
         private Integer responseCode;
 
         public Request() {}
 
         public Request(String url, String name, String method, String data, Integer responseCode) {
-            this(url, name, method, data, responseCode, null);
+            this(url, name, method, data, responseCode, List.of());
         }
 
         public Request(
@@ -399,58 +397,6 @@ public class RequestorJob extends AutomationJob {
             return new Request(url, name, method, httpVersion, data, responseCode, headers);
         }
 
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getMethod() {
-            return method;
-        }
-
-        public void setMethod(String method) {
-            this.method = method;
-        }
-
-        public String getHttpVersion() {
-            return httpVersion;
-        }
-
-        public void setHttpVersion(String httpVersion) {
-            this.httpVersion = httpVersion;
-        }
-
-        public String getData() {
-            return data;
-        }
-
-        public void setData(String data) {
-            this.data = data;
-        }
-
-        public Integer getResponseCode() {
-            return responseCode;
-        }
-
-        public void setResponseCode(Integer responseCode) {
-            this.responseCode = responseCode;
-        }
-
-        public List<Header> getHeaders() {
-            return headers;
-        }
-
         private static List<Header> convertStringListToHeadersList(List<String> stringHeaders) {
             List<Header> headers = new ArrayList<>();
             if (stringHeaders != null) {
@@ -476,36 +422,14 @@ public class RequestorJob extends AutomationJob {
             this.headers = headers;
         }
 
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        @AllArgsConstructor
         @JsonSerialize(converter = HeaderConverter.class)
         public static class Header {
-            private String name;
-            private String value;
-
-            public Header() {
-                this.name = "";
-                this.value = "";
-            }
-
-            public Header(String name, String value) {
-                this.name = name;
-                this.value = value;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public void setName(String name) {
-                this.name = name;
-            }
-
-            public String getValue() {
-                return value;
-            }
-
-            public void setValue(String value) {
-                this.value = value;
-            }
+            private String name = "";
+            private String value = "";
         }
 
         static class HeaderConverter extends StdConverter<Request.Header, String> {

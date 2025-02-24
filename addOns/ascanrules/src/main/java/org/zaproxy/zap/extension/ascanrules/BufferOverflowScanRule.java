@@ -24,6 +24,8 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URIException;
@@ -36,6 +38,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -45,10 +48,18 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.bufferoverflow.";
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION));
+        alertTags.put(PolicyTag.API.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
+
     private static final String CONNECTION_CLOSED = "Connection: close";
 
     private static final int PLUGIN_ID = 30001;
@@ -169,7 +180,7 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin
         return 7;
     }
 
-    private String randomCharacterString(int length) {
+    private static String randomCharacterString(int length) {
         StringBuilder sb1 = new StringBuilder(length + 1);
         int counter = 0;
         int character = 0;

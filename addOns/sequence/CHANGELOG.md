@@ -4,9 +4,28 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [8] - 2025-01-10
+### Added
+- Add Automation Framework jobs:
+  - `sequence-import` to import HARs as sequences.
+  - `sequence-activeScan` to active scan sequences.
+- Data for reporting.
+- Stats for import automation and active scan.
+- Sequence active scan policy which will be used if neither a policy nor policyDefinition are set.
+- Add Import top level menu item to import HAR as sequence.
+- Active Scan Sequence dialog.
+
 ### Changed
-- Update minimum ZAP version to 2.15.0.
+- Depend on Import/Export add-on to allow to import HARs as sequences.
+- Update minimum ZAP version to 2.16.0.
 - Maintenance changes.
+- Sequence scan implementation.
+- Promoted to beta.
+
+### Removed
+- Sequence panel from the Active Scan dialog.
 
 ## [7] - 2023-10-23
 ### Changed
@@ -49,5 +68,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[8]: https://github.com/zaproxy/zap-extensions/releases/sequence-v8
 [7]: https://github.com/zaproxy/zap-extensions/releases/sequence-v7
 [6]: https://github.com/zaproxy/zap-extensions/releases/sequence-v6

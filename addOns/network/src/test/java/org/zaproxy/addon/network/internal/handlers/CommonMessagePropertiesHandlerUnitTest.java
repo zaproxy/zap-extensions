@@ -37,12 +37,15 @@ class CommonMessagePropertiesHandlerUnitTest {
     private static final InetSocketAddress SENDER_ADDRESS =
             new InetSocketAddress("127.0.0.1", 1234);
 
+    private static final InetSocketAddress LOCAL_ADDRESS = new InetSocketAddress("127.0.0.1", 4321);
+
     protected EmbeddedChannel channel;
 
     @BeforeEach
     void setUp() {
         channel = new EmbeddedChannel(CommonMessagePropertiesHandler.getInstance());
         channel.attr(ChannelAttributes.REMOTE_ADDRESS).set(SENDER_ADDRESS);
+        channel.attr(ChannelAttributes.LOCAL_ADDRESS).set(LOCAL_ADDRESS);
     }
 
     @Test
@@ -68,6 +71,32 @@ class CommonMessagePropertiesHandlerUnitTest {
         written(msg);
         // Then
         assertThat(msg.getRequestHeader().getSenderAddress(), is(nullValue()));
+        assertThat(msg.getUserObject(), is(nullValue()));
+        assertChannelState(msg);
+    }
+
+    @Test
+    void shouldSetLocalAddress() {
+        // Given
+        InetSocketAddress address = new InetSocketAddress("127.0.0.2", 12345);
+        channel.attr(ChannelAttributes.LOCAL_ADDRESS).set(address);
+        HttpMessage msg = new HttpMessage();
+        // When
+        written(msg);
+        // Then
+        assertThat(msg.getRequestHeader().getLocalAddress(), is(equalTo(address)));
+        assertChannelState(msg);
+    }
+
+    @Test
+    void shouldNotSetLocalAddressIfNotPresent() {
+        // Given
+        channel.attr(ChannelAttributes.LOCAL_ADDRESS).set(null);
+        HttpMessage msg = new HttpMessage();
+        // When
+        written(msg);
+        // Then
+        assertThat(msg.getRequestHeader().getLocalAddress(), is(nullValue()));
         assertThat(msg.getUserObject(), is(nullValue()));
         assertChannelState(msg);
     }

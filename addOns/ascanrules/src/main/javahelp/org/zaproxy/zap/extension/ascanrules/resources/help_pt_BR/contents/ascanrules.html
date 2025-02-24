@@ -178,7 +178,9 @@ This scan rule checks for various web accessible files which may leak administra
 The original included set of payloads were based on <a href="https://github.com/hannob/snallygaster">Snallygaster</a> by Hanno Böck.
 Such payloads are verified by checking response code, and content. If the response code is 200 (Ok) then additional content checks are performed to increase alert confidence.
 If the response code is 401 (Unauthorized) or 403 (Forbidden) or the content checks are un-successful then an alert is raised with lower confidence (at LOW Threshold).
-<strong>Note:</strong> If the Custom Payloads addon is installed you can add your own hidden file paths (payloads) in the Custom Payloads options panel. 
+<strong>Note:</strong> If the Custom Payloads add-on is installed you can add your own hidden file paths (payloads) in the Custom Payloads options panel. 
+<br>
+The Custom Payloads category for this rule is: <code>Hidden-File</code>.<br>
 For custom payloads only the response status code is checked. If there is a requirement to include a content check then it is also possible to add payloads to 
 the <code>json/hidden_files.json</code> file in ZAP's user directory (in which case they will be treated as included payloads).
 <p>
@@ -443,7 +445,9 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/40029/">40029</a>.
 
 <h2 id="id-10104">User Agent Fuzzer</h2>
 This active scan rule checks for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). The rule compares the response statuscode and the hashcode of the response body with the original response.<br>
-<strong>Note:</strong> If the Custom Payloads addon is installed you can add your own User Agent strings (payloads) in the Custom Payloads options panel.
+<strong>Note:</strong> If the Custom Payloads add-on is installed you can add your own User Agent strings (payloads) in the Custom Payloads options panel.
+<br>
+The Custom Payloads category for this rule is: <code>User-Agent</code>.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/UserAgentScanRule.java">UserAgentScanRule.java</a>
 <br>

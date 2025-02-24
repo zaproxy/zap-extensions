@@ -27,6 +27,7 @@ import javax.jdo.Constants;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Query;
 import javax.jdo.Transaction;
 import org.datanucleus.PropertyNames;
 import org.datanucleus.api.jdo.JDOPersistenceManagerFactory;
@@ -65,6 +66,9 @@ public abstract class Database implements Closeable {
         jdoProperties.put(PropertyNames.PROPERTY_SCHEMA_VALIDATE_COLUMNS, false);
         jdoProperties.put(PropertyNames.PROPERTY_SCHEMA_VALIDATE_CONSTRAINTS, false);
 
+        // Required for non "select" SQL statements.
+        jdoProperties.put(PropertyNames.PROPERTY_QUERY_SQL_ALLOWALL, true);
+
         pmf = JDOHelper.getPersistenceManagerFactory(jdoProperties, classLoader);
         this.classLoader = classLoader;
     }
@@ -74,6 +78,16 @@ public abstract class Database implements Closeable {
         if (pmf != null) {
             pmf.close();
         }
+    }
+
+    /**
+     * Gets a {@code PersistenceManager}.
+     *
+     * @return the persistence manager.
+     * @since 0.6.0
+     */
+    protected PersistenceManager getPm() {
+        return pmf.getPersistenceManager();
     }
 
     public void persistEntity(Object entity) {
@@ -92,6 +106,17 @@ public abstract class Database implements Closeable {
             }
             pm.close();
         }
+    }
+
+    public Object runQuery(String sql, Class<?> clazz, boolean unique) {
+        PersistenceManager pm = pmf.getPersistenceManager();
+
+        Query<?> query = pm.newQuery("javax.jdo.query.SQL", sql);
+        if (clazz != null) {
+            query.setResultClass(clazz);
+        }
+        query.setUnique(unique);
+        return query.execute();
     }
 
     public <T> List<T> getAll(Class<T> clazz) {

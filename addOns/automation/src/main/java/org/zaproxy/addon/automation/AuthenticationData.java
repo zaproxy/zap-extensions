@@ -19,21 +19,27 @@
  */
 package org.zaproxy.addon.automation;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.zaproxy.addon.automation.ContextWrapper.UserData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethodType;
@@ -50,6 +56,7 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class AuthenticationData extends AutomationData {
+
     public static final String METHOD_HTTP = "http";
     public static final String METHOD_FORM = "form";
     public static final String METHOD_JSON = "json";
@@ -57,6 +64,7 @@ public class AuthenticationData extends AutomationData {
     public static final String METHOD_SCRIPT = "script";
     public static final String METHOD_BROWSER = "browser";
     public static final String METHOD_AUTO = "autodetect";
+    public static final String METHOD_CLIENT = "client";
 
     public static final String PARAM_HOSTNAME = "hostname";
     public static final String PARAM_REALM = "realm";
@@ -69,6 +77,9 @@ public class AuthenticationData extends AutomationData {
     public static final String PARAM_SCRIPT = "script";
     public static final String PARAM_SCRIPT_ENGINE = "scriptEngine";
 
+    // TODO: Plan to change once the core supports dynamic methods better
+    protected static final String CLIENT_SCRIPT_BASED_AUTH_METHOD_CLASSNAME =
+            "org.zaproxy.addon.authhelper.client.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod";
     protected static final String BROWSER_BASED_AUTH_METHOD_CLASSNAME =
             "org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod";
 
@@ -76,6 +87,7 @@ public class AuthenticationData extends AutomationData {
     protected static final String FIELD_LOGIN_REQUEST_URL = "loginRequestURL";
 
     private static final String BAD_FIELD_ERROR_MSG = "automation.error.env.auth.field.bad";
+    private static final String PRIVATE_FIELD_SCRIPT = "script";
 
     public static final String VERIFICATION_ELEMENT = "verification";
 
@@ -87,7 +99,8 @@ public class AuthenticationData extends AutomationData {
                     METHOD_JSON,
                     METHOD_SCRIPT,
                     METHOD_BROWSER,
-                    METHOD_AUTO);
+                    METHOD_AUTO,
+                    METHOD_CLIENT);
 
     private String method;
     private Map<String, Object> parameters = new LinkedHashMap<>();
@@ -98,6 +111,10 @@ public class AuthenticationData extends AutomationData {
     public AuthenticationData() {}
 
     public AuthenticationData(Context context) {
+        this(context, List.of());
+    }
+
+    public AuthenticationData(Context context, List<UserData> users) {
         AuthenticationMethod authMethod = context.getAuthenticationMethod();
         if (authMethod instanceof HttpAuthenticationMethod) {
             HttpAuthenticationMethod httpAuthMethod = (HttpAuthenticationMethod) authMethod;
@@ -121,10 +138,29 @@ public class AuthenticationData extends AutomationData {
             JobUtils.addPrivateField(
                     parameters, PARAM_LOGIN_REQUEST_URL, FIELD_LOGIN_REQUEST_URL, jsonAuthMethod);
             JobUtils.addPrivateField(parameters, PARAM_LOGIN_REQUEST_BODY, jsonAuthMethod);
-        } else if (authMethod instanceof ScriptBasedAuthenticationMethod) {
-            ScriptBasedAuthenticationMethod scriptAuthMethod =
-                    (ScriptBasedAuthenticationMethod) authMethod;
-            ScriptWrapper sw = (ScriptWrapper) JobUtils.getPrivateField(scriptAuthMethod, "script");
+        } else if (authMethod != null
+                && authMethod
+                        .getClass()
+                        .getCanonicalName()
+                        .equals(CLIENT_SCRIPT_BASED_AUTH_METHOD_CLASSNAME)) {
+            ScriptWrapper sw =
+                    (ScriptWrapper) JobUtils.getPrivateField(authMethod, PRIVATE_FIELD_SCRIPT);
+            LOGGER.debug("Matched client script class");
+            if (sw != null) {
+                setMethod(METHOD_CLIENT);
+                parameters.put(PARAM_SCRIPT, sw.getFile().getAbsolutePath());
+                parameters.put(PARAM_SCRIPT_ENGINE, sw.getEngineName());
+                @SuppressWarnings("unchecked")
+                Map<String, String> paramValues =
+                        (Map<String, String>) JobUtils.getPrivateField(authMethod, "paramValues");
+                for (Entry<String, String> entry : paramValues.entrySet()) {
+                    parameters.put(entry.getKey(), entry.getValue());
+                }
+            }
+        } else if (authMethod instanceof ScriptBasedAuthenticationMethod scriptAuthMethod) {
+            ScriptWrapper sw =
+                    (ScriptWrapper)
+                            JobUtils.getPrivateField(scriptAuthMethod, PRIVATE_FIELD_SCRIPT);
             if (sw != null) {
                 setMethod(AuthenticationData.METHOD_SCRIPT);
                 parameters.put(PARAM_SCRIPT, sw.getFile().getAbsolutePath());
@@ -147,6 +183,16 @@ public class AuthenticationData extends AutomationData {
             JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_URL, authMethod);
             JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_WAIT, authMethod);
             JobUtils.addPrivateField(parameters, PARAM_BROWSER_ID, authMethod);
+
+            try {
+                Method method = authMethod.getClass().getMethod("toMap", Map.class);
+                method.invoke(authMethod, parameters);
+            } catch (Exception e) {
+                LOGGER.error("An error occurred while saving steps:", e);
+            }
+
+            totpMethodToUser(parameters, users);
+
         } else if (authMethod != null
                 && authMethod
                         .getClass()
@@ -159,6 +205,74 @@ public class AuthenticationData extends AutomationData {
         if (authMethod != null) {
             setVerification(new VerificationData(context));
         }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void totpMethodToUser(
+            Map<String, Object> parameters, List<ContextWrapper.UserData> users) {
+        if (users == null || users.isEmpty()) {
+            return;
+        }
+
+        var user = users.get(0);
+        Object data = parameters.get("steps");
+        if (!(data instanceof List steps)) {
+            return;
+        }
+
+        for (Iterator<?> it = steps.iterator(); it.hasNext(); ) {
+            Map<String, Object> object = (Map<String, Object>) it.next();
+            if (isTotpType(object)) {
+                user.getInternalCredentials()
+                        .setTotp(
+                                JsonMapper.builder()
+                                        .build()
+                                        .convertValue(
+                                                object.remove("totp"), UserData.TotpData.class));
+                return;
+            }
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static Map<String, Object> totpUserToMethod(
+            Map<String, Object> parameters,
+            List<ContextWrapper.UserData> users,
+            AutomationEnvironment env) {
+        if (users == null) {
+            return parameters;
+        }
+
+        var totpData =
+                users.stream()
+                        .map(ContextWrapper.UserData::getInternalCredentials)
+                        .map(ContextWrapper.UserData.Credentials::getTotp)
+                        .filter(Objects::nonNull)
+                        .findFirst()
+                        .orElse(null);
+        if (totpData == null) {
+            return parameters;
+        }
+
+        Object data = parameters.get("steps");
+        if (!(data instanceof List steps)) {
+            return parameters;
+        }
+
+        for (Iterator<?> it = steps.iterator(); it.hasNext(); ) {
+            Map<String, Object> object = (Map<String, Object>) it.next();
+            if (isTotpType(object)) {
+                Map<String, Object> totpMap =
+                        JsonMapper.builder().build().convertValue(totpData, LinkedHashMap.class);
+                totpMap.replaceAll((k, v) -> env.replaceVars(v));
+                object.put("totp", totpMap);
+            }
+        }
+        return parameters;
+    }
+
+    private static boolean isTotpType(Map<String, Object> object) {
+        return "TOTP_FIELD".equals(object.get("type"));
     }
 
     public AuthenticationData(Object data, AutomationProgress progress) {
@@ -186,6 +300,8 @@ public class AuthenticationData extends AutomationData {
                                             BAD_FIELD_ERROR_MSG, PARAM_PORT, data));
                         }
                         break;
+                    case "steps":
+                        break;
                     default:
                         if (!(entry.getValue() instanceof String)) {
                             progress.error(
@@ -204,6 +320,14 @@ public class AuthenticationData extends AutomationData {
 
     public void initContextAuthentication(
             Context context, AutomationProgress progress, AutomationEnvironment env) {
+        initContextAuthentication(context, progress, env, List.of());
+    }
+
+    public void initContextAuthentication(
+            Context context,
+            AutomationProgress progress,
+            AutomationEnvironment env,
+            List<ContextWrapper.UserData> users) {
         if (getMethod() != null) {
             ExtensionAuthentication extAuth = null;
             if (Control.getSingleton() != null) {
@@ -291,6 +415,51 @@ public class AuthenticationData extends AutomationData {
                                             .get(AuthenticationData.PARAM_LOGIN_REQUEST_BODY)));
                     context.setAuthenticationMethod(jsonAuthMethod);
                     break;
+                case AuthenticationData.METHOD_CLIENT:
+                    File clientScript =
+                            JobUtils.getFile(
+                                    parameters.getOrDefault(PARAM_SCRIPT, "").toString(),
+                                    env.getPlan());
+                    if (!clientScript.exists() || !clientScript.canRead()) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.env.sessionmgmt.script.bad",
+                                        clientScript.getAbsolutePath()));
+                    } else {
+                        ScriptWrapper sw =
+                                JobUtils.getScriptWrapper(
+                                        clientScript,
+                                        ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH,
+                                        parameters.getOrDefault(PARAM_SCRIPT_ENGINE, "").toString(),
+                                        progress);
+
+                        AuthenticationMethodType clientScriptType =
+                                extAuth.getAuthenticationMethodTypeForIdentifier(8);
+                        LOGGER.info("Loaded client script auth method type {}.", clientScriptType);
+                        AuthenticationMethod clientScriptMethod =
+                                clientScriptType.createAuthenticationMethod(context.getId());
+
+                        if (sw == null) {
+                            LOGGER.error(
+                                    "Error setting script authentication - failed to find script wrapper");
+                            progress.error(
+                                    Constant.messages.getString(
+                                            "automation.error.env.auth.script.bad",
+                                            clientScript.getAbsolutePath()));
+                        } else {
+                            try {
+                                MethodUtils.invokeMethod(clientScriptMethod, "loadScript", sw);
+                            } catch (Exception e) {
+                                LOGGER.error(e.getMessage(), e);
+                            }
+                            JobUtils.setPrivateField(
+                                    clientScriptMethod, "paramValues", getScriptParameters(env));
+
+                            reloadAuthenticationMethod(clientScriptMethod, progress);
+                            context.setAuthenticationMethod(clientScriptMethod);
+                        }
+                    }
+                    break;
                 case AuthenticationData.METHOD_SCRIPT:
                     File f =
                             JobUtils.getFile(
@@ -308,9 +477,12 @@ public class AuthenticationData extends AutomationData {
                                         ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH,
                                         parameters.getOrDefault(PARAM_SCRIPT_ENGINE, "").toString(),
                                         progress);
-                        ScriptBasedAuthenticationMethodType scriptType =
+
+                        AuthenticationMethodType scriptType =
                                 new ScriptBasedAuthenticationMethodType();
-                        ScriptBasedAuthenticationMethod scriptMethod =
+                        LOGGER.debug("Loaded script auth method type");
+
+                        AuthenticationMethod scriptMethod =
                                 scriptType.createAuthenticationMethod(context.getId());
 
                         if (sw == null) {
@@ -321,7 +493,11 @@ public class AuthenticationData extends AutomationData {
                                             "automation.error.env.auth.script.bad",
                                             f.getAbsolutePath()));
                         } else {
-                            scriptMethod.loadScript(sw);
+                            try {
+                                MethodUtils.invokeMethod(scriptMethod, "loadScript", sw);
+                            } catch (Exception e) {
+                                LOGGER.error(e.getMessage(), e);
+                            }
                             JobUtils.setPrivateField(
                                     scriptMethod, "paramValues", getScriptParameters(env));
 
@@ -362,6 +538,13 @@ public class AuthenticationData extends AutomationData {
                                         AuthenticationData.PARAM_LOGIN_PAGE_WAIT,
                                         loginPageWait);
                             }
+                        }
+
+                        try {
+                            Method method = am.getClass().getMethod("fromMap", Map.class);
+                            method.invoke(am, totpUserToMethod(getParameters(), users, env));
+                        } catch (Exception e) {
+                            LOGGER.error("An error occurred while reading steps:", e);
                         }
 
                         reloadAuthenticationMethod(am, progress);

@@ -70,7 +70,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.model.ValueGenerator;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ThreadUtils;
@@ -80,19 +80,19 @@ public class WSDLCustomParser {
     private static final Logger LOGGER = LogManager.getLogger(WSDLCustomParser.class);
     private static int keyIndex = -1;
     private SOAPMsgConfig lastConfig; // Only used for unit testing purposes.
-    private final Supplier<ValueGenerator> valueGeneratorSupplier;
+    private final Supplier<ValueProvider> valueProviderSupplier;
     private final TableWsdl table;
     private final Supplier<Date> dateSupplier;
 
-    public WSDLCustomParser(Supplier<ValueGenerator> valueGeneratorSupplier, TableWsdl table) {
-        this(valueGeneratorSupplier, table, Date::new);
+    public WSDLCustomParser(Supplier<ValueProvider> valueProviderSupplier, TableWsdl table) {
+        this(valueProviderSupplier, table, Date::new);
     }
 
     WSDLCustomParser(
-            Supplier<ValueGenerator> valueGeneratorSupplier,
+            Supplier<ValueProvider> valueProviderSupplier,
             TableWsdl table,
             Supplier<Date> dateSupplier) {
-        this.valueGeneratorSupplier = valueGeneratorSupplier;
+        this.valueProviderSupplier = valueProviderSupplier;
         this.table = table;
         this.dateSupplier = dateSupplier;
     }
@@ -481,7 +481,7 @@ public class WSDLCustomParser {
         fieldAttributes.put("Control Type", "TEXT");
         fieldAttributes.put("type", name);
         String valGenValue =
-                valueGeneratorSupplier
+                valueProviderSupplier
                         .get()
                         .getValue(
                                 null,

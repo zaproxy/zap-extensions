@@ -21,12 +21,15 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import fi.iki.elonen.NanoHTTPD;
+import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +38,8 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastPayload;
 import org.zaproxy.addon.oast.OastService;
@@ -75,6 +80,36 @@ class SsrfScanRuleUnitTest extends ActiveScannerTest<SsrfScanRule> {
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(cwe, is(equalTo(918)));
+        assertThat(wasc, is(equalTo(20)));
+        assertThat(tags.size(), is(equalTo(6)));
+
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A10_SSRF.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_INPV_19_SSRF.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(ExtensionOast.OAST_ALERT_TAG_KEY), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.SEQUENCE.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A10_SSRF.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A10_SSRF.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_INPV_19_SSRF.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_INPV_19_SSRF.getValue())));
+        assertThat(
+                tags.get(ExtensionOast.OAST_ALERT_TAG_KEY),
+                is(equalTo(ExtensionOast.OAST_ALERT_TAG_VALUE)));
     }
 
     private static class StaticOastServerHandler extends NanoServerHandler {

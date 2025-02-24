@@ -7,6 +7,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated with upstream retire.js pattern changes.
 
+## [0.44.0] - 2025-01-10
+### Changed
+- Updated with upstream retire.js pattern changes.
+- Update minimum ZAP version to 2.16.0.
+
+## [0.43.0] - 2024-12-23
+### Fixed
+- An issue that was resulting in False Positives.
+
+### Changed
+- Updated with upstream retire.js pattern changes.
+- The scan rule now uses a more specific CWE (Issue 8732).
+
+## [0.42.0] - 2024-11-25
+### Changed
+- Updated with upstream retire.js pattern changes.
+- The Risk level associated with Alerts raised by this scan rule are mapped to the severity ratings provided in the Retire.js data. If no severity is matched then a default of Medium Risk is used (Issue 7926).
+- Maintenance changes.
+
+## [0.41.0] - 2024-10-07
+### Changed
+- Performance improvements (Issue 8659).
+- Updated with upstream retire.js pattern changes.
+
+## [0.40.0] - 2024-09-24
+### Changed
+- Updated with upstream retire.js pattern changes.
+
+## [0.39.0] - 2024-08-28
+### Changed
+- Updated with upstream retire.js pattern changes.
+
 ### Added
 - A helpful description for the add-on.
 
@@ -208,6 +240,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - First release.
 
+[0.44.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.44.0
+[0.43.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.43.0
+[0.42.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.42.0
+[0.41.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.41.0
+[0.40.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.40.0
+[0.39.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.39.0
 [0.38.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.38.0
 [0.37.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.37.0
 [0.36.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.36.0

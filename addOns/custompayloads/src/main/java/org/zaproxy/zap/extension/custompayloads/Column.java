@@ -19,11 +19,11 @@
  */
 package org.zaproxy.zap.extension.custompayloads;
 
-public abstract class Column<T> {
+abstract class Column<T> {
     Class<?> columnClass;
     String nameKey;
 
-    public Column(Class<?> columnClass, String nameKey) {
+    Column(Class<?> columnClass, String nameKey) {
         this.columnClass = columnClass;
         this.nameKey = nameKey;
     }

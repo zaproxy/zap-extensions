@@ -39,8 +39,12 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
@@ -54,6 +58,7 @@ import org.openqa.selenium.firefox.ProfilesIni;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
 import org.parosproxy.paros.Constant;
@@ -87,6 +92,10 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public static final String SCRIPT_TYPE_SELENIUM = "selenium";
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionSelenium.class);
+
+    private static final Logger WEBDRIVER_LOGGER = LogManager.getLogger("org.zaproxy.webdriver");
+
+    private static final String BIDI_CAPABILITIY = "webSocketUrl";
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
             List.of(ExtensionNetwork.class);
@@ -145,6 +154,32 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     public ExtensionSelenium() {
         super(NAME);
+
+        // Prevent verbose INFO logging of WebDriver BiDi exchanges.
+        setLogLevel(List.of("org.openqa.selenium.bidi.Connection"), Level.WARN);
+    }
+
+    private static void setLogLevel(List<String> classnames, Level level) {
+        boolean updateLoggers = false;
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration configuration = ctx.getConfiguration();
+        for (String classname : classnames) {
+            LoggerConfig loggerConfig = configuration.getLoggerConfig(classname);
+            if (!classname.equals(loggerConfig.getName())) {
+                configuration.addLogger(
+                        classname,
+                        LoggerConfig.newBuilder()
+                                .withLoggerName(classname)
+                                .withLevel(level)
+                                .withConfig(configuration)
+                                .build());
+                updateLoggers = true;
+            }
+        }
+
+        if (updateLoggers) {
+            ctx.updateLoggers();
+        }
     }
 
     @Override
@@ -176,7 +211,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public void init() {
         super.init();
 
-        seleniumApi = new SeleniumAPI(getOptions());
+        seleniumApi = new SeleniumAPI(getOptions(), this);
         addonFilesChangedListener = new AddonFilesChangedListenerImpl();
         webDriverProviders = Collections.synchronizedMap(new HashMap<>());
         providedBrowsers = Collections.synchronizedMap(new HashMap<>());
@@ -1007,6 +1042,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                         .collect(Collectors.toList()));
     }
 
+    private static RemoteWebDriver configureDriver(RemoteWebDriver driver) {
+        driver.script().addConsoleMessageHandler(e -> WEBDRIVER_LOGGER.debug(e.getText()));
+        return driver;
+    }
+
     private static WebDriver getWebDriverImpl(
             int requester,
             Browser browser,
@@ -1018,6 +1058,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             case CHROME:
             case CHROME_HEADLESS:
                 ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.setCapability(BIDI_CAPABILITIY, true);
                 if (enableExtensions) {
                     addChromeExtensions(chromeOptions);
                 }
@@ -1034,10 +1075,15 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
                 addChromeArguments(chromeOptions);
                 consumer.accept(chromeOptions);
-                return new ChromeDriver(chromeOptions);
+                return configureDriver(new ChromeDriver(chromeOptions));
             case FIREFOX:
             case FIREFOX_HEADLESS:
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
+                // Use WebDriver BiDi
+                firefoxOptions.setCapability(BIDI_CAPABILITIY, true);
+                // Force the use of just BiDi, should not be required once Selenium stops
+                // adding the preference https://github.com/SeleniumHQ/selenium/issues/14885
+                firefoxOptions.addPreference("remote.active-protocols", "1");
                 setCommonOptions(firefoxOptions, proxyAddress, proxyPort);
 
                 String binaryPath =
@@ -1106,7 +1152,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 if (enableExtensions) {
                     addFirefoxExtensions(driver);
                 }
-                return driver;
+                return configureDriver(driver);
             case HTML_UNIT:
                 DesiredCapabilities htmlunitCapabilities = new DesiredCapabilities();
                 setCommonOptions(htmlunitCapabilities, proxyAddress, proxyPort);

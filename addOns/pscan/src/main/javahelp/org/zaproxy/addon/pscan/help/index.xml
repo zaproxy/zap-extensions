@@ -5,4 +5,9 @@
 
 <index version="2.0">
     <indexitem text="Passive Scanner" target="addon.pscan" />
+    <indexitem text="Passive Scanner API" target="addon.pscan.api" />
+    <indexitem text="Passive Scanner Automation" target="addon.pscan.automation"/>
+    <indexitem text="Passive Scanner Automation - passiveScan-config job" target="addon.pscan.automation.pscanconf" />
+    <indexitem text="Passive Scanner Automation - passiveScan-wait job" target="addon.pscan.automation.pscanwait" />
+    <indexitem text="Passive Scanner Options" target="addon.pscan.options" />
 </index>

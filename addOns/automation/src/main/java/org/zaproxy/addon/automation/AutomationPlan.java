@@ -19,16 +19,19 @@
  */
 package org.zaproxy.addon.automation;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -52,6 +55,17 @@ public class AutomationPlan {
     private Date finished;
 
     private static final Logger LOGGER = LogManager.getLogger(AutomationPlan.class);
+    private static final ObjectMapper YAML_OBJECT_MAPPER;
+
+    static {
+        YAML_OBJECT_MAPPER =
+                YAMLMapper.builder()
+                        .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+                        .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                        .serializationInclusion(JsonInclude.Include.NON_DEFAULT)
+                        .build();
+        YAML_OBJECT_MAPPER.findAndRegisterModules();
+    }
 
     public AutomationPlan() {
         super();
@@ -117,6 +131,18 @@ public class AutomationPlan {
                                             "automation.error.job.data", paramsObj));
                             continue;
                         }
+
+                        Object jobEnabled = jobData.get("enabled");
+                        if (jobEnabled != null) {
+                            if (jobEnabled instanceof Boolean) {
+                                job.setEnabled((Boolean) jobEnabled);
+                            } else {
+                                progress.warn(
+                                        Constant.messages.getString(
+                                                "automation.error.job.enabled", jobEnabled));
+                            }
+                        }
+
                         job.setEnv(env);
                         job.setJobData(jobData);
                         job.verifyParameters(progress);
@@ -268,13 +294,24 @@ public class AutomationPlan {
         return finished;
     }
 
+    public String toYaml() throws IOException {
+        try (StringWriter writer = new StringWriter()) {
+            Data data = new Data();
+            data.setEnv(this.env.getData());
+            for (AutomationJob job : this.jobs) {
+                data.addJob(job.getData());
+            }
+            writer.append(writeObjectAsString(data));
+            return writer.toString();
+        }
+    }
+
     public boolean save() throws FileNotFoundException, JsonProcessingException {
         if (file == null) {
             LOGGER.error("Cannot save plan as it has no file set");
             return false;
         }
         LOGGER.debug("Writing plan to {}", file.getAbsolutePath());
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         try (PrintWriter writer = new PrintWriter(file)) {
             Data data = new Data();
             data.setEnv(this.env.getData());
@@ -282,14 +319,18 @@ public class AutomationPlan {
                 data.addJob(job.getData());
             }
 
-            FilterProvider filters =
-                    new SimpleFilterProvider()
-                            .addFilter("ignoreDefaultFilter", new DefaultPropertyFilter());
-            writer.println(objectMapper.writer(filters).writeValueAsString(data));
+            writer.println(writeObjectAsString(data));
         }
         this.changed = false;
         AutomationEventPublisher.publishEvent(AutomationEventPublisher.PLAN_SAVED, this, null);
         return true;
+    }
+
+    public static String writeObjectAsString(Object obj) throws JsonProcessingException {
+        FilterProvider filters =
+                new SimpleFilterProvider()
+                        .addFilter(DefaultPropertyFilter.FILTER_ID, new DefaultPropertyFilter());
+        return YAML_OBJECT_MAPPER.writer(filters).writeValueAsString(obj);
     }
 
     public static class Data {

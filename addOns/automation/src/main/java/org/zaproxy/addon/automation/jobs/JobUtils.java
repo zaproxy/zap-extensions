@@ -29,12 +29,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -352,7 +354,10 @@ public class JobUtils {
         }
 
         try {
-            Method[] methods = srcObject.getClass().getMethods();
+            Method[] methods =
+                    Stream.of(srcObject.getClass().getMethods())
+                            .sorted(Comparator.comparing(Method::getName))
+                            .toArray(Method[]::new);
             for (Method m : methods) {
                 String getterName = m.getName();
 

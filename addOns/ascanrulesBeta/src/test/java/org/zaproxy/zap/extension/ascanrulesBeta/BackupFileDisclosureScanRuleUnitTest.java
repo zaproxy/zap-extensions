@@ -38,6 +38,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -299,7 +300,7 @@ class BackupFileDisclosureScanRuleUnitTest extends ActiveScannerTest<BackupFileD
         // Then
         assertThat(cwe, is(equalTo(530)));
         assertThat(wasc, is(equalTo(34)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -309,6 +310,7 @@ class BackupFileDisclosureScanRuleUnitTest extends ActiveScannerTest<BackupFileD
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_CONF_04_BACKUP_FILES.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));

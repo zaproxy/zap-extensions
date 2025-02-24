@@ -25,7 +25,7 @@ import javax.jdo.annotations.PrimaryKey;
 import org.datanucleus.api.jdo.annotations.CreateTimestamp;
 import org.zaproxy.addon.oast.OastEntity;
 
-@PersistenceCapable
+@PersistenceCapable(detachable = "true")
 public class BoastEntity implements OastEntity {
 
     @PrimaryKey private String id;

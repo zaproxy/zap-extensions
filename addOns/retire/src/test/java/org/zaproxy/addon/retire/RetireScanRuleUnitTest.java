@@ -21,14 +21,18 @@ package org.zaproxy.addon.retire;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
@@ -104,6 +108,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertEquals("/1.2.19/angular.min.js", alertsRaised.get(0).getEvidence());
         assertEquals(
                 "https://github.com/angular/angular.js/commit/8f31f1ff43b673a24f84422d5c13d6312b2c4d94\n",
@@ -134,6 +139,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertEquals(fileName, alertsRaised.get(0).getEvidence());
         assertEquals(
                 "https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/\n",
@@ -169,12 +175,31 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertEquals("* Bootstrap v3.3.7", alertsRaised.get(0).getEvidence());
         assertEquals(
                 "https://github.com/twbs/bootstrap/issues/20184\n",
                 alertsRaised.get(0).getReference());
         // Two Constant OWASP tags plus one CVE and CWE
         assertEquals(4, alertsRaised.get(0).getTags().size());
+    }
+
+    @Test
+    void shouldNotRaiseAlertOnNonVulnerableContent() {
+        // Given
+        String content =
+                "/*!\n"
+                        + " * Bootstrap v3.4.0 (http://getbootstrap.com)\n"
+                        + " * Copyright 2011-2016 Twitter, Inc.\n"
+                        + " * Licensed under the MIT license\n"
+                        + " */";
+        HttpMessage msg = createMessage("http://example.com/angular.min.js", content);
+        msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "text/javascript");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test
@@ -193,6 +218,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertEquals(
                 "CVE-XXXX-XXX2\n"
                         + "CVE-XXXX-XXX1\n"
@@ -218,7 +244,9 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
     void shouldReturnExpectedMappings() {
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
+        int cweId = rule.getExampleAlerts().get(0).getCweId();
         // Then
+        assertThat(cweId, is(equalTo(1395)));
         assertThat(tags.size(), is(equalTo(2)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
@@ -240,6 +268,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         List<Alert> alerts = rule.getExampleAlerts();
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
+        assertThat(alerts.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
     }
 
     @Test
@@ -248,8 +277,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         super.shouldHaveValidReferences();
     }
 
-    private HttpMessage createMessage(String url, String body) {
-        HttpMessage msg = new HttpMessage();
+    private static HttpMessage createMessage(String url, String body) {
         if (url == null) {
             url = "http://example.com/";
         }
@@ -262,7 +290,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         } catch (URIException | NullPointerException e) {
             // Nothing to do
         }
-        msg = new HttpMessage();
+        HttpMessage msg = new HttpMessage();
         msg.setRequestHeader(requestHeader);
         try {
             msg.setResponseHeader("HTTP/1.1 200 OK\r\n");
@@ -273,5 +301,15 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         msg.setResponseBody(body);
 
         return msg;
+    }
+
+    @Test
+    void shouldUseSameRepoInstance() {
+        RetireScanRule scanRule = createScanner();
+
+        scanRule.setConfig(mock(HierarchicalConfiguration.class));
+        RetireScanRule copiedScanRule = (RetireScanRule) scanRule.copy();
+
+        assertSame(scanRule.getRepo(), copiedScanRule.getRepo());
     }
 }

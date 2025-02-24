@@ -31,8 +31,6 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.api.API;
-import org.zaproxy.zap.extension.api.API.RequestType;
 import org.zaproxy.zap.extension.api.ApiElement;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiParameter;
@@ -50,7 +48,7 @@ class CustomPayloadsApiUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldHavePrefix() throws Exception {
+    void shouldHavePrefix() {
         // Given / When
         String prefix = api.getPrefix();
         // Then
@@ -61,17 +59,14 @@ class CustomPayloadsApiUnitTest extends TestUtils {
     void shouldHaveDescriptionsForAllApiElements() {
         List<String> missingKeys = new ArrayList<>();
         checkKey(api.getDescriptionKey(), missingKeys);
-        checkApiElements(api, api.getApiActions(), API.RequestType.action, missingKeys);
-        checkApiElements(api, api.getApiOthers(), API.RequestType.other, missingKeys);
-        checkApiElements(api, api.getApiViews(), API.RequestType.view, missingKeys);
+        checkApiElements(api, api.getApiActions(), missingKeys);
+        checkApiElements(api, api.getApiOthers(), missingKeys);
+        checkApiElements(api, api.getApiViews(), missingKeys);
         assertThat(missingKeys, is(empty()));
     }
 
     private static void checkApiElements(
-            ApiImplementor api,
-            List<? extends ApiElement> elements,
-            RequestType type,
-            List<String> missingKeys) {
+            ApiImplementor api, List<? extends ApiElement> elements, List<String> missingKeys) {
         elements.sort((a, b) -> a.getName().compareTo(b.getName()));
         for (ApiElement element : elements) {
             assertThat(

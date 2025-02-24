@@ -25,7 +25,6 @@ import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -172,7 +171,7 @@ public class OptionsPassiveScan extends AbstractParamPanel {
             return this.scanController.getAllScanRules().stream()
                     .filter(Predicate.not(ClientPassiveScanRule::isEnabled))
                     .map(ClientPassiveScanRule::getId)
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         public void setDisabledScannerIds(List<Integer> disabledScanIds) {
@@ -183,7 +182,6 @@ public class OptionsPassiveScan extends AbstractParamPanel {
                                 if (disabledScanIds.stream().noneMatch(i -> (i == s.getId()))) {
                                     enabledPscanList.add(s);
                                 }
-                                ;
                             });
             this.fireTableDataChanged();
         }

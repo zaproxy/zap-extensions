@@ -28,12 +28,15 @@ zapAddOn {
                 register("commonlib") {
                     version.set(">= 1.17.0 & < 2.0.0")
                 }
+                register("pscan") {
+                    version.set(">= 0.1.0 & < 1.0.0")
+                }
             }
         }
     }
 
     apiClientGen {
-        api.set("org.zaproxy.zap.extension.wappalyzer.WappalyzerAPI")
+        api.set("org.zaproxy.zap.extension.wappalyzer.TechApi")
         messages.set(file("src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/Messages.properties"))
     }
 }
@@ -41,6 +44,7 @@ zapAddOn {
 dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
+    zapAddOn("pscan")
 
     compileOnly(libs.log4j.core)
 

@@ -39,6 +39,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
@@ -70,10 +71,8 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
             strings = {
                 "169.254.169.254",
                 "aws.zaproxy.org",
-                "100.100.100.200",
-                "alibaba.zaproxy.org"
             })
-    void shouldAlertIfResponseIs200Ok(String host) throws Exception {
+    void shouldAlertIfResponseIs200OkAWS(String host) throws Exception {
         // Given
         String path = "/latest/meta-data/";
         // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
@@ -87,7 +86,74 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
         assertEquals(Alert.RISK_HIGH, alert.getRisk());
-        assertEquals(Alert.CONFIDENCE_LOW, alert.getConfidence());
+        assertEquals(Alert.CONFIDENCE_MEDIUM, alert.getConfidence());
+        assertEquals(host, alert.getAttack());
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "100.100.100.200",
+                "alibaba.zaproxy.org",
+            })
+    void shouldAlertIfResponseIs200OkAlibabaCloud(String host) throws Exception {
+        // Given
+        String path = "/latest/meta-data/";
+        String body = "image-id\ninstance-id";
+        this.nano.addHandler(createHandler(path, Response.Status.OK, body, host));
+        HttpMessage msg = this.getHttpMessage(path);
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        Alert alert = alertsRaised.get(0);
+        assertEquals(Alert.RISK_HIGH, alert.getRisk());
+        assertEquals(Alert.CONFIDENCE_MEDIUM, alert.getConfidence());
+        assertEquals(host, alert.getAttack());
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "169.254.169.254",
+            })
+    void shouldAlertIfResponseIs200OkGCP(String host) throws Exception {
+        // Given
+        String path = "/computeMetadata/v1/";
+        String body = "project-id";
+        this.nano.addHandler(createHandler(path, Response.Status.OK, body, host));
+        HttpMessage msg = this.getHttpMessage(path);
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        Alert alert = alertsRaised.get(0);
+        assertEquals(Alert.RISK_HIGH, alert.getRisk());
+        assertEquals(Alert.CONFIDENCE_MEDIUM, alert.getConfidence());
+        assertEquals(host, alert.getAttack());
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "169.254.169.254",
+            })
+    void shouldAlertIfResponseIs200OkAzure(String host) throws Exception {
+        // Given
+        String path = "/metadata/instance";
+        String body = "osType";
+        this.nano.addHandler(createHandler(path, Response.Status.OK, body, host));
+        HttpMessage msg = this.getHttpMessage(path);
+        rule.init(msg, this.parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        Alert alert = alertsRaised.get(0);
+        assertEquals(Alert.RISK_HIGH, alert.getRisk());
+        assertEquals(Alert.CONFIDENCE_MEDIUM, alert.getConfidence());
         assertEquals(host, alert.getAttack());
     }
 
@@ -96,13 +162,15 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
@@ -119,7 +187,7 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
         assertThat(alerts.size(), is(equalTo(1)));
         Alert alert1 = alerts.get(0);
         assertThat(alert1.getRisk(), is(equalTo(Alert.RISK_HIGH)));
-        assertThat(alert1.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+        assertThat(alert1.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
     private static NanoServerHandler createHandler(

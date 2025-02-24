@@ -26,6 +26,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -179,6 +181,8 @@ public class PostmanJob extends AutomationJob {
         return data;
     }
 
+    @Getter
+    @Setter
     public static class Data extends JobData {
         private Parameters parameters;
 
@@ -186,43 +190,13 @@ public class PostmanJob extends AutomationJob {
             super(job);
             this.parameters = parameters;
         }
-
-        public Parameters getParameters() {
-            return parameters;
-        }
-
-        public void setParameters(Parameters parameters) {
-            this.parameters = parameters;
-        }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
-        private String collectionFile;
-        private String collectionUrl;
-        private String variables;
-
-        public String getCollectionFile() {
-            return collectionFile;
-        }
-
-        public void setCollectionFile(String collectionFile) {
-            this.collectionFile = collectionFile;
-        }
-
-        public String getCollectionUrl() {
-            return collectionUrl;
-        }
-
-        public void setCollectionUrl(String collectionUrl) {
-            this.collectionUrl = collectionUrl;
-        }
-
-        public String getVariables() {
-            return variables;
-        }
-
-        public void setVariables(String variables) {
-            this.variables = variables;
-        }
+        private String collectionFile = "";
+        private String collectionUrl = "";
+        private String variables = "";
     }
 }

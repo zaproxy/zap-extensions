@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.pscanrules;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 
 import java.util.List;
 import java.util.Map;
@@ -266,5 +267,26 @@ class PolyfillCdnScriptScanRuleUnitTest extends PassiveScannerTest<PolyfillCdnSc
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(domain + "/v3/polyfill.min.js"));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(1));
+    }
+
+    @Test
+    void shouldRunQuickly() throws Exception {
+
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.bbc.com/ HTTP/1.1");
+        msg.setResponseBody(this.getHtml("bbc.html"));
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        long start = System.currentTimeMillis();
+        scanHttpResponseReceive(msg);
+        long end = System.currentTimeMillis();
+
+        assertThat(alertsRaised.size(), equalTo(0));
+        assertThat(end - start, lessThan(275L));
     }
 }

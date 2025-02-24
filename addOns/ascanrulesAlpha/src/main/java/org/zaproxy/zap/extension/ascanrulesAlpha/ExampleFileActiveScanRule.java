@@ -43,7 +43,8 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author psiinon
  */
-public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
+public class ExampleFileActiveScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanalpha.examplefile.";
@@ -80,7 +81,7 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getOtherInfo() {
+    private static String getOtherInfo() {
         return Constant.messages.getString(MESSAGE_PREFIX + "other");
     }
 
@@ -155,14 +156,7 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
                 String evidence;
                 if ((evidence = doesResponseContainString(msg.getResponseBody(), attack)) != null) {
                     // Raise an alert
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setParam(param)
-                            .setAttack(attack)
-                            .setOtherInfo(getOtherInfo())
-                            .setEvidence(evidence)
-                            .setMessage(testMsg)
-                            .raise();
+                    createAlert(param, attack, evidence).setMessage(testMsg).raise();
                     return;
                 }
             }
@@ -194,7 +188,16 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
         return null;
     }
 
-    private List<String> loadFile(String file) {
+    private AlertBuilder createAlert(String param, String attack, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(param)
+                .setAttack(attack)
+                .setOtherInfo(getOtherInfo())
+                .setEvidence(evidence);
+    }
+
+    private static List<String> loadFile(String file) {
         /*
          * ZAP will have already extracted the file from the add-on and put it underneath the 'ZAP home' directory
          */
@@ -243,5 +246,10 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
     public int getWascId() {
         // The WASC ID
         return 0;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("foo", "<SCRIPT>a=/XSS/", "<SCRIPT>a=/XSS/").build());
     }
 }

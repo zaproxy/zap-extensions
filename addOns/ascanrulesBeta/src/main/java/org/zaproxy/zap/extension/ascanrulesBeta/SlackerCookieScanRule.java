@@ -212,7 +212,7 @@ public class SlackerCookieScanRule extends AbstractAppPlugin implements CommonAc
         return newAlert().setRisk(risk).setConfidence(Alert.CONFIDENCE_LOW).setOtherInfo(otherInfo);
     }
 
-    private StringBuilder createOtherInfoText(
+    private static StringBuilder createOtherInfoText(
             Set<String> cookiesThatMakeADifference, Set<String> cookiesThatDoNOTMakeADifference) {
 
         StringBuilder otherInfoBuff =
@@ -228,7 +228,7 @@ public class SlackerCookieScanRule extends AbstractAppPlugin implements CommonAc
         return otherInfoBuff;
     }
 
-    private void listCookies(Set<String> cookieSet, StringBuilder otherInfoBuff) {
+    private static void listCookies(Set<String> cookieSet, StringBuilder otherInfoBuff) {
         Iterator<String> itYes = cookieSet.iterator();
         while (itYes.hasNext()) {
             formatCookiesList(otherInfoBuff, itYes);
@@ -236,7 +236,7 @@ public class SlackerCookieScanRule extends AbstractAppPlugin implements CommonAc
         otherInfoBuff.append(getEOL());
     }
 
-    private int calculateRisk(
+    private static int calculateRisk(
             Set<String> cookiesThatDoNOTMakeADifference, StringBuilder otherInfoBuff) {
         int riskLevel = Alert.RISK_INFO;
         for (String cookie : cookiesThatDoNOTMakeADifference) {
@@ -252,27 +252,28 @@ public class SlackerCookieScanRule extends AbstractAppPlugin implements CommonAc
         return riskLevel;
     }
 
-    private String getSessionDestroyedText(String cookie) {
+    private static String getSessionDestroyedText(String cookie) {
         return Constant.messages.getString("ascanbeta.cookieslack.session.destroyed", cookie);
     }
 
-    private String getAffectResponseYes() {
+    private static String getAffectResponseYes() {
         return Constant.messages.getString("ascanbeta.cookieslack.affect.response.yes");
     }
 
-    private String getAffectResponseNo() {
+    private static String getAffectResponseNo() {
         return Constant.messages.getString("ascanbeta.cookieslack.affect.response.no");
     }
 
-    private String getSeparator() {
+    private static String getSeparator() {
         return Constant.messages.getString("ascanbeta.cookieslack.separator");
     }
 
-    private String getEOL() {
+    private static String getEOL() {
         return Constant.messages.getString("ascanbeta.cookieslack.endline");
     }
 
-    private void formatCookiesList(StringBuilder otherInfoBuff, Iterator<String> cookieIterator) {
+    private static void formatCookiesList(
+            StringBuilder otherInfoBuff, Iterator<String> cookieIterator) {
 
         otherInfoBuff.append(cookieIterator.next());
         if (cookieIterator.hasNext()) {
@@ -280,7 +281,7 @@ public class SlackerCookieScanRule extends AbstractAppPlugin implements CommonAc
         }
     }
 
-    private String getSessionCookieWarning(String cookie) {
+    private static String getSessionCookieWarning(String cookie) {
         return Constant.messages.getString("ascanbeta.cookieslack.session.warning", cookie);
     }
 

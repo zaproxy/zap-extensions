@@ -33,16 +33,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
-/** Unit test for {@link FormHandlerValueGenerator}. */
+/** Unit test for {@link FormHandlerValueProvider}. */
 class FormHandlerValueGeneratorUnitTest {
 
     private FormHandlerParam param;
-    private FormHandlerValueGenerator valueGenerator;
+    private FormHandlerValueProvider valueGenerator;
 
     @BeforeEach
     void setUp() {
         param = mock(FormHandlerParam.class);
-        valueGenerator = new FormHandlerValueGenerator(param);
+        valueGenerator = new FormHandlerValueProvider(param);
     }
 
     @ParameterizedTest

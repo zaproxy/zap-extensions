@@ -31,11 +31,14 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -253,6 +256,36 @@ class SourceCodeDisclosureCve20121823ScanRuleUnitTest
         assertThat(alertsRaised, hasSize(0));
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {PHP_SOURCE_TAGS, PHP_SOURCE_ECHO_TAG})
+    void shouldNotScanIfPhpSourceWasAlreadyPresentInResponse(String source) throws Exception {
+        // Given
+        var response =
+                "<html><body>PHP Tutorial: <code>"
+                        + StringEscapeUtils.escapeHtml4(source)
+                        + "</code></body></html>";
+        HttpMessage message = getHttpMessage("GET", "/", response);
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(0));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldNotScanBinaryResponse() throws Exception {
+        // Given
+        var response = "�PNG\n\n";
+        HttpMessage message = getHttpMessage("GET", "/", response);
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(0));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
     @Test
     void shouldAlertIfPhpEchoTagsWereDisclosedInResponseBody() throws Exception {
         // Given
@@ -375,7 +408,7 @@ class SourceCodeDisclosureCve20121823ScanRuleUnitTest
         // Then
         assertThat(cwe, is(equalTo(20)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
@@ -383,6 +416,7 @@ class SourceCodeDisclosureCve20121823ScanRuleUnitTest
                 tags.containsKey(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
                 is(equalTo(true)));
         assertThat(tags.containsKey("CVE-2012-1823"), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));

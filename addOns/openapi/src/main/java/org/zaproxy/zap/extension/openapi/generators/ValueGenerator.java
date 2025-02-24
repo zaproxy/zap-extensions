@@ -23,23 +23,24 @@ import java.util.Collections;
 import java.util.HashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.commonlib.ValueProvider;
 
 /** A wrapper around the core ValueGenerator class */
 public class ValueGenerator {
 
-    private org.zaproxy.zap.model.ValueGenerator coreValGen;
-
     private static final Logger LOGGER = LogManager.getLogger(ValueGenerator.class);
 
-    public ValueGenerator(org.zaproxy.zap.model.ValueGenerator coreValGen) {
-        this.coreValGen = coreValGen;
+    private ValueProvider valueProvider;
+
+    public ValueGenerator(ValueProvider valueProvider) {
+        this.valueProvider = valueProvider;
     }
 
     public String getValue(String name, String type, String defaultValue) {
         if (defaultValue == null) {
             defaultValue = "";
         }
-        if (coreValGen == null) {
+        if (valueProvider == null) {
             LOGGER.debug(
                     "Name : {} Type : {} Default : {} Returning default value",
                     name,
@@ -51,7 +52,7 @@ public class ValueGenerator {
         HashMap<String, String> fieldAtts = new HashMap<>();
         fieldAtts.put("Control Type", type == null ? "" : type);
         String value =
-                coreValGen.getValue(
+                valueProvider.getValue(
                         null,
                         null,
                         name,

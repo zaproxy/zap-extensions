@@ -6,10 +6,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
+
+## [21.44.0] - 2025-01-15
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+- Update minimum ZAP version to 2.16.0.
+- Depend on Passive Scanner add-on (Issue 7959).
+- The scan rule no longer sets a CWE for alerts (Issue 8733).
+
+## [21.43.0] - 2024-11-25
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+- Maintenance changes.
+
+## [21.42.0] - 2024-09-24
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+- Maintenance changes.
+
+## [21.41.0] - 2024-09-02
+### Added
+- Request stats.
+
+### Fixed
+- Example alert details for documentation generation (Issue 6119).
+
+## [21.40.0] - 2024-08-28
+### Changed
+- Updated with enthec upstream icon and pattern changes.
 - The add-on now has an options screen to allow users to select Quick/Exhaustive mode used by the passive scanner (part of Issue 8361).
     - Quick > Return on first match; which may mean missing version information, but should be slightly more performant. (This is the default.)
     - Exhaustive > Keep matching and don't return early; likely slightly less performant.
 - The add-on now also has the ability to optionally raise Alerts for each technology identified. The default setting is enabled. (Issue 8361)
+- Maintenance changes.
+    - This may be a breaking change for anyone that has code using the Automation Framework's Tech Detection (Wappalyzer) data.
+- The scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
+- Link website alert page and help (Issues 8189).
 
 ## [21.39.0] - 2024-07-04
 ### Changed
@@ -377,6 +409,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.44.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.44.0
+[21.43.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.43.0
+[21.42.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.42.0
+[21.41.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.41.0
+[21.40.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.40.0
 [21.39.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.39.0
 [21.38.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.38.0
 [21.37.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.37.0

@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [14] - 2025-01-10
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
 ## [13] - 2024-05-07
 ### Changed
 - Update minimum ZAP version to 2.15.0.
@@ -71,6 +75,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[14]: https://github.com/zaproxy/zap-extensions/releases/tips-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/tips-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/tips-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/tips-v11

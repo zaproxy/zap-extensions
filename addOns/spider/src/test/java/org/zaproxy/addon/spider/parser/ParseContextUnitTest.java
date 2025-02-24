@@ -35,15 +35,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.spider.SpiderParam;
-import org.zaproxy.zap.model.ValueGenerator;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.network.HttpResponseBody;
+import org.zaproxy.zap.users.User;
 
 /** Unit test for {@link ParseContext}. */
 class ParseContextUnitTest {
 
     private SpiderParam spiderParam;
-    private ValueGenerator valueGenerator;
+    private ValueProvider valueProvider;
+    private Context context;
+    private User user;
     private HttpMessage httpMessage;
     private String responseData;
     private String path;
@@ -55,7 +59,9 @@ class ParseContextUnitTest {
     @BeforeEach
     void setup() throws Exception {
         spiderParam = mock(SpiderParam.class);
-        valueGenerator = mock(ValueGenerator.class);
+        valueProvider = mock(ValueProvider.class);
+        context = mock(Context.class);
+        user = mock(User.class);
         httpMessage = mock(HttpMessage.class);
         responseData = "<html></html>";
         path = "/path";
@@ -74,10 +80,14 @@ class ParseContextUnitTest {
     @Test
     void shouldCreateWithGivenValues() {
         // Given / When
-        ctx = new ParseContext(spiderParam, valueGenerator, httpMessage, path, depth);
+        ctx = new ParseContext(spiderParam, valueProvider, httpMessage, path, depth);
         // Then
+        assertInitialConstructorValues();
+    }
+
+    private void assertInitialConstructorValues() {
         assertThat(ctx.getSpiderParam(), is(sameInstance(spiderParam)));
-        assertThat(ctx.getValueGenerator(), is(sameInstance(valueGenerator)));
+        assertThat(ctx.getValueProvider(), is(sameInstance(valueProvider)));
         assertThat(ctx.getHttpMessage(), is(sameInstance(httpMessage)));
         assertThat(ctx.getPath(), is(equalTo(path)));
         assertThat(ctx.getDepth(), is(equalTo(depth)));
@@ -87,23 +97,33 @@ class ParseContextUnitTest {
     }
 
     @Test
+    void shouldCreateWithGivenAdditionalValues() {
+        // Given / When
+        ctx = new ParseContext(spiderParam, valueProvider, context, user, httpMessage, path, depth);
+        // Then
+        assertInitialConstructorValues();
+        assertThat(ctx.getContext(), is(sameInstance(context)));
+        assertThat(ctx.getUser(), is(sameInstance(user)));
+    }
+
+    @Test
     void shouldThrowWhenCreatingWithNullSpiderParam() {
         // Given
         SpiderParam spiderParam = null;
         // When / Then
         assertThrows(
                 NullPointerException.class,
-                () -> new ParseContext(spiderParam, valueGenerator, httpMessage, path, depth));
+                () -> new ParseContext(spiderParam, valueProvider, httpMessage, path, depth));
     }
 
     @Test
     void shouldThrowWhenCreatingWithNullValueGenerator() {
         // Given
-        ValueGenerator valueGenerator = null;
+        ValueProvider valueProvider = null;
         // When / Then
         assertThrows(
                 NullPointerException.class,
-                () -> new ParseContext(spiderParam, valueGenerator, httpMessage, path, depth));
+                () -> new ParseContext(spiderParam, valueProvider, httpMessage, path, depth));
     }
 
     @Test
@@ -113,13 +133,13 @@ class ParseContextUnitTest {
         // When / Then
         assertThrows(
                 NullPointerException.class,
-                () -> new ParseContext(spiderParam, valueGenerator, httpMessage, path, depth));
+                () -> new ParseContext(spiderParam, valueProvider, httpMessage, path, depth));
     }
 
     @Test
     void shouldCreateBaseUrlLazily() {
         // Given / When
-        ctx = new ParseContext(spiderParam, valueGenerator, httpMessage, path, depth);
+        ctx = new ParseContext(spiderParam, valueProvider, httpMessage, path, depth);
         // Then
         verify(httpMessage, times(0)).getRequestHeader();
     }
@@ -127,7 +147,7 @@ class ParseContextUnitTest {
     @Test
     void shouldCreateBaseUrlOnce() {
         // Given
-        ctx = new ParseContext(spiderParam, valueGenerator, httpMessage, path, depth);
+        ctx = new ParseContext(spiderParam, valueProvider, httpMessage, path, depth);
         // When
         ctx.getBaseUrl();
         ctx.getBaseUrl();
@@ -138,7 +158,7 @@ class ParseContextUnitTest {
     @Test
     void shouldCreateSourceLazily() {
         // Given / When
-        ctx = new ParseContext(spiderParam, valueGenerator, httpMessage, path, depth);
+        ctx = new ParseContext(spiderParam, valueProvider, httpMessage, path, depth);
         // Then
         verify(httpMessage, times(0)).getResponseBody();
     }
@@ -146,7 +166,7 @@ class ParseContextUnitTest {
     @Test
     void shouldCreateSourceOnce() {
         // Given
-        ctx = new ParseContext(spiderParam, valueGenerator, httpMessage, path, depth);
+        ctx = new ParseContext(spiderParam, valueProvider, httpMessage, path, depth);
         // When
         ctx.getSource();
         ctx.getSource();

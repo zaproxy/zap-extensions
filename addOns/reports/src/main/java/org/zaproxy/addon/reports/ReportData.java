@@ -30,6 +30,7 @@ import org.zaproxy.zap.model.Context;
 
 public class ReportData {
 
+    private String templateName;
     private AlertNode alertTreeRootNode;
     private String title;
     private String description;
@@ -41,9 +42,14 @@ public class ReportData {
     private List<String> sections = new ArrayList<>();
     private String theme;
 
+    @Deprecated
     public ReportData() {}
 
-    public ReportData(boolean allRisks, boolean allConfidences) {
+    public ReportData(String templateName) {
+        this.templateName = templateName;
+    }
+
+    protected ReportData(boolean allRisks, boolean allConfidences) {
         this.setIncludeAllRisks(allRisks);
         this.setIncludeAllConfidences(allConfidences);
     }
@@ -94,6 +100,10 @@ public class ReportData {
 
     public Map<String, Object> getReportObjects() {
         return reportObjects;
+    }
+
+    public Object getReportObject(String key) {
+        return this.reportObjects.get(key);
     }
 
     public void addReportObjects(String key, Object object) {
@@ -168,5 +178,13 @@ public class ReportData {
 
     public void setTheme(String theme) {
         this.theme = theme;
+    }
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
     }
 }

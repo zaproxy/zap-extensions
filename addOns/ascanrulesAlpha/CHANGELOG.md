@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.16.0.
+- Maintenance changes.
+
+## [48] - 2024-09-02
+### Changed
 - Update minimum ZAP version to 2.15.0.
 
 ### Fixed
@@ -378,6 +383,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[48]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v45
