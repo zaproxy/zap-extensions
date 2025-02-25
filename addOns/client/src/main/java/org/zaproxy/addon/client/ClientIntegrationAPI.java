@@ -208,9 +208,24 @@ public class ClientIntegrationAPI extends ApiImplementor {
         return "";
     }
 
-    private void validateExportPath(String exportPath) throws ApiException {
+    private static void validateExportPath(String exportPath) throws ApiException {
         try {
             Path path = Paths.get(exportPath).toAbsolutePath().normalize();
+
+            if (Files.exists(path)) {
+                if (!Files.isRegularFile(path)) {
+                    throw new ApiException(
+                            ApiException.Type.ILLEGAL_PARAMETER,
+                            "Export path is not a file: " + path);
+                }
+
+                if (!Files.isWritable(path)) {
+                    throw new ApiException(
+                            ApiException.Type.ILLEGAL_PARAMETER,
+                            "Export file is not writable: " + path);
+                }
+                return;
+            }
 
             Path parentDir = path.getParent();
             if (parentDir == null || Files.notExists(parentDir)) {
@@ -223,12 +238,6 @@ public class ClientIntegrationAPI extends ApiImplementor {
                 throw new ApiException(
                         ApiException.Type.ILLEGAL_PARAMETER,
                         "Export directory is not writable: " + parentDir);
-            }
-
-            if (Files.exists(path) && !Files.isWritable(path)) {
-                throw new ApiException(
-                        ApiException.Type.ILLEGAL_PARAMETER,
-                        "Export file is not writable: " + path);
             }
 
         } catch (InvalidPathException e) {
