@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -215,11 +214,7 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             env.addContext(authContext);
             AutomationPlan plan = new AutomationPlan(env, new ArrayList<>(), progress);
             try {
-                if (reportData.getTemplateName().endsWith("-json")) {
-                    ard.setAfEnv(StringEscapeUtils.escapeJson(plan.toYaml()));
-                } else {
-                    ard.setAfEnv(plan.toYaml());
-                }
+                ard.setAfEnv(plan.toYaml());
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
             }
