@@ -21,6 +21,10 @@ package org.zaproxy.addon.client;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
@@ -42,11 +46,13 @@ import org.zaproxy.zap.extension.api.ApiResponseElement;
 public class ClientIntegrationAPI extends ApiImplementor {
     private static final String PREFIX = "client";
 
+    private static final String ACTION_EXPORT_CLIENT_MAP = "exportClientMap";
     private static final String ACTION_REPORT_OBJECT = "reportObject";
     private static final String ACTION_REPORT_EVENT = "reportEvent";
     private static final String ACTION_REPORT_ZEST_STATEMENT = "reportZestStatement";
     private static final String ACTION_REPORT_ZEST_SCRIPT = "reportZestScript";
 
+    private static final String PARAM_EXPORT_PATH = "pathYaml";
     private static final String PARAM_OBJECT_JSON = "objectJson";
     private static final String PARAM_EVENT_JSON = "eventJson";
     private static final String PARAM_STATEMENT_JSON = "statementJson";
@@ -60,12 +66,16 @@ public class ClientIntegrationAPI extends ApiImplementor {
 
     public ClientIntegrationAPI(ExtensionClientIntegration extension) {
         this.extension = extension;
+
         this.addApiAction(new ApiAction(ACTION_REPORT_OBJECT, new String[] {PARAM_OBJECT_JSON}));
         this.addApiAction(new ApiAction(ACTION_REPORT_EVENT, new String[] {PARAM_EVENT_JSON}));
         this.addApiAction(
                 new ApiAction(ACTION_REPORT_ZEST_STATEMENT, new String[] {PARAM_STATEMENT_JSON}));
         this.addApiAction(
                 new ApiAction(ACTION_REPORT_ZEST_SCRIPT, new String[] {PARAM_SCRIPT_JSON}));
+
+        this.addApiAction(
+                new ApiAction(ACTION_EXPORT_CLIENT_MAP, new String[] {PARAM_EXPORT_PATH}));
 
         callbackUrl =
                 API.getInstance().getCallBackUrl(this, HttpHeader.SCHEME_HTTPS + API.API_DOMAIN);
@@ -137,6 +147,17 @@ public class ClientIntegrationAPI extends ApiImplementor {
                         this.getParam(params, PARAM_STATEMENT_JSON, ""));
                 case ACTION_REPORT_ZEST_SCRIPT -> this.extension.addZestStatement(
                         this.getParam(params, PARAM_SCRIPT_JSON, ""));
+                case ACTION_EXPORT_CLIENT_MAP -> {
+                    String exportPath = this.getParam(params, PARAM_EXPORT_PATH, "");
+
+                    validateExportPath(exportPath);
+
+                    if (!this.extension.exportClientMap(exportPath, true)) {
+                        throw new ApiException(
+                                ApiException.Type.INTERNAL_ERROR,
+                                "Failed to export client map: " + exportPath);
+                    }
+                }
                 default -> throw new ApiException(ApiException.Type.BAD_ACTION);
             }
         } catch (ApiException e) {
@@ -185,5 +206,43 @@ public class ClientIntegrationAPI extends ApiImplementor {
         }
         // Will be accessed via a GET as part of the browser ext initiation
         return "";
+    }
+
+    private static void validateExportPath(String exportPath) throws ApiException {
+        try {
+            Path path = Paths.get(exportPath).toAbsolutePath().normalize();
+
+            if (Files.exists(path)) {
+                if (!Files.isRegularFile(path)) {
+                    throw new ApiException(
+                            ApiException.Type.ILLEGAL_PARAMETER,
+                            "Export path is not a file: " + path);
+                }
+
+                if (!Files.isWritable(path)) {
+                    throw new ApiException(
+                            ApiException.Type.ILLEGAL_PARAMETER,
+                            "Export file is not writable: " + path);
+                }
+                return;
+            }
+
+            Path parentDir = path.getParent();
+            if (parentDir == null || Files.notExists(parentDir)) {
+                throw new ApiException(
+                        ApiException.Type.ILLEGAL_PARAMETER,
+                        "Export directory does not exist: " + parentDir);
+            }
+
+            if (!Files.isWritable(parentDir)) {
+                throw new ApiException(
+                        ApiException.Type.ILLEGAL_PARAMETER,
+                        "Export directory is not writable: " + parentDir);
+            }
+
+        } catch (InvalidPathException e) {
+            throw new ApiException(
+                    ApiException.Type.ILLEGAL_PARAMETER, "Invalid export path: " + exportPath);
+        }
     }
 }

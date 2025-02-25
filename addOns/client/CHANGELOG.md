@@ -4,13 +4,16 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Added an API action to export the Client Map.
+
 ### Fixed
 - Correct Client Passive Scan Queue counter, which could be showing one when none left.
 - Correctly fill input elements when spidering (Issue 8851).
 
 ## [0.13.0] - 2025-02-04
 ### Added
-- Added support for Client Script Authentication when installed in conjunction with the Authentication Helper add-on. 
+- Added support for Client Script Authentication when installed in conjunction with the Authentication Helper add-on.
 
 ## [0.12.0] - 2025-01-24
 ### Fixed
