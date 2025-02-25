@@ -6,7 +6,7 @@ import org.zaproxy.gradle.tasks.DownloadWebDriver
 description = "Common configuration of the WebDriver add-ons."
 
 val geckodriverVersion = "0.36.0"
-val chromeDriverVersion = "133.0.6943.126"
+val chromeDriverVersion = "133.0.6943.141"
 
 fun configureDownloadTask(
     outputDir: File,
