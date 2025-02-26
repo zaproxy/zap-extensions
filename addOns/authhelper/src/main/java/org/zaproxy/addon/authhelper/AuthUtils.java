@@ -67,6 +67,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod.UnsupportedAuthenticationCredentialsException;
@@ -163,6 +164,12 @@ public class AuthUtils {
      */
     private static Map<Integer, SessionManagementRequestDetails> contextSessionMgmtMap =
             new HashMap<>();
+
+    /**
+     * The URLs (and methods) we've checked for finding good verification requests. These will only
+     * be recorded if the user has set verification to auto-detect.
+     */
+    private static Map<Integer, Set<String>> contextVerificationMap = new HashMap<>();
 
     public static long getTimeToWaitMs() {
         return timeToWaitMs;
@@ -986,6 +993,7 @@ public class AuthUtils {
         knownTokenMap.clear();
         contextVerifMap.clear();
         contextSessionMgmtMap.clear();
+        contextVerificationMap.clear();
         if (executorService != null) {
             executorService.shutdown();
         }
@@ -1051,7 +1059,18 @@ public class AuthUtils {
             Context context,
             VerificationRequestDetails details,
             VerificationDetectionScanRule rule) {
-        getExecutorService().submit(new VerificationDetectionProcessor(context, details, rule));
+
+        String methodUrl =
+                details.getMsg().getRequestHeader().getMethod()
+                        + " "
+                        + details.getMsg().getRequestHeader().getURI().toString();
+
+        if (contextVerificationMap
+                .computeIfAbsent(context.getId(), c -> new HashSet<>())
+                .add(methodUrl)) {
+            // Have not already checked this method + url
+            getExecutorService().submit(new VerificationDetectionProcessor(context, details, rule));
+        }
     }
 
     static class AuthenticationBrowserHook implements BrowserHook {
@@ -1108,5 +1127,12 @@ public class AuthUtils {
             }
             return t;
         }
+    }
+
+    public static boolean isRelevantToAuth(HttpMessage msg) {
+        return !(ResourceIdentificationUtils.isImage(msg)
+                || ResourceIdentificationUtils.isFont(msg)
+                || ResourceIdentificationUtils.isCss(msg)
+                || ResourceIdentificationUtils.isJavaScript(msg));
     }
 }

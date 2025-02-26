@@ -53,11 +53,7 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
-        if (msg.getResponseHeader().isImage()
-                || !(msg.getResponseHeader().isHtml()
-                        || msg.getResponseHeader().isJson()
-                        || msg.getResponseHeader().isXml())) {
-            // An "image/svg+xml" will look like XML
+        if (!AuthUtils.isRelevantToAuth(msg)) {
             return;
         }
 

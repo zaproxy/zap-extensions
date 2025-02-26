@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Prefer form related fields in Browser Based Authentication for the selection of username field.
 - Tweaked the auth report summary keys.
+- Only check URLs and methods once for being good verification requests.
+- Added API support to the browser based auth method proxy.
 
 ### Fixed
 - Correctly read the API parameters when setting up Browser Based Authentication.
