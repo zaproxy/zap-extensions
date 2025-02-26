@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Allow to use variables for the TOTP data.
+- Allow to enable diagnostics for Client Script and Browser Based Authentication methods.
 
 ## [0.47.0] - 2025-02-12
 ### Added

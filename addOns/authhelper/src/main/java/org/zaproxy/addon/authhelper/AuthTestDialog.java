@@ -82,6 +82,8 @@ public class AuthTestDialog extends StandardFieldsDialog {
     private static final String BROWSER_LABEL = "authhelper.auth.test.dialog.label.browser";
     private static final String WAIT_LABEL = "authhelper.auth.test.dialog.label.wait";
     private static final String DEMO_LABEL = "authhelper.auth.test.dialog.label.demo";
+    private static final String RECORD_DIAGNOSTICS_LABEL =
+            "authhelper.auth.test.dialog.label.recdiag";
     private static final String DIAGNOSTICS_LABEL = "authhelper.auth.test.dialog.label.diag";
     private static final String COPY_LABEL = "authhelper.auth.test.dialog.label.copy";
 
@@ -142,6 +144,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
         this.addComboField(0, BROWSER_LABEL, browserComboModel);
         this.addNumberField(0, WAIT_LABEL, 0, Integer.MAX_VALUE, params.getWait());
         this.addCheckBoxField(0, DEMO_LABEL, params.isDemoMode());
+        this.addCheckBoxField(0, RECORD_DIAGNOSTICS_LABEL, params.isRecordDiagnostics());
         this.addCustomComponent(0, getResultsPanel());
         this.addPadding(0);
 
@@ -270,6 +273,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
                     ExtensionAuthhelper.BROWSER_BASED_AUTH_TYPE.createAuthenticationMethod(
                             context.getId());
             am.setLoginPageUrl(loginUrl);
+            am.setDiagnostics(getBoolValue(RECORD_DIAGNOSTICS_LABEL));
 
             JComboBox<?> browserCombo = (JComboBox<?>) this.getField(BROWSER_LABEL);
             String browserId = ((BrowserUI) browserCombo.getSelectedItem()).getBrowser().getId();
@@ -464,6 +468,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
         params.setBrowser(((BrowserUI) browserCombo.getSelectedItem()).getBrowser().getId());
         params.setWait(this.getIntValue(WAIT_LABEL));
         params.setDemoMode(this.getBoolValue(DEMO_LABEL));
+        params.setRecordDiagnostics(getBoolValue(RECORD_DIAGNOSTICS_LABEL));
         params.setSteps(stepsPanel.getSteps());
     }
 
