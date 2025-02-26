@@ -66,13 +66,13 @@ import org.zaproxy.addon.authhelper.internal.ClientSideHandler;
 import org.zaproxy.addon.authhelper.internal.StepsPanel;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderContextApache;
+import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.authentication.AbstractAuthenticationMethodOptionsPanel;
 import org.zaproxy.zap.authentication.AbstractCredentialsOptionsPanel;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
 import org.zaproxy.zap.authentication.AuthenticationHelper;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
-import org.zaproxy.zap.authentication.AuthenticationMethod.UnsupportedAuthenticationCredentialsException;
 import org.zaproxy.zap.authentication.AuthenticationMethodType;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.api.ApiDynamicActionImplementor;
@@ -144,7 +144,13 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         if (proxy == null) {
             ExtensionNetwork extNet = AuthUtils.getExtension(ExtensionNetwork.class);
             handler = new ClientSideHandler(context);
-            proxy = extNet.createHttpProxy(getHttpSender(), handler);
+            proxy =
+                    extNet.createHttpServer(
+                            HttpServerConfig.builder()
+                                    .setHttpMessageHandler(handler)
+                                    .setHttpSender(getHttpSender())
+                                    .setServeZapApi(true)
+                                    .build());
         }
         return proxy;
     }

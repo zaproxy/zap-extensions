@@ -64,7 +64,11 @@ public final class ClientSideHandler implements HttpMessageHandler {
 
         AuthenticationHelper.addAuthMessageToHistory(msg);
 
-        if (isPost(msg) && context.isIncluded(msg.getRequestHeader().getURI().toString())) {
+        if (!context.isIncluded(msg.getRequestHeader().getURI().toString())) {
+            return;
+        }
+
+        if (isPost(msg)) {
             // Record the last in scope POST as a fallback
             fallbackMsg = msg;
         }

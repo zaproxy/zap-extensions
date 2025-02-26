@@ -51,6 +51,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
@@ -758,6 +760,41 @@ class AuthUtilsUnitTest extends TestUtils {
         // Then
         assertThat(st1, is(notNullValue()));
         assertThat(st2, is(nullValue()));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "text/html; charset=utf-8, true",
+        "multipart/form-data; boundary=ExampleBoundaryString, true",
+        "application/x-www-form-urlencoded, true",
+        "application/json, true",
+        "application/xhtml+xml, true",
+        "application/xml, true",
+        "text/xml, true",
+        "application/x-font-ttf, false",
+        "text/css, false",
+        "text/javascript; charset=utf-8, false",
+        "image/gif, false",
+        "image/svg+xml, false",
+    })
+    void shouldReportIfRelevantToAuth(String contentType, String result) throws Exception {
+        // Given
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                HttpRequestHeader.GET,
+                                new URI("https://www.example.com", true),
+                                HttpHeader.HTTP11),
+                        new HttpRequestBody(),
+                        new HttpResponseHeader(),
+                        new HttpResponseBody());
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, contentType);
+
+        // When
+        boolean res = AuthUtils.isRelevantToAuth(msg);
+
+        // Then
+        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
     }
 
     static class BrowserTest extends TestUtils {

@@ -89,13 +89,9 @@ public class AuthenticationDiagnostics implements AutoCloseable {
                     @Override
                     public void onHttpResponseReceive(
                             HttpMessage msg, int initiator, HttpSender sender) {
-                        if (msg.getResponseHeader().isImage()
-                                || !(msg.getResponseHeader().isHtml()
-                                        || msg.getResponseHeader().isJson()
-                                        || msg.getResponseHeader().isXml())) {
+                        if (!AuthUtils.isRelevantToAuth(msg)) {
                             return;
                         }
-
                         addMessageToStep(msg);
                     }
 
