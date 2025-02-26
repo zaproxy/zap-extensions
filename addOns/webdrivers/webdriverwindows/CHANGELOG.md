@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [127] - 2025-02-26
 ### Changed
 - Update ChromeDriver to 133.0.6943.141.
 
@@ -537,6 +537,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27 IE 3.0.0
 
+[127]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v127
 [126]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v126
 [125]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v125
 [124]: https://github.com/zaproxy/zap-extensions/releases/webdriverwindows-v124
