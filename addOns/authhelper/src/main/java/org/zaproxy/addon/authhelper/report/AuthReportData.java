@@ -19,16 +19,27 @@
  */
 package org.zaproxy.addon.authhelper.report;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Query;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.authhelper.internal.db.Diagnostic;
+import org.zaproxy.addon.authhelper.internal.db.TableJdo;
 
 @Getter
 @Setter
-public class AuthReportData {
+public class AuthReportData implements Closeable {
+
+    private static final Logger LOGGER = LogManager.getLogger(AuthReportData.class);
 
     private String site;
     private boolean validReport;
@@ -36,6 +47,8 @@ public class AuthReportData {
     private List<SummaryItem> summaryItems = new ArrayList<>();
     private Map<String, StatsItem> statistics = new TreeMap<>();
     private List<String> nextSteps = new ArrayList<>();
+    private PersistenceManager pm;
+    private List<Diagnostic> diagnostics;
 
     public void addSummaryItem(boolean passed, String key, String description) {
         summaryItems.add(new SummaryItem(passed, key, description));
@@ -47,6 +60,39 @@ public class AuthReportData {
 
     public Object[] getStatistics() {
         return statistics.values().toArray();
+    }
+
+    public List<Diagnostic> getDiagnostics() {
+        if (diagnostics == null) {
+            diagnostics = readDiagnostics();
+        }
+        return diagnostics;
+    }
+
+    @SuppressWarnings("try")
+    private List<Diagnostic> readDiagnostics() {
+        PersistenceManagerFactory pmf = TableJdo.getPmf();
+        if (pmf == null) {
+            return List.of();
+        }
+
+        pm = pmf.getPersistenceManager();
+        try (Query<Diagnostic> query = pm.newQuery(Diagnostic.class)) {
+            return new ArrayList<>(query.executeList());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOGGER.warn("Interrupted while reading diagnostics", e);
+        } catch (Exception e) {
+            LOGGER.error("An error occurred while getting the diagnostics:", e);
+        }
+        return List.of();
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (pm != null) {
+            pm.close();
+        }
     }
 
     public record SummaryItem(boolean passed, String key, String description) {}

@@ -53,7 +53,7 @@ dependencies {
     datanucleus("org.datanucleus:datanucleus-accessplatform-jdo-rdbms:6.0.7")
     sqlite("org.xerial:sqlite-jdbc:3.45.3.0")
 
-    implementation("org.flywaydb:flyway-core:9.22.3")
+    api("org.flywaydb:flyway-core:9.22.3")
 
     testImplementation(libs.log4j.core)
     testImplementation(project(":testutils"))

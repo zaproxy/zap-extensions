@@ -270,6 +270,9 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
                 		}
                 	]
                 \t
+                \t
+                	,\"diagnostics\": [
+                	]
                 }
                 """
                         .replace("@@@replace@@@", current);

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jdoconfig xmlns="https://db.apache.org/jdo/xmlns/jdoconfig"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://db.apache.org/jdo/xmlns/jdoconfig
+        https://db.apache.org/jdo/xmlns/jdoconfig_3_2.xsd" version="3.2">
+
+    <persistence-manager-factory name="authhelper">
+
+        <property name="javax.jdo.option.PersistenceUnitName" value="authhelper" />
+        <property name="javax.jdo.PersistenceManagerFactoryClass" value="org.datanucleus.api.jdo.JDOPersistenceManagerFactory" />
+
+        <property name="datanucleus.connectionPool.maxPoolSize" value="2" />
+
+        <property name="datanucleus.detachAllOnCommit" value="true" />
+
+        <property name="datanucleus.schema.autoCreateAll" value="false" />
+        <property name="datanucleus.schema.autoCreateTables" value="false" />
+        <property name="datanucleus.schema.autoCreateColumns" value="false" />
+        <property name="datanucleus.schema.autoCreateConstraints" value="false" />
+
+        <property name="datanucleus.schema.validateTables" value="false" />
+        <property name="datanucleus.schema.validateConstraints" value="false" />
+        <property name="datanucleus.schema.validateColumns" value="false" />
+
+        <property name="datanucleus.rdbms.checkExistTablesOrViews" value="false" />
+        <property name="datanucleus.rdbms.initializeColumnInfo" value="NONE" />
+
+    </persistence-manager-factory>
+
+</jdoconfig>

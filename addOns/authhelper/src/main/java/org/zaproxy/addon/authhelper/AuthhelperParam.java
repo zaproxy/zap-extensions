@@ -34,6 +34,7 @@ public class AuthhelperParam extends AbstractParam {
     private static final String BROWSER_KEY = AUTO_KEY + ".browser";
     private static final String WAIT_KEY = AUTO_KEY + ".wait";
     private static final String DEMO_MODE_KEY = AUTO_KEY + ".demo";
+    private static final String RECORD_DIAGNOSTICS_KEY = AUTO_KEY + ".diagnostics";
     private static final String STEP_KEY = AUTO_KEY + ".steps.step";
 
     private String loginUrl;
@@ -41,6 +42,7 @@ public class AuthhelperParam extends AbstractParam {
     private String browser;
     private int wait = 2;
     private boolean demoMode;
+    private boolean recordDiagnostics;
     private List<AuthenticationStep> steps = List.of();
 
     public AuthhelperParam() {}
@@ -52,6 +54,7 @@ public class AuthhelperParam extends AbstractParam {
         this.browser = this.getString(BROWSER_KEY, Browser.FIREFOX.getId());
         this.wait = getInteger(WAIT_KEY, 2);
         this.demoMode = getBoolean(DEMO_MODE_KEY, false);
+        this.recordDiagnostics = getBoolean(RECORD_DIAGNOSTICS_KEY, false);
 
         steps =
                 getConfig().getList(STEP_KEY).stream()
@@ -104,6 +107,15 @@ public class AuthhelperParam extends AbstractParam {
     public void setWait(int wait) {
         this.wait = wait;
         getConfig().setProperty(WAIT_KEY, wait);
+    }
+
+    public boolean isRecordDiagnostics() {
+        return recordDiagnostics;
+    }
+
+    public void setRecordDiagnostics(boolean recordDiagnostics) {
+        this.recordDiagnostics = recordDiagnostics;
+        getConfig().setProperty(RECORD_DIAGNOSTICS_KEY, recordDiagnostics);
     }
 
     public List<AuthenticationStep> getSteps() {

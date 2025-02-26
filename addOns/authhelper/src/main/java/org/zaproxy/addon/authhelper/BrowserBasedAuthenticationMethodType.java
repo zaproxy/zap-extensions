@@ -72,6 +72,7 @@ import org.zaproxy.zap.authentication.AbstractCredentialsOptionsPanel;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
 import org.zaproxy.zap.authentication.AuthenticationHelper;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
+import org.zaproxy.zap.authentication.AuthenticationMethod.UnsupportedAuthenticationCredentialsException;
 import org.zaproxy.zap.authentication.AuthenticationMethodType;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.api.ApiDynamicActionImplementor;
@@ -191,6 +192,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
     public class BrowserBasedAuthenticationMethod extends AuthenticationMethod {
 
+        private boolean diagnostics;
         private String loginPageUrl;
         private String browserId = DEFAULT_BROWSER_ID;
         private int loginPageWait = DEFAULT_PAGE_WAIT;
@@ -199,6 +201,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         public BrowserBasedAuthenticationMethod() {}
 
         public BrowserBasedAuthenticationMethod(BrowserBasedAuthenticationMethod method) {
+            diagnostics = method.diagnostics;
             this.loginPageUrl = method.loginPageUrl;
             this.browserId = method.browserId;
             this.loginPageWait = method.loginPageWait;
@@ -224,6 +227,14 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         @Override
         public AuthenticationMethodType getType() {
             return new BrowserBasedAuthenticationMethodType(httpSender);
+        }
+
+        public boolean isDiagnostics() {
+            return diagnostics;
+        }
+
+        public void setDiagnostics(boolean diagnostics) {
+            this.diagnostics = diagnostics;
         }
 
         public String getLoginPageUrl() {
@@ -267,6 +278,23 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                 AuthenticationCredentials credentials,
                 User user)
                 throws UnsupportedAuthenticationCredentialsException {
+
+            if (user.getAuthenticationCredentials() != credentials) {
+                throw new UnsupportedAuthenticationCredentialsException(
+                        "Provided credentials do not match that of the user.");
+            }
+
+            try (AuthenticationDiagnostics diags =
+                    new AuthenticationDiagnostics(
+                            diagnostics, getName(), user.getContext().getName(), user.getName())) {
+                return authenticateImpl(diags, sessionManagementMethod, user);
+            }
+        }
+
+        private WebSession authenticateImpl(
+                AuthenticationDiagnostics diags,
+                SessionManagementMethod sessionManagementMethod,
+                User user) {
             if (handler != null) {
                 handler.resetAuthMsg();
             }
@@ -274,19 +302,10 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                 AuthUtils.setTimeToWaitMs(TimeUnit.SECONDS.toMillis(loginPageWait));
             }
 
-            if (!(credentials instanceof UsernamePasswordAuthenticationCredentials)) {
-                throw new UnsupportedAuthenticationCredentialsException(
-                        "Only username and password credential currently supported");
-            }
-            UsernamePasswordAuthenticationCredentials userCreds =
-                    (UsernamePasswordAuthenticationCredentials) credentials;
-
             ExtensionSelenium extSel =
                     Control.getSingleton()
                             .getExtensionLoader()
                             .getExtension(ExtensionSelenium.class);
-
-            Context context = Model.getSingleton().getSession().getContext(user.getContextId());
 
             try {
                 proxyPort = getProxy(user.getContext()).start(proxyHost, 0);
@@ -300,14 +319,8 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                                     proxyHost,
                                     proxyPort);
 
-                    if (AuthUtils.authenticateAsUser(
-                            wd,
-                            context,
-                            loginPageUrl,
-                            userCreds.getUsername(),
-                            userCreds.getPassword(),
-                            loginPageWait,
-                            authenticationSteps)) {
+                    if (AuthUtils.authenticateAsUserImpl(
+                            diags, wd, user, loginPageUrl, loginPageWait, authenticationSteps)) {
                         // Wait until the authentication request is identified
                         for (int i = 0; i < AuthUtils.getWaitLoopCount(); i++) {
                             if (handler.getAuthMsg() != null) {
@@ -342,6 +355,10 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     }
                     WebSession session = sessionManagementMethod.extractWebSession(authMsg);
                     if (session != null) {
+                        diags.recordStep(
+                                authMsg,
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.diags.steps.sessionupdate"));
                         LOGGER.info(
                                 "Updating session management method {} with session {}",
                                 sessionManagementMethod.getClass().getCanonicalName(),
@@ -350,10 +367,18 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     }
 
                     if (this.isAuthenticated(authMsg, user, true)) {
+                        diags.recordStep(
+                                authMsg,
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.diags.steps.authenticated"));
                         // Let the user know it worked
                         AuthenticationHelper.notifyOutputAuthSuccessful(authMsg);
                         user.getAuthenticationState().setLastAuthFailure("");
                     } else {
+                        diags.recordStep(
+                                authMsg,
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.diags.steps.unauthenticated"));
                         // Let the user know it failed
                         AuthenticationHelper.notifyOutputAuthFailure(authMsg);
                     }
@@ -378,8 +403,12 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     Constant.messages.getString("authentication.output.failure", this.loginPageUrl)
                             + "\n");
 
+            HttpMessage fallbackMsg = handler.getFallbackMsg();
+            diags.recordStep(
+                    fallbackMsg,
+                    Constant.messages.getString("authhelper.auth.method.diags.steps.fallback"));
             // We don't expect this to work, but it will prevent some NPEs
-            return sessionManagementMethod.extractWebSession(handler.getFallbackMsg());
+            return sessionManagementMethod.extractWebSession(fallbackMsg);
         }
 
         @Override

@@ -116,11 +116,21 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
     }
 
     public class ClientScriptBasedAuthenticationMethod extends ScriptBasedAuthenticationMethod {
+
+        private boolean diagnostics;
         private ScriptWrapper script;
 
         private String[] credentialsParamNames;
 
         private Map<String, String> paramValues;
+
+        public void setDiagnostics(boolean diagnostics) {
+            this.diagnostics = diagnostics;
+        }
+
+        public boolean isDiagnostics() {
+            return diagnostics;
+        }
 
         /**
          * Load a script and fills in the method's parameters according to the values specified by
@@ -209,6 +219,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         public AuthenticationMethod duplicate() {
             ClientScriptBasedAuthenticationMethod method =
                     new ClientScriptBasedAuthenticationMethod();
+            method.diagnostics = diagnostics;
             method.script = script;
             method.paramValues = this.paramValues != null ? new HashMap<>(this.paramValues) : null;
             method.credentialsParamNames = this.credentialsParamNames;
@@ -333,10 +344,19 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 HttpSender sender = getHttpSender();
                 sender.setUser(user);
 
-                authScript.authenticate(
-                        new AuthenticationHelper(sender, sessionManagementMethod, user),
-                        this.paramValues,
-                        cred);
+                try (AuthenticationDiagnostics diags =
+                        new AuthenticationDiagnostics(
+                                diagnostics,
+                                getName(),
+                                user.getContext().getName(),
+                                user.getName())) {
+                    diags.insertDiagnostics(zestRunner.getScript().getZestScript());
+
+                    authScript.authenticate(
+                            new AuthenticationHelper(sender, sessionManagementMethod, user),
+                            this.paramValues,
+                            cred);
+                }
             } catch (Exception e) {
                 // Catch Exception instead of ScriptException and IOException because script engine
                 // implementations might throw other exceptions on script errors (e.g.

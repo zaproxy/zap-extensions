@@ -28,15 +28,23 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.utils.XMLStringUtil;
 
 public class ReportHelper {
+
+    private static final Logger LOGGER = LogManager.getLogger(ReportHelper.class);
 
     private static final String STATS_RESOURCE_PREFIX = ExtensionReports.PREFIX + ".report.";
 
@@ -265,5 +273,21 @@ public class ReportHelper {
             return "";
         }
         return XMLStringUtil.escapeControlChrs(text);
+    }
+
+    /**
+     * Gets the HTTP message with the given ID.
+     *
+     * @param id the ID of the message.
+     * @return the message, or {@code null} if it no longer exists or an error occurred.
+     * @since 0.38.0
+     */
+    public static HttpMessage getHttpMessage(int id) {
+        try {
+            return new HistoryReference(id, true).getHttpMessage();
+        } catch (HttpMalformedHeaderException | DatabaseException e) {
+            LOGGER.debug("An error occurred while reading the HTTP message:", e);
+        }
+        return null;
     }
 }

@@ -35,6 +35,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.DatabaseUnsupportedException;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -43,6 +46,7 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.authhelper.internal.db.TableJdo;
 import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType;
@@ -339,5 +343,22 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
     @Override
     public void sessionModeChanged(Mode mode) {
         // Ignore
+    }
+
+    @Override
+    public boolean supportsDb(String type) {
+        return true;
+    }
+
+    @Override
+    public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
+        try {
+            TableJdo table = new TableJdo();
+            db.addDatabaseListener(table);
+            table.databaseOpen(db.getDatabaseServer());
+
+        } catch (Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
     }
 }
