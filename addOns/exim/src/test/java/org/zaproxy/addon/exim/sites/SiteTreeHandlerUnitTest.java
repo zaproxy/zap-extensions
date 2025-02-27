@@ -144,14 +144,21 @@ class SiteTreeHandlerUnitTest {
     void shouldOutputNodeWithData() throws Exception {
         // Given
         String expectedYaml =
-                "- node: Sites\n"
+                "- node: |-\n"
+                        + "  Sites\n"
                         + "  children: \n"
-                        + "  - node: https://www.example.com\n"
-                        + "    url: https://www.example.com?aa=bb&cc=dd\n"
-                        + "    method: POST\n"
-                        + "    responseLength: 61\n"
-                        + "    statusCode: 200\n"
-                        + "    data: eee=&ggg=\n";
+                        + "  - node: |-\n"
+                        + "  https://www.example.com\n"
+                        + "    url: |-\n"
+                        + "  https://www.example.com?aa=bb&cc=dd\n"
+                        + "    method: |-\n"
+                        + "  POST\n"
+                        + "    responseLength: !!int |-\n"
+                        + "  61\n"
+                        + "    statusCode: !!int |-\n"
+                        + "  200\n"
+                        + "    data: |-\n"
+                        + "  eee=&ggg=\n";
         HttpMessage msg =
                 new HttpMessage(
                         "POST https://www.example.com?aa=bb&cc=dd HTTP/1.1\r\n"
@@ -175,14 +182,21 @@ class SiteTreeHandlerUnitTest {
     void shouldOutputNodeWithDataButNoContentType() throws Exception {
         // Given
         String expectedYaml =
-                "- node: Sites\n"
+                "- node: |-\n"
+                        + "  Sites\n"
                         + "  children: \n"
-                        + "  - node: https://www.example.com\n"
-                        + "    url: https://www.example.com?aa=bb&cc=dd\n"
-                        + "    method: POST\n"
-                        + "    responseLength: 61\n"
-                        + "    statusCode: 200\n"
-                        + "    data: eee=&ggg=\n";
+                        + "  - node: |-\n"
+                        + "  https://www.example.com\n"
+                        + "    url: |-\n"
+                        + "  https://www.example.com?aa=bb&cc=dd\n"
+                        + "    method: |-\n"
+                        + "  POST\n"
+                        + "    responseLength: !!int |-\n"
+                        + "  61\n"
+                        + "    statusCode: !!int |-\n"
+                        + "  200\n"
+                        + "    data: |-\n"
+                        + "  eee=&ggg=\n";
         HttpMessage msg =
                 new HttpMessage(
                         "POST https://www.example.com?aa=bb&cc=dd HTTP/1.1\r\n",
@@ -205,21 +219,34 @@ class SiteTreeHandlerUnitTest {
     void shouldOutputNodes() throws Exception {
         // Given
         String expectedYaml =
-                "- node: Sites\n"
+                "- node: |-\n"
+                        + "  Sites\n"
                         + "  children: \n"
-                        + "  - node: https://www.example.com\n"
-                        + "    url: https://www.example.com\n"
-                        + "    method: GET\n"
+                        + "  - node: |-\n"
+                        + "  https://www.example.com\n"
+                        + "    url: |-\n"
+                        + "  https://www.example.com\n"
+                        + "    method: |-\n"
+                        + "  GET\n"
                         + "    children: \n"
-                        + "    - node: POST:/()(aaa)\n"
-                        + "      url: https://www.example.com/\n"
-                        + "      method: POST\n"
-                        + "      responseLength: 61\n"
-                        + "      statusCode: 200\n"
-                        + "      data: aaa=\n"
-                        + "    - node: PUT:aaa\n"
-                        + "      url: https://www.example.com/aaa\n"
-                        + "      method: PUT\n";
+                        + "    - node: |-\n"
+                        + "  POST:/()(aaa)\n"
+                        + "      url: |-\n"
+                        + "  https://www.example.com/\n"
+                        + "      method: |-\n"
+                        + "  POST\n"
+                        + "      responseLength: !!int |-\n"
+                        + "  61\n"
+                        + "      statusCode: !!int |-\n"
+                        + "  200\n"
+                        + "      data: |-\n"
+                        + "  aaa=\n"
+                        + "    - node: |-\n"
+                        + "  PUT:aaa\n"
+                        + "      url: |-\n"
+                        + "  https://www.example.com/aaa\n"
+                        + "      method: |-\n"
+                        + "  PUT\n";
         HttpMessage msg =
                 new HttpMessage(
                         "POST https://www.example.com/ HTTP/1.1\r\n",
@@ -244,17 +271,26 @@ class SiteTreeHandlerUnitTest {
     void shouldOutputNodeWithMultipartFormData() throws Exception {
         // Given
         String expectedYaml =
-                "- node: Sites\n"
+                "- node: |-\n"
+                        + "  Sites\n"
                         + "  children: \n"
-                        + "  - node: https://www.example.com\n"
-                        + "    url: https://www.example.com\n"
-                        + "    method: GET\n"
+                        + "  - node: |-\n"
+                        + "  https://www.example.com\n"
+                        + "    url: |-\n"
+                        + "  https://www.example.com\n"
+                        + "    method: |-\n"
+                        + "  GET\n"
                         + "    children: \n"
-                        + "    - node: POST:/(bb,dd)(multipart/form-data)\n"
-                        + "      url: https://www.example.com/?bb=bcc&dd=ee\n"
-                        + "      method: POST\n"
-                        + "      responseLength: 61\n"
-                        + "      statusCode: 200\n";
+                        + "    - node: |-\n"
+                        + "  POST:/(bb,dd)(multipart/form-data)\n"
+                        + "      url: |-\n"
+                        + "  https://www.example.com/?bb=bcc&dd=ee\n"
+                        + "      method: |-\n"
+                        + "  POST\n"
+                        + "      responseLength: !!int |-\n"
+                        + "  61\n"
+                        + "      statusCode: !!int |-\n"
+                        + "  200\n";
         HttpMessage msg =
                 new HttpMessage(
                         "POST https://www.example.com/?bb=bcc&dd=ee HTTP/1.1\r\n"
@@ -285,23 +321,36 @@ class SiteTreeHandlerUnitTest {
         context.addDataDrivenNodes(ddn);
         spp.setContext(context);
         String expectedYaml =
-                "- node: Sites\n"
+                "- node: |-\n"
+                        + "  Sites\n"
                         + "  children: \n"
-                        + "  - node: https://www.example.com\n"
-                        + "    url: https://www.example.com\n"
-                        + "    method: GET\n"
+                        + "  - node: |-\n"
+                        + "  https://www.example.com\n"
+                        + "    url: |-\n"
+                        + "  https://www.example.com\n"
+                        + "    method: |-\n"
+                        + "  GET\n"
                         + "    children: \n"
-                        + "    - node: app\n"
-                        + "      url: https://www.example.com/app\n"
-                        + "      method: GET\n"
+                        + "    - node: |-\n"
+                        + "  app\n"
+                        + "      url: |-\n"
+                        + "  https://www.example.com/app\n"
+                        + "      method: |-\n"
+                        + "  GET\n"
                         + "      children: \n"
-                        + "      - node: «DDN1»\n"
-                        + "        url: https://www.example.com/app/company1\n"
-                        + "        method: GET\n"
+                        + "      - node: |-\n"
+                        + "  «DDN1»\n"
+                        + "        url: |-\n"
+                        + "  https://www.example.com/app/company1\n"
+                        + "        method: |-\n"
+                        + "  GET\n"
                         + "        children: \n"
-                        + "        - node: GET:aaa?ddd=eee(ddd)\n"
-                        + "          url: https://www.example.com/app/company1/aaa?ddd=eee\n"
-                        + "          method: GET\n";
+                        + "        - node: |-\n"
+                        + "  GET:aaa?ddd=eee(ddd)\n"
+                        + "          url: |-\n"
+                        + "  https://www.example.com/app/company1/aaa?ddd=eee\n"
+                        + "          method: |-\n"
+                        + "  GET\n";
         siteMap.addPath(getHref("https://www.example.com/app/company1/aaa?ddd=eee", "GET"));
         siteMap.addPath(getHref("https://www.example.com/app/company2/aaa?ddd=eee", "GET"));
         siteMap.addPath(getHref("https://www.example.com/app/company3/aaa?ddd=eee", "GET"));

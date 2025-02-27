@@ -28,8 +28,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.representer.Representer;
 import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.testutils.TestUtils;
 
@@ -196,5 +198,73 @@ class EximSiteNodeUnitTest extends TestUtils {
         assertThat(
                 node.getErrors().get(1),
                 is(equalTo("Invalid key for node www.example.com: badKey2")));
+    }
+
+    @Test
+    void shouldHandleNodeNamesWithSpacesAndSpecialCharacters() {
+        // Given
+        String yamlStr =
+                "- node: |\n"
+                        + "    My example of breaking line\n"
+                        + "    second line\n"
+                        + "  url: https://www.example.com\n"
+                        + "  method: GET\n"
+                        + "  responseLength: 1234\n"
+                        + "  statusCode: 200\n";
+
+        // Use the same YAML configuration as in SitesTreeHandler
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        options.setPrettyFlow(true);
+        options.setDefaultScalarStyle(DumperOptions.ScalarStyle.LITERAL);
+        Representer representer = new Representer(options);
+        representer.setDefaultScalarStyle(DumperOptions.ScalarStyle.LITERAL);
+        Yaml yamlConfig = new Yaml(representer, options);
+
+        // When
+        List<?> list = (ArrayList<?>) yamlConfig.load(yamlStr);
+        EximSiteNode node = new EximSiteNode((LinkedHashMap<?, ?>) list.get(0));
+
+        // Then
+        assertThat(node.getNode(), is(equalTo("My example of breaking line\nsecond line\n")));
+        assertThat(node.getUrl(), is(equalTo("https://www.example.com")));
+        assertThat(node.getMethod(), is(equalTo("GET")));
+        assertThat(node.getResponseLength(), is(equalTo(1234)));
+        assertThat(node.getStatusCode(), is(equalTo(200)));
+        assertThat(node.getErrors().size(), is(equalTo(0)));
+    }
+
+    @Test
+    void shouldHandleEncodedSpecialCharactersInUrl() {
+        // Given
+        String yamlStr =
+                "- node: |\n"
+                        + "    Node with encoded URL\n"
+                        + "  url: |\n"
+                        + "    http://www.example.org/%0A/\n"
+                        + "  method: GET\n"
+                        + "  responseLength: 1234\n"
+                        + "  statusCode: 200\n";
+
+        // Use the same YAML configuration as in SitesTreeHandler
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        options.setPrettyFlow(true);
+        options.setDefaultScalarStyle(DumperOptions.ScalarStyle.LITERAL);
+        Representer representer = new Representer(options);
+        representer.setDefaultScalarStyle(DumperOptions.ScalarStyle.LITERAL);
+        Yaml yamlConfig = new Yaml(representer, options);
+
+        // When
+        List<?> list = (ArrayList<?>) yamlConfig.load(yamlStr);
+        EximSiteNode node = new EximSiteNode((LinkedHashMap<?, ?>) list.get(0));
+
+        // Then
+        assertThat(node.getNode(), is(equalTo("Node with encoded URL\n")));
+        assertThat(node.getUrl(), is(equalTo("http://www.example.org/%0A/\n")));
+        assertThat(node.getMethod(), is(equalTo("GET")));
+        assertThat(node.getResponseLength(), is(equalTo(1234)));
+        assertThat(node.getStatusCode(), is(equalTo(200)));
+        assertThat(node.getErrors().size(), is(equalTo(0)));
     }
 }
