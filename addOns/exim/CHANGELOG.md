@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Caps fix in Import menu (Issue 2000).
 
+### Fixed
+- Sites Tree export now correctly handles node names with newlines and special characters.
+
 ## [0.13.0] - 2025-01-09
 ### Added
 - Add Automation Framework job to export data (e.g. HAR, URLs).

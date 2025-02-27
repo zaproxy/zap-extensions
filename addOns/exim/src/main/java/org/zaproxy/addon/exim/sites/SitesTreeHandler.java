@@ -58,12 +58,18 @@ public class SitesTreeHandler {
 
     static {
         // YAML is used for encoding
+        YAML = createYaml();
+    }
+
+    private static Yaml createYaml() {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setPrettyFlow(true);
+        // Using literal style to better preserve newlines and whitespace
+        options.setDefaultScalarStyle(DumperOptions.ScalarStyle.LITERAL);
         Representer representer = new Representer(options);
-        representer.setDefaultScalarStyle(DumperOptions.ScalarStyle.DOUBLE_QUOTED);
-        YAML = new Yaml(representer, options);
+        representer.setDefaultScalarStyle(DumperOptions.ScalarStyle.LITERAL);
+        return new Yaml(representer, options);
     }
 
     public static void exportSitesTree(File file, ExporterResult result) throws IOException {
@@ -235,7 +241,10 @@ public class SitesTreeHandler {
         PruneSiteResult res = new PruneSiteResult();
         // Don't load yaml using the Constructor class - that throws exceptions that don't give
         // enough info
-        Yaml yaml = new Yaml(new LoaderOptions());
+        LoaderOptions loaderOptions = new LoaderOptions();
+        // Use a consistent configuration for loading that includes proper handling of
+        // newlines
+        Yaml yaml = createYaml();
 
         Object obj = yaml.load(is);
         if (obj instanceof ArrayList<?>) {
