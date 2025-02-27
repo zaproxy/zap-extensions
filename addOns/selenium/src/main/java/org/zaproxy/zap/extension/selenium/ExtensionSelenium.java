@@ -1079,11 +1079,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             case FIREFOX:
             case FIREFOX_HEADLESS:
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
-                // Use WebDriver BiDi
                 firefoxOptions.setCapability(BIDI_CAPABILITIY, true);
-                // Force the use of just BiDi, should not be required once Selenium stops
-                // adding the preference https://github.com/SeleniumHQ/selenium/issues/14885
-                firefoxOptions.addPreference("remote.active-protocols", "1");
                 setCommonOptions(firefoxOptions, proxyAddress, proxyPort);
 
                 String binaryPath =
