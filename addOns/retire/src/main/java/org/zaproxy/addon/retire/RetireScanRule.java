@@ -85,15 +85,21 @@ public class RetireScanRule extends PluginPassiveScanner {
                         result.getVersion(),
                         result.getInformation());
 
-                String otherInfo = getDetails(result.getInformation().getCves());
-
+                StringBuilder otherInfo =
+                        new StringBuilder(getOtherInfo(result.getFilename(), result.getVersion()))
+                                .append(getDetails(result.getInformation().getCves()));
                 if (result.hasOtherInfo()) {
-                    otherInfo = otherInfo + result.getOtherinfo();
+                    otherInfo.append(result.getOtherinfo()).append('\n');
                 }
+                otherInfo.append(getDetails(result.getInformation().getInfo()));
 
-                buildAlert(result, otherInfo).raise();
+                buildAlert(result, otherInfo.toString()).raise();
             }
         }
+    }
+
+    private static String getOtherInfo(String fileName, String version) {
+        return Constant.messages.getString("retire.rule.otherinfo", fileName, version);
     }
 
     private AlertBuilder buildAlert(Result result, String otherInfo) {
@@ -106,8 +112,8 @@ public class RetireScanRule extends PluginPassiveScanner {
                                 "retire.rule.desc", result.getFilename(), result.getVersion()))
                 .setOtherInfo(otherInfo)
                 .setTags(getAllAlertTags(result))
-                .setReference(getDetails(result.getInformation().getInfo()))
-                .setSolution(Constant.messages.getString("retire.rule.soln", result.getFilename()))
+                .setReference(Constant.messages.getString("retire.rule.references"))
+                .setSolution(Constant.messages.getString("retire.rule.soln"))
                 .setEvidence(result.getEvidence().trim())
                 .setCweId(1395); // CWE-1395: Dependency on Vulnerable Third-Party Component
     }
@@ -115,8 +121,12 @@ public class RetireScanRule extends PluginPassiveScanner {
     @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
+        String file = "ExampleLibrary.js";
+        String version = "13.3.7";
         alerts.add(
-                buildAlert(new Result("ExampleLibrary", "x.y.z", VulnerabilityData.EMPTY, ""), "")
+                buildAlert(
+                                new Result(file, version, VulnerabilityData.EMPTY, version),
+                                getOtherInfo(file, version))
                         .build());
         return alerts;
     }
