@@ -28,9 +28,11 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.httpclient.URI;
@@ -64,6 +66,7 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.FontUtils.Size;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.StatsListener;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -105,6 +108,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
     private JLabel statusLabel = new JLabel();
     private JLabel sessionIdLabel = new JLabel();
     private JLabel verifIdLabel = new JLabel();
+    private JButton[] extraButtons;
 
     private StepsPanel stepsPanel;
 
@@ -180,6 +184,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
         text.setText(params.getLoginUrl());
 
         this.setHideOnSave(false);
+        this.pack();
     }
 
     @Override
@@ -456,11 +461,44 @@ public class AuthTestDialog extends StandardFieldsDialog {
     }
 
     @Override
+    public JButton[] getExtraButtons() {
+        if (extraButtons == null) {
+            JButton resetButton =
+                    new JButton(
+                            Constant.messages.getString(
+                                    "authhelper.auth.test.dialog.button.reset"));
+            resetButton.addActionListener(
+                    e -> {
+                        ((JTextField) getField(CONTEXT_LABEL))
+                                .setText(
+                                        Constant.messages.getString(
+                                                "authhelper.auth.test.dialog.default-context"));
+                        ((JTextField) getField(LOGIN_URL_LABEL)).setText("");
+                        ((JTextField) getField(USERNAME_LABEL)).setText("");
+                        ((JTextField) getField(PASSWORD_LABEL)).setText("");
+                        ((ZapNumberSpinner) getField(WAIT_LABEL))
+                                .setValue(AuthhelperParam.DEFAULT_WAIT);
+                        ((JCheckBox) getField(DEMO_LABEL)).setSelected(false);
+                        ((JCheckBox) getField(RECORD_DIAGNOSTICS_LABEL)).setSelected(false);
+                        stepsPanel.getSteps().forEach(step -> step.setEnabled(false));
+                        this.saveDetails();
+                    });
+
+            extraButtons = new JButton[] {resetButton};
+        }
+        return extraButtons;
+    }
+
+    @Override
     public void save() {
         resetResultsPanel();
         Thread t = new Thread(() -> authenticate(), "ZAP-auth-tester");
         t.start();
         // Save the values for next time
+        this.saveDetails();
+    }
+
+    private void saveDetails() {
         AuthhelperParam params = this.ext.getParam();
         params.setLoginUrl(this.getStringValue(LOGIN_URL_LABEL));
         params.setUsername(this.getStringValue(USERNAME_LABEL));
