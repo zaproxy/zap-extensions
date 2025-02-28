@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - If authentication fails then try to find a likely looking login link.
 - Persist diagnostics to the session and include it in the Authentication Report (JSON) for Client Script and Browser Based Authentication methods.
+- A reset button.
 
 ### Changed
 - Prefer form related fields in Browser Based Authentication for the selection of username field.

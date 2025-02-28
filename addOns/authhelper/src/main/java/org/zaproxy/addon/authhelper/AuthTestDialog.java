@@ -31,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.httpclient.URI;
@@ -105,12 +106,15 @@ public class AuthTestDialog extends StandardFieldsDialog {
     private JLabel statusLabel = new JLabel();
     private JLabel sessionIdLabel = new JLabel();
     private JLabel verifIdLabel = new JLabel();
+    private JButton[] extraButtons;
 
     private StepsPanel stepsPanel;
 
     private ZapTextArea diagnosticField;
     private Boolean usernameFieldFound;
     private Boolean passwordFieldFound;
+
+    private BrowsersComboBoxModel browserComboModel;
 
     private ExtensionAuthhelper ext;
 
@@ -139,7 +143,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
         ExtensionSelenium extSel =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
 
-        BrowsersComboBoxModel browserComboModel = extSel.createBrowsersComboBoxModel();
+        browserComboModel = extSel.createBrowsersComboBoxModel();
         browserComboModel.setSelectedBrowser(params.getBrowser());
         this.addComboField(0, BROWSER_LABEL, browserComboModel);
         this.addNumberField(0, WAIT_LABEL, 0, Integer.MAX_VALUE, params.getWait());
@@ -180,6 +184,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
         text.setText(params.getLoginUrl());
 
         this.setHideOnSave(false);
+        this.pack();
     }
 
     @Override
@@ -456,11 +461,48 @@ public class AuthTestDialog extends StandardFieldsDialog {
     }
 
     @Override
+    public JButton[] getExtraButtons() {
+        if (extraButtons == null) {
+            JButton resetButton =
+                    new JButton(
+                            Constant.messages.getString(
+                                    "authhelper.auth.test.dialog.button.reset"));
+            resetButton.addActionListener(
+                    e -> {
+                        ((JTextField) getField(CONTEXT_LABEL))
+                                .setText(
+                                        Constant.messages.getString(
+                                                "authhelper.auth.test.dialog.default-context"));
+                        setFieldValue(LOGIN_URL_LABEL, "");
+                        setFieldValue(USERNAME_LABEL, "");
+                        setFieldValue(PASSWORD_LABEL, "");
+                        setFieldValue(WAIT_LABEL, AuthhelperParam.DEFAULT_WAIT);
+                        browserComboModel.setSelectedBrowser(AuthhelperParam.DEFAULT_BROWSER);
+                        setFieldValue(DEMO_LABEL, false);
+                        setFieldValue(RECORD_DIAGNOSTICS_LABEL, false);
+                        stepsPanel.getSteps().forEach(step -> step.setEnabled(false));
+
+                        resetResultsPanel();
+                        diagnosticField.setText("");
+
+                        this.saveDetails();
+                    });
+
+            extraButtons = new JButton[] {resetButton};
+        }
+        return extraButtons;
+    }
+
+    @Override
     public void save() {
         resetResultsPanel();
         Thread t = new Thread(() -> authenticate(), "ZAP-auth-tester");
         t.start();
         // Save the values for next time
+        this.saveDetails();
+    }
+
+    private void saveDetails() {
         AuthhelperParam params = this.ext.getParam();
         params.setLoginUrl(this.getStringValue(LOGIN_URL_LABEL));
         params.setUsername(this.getStringValue(USERNAME_LABEL));
