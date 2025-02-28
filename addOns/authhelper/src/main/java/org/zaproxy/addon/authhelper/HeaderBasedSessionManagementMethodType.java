@@ -100,7 +100,8 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
             return new HeaderBasedSessionManagementMethodType();
         }
 
-        protected static String replaceTokens(String text, Map<String, SessionToken> tokens) {
+        protected static String replaceTokens(
+                int contextId, String key, String text, Map<String, SessionToken> tokens) {
             Pattern pattern = Pattern.compile("\\{%(.+?)\\%}");
             Matcher matcher = pattern.matcher(text);
             StringBuilder builder = new StringBuilder();
@@ -110,8 +111,17 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                 if (token != null) {
                     replacement = token.getValue();
                 } else {
-                    // Put the token back so its more obvious what failed
-                    replacement = matcher.group(0);
+                    SessionToken token2 = AuthUtils.getSessionToken(matcher.group(0));
+                    if (token2 == null) {
+                        // Use the most recent value seen in an auth request
+                        replacement = AuthUtils.getRequestSessionToken(contextId, key);
+                        if (replacement == null) {
+                            // Put the token back so its more obvious what failed
+                            replacement = matcher.group(0);
+                        }
+                    } else {
+                        replacement = token2.getValue();
+                    }
                 }
                 matcher.appendReplacement(builder, replacement);
             }
@@ -151,7 +161,9 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
 
             List<Pair<String, String>> headers = new ArrayList<>();
             for (Pair<String, String> hc : this.headerConfigs) {
-                headers.add(new Pair<>(hc.first, replaceTokens(hc.second, tokens)));
+                headers.add(
+                        new Pair<>(
+                                hc.first, replaceTokens(contextId, hc.first, hc.second, tokens)));
             }
 
             User user = msg.getRequestingUser();

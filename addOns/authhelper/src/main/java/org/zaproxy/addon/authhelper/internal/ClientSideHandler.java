@@ -77,6 +77,12 @@ public final class ClientSideHandler implements HttpMessageHandler {
             // We have a better candidate
             return;
         }
+        Set<SessionToken> reqSessionTokens = AuthUtils.getRequestSessionTokens(msg);
+        for (SessionToken token : reqSessionTokens) {
+            if (!SessionToken.COOKIE_SOURCE.equals(token.getSource())) {
+                AuthUtils.recordRequestSessionToken(context, token.getKey(), token.getValue());
+            }
+        }
 
         SessionManagementRequestDetails smReqDetails = null;
         Map<String, SessionToken> sessionTokens = AuthUtils.getResponseSessionTokens(msg);
@@ -92,7 +98,6 @@ public final class ClientSideHandler implements HttpMessageHandler {
                             new ArrayList<>(sessionTokens.values()),
                             Alert.CONFIDENCE_HIGH);
         } else {
-            Set<SessionToken> reqSessionTokens = AuthUtils.getRequestSessionTokens(msg);
             if (!reqSessionTokens.isEmpty()) {
                 // The request has at least one auth token we missed - try
                 // to find one of them

@@ -24,6 +24,8 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
@@ -34,6 +36,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,11 +48,19 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.authhelper.AuthUtils;
+import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType;
+import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType;
+import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.ExtensionAuthhelper;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReportData;
 import org.zaproxy.addon.reports.Template;
+import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
 import org.zaproxy.zap.extension.alert.AlertNode;
+import org.zaproxy.zap.extension.stats.ExtensionStats;
+import org.zaproxy.zap.extension.stats.InMemoryStats;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -288,5 +299,146 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
                                 ExtensionReports.class,
                                 "/reports/" + templateName + "/template.yaml")
                         .toFile());
+    }
+
+    @Test
+    void shouldIgnoreNonAuthReport() throws Exception {
+        // Given
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("some-other-report");
+
+        // When
+        dataHandler.handle(reportData);
+
+        // Then
+        assertThat(reportData.getReportObject("authdata"), is(nullValue()));
+    }
+
+    @Test
+    void shouldNotErrorIfNoContexts() throws Exception {
+        // Given
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("auth-report-test");
+        reportData.setContexts(List.of());
+
+        // When
+        dataHandler.handle(reportData);
+
+        // Then
+        assertThat(reportData.getReportObject("authdata"), is(notNullValue()));
+        AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
+        assertThat(ard.isValidReport(), is(equalTo(false)));
+        assertThat(ard.getSummaryItems().size(), is(equalTo(0)));
+    }
+
+    @Test
+    void shouldReportPassingCase() throws Exception {
+        // Given
+        String site = "https://www.example.com";
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("auth-report-test");
+        Context context = mock(Context.class);
+        given(context.getAuthenticationMethod())
+                .willReturn(
+                        new BrowserBasedAuthenticationMethodType().createAuthenticationMethod(0));
+        given(context.getIncludeInContextRegexs()).willReturn(List.of(site + ".*"));
+        reportData.setContexts(List.of(context));
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+
+        InMemoryStats stats = new InMemoryStats();
+        given(extStats.getInMemoryStats()).willReturn(stats);
+
+        stats.counterInc(site, AuthUtils.AUTH_BROWSER_PASSED_STATS);
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        dataHandler.handle(reportData);
+
+        // Then
+        assertThat(reportData.getReportObject("authdata"), is(notNullValue()));
+        AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
+        assertThat(ard.isValidReport(), is(equalTo(true)));
+        assertThat(ard.getSummaryItems().size(), is(equalTo(5)));
+
+        assertThat(ard.getSummaryItems().get(0).key(), is(equalTo("auth.summary.auth")));
+        assertThat(ard.getSummaryItems().get(0).passed(), is(equalTo(true)));
+
+        assertThat(ard.getSummaryItems().get(1).key(), is(equalTo("auth.summary.username")));
+        assertThat(ard.getSummaryItems().get(1).passed(), is(equalTo(true)));
+
+        assertThat(ard.getSummaryItems().get(2).key(), is(equalTo("auth.summary.password")));
+        assertThat(ard.getSummaryItems().get(2).passed(), is(equalTo(true)));
+
+        assertThat(ard.getSummaryItems().get(3).key(), is(equalTo("auth.summary.session")));
+        assertThat(ard.getSummaryItems().get(3).passed(), is(equalTo(true)));
+
+        assertThat(ard.getSummaryItems().get(4).key(), is(equalTo("auth.summary.verif")));
+        assertThat(ard.getSummaryItems().get(4).passed(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldReportFailingCase() throws Exception {
+        // Given
+        String site = "https://www.example.com";
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("auth-report-test");
+        Context context = mock(Context.class);
+
+        BrowserBasedAuthenticationMethod authMethod =
+                new BrowserBasedAuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.AUTO_DETECT);
+        given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(context.getSessionManagementMethod())
+                .willReturn(
+                        new AutoDetectSessionManagementMethodType()
+                                .createSessionManagementMethod(0));
+
+        given(context.getIncludeInContextRegexs()).willReturn(List.of(site + ".*"));
+        reportData.setContexts(List.of(context));
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+
+        InMemoryStats stats = new InMemoryStats();
+        given(extStats.getInMemoryStats()).willReturn(stats);
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        dataHandler.handle(reportData);
+
+        // Then
+        assertThat(reportData.getReportObject("authdata"), is(notNullValue()));
+        AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
+        assertThat(ard.isValidReport(), is(equalTo(true)));
+        assertThat(ard.getSummaryItems().size(), is(equalTo(5)));
+
+        assertThat(ard.getSummaryItems().get(0).key(), is(equalTo("auth.summary.auth")));
+        assertThat(ard.getSummaryItems().get(0).passed(), is(equalTo(false)));
+
+        assertThat(ard.getSummaryItems().get(1).key(), is(equalTo("auth.summary.username")));
+        assertThat(ard.getSummaryItems().get(1).passed(), is(equalTo(false)));
+
+        assertThat(ard.getSummaryItems().get(2).key(), is(equalTo("auth.summary.password")));
+        assertThat(ard.getSummaryItems().get(2).passed(), is(equalTo(false)));
+
+        assertThat(ard.getSummaryItems().get(3).key(), is(equalTo("auth.summary.session")));
+        assertThat(ard.getSummaryItems().get(3).passed(), is(equalTo(false)));
+
+        assertThat(ard.getSummaryItems().get(4).key(), is(equalTo("auth.summary.verif")));
+        assertThat(ard.getSummaryItems().get(4).passed(), is(equalTo(false)));
     }
 }

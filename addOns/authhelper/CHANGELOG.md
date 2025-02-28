@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Correctly read the API parameters when setting up Browser Based Authentication.
 - Tweaked auth report output to ensure that values are properly escaped.
+- Report to use better stats with browser based auth.
+- Session handling to cope with X-CSRF-Token headers.
 
 ## [0.22.0] - 2025-02-12
 ### Added

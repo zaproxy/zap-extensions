@@ -92,7 +92,7 @@ public class AuthUtils {
     public static final String AUTH_BROWSER_PASSED_STATS = "stats.auth.browser.passed";
     public static final String AUTH_BROWSER_FAILED_STATS = "stats.auth.browser.failed";
 
-    public static final String[] HEADERS = {HttpHeader.AUTHORIZATION};
+    public static final String[] HEADERS = {HttpHeader.AUTHORIZATION, "X-CSRF-Token"};
     public static final String[] JSON_IDS = {"accesstoken", "token"};
     private static final List<String> USERNAME_FIELD_INDICATORS =
             List.of("email", "signinname", "uname", "user", "name", "nome", "nombre");
@@ -148,6 +148,13 @@ public class AuthUtils {
      */
     private static Map<String, SessionToken> knownTokenMap =
             Collections.synchronizedMap(new HashMap<>());
+
+    /**
+     * Session tokens used in authentication requests. We keep track of them so that we can reuse
+     * the last known good value, in the case where we don't see the token set in the authentication
+     * response.
+     */
+    private static Map<Integer, Map<String, String>> requestTokenMap = new HashMap<>();
 
     /**
      * The best verification request we have found for a context. There will only be a verification
@@ -994,6 +1001,7 @@ public class AuthUtils {
         contextVerifMap.clear();
         contextSessionMgmtMap.clear();
         contextVerificationMap.clear();
+        requestTokenMap.clear();
         if (executorService != null) {
             executorService.shutdown();
         }
@@ -1071,6 +1079,26 @@ public class AuthUtils {
             // Have not already checked this method + url
             getExecutorService().submit(new VerificationDetectionProcessor(context, details, rule));
         }
+    }
+
+    public static void recordRequestSessionToken(Context context, String key, String value) {
+        recordRequestSessionToken(context.getId(), key, value);
+    }
+
+    public static void recordRequestSessionToken(int contextId, String key, String value) {
+        requestTokenMap
+                .computeIfAbsent(contextId, c -> new HashMap<>())
+                .put(key.toLowerCase(Locale.ROOT), value);
+    }
+
+    public static String getRequestSessionToken(Context context, String key) {
+        return getRequestSessionToken(context.getId(), key);
+    }
+
+    public static String getRequestSessionToken(int contextId, String key) {
+        return requestTokenMap
+                .computeIfAbsent(contextId, c -> new HashMap<>())
+                .get(key.toLowerCase(Locale.ROOT));
     }
 
     static class AuthenticationBrowserHook implements BrowserHook {

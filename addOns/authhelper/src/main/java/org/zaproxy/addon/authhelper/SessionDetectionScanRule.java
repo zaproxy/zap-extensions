@@ -137,7 +137,8 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                                 new HeaderBasedSessionManagementMethodType();
                         HeaderBasedSessionManagementMethod method =
                                 type.createSessionManagementMethod(context.getId());
-                        method.setHeaderConfigs(AuthUtils.getHeaderTokens(msg, foundTokens, true));
+                        // Do not include cookies as they are handled separately
+                        method.setHeaderConfigs(AuthUtils.getHeaderTokens(msg, foundTokens, false));
 
                         context.setSessionManagementMethod(method);
                         Stats.incCounter("stats.auth.configure.session.header");
