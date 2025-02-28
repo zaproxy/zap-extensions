@@ -370,13 +370,13 @@ public class SpiderParam extends VersionedAbstractParam {
                 setIrrelevantParameters(
                         Collections.singletonList(
                                 new IrrelevantParameter(Pattern.compile("utm_.*"))));
-                // Fallthrough
+            // Fallthrough
             case 1:
                 if (getInt(SPIDER_THREAD, 2) == 2) {
                     // the old default
                     this.setThreadCount(Constants.getDefaultThreadCount());
                 }
-                // Fallthrough
+            // Fallthrough
             case 2:
                 getConfig().clearProperty("spider.requestwait");
                 break;

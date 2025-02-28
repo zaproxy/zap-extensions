@@ -181,21 +181,21 @@ public class Base64Disclosure extends PluginPassiveScanner implements CommonPass
                     // set the threshold percentage based on what threshold was set by the user
                     float probabilityThreshold = 0.0F; // 0% probability threshold
                     switch (this.getAlertThreshold()) {
-                            // 50% probability threshold (ie, "on balance of probability")
+                        // 50% probability threshold (ie, "on balance of probability")
                         case HIGH:
                             probabilityThreshold = 0.50F;
                             break;
-                            // 25% probability threshold
+                        // 25% probability threshold
                         case MEDIUM:
                             probabilityThreshold = 0.25F;
                             break;
-                            // 10% probability threshold
+                        // 10% probability threshold
                         case LOW:
                             probabilityThreshold = 0.10F;
                             break;
-                            // 0% probability threshold (all structurally valid Base64 data is
-                            // considered, regardless of how improbable  it is given character
-                            // frequencies, etc.)
+                        // 0% probability threshold (all structurally valid Base64 data is
+                        // considered, regardless of how improbable  it is given character
+                        // frequencies, etc.)
                         default:
                     }
 
