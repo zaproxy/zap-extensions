@@ -137,16 +137,18 @@ public class ClientIntegrationAPI extends ApiImplementor {
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
         try {
             switch (name) {
-                case ACTION_REPORT_OBJECT -> handleReportObject(
-                        this.getParam(params, PARAM_OBJECT_JSON, ""));
+                case ACTION_REPORT_OBJECT ->
+                        handleReportObject(this.getParam(params, PARAM_OBJECT_JSON, ""));
 
-                case ACTION_REPORT_EVENT -> handleReportEvent(
-                        this.getParam(params, PARAM_EVENT_JSON, ""));
+                case ACTION_REPORT_EVENT ->
+                        handleReportEvent(this.getParam(params, PARAM_EVENT_JSON, ""));
 
-                case ACTION_REPORT_ZEST_STATEMENT -> this.extension.addZestStatement(
-                        this.getParam(params, PARAM_STATEMENT_JSON, ""));
-                case ACTION_REPORT_ZEST_SCRIPT -> this.extension.addZestStatement(
-                        this.getParam(params, PARAM_SCRIPT_JSON, ""));
+                case ACTION_REPORT_ZEST_STATEMENT ->
+                        this.extension.addZestStatement(
+                                this.getParam(params, PARAM_STATEMENT_JSON, ""));
+                case ACTION_REPORT_ZEST_SCRIPT ->
+                        this.extension.addZestStatement(
+                                this.getParam(params, PARAM_SCRIPT_JSON, ""));
                 case ACTION_EXPORT_CLIENT_MAP -> {
                     String exportPath = this.getParam(params, PARAM_EXPORT_PATH, "");
 

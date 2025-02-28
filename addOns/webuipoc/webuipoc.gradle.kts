@@ -1,5 +1,4 @@
 import com.github.gradle.node.npm.task.NpmTask
-import org.gradle.configurationcache.extensions.capitalized
 
 description = "A Proof of Concept add-on for potential ZAP web based UIs."
 
@@ -19,7 +18,7 @@ val pocBuildTasksGroup = "ZAP Web UI PoC Build"
 for (dir in pocsSrcDir.listFiles()!!) {
     val packageJson = File(dir, "package.json")
     val outputDir = pocsBuildDir.dir("webuipoc").dir(dir.name)
-    val normalizedPocName = dir.name.capitalized()
+    val normalizedPocName = dir.name.replaceFirstChar(Char::titlecase)
     if (packageJson.exists()) {
         val installTask =
             tasks.register<NpmTask>("installPoc${normalizedPocName}Dependencies") {
