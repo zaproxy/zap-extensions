@@ -33,7 +33,7 @@ crowdin {
 
 dependencies {
     zapAddOn("commonlib")
-
+    testImplementation(project(":testutils"))
     implementation("org.jdom:jdom:2.0.2")
 }
 
