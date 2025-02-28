@@ -39,6 +39,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -111,7 +112,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertEquals("/1.2.19/angular.min.js", alertsRaised.get(0).getEvidence());
         assertEquals(
-                "https://github.com/angular/angular.js/commit/8f31f1ff43b673a24f84422d5c13d6312b2c4d94\n",
+                "https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/",
                 alertsRaised.get(0).getReference());
     }
 
@@ -142,7 +143,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertEquals(fileName, alertsRaised.get(0).getEvidence());
         assertEquals(
-                "https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/\n",
+                "https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/",
                 alertsRaised.get(0).getReference());
     }
 
@@ -163,11 +164,12 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
     void shouldRaiseAlertOnVulnerableContent() {
         // Given
         String content =
-                "/*!\n"
-                        + " * Bootstrap v3.3.7 (http://getbootstrap.com)\n"
-                        + " * Copyright 2011-2016 Twitter, Inc.\n"
-                        + " * Licensed under the MIT license\n"
-                        + " */";
+                """
+                /*!
+                 * Bootstrap v3.3.7 (http://getbootstrap.com)
+                 * Copyright 2011-2016 Twitter, Inc.
+                 * Licensed under the MIT license
+                 */""";
         HttpMessage msg = createMessage("http://example.com/angular.min.js", content);
         msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "text/javascript");
         given(passiveScanData.isPage200(any())).willReturn(true);
@@ -178,7 +180,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertEquals("* Bootstrap v3.3.7", alertsRaised.get(0).getEvidence());
         assertEquals(
-                "https://github.com/twbs/bootstrap/issues/20184\n",
+                "https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/",
                 alertsRaised.get(0).getReference());
         // Two Constant OWASP tags plus one CVE and CWE
         assertEquals(4, alertsRaised.get(0).getTags().size());
@@ -188,11 +190,12 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
     void shouldNotRaiseAlertOnNonVulnerableContent() {
         // Given
         String content =
-                "/*!\n"
-                        + " * Bootstrap v3.4.0 (http://getbootstrap.com)\n"
-                        + " * Copyright 2011-2016 Twitter, Inc.\n"
-                        + " * Licensed under the MIT license\n"
-                        + " */";
+                """
+                /*!
+                 * Bootstrap v3.4.0 (http://getbootstrap.com)
+                 * Copyright 2011-2016 Twitter, Inc.
+                 * Licensed under the MIT license
+                 */""";
         HttpMessage msg = createMessage("http://example.com/angular.min.js", content);
         msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "text/javascript");
         given(passiveScanData.isPage200(any())).willReturn(true);
@@ -206,11 +209,12 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
     void shouldRaiseAlertOnHashOfVulnerableContent() {
         // Given
         String content =
-                "/*!\n"
-                        + " * Hash test content v0.0.1\n"
-                        + " * Copyright 2011-2016 Null, Inc.\n"
-                        + " * Licensed under the MIT license\n"
-                        + " */";
+                """
+                /*!
+                 * Hash test content v0.0.1
+                 * Copyright 2011-2016 Null, Inc.
+                 * Licensed under the MIT license
+                 */""";
         HttpMessage msg = createMessage("http://example.com/hash.js", content);
         msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "text/javascript");
         given(passiveScanData.isPage200(any())).willReturn(true);
@@ -220,13 +224,18 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         assertEquals(1, alertsRaised.size());
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertEquals(
-                "CVE-XXXX-XXX2\n"
-                        + "CVE-XXXX-XXX1\n"
-                        + "CVE-XXXX-XXX0\n"
-                        + "The library matched the known vulnerable hash e19cea51d7542303f6e8949a0ae27dd3509ea566.",
+                """
+                The identified library hash-test-entry, version 0.0.1 is vulnerable.
+                CVE-XXXX-XXX2
+                CVE-XXXX-XXX1
+                CVE-XXXX-XXX0
+                The library matched the known vulnerable hash e19cea51d7542303f6e8949a0ae27dd3509ea566.
+                http://example.com/hash-test-entry
+                http://example.com/hash-test-entry2
+                """,
                 alertsRaised.get(0).getOtherInfo());
         assertEquals(
-                "http://example.com/hash-test-entry\nhttp://example.com/hash-test-entry2\n",
+                "https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/",
                 alertsRaised.get(0).getReference());
     }
 
@@ -268,7 +277,18 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         List<Alert> alerts = rule.getExampleAlerts();
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
-        assertThat(alerts.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        Alert example = alerts.get(0);
+        assertThat(example.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(
+                example.getDescription(),
+                is(equalTo("The identified library appears to be vulnerable.")));
+        assertThat(example.getEvidence(), is(equalTo("13.3.7")));
+        assertThat(
+                example.getOtherInfo(),
+                is(
+                        equalTo(
+                                Constant.messages.getString(
+                                        "retire.rule.otherinfo", "ExampleLibrary.js", "13.3.7"))));
     }
 
     @Test

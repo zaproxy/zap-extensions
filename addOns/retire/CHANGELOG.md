@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Updated with upstream retire.js pattern changes.
+- Make Alert's Description, Solution, and References generic, and provide finding specific details via Other Info.
 
 ## [0.44.0] - 2025-01-10
 ### Changed
