@@ -122,7 +122,7 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
         return SessionStructure.getHostName(new URI(regexStr.replace(".*", ""), false));
     }
 
-    private static class AuthReportDataHandler implements ExtensionReports.ReportDataHandler {
+    protected static class AuthReportDataHandler implements ExtensionReports.ReportDataHandler {
 
         @Override
         public void handle(ReportData reportData) {
@@ -139,6 +139,15 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             }
             ard.setValidReport(true);
 
+            boolean sessionPassed =
+                    !(authContext.getSessionManagementMethod()
+                            instanceof
+                            AutoDetectSessionManagementMethodType
+                                    .AutoDetectSessionManagementMethod);
+            boolean verificationPassed =
+                    !(AuthCheckingStrategy.AUTO_DETECT.equals(
+                            authContext.getAuthenticationMethod().getAuthCheckingStrategy()));
+
             List<String> incRegexes = authContext.getIncludeInContextRegexs();
 
             InMemoryStats inMemoryStats =
@@ -153,15 +162,20 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                     hostname = getHostName(incRegexes.get(0));
                     ard.setSite(hostname);
 
-                    addSummaryItem(
-                            ard,
-                            "auth",
-                            inMemoryStats.getStat(hostname, AuthenticationHelper.AUTH_SUCCESS_STATS)
-                                    != null);
-
                     if (authContext.getAuthenticationMethod()
                             instanceof
                             BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod) {
+
+                        addSummaryItem(
+                                ard,
+                                "auth",
+                                sessionPassed
+                                        && verificationPassed
+                                        && inMemoryStats.getStat(
+                                                        hostname,
+                                                        AuthUtils.AUTH_BROWSER_PASSED_STATS)
+                                                != null);
+
                         Long passedCount =
                                 inMemoryStats.getStat(
                                         hostname, AuthUtils.AUTH_BROWSER_PASSED_STATS);
@@ -180,6 +194,16 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                             addSummaryItem(ard, "username", noUserCount != null);
                             addSummaryItem(ard, "password", noPwdCount != null);
                         }
+                    } else {
+                        addSummaryItem(
+                                ard,
+                                "auth",
+                                sessionPassed
+                                        && verificationPassed
+                                        && inMemoryStats.getStat(
+                                                        hostname,
+                                                        AuthenticationHelper.AUTH_SUCCESS_STATS)
+                                                != null);
                     }
 
                     // Add all of the stats
@@ -196,18 +220,8 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                 addSummaryItem(ard, "stats", false);
             }
 
-            addSummaryItem(
-                    ard,
-                    "session",
-                    !(authContext.getSessionManagementMethod()
-                            instanceof
-                            AutoDetectSessionManagementMethodType
-                                    .AutoDetectSessionManagementMethod));
-            addSummaryItem(
-                    ard,
-                    "verif",
-                    !(AuthCheckingStrategy.AUTO_DETECT.equals(
-                            authContext.getAuthenticationMethod().getAuthCheckingStrategy())));
+            addSummaryItem(ard, "session", sessionPassed);
+            addSummaryItem(ard, "verif", verificationPassed);
 
             AutomationProgress progress = new AutomationProgress();
             AutomationEnvironment env = new AutomationEnvironment(progress);
