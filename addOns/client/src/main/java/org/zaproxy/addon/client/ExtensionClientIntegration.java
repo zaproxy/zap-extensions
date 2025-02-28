@@ -72,6 +72,7 @@ import org.zaproxy.addon.client.pscan.ClientPassiveScanHelper;
 import org.zaproxy.addon.client.pscan.OptionsPassiveScan;
 import org.zaproxy.addon.client.spider.AuthenticationHandler;
 import org.zaproxy.addon.client.spider.ClientSpider;
+import org.zaproxy.addon.client.spider.ClientSpiderAPI;
 import org.zaproxy.addon.client.spider.ClientSpiderDialog;
 import org.zaproxy.addon.client.spider.ClientSpiderPanel;
 import org.zaproxy.addon.client.spider.PopupMenuSpider;
@@ -143,6 +144,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private ClientPassiveScanHelper pscanHelper;
     private ClientOptions clientParam;
     private ClientIntegrationAPI api;
+    private ClientSpiderAPI clientSpiderAPI;
     private EventConsumer eventConsumer;
     private Event lastAjaxSpiderStartEvent;
     private static ImageIcon icon;
@@ -192,10 +194,12 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         this.api = new ClientIntegrationAPI(this);
+        this.clientSpiderAPI = new ClientSpiderAPI(this);
 
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
         extensionHook.addOptionsParamSet(getClientParam());
         extensionHook.addApiImplementor(this.api);
+        extensionHook.addApiImplementor(this.clientSpiderAPI);
         extensionHook.addSessionListener(new SessionChangeListener());
 
         if (hasView()) {
@@ -810,6 +814,10 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     public ClientSpider getScan(int id) {
         return this.spiderScanController.getScan(id);
+    }
+
+    public ClientSpider getLastScan() {
+        return this.spiderScanController.getLastScan();
     }
 
     public void stopScan(int id) {
