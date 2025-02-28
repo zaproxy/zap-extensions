@@ -34,26 +34,15 @@ public class LlmResponseHandler implements ChatModelListener {
     private static final Logger LOGGER = LogManager.getLogger(LlmResponseHandler.class);
 
     @Override
-    public void onRequest(ChatModelRequestContext requestContext) {
-        ChatModelRequest request = requestContext.request();
-        Map<Object, Object> attributes = requestContext.attributes();
-    }
-
-    @Override
     public void onResponse(ChatModelResponseContext responseContext) {
-        ChatModelResponse response = responseContext.response();
-        ChatModelRequest request = responseContext.request();
-        Map<Object, Object> attributes = responseContext.attributes();
-        LOGGER.info("Token usage = " + response.tokenUsage());
+        LOGGER.info("Token usage = {} ", responseContext.response().tokenUsage());
     }
 
     @Override
     public void onError(ChatModelErrorContext errorContext) {
-        Throwable error = errorContext.error();
-        ChatModelRequest request = errorContext.request();
-        ChatModelResponse partialResponse = errorContext.partialResponse();
-        Map<Object, Object> attributes = errorContext.attributes();
-        LOGGER.error("LLM/AI Error : " + error);
-        throw new RuntimeException("LLM/AI Error : " + error.getMessage());
+        LOGGER.error("LLM Error : {} ", errorContext.error().getMessage());
+        throw new RuntimeException(
+                String.format("LLM Error : %s", errorContext.error().getMessage())
+        );
     }
 }

@@ -20,39 +20,24 @@
 package org.zaproxy.addon.llm.communication;
 
 import dev.langchain4j.model.output.structured.Description;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Confidence {
 
     @Description(
             "The level of confidence, typically represented as a percentage or a descriptive term")
+    @Getter
+    @Setter
     private Integer level;
 
     @Description("A textual explanation for the assigned confidence level")
+    @Getter
+    @Setter
     private String explanation;
 
-    // Constructor
     public Confidence(Integer level, String explanation) {
         this.level = level;
-        this.explanation = explanation;
-    }
-
-    // Getter for level
-    public Integer getLevel() {
-        return level;
-    }
-
-    // Setter for level
-    public void setLevel(Integer level) {
-        this.level = level;
-    }
-
-    // Getter for explanation
-    public String getExplanation() {
-        return explanation;
-    }
-
-    // Setter for explanation
-    public void setExplanation(String explanation) {
         this.explanation = explanation;
     }
 

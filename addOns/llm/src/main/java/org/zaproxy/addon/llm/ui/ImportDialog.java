@@ -23,7 +23,6 @@ import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -41,14 +40,12 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.llm.ExtensionLlm;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
 import org.zaproxy.addon.llm.ui.settings.LlmOptionsParam;
-import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapHtmlLabel;
@@ -112,8 +109,7 @@ public class ImportDialog extends AbstractDialog {
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
-    private boolean importOpenapi()
-            throws IOException, URISyntaxException, ApiException, DatabaseException {
+    private boolean importOpenapi() {
 
         String openapiLocation = getOpenapiField().getText();
         llmOptionsParam = extLlm.getOptionsParam();
@@ -148,19 +144,11 @@ public class ImportDialog extends AbstractDialog {
             return false;
         }
 
-        try {
-            new URL(openapiLocation).toURI();
-            new URI(openapiLocation, true);
+        if (isValidURL(openapiLocation)){
             endpointCount = llmCommunicationService.importOpenapiFromUrl(openapiLocation);
-
-            return true;
-        } catch (URIException | MalformedURLException | URISyntaxException e) {
-            // Not a valid URI, try to import as a file
+        } else if (new File(openapiLocation).canRead()) {
             endpointCount = llmCommunicationService.importOpenapiFromFile(openapiLocation);
-        }
-
-        var file = new File(openapiLocation);
-        if (!file.canRead()) {
+        } else {
             ThreadUtils.invokeAndWaitHandled(
                     () -> {
                         showWarningFileNotFound(openapiLocation);
@@ -169,12 +157,17 @@ public class ImportDialog extends AbstractDialog {
             return false;
         }
 
-        endpointCount = llmCommunicationService.importOpenapiFromFile(openapiLocation);
+        if (endpointCount > 0) {
+            showMessageDialog(
+                    Constant.messages.getString("llm.importDialog.import.success", endpointCount));
+            return true;
+        }else{
+            showWarningDialog(
+                    Constant.messages.getString("llm.importDialog.import.failure", endpointCount));
+            return false;
 
-        showMessageDialog(
-                Constant.messages.getString("llm.importDialog.import.success", endpointCount));
+        }
 
-        return true;
     }
 
     private static void setContextMenu(JTextField field) {
@@ -211,8 +204,7 @@ public class ImportDialog extends AbstractDialog {
                                         "json",
                                         "yaml");
                         fileChooser.setFileFilter(filter);
-                        int state = fileChooser.showOpenDialog(this);
-                        if (state == JFileChooser.APPROVE_OPTION) {
+                        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                             String filename = fileChooser.getSelectedFile().getAbsolutePath();
                             try {
                                 getOpenapiField().setText(filename);
@@ -307,5 +299,16 @@ public class ImportDialog extends AbstractDialog {
 
     public void clearFields() {
         getOpenapiField().setText("");
+    }
+
+    private boolean isValidURL(String url){
+        try {
+            new URL(url).toURI();
+            new URI(url, true);
+        } catch (URIException | MalformedURLException | URISyntaxException e) {
+            // Not a valid URI
+            return false;
+        }
+       return true;
     }
 }

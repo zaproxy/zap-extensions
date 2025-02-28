@@ -27,15 +27,15 @@ import org.zaproxy.addon.llm.communication.HttpRequestList;
 
 public interface LlmAssistant {
     @UserMessage(
-            "GGiven the following OpenAPI definition, generate a list of chained HTTP requests to simulate a real world user : {{swagger}} ")
+            "Given the following OpenAPI definition, generate a list of chained HTTP requests to simulate a real world interaction : {{swagger}} ")
     HttpRequestList extractHttpRequests(String swagger);
 
     @UserMessage(
-            "As software architect, and based on your previous answer, generate other potential missing endpoints that are not mentioned in the swagger file. For example, if there is GET /product/1, suggest DELETE /product/1 if it's not mentioned")
+            "As a software architect, and based on your previous answer, generate other potential missing endpoints that are not mentioned in the swagger file. For example, if there is GET /product/1, suggest DELETE /product/1 if it's not mentioned")
     HttpRequestList complete();
 
     @SystemMessage(
-            "You are a web application security expert reviewing false positives. Answer only in JSON.")
+            "You are a web application security expert reviewing potential false positives. Answer only in JSON.")
     @UserMessage(
             "Your task is to review the following finding from ZAP (Zed Attack Proxy).\n"
                     + "The confidence level is a pull down field which allows you to specify how confident you are in the validity of the finding : \n"

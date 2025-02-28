@@ -49,15 +49,8 @@ import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
 public class LlmCommunicationService {
 
-    private LlmOptionsParam llmOptionsParam;
-
     private static final Logger LOGGER = LogManager.getLogger(LlmCommunicationService.class);
     private static final String AI_REVIEWD_TAG_KEY = "AI-Reviewed";
-    private static final String AI_REVIEWD_TAG_VALUE = "1";
-
-    public String endpoint;
-    private String apiKey;
-    private String modelName;
 
     private LlmAssistant llmAssistant;
     private LlmResponseHandler listener;
@@ -91,7 +84,7 @@ public class LlmCommunicationService {
     private Integer importHttpCalls(String swaggercontent) throws IOException {
         HttpRequestList listHttpRequest = llmAssistant.extractHttpRequests(swaggercontent);
         if (listHttpRequest == null) {
-            throw new RuntimeException("An issue occurred hy trying to get response from LLM");
+            throw new RuntimeException("An issue occurred when trying to get response from the LLM");
         }
         requestor.run(listHttpRequest);
         return listHttpRequest.getRequests().size();
@@ -107,7 +100,7 @@ public class LlmCommunicationService {
             // Check for successful response code or throw error
             if (connection.getResponseCode() != 200) {
                 throw new RuntimeException(
-                        "Failed : HTTP error code : " + connection.getResponseCode());
+                        String.format("Failed : HTTP error code : %s ", connection.getResponseCode()));
             }
 
             // Read the response
@@ -148,20 +141,17 @@ public class LlmCommunicationService {
 
         if (!alert.getTags().containsKey(AI_REVIEWD_TAG_KEY)) {
             Confidence conf_llm;
-            LOGGER.debug("Reviewing alert :" + alert.getName());
-            LOGGER.debug("Confidence level from ZAP : " + alert.getConfidence());
+            LOGGER.debug("Reviewing alert : {}", alert.getName());
+            LOGGER.debug("Confidence level from ZAP : {}", alert.getConfidence());
             conf_llm = llmAssistant.review(alert.getDescription(), alert.getEvidence());
-            LOGGER.debug(
-                    "Confidence level from LLM : "
-                            + conf_llm.getLevel()
-                            + " | Explanation : "
-                            + conf_llm.getExplanation());
+            LOGGER.debug( "Confidence level from LLM : {} | Explanation : {}", conf_llm.getLevel(), conf_llm.getExplanation());
             updatedAlert.setConfidence(conf_llm.getLevel());
             updatedAlert.setOtherInfo(
-                    "LLM Explanation : " + conf_llm.getExplanation() + "\n" + alert.getOtherInfo());
+                    String.format("LLM Explanation: %s \n %s", conf_llm.getExplanation(), alert.getOtherInfo())
+            );
             Map<String, String> alertTags = alert.getTags();
 
-            alertTags.putIfAbsent(AI_REVIEWD_TAG_KEY, AI_REVIEWD_TAG_VALUE);
+            alertTags.putIfAbsent(AI_REVIEWD_TAG_KEY, "");
             updatedAlert.setTags(alertTags);
 
             try {
@@ -179,11 +169,11 @@ public class LlmCommunicationService {
                 LOGGER.error(e.getMessage(), e);
             }
         } else {
-            LOGGER.debug("Skipping reviewed alert : " + alert.getName());
+            LOGGER.debug("Skipping reviewed alert : {} ", alert.getName());
         }
     }
 
-    private ExtensionAlert getExtAlert() {
+    static private ExtensionAlert getExtAlert() {
         return Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
     }
 }

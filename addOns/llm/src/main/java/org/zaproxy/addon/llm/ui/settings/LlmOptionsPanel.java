@@ -121,7 +121,7 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         param.setApiKey(this.apiKeyTextField.getText());
         param.setEndpoint(this.llmendpointTextField.getText());
         param.setModelName(this.llmModelsComboBox.getSelectedItem().toString());
-        this.extensionLlm.setLLMExtEnabled(true);
+        this.extensionLlm.setLlmExtEnabled(true);
     }
 
     @Override

@@ -20,26 +20,41 @@
 package org.zaproxy.addon.llm.communication;
 
 import dev.langchain4j.model.output.structured.Description;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Map;
 
 public class HttpRequest {
 
     @Description("HTTP method such as GET, POST, PUT, DELETE, etc.")
+    @Getter
+    @Setter
     private String method;
 
     @Description("hostname of the request")
+    @Getter
+    @Setter
     private String hostname;
 
     @Description("Full URL of the request based on the hostname and base URL fields")
+    @Getter
+    @Setter
     private String url;
 
     @Description("Query parameters in key-value pairs")
+    @Getter
+    @Setter
     private Map<String, String> queryParams;
 
     @Description("HTTP headers in key-value pairs")
+    @Getter
+    @Setter
     private Map<String, String> headers;
 
     @Description("Body of the request, typically used with POST or PUT methods")
+    @Getter
+    @Setter
     private String body;
 
     public HttpRequest(
@@ -57,56 +72,8 @@ public class HttpRequest {
         this.body = body;
     }
 
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getHostname() {
-        return hostname;
-    }
-
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
-    }
-
-    public Map<String, String> getQueryParams() {
-        return queryParams;
-    }
-
-    public void setQueryParams(Map<String, String> queryParams) {
-        this.queryParams = queryParams;
-    }
-
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
-
-    public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
     @Override
     public String toString() {
-        return "url = " + this.url;
+        return "url = {}" + this.url;
     }
 }

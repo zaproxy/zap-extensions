@@ -35,7 +35,6 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
 
     private static final long serialVersionUID = 1L;
     private ExtensionLlm extensionLlm;
-    private static final Logger LOGGER = LogManager.getLogger(LlmReviewAlertMenu.class);
 
     public LlmReviewAlertMenu(ExtensionLlm ext) {
         super(Constant.messages.getString("llm.menu.review.title"), true);
@@ -68,11 +67,7 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (super.isEnableForComponent(invoker)) {
-            if (!extensionLlm.isConfigured()) {
-                setEnabled(false);
-            } else {
-                setEnabled(true);
-            }
+            setEnabled(extensionLlm.isConfigured());
             return true;
         }
         return false;

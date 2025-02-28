@@ -73,7 +73,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
 
         extensionHook.getHookView().addOptionPanel(getOptionsPanel());
         extensionHook.addOptionsParamSet(getOptionsParam());
-        extensionHook.getHookMenu().addImportMenuItem(getMenuLLM());
+        extensionHook.getHookMenu().addImportMenuItem(getMenuLlm());
         extensionHook.getHookMenu().addPopupMenuItem(getCheckLlmMenu());
 
         extensionHook.addSessionListener(
@@ -113,7 +113,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
         }
     }
 
-    private ZapMenuItem getMenuLLM() {
+    private ZapMenuItem getMenuLlm() {
         if (menuLLM == null) {
             menuLLM = new ZapMenuItem("llm.topmenu.import.importOpenAPI");
             menuLLM.setToolTipText(
@@ -162,12 +162,11 @@ public class ExtensionLlm extends ExtensionAdaptor {
     @Override
     public void optionsLoaded() {
         super.optionsLoaded();
-        boolean enabled = !StringUtils.isEmpty(this.llmOptionsParam.getApiKey());
-        setLLMExtEnabled(enabled);
+        setLlmExtEnabled(isConfigured());
     }
 
-    public void setLLMExtEnabled(boolean enable) {
-        getMenuLLM().setEnabled(enable);
+    public void setLlmExtEnabled(boolean enable) {
+        getMenuLlm().setEnabled(enable);
         getCheckLlmMenu().setEnabled(enable);
     }
 }

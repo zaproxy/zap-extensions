@@ -20,22 +20,19 @@
 package org.zaproxy.addon.llm.communication;
 
 import dev.langchain4j.model.output.structured.Description;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
 public class HttpRequestList {
 
     @Description("List of HTTP request objects")
+    @Getter
+    @Setter
     private List<HttpRequest> requests;
 
     public HttpRequestList(List<HttpRequest> requests) {
-        this.requests = requests;
-    }
-
-    public List<HttpRequest> getRequests() {
-        return requests;
-    }
-
-    public void setRequests(List<HttpRequest> requests) {
         this.requests = requests;
     }
 
