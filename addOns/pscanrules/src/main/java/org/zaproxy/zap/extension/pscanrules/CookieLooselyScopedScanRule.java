@@ -33,12 +33,6 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.CookieUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-/**
- * A port from a Watcher passive scanner (http://websecuritytool.codeplex.com/) rule {@code
- * CasabaSecurity.Web.Watcher.Checks.CheckPasvCookieLooselyScope}
- *
- * <p>http://websecuritytool.codeplex.com/SourceControl/changeset/view/17f2e3ded58f#Watcher%20Check%20Library%2fCheck.Pasv.Cookie.LooselyScoped.cs
- */
 public class CookieLooselyScopedScanRule extends PluginPassiveScanner
         implements CommonPassiveScanRuleInfo {
 
@@ -76,88 +70,52 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner
             }
         }
 
-        // raise alert if have found any loosely scoped cookies
-        if (looselyScopedCookies.size() > 0) {
+        // raise an alert if any loosely scoped cookies were found
+        if (!looselyScopedCookies.isEmpty()) {
             buildAlert(host, looselyScopedCookies).raise();
         }
     }
 
     /*
      * Determines whether the specified cookie is loosely scoped by
-     * checking it's Domain attribute value against the host
+     * checking its Domain attribute value against the origin domain
+     *
+     * Compliant with RFC 6265 (https://datatracker.ietf.org/doc/html/rfc6265#section-4.1.2.3).
      */
-    private static boolean isLooselyScopedCookie(HttpCookie cookie, String host) {
+    private static boolean isLooselyScopedCookie(HttpCookie cookie, String originDomain) {
         // preconditions
         assert cookie != null;
-        assert host != null;
+        assert originDomain != null;
 
         String cookieDomain = cookie.getDomain();
 
-        // if Domain attribute hasn't been specified, the cookie
-        // is scoped with the response host
+        // No problem here since by default the cookie is
+        // scoped to the origin, not including subdomains
         if (cookieDomain == null || cookieDomain.isEmpty()) {
             return false;
         }
 
-        // Split cookie domain into sub-domains
-        String[] cookieDomains = cookie.getDomain().split("\\.");
-        // Split host FQDN into sub-domains
-        String[] hostDomains = host.split("\\.");
+        cookieDomain = cookieDomain.toLowerCase();
+        originDomain = originDomain.toLowerCase();
 
-        boolean isFromTheSameDomain = isCookieAndHostHaveTheSameDomain(cookieDomains, hostDomains);
-        if (!isFromTheSameDomain) {
-            return true;
-        }
-        // if cookie domain doesn't start with '.', and the domain is
-        // not a second-level domain (example.com), the cookie Domain and
-        // host values should match exactly
-        if (!cookieDomain.startsWith(".") && cookieDomains.length >= 2 && !isFromTheSameDomain) {
-            return !cookieDomain.equals(host);
+        // If the cookie domain starts with a leading dot,
+        // remove it as per RFC (ignore the dot)
+        if (cookieDomain.startsWith(".")) {
+            cookieDomain = cookieDomain.substring(1);
         }
 
-        // otherwise, remove the '.' and compare the result with the host
-        if (cookieDomains.length != 2) {
-            cookieDomains = cookieDomain.substring(1).split("\\.");
-        }
-
-        // loosely scoped domain name should have fewer sub-domains
-        if (cookieDomains.length == 0 || cookieDomains.length >= hostDomains.length) {
+        // According to the RFC, the cookie domain must either be the same as
+        // the origin domain or a higher-order domain. Therefore, if the cookieDomain
+        // is more specific (lower order) than the originDomain, the cookie is invalid
+        // and cannot be considered loosely scoped.
+        if (cookieDomain.equals(originDomain) || cookieDomain.length() > originDomain.length()) {
             return false;
         }
 
-        // and those sub-domains should match the right most sub-domains of the
-        // origin domain name
-        for (int i = 1; i <= cookieDomains.length; i++) {
-            if (!cookieDomains[cookieDomains.length - i].equalsIgnoreCase(
-                    hostDomains[hostDomains.length - i])) {
-                return false;
-            }
-        }
-
-        // so, the right-most domains matched, the cookie is loosely scoped
-        return true;
-    }
-
-    private static boolean isCookieAndHostHaveTheSameDomain(
-            String[] cookieDomains, String[] hostDomains) {
-        if (cookieDomains == null
-                || hostDomains == null
-                || cookieDomains[0].equalsIgnoreCase("null")
-                || hostDomains[0].equalsIgnoreCase(
-                        "null")) { // this happens  when we don't have any host domain
-            return true;
-        }
-        if (!cookieDomains[cookieDomains.length - 1].equalsIgnoreCase(
-                hostDomains[hostDomains.length - 1])) {
-            return false;
-        }
-        if (cookieDomains.length < 2
-                || hostDomains.length < 2
-                || !cookieDomains[cookieDomains.length - 2].equalsIgnoreCase(
-                        hostDomains[hostDomains.length - 2])) {
-            return false;
-        }
-        return true;
+        // If the cookie domain is a higher-order domain
+        // (cookieDomain is "example.com", originDomain is "sub.example.com")
+        // it is considered loosely scoped
+        return originDomain.endsWith("." + cookieDomain);
     }
 
     private AlertBuilder buildAlert(String host, List<HttpCookie> looselyScopedCookies) {
