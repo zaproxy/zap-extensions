@@ -469,7 +469,7 @@ public class AuthUtils {
         boolean pwdAdded = false;
 
         Iterator<AuthenticationStep> it = steps.stream().sorted().iterator();
-        for (; it.hasNext(); ) {
+        while (it.hasNext()) {
             AuthenticationStep step = it.next();
             if (!step.isEnabled()) {
                 continue;
@@ -537,7 +537,7 @@ public class AuthUtils {
                 sendReturn(diags, wd, pwdField);
             }
 
-            for (; it.hasNext(); ) {
+            while (it.hasNext()) {
                 AuthenticationStep step = it.next();
                 if (!step.isEnabled()) {
                     continue;
@@ -555,18 +555,15 @@ public class AuthUtils {
             incStatsCounter(loginPageUrl, AUTH_BROWSER_PASSED_STATS);
             AuthUtils.sleep(TimeUnit.SECONDS.toMillis(waitInSecs));
 
-            if (context != null) {
-                if (context.getAuthenticationMethod().getPollUrl() == null) {
-                    // We failed to identify a suitable URL for polling.
-                    // This can happen for more traditional apps - refresh the current one in case
-                    // its a good option.
-                    wd.get(wd.getCurrentUrl());
-                    AuthUtils.sleep(TimeUnit.SECONDS.toMillis(1));
-                    diags.recordStep(
-                            wd,
-                            Constant.messages.getString(
-                                    "authhelper.auth.method.diags.steps.refresh"));
-                }
+            if (context != null && context.getAuthenticationMethod().getPollUrl() == null) {
+                // We failed to identify a suitable URL for polling.
+                // This can happen for more traditional apps - refresh the current one in case
+                // its a good option.
+                wd.get(wd.getCurrentUrl());
+                AuthUtils.sleep(TimeUnit.SECONDS.toMillis(1));
+                diags.recordStep(
+                        wd,
+                        Constant.messages.getString("authhelper.auth.method.diags.steps.refresh"));
             }
             return true;
         }
@@ -755,7 +752,7 @@ public class AuthUtils {
             } catch (JSONException e) {
                 LOGGER.debug(
                         "Unable to parse authentication response body from {} as JSON: {} ",
-                        msg.getRequestHeader().getURI().toString(),
+                        msg.getRequestHeader().getURI(),
                         responseData,
                         e);
             }
@@ -784,7 +781,7 @@ public class AuthUtils {
                     String hv =
                             header.getValue()
                                     .replace(token.getValue(), "{%" + token.getToken() + "%}");
-                    list.add(new Pair<String, String>(header.getName(), hv));
+                    list.add(new Pair<>(header.getName(), hv));
                 }
             }
         }
@@ -817,7 +814,7 @@ public class AuthUtils {
             } catch (JSONException e) {
                 LOGGER.debug(
                         "Unable to parse authentication response body from {} as JSON: {}",
-                        msg.getRequestHeader().getURI().toString(),
+                        msg.getRequestHeader().getURI(),
                         responseData);
             }
         }
@@ -949,15 +946,15 @@ public class AuthUtils {
 
     private static void extractJsonTokens(
             Object obj, String parent, Map<String, SessionToken> tokens) {
-        if (obj instanceof JSONObject) {
-            extractJsonTokens((JSONObject) obj, parent, tokens);
-        } else if (obj instanceof JSONArray) {
-            Object[] oa = ((JSONArray) obj).toArray();
+        if (obj instanceof JSONObject jsonObj) {
+            extractJsonTokens(jsonObj, parent, tokens);
+        } else if (obj instanceof JSONArray jsonArr) {
+            Object[] oa = (jsonArr.toArray());
             for (int i = 0; i < oa.length; i++) {
                 extractJsonTokens(oa[i], parent + "[" + i + "]", tokens);
             }
-        } else if (obj instanceof String) {
-            addToMap(tokens, new SessionToken(SessionToken.JSON_SOURCE, parent, (String) obj));
+        } else if (obj instanceof String str) {
+            addToMap(tokens, new SessionToken(SessionToken.JSON_SOURCE, parent, str));
         }
     }
 

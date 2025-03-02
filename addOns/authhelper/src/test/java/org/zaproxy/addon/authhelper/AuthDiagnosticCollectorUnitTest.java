@@ -46,7 +46,7 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
     private StringBuilder sb;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         adc = new AuthDiagnosticCollector();
         sb = new StringBuilder();
         adc.setCollector(str -> sb.append(str));
@@ -76,7 +76,7 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotLogMsgIfDisabled() throws Exception {
+    void shouldNotLogMsgIfDisabled() {
         // Given / When
         adc.onHttpResponseReceive(new HttpMessage(), 1, null);
 
@@ -106,7 +106,7 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldAppendCookies() throws Exception {
+    void shouldAppendCookies() {
         // Given
         List<HttpCookie> cookies = new ArrayList<>();
         cookies.add(new HttpCookie("name", "someValue"));
@@ -129,9 +129,9 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldAppendStructuredData() throws Exception {
+    void shouldAppendStructuredData() {
         // Given
-        StringBuilder sb = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         HttpHeader header = new HttpRequestHeader();
         HttpBody body = new HttpRequestBody();
 
@@ -140,18 +140,18 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
                 "[{\"user\":\"test@test.com\",\"password\":\"password123\"},{\"xxx\":\"yyy\"}]");
 
         // When
-        adc.appendStructuredData(header, body, sb);
+        adc.appendStructuredData(header, body, builder);
 
         // Then
         assertThat(
-                sb.toString(),
+                builder.toString(),
                 is(
                         equalTo(
                                 "\n[{\"user\":\"token0\",\"password\":\"token1\"},{\"xxx\":\"token2\"}]\n")));
     }
 
     @Test
-    void shouldNotAppendNonJsonData() throws Exception {
+    void shouldNotAppendNonJsonData() {
         // Given
         HttpHeader header = new HttpRequestHeader();
         HttpBody body = new HttpRequestBody();
@@ -168,7 +168,7 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldAppendExactHeaders() throws Exception {
+    void shouldAppendExactHeaders() {
         // Given
         HttpHeader header = new HttpRequestHeader();
 
@@ -184,7 +184,7 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldAppendSanitisedHeaders() throws Exception {
+    void shouldAppendSanitisedHeaders() {
         // Given
         HttpHeader header = new HttpRequestHeader();
 
@@ -200,7 +200,7 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnSanitisedSimpleJsonObject() throws Exception {
+    void shouldReturnSanitisedSimpleJsonObject() {
         // Given
         String jsonStr = "{\"user\":\"test@test.com\",\"password\":\"password123\"}";
         JSONObject json = JSONObject.fromObject(jsonStr);
@@ -213,7 +213,7 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnSanitisedSimpleJsonArray() throws Exception {
+    void shouldReturnSanitisedSimpleJsonArray() {
         // Given
         String jsonStr = "[{\"user\":\"test@test.com\",\"password\":\"password123\"}]";
         JSONArray json = JSONArray.fromObject(jsonStr);
