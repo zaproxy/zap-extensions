@@ -280,7 +280,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
         return parameter;
     }
 
-    private void updateContextAuth(
+    private static void updateContextAuth(
             Context context, AuthenticationRequestDetails ard, HttpMessage msg) {
 
         PostBasedAuthenticationMethodType methodType;
