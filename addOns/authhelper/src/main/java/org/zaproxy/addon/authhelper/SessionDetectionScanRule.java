@@ -153,7 +153,7 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                 LOGGER.debug(
                         "Failed to find source of session management tokens in {}:",
                         msg.getRequestHeader().getURI());
-                requestTokens.forEach((st) -> LOGGER.debug("Missed token {}", st.getToken()));
+                requestTokens.forEach(st -> LOGGER.debug("Missed token {}", st.getToken()));
             }
         }
     }

@@ -84,7 +84,7 @@ public class StepsPanel {
         return stepsModel.getElements();
     }
 
-    private <T> AuthenticationStep showAddDialogue(
+    private AuthenticationStep showAddDialogue(
             AbstractMultipleOptionsBaseTableModel<AuthenticationStep> model) {
         if (addDialog == null) {
             addDialog = new DialogAddStep(parent);
@@ -99,7 +99,7 @@ public class StepsPanel {
         return elem;
     }
 
-    private <T> AuthenticationStep showModifyDialogue(
+    private AuthenticationStep showModifyDialogue(
             AbstractMultipleOptionsBaseTableModel<AuthenticationStep> model, AuthenticationStep e) {
         if (modifyDialog == null) {
             modifyDialog = new DialogModifyStep(parent);
@@ -311,8 +311,8 @@ public class StepsPanel {
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            if (getEffectiveColumnIndex(columnIndex) == 0 && aValue instanceof Boolean) {
-                steps.get(rowIndex).setEnabled(((Boolean) aValue).booleanValue());
+            if (getEffectiveColumnIndex(columnIndex) == 0 && aValue instanceof Boolean val) {
+                steps.get(rowIndex).setEnabled(val.booleanValue());
                 fireTableCellUpdated(rowIndex, columnIndex);
             }
         }

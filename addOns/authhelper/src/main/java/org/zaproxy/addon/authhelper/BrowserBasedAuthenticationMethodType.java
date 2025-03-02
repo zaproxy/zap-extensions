@@ -158,10 +158,10 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             HttpSender temp = getHttpSender();
             Object obj = MethodUtils.invokeMethod(temp, true, "getContext");
 
-            if (obj instanceof HttpSenderContextApache) {
+            if (obj instanceof HttpSenderContextApache hsca) {
                 return FieldUtils.readField(
                         HttpSenderContextApache.class.getDeclaredField("localCookieStore"),
-                        (HttpSenderContextApache) obj,
+                        hsca,
                         true);
             }
         } catch (Exception e) {
@@ -370,7 +370,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                         user.setAuthenticatedSession(session);
                     }
 
-                    AuthUtils.checkLoginLinkVerification(httpSender, user, session, loginPageUrl);
+                    AuthUtils.checkLoginLinkVerification(httpSender, user, loginPageUrl);
 
                     if (this.isAuthenticated(authMsg, user, true)) {
                         diags.recordStep(
@@ -712,43 +712,36 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
             // Add behaviour for Node Select dialog
             selectButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            NodeSelectDialog nsd =
-                                    new NodeSelectDialog(View.getSingleton().getMainFrame());
-                            // Try to pre-select the node according to what has been inserted in the
-                            // fields
-                            SiteNode node = null;
-                            if (loginUrlField.getText().trim().length() > 0)
-                                try {
-                                    node =
-                                            Model.getSingleton()
-                                                    .getSession()
-                                                    .getSiteTree()
-                                                    .findNode(
-                                                            new URI(
-                                                                    loginUrlField.getText(),
-                                                                    false));
-                                } catch (Exception e2) {
-                                    // Ignore. It means we could not properly get a node for the
-                                    // existing
-                                    // value and does not have any harmful effects
-                                }
+                    e -> {
+                        NodeSelectDialog nsd =
+                                new NodeSelectDialog(View.getSingleton().getMainFrame());
+                        // Try to pre-select the node according to what has been inserted in the
+                        // fields
+                        SiteNode node = null;
+                        if (!loginUrlField.getText().trim().isEmpty())
+                            try {
+                                node =
+                                        Model.getSingleton()
+                                                .getSession()
+                                                .getSiteTree()
+                                                .findNode(new URI(loginUrlField.getText(), false));
+                            } catch (Exception e2) {
+                                // Ignore. It means we could not properly get a node for the
+                                // existing value and does not have any harmful effects
+                            }
 
-                            // Show the dialog and wait for input
-                            node = nsd.showDialog(node);
-                            if (node != null && node.getHistoryReference() != null) {
-                                try {
-                                    LOGGER.debug(
-                                            "Selected Browser Based Auth Login URL via dialog: {}",
-                                            node.getHistoryReference().getURI());
+                        // Show the dialog and wait for input
+                        node = nsd.showDialog(node);
+                        if (node != null && node.getHistoryReference() != null) {
+                            try {
+                                LOGGER.debug(
+                                        "Selected Browser Based Auth Login URL via dialog: {}",
+                                        node.getHistoryReference().getURI());
 
-                                    loginUrlField.setText(
-                                            node.getHistoryReference().getURI().toString());
-                                } catch (Exception e1) {
-                                    LOGGER.error(e1.getMessage(), e1);
-                                }
+                                loginUrlField.setText(
+                                        node.getHistoryReference().getURI().toString());
+                            } catch (Exception e1) {
+                                LOGGER.error(e1.getMessage(), e1);
                             }
                         }
                     });
