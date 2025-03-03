@@ -24,9 +24,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -348,22 +349,87 @@ class ExitStatusJobUnitTest extends TestUtils {
         assertThat(ExtensionAutomation.getExitOverride(), is(equalTo(Integer.parseInt(exitcode))));
     }
 
-    private JobResultData getTestData(String alertLevel) {
-        Alert alert = new Alert(-1, JobUtils.parseAlertRisk(alertLevel), 2, "test");
+    @ParameterizedTest
+    @CsvSource({
+        "HIGH,MEDIUM,4",
+        "medium,medium,3",
+        "low,medium,2",
+        "High,False Positive,0",
+        "Medium,False Positive,0",
+        "Low,False Positive,0"
+    })
+    void shouldSetExitCodeExcludingFalsePositive(
+            String alertrisk, String confidence, String exitcode) {
+        // Given
+        ExitStatusJob job = new ExitStatusJob();
+        AutomationProgress progress = new AutomationProgress();
+        progress.addJobResultData(getTestData(alertrisk, confidence, true, false));
 
-        JobResultData data =
-                new JobResultData("test") {
+        // When
+        job.getParameters().setOkExitValue(Integer.parseInt(exitcode) > 0 ? 2 : 0);
+        job.getParameters().setWarnExitValue(3);
+        job.getParameters().setErrorExitValue(4);
+        job.getParameters().setErrorLevel("high");
+        job.getParameters().setWarnLevel("medium");
+        job.verifyParameters(progress);
+        job.runJob(new AutomationEnvironment(progress), progress);
 
-                    @Override
-                    public String getKey() {
-                        return "test";
-                    }
+        // Then
+        assertThat(ExtensionAutomation.getExitOverride(), is(equalTo(Integer.parseInt(exitcode))));
+    }
 
-                    @Override
-                    public Collection<Alert> getAllAlertData() {
-                        return Arrays.asList(alert);
-                    }
-                };
-        return data;
+    @Test
+    void shouldSetExitCodeBasedOnAlerts() {
+        // Given
+        ExitStatusJob job = new ExitStatusJob();
+        AutomationProgress progress = new AutomationProgress();
+        progress.addJobResultData(getTestData("medium", "false positive", true, true));
+        // When
+        job.getParameters().setOkExitValue(1);
+        job.getParameters().setWarnExitValue(2);
+        job.getParameters().setErrorExitValue(3);
+        job.getParameters().setErrorLevel("high");
+        job.getParameters().setWarnLevel("medium");
+        job.verifyParameters(progress);
+        job.runJob(new AutomationEnvironment(progress), progress);
+        // Then
+        assertThat(ExtensionAutomation.getExitOverride(), is(equalTo(3)));
+    }
+
+    private static JobResultData getTestData(String alertLevel) {
+        return getTestData(alertLevel, "Medium", true, false);
+    }
+
+    private static JobResultData getTestData(
+            String alertLevel,
+            String confidence,
+            boolean includeBaseAlert,
+            boolean includeExtraAlerts) {
+        Alert alert =
+                new Alert(
+                        -1,
+                        JobUtils.parseAlertRisk(alertLevel),
+                        JobUtils.parseAlertConfidence(confidence),
+                        "test");
+
+        return new JobResultData("test") {
+
+            @Override
+            public String getKey() {
+                return "test";
+            }
+
+            @Override
+            public Collection<Alert> getAllAlertData() {
+                List<Alert> alertList = new ArrayList<>();
+                if (includeBaseAlert) {
+                    alertList.add(alert);
+                }
+                if (includeExtraAlerts) {
+                    alertList.add(new Alert(-1, 3, 3, "test"));
+                }
+                return alertList;
+            }
+        };
     }
 }

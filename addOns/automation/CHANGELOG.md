@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Allow to use variables for the TOTP data.
 - Allow to enable diagnostics for Client Script and Browser Based Authentication methods.
 
+### Fixed
+- Ensure that the Exit Status job accounts for False Positive alerts (Issue 8875).
+
 ## [0.47.0] - 2025-02-12
 ### Added
 - Method to get the YAML representation of a plan.
