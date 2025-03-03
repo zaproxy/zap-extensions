@@ -59,7 +59,7 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
     @Override
     public void onHttpResponseReceive(HttpMessage msg, int initiator, HttpSender sender) {
 
-        if (!enabled || collector == null || !isRelevant(msg)) {
+        if (!enabled || collector == null || !AuthUtils.isRelevantToAuthDiags(msg)) {
             return;
         }
 
@@ -230,27 +230,6 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
         } else {
             return obj;
         }
-    }
-
-    protected boolean isRelevant(HttpMessage msg) {
-        if (msg.getRequestHeader().isCss() || msg.getRequestHeader().isImage()) {
-            return false;
-        }
-        if (msg.getResponseHeader().isCss()
-                || msg.getResponseHeader().isImage()
-                || msg.getResponseHeader().isJavaScript()) {
-            return false;
-        }
-        String url = msg.getRequestHeader().getURI().toString().toLowerCase();
-        // Strip out a few requests that can be expected to be unrelated
-        if (url.contains("clients2.google")
-                || url.contains("detectportal.firefox")
-                || url.contains("google-analytics")
-                || url.contains("mozilla")
-                || url.contains("safebrowsing-cache")) {
-            return false;
-        }
-        return true;
     }
 
     public void setEnabled(boolean enable) {

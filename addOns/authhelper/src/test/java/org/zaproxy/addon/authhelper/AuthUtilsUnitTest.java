@@ -797,6 +797,80 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
     }
 
+    @ParameterizedTest
+    @CsvSource({
+        "https://www.example.com, true",
+        "https://www.example.com/page.html, true",
+        "https://www.example.com/page.html?type=x.css, true",
+        "https://www.example.com/page.css, false",
+        "https://www.example.com/page.png, false",
+        "https://www.example.com/page.jpg, false",
+        "https://www.example.com/page.jpeg?aaa=bbb, false",
+    })
+    void shouldReportRelevantRequestHeaderUrlToAuthDiags(String url, String result)
+            throws Exception {
+        // Given
+        HttpRequestHeader header = new HttpRequestHeader();
+        header.setURI(new URI(url, true));
+        HttpMessage msg = new HttpMessage(header, new HttpRequestBody());
+
+        // When
+        boolean res = AuthUtils.isRelevantToAuthDiags(msg);
+
+        // Then
+        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "https://www.example.com, true",
+        "https://www.clients2.google.com, false",
+        "https://www.detectportal.firefox.com, false",
+        "https://google-analytics.com, false",
+        "https://www.mozilla.com, false",
+        "https://www.safebrowsing-cache.co.uk, false",
+    })
+    void shouldReportRelevantHostsToAuthDiags(String url, String result) throws Exception {
+        // Given
+        HttpRequestHeader header = new HttpRequestHeader();
+        header.setURI(new URI(url, true));
+        HttpMessage msg = new HttpMessage(header, new HttpRequestBody());
+
+        // When
+        boolean res = AuthUtils.isRelevantToAuthDiags(msg);
+
+        // Then
+        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "text/html, true",
+        "app/random, true",
+        "app/css, false",
+        "app/Image, false",
+        "app/JavaScript, false",
+    })
+    void shouldReportRelevantResponseHeaderTypeToAuthDiags(String type, String result)
+            throws Exception {
+        // Given
+        HttpResponseHeader header = new HttpResponseHeader();
+        header.setHeader(HttpHeader.CONTENT_TYPE, type);
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(),
+                        new HttpRequestBody(),
+                        header,
+                        new HttpResponseBody());
+        msg.getRequestHeader().setURI(new URI("https://www.example.com", true));
+
+        // When
+        boolean res = AuthUtils.isRelevantToAuthDiags(msg);
+
+        // Then
+        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
+    }
+
     static class BrowserTest extends TestUtils {
 
         @RegisterExtension static SeleniumJupiter seleniumJupiter = new SeleniumJupiter();
