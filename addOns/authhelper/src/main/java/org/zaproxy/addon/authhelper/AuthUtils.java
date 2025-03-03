@@ -1163,4 +1163,19 @@ public class AuthUtils {
                 || ResourceIdentificationUtils.isCss(msg)
                 || ResourceIdentificationUtils.isJavaScript(msg));
     }
+
+    public static boolean isRelevantToAuthDiags(HttpMessage msg) {
+        if (!isRelevantToAuth(msg)) {
+            return false;
+        }
+
+        String host =
+                new String(msg.getRequestHeader().getURI().getRawHost()).toLowerCase(Locale.ROOT);
+        // Strip out a few requests that can be expected to be unrelated
+        return !(host.contains("clients2.google")
+                || host.contains("detectportal.firefox")
+                || host.contains("google-analytics")
+                || host.contains("mozilla")
+                || host.contains("safebrowsing-cache"));
+    }
 }

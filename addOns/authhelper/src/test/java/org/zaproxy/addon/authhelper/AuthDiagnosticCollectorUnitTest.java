@@ -31,8 +31,6 @@ import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -225,77 +223,5 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
 
         // Then
         assertThat(res.toString(), is(equalTo("[{\"user\":\"token0\",\"password\":\"token1\"}]")));
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-        "https://www.example.com, true",
-        "https://www.example.com/page.html, true",
-        "https://www.example.com/page.html?type=x.css, true",
-        "https://www.example.com/page.css, false",
-        "https://www.example.com/page.png, false",
-        "https://www.example.com/page.jpg, false",
-        "https://www.example.com/page.jpeg?aaa=bbb, false",
-    })
-    void shouldReportRelevantRequestHeaderUrl(String url, String result) throws Exception {
-        // Given
-        HttpRequestHeader header = new HttpRequestHeader();
-        header.setURI(new URI(url, true));
-        HttpMessage msg = new HttpMessage(header, new HttpRequestBody());
-
-        // When
-        boolean res = adc.isRelevant(msg);
-
-        // Then
-        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-        "https://www.example.com, true",
-        "https://www.clients2.google.com, false",
-        "https://www.detectportal.firefox.com, false",
-        "https://google-analytics.com, false",
-        "https://www.mozilla.com, false",
-        "https://www.safebrowsing-cache.co.uk, false",
-    })
-    void shouldReportRelevantHosts(String url, String result) throws Exception {
-        // Given
-        HttpRequestHeader header = new HttpRequestHeader();
-        header.setURI(new URI(url, true));
-        HttpMessage msg = new HttpMessage(header, new HttpRequestBody());
-
-        // When
-        boolean res = adc.isRelevant(msg);
-
-        // Then
-        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-        "text/html, true",
-        "app/random, true",
-        "app/css, false",
-        "app/Image, false",
-        "app/JavaScript, false",
-    })
-    void shouldReportRelevantResponseHeaderType(String type, String result) throws Exception {
-        // Given
-        HttpResponseHeader header = new HttpResponseHeader();
-        header.setHeader(HttpHeader.CONTENT_TYPE, type);
-        HttpMessage msg =
-                new HttpMessage(
-                        new HttpRequestHeader(),
-                        new HttpRequestBody(),
-                        header,
-                        new HttpResponseBody());
-        msg.getRequestHeader().setURI(new URI("https://www.example.com", true));
-
-        // When
-        boolean res = adc.isRelevant(msg);
-
-        // Then
-        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
     }
 }
