@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Themes are once again properly taken into account when generating reports (Issue 8854).
+
 ### Added
 - Allow report data to be cleaned up after the report generation.
 - Allow reports to read HTTP messages through the report helper.
