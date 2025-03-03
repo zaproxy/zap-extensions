@@ -155,7 +155,7 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
     }
 
     @Test
-    void shouldRaiseAlertIfHostDomainIsDifferentFromCookieDomain() throws Exception {
+    void shouldNotRaiseAlertIfHostDomainIsDifferentFromCookieDomain() throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://dev.test.org HTTP/1.1");
@@ -166,7 +166,7 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
         scanHttpResponseReceive(msg);
 
         // Then
-        assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.size(), is(0));
     }
 
     @Test
@@ -234,6 +234,34 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://test.example.com/admin/roles HTTP/1.1");
         msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=.example.com");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+    }
+
+    @Test
+    void shouldNotRaiseAlertForExactMatchIgnoringLeadingDot() throws Exception {
+        // Given
+        HttpMessage msg = createBasicMessage();
+        msg.setRequestHeader("GET http://test.com HTTP/1.1");
+        msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=.test.com;");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
+    void shouldRaiseAlertForNestedSubdomainIfCookieDomainIsHigherOrder() throws Exception {
+        // Given
+        HttpMessage msg = createBasicMessage();
+        msg.setRequestHeader("GET http://deep.sub.example.com HTTP/1.1");
+        msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=example.com;");
 
         // When
         scanHttpResponseReceive(msg);
