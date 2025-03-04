@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - External Redirect scan rule to regenerate anti CSRF tokens.
 
+### Changed
+- Scan rules which execute time based attacks now include the "TEST_TIMING" alert tag.
+
 ## [70] - 2025-01-09
 ### Changed
 - Update minimum ZAP version to 2.16.0.
