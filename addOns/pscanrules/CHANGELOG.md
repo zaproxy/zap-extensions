@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [63] - 2025-03-04
 ### Fixed
 - Refactored Loosely Scoped Cookie to comply with the latest RFC standards and streamline the loosely scoped cookie check (Issue 8863).
 - The Absence of Anti-CSRF Tokens scan rule now only considers forms with GET method at Low Threshold. (Forms submitted via GET, not forms delivered via GET.)
@@ -602,6 +602,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[63]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v63
 [62]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v62
 [61]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v61
 [60]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v60

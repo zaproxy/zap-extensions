@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [71] - 2025-03-04
 ### Fixed
 - External Redirect scan rule to regenerate anti CSRF tokens.
 
@@ -576,6 +576,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[71]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v71
 [70]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v70
 [69]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v69
 [68]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v68
