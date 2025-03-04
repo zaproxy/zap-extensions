@@ -166,7 +166,7 @@ public class Repo {
                                 new Result(repoEntry.getKey(), hashEntry.getValue(), vulnData, "");
                         result.setOtherinfo(
                                 Constant.messages.getString(
-                                        "retire.rule.otherinfo", hashEntry.getKey()));
+                                        "retire.rule.otherinfo.hash", hashEntry.getKey()));
                         return result;
                     }
                 }
