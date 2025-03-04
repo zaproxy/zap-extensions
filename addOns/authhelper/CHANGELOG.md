@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.23.0] - 2025-03-04
 ### Added
 - If authentication fails then try to find a likely looking login link.
 - Persist diagnostics to the session and include it in the Authentication Report (JSON) for Client Script and Browser Based Authentication methods.
@@ -170,6 +170,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.23.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.23.0
 [0.22.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.20.0

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.48.0] - 2025-03-04
 ### Changed
 - Allow to use variables for the TOTP data.
 - Allow to enable diagnostics for Client Script and Browser Based Authentication methods.
@@ -478,6 +478,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.48.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.48.0
 [0.47.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.47.0
 [0.46.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.46.0
 [0.45.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.45.0
