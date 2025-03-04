@@ -372,6 +372,8 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                         user.setAuthenticatedSession(session);
                     }
 
+                    AuthUtils.checkLoginLinkVerification(httpSender, user, session, loginPageUrl);
+
                     if (this.isAuthenticated(authMsg, user, true)) {
                         diags.recordStep(
                                 authMsg,

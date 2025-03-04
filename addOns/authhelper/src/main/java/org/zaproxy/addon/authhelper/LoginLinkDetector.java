@@ -21,6 +21,9 @@ package org.zaproxy.addon.authhelper;
 
 import java.util.List;
 import java.util.Locale;
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -46,6 +49,28 @@ public class LoginLinkDetector {
 
     private static boolean elementContainsText(WebElement element, List<String> searchTexts) {
         String txt = element.getText().toLowerCase(Locale.ROOT);
+        return searchTexts.stream().anyMatch(txt::contains);
+    }
+
+    public static List<Element> getLoginLinks(Source src, List<String> loginLabels) {
+        // Try finding links first
+        List<Element> loginLinks = findElementsByTagAndLabels(src, HTMLElementName.A, loginLabels);
+        if (!loginLinks.isEmpty()) {
+            return loginLinks;
+        }
+        // If no links found, try buttons
+        return findElementsByTagAndLabels(src, HTMLElementName.BUTTON, loginLabels);
+    }
+
+    private static List<Element> findElementsByTagAndLabels(
+            Source src, String tag, List<String> labels) {
+        return src.getAllElements(tag).stream()
+                .filter(element -> elementContainsText(element, labels))
+                .toList();
+    }
+
+    private static boolean elementContainsText(Element element, List<String> searchTexts) {
+        String txt = element.getTextExtractor().toString().toLowerCase(Locale.ROOT);
         return searchTexts.stream().anyMatch(txt::contains);
     }
 }
