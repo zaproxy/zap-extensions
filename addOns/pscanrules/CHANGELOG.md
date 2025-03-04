@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [63] - 2025-03-04
 ### Fixed
 - Refactored Loosely Scoped Cookie to comply with the latest RFC standards and streamline the loosely scoped cookie check (Issue 8863).
