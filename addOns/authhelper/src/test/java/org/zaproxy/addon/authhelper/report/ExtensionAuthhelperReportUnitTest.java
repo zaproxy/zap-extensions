@@ -67,7 +67,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 class ExtensionAuthhelperReportUnitTest extends TestUtils {
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         mockMessages(new ExtensionAuthhelper());
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
@@ -80,7 +80,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         Constant.PROGRAM_VERSION = "Test Build";
     }
 
-    private ReportData getGenericReportData(String templateName) {
+    private static ReportData getGenericReportData(String templateName) {
         ReportData reportData = new ReportData(templateName);
         reportData.setTitle("Test Title");
         reportData.setDescription("Test Description");
@@ -302,7 +302,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldIgnoreNonAuthReport() throws Exception {
+    void shouldIgnoreNonAuthReport() {
         // Given
         ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
                 new ExtensionAuthhelperReport.AuthReportDataHandler();
@@ -316,7 +316,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotErrorIfNoContexts() throws Exception {
+    void shouldNotErrorIfNoContexts() {
         // Given
         ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
                 new ExtensionAuthhelperReport.AuthReportDataHandler();
@@ -334,7 +334,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReportPassingCase() throws Exception {
+    void shouldReportPassingCase() {
         // Given
         String site = "https://www.example.com";
         ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
@@ -386,7 +386,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReportFailingCase() throws Exception {
+    void shouldReportFailingCase() {
         // Given
         String site = "https://www.example.com";
         ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =

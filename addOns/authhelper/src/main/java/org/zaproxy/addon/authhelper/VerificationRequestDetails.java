@@ -66,14 +66,11 @@ public class VerificationRequestDetails {
                     break;
                 }
                 AuthenticationCredentials creds = user.getAuthenticationCredentials();
-                if (creds instanceof UsernamePasswordAuthenticationCredentials) {
-                    UsernamePasswordAuthenticationCredentials upCreds =
-                            (UsernamePasswordAuthenticationCredentials) creds;
-                    if (responseBody.contains(upCreds.getUsername())) {
-                        containsUserDetails = true;
-                        this.setEvidence(upCreds.getUsername());
-                        break;
-                    }
+                if (creds instanceof UsernamePasswordAuthenticationCredentials upCreds
+                        && responseBody.contains(upCreds.getUsername())) {
+                    containsUserDetails = true;
+                    this.setEvidence(upCreds.getUsername());
+                    break;
                 }
             }
         }
