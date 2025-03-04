@@ -32,9 +32,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.Source;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.WebDriver;
@@ -82,7 +85,7 @@ public class LoginLinkDetectorUnitTest extends TestUtils {
     }
 
     @TestTemplate
-    void shouldReturnNoLinks(WebDriver wd) {
+    void shouldReturnNoWdLinks(WebDriver wd) {
         // Given
         pageContent =
                 () ->
@@ -102,8 +105,27 @@ public class LoginLinkDetectorUnitTest extends TestUtils {
         assertThat(loginLinks.size(), is(equalTo(0)));
     }
 
+    @Test
+    void shouldReturnNoSrcLinks() {
+        // Given
+        String html =
+                """
+                            <input type="text" name="randomA" />
+                            <form>
+                            <input type="text" name="randomB">
+                            <input type="password" name="passw">
+                            </form>
+                         """;
+        // When
+        List<Element> loginLinks =
+                LoginLinkDetector.getLoginLinks(new Source(html), AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(0)));
+    }
+
     @TestTemplate
-    void shouldReturnSimpleLink(WebDriver wd) {
+    void shouldReturnSimpleWdLink(WebDriver wd) {
         // Given
         pageContent =
                 () ->
@@ -126,8 +148,30 @@ public class LoginLinkDetectorUnitTest extends TestUtils {
         assertThat(loginLinks.get(0).getDomProperty("href"), is(equalTo(url + "#login")));
     }
 
+    @Test
+    void shouldReturnSimpleSrcLink() {
+        // Given
+        String html =
+                """
+                            <h1>Heading</h1>
+                            <a href="#link1">Link 1</a>
+                            <a href="#link2">Link 2</a>
+                            <a href="#login">Log in</a>
+                            <a href="#link3">Link 3</a>
+                            <button>Sign in</button>
+                            <div/>
+                         """;
+        // When
+        List<Element> loginLinks =
+                LoginLinkDetector.getLoginLinks(new Source(html), AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(1)));
+        assertThat(loginLinks.get(0).getAttributeValue("href"), is(equalTo("#login")));
+    }
+
     @TestTemplate
-    void shouldReturnMultipleSimpleLinks(WebDriver wd) {
+    void shouldReturnMultipleSimpleWdLinks(WebDriver wd) {
         // Given
         pageContent =
                 () ->
@@ -152,8 +196,32 @@ public class LoginLinkDetectorUnitTest extends TestUtils {
         assertThat(loginLinks.get(1).getDomProperty("href"), is(equalTo(url + "#signin")));
     }
 
+    @Test
+    void shouldReturnMultipleSimpleSrcLinks() {
+        // Given
+        String html =
+                """
+                            <h1>Heading</h1>
+                            <a href="#link1">Link 1</a>
+                            <a href="#login">Log in</a>
+                            <a href="#link2">Link 2</a>
+                            <a href="#signin"> SignIn </a>
+                            <a href="#link3">Link 3</a>
+                            <button>Sign in</button>
+                            <div/>
+                         """;
+        // When
+        List<Element> loginLinks =
+                LoginLinkDetector.getLoginLinks(new Source(html), AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(2)));
+        assertThat(loginLinks.get(0).getAttributeValue("href"), is(equalTo("#login")));
+        assertThat(loginLinks.get(1).getAttributeValue("href"), is(equalTo("#signin")));
+    }
+
     @TestTemplate
-    void shouldReturnLinkWithDeeperText(WebDriver wd) {
+    void shouldReturnLinkWithDeeperWdText(WebDriver wd) {
         // Given
         pageContent =
                 () ->
@@ -176,8 +244,30 @@ public class LoginLinkDetectorUnitTest extends TestUtils {
         assertThat(loginLinks.get(0).getDomProperty("href"), is(equalTo(url + "#login")));
     }
 
+    @Test
+    void shouldReturnLinkWithDeeperSrcText() {
+        // Given
+        String html =
+                """
+                            <h1>Heading</h1>
+                            <a href="#link1">Link 1</a>
+                            <a href="#link2">Link 2</a>
+                            <a href="#login"><div><div></div><div><div>Log in</div></div></a>
+                            <a href="#link3">Link 3</a>
+                            <button>Sign in</button>
+                            <div/>
+                         """;
+        // When
+        List<Element> loginLinks =
+                LoginLinkDetector.getLoginLinks(new Source(html), AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(1)));
+        assertThat(loginLinks.get(0).getAttributeValue("href"), is(equalTo("#login")));
+    }
+
     @TestTemplate
-    void shouldReturnSimpleButton(WebDriver wd) {
+    void shouldReturnSimpleWdButton(WebDriver wd) {
         // Given
         pageContent =
                 () ->
@@ -199,8 +289,29 @@ public class LoginLinkDetectorUnitTest extends TestUtils {
         assertThat(loginLinks.get(0).getDomAttribute("custom"), is(equalTo("test")));
     }
 
+    @Test
+    void shouldReturnSimpleWdButton() {
+        // Given
+        String html =
+                """
+                            <h1>Heading</h1>
+                            <a href="#link1">Link 1</a>
+                            <a href="#link2">Link 2</a>
+                            <a href="#link3">Link 3</a>
+                            <button custom="test">Sign in</button>
+                            <div/>
+                         """;
+        // When
+        List<Element> loginLinks =
+                LoginLinkDetector.getLoginLinks(new Source(html), AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(1)));
+        assertThat(loginLinks.get(0).getAttributeValue("custom"), is(equalTo("test")));
+    }
+
     @TestTemplate
-    void shouldReturnMultipleSimpleButtons(WebDriver wd) {
+    void shouldReturnMultipleSimpleWdButtons(WebDriver wd) {
         // Given
         pageContent =
                 () ->
@@ -225,8 +336,32 @@ public class LoginLinkDetectorUnitTest extends TestUtils {
         assertThat(loginLinks.get(1).getDomAttribute("custom"), is(equalTo("test2")));
     }
 
+    @Test
+    void shouldReturnMultipleSimpleSrcButtons() {
+        // Given
+        String html =
+                """
+                            <h1>Heading</h1>
+                            <a href="#link1">Link 1</a>
+                            <button custom="test1">Sign in</button>
+                            <a href="#link2">Link 2</a>
+                            <button custom="test2">Log In</button>
+                            <a href="#link3">Link 3</a>
+                            <button custom="test3">Log Out</button>
+                            <div/>
+                         """;
+        // When
+        List<Element> loginLinks =
+                LoginLinkDetector.getLoginLinks(new Source(html), AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(2)));
+        assertThat(loginLinks.get(0).getAttributeValue("custom"), is(equalTo("test1")));
+        assertThat(loginLinks.get(1).getAttributeValue("custom"), is(equalTo("test2")));
+    }
+
     @TestTemplate
-    void shouldReturnButtonWithDeeperText(WebDriver wd) {
+    void shouldReturnButtonWithDeeperWdText(WebDriver wd) {
         // Given
         pageContent =
                 () ->
@@ -246,5 +381,26 @@ public class LoginLinkDetectorUnitTest extends TestUtils {
         // Then
         assertThat(loginLinks.size(), is(equalTo(1)));
         assertThat(loginLinks.get(0).getDomAttribute("custom"), is(equalTo("test")));
+    }
+
+    @Test
+    void shouldReturnButtonWithDeeperSrcText() {
+        // Given
+        String html =
+                """
+                            <h1>Heading</h1>
+                            <a href="#link1">Link 1</a>
+                            <a href="#link2">Link 2</a>
+                            <button custom="test"><div><div></div><div><div>Log in</div></div></button>
+                            <a href="#link3">Link 3</a>
+                            <div/>
+                         """;
+        // When
+        List<Element> loginLinks =
+                LoginLinkDetector.getLoginLinks(new Source(html), AuthUtils.LOGIN_LABELS_P1);
+
+        // Then
+        assertThat(loginLinks.size(), is(equalTo(1)));
+        assertThat(loginLinks.get(0).getAttributeValue("custom"), is(equalTo("test")));
     }
 }

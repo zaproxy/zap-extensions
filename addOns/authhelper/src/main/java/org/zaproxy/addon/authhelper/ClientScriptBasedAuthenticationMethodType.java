@@ -386,6 +386,12 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 WebSession session = sessionManagementMethod.extractWebSession(authMsg);
                 user.setAuthenticatedSession(session);
 
+                AuthUtils.checkLoginLinkVerification(
+                        getHttpSender(),
+                        user,
+                        session,
+                        authMsg.getRequestHeader().getURI().toString());
+
                 if (this.isAuthenticated(authMsg, user, true)) {
                     // Let the user know it worked
                     AuthenticationHelper.notifyOutputAuthSuccessful(authMsg);

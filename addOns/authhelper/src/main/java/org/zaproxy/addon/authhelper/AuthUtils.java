@@ -38,7 +38,10 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.Source;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -64,12 +67,17 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
+import org.zaproxy.zap.authentication.AuthenticationHelper;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
+import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
 import org.zaproxy.zap.authentication.AuthenticationMethod.UnsupportedAuthenticationCredentialsException;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.selenium.BrowserHook;
@@ -78,6 +86,7 @@ import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.SessionStructure;
+import org.zaproxy.zap.session.WebSession;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Pair;
 import org.zaproxy.zap.utils.Stats;
@@ -1162,6 +1171,121 @@ public class AuthUtils {
                 || ResourceIdentificationUtils.isFont(msg)
                 || ResourceIdentificationUtils.isCss(msg)
                 || ResourceIdentificationUtils.isJavaScript(msg));
+    }
+
+    /**
+     * If the auth checking strategy is set to auto-detect then this method will try to find a
+     * suitable verification URL. This works best with more traditional web apps where a login link
+     * is returned in HTML. The method first tries the URL without a path before falling back to the
+     * given URL.
+     */
+    public static void checkLoginLinkVerification(
+            HttpSender authSender, User user, WebSession session, String loginUrl) {
+        AuthCheckingStrategy verif =
+                user.getContext().getAuthenticationMethod().getAuthCheckingStrategy();
+        if (!AuthCheckingStrategy.AUTO_DETECT.equals(verif)) {
+            return;
+        }
+        try {
+            URI testUri = new URI(loginUrl, true);
+            if (!StringUtils.isEmpty(testUri.getPath())) {
+                // Try to top level link first, if the page has the login form then its less likely
+                // to have a link to one
+                testUri.setPath("");
+                if (checkLoginLinkVerification(authSender, user, session, testUri)) {
+                    // The top level URL worked :)
+                    return;
+                }
+                testUri = new URI(loginUrl, true);
+            }
+            checkLoginLinkVerification(authSender, user, session, testUri);
+
+        } catch (Exception e) {
+            LOGGER.warn(
+                    "Failed accessing potential login link verification URL {}, {}",
+                    loginUrl,
+                    e.getMessage(),
+                    e);
+        }
+    }
+
+    private static boolean checkLoginLinkVerification(
+            HttpSender authSender, User user, WebSession session, URI testUri) {
+        try {
+            // Send an unauthenticated req to the test site, manually following redirects as needed
+            HttpMessage msg = new HttpMessage(testUri);
+            HttpSender unauthSender = new HttpSender(HttpSender.AUTHENTICATION_HELPER_INITIATOR);
+            unauthSender.sendAndReceive(msg);
+            AuthenticationHelper.addAuthMessageToHistory(msg);
+            int count = 0;
+            while (HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode())) {
+                testUri =
+                        new URI(
+                                msg.getResponseHeader().getHeader(HttpResponseHeader.LOCATION),
+                                true);
+                msg = new HttpMessage(testUri);
+                unauthSender.sendAndReceive(msg);
+                AuthenticationHelper.addAuthMessageToHistory(msg);
+                if (count++ > 50) {
+                    return false;
+                }
+            }
+
+            if (!msg.getResponseHeader().isHtml()) {
+                LOGGER.debug(
+                        "Response to {} is no good as a login link verification req, it is not HTML {}",
+                        testUri,
+                        msg.getResponseHeader().getNormalisedContentTypeValue());
+                return false;
+            }
+            String unauthBody = msg.getResponseBody().toString();
+            Source src = new Source(unauthBody);
+            List<Element> elements = LoginLinkDetector.getLoginLinks(src, LOGIN_LABELS_P1);
+            if (elements.isEmpty()) {
+                elements = LoginLinkDetector.getLoginLinks(src, LOGIN_LABELS_P2);
+            }
+            if (elements.isEmpty()) {
+                return false;
+            }
+            String link = elements.get(0).toString();
+            if (!unauthBody.contains(link)) {
+                LOGGER.debug(
+                        "Response to {} is no good as a login link verification req, no login link found",
+                        testUri);
+                return false;
+            }
+            // We've found a login link, now try an authenticated request
+            HttpMessage authMsg = new HttpMessage(testUri);
+            authSender.sendAndReceive(authMsg, true);
+            AuthenticationHelper.addAuthMessageToHistory(authMsg);
+
+            String authBody = authMsg.getResponseBody().toString();
+            if (authBody.contains(link)) {
+                LOGGER.debug(
+                        "Response to {} is no good as a login link verification req, an authenticated request also includes the link {}",
+                        testUri,
+                        link.toString());
+                return false;
+            }
+            LOGGER.debug(
+                    "Found good login link verification req {}, contains login link {}",
+                    testUri,
+                    link.toString());
+
+            AuthenticationMethod authMethod = user.getContext().getAuthenticationMethod();
+            authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+            authMethod.setPollUrl(testUri.toString());
+            authMethod.setLoggedOutIndicatorPattern(Pattern.quote(link));
+            return true;
+
+        } catch (Exception e) {
+            LOGGER.warn(
+                    "Failed accessing potential login link verification URL {}, {}",
+                    testUri,
+                    e.getMessage(),
+                    e);
+            return false;
+        }
     }
 
     public static boolean isRelevantToAuthDiags(HttpMessage msg) {
