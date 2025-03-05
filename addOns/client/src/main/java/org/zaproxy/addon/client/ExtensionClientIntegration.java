@@ -72,6 +72,7 @@ import org.zaproxy.addon.client.pscan.ClientPassiveScanHelper;
 import org.zaproxy.addon.client.pscan.OptionsPassiveScan;
 import org.zaproxy.addon.client.spider.AuthenticationHandler;
 import org.zaproxy.addon.client.spider.ClientSpider;
+import org.zaproxy.addon.client.spider.ClientSpiderApi;
 import org.zaproxy.addon.client.spider.ClientSpiderDialog;
 import org.zaproxy.addon.client.spider.ClientSpiderPanel;
 import org.zaproxy.addon.client.spider.PopupMenuSpider;
@@ -196,6 +197,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
         extensionHook.addOptionsParamSet(getClientParam());
         extensionHook.addApiImplementor(this.api);
+        extensionHook.addApiImplementor(new ClientSpiderApi(this));
         extensionHook.addSessionListener(new SessionChangeListener());
 
         if (hasView()) {
