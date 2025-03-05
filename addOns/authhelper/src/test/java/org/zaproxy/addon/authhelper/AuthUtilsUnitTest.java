@@ -601,7 +601,7 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("Response Body"));
         msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, "Bearer " + token1);
-        msg.getRequestHeader().addHeader(HttpHeader.COOKIE, token2 + "; SameSite=Strict");
+        msg.getRequestHeader().addHeader(HttpHeader.COOKIE, "test=" + token2 + "; SameSite=Strict");
         msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, token3);
         List<SessionToken> tokens = new ArrayList<>();
         tokens.add(new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, token1));
@@ -615,7 +615,7 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(headerTokens.get(0).first, is(equalTo(HttpHeader.AUTHORIZATION)));
         assertThat(headerTokens.get(0).second, is(equalTo("Bearer {%header:authorization%}")));
         assertThat(headerTokens.get(1).first, is(equalTo(HttpHeader.COOKIE)));
-        assertThat(headerTokens.get(1).second, is(equalTo("{%json:set.cookie%}; SameSite=Strict")));
+        assertThat(headerTokens.get(1).second, is(equalTo("test={%json:set.cookie%}")));
     }
 
     @Test
@@ -646,6 +646,36 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(headerTokens.size(), is(equalTo(1)));
         assertThat(headerTokens.get(0).first, is(equalTo(HttpHeader.AUTHORIZATION)));
         assertThat(headerTokens.get(0).second, is(equalTo("Bearer {%header:authorization%}")));
+    }
+
+    @Test
+    void shouldGetHeaderTokensIgnoringIrrelevantCookies() throws Exception {
+        // Given
+        String token1 = "96438673498764398";
+        String token2 = "bndkdfsojhgkdshgk";
+        String token3 = "89jdhf9834herg03s";
+
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                "GET https://example.com/?att1=val1&att2=val2 HTTP/1.1\r\nHost: example.com\r\n\r\n"),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
+                        new HttpResponseBody("Response Body"));
+        msg.getRequestHeader()
+                .addHeader(
+                        HttpHeader.COOKIE,
+                        "test1=" + token1 + "; test2=" + token2 + "; test3=" + token3);
+        List<SessionToken> tokens = new ArrayList<>();
+        tokens.add(new SessionToken(SessionToken.JSON_SOURCE, "set.cookie", token2));
+
+        // When
+        List<Pair<String, String>> headerTokens = AuthUtils.getHeaderTokens(msg, tokens, true);
+
+        // Then
+        assertThat(headerTokens.size(), is(equalTo(1)));
+        assertThat(headerTokens.get(0).first, is(equalTo(HttpHeader.COOKIE)));
+        assertThat(headerTokens.get(0).second, is(equalTo("test2={%json:set.cookie%}")));
     }
 
     @Test

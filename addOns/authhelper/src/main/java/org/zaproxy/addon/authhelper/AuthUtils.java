@@ -786,7 +786,8 @@ public class AuthUtils {
         List<Pair<String, String>> list = new ArrayList<>();
         for (SessionToken token : tokens) {
             for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
-                if (!incCookies && HttpHeader.COOKIE.equalsIgnoreCase(header.getName())) {
+                if (HttpHeader.COOKIE.equalsIgnoreCase(header.getName())) {
+                    // Handle cookies below so we can separate them out
                     continue;
                 }
                 if (header.getValue().contains(token.getValue())) {
@@ -794,6 +795,16 @@ public class AuthUtils {
                             header.getValue()
                                     .replace(token.getValue(), "{%" + token.getToken() + "%}");
                     list.add(new Pair<String, String>(header.getName(), hv));
+                }
+            }
+            if (incCookies) {
+                for (HttpCookie cookie : msg.getRequestHeader().getHttpCookies()) {
+                    if (cookie.getValue().contains(token.getValue())) {
+                        String hv =
+                                cookie.getValue()
+                                        .replace(token.getValue(), "{%" + token.getToken() + "%}");
+                        list.add(new Pair<>(HttpHeader.COOKIE, cookie.getName() + "=" + hv));
+                    }
                 }
             }
         }
@@ -1013,6 +1024,7 @@ public class AuthUtils {
         requestTokenMap.clear();
         if (executorService != null) {
             executorService.shutdown();
+            executorService = null;
         }
     }
 
