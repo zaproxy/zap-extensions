@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Document custom steps for Browser Based Authentication.
+
 ### Changed
 - Add any session related cookies which are not being tracked.
 
