@@ -62,7 +62,7 @@ import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChangedListener {
+public class ExtensionAuthhelper extends ExtensionAdaptor {
 
     private Map<Integer, AuthenticationRequestDetails> contextIdToLoginDetails = new HashMap<>();
 
@@ -310,39 +310,22 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
         @Override
         public void sessionChanged(Session session) {
             contextIdToLoginDetails.clear();
+            AuthUtils.clean();
         }
 
         @Override
-        public void sessionAboutToChange(Session session) {}
+        public void sessionAboutToChange(Session session) {
+            BrowserBasedAuthenticationMethodType.stopProxies();
+            if (authDiagCollector != null) {
+                authDiagCollector.reset();
+            }
+        }
 
         @Override
         public void sessionScopeChanged(Session session) {}
 
         @Override
         public void sessionModeChanged(Mode mode) {}
-    }
-
-    @Override
-    public void sessionChanged(Session session) {
-        AuthUtils.clean();
-    }
-
-    @Override
-    public void sessionAboutToChange(Session session) {
-        BrowserBasedAuthenticationMethodType.stopProxies();
-        if (this.authDiagCollector != null) {
-            this.authDiagCollector.reset();
-        }
-    }
-
-    @Override
-    public void sessionScopeChanged(Session session) {
-        // Ignore
-    }
-
-    @Override
-    public void sessionModeChanged(Mode mode) {
-        // Ignore
     }
 
     @Override

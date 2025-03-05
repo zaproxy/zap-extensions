@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Add any session related cookies which are not being tracked.
 
+### Fixed
+- Bug where some of the data structures were not being reset when the session changed.
 
 ## [0.23.0] - 2025-03-04
 ### Added

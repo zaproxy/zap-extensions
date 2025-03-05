@@ -21,16 +21,20 @@ package org.zaproxy.addon.authhelper;
 
 import java.awt.GridBagLayout;
 import java.lang.reflect.Method;
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,6 +44,7 @@ import org.parosproxy.paros.db.RecordContext;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod;
@@ -205,10 +210,33 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                         "processMessageToMatchSession {} # headers {} ",
                         message.getRequestHeader().getURI(),
                         hbSession.getHeaders().size());
+
+                Map<String, String> trackedCookies =
+                        Stream.of(hbSession.getHttpState().getCookies())
+                                .collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
+
+                List<HttpCookie> cookies = message.getRequestHeader().getHttpCookies();
                 for (Pair<String, String> header : hbSession.getHeaders()) {
+                    if (HttpHeader.COOKIE.equalsIgnoreCase(header.first)) {
+                        String[] kv = header.second.split("=");
+                        if (!trackedCookies.containsKey(kv[0])) {
+                            cookies.add(new HttpCookie(kv[0], kv[1]));
+                        } else {
+                            LOGGER.debug(
+                                    "processMessageToMatchSession {} ignoring tracked cookie {} ",
+                                    message.getRequestHeader().getURI(),
+                                    kv[0]);
+                        }
+                        continue;
+                    }
+
                     Stats.incCounter("stats.auth.session.set.header");
                     message.getRequestHeader().setHeader(header.first, header.second);
                 }
+                if (!cookies.isEmpty()) {
+                    message.getRequestHeader().setCookies(cookies);
+                }
+
                 Context context = Model.getSingleton().getSession().getContext(contextId);
                 AuthenticationMethod am = context.getAuthenticationMethod();
                 if (am instanceof BrowserBasedAuthenticationMethod) {
