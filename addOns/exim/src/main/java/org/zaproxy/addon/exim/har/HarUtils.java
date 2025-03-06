@@ -19,6 +19,10 @@
  */
 package org.zaproxy.addon.exim.har;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import de.sstoehr.harreader.model.HarContent;
 import de.sstoehr.harreader.model.HarCookie;
 import de.sstoehr.harreader.model.HarCreatorBrowser;
@@ -33,13 +37,17 @@ import de.sstoehr.harreader.model.HarResponse;
 import de.sstoehr.harreader.model.HarTiming;
 import de.sstoehr.harreader.model.HttpMethod;
 import de.sstoehr.harreader.model.HttpStatus;
+import java.io.IOException;
 import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -60,10 +68,45 @@ import org.zaproxy.zap.network.HttpRequestBody;
  * @see HttpMessage
  */
 public final class HarUtils {
-    // TODO: The custom fields from the core class:
-    // /zap/src/main/java/org/zaproxy/zap/utils/HarUtils.java
-    // needs to be migrated to accommodate har writing/creation
+    private static final String BASE64_BODY_ENCODING = "base64";
+
+    /**
+     * The prefix for custom HAR fields produced by ZAP.
+     *
+     * @since 0.13.0
+     */
+    public static final String CUSTOM_FIELD_PREFIX = "_zap";
+
+    /**
+     * The name of the custom field that contains the message ID.
+     *
+     * @since 0.13.0
+     */
+    public static final String MESSAGE_ID_CUSTOM_FIELD = CUSTOM_FIELD_PREFIX + "MessageId";
+
+    /**
+     * The name of the custom field that contains the message type.
+     *
+     * @since 0.13.0
+     */
+    public static final String MESSAGE_TYPE_CUSTOM_FIELD = CUSTOM_FIELD_PREFIX + "MessageType";
+
+    /**
+     * The name of the custom field that contains the message note.
+     *
+     * @since 0.13.0
+     */
+    public static final String MESSAGE_NOTE_CUSTOM_FIELD = CUSTOM_FIELD_PREFIX + "MessageNote";
+
     private static final Logger LOGGER = LogManager.getLogger(HarUtils.class);
+
+    public static final ObjectMapper JSON_MAPPER =
+            JsonMapper.builder()
+                    .serializationInclusion(JsonInclude.Include.NON_DEFAULT)
+                    .build()
+                    .findAndRegisterModules();
+
+    private static final ObjectWriter JSON_WRITER = JSON_MAPPER.writerWithDefaultPrettyPrinter();
 
     private HarUtils() {}
 
@@ -72,8 +115,22 @@ public final class HarUtils {
         harCreator.setName(Constant.PROGRAM_NAME);
         harCreator.setVersion(Constant.PROGRAM_VERSION);
         HarLog log = new HarLog();
+        log.setVersion("1.2");
         log.setCreator(harCreator);
         return log;
+    }
+
+    /**
+     * Creates an {@code HttpMessage} from the given HAR Request.
+     *
+     * @param harRequest the HAR request.
+     * @return the HTTP message containing the given request.
+     * @throws IOException if an error occurred while reading the HAR Request or creating the {@code
+     *     HttpMessage}.
+     * @since 0.13.0
+     */
+    public static HttpMessage createHttpMessage(String harRequest) throws IOException {
+        return createHttpMessage(JSON_MAPPER.readValue(harRequest, HarEntry.class).getRequest());
     }
 
     public static HttpMessage createHttpMessage(HarRequest harRequest)
@@ -81,7 +138,7 @@ public final class HarUtils {
         StringBuilder strBuilderReqHeader = new StringBuilder();
 
         strBuilderReqHeader
-                .append(harRequest.getMethod())
+                .append(harRequest.getRawMethod())
                 .append(' ')
                 .append(harRequest.getUrl())
                 .append(' ')
@@ -113,16 +170,96 @@ public final class HarUtils {
             }
         }
 
-        HttpRequestHeader header = null;
-        try {
-            header = new HttpRequestHeader(strBuilderReqHeader.toString());
-        } catch (HttpMalformedHeaderException headerEx) {
-            LOGGER.warn(
-                    "Failed to create HTTP Request Header for HAR entry.\n{}",
-                    headerEx.getMessage());
-            return null;
+        return new HttpMessage(
+                new HttpRequestHeader(strBuilderReqHeader.toString()),
+                new HttpRequestBody(strBuilderReqBody.toString()));
+    }
+
+    /**
+     * Creates an {@code HttpMessage} from the given HAR entry.
+     *
+     * @param harEntry the HAR entry.
+     * @return the HTTP message containing the request and response from the HAR entry.
+     * @throws HttpMalformedHeaderException if an error occurred while creating the request or
+     *     response header from the HAR entry.
+     * @since 0.13.0
+     */
+    public static HttpMessage createHttpMessage(HarEntry harEntry)
+            throws HttpMalformedHeaderException {
+        HttpMessage message = createHttpMessage(harEntry.getRequest());
+
+        message.setTimeSentMillis(
+                Optional.ofNullable(harEntry.getStartedDateTime()).map(Date::getTime).orElse(0L));
+        message.setTimeElapsedMillis(
+                Optional.ofNullable(harEntry.getTimings()).map(HarTiming::getReceive).orElse(0));
+
+        setHttpResponse(harEntry.getResponse(), message);
+
+        return message;
+    }
+
+    private static void setHttpResponse(HarResponse harResponse, HttpMessage message)
+            throws HttpMalformedHeaderException {
+        // empty responses without status code are possible
+        if (harResponse.getRawStatus() == 0) {
+            return;
         }
-        return new HttpMessage(header, new HttpRequestBody(strBuilderReqBody.toString()));
+
+        StringBuilder strBuilderResHeader =
+                new StringBuilder()
+                        .append(harResponse.getHttpVersion())
+                        .append(' ')
+                        .append(harResponse.getRawStatus())
+                        .append(' ')
+                        .append(harResponse.getStatusText())
+                        .append(HttpHeader.CRLF);
+
+        boolean mixedNewlineChars = false;
+        for (HarHeader harHeader : harResponse.getHeaders()) {
+            String value = harHeader.getValue();
+            if (value.contains("\n") || value.contains("\r")) {
+                mixedNewlineChars = true;
+                LOGGER.info(
+                        "{}\n\t{} value contains CR or LF and is likely invalid (though it may have been successfully set to the message):\n\t{}",
+                        message.getRequestHeader().getURI(),
+                        harHeader.getName(),
+                        StringEscapeUtils.escapeJava(value));
+            }
+            strBuilderResHeader
+                    .append(harHeader.getName())
+                    .append(": ")
+                    .append(harHeader.getValue())
+                    .append(HttpHeader.CRLF);
+        }
+        strBuilderResHeader.append(HttpHeader.CRLF);
+
+        try {
+            message.setResponseHeader(strBuilderResHeader.toString());
+        } catch (HttpMalformedHeaderException e) {
+            if (!mixedNewlineChars) {
+                throw e;
+            }
+            LOGGER.info(
+                    "Couldn't set response header for: {}", message.getRequestHeader().getURI());
+        }
+        message.setResponseFromTargetHost(true);
+
+        HarContent harContent = harResponse.getContent();
+        if (harContent != null) {
+            if (BASE64_BODY_ENCODING.equals(harContent.getEncoding())) {
+                var text = harContent.getText();
+                if (text != null)
+                    try {
+                        message.setResponseBody(Base64.getDecoder().decode(text));
+                    } catch (IllegalArgumentException e) {
+                        LOGGER.debug(
+                                "Failed to base64 decode body {}. Setting as plain text.", text, e);
+                        message.setResponseBody(text);
+                    }
+            } else {
+                message.setResponseBody(harContent.getText());
+            }
+        }
     }
 
     /**
@@ -143,7 +280,33 @@ public final class HarUtils {
         newEntry.setRequest(createHarRequest(httpMessage));
         newEntry.setResponse(createHarResponse(httpMessage));
         newEntry.setTimings(newTimings);
+        addCustomFields(newEntry, httpMessage);
         return newEntry;
+    }
+
+    private static void addCustomFields(HarEntry entry, HttpMessage message) {
+        entry.setAdditionalField(MESSAGE_NOTE_CUSTOM_FIELD, message.getNote());
+    }
+
+    /**
+     * Creates a {@code HarEntry} from the given message with additional custom fields for the
+     * history ID/type and note.
+     *
+     * @param historyId the history ID of the HTTP message.
+     * @param historyType the history type of the HTTP message.
+     * @param httpMessage the HTTP message.
+     * @return the {@code HarEntry}, never {@code null}.
+     * @since 0.13.0
+     * @see #MESSAGE_ID_CUSTOM_FIELD
+     * @see #MESSAGE_TYPE_CUSTOM_FIELD
+     * @see #MESSAGE_NOTE_CUSTOM_FIELD
+     */
+    public static HarEntry createHarEntry(int historyId, int historyType, HttpMessage httpMessage) {
+        HarEntry entry = createHarEntry(httpMessage);
+        entry.setAdditionalField(MESSAGE_ID_CUSTOM_FIELD, historyId);
+        entry.setAdditionalField(MESSAGE_TYPE_CUSTOM_FIELD, historyType);
+        addCustomFields(entry, httpMessage);
+        return entry;
     }
 
     public static HarRequest createHarRequest(HttpMessage httpMessage) {
@@ -194,10 +357,10 @@ public final class HarUtils {
                     text = requestBody.toString();
                 }
             }
-            HarPostData newPostData = new HarPostData();
-            newPostData.setMimeType(contentType);
-            newPostData.setParams(params);
-            newPostData.setText(text);
+            harPostData = new HarPostData();
+            harPostData.setMimeType(contentType);
+            harPostData.setParams(params);
+            harPostData.setText(text);
         }
 
         HttpMethod method = HttpMethod.valueOf(requestHeader.getMethod().toUpperCase(Locale.ROOT));
@@ -246,9 +409,13 @@ public final class HarUtils {
         String text = null;
         String encoding = null;
         String contentType = responseHeader.getHeader(HttpHeader.CONTENT_TYPE);
-        if (contentType == null) {
+        if (contentType == null || contentType.isEmpty()) {
             contentType = "";
-        } else if (!contentType.isEmpty()) {
+            if (httpMessage.getResponseBody().length() != 0) {
+                encoding = BASE64_BODY_ENCODING;
+                text = Base64.getEncoder().encodeToString(httpMessage.getResponseBody().getBytes());
+            }
+        } else {
             String lcContentType = contentType.toLowerCase(Locale.ROOT);
             final int pos = lcContentType.indexOf(';');
             if (pos != -1) {
@@ -256,7 +423,7 @@ public final class HarUtils {
             }
 
             if (!lcContentType.startsWith("text")) {
-                encoding = "base64";
+                encoding = BASE64_BODY_ENCODING;
                 text = Base64.getEncoder().encodeToString(httpMessage.getResponseBody().getBytes());
             } else {
                 text = httpMessage.getResponseBody().toString();
@@ -295,5 +462,17 @@ public final class HarUtils {
             harHeaders.add(newHeader);
         }
         return harHeaders;
+    }
+
+    /**
+     * Converts the given {@code HarLog} into JSON and then to a byte array (UTF-8).
+     *
+     * @param harLog the {@code HarLog} to convert to JSON/bytes.
+     * @return the bytes with the JSON conversion of the {@code HarLog}.
+     * @throws IOException if failed to convert the {@code HarLog} into JSON.
+     * @since 0.13.0
+     */
+    public static byte[] toJsonAsBytes(HarLog harLog) throws IOException {
+        return JSON_WRITER.writeValueAsBytes(Map.of("log", harLog));
     }
 }

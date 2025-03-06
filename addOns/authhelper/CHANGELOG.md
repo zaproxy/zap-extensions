@@ -4,7 +4,61 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Prefer form related fields in Browser Based Authentication for the selection of username field.
+- Tweaked the auth report summary keys.
 
+### Fixed
+- Correctly read the API parameters when setting up Browser Based Authentication.
+
+## [0.22.0] - 2025-02-12
+### Added
+- Initial authentication report (JSON).
+
+## [0.21.0] - 2025-02-10
+### Fixed
+- Delays identifying verification due to tests being performed on too many unlikely URLs (such as images).
+
+## [0.20.0] - 2025-02-07
+### Changed
+- Reduce add-on size.
+- Improved session management detection.
+
+### Fixed
+- Maintain the correct cookie state when using client script authentication.
+- Do not close windows when running client auth in the spiders.
+- Always close all of the windows when running client auth not in the spiders.
+
+## [0.19.0] - 2025-02-04
+### Added
+- Added support for Client Script Authentication when used in conjunction with the Ajax Spider add-on or the Client Spider via the Client Side Integration add-on.
+- Add support for custom authentication steps in Browser Based Authentication.
+
+### Fixed
+- Reset always the state of the demo mode in the Authentication Tester dialogue.
+
+## [0.18.0] - 2025-01-27
+### Changed
+- Ignore non-displayed fields when selecting the user name and password.
+- Use single displayed field for user name, e.g. multi step login.
+
+### Fixed
+- Input fields that do not explicitly declare their type were no longer being chosen by the Browser Based Authentication.
+
+## [0.17.0] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Depend on Passive Scanner add-on (Issue 7959).
+- Address deprecation warnings with newer Selenium version (4.27).
+- Optionally depend on the Client Integration add-on to provide Browser Based Authentication to the Client Spider.
+
+## [0.16.0] - 2024-11-06
+### Fixed
+- Address concurrency issue while passive scanning with the Session Management Response Identified scan rule (Issue 8187).
+
+## [0.15.1] - 2024-09-02
+### Changed
+- Restored stats removed in previous release as these could be used in AF tests.
 
 ## [0.15.0] - 2024-08-28
 ### Changed
@@ -105,6 +159,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.22.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.22.0
+[0.21.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.21.0
+[0.20.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.20.0
+[0.19.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.19.0
+[0.18.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.18.0
+[0.17.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.17.0
+[0.16.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.16.0
+[0.15.1]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.15.1
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.15.0
 [0.14.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.13.0

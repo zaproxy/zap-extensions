@@ -33,7 +33,10 @@
 		<li>username = test@test.com
 		<li>password = password123
 	</ul>
-	The verification URL returns JSON with the username and a 200 response if valid, otherwise a 403 response.
+	The verification URL returns JSON with the username and a 200 response if valid, otherwise a 403 response.<br>
+	On a successfull login it will set a local storage item called zapSecret.<br>
+	If zapSecret is set then page3 will add a link to a page based on the secret name.<br>
+	Spiders that authenticate in separate browsers should not be able to find the "secret" page.
 	
 </div>
 <script>
@@ -54,6 +57,7 @@ function submitform() {
 	        var json = JSON.parse(xhr.responseText);
 	        
 	        if (json.result === "OK") {
+	        	localStorage.setItem("zapSecret", "s3c" + "r3t");
 	        	window.location.replace("home.html");
 	        } else {
 	        	const h3 = document.createElement("h3");

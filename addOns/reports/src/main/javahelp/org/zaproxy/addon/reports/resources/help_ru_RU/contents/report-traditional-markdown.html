@@ -17,9 +17,9 @@
 	, would indicate a High risk issue identified with Medium confidence.
 	<pre>
 
-# Отчет о сканировании ZAP 
+# ZAP by Checkmarx Scanning Report
 
-## Сводка предупреждений 
+## Summary of Alerts
 
 | Risk Level | Number of Alerts |
 | --- | --- |
@@ -53,15 +53,15 @@
 | Storable and Cacheable Content | Informational | 64 |
 | User Controllable HTML Element Attribute (Potential XSS) | Informational | 32 |
 
-## Сведения об оповещении 
+## Alert Detail
 
-### [ Проверка токенов против CSRF  ](https://www.zaproxy.org/docs/alerts/20012/)
+### [ Anti-CSRF Tokens Check ](https://www.zaproxy.org/docs/alerts/20012/)
 
 ##### High (Medium)
 
-### Описание
+### Description
 
-Подделка межсайтовых запросов — это атака, которая включает в себя принуждение жертвы к отправке HTTP-запроса в целевое место назначения без их ведома или намерения, чтобы выполнить действие от имени жертвы.  The underlying cause is application functionality using predictable URL/form actions in a repeatable way. Суть атаки заключается в том, что CSRF использует доверие веб-сайта к пользователю.  Напротив, межсайтовый скриптинг (XSS) использует доверие пользователя к веб-сайту.  Как и XSS, CSRF-атаки не обязательно являются межсайтовыми, но могут быть таковыми.  Подделка межсайтовых запросов также известна как CSRF, XSRF, атака в один клик, сессионная езда, запутанный заместитель и морской прибой. 
+A cross-site request forgery is an attack that involves forcing a victim to send an HTTP request to a target destination without their knowledge or intent in order to perform an action as the victim. The underlying cause is application functionality using predictable URL/form actions in a repeatable way. Суть атаки заключается в том, что CSRF использует доверие веб-сайта к пользователю.  Напротив, межсайтовый скриптинг (XSS) использует доверие пользователя к веб-сайту.  Как и XSS, CSRF-атаки не обязательно являются межсайтовыми, но могут быть таковыми.  Подделка межсайтовых запросов также известна как CSRF, XSRF, атака в один клик, сессионная езда, запутанный заместитель и морской прибой. 
 
 Атаки CSRF эффективны в ряде ситуаций, в том числе:
      * Жертва имеет активный сеанс на целевом сайте. 

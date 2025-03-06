@@ -167,7 +167,7 @@ public class PolyfillCdnScriptScanRule extends PluginPassiveScanner
     private AlertBuilder createAlert(
             int confidence, String description, String param, String evidence, int alertRef) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_HIGH)
                 .setConfidence(confidence)
                 .setDescription(description)
                 .setParam(param)
@@ -196,10 +196,6 @@ public class PolyfillCdnScriptScanRule extends PluginPassiveScanner
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
-    }
-
-    public int getRisk() {
-        return Alert.RISK_HIGH;
     }
 
     @Override

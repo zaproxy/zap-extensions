@@ -25,25 +25,16 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
-import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -51,44 +42,31 @@ import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
+import org.zaproxy.addon.pscan.PassiveScannersManager;
 import org.zaproxy.zap.utils.I18N;
-import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class PassiveScanWaitJobUnitTest {
 
-    private static MockedStatic<CommandLine> mockedCmdLine;
-
-    @BeforeAll
-    static void init() {
-        mockedCmdLine = Mockito.mockStatic(CommandLine.class);
-    }
-
-    @AfterAll
-    static void close() {
-        mockedCmdLine.close();
-    }
+    private ExtensionPassiveScan2 pscan;
 
     @BeforeEach
     void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
+
+        pscan = mock(ExtensionPassiveScan2.class);
+        PassiveScannersManager scannersManager = mock(PassiveScannersManager.class);
+        given(pscan.getPassiveScannersManager()).willReturn(scannersManager);
+
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        given(extensionLoader.getExtension(ExtensionPassiveScan2.class)).willReturn(pscan);
+
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
     }
 
     @Test
     void shouldReturnDefaultFields() {
-        // Given
-        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader =
-                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
-        ExtensionPassiveScan extPscan =
-                mock(ExtensionPassiveScan.class, withSettings().strictness(Strictness.LENIENT));
-        given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
-
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
-        Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
-
-        // When
+        // Given / When
         PassiveScanWaitJob job = new PassiveScanWaitJob();
 
         // Then
@@ -97,6 +75,7 @@ class PassiveScanWaitJobUnitTest {
         assertThat(job.getOrder(), is(equalTo(Order.AFTER_EXPLORE)));
         assertThat(job.getParamMethodObject(), is(nullValue()));
         assertThat(job.getParamMethodName(), is(nullValue()));
+        assertThat(job.getKeyAlertTestsResultData(), is("passiveScanData2"));
     }
 
     @Test
@@ -113,18 +92,14 @@ class PassiveScanWaitJobUnitTest {
         assertThat(params.containsValue("0"), is(equalTo(true)));
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
     void shouldApplyParams() {
         // Given
         PassiveScanWaitJob job = new PassiveScanWaitJob();
         AutomationProgress progress = new AutomationProgress();
         int duration = 10;
-        Map map = new HashMap();
-        map.put("maxDuration", Integer.toString(duration));
-        LinkedHashMap<?, ?> params = new LinkedHashMap(map);
         LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
-        jobData.put("parameters", params);
+        jobData.put("parameters", Map.of("maxDuration", duration));
 
         // When
         job.setJobData(jobData);
@@ -137,17 +112,13 @@ class PassiveScanWaitJobUnitTest {
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
     void shouldWarnOnUnknownParams() {
         // Given
         PassiveScanWaitJob job = new PassiveScanWaitJob();
         AutomationProgress progress = new AutomationProgress();
-        Map map = new HashMap();
-        map.put("test", "test");
-        LinkedHashMap<?, ?> params = new LinkedHashMap(map);
         LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
-        jobData.put("parameters", params);
+        jobData.put("parameters", Map.of("test", "test"));
 
         // When
         job.setJobData(jobData);
@@ -165,15 +136,7 @@ class PassiveScanWaitJobUnitTest {
     @Test
     void shouldWaitForPassiveScan() {
         // Given
-        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader =
-                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
-        ExtensionPassiveScan extAuto =
-                mock(ExtensionPassiveScan.class, withSettings().strictness(Strictness.LENIENT));
-        given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extAuto);
-
-        when(extAuto.getRecordsToScan())
+        when(pscan.getRecordsToScan())
                 .thenAnswer(
                         new Answer<Integer>() {
                             private int records = 5;
@@ -184,9 +147,6 @@ class PassiveScanWaitJobUnitTest {
                                 return records;
                             }
                         });
-
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
-        Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
 
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
@@ -202,21 +162,10 @@ class PassiveScanWaitJobUnitTest {
         assertThat(progress.getJobResultData("passiveScanData2"), is(notNullValue()));
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
     void shouldExitIfPassiveScanTakesLongerThanConfig() {
         // Given
-        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader =
-                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
-        ExtensionPassiveScan extAuto =
-                mock(ExtensionPassiveScan.class, withSettings().strictness(Strictness.LENIENT));
-        given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extAuto);
-        given(extAuto.getRecordsToScan()).willReturn(1);
-
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
-        Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
+        given(pscan.getRecordsToScan()).willReturn(1);
 
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
@@ -224,11 +173,8 @@ class PassiveScanWaitJobUnitTest {
         PassiveScanWaitJob job = new PassiveScanWaitJob();
 
         int duration = 1;
-        Map map = new HashMap();
-        map.put("maxDuration", Integer.toString(duration));
-        LinkedHashMap<?, ?> params = new LinkedHashMap(map);
         LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
-        jobData.put("parameters", params);
+        jobData.put("parameters", Map.of("maxDuration", duration));
 
         // When
         job.setJobData(jobData);

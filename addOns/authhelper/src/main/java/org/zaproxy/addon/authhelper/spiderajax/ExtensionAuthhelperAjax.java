@@ -35,6 +35,7 @@ public class ExtensionAuthhelperAjax extends ExtensionAdaptor {
             List.of(ExtensionAjax.class);
 
     private BrowserBasedAuthHandler authHandler;
+    private ClientScriptBasedAuthHandler scriptAuthHandler;
 
     public ExtensionAuthhelperAjax() {
         super(NAME);
@@ -52,6 +53,9 @@ public class ExtensionAuthhelperAjax extends ExtensionAdaptor {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAjax.class);
         authHandler = new BrowserBasedAuthHandler();
         extAjax.addAuthenticationHandler(authHandler);
+
+        scriptAuthHandler = new ClientScriptBasedAuthHandler();
+        extAjax.addAuthenticationHandler(scriptAuthHandler);
     }
 
     @Override
@@ -64,6 +68,7 @@ public class ExtensionAuthhelperAjax extends ExtensionAdaptor {
         ExtensionAjax extAjax =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAjax.class);
         extAjax.removeAuthenticationHandler(authHandler);
+        extAjax.removeAuthenticationHandler(scriptAuthHandler);
     }
 
     @Override

@@ -51,8 +51,8 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ScanPanel;
@@ -75,7 +75,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     private TechPanel techPanel = null;
     private PopupMenuEvidence popupMenuEvidence = null;
 
-    private Map<String, String> categories = new HashMap<>();
     private List<Application> applications = new ArrayList<>();
 
     private ExtensionSearch extSearch = null;
@@ -88,10 +87,9 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     /** The dependencies of the extension. */
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
-            List.of(ExtensionPassiveScan.class);
+            List.of(ExtensionPassiveScan2.class);
 
     private TechPassiveScanner passiveScanner;
-    private TechApi api;
 
     public enum Mode {
         QUICK(Constant.messages.getString("wappalyzer.mode.quick")),
@@ -152,7 +150,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         TechData result =
                 new TechsJsonParser().parse(CATEGORIES_PATH, technologyFiles, View.isInitialised());
         this.applications = result.getApplications();
-        this.categories = result.getCategories();
 
         enabled = true;
         techDetectParam = new TechDetectParam();
@@ -188,16 +185,19 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             extensionHook.getHookView().addOptionPanel(new TechOptionsPanel());
         }
 
-        this.api = new TechApi(this);
-        extensionHook.addApiImplementor(this.api);
+        extensionHook.addApiImplementor(new TechApi(this));
         extensionHook.addOptionsParamSet(techDetectParam);
 
-        ExtensionPassiveScan extPScan =
+        getPscanExtension().getPassiveScannersManager().add(passiveScanner);
+        extensionHook.addOptionsChangedListener(passiveScanner);
+    }
+
+    private ExtensionPassiveScan2 getPscanExtension() {
+        ExtensionPassiveScan2 extPScan =
                 Control.getSingleton()
                         .getExtensionLoader()
-                        .getExtension(ExtensionPassiveScan.class);
-        extPScan.addPassiveScanner(passiveScanner);
-        extensionHook.addOptionsChangedListener(passiveScanner);
+                        .getExtension(ExtensionPassiveScan2.class);
+        return extPScan;
     }
 
     @Override
@@ -251,11 +251,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     public void unload() {
         super.unload();
 
-        ExtensionPassiveScan extPScan =
-                Control.getSingleton()
-                        .getExtensionLoader()
-                        .getExtension(ExtensionPassiveScan.class);
-        extPScan.removePassiveScanner(passiveScanner);
+        getPscanExtension().getPassiveScannersManager().remove(passiveScanner);
     }
 
     @Override
@@ -296,6 +292,18 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             EventQueue.invokeLater(
                     () -> this.getTechModelForSite(site).addApplication(applicationMatch));
         }
+    }
+
+    /**
+     * Accept an {@code URI} which will be normalized into a site string usable by the Tech
+     * Detection add-on and adds the provided {@code ApplicationMatch}
+     *
+     * @param uri The URI to be normalized and used
+     * @param applicationMatch the ApplicationMatch for the tech to be added
+     * @since 21.44.0
+     */
+    public void addApplicationsToSite(URI uri, ApplicationMatch applicationMatch) {
+        this.addApplicationsToSite(normalizeSite(uri), applicationMatch);
     }
 
     public Application getSelectedApp() {
@@ -354,9 +362,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     }
 
     public void search(Pattern p, ExtensionSearch.Type type) {
-        ExtensionSearch extSearch = this.getExtensionSearch();
-        if (extSearch != null) {
-            extSearch.search(p.pattern(), type, true, false);
+        if (getExtensionSearch() != null) {
+            getExtensionSearch().search(p.pattern(), type, true, false);
         }
     }
 

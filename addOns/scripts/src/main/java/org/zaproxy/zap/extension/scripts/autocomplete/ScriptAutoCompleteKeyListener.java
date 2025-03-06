@@ -30,10 +30,10 @@ import javax.swing.JTextArea;
 import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 
@@ -102,10 +102,10 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
 
         // Passive Rules
         HashMap<String, String> passiveRuleMap = new HashMap<>();
+        passiveRuleMap.put("ps", "org.zaproxy.zap.extension.scripts.scanrules.PassiveScriptHelper");
         passiveRuleMap.put("msg", "org.parosproxy.paros.network.HttpMessage");
-        passiveRuleMap.put("ps", "org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner");
         passiveRuleMap.put("src", "net.htmlparser.jericho.Source");
-        typeToClassMaps.put(ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE, passiveRuleMap);
+        typeToClassMaps.put(ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE, passiveRuleMap);
 
         // Payload Generator - none : has no parameters
 

@@ -9,6 +9,13 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/alert-filters/")
+        dependencies {
+            addOns {
+                register("pscan") {
+                    version.set(">= 0.1.0 & < 1.0.0")
+                }
+            }
+        }
         extensions {
             register("org.zaproxy.zap.extension.alertFilters.automation.ExtensionAlertFiltersAutomation") {
                 classnames {
@@ -35,6 +42,7 @@ zapAddOn {
 dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
+    zapAddOn("pscan")
 
     testImplementation(project(":testutils"))
 }

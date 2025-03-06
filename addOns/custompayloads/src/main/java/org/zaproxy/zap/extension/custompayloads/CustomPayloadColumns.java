@@ -25,10 +25,13 @@ import java.util.List;
 
 public final class CustomPayloadColumns {
 
+    private CustomPayloadColumns() {
+        // Nothing to do
+    }
+
     public static List<Column<CustomPayload>> createColumns() {
         ArrayList<Column<CustomPayload>> columns = new ArrayList<>();
         columns.add(createEnabledColumn());
-        columns.add(createIdColumn());
         columns.add(createCategoryColumn());
         columns.add(createPayloadColumn());
         return columns;
@@ -37,9 +40,8 @@ public final class CustomPayloadColumns {
     public static List<Column<CustomPayload>> createColumnsForOptionsTable() {
         ArrayList<Column<CustomPayload>> columns = new ArrayList<>();
         columns.add(createEnabledColumn());
-        columns.add(createIdColumn());
-        columns.add(createCategoryColumn().AsReadonly());
-        columns.add(createPayloadColumn().AsReadonly());
+        columns.add(createCategoryColumn().asReadonly());
+        columns.add(createPayloadColumn().asReadonly());
         return columns;
     }
 
@@ -58,16 +60,6 @@ public final class CustomPayloadColumns {
             @Override
             public Object getValue(CustomPayload payload) {
                 return payload.isEnabled();
-            }
-        };
-    }
-
-    private static Column<CustomPayload> createIdColumn() {
-        return new Column<CustomPayload>(Integer.class, "custompayloads.options.dialog.id") {
-
-            @Override
-            public Object getValue(CustomPayload payload) {
-                return payload.getId();
             }
         };
     }

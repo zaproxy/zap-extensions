@@ -27,11 +27,11 @@ Un ejemplo muy claro fue el truco realizado en el 2005 del proceso de solicitud 
  
 La autorización de datos es insuficiente
 
-Muchas aplicaciones manifiestan identificadores de datos ocultas en una URL. For example, when accessing a medical record on a system one might have a URL such as:
+Muchas aplicaciones manifiestan identificadores de datos ocultas en una URL. Por ejemplo, al acceder a un registro médico en un sistema, se podría tener una URL como:
 
 https://example.com/RecordView?id=12345
 
-If the application does not check that the authenticated user ID has read rights, then it could display data to the user that the user should not see.
+Si la aplicación no verifica que el ID del usuario autenticado tenga derechos de lectura, podría mostrarle datos que este no debería ver.
 
 La Autorización de Datos Insuficientes es más común que la Autorización de Función Insuficiente porque los programadores generalmente tienen total conocimiento de la funcionalidad de la aplicación, pero no siempre cuentan con un diagrama completo de toda la información a la que la aplicación accederá. Los programadores suelen tener un estricto control sobre los mecanismos de autorización de funciones, pero dependen de otros sistemas, como bases de datos para ejecutar la autorización de la información.</desc>
 	<solution>Fases: Arquitectura y Diseño; Operación
@@ -435,8 +435,19 @@ Si no se eliminan los comentarios HTML/Script antes de enviarlos al entorno de p
 Los números de versión de software y los mensajes de error detallados (como los números de versión de ASP.NET) son ejemplos de configuraciones de servidor incorrectas. Esta información es muy útil para un atacante al proporcionar información muy detallada sobre el marco de trabajo, los lenguajes o las funciones que se encuentran prediseñadas que utiliza una aplicación web. La mayoría de las configuraciones de servidor predeterminadas proporcionan números de versión de software y mensajes de error detallados para fines de depuración y solución de problemas. Se pueden realizar cambios en la configuración para deshabilitar estas funciones, evitando mostrar esa información.
 
 Las páginas que brindan diferentes respuestas según la validez de los datos también pueden provocar una fuga de información; específicamente cuando se revelan datos considerados confidenciales como resultado del diseño de la aplicación web. Los ejemplos de datos confidenciales incluyen (pero no se limitan solamente a): números de cuenta, identificadores de usuario (número de licencia de conducir, número de pasaporte, números de seguridad social, etc) e información muy puntual del usuario (contraseñas, sesiones, direcciones). La fuga de información en este contexto se refiere a la exposición de datos clave del usuario considerados confidenciales o secretos, que no deben exponerse a la vista, ni siquiera para el usuario. Los números de tarjetas de crédito y otra información fuertemente regulada son excelentes ejemplos de datos de usuario que deben protegerse aún más contra la exposición o filtración, incluso con el cifrado adecuado y los controles de acceso ya implementados.</desc>
-	<solution>Compartimente su sistema para tener áreas "seguras" donde se puedan trazar límites de confianza sin ambigüedades. No permita que datos confidenciales salgan del límite de confianza y siempre tenga cuidado al interactuar con un compartimento fuera del área segura.</solution>
-	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
+	<solution>
+    * Have a clear definition of which information is considered sensitive and which isn't. Take privacy laws, regulatory requirements, and business needs into account.
+    * Store sensitive data only if you have to.
+    * Implement checks for sensitive information in your devops pipeline. Steps that could be taken include stripping developer comments, removing debugging information and sensitive logs, as well as making error messages less verbose.
+    * In situations where the sensitive information must be used, for instance, backend microservices, ensure trust boundaries are appropriately drawn. Example: set up an isolated, well secured kubernetes cluster with well configured access controls, then only grant access to authorized clients.
+    * In situations where error messages need to be returned to the user, use messages that are as generic as possible eg "invalid credentials" instead of "invalid username" or "invalid password".
+    * When using third party technologies, understand how the software works, its configuration, as well as security risks of using it. After understanding the technology, use only the features that you need and disable everything else.
+    * Detailed debug messages are sometimes necessary, for instance, when adding a new feature to an application. In this case, separate the development environment from the production one. Ensure appropriate access controls are implemented for the development environments.
+    * All sensitive data should be encrypted before storage. Ensure up-to-date and strong standard algorithms, protocols, and keys are in place; use proper key management.
+</solution>
+<reference>https://portswigger.net/web-security/information-disclosure</reference>
+<reference>https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure</reference>
+<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
 <vuln_items>wasc_14</vuln_items>
@@ -473,7 +484,7 @@ Del mismo modo, las instalaciones predeterminadas pueden incluir nombres de usua
 <vuln_items>wasc_16</vuln_items>
 <vuln_item_wasc_16>
 	<alert>Indexación del Directorio</alert>
-	<desc>La lista/ordenación de datos de forma automática de directorios es una función del servidor web que enumer a todos los archivos que se encuentran dentro de un directorio que es solicitado si el arhivo base normal (index.html/home.html/default.htm/default.asp/default.aspx/index.php) no está presente. When a user requests the main page of a web site, they normally type in a URL such as: https://www.example.com/directory1/ - using the domain name and excluding a specific file. El servidor web procesa toda esta información y busca en el directorio raíz del documento el nombre del archivo que es predeterminado y luego envía esta página al cliente. Si esta página no se encuentra presente, el servidor web producirá una lista de directorios de forma dinámica y luego eviará la salida al cliente. Básicamente, esto es igual a producir un comando "Is" (Unix) o "dir" (Windows) dentro de este directorio y mostrar los resultados en un formato HTML. Desde el punto de vista del ataque y contramedida, es muy importante fijarse de que las listas de directorios involuntarios pueden ser ocasionados por las vulnerabilidades del software (discutidas en la sesión de ejemplos que se encuentra a continuación) combinadas con una solicitud web específica.</desc>
+	<desc>La lista/ordenación de datos de forma automática de directorios es una función del servidor web que enumer a todos los archivos que se encuentran dentro de un directorio que es solicitado si el arhivo base normal (index.html/home.html/default.htm/default.asp/default.aspx/index.php) no está presente. Cuando un usuario solicita la página principal de un sitio web, normalmente escribe una URL como: https://www.example.com/directory1/ - utilizando el nombre de dominio y excluyendo un archivo específico. El servidor web procesa toda esta información y busca en el directorio raíz del documento el nombre del archivo que es predeterminado y luego envía esta página al cliente. Si esta página no se encuentra presente, el servidor web producirá una lista de directorios de forma dinámica y luego eviará la salida al cliente. Básicamente, esto es igual a producir un comando "Is" (Unix) o "dir" (Windows) dentro de este directorio y mostrar los resultados en un formato HTML. Desde el punto de vista del ataque y contramedida, es muy importante fijarse de que las listas de directorios involuntarios pueden ser ocasionados por las vulnerabilidades del software (discutidas en la sesión de ejemplos que se encuentra a continuación) combinadas con una solicitud web específica.</desc>
 	<solution>Las recomendaciones contienen la capacidad de restringir el acceso a directorios o archivos que sean importantes al adoptar la necesidad de conocer todos los requisitos para el documento y a raíz del servidor, y desactivar todas las funciones como los listados de los directorios de forma automática que pueden exponer los archivos privados y otorgar información que podría ser utilizada por un atacante al formular o llevando a cabo algún ataque.</solution>
 	<reference>https://owasp.org/www-community/attacks/Path_Traversal</reference>
 	<reference>https://cwe.mitre.org/data/definitions/548.html</reference>
@@ -595,16 +606,16 @@ Las funciones de aplicaciones web que suelen ser objeto de ataques de automatiza
     *Encuentas en línea: las encuentas en línea y otros diferentes sistemas de votación en línea se pueden trastornar de forma automática a favor de una opción determinada.
     *Envío de mensajes SMS basados en la web: los atacantes pueden explotar los sistemas de envíos de los mensajes SMS para poder enviar correos no deseados a los usuarios de teléfonos móviles
 	</desc>
-	<solution>Implement strong anti-automation measures to defend against malicious attempts to automate processes. Consider the following strategies:
-1. **CAPTCHA:** Integrate CAPTCHA challenges in critical forms to distinguish between automated bots and human users.
-2. **Rate Limiting:** Enforce rate limiting on various actions to prevent rapid and repetitive requests which makes the automated attacks less effective.
-3. **Behavioral Analysis:** Implement behavioral analysis tools to detect patterns indicative of automation, such as unusual navigation sequences or form submissions.
-4. **Device Fingerprinting:** Use device fingerprinting techniques to identify and block requests from suspicious or known automated sources.
-5. **Multi-Factor Authentication (MFA):** Introduce multi-factor authentication to add an extra layer of security, making it harder for automated attacks to succeed.
-6. **Honeypots:** Deploy honeypots or hidden fields in forms to trick automated bots into revealing their presence, allowing for appropriate action.
-7. **Monitoring and Logging:** Regularly monitor and log user activities to identify and respond to unusual patterns indicative of automation.
+	<solution>Implemente fuertes medidas anti-automatización para defenderse contra intentos maliciosos de automatizar procesos. Considere las siguientes estrategias:
+1. **CAPTCHA:** Integra desafíos CAPTCHA en formularios críticos para distinguir entre bots automatizados y usuarios humanos.
+2. **Limitación de velocidad:** Aplique la limitación de velocidad en varias acciones para evitar solicitudes rápidas y repetitivas para conseguir que los ataques automatizados sean menos efectivos.
+3. **Análisis de comportamiento:** Implemente herramientas de análisis de comportamiento para detectar patrones indicativos de automatización, como secuencias de navegación o envíos de formularios inusuales.
+4. **Huella digital del dispositivo:** Utilice técnicas de huella digital del dispositivo para identificar y bloquear solicitudes de fuentes automatizadas sospechosas o conocidas.
+5. **Autenticación multifactor (MFA):** Introduzca la autenticación multifactor para agregar una capa adicional de seguridad, lo que dificultara que los ataques automatizados tengan éxito.
+6. **Honeypots:** Implemente honeypots o campos ocultos en formularios para engañar a los bots automatizados para que revelen su presencia, y poder tomar las medidas adecuadas.
+7. **Monitoreo y registro:** Monitoree y registre periódicamente las actividades de los usuarios para identificar y responder a patrones inusuales indicativos de automatización.
 
-A combination of these measures is often more effective in preventing automated attacks.</solution>
+Una combinación de estas medidas suele ser más eficaz para prevenir ataques automatizados.</solution>
 	<reference>https://owasp.org/www-project-automated-threats-to-web-applications/</reference>
 	<reference>https://cwe.mitre.org/data/definitions/116.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/799.html</reference>
@@ -703,21 +714,21 @@ Un uso para este método es para mejorar la técnica de división de respuestas 
 
 El contrabando de las respuestas de HTTP utiliza algunas técnicas de contrabando de solicitudes HTTP para poder explotar las faltas de acuerdos entre lo que un mecanismo de división de respuestas de HTTP (o un servidor proxy) consideraría como la secuencia de respuesta HTTP, y la secuencia de respuesta que fue analizada por un servidor proxy (o un navegador). Entonces, aunque un mecanismo de división de respuesta anti HTTP se puede considerar un flujo de respuesta única e inofensiva (respuesta de HTTP única), un proxy/navegador puede analizarlo como dos respuestas HTTP y, por lo tanto, tener las condiciones necesarias para todos los resultados de la división de respuesta HTTP original técnica (en el primer caso de utilización) o tener las condiones necesarias para la suplantación de página (en el segundo caso). Por ejemplo, varios meanismos de división de respuesta anti HTTP que son utilizados por algunos motores de aplicaciones impiden a la aplicación poder ingresar un encabezado que contenga CR+LF a la respuesta. Sin embargo, un atacante puede obligar a la aplicación a que ingrese un encabezado que contenga CR, evadiendo de esta forma a el mecanismo de defensa. Algunos servidores proxy todavía pueden tratar CR (solo) como un separador de encabezado (y respuesta), y de esta forma, la combinación de un servidor web y un servidor proxy seguirá siendo muy vulnerable a un ataque que puede envenenar el caché del servidor proxy.
 	</desc>
-	<solution>Use HTTP/2 for backend connections. While HTTP/2 doesn't entirely prevent request smuggling, it does introduce certain changes that makes it difficult for attacker to exploit this.
+	<solution>Usa HTTP/2 para conexiones backend. Si bien HTTP/2 no evita por completo el contrabando de solicitudes, sí introduce ciertos cambios que dificultan que los atacantes lo exploten.
 
-		Utilize a Web Application Firewall (WAF) that has built-in mitigation to detect abnormal requests/responses.
+		Utilize un firewall de aplicaciones web (WAF) que tenga mitigación incorporada para detectar solicitudes/respuestas no comunes.
 
-		Whenever a HTTP message contains both Transfer-Encoding and Content-Length either prioritize the Transfer-Encoding header or just completely reject the HTTP message. Make this behavior consistent in the back-end server and any intermediary HTTP agents.
+		Siempre que un mensaje HTTP contenga Transfer-Encoding y Content-Length, priorice el encabezado Transfer-Encoding o simplemente rechace por completo el mensaje HTTP. Haga que este comportamiento sea consistente en el servidor back-end y en cualquier agente HTTP intermediario.
 
-		Disallow Malformed/Invalid Transfer-Encoding Headers used in obfuscation, such as:
-			* Headers with no space before the value “chunked”
-			* Headers with extra spaces
-			* Headers beginning with trailing characters
-			* Headers providing a value “chunk” instead of “chunked” (the server normalizes this as chunked encoding)
-			* Headers with multiple spaces before the value “chunked”
-			* Headers with quoted values (whether single or double quotations)
-			* Headers with CRLF characters before the value “chunked”
-			* Values with invalid characters
+		No permitir Cabeceras de Codificación de Transferencia Malformadas/Inválidas usadas en ofuscación, tales como:
+			* Cabeceras sin espacio antes del valor «chunked»
+			* Cabeceras con espacios adicionales
+			* Cabeceras que comienzan con caracteres finales
+			* Encabezados que proporcionan un valor «chunk» en lugar de «chunked» (el servidor lo normaliza como codificación chunked)
+			* Encabezados con varios espacios antes del valor «chunked».
+			* Encabezados con valores entrecomillados (ya sean comillas simples o dobles)
+			* Encabezados con caracteres CRLF antes del valor «chunked».
+			* Valores con caracteres no válidos
 	</solution>
 	<reference>https://owasp.org/www-community/attacks/HTTP_Response_Splitting</reference>
 	<reference>https://capec.mitre.org/data/definitions/273.html</reference>
@@ -828,7 +839,7 @@ Incluso si se comete un error en su validación (como por ejemplo olvidar uno de
 
 Los desvíos de enrutamiento son un tipo de ataque de "Hombre en el medio" en donde los intermediarios pueden ser inyectados o "secuestrados" para poder enrutar los mensajes que son confidenciales a un lugar que sea externo. La información de enrutamiento (ya sea en el encabezado HTTP o en el encabezado WS-Routing) se puede cambiar en una ruta y los rastros del enrutamiento pueden ser eliminados del encabezado y mensaje de tal forma que la aplicación que es receptora no tenga más conocimiento de que se ha producido algún tipo de desvío de enrutamiento. El encabezado y la incorporación de los objetos del encabezado normalmente se encuentran menos protegidos que el mensaje; esto se origina por el hecho de que el encabezado se utiliza como un capturador de todos los metadatos acerca de la transacción, como por ejemplo autenticación, enrutamiento, formato, esquema, canonicalización, espacios de los nombres, etc. Además, muchos de los procesos se pueden encontrar muy involucrados en agregar/procesar el encabezado de un documento que sea XML. En muchas de las ejecuciones, la información de enrutamiento puede tener su origen de algún servicio web que sea externo (utilizando WS-Referral, por ejemplo) que otorga el enrutamiento de forma específica para la transacción.
 
-WS-Addressing es un estándar mucho más nuevo publicado por el W3C para poder proporcionar alguna funcionalidad de enrutamiento a todos los mensajes SOAP. Una de las diferencias principales entre el WS-Routing y WS-Addressing es que WS-Addressing solo puede otorgar la siguiente localización en la ruta. While little research has been done into the susceptibility of WS-Addressing to Routing Detour Attack, some research suggests that WS-Addressing is vulnerable to Routing Detour as well.</desc>
+WS-Addressing es un estándar mucho más nuevo publicado por el W3C para poder proporcionar alguna funcionalidad de enrutamiento a todos los mensajes SOAP. Una de las diferencias principales entre el WS-Routing y WS-Addressing es que WS-Addressing solo puede otorgar la siguiente localización en la ruta. Si bien se han realizado pocas investigaciones sobre la susceptibilidad de WS-Addressing a los Routing Detour Attack, algunas investigaciones sugieren que WS-Addressing también es vulnerable a los ataques de Routing Detour.</desc>
 	<solution>Siempre tiene que autentificar de forma completa los dos extremos de cualquier canal de comunicaciones.
 
 Unirse al principio de la mediación completa.
@@ -946,7 +957,7 @@ Use una página intermediaria que le dé al usuario una advertencia clara de que
 
 Cuando el grupo de los objetos que son aceptados, como nombre de los archivos o URL, es limitado o conocido, tiene que crear una asignación de un grupo de valores de entradas que son fijos (como ID numéricos) a los nombres de los archivos o URL que son reales, y además tiene que rechazar todas las otras entradas.
 
-For example, ID 1 could map to "/login.asp" and ID 2 could map to "https://www.example.com/". Las características tales como AccessReferenceMap de ESAPI otorgan esta capacidad.
+Por ejemplo, el ID 1 podría asignarse a "/login.asp" y el ID 2 podría asignarse a "https://www.example.com/". Las características tales como AccessReferenceMap de ESAPI otorgan esta capacidad.
 
 Identifique todas las áreas potenciales a través de las cuales puede ingresar a su software contenido poco confiable: parámetros o argumentos, cookies, cualquier cosa que sea leída desde la red, variables del ámbito, títulos o contenido de las solicitudes, componentes URL, correos electrónicos, archivos, bases de datos y cualquier sistema externo que le brinde información a la aplicación. Recuerde que esas entradas pueden ser obtenidas de forma indirecta por medio de llamadas API.
 
@@ -979,7 +990,17 @@ Hay dos tipos principales de procesos que requieren validación: control de fluj
 “Control de flujo” se refiere a procesos multi-pasos que requieren que cada paso sea ejecutado por el usuario en un orden específico. Cuando un atacante ejecuta el paso de manera incorrecta o fuera del orden, los controles de acceso pueden ser pasados por alto y puede ocurrir un error de integridad en la aplicación. Ejemplos de procesos multi-pasos incluyen transferencias bancarias, recupero de contraseñas, salida luego de hacer una compra e inicio de sesión para en una cuenta.
 
 “Lógica de negocio” se refiere al contexto en el cual un proceso será ejecutado bajo la orden de los requerimientos del negocio. Explotar la debilidad de una lógica de negocio requiere conocimiento acerca negocio; si no se necesita conocimiento para explotarlo, entonces muy probablemente no es una falla de lógica de negocio. Debido a esto, medidas de seguridad típicas como escaneos y revisión de códigos no encontrarán esta clase de debilidad. OWASP presenta una forma de enfoque para las pruebas en su Guía de Prueba.</desc>
-	<solution/>
+	<solution>Make sure that all operations within a multi-step process are either performed entirely or not at all. If one step fails, the changes made must be canceled. Fuzzing inputs is a good way to test for anomalies and to verify the results after the flow completes.
+
+Make sure the correct order of steps in the flow is enforced and that the order cannot be changed or bypassed by the user.
+
+Developers and testers must have a solid understanding of the domain that the application serves.
+
+Do not rely on implicit assumptions about how users or different application parts will behave.
+
+Identify all references to other code that interacts with each component and evaluate the possible side-effects if a malicious actor manipulates these dependencies in unexpected ways.
+
+Maintain clear code, design documents, and data flow diagrams for all transactions and workflows, noting any assumptions made at each stage and what the expected behavior is.</solution>
 	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
 	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>
@@ -1043,19 +1064,19 @@ Antes de formular archivos XML con DTDs asociados, escanee para detectar declara
 	<desc>La metodología más común para los atacantes es revisar la presencia del sitio web que se quiere atacar y enumerar tanta información como sea posible. Con esta información, el atacante puede desarrollar un plan de ataque preciso, el cual explotará eficazmente una vulnerabilidad en el tipo/versión del sistema utilizado por el objetivo.
 
 El sistema de huella dactilar multi-paso es similar a su predecesor, TCP/IP Fingerprinting (con un escáner como Nmap) con la excepción de que está focalizado en la Capa de Aplicación del modelo OSI en lugar que en la Capa de Transporte. La teoría que se encuentra detrás de esta toma de huellas dactilares es originar un perfil de forma precisa de la plataforma del objetivo, la tecnología del software de la aplicación web, la versión de la base de datos back-end, de las configuraciones y también posiblemente de su arquitectura/topología de la red.</desc>
-	<solution>Implement measures to obfuscate or disguise information about the system's platform, web application software technology, backend database version, configurations, and network architecture/topology. This can include:
+	<solution>Implementar medidas para ofuscar o enmascarar información sobre la plataforma del sistema, la tecnología del software de aplicación web, la versión de la base de datos de back-end, las configuraciones y la arquitectura/topología de la red. Esto puede incluir:
 
-1. **Platform and Software Diversity:** Use a mix of technologies and platforms to make it harder for attackers to build an accurate profile.
+1. **Diversidad de plataformas y software:** Utilice una combinación de tecnologías y plataformas para dificultar que los atacantes creen un perfil preciso.
 
-2. **False Information:** Introduce fake or misleading information in system responses to confuse fingerprinting tools.
+2. **Información falsa:** Introduzca información falsa o engañosa en las respuestas del sistema para confundir las herramientas de toma de huellas digitales.
 
-3. **Response Randomization:** Randomize certain elements in responses to make it difficult for attackers to consistently identify the system.
+3. **Aleatorización de respuestas:** Aleatorice ciertos elementos en las respuestas para dificultar que los atacantes identifiquen el sistema de manera consistente.
 
-4. **Firewall Rules:** Implement firewall rules to block or limit the effectiveness of fingerprinting techniques.
+4. Reglas de firewall: Implementar reglas de firewall para bloquear o limitar la efectividad de las técnicas de huella digital.
 
-5. **Regular Updates:** Keep software, platforms, and configurations up-to-date to patch known vulnerabilities and prevent accurate identification based on outdated information.
+5. **Actualizaciones Regulares** Mantén el software, las plataformas y las configuraciones actualizadas para corregir vulnerabilidades conocidas y evitar la identificación precisa basada en información desactualizada.
 
-There is no one-size-fits-all solution, and a combination of these measures may be most effective.</solution>
+No existe una solución única para todos los casos, por lo que una combinación de estas medidas puede ser la más efectiva.</solution>
 	<reference>https://cwe.mitre.org/data/definitions/205.html</reference>
 </vuln_item_wasc_45>
 
@@ -1091,22 +1112,22 @@ Una aplicación Web debería invalidar una sesión después de que ha pasado un 
 <vuln_item_wasc_48>
 	<alert>Indexación Insegura</alert>
 	<desc>La Indexación insegura es una amenaza a la confidencialidad de los datos de un sitio web. La indexación de contenidos de sitios web a través de un proceso que tiene acceso a archivos que se supone que no son de acceso público tiene el potencial de filtrar información sobre la existencia de dichos archivos y sobre su contenido. En el proceso de indexar, dicha información es recogida y almacenada por el proceso de indexación, la cual puede ser recuperada después (aunque no de forma trivial) por un determinado atacante, normalmente a través de una serie de consultas al motor de búsqueda. Al atacante no le impide el modelo de seguridad del motor de búsqueda. Como tal, este ataque es sutil y muy difícil de detectar y frustrar -no es fácil distinguir las consultas del atacante de las consultas de un usuario legítimo.</desc>
-	<solution>Implement measures to secure indexing processes and prevent unauthorized access to sensitive information. The following strategies can be considered:
-1. **Access Controls:** Review and restrict access permissions for the indexing process to ensure it only accesses and indexes files that are intended to be publicly available.
-2. **Robot Exclusion Standard (robots.txt):** Use the robots.txt file to explicitly specify which areas of the website should not be indexed by search engines.
-3. **Authentication Requirements:** Implement authentication mechanisms for accessing sensitive files, ensuring that only authorized users or processes can retrieve them.
-4. **File Encryption:** Encrypt sensitive files to protect their content, even if an unauthorized user gains access to the files.
-5. **URL Redaction:** Avoid including sensitive information in URLs or filenames that might be exposed during indexing.
-6. **Security Headers:** Utilize security headers (e.g., Content Security Policy) to control how browsers and search engines interact with your website.
+	<solution>Implementa medidas para asegurar los procesos de indexación y prevenir el acceso no autorizado a información sensible. Las siguientes estrategias se tendrían que considerar:
+1. **Controles de Acceso** Revisa y restringe los permisos de acceso al proceso de indexación para asegurar que solo acceda e indexe archivos que estén destinados a ser públicos.
+2. **Estándar de exclusión de robots (robots.txt)** Utiliza el archivo robots.txt para especificar explícitamente qué áreas del sitio web no deben ser indexadas por los motores de búsqueda.
+3. **Requisitos de autenticación** Implementa mecanismos de autenticación para acceder a archivos sensibles, asegurando que solo usuarios o procesos autorizados puedan recuperarlos.
+4. **Cifrado de archivos:** Cifre archivos confidenciales para proteger su contenido, incluso si un usuario no autorizado obtiene acceso a los archivos.
+5. **Redacción de URL:** Evite incluir información confidencial en la URL o nombres de archivos que puedan quedar expuestos durante la indexación.
+6. **Encabezados de seguridad:** utilice encabezados de seguridad (por ejemplo, Política de seguridad de contenido) para controlar cómo los navegadores y motores de búsqueda interactúan con su sitio web.
 
-A proactive and layered approach to security is crucial for safeguarding against Insecure Indexing.</solution>
+Un enfoque de seguridad proactivo y en capas es crucial para protegerse contra la indexación insegura.</solution>
 	<reference>https://cwe.mitre.org/data/definitions/612.html</reference>
 </vuln_item_wasc_48>
 
 <vuln_items>wasc_49</vuln_items>
 <vuln_item_wasc_49>
 	<alert>Recuperación de Contraseña Insuficiente</alert>
-	<desc>La recuperación de contraseña insuficiente es cuando un sitio web permite a un atacante obtener ilegalmente, cambiar o recuperar otra contraseña de usuario. Los métodos de autenticación de un sitio web convencional requiere que los usuarios seleccionen y recuerden una contraseña o una frase de contraseña. El usuario debería ser la única persona que conoce la contraseña y esta debe ser recordada precisamente. A medida que pasa el tiempo, la habilidad de un usuario para recordar una contraseña se desvanece. El problema es más complicado cuando el usuario promedio visita 20 sitios pidiéndoles suministrarle una contraseña. Thus, password recovery is an important part in servicing online users.
+	<desc>La recuperación de contraseña insuficiente es cuando un sitio web permite a un atacante obtener ilegalmente, cambiar o recuperar otra contraseña de usuario. Los métodos de autenticación de un sitio web convencional requiere que los usuarios seleccionen y recuerden una contraseña o una frase de contraseña. El usuario debería ser la única persona que conoce la contraseña y esta debe ser recordada precisamente. A medida que pasa el tiempo, la habilidad de un usuario para recordar una contraseña se desvanece. El problema es más complicado cuando el usuario promedio visita 20 sitios pidiéndoles suministrarle una contraseña. Por lo tanto, la recuperación de contraseña es una parte importante en el servicio para los usuarios en línea.
 
 En ejemplos de procesos de recuperación de contraseña automáticos se incluye pedirle al usuario responder una "pregunta secreta" definida como parte del proceso de registro del usuario. Esta pregunta puede ser tanto seleccionada de un banco de preguntas o suministrada por el usuario. Otro mecanismo en uso es que el usuario proporcione una "pista" durante el registro que ayudará al usuario a recordar su contraseña. Otros mecanismos requieren que el usuario facilite varios datos personales, como su número de la seguridad social, su dirección, su código postal, etc., para validar su identidad. Después de que el usuario ha probado quién es, el sistema de recuperación le mostrará o le enviará por e-mail una nueva contraseña.
 

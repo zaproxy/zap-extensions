@@ -5,6 +5,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Replace usage of CWE-200 for the Insecure HTTP Method scan rule (Issue 8714).
+- Include exception message of failed attacks in the Server Side Request Forgery scan rule.
+
+### Fixed
+- Address potential/theoretical reDoS issue in the Insecure HTTP Method scan rule.
+
+## [57] - 2025-01-15
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- The following scan rules now use more specific CWE IDs:
+    - Proxy Disclosure (Issue 8713)
+    - Possible Username Enumeration (Issue 8715)
+- Remove double dot in skipped message of scan rules that use the Active Scan OAST service.
+
+### Fixed
+- Address exception when scanning a message without path with Possible Username Enumeration scan rule.
+- The WSTG alert tags on the HTTP Only Site scan rule.
+
+### Added
+- Standardized Scan Policy related alert tags on various rules.
+
+## [56] - 2024-09-24
+### Changed
+- Log exception details in Out of Band XSS scan rule.
+- Maintenance changes.
+- The Anti-CSRF Tokens Check scan rule now only considers GET requests at Low Threshold (Issue 7741).
+
+### Fixed
+- Address time-based false positives in Remote Code Execution - Shell Shock scan rule (Issue 8516).
+
+## [55] - 2024-09-02
+### Changed
 - The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
     - Expression Language Injection
     - Cookie Slack Detector
@@ -533,6 +565,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[57]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v57
+[56]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v56
+[55]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v52

@@ -119,7 +119,9 @@
     ],
     "description": "REG.RU is a web hosting provider and internet domain registrar.",
     "dns": {
-      "SOA": "(?:\\.hosting)?\\.reg\\.ru"
+      "SOA": [
+        "(?:\\.hosting)?\\.reg\\.ru"
+      ]
     },
     "icon": "REG.RU.svg",
     "pricing": [
@@ -128,15 +130,41 @@
     ],
     "website": "https://www.reg.ru"
   },
+  "RMZ": {
+    "cats": [
+      6
+    ],
+    "description": "RMZ is a platform that allows users to create a store with features including payment processing, management tools, and access to statistics.",
+    "icon": "RMZ.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "assets\\.rmz\\.gg/"
+    ],
+    "website": "https://rmz.gg"
+  },
   "RND": {
     "cats": [
       6
     ],
+    "cookies": {
+      ".RND.Antiforgery": "",
+      ".RND.Customer": "",
+      "rnd_csid": ""
+    },
     "description": "RND is a software technology used for companies to set up ecommerce infrastructure.",
     "dom": [
       "div#rnd-mobile-menu, a[href*='www.rnd.com.tr/?utm_source='][target='_blank'], a[href*='www.rndecommerce.com/'] > span > svg[title*='RND']"
     ],
     "icon": "RND.svg",
+    "meta": {
+      "apple-mobile-web-app-title": "^Rnd Commerce$",
+      "generator": "^RND Ecommerce$"
+    },
     "pricing": [
       "recurring"
     ],
@@ -148,13 +176,7 @@
     "scriptSrc": [
       "/Scripts/plugins/rnd-mobilemenu/"
     ],
-    "website": "https://www.rnd.com.tr/en/",
-    "cookies": {
-      "rnd_csid": ""
-    },
-    "meta": {
-      "apple-mobile-web-app-title": "^Rnd Commerce$"
-    }
+    "website": "https://www.rnd.com.tr/en/"
   },
   "RSS": {
     "cats": [
@@ -200,6 +222,25 @@
     },
     "icon": "RXWeb.svg",
     "website": "https://developers.rokitax.co.uk/projects/rxweb"
+  },
+  "Raaft": {
+    "cats": [
+      97
+    ],
+    "description": "Raaft is a tool designed to help SaaS companies lower customer churn and gather feedback from users who choose to cancel their subscriptions.",
+    "icon": "Raaft.svg",
+    "js": {
+      "RAAFT_APP_ID": "",
+      "raaft": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://raaft.io"
   },
   "RabbitLoader": {
     "cats": [
@@ -310,6 +351,9 @@
       "recurring"
     ],
     "saas": false,
+    "scripts": [
+      "railway\\.app"
+    ],
     "website": "https://railway.app"
   },
   "Rain": {
@@ -391,6 +435,23 @@
     "saas": true,
     "website": "https://raisely.com"
   },
+  "Rake": {
+    "cats": [
+      52
+    ],
+    "description": "Rake is a messaging platform and conversion optimization solution designed for communication between customers, visitors, and co-workers.",
+    "icon": "Rake.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.rake\\.ai/"
+    ],
+    "website": "https://www.rake.ai"
+  },
   "Raku-uru Cart": {
     "cats": [
       6
@@ -450,13 +511,28 @@
     "cats": [
       59
     ],
+    "description": "Ramda is a practical functional programming library for JavaScript that emphasizes immutability, currying, and function composition to facilitate writing more declarative and modular code.",
     "icon": "Ramda.svg",
+    "oss": true,
     "scriptSrc": [
       "ramda.*\\.js"
     ],
-    "website": "https://ramdajs.com",
-    "oss": true,
-    "description": "Ramda is a practical functional programming library for JavaScript that emphasizes immutability, currying, and function composition to facilitate writing more declarative and modular code."
+    "website": "https://ramdajs.com"
+  },
+  "Ramper": {
+    "cats": [
+      32
+    ],
+    "description": "Ramper is a B2B marketing and sales platform designed to streamline business operations.",
+    "icon": "Ramper.svg",
+    "js": {
+      "LaharApp.criacao_elementos": "",
+      "PopupLahar.create": "",
+      "SourceLahar.init": "",
+      "TrackingLahar.create": ""
+    },
+    "saas": true,
+    "website": "https://ramper.com.br"
   },
   "RankMath SEO": {
     "cats": [
@@ -570,6 +646,25 @@
       "msecnd\\.net/script/raptor-([\\d.]+)\\.js\\;version:\\1"
     ],
     "website": "https://raptorsmartadvisor.com"
+  },
+  "Rasayel": {
+    "cats": [
+      2
+    ],
+    "description": "Rasayel is a customer communication platform that helps businesses sell to and support their customers over WhatsApp and other social messaging channels.",
+    "icon": "Rasayel.svg",
+    "js": {
+      "RasayelOmniWidget": "",
+      "RasayelWabaWidget": "",
+      "RasayelWhatsAppWidget": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.rasayel.io"
   },
   "Raspbian": {
     "cats": [
@@ -925,14 +1020,14 @@
     "implies": [
       "React"
     ],
+    "js": {
+      "__reactRouterVersion": "^([\\d\\.]+)$\\;version:\\1"
+    },
     "oss": true,
     "scriptSrc": [
       "(?:/react-router(@|/)([\\d.]+)(?:/[a-z]+)?)?/react-router(?:\\.min)?\\.js\\;version:\\2"
     ],
-    "website": "https://reactrouter.com",
-    "js": {
-      "__reactRouterVersion": "^([\\d\\.]+)$\\;version:\\1"
-    }
+    "website": "https://reactrouter.com"
   },
   "Reactive": {
     "cats": [
@@ -1048,6 +1143,44 @@
     "saas": true,
     "website": "https://readymag.com"
   },
+  "Reaktion": {
+    "cats": [
+      6
+    ],
+    "description": "Reaktion is a provider of ecommerce solutions designed to help businesses enhance their online profits.",
+    "icon": "Reaktion.svg",
+    "js": {
+      "reaktionLock": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "api\\.reaktion\\.com"
+    ],
+    "website": "https://reaktion.com"
+  },
+  "RealNex MarketPlace": {
+    "cats": [
+      6
+    ],
+    "description": "RealNex Marketplace is a platform for buying, selling, leasing, and transacting in commercial real estate, offering advanced search tools, alerts for new listings, and automated matching based on user-defined criteria.",
+    "icon": "RealNex.svg",
+    "js": {
+      "NEX_MAP_ID": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://realnex.com"
+  },
   "Really Simple CAPTCHA": {
     "cats": [
       87
@@ -1075,10 +1208,10 @@
       "<!-- Powered by RebelMouse\\."
     ],
     "icon": "RebelMouse.svg",
-    "website": "https://www.rebelmouse.com/",
     "js": {
       "REBELMOUSE_ACTIVE_TASKS_QUEUE": ""
-    }
+    },
+    "website": "https://www.rebelmouse.com/"
   },
   "Rebuy": {
     "cats": [
@@ -1249,6 +1382,22 @@
     ],
     "website": "https://www.recomify.com"
   },
+  "Recop": {
+    "cats": [
+      101
+    ],
+    "description": "Recop is a recruitment optimization system from Japan.",
+    "icon": "Recop.svg",
+    "js": {
+      "$recop.Event": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://recop.jp"
+  },
   "RecoverMyCart": {
     "cats": [
       76,
@@ -1320,6 +1469,9 @@
       41
     ],
     "description": "Recurly provides enterprise-class subscription billing and recurring payment management for thousands of businesses worldwide.",
+    "dom": [
+      "input[data-recurly]"
+    ],
     "html": [
       "<input[^>]+data-recurly"
     ],
@@ -1330,10 +1482,7 @@
     "scriptSrc": [
       "js\\.recurly\\.com"
     ],
-    "website": "https://recurly.com",
-    "dom": [
-      "input[data-recurly]"
-    ]
+    "website": "https://recurly.com"
   },
   "Red Hat": {
     "cats": [
@@ -1443,6 +1592,18 @@
     ],
     "website": "https://advertising.reddithelp.com/"
   },
+  "Redicom": {
+    "cats": [
+      6
+    ],
+    "description": "Redicom is a Portuguese-based platform specializing in premium ecommerce solutions.",
+    "icon": "Redicom.svg",
+    "meta": {
+      "generator": "^Redicom Prolepse$"
+    },
+    "saas": true,
+    "website": "https://www.redicom.pt"
+  },
   "Redis": {
     "cats": [
       34
@@ -1465,6 +1626,23 @@
       "WordPress"
     ],
     "website": "https://wprediscache.com"
+  },
+  "Reditus": {
+    "cats": [
+      71
+    ],
+    "description": "Reditus is a partner management tool for B2B SaaS companies.",
+    "icon": "Reditus.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.getreditus\\.com/"
+    ],
+    "website": "https://www.getreditus.com"
   },
   "Redmine": {
     "cats": [
@@ -1503,18 +1681,18 @@
       12
     ],
     "description": "Redux is a predictable state container for JavaScript applications.",
-    "icon": "Redux.svg",
-    "scriptSrc": [
-      "/redux(@|/)([\\d.]+)(?:/[a-z]+)?/redux(?:.min)?\\.js\\;version:\\2"
-    ],
-    "website": "https://redux.js.org",
-    "oss": true,
     "dom": [
       "link[href*='//redux.js.org']"
     ],
+    "icon": "Redux.svg",
     "js": {
       "__REDUX_DEVTOOLS_EXTENSION__": ""
-    }
+    },
+    "oss": true,
+    "scriptSrc": [
+      "/redux(@|/)([\\d.]+)(?:/[a-z]+)?/redux(?:.min)?\\.js\\;version:\\2"
+    ],
+    "website": "https://redux.js.org"
   },
   "Redux Framework": {
     "cats": [
@@ -1700,6 +1878,23 @@
     ],
     "website": "https://reflektion.com"
   },
+  "Reform": {
+    "cats": [
+      110
+    ],
+    "description": "Reform is a conversion-focused form builder designed to optimize data collection.",
+    "icon": "Reform.svg",
+    "js": {
+      "Reform": "",
+      "ReformHandlers": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.reform.app"
+  },
   "Refundid": {
     "cats": [
       102
@@ -1748,6 +1943,23 @@
     },
     "website": "https://www.reinvigorate.net"
   },
+  "Rela": {
+    "cats": [
+      32
+    ],
+    "description": "Rela is a set of property marketing tools for real estate professionals to enhance listings, attract potential buyers, and streamline the sales process.",
+    "icon": "Rela.svg",
+    "js": {
+      "relaAjaxLink": "",
+      "relaAjaxPost": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.relahq.com"
+  },
   "Relais Colis": {
     "cats": [
       99
@@ -1761,6 +1973,22 @@
       "\\bRelais Colis\\b"
     ],
     "website": "https://www.relaiscolis.com"
+  },
+  "Relap": {
+    "cats": [
+      36
+    ],
+    "description": "Relap is an advertising effectiveness system that focuses on optimizing content recommendations and increasing user engagement.",
+    "icon": "Relap.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "//relap\\.io/v([\\d]+)/relap\\.js\\;version:\\1"
+    ],
+    "website": "https://relap.io"
   },
   "Relewise": {
     "cats": [
@@ -1786,6 +2014,9 @@
       6
     ],
     "description": "Remarkable Commerce is a technology and services company which provides a ecommerce platform for mid-sized retailers.",
+    "headers": {
+      "x-powered-by": "Remarkable Commerce"
+    },
     "icon": "Remarkable.svg",
     "js": {
       "Remarkable.BasketItems": ""
@@ -1794,10 +2025,7 @@
       "poa"
     ],
     "saas": true,
-    "website": "https://remarkable.net/",
-    "headers": {
-      "x-powered-by": "Remarkable Commerce"
-    }
+    "website": "https://remarkable.net/"
   },
   "Remix": {
     "cats": [
@@ -1810,7 +2038,9 @@
       "React"
     ],
     "js": {
-      "__remixContext": ""
+      "__remixContext": "",
+      "__remixRouteModules": "",
+      "__remixRouter": ""
     },
     "oss": true,
     "website": "https://remix.run/"
@@ -1870,7 +2100,9 @@
     ],
     "description": "Render Better is automated site speed and core web vital optimisation platform for Shopify.",
     "dns": {
-      "CNAME": "\\.renderbetter\\.app"
+      "CNAME": [
+        "\\.renderbetter\\.app"
+      ]
     },
     "icon": "renderbetter.svg",
     "js": {
@@ -2074,6 +2306,23 @@
     ],
     "website": "https://wwc.resengo.com"
   },
+  "Reserva INK": {
+    "cats": [
+      6
+    ],
+    "description": "Reserva INK is a platform that enables users to sell personalized t-shirts without the need for stock, offering nationwide delivery and a professional online store for easy management of orders and sales.",
+    "icon": "ReservaINK.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "www\\.reserva\\.ink"
+    ],
+    "website": "https://reserva.ink"
+  },
   "Reserve In-Store": {
     "cats": [
       100,
@@ -2198,6 +2447,22 @@
     "saas": true,
     "website": "https://www.respond.io"
   },
+  "Responsa": {
+    "cats": [
+      52
+    ],
+    "description": "Responsa is a conversational AI platform designed to increase sales and reduce operational costs by automating customer interactions and streamlining communication processes.",
+    "icon": "Responsa.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "//goresponsa\\.com/"
+    ],
+    "website": "https://responsa.ai"
+  },
   "Responsive Lightbox & Gallery": {
     "cats": [
       87,
@@ -2311,6 +2576,17 @@
     ],
     "website": "https://retailrocket.net"
   },
+  "Retain": {
+    "cats": [
+      52
+    ],
+    "description": "Retain is an online conversation system developed in Iran designed to facilitate digital communication.",
+    "saas": true,
+    "scriptSrc": [
+      "\\.retain\\.ir/"
+    ],
+    "website": "https://retain.ir"
+  },
   "Retention.com": {
     "cats": [
       100,
@@ -2319,6 +2595,7 @@
     "description": "Retention.com's identity resolution software helps Shopify merchants recover lost shoppers.",
     "icon": "Retention.com.svg",
     "js": {
+      "B2BRetention": "",
       "addedToCartRetentionButton": "",
       "viewedProductRetention": ""
     },
@@ -2366,6 +2643,19 @@
       "^https://retool\\.[\\d\\w\\-]+\\.(?:com|io)/"
     ],
     "website": "https://retool.com"
+  },
+  "Retrina Builder": {
+    "cats": [
+      51
+    ],
+    "description": "Retrina Builder is a drag-and-drop page builder for OpenCart that enables website creation without requiring coding skills.",
+    "dom": [
+      "link[href*='/retrina-builder.min.css']",
+      "link[href*='/retrina_builder_custom.css']"
+    ],
+    "icon": "RetrinaBuilder.svg",
+    "saas": true,
+    "website": "https://retrina.com/ronixa-product"
   },
   "Return Prime": {
     "cats": [
@@ -2460,16 +2750,28 @@
     "saas": true,
     "website": "https://reunionmarketing.com"
   },
+  "RevBid": {
+    "cats": [
+      36
+    ],
+    "description": "RevBid is a header bidding platform designed for publishers to optimize ad revenue.",
+    "icon": "RevBid.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.revbid\\.net/"
+    ],
+    "website": "https://revbid.net"
+  },
   "RevContent": {
     "cats": [
       36,
       5
     ],
     "description": "RevContent is a monetization and recommendation engine that connects advertisers to highly engaged audiences on the web's leading publisher sites.",
-    "icon": "revcontent.png",
     "dom": [
       "link[href*='.revcontent.com']"
     ],
+    "icon": "revcontent.png",
     "js": {
       "revcontent": ""
     },
@@ -2516,6 +2818,7 @@
     "cats": [
       12
     ],
+    "description": "Reveal.js is a JavaScript framework for building dynamic and interactive presentations using web technologies like HTML, CSS, and JavaScript.",
     "icon": "reveal.js.svg",
     "implies": [
       "Highlight.js"
@@ -2523,12 +2826,11 @@
     "js": {
       "Reveal.VERSION": "^(.+)$\\;version:\\1"
     },
+    "oss": true,
     "scriptSrc": [
       "(?:^|/)reveal(?:\\.min)?\\.js"
     ],
-    "website": "https://revealjs.com",
-    "oss": true,
-    "description": "Reveal.js is a JavaScript framework for building dynamic and interactive presentations using web technologies like HTML, CSS, and JavaScript."
+    "website": "https://revealjs.com"
   },
   "Revel": {
     "cats": [
@@ -2638,6 +2940,18 @@
       "\\.reviewforest\\.org/"
     ],
     "website": "https://reviewforest.org/"
+  },
+  "ReviewPro": {
+    "cats": [
+      90
+    ],
+    "description": "ReviewPro is a hotel guest review system designed to collect and analyze guest feedback.",
+    "icon": "ReviewPro.svg",
+    "saas": true,
+    "scriptSrc": [
+      "sapi\\.reviewpro\\.com/"
+    ],
+    "website": "https://reviewpro.shijigroup.com"
   },
   "ReviewRail": {
     "cats": [
@@ -2778,6 +3092,18 @@
       "r\\.wdfl\\.co"
     ],
     "website": "https://www.getrewardful.com/"
+  },
+  "Rewix": {
+    "cats": [
+      6
+    ],
+    "description": "Rewix is a B2B ecommerce platform that offers flexible and secure solutions to increase sales through data-driven tools.",
+    "icon": "Rewix.svg",
+    "js": {
+      "Rewix.trackUpdateCart": ""
+    },
+    "saas": true,
+    "website": "https://www.rewixecommerce.com"
   },
   "Rezdy": {
     "cats": [
@@ -2946,6 +3272,62 @@
     "oss": true,
     "website": "https://github.com/rightjs"
   },
+  "RightMessage": {
+    "cats": [
+      76
+    ],
+    "description": "RightMessage is a real-time content personalization tool.",
+    "icon": "RightMessage.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "tag\\.rightmessage\\.com/"
+    ],
+    "website": "https://rightmessage.com"
+  },
+  "Ringba": {
+    "cats": [
+      10
+    ],
+    "description": "Ringba is a platform that offers call tracking solutions to businesses, pay-per-call networks, brokers, agencies, and performance marketers of all sizes.",
+    "icon": "Ringba.svg",
+    "js": {
+      "ringba.release": "",
+      "ringba_known_numbers": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.ringba.com"
+  },
+  "Ringostat": {
+    "cats": [
+      32
+    ],
+    "description": "Ringostat is an AI-powered platform designed for business phone systems and marketing performance.",
+    "icon": "Ringostat.svg",
+    "js": {
+      "ringostatAPI": "",
+      "ringostatAnalytics": "",
+      "ringostatRestartSubstitution": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "script\\.ringostat\\.com/"
+    ],
+    "website": "https://ringostat.com"
+  },
   "Rinsed": {
     "cats": [
       53
@@ -3064,6 +3446,7 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:ritecms:ritecms:*:*:*:*:*:*:*:*",
     "icon": "RiteCMS.png",
     "implies": [
       "PHP",
@@ -3072,8 +3455,23 @@
     "meta": {
       "generator": "^RiteCMS(?: (.+))?\\;version:\\1"
     },
-    "cpe": "cpe:2.3:a:ritecms:ritecms:*:*:*:*:*:*:*:*",
     "website": "https://ritecms.com"
+  },
+  "RiteKit": {
+    "cats": [
+      32
+    ],
+    "description": "RiteKit is a tool that enhances social media engagement by optimizing calls-to-action (CTAs), generating relevant hashtags, and integrating with social media management systems to streamline content distribution and audience interaction.",
+    "dom": [
+      "iframe[src*='cdn.ritekit.com/']"
+    ],
+    "icon": "RiteKit.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://ritekit.com"
   },
   "Rive": {
     "cats": [
@@ -3112,6 +3510,7 @@
       1,
       11
     ],
+    "description": "Roadiz CMS is a polymorphic CMS based on Symfony Flex, Doctrine ORM, API Platform, and Twig.",
     "headers": {
       "X-Powered-By": "Roadiz CMS"
     },
@@ -3123,9 +3522,8 @@
     "meta": {
       "generator": "^Roadiz ?(?:master|develop)? v?([0-9\\.]+)\\;version:\\1"
     },
-    "website": "https://www.roadiz.io",
     "oss": true,
-    "description": "Roadiz CMS is a polymorphic CMS based on Symfony Flex, Doctrine ORM, API Platform, and Twig."
+    "website": "https://www.roadiz.io"
   },
   "Robin": {
     "cats": [
@@ -3138,6 +3536,51 @@
       "robin_storage_settings": ""
     },
     "website": "https://www.robinhq.com"
+  },
+  "RobixCM Generator": {
+    "cats": [
+      19
+    ],
+    "description": "RobixCM Generator is a service specializing in designing, developing, updating, and managing websites and online services.",
+    "icon": "Robixcm.png",
+    "meta": {
+      "robixcm": "RobixCM"
+    },
+    "saas": true,
+    "website": "https://robixcm.ir"
+  },
+  "Robly": {
+    "cats": [
+      32,
+      75
+    ],
+    "description": "Robly is an email marketing platform designed to simplify campaign creation and management for businesses.",
+    "dom": [
+      "form[action*='list.robly.com/']"
+    ],
+    "icon": "Robly.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.robly.com"
+  },
+  "Robofy": {
+    "cats": [
+      52
+    ],
+    "description": "Robofy is a platform providing AI chatbots for websites, enabling the creation of custom ChatGPT models trained on user-specific content.",
+    "icon": "Robofy.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.robofy\\.ai/"
+    ],
+    "website": "https://www.robofy.ai"
   },
   "Rock Content": {
     "cats": [
@@ -3168,6 +3611,22 @@
       "generator": "^Rock v([0-9.]+)\\;version:\\1"
     },
     "website": "https://www.rockrms.com"
+  },
+  "Rockee": {
+    "cats": [
+      90
+    ],
+    "description": "Rockee is a content feedback and performance platform that provides insights into audience perceptions of content.",
+    "icon": "Rockee.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.rockee\\.io/"
+    ],
+    "website": "https://rockee.io"
   },
   "Rockerbox": {
     "cats": [
@@ -3392,8 +3851,8 @@
       "rcmail": "",
       "roundcube": ""
     },
-    "website": "https://roundcube.net",
-    "oss": true
+    "oss": true,
+    "website": "https://roundcube.net"
   },
   "Route": {
     "cats": [
@@ -3404,16 +3863,16 @@
     "js": {
       "Routeapp": ""
     },
-    "scriptSrc": [
-      "\\.routeapp\\.io/"
-    ],
-    "website": "https://route.com",
-    "saas": true,
     "pricing": [
       "freemium",
       "mid",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.routeapp\\.io/"
+    ],
+    "website": "https://route.com"
   },
   "Royal Mail": {
     "cats": [
@@ -3511,6 +3970,25 @@
     "icon": "Ruby.svg",
     "website": "https://ruby-lang.org"
   },
+  "Ruby Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Ruby Chat is a service offering live virtual receptionists and live chat to assist businesses in managing customer interactions and inquiries in real-time.",
+    "icon": "RubyChat.svg",
+    "js": {
+      "rubyChatLoading": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "chatwidget\\.ruby\\.com/"
+    ],
+    "website": "https://www.ruby.com/solutions/live-chat"
+  },
   "Ruby Receptionists": {
     "cats": [
       5
@@ -3582,7 +4060,7 @@
     "description": "Ruffle is an open-source Flash Player emulator that allows users to view and play Flash content on modern web browsers without requiring the original Adobe Flash Player.",
     "icon": "Ruffle.svg",
     "js": {
-      "RufflePlayer": ""
+      "RufflePlayer.config": ""
     },
     "oss": true,
     "website": "https://ruffle.rs"
@@ -3623,10 +4101,10 @@
     "cats": [
       27
     ],
+    "cpe": "cpe:2.3:a:rust-lang:rust:*:*:*:*:*:*:*:*",
     "description": "Rust is a multi-paradigm, general-purpose programming language designed for performance and safety, especially safe concurrency.",
     "icon": "Rust.svg",
     "oss": true,
-    "cpe": "cpe:2.3:a:rust-lang:rust:*:*:*:*:*:*:*:*",
     "website": "https://www.rust-lang.org"
   },
   "RxJS": {

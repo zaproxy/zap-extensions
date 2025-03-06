@@ -35,6 +35,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -51,12 +52,8 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(200)));
-        assertThat(wasc, is(equalTo(13)));
         assertThat(tags.size(), is(equalTo(2)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
@@ -83,6 +80,7 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
         assertThat(tags.size(), is(equalTo(3)));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getCweId(), is(equalTo(497)));
     }
 
     @Test
@@ -161,6 +159,17 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
         assertThat(alertsRaised.size(), is(equalTo(1)));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(privateIp));
         validateAlert(requestUri, alertsRaised.get(0));
+    }
+
+    @Test
+    void shouldNotAlertWhenImageResponse() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createHttpMessage("https://192.168.36.127/");
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "image/jpeg");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(equalTo(0)));
     }
 
     @ParameterizedTest
@@ -408,16 +417,17 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
         assertThat(alert.getUri(), equalTo(requestUri));
     }
 
-    private HttpMessage createHttpMessage(String body) throws HttpMalformedHeaderException {
+    private static HttpMessage createHttpMessage(String body) throws HttpMalformedHeaderException {
         return createHttpMessage(URI, body);
     }
 
-    private HttpMessage createHttpMessage(String requestUri, String body)
+    private static HttpMessage createHttpMessage(String requestUri, String body)
             throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         requestUri = requestUri.startsWith("http") ? requestUri : "http://" + requestUri;
         msg.setRequestHeader("GET " + requestUri + " HTTP/1.1");
         msg.setResponseHeader("HTTP/1.1 200 OK\r\n");
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/html");
         msg.setResponseBody(body);
         return msg;
     }

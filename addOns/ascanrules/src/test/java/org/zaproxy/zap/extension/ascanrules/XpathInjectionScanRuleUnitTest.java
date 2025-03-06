@@ -21,11 +21,15 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class XpathInjectionScanRuleUnitTest extends ActiveScannerTest<XpathInjectionScanRule> {
 
@@ -43,7 +47,7 @@ class XpathInjectionScanRuleUnitTest extends ActiveScannerTest<XpathInjectionSca
         // Then
         assertThat(cwe, is(equalTo(643)));
         assertThat(wasc, is(equalTo(39)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(10)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -53,6 +57,12 @@ class XpathInjectionScanRuleUnitTest extends ActiveScannerTest<XpathInjectionSca
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_09_XPATH.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.SEQUENCE.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
@@ -62,5 +72,22 @@ class XpathInjectionScanRuleUnitTest extends ActiveScannerTest<XpathInjectionSca
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_09_XPATH.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_09_XPATH.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts, hasSize(1));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(alert.getAlertRef(), is(equalTo("90021")));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

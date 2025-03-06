@@ -169,6 +169,22 @@
     ],
     "website": "https://dplayer.js.org"
   },
+  "DSpace": {
+    "cats": [
+      50
+    ],
+    "description": "DSpace is a software platform for academic, non-profit, and commercial organizations to create and manage open digital repositories.",
+    "icon": "DSpace.svg",
+    "js": {
+      "DSpaceChoiceLookup": "",
+      "DSpaceChoicesSetup": ""
+    },
+    "meta": {
+      "generator": "DSpace ([\\d.]+)\\;version:\\1"
+    },
+    "saas": true,
+    "website": "https://dspace.org/"
+  },
   "DTScout": {
     "cats": [
       36
@@ -328,6 +344,7 @@
     "cats": [
       18
     ],
+    "cpe": "cpe:2.3:a:dancer:dancer:*:*:*:*:*:*:*:*",
     "description": "Dancer is a simple but powerful web application framework for Perl.",
     "headers": {
       "Server": "Perl Dancer ([\\d.]+)\\;version:\\1",
@@ -340,7 +357,6 @@
     "pricing": [
       "poa"
     ],
-    "cpe": "cpe:2.3:a:dancer:dancer:*:*:*:*:*:*:*:*",
     "saas": true,
     "website": "https://perldancer.org"
   },
@@ -360,8 +376,8 @@
     "meta": {
       "generator": "Danneo CMS ([\\d.]+)\\;version:\\1"
     },
-    "website": "https://danneo.ru/",
-    "oss": true
+    "oss": true,
+    "website": "https://danneo.ru/"
   },
   "Daphne": {
     "cats": [
@@ -444,6 +460,23 @@
     ],
     "website": "https://www.dashly.io"
   },
+  "DatHuis": {
+    "cats": [
+      32
+    ],
+    "description": "DatHuis is a platform providing marketing automation tools for real estate professionals, designed to enhance visibility and streamline operations.",
+    "icon": "DatHuis.svg",
+    "js": {
+      "DatHuisObject": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://dathuis.nl"
+  },
   "DataDome": {
     "cats": [
       16
@@ -523,6 +556,23 @@
     ],
     "website": "https://datatables.net"
   },
+  "Datacrush": {
+    "cats": [
+      32
+    ],
+    "description": "Datacrush is a marketing automation platform.",
+    "icon": "Datacrush.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "js\\.datacrush\\.la"
+    ],
+    "website": "https://www.datacrush.la"
+  },
   "Datadog": {
     "cats": [
       78,
@@ -546,6 +596,26 @@
     ],
     "website": "https://www.datadoghq.com"
   },
+  "Datalitics": {
+    "cats": [
+      32
+    ],
+    "description": "Datalitics is a platform designed for advanced lead tracking, offering tools to monitor, analyze, and optimize customer acquisition efforts.",
+    "icon": "Datalitics.svg",
+    "js": {
+      "createWPDatalitics": "",
+      "createWPRedirectDatalitics": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.datalitics\\.com\\.br/"
+    ],
+    "website": "https://datalitics.com.br"
+  },
   "Datanyze": {
     "cats": [
       10
@@ -563,6 +633,24 @@
     ],
     "website": "https://www.datanyze.com"
   },
+  "Datarize": {
+    "cats": [
+      32,
+      53
+    ],
+    "description": "Datarize is a CRM marketing solution designed to streamline customer relationship management and enhance targeted marketing efforts.",
+    "icon": "Datarize.svg",
+    "pricing": [
+      "high",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "assets\\.datarize\\.ai/"
+    ],
+    "website": "https://datarize.ai"
+  },
   "Datascape": {
     "cats": [
       1
@@ -577,6 +665,22 @@
     ],
     "saas": true,
     "website": "https://datacom.com/nz/en/products/datascape"
+  },
+  "Dataships": {
+    "cats": [
+      16
+    ],
+    "description": "Dataships is a platform that ensures compliance with global data privacy regulations, helping businesses manage and protect customer data according to international standards.",
+    "icon": "Dataships.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.dataships\\.io/"
+    ],
+    "website": "https://dataships.io"
   },
   "Datatrics": {
     "cats": [
@@ -663,6 +767,20 @@
     "icon": "Debian.png",
     "website": "https://debian.org"
   },
+  "Decap CMS": {
+    "cats": [
+      1
+    ],
+    "description": "Decap CMS is an open-source content management system designed to integrate with Git workflows.",
+    "icon": "DecapCMS.svg",
+    "js": {
+      "DecapCms.getBackend": "",
+      "DecapCmsApp.getBackend": "",
+      "webpackChunkdecap_website": ""
+    },
+    "oss": true,
+    "website": "https://decapcms.org"
+  },
   "Decibel": {
     "cats": [
       10,
@@ -683,11 +801,30 @@
     ],
     "website": "https://decibel.com"
   },
+  "Deco.cx": {
+    "cats": [
+      108
+    ],
+    "description": "Deco.cx is an enterprise frontend platform designed to optimize and accelerate ecommerce performance.",
+    "icon": "Deco.svg",
+    "js": {
+      "DECO.events": "",
+      "DECO_SITES_STD": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://deco.cx"
+  },
   "DedeCMS": {
     "cats": [
       1
     ],
     "cpe": "cpe:2.3:a:dedecms:dedecms:*:*:*:*:*:*:*:*",
+    "description": "DedeCMS is an open-source content management system developed by Shanghai Zhi Zhuo Network Technology, known for its customizable templates and strong SEO capabilities.",
     "icon": "DedeCMS.svg",
     "implies": [
       "PHP"
@@ -698,8 +835,41 @@
     "scriptSrc": [
       "dedeajax"
     ],
-    "website": "https://dedecms.com",
-    "description": "DedeCMS is an open-source content management system developed by Shanghai Zhi Zhuo Network Technology, known for its customizable templates and strong SEO capabilities."
+    "website": "https://dedecms.com"
+  },
+  "Deep Lawn": {
+    "cats": [
+      32
+    ],
+    "description": "Deep Lawn is a sales tool designed for lawn care and pest control companies.",
+    "icon": "DeepLawn.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.deeplawn\\.com/"
+    ],
+    "website": "https://deeplawn.com"
+  },
+  "DeepAR": {
+    "cats": [
+      105
+    ],
+    "description": "DeepAR is SDK that integrates AR face filters, 3D masks, effects, and background removal into websites, apps, or games.",
+    "dom": [
+      "source[src*='demo.deepar.ai/']"
+    ],
+    "icon": "DeepAR.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.deepar.ai"
   },
   "Delacon": {
     "cats": [
@@ -810,6 +980,24 @@
     ],
     "website": "https://deliverr.com"
   },
+  "Delivra": {
+    "cats": [
+      32,
+      75
+    ],
+    "description": "Delivra is a premium email marketing tracking software.",
+    "icon": "Delivra.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "integration\\.delivra\\.com"
+    ],
+    "website": "https://www.delivra.com"
+  },
   "Delm": {
     "cats": [
       100
@@ -828,6 +1016,21 @@
       "cdn\\.delm\\.io/"
     ],
     "website": "https://delm.io"
+  },
+  "Dema": {
+    "cats": [
+      10
+    ],
+    "description": "Dema is a next-generation ecommerce analytics system designed to provide insights and data-driven solutions for online businesses.",
+    "icon": "Dema.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.dema\\.ai"
+    ],
+    "scripts": [
+      "\\.dema\\.ai"
+    ],
+    "website": "https://www.dema.ai"
   },
   "Demandbase": {
     "cats": [
@@ -933,6 +1136,18 @@
     "saas": true,
     "website": "https://depict.ai"
   },
+  "Deriv": {
+    "cats": [
+      10
+    ],
+    "description": "Deriv is an online platform that allows users to track trading activities.",
+    "icon": "Deriv.svg",
+    "saas": true,
+    "scripts": [
+      "track\\.deriv\\.com"
+    ],
+    "website": "https://deriv.com"
+  },
   "DeskPro": {
     "cats": [
       1,
@@ -1012,6 +1227,51 @@
     ],
     "website": "https://desku.io"
   },
+  "Destinet": {
+    "cats": [
+      51
+    ],
+    "description": "Destinet is a homepage generator system designed to streamline the creation of customizable web pages.",
+    "headers": {
+      "server": "Destinet"
+    },
+    "js": {
+      "DestinetMap.SetMap": ""
+    },
+    "saas": true,
+    "website": "https://www.destinet.no"
+  },
+  "Destini": {
+    "cats": [
+      6
+    ],
+    "description": "Destini is a product locator solution that offers automated store-level data, advanced analytics, and customizable web and mobile applications.",
+    "icon": "Destini.svg",
+    "js": {
+      "destini.init": "",
+      "destiniAddProducts": "",
+      "destiniDataLayer": "",
+      "destiniReset": ""
+    },
+    "saas": true,
+    "website": "https://destini.co/"
+  },
+  "Desty": {
+    "cats": [
+      6
+    ],
+    "description": "Desty is a platform offering product and order management services, enabling handling of inventory, orders, and related processes for businesses.",
+    "icon": "Desty.svg",
+    "js": {
+      "DestyBp": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.desty.app"
+  },
   "Deta": {
     "cats": [
       62
@@ -1038,6 +1298,20 @@
     },
     "icon": "Detectify.svg",
     "website": "https://detectify.com/"
+  },
+  "Detectizr": {
+    "cats": [
+      10
+    ],
+    "description": "Detectizr is a Modernizr extension to detect device, browser, operating system and screen size.",
+    "js": {
+      "Detectizr": ""
+    },
+    "oss": true,
+    "requires": [
+      "Modernizr"
+    ],
+    "website": "https://baris.aydinoglu.net/Detectizr"
   },
   "Deutsche Post": {
     "cats": [
@@ -1070,6 +1344,36 @@
     },
     "oss": true,
     "website": "https://js.devexpress.com"
+  },
+  "DevRev": {
+    "cats": [
+      52,
+      53
+    ],
+    "description": "DevRev PLuG is a customer support platform offering live chat, help documentation, search functionality, an observability engine, and product announcements, all integrated within a widget similar to a support chat widget for website assistance.",
+    "icon": "DevRev.svg",
+    "pricing": [
+      "freemium",
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "plug-platform\\.devrev\\.ai/"
+    ],
+    "website": "https://devrev.ai/plug-observability"
+  },
+  "Developing Azerbaijan": {
+    "cats": [
+      47
+    ],
+    "description": "Developing Azerbaijan is a provider of services including website creation, optimization, technical support, and hosting.",
+    "icon": "DevelopingAzerbaijan.svg",
+    "meta": {
+      "author": "Developing.az"
+    },
+    "saas": true,
+    "website": "https://www.developing.az/"
   },
   "Dexie.js": {
     "cats": [
@@ -1308,6 +1612,19 @@
     "saas": true,
     "website": "https://www.digizuite.com"
   },
+  "Dimml": {
+    "cats": [
+      47
+    ],
+    "description": "Dimml is a data flow management software.",
+    "icon": "Dimml.svg",
+    "oss": true,
+    "saas": true,
+    "scriptSrc": [
+      "\\.dimml\\.io/"
+    ],
+    "website": "https://www.dimml.io"
+  },
   "DirectAdmin": {
     "cats": [
       9
@@ -1354,6 +1671,7 @@
     "cats": [
       2
     ],
+    "cpe": "cpe:2.3:a:discourse:discourse:*:*:*:*:*:*:*:*",
     "description": "Discourse is an open-source internet forum and mailing list management software application.",
     "icon": "Discourse.svg",
     "implies": [
@@ -1362,7 +1680,6 @@
     "js": {
       "Discourse": ""
     },
-    "cpe": "cpe:2.3:a:discourse:discourse:*:*:*:*:*:*:*:*",
     "meta": {
       "generator": "Discourse(?: ?/?([\\d.]+\\d))?\\;version:\\1"
     },
@@ -1627,6 +1944,23 @@
     ],
     "website": "https://www.yourdocket.com"
   },
+  "DocsBot": {
+    "cats": [
+      52
+    ],
+    "description": "DocsBot is an AI-powered chatbot that helps automate customer support and improve team productivity.",
+    "icon": "DocsBotAI.svg",
+    "js": {
+      "DocsBotAI.el": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://docsbot.ai"
+  },
   "Docsify": {
     "cats": [
       4
@@ -1730,6 +2064,7 @@
     "cats": [
       21
     ],
+    "cpe": "cpe:2.3:a:dokeos:dokeos:*:*:*:*:*:*:*:*",
     "description": "Dokeos is an e-learning and course management web application.",
     "headers": {
       "X-Powered-By": "Dokeos"
@@ -1746,7 +2081,6 @@
     "meta": {
       "generator": "Dokeos"
     },
-    "cpe": "cpe:2.3:a:dokeos:dokeos:*:*:*:*:*:*:*:*",
     "website": "https://dokeos.com"
   },
   "DokuWiki": {
@@ -1778,7 +2112,9 @@
     ],
     "description": "DomainFactory has been operating as a web hosting company. It is owned by GoDaddy and targets businesses in Austria and Germany.",
     "dns": {
-      "SOA": "ns(?:\\d+)?\\.namespace4you\\.de"
+      "SOA": [
+        "ns(?:\\d+)?\\.namespace4you\\.de"
+      ]
     },
     "icon": "DomainFactory.svg",
     "pricing": [
@@ -1976,6 +2312,7 @@
       11
     ],
     "cpe": "cpe:2.3:a:dotclear:dotclear:*:*:*:*:*:*:*:*",
+    "description": "Dotclear is an open-source blogging platform focused on ease of use and versatility, offering features like multi-blog support, customizable themes, and antispam tools.",
     "headers": {
       "X-Dotclear-Static-Cache": ""
     },
@@ -1983,9 +2320,8 @@
     "implies": [
       "PHP"
     ],
-    "website": "https://dotclear.org",
-    "description": "Dotclear is an open-source blogging platform focused on ease of use and versatility, offering features like multi-blog support, customizable themes, and antispam tools.",
-    "oss": true
+    "oss": true,
+    "website": "https://dotclear.org"
   },
   "Dotdigital": {
     "cats": [
@@ -2126,6 +2462,9 @@
     "scriptSrc": [
       "https?://fls\\.doubleclick\\.net"
     ],
+    "scripts": [
+      "fls\\.doubleclick\\.net"
+    ],
     "website": "https://support.google.com/ds/answer/6029713?hl=en"
   },
   "DoubleClick for Publishers (DFP)": {
@@ -2158,6 +2497,22 @@
     ],
     "saas": true,
     "website": "https://doubleverify.com"
+  },
+  "Dover": {
+    "cats": [
+      101
+    ],
+    "description": "Dover is a platform that streamlines recruiting by identifying and scheduling qualified candidates.",
+    "icon": "Dover.svg",
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": [
+      "app\\.dover\\.io"
+    ],
+    "website": "https://www.dover.com"
   },
   "Dovetale": {
     "cats": [
@@ -2204,6 +2559,9 @@
     ],
     "cpe": "cpe:2.3:a:doxygen:doxygen:*:*:*:*:*:*:*:*",
     "description": "Doxygen is a documentation generator, a tool for writing software reference documentation.",
+    "dom": [
+      "link[href*='doxygen.css']"
+    ],
     "html": [
       "(?:<!-- Generated by Doxygen ([\\d.]+)|<link[^>]+doxygen\\.css)\\;version:\\1"
     ],
@@ -2211,6 +2569,10 @@
     "meta": {
       "generator": "Doxygen ([\\d.]+)\\;version:\\1"
     },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
     "website": "https://www.doxygen.nl/"
   },
   "Draft.js": {
@@ -2219,11 +2581,11 @@
     ],
     "description": "Draft.js is a JavaScript rich text editor framework, built for React.",
     "icon": "draftjs.svg",
+    "oss": true,
     "scriptSrc": [
       "draft-js(@|/)([\\d.]+)\\;version:\\2"
     ],
-    "website": "https://draftjs.org/",
-    "oss": true
+    "website": "https://draftjs.org/"
   },
   "Draftpress HFCM": {
     "cats": [
@@ -2279,6 +2641,26 @@
     ],
     "website": "https://www.drapr.com"
   },
+  "Drata": {
+    "cats": [
+      16
+    ],
+    "description": "Drata is an automated site compliance system designed to streamline and manage security and privacy requirements.",
+    "icon": "Drata.svg",
+    "js": {
+      "webpackChunkdrata_web": ""
+    },
+    "meta": {
+      "author": "Drata Inc.",
+      "copyright": "Drata Inc."
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://drata.com"
+  },
   "DreamApply": {
     "cats": [
       101,
@@ -2306,8 +2688,12 @@
     ],
     "description": "DreamHost is a Los Angeles-based web hosting provider and domain name registrar.",
     "dns": {
-      "NS": "ns\\d+\\.dreamhost\\.com",
-      "SOA": "ns\\d+\\.dreamhost\\.com"
+      "NS": [
+        "ns\\d+\\.dreamhost\\.com"
+      ],
+      "SOA": [
+        "ns\\d+\\.dreamhost\\.com"
+      ]
     },
     "icon": "DreamHost.svg",
     "pricing": [
@@ -2332,10 +2718,10 @@
       "MM_showHideLayers": "",
       "MM_showMenu": ""
     },
-    "website": "https://www.adobe.com/products/dreamweaver.html",
     "meta": {
       "generator": "^Adobe dreamweaver$"
-    }
+    },
+    "website": "https://www.adobe.com/products/dreamweaver.html"
   },
   "Dreamdata": {
     "cats": [
@@ -2441,7 +2827,9 @@
     ],
     "cpe": "cpe:2.3:a:dropbox:dropbox:*:*:*:*:*:*:*:*",
     "dns": {
-      "TXT": "dropbox-domain-verification"
+      "TXT": [
+        "dropbox-domain-verification"
+      ]
     },
     "icon": "Dropbox.svg",
     "website": "https://www.dropbox.com"
@@ -2688,6 +3076,21 @@
     ],
     "website": "https://duopana.com"
   },
+  "Dweet": {
+    "cats": [
+      63
+    ],
+    "description": "Dweet is a platform enabling data sharing across Internet of Things(IoT).",
+    "icon": "Dweet.svg",
+    "js": {
+      "dweetCallback": "",
+      "dweet_script_loader": "",
+      "dweetio.dweet": "",
+      "dweetioThing": ""
+    },
+    "saas": true,
+    "website": "https://dweet.io"
+  },
   "DynAd": {
     "cats": [
       36
@@ -2764,6 +3167,9 @@
       "Dynamicweb": ""
     },
     "description": "Dynamicweb is a all-in-one platform for content management, ecommerce, digital marketing​, product information management (PIM) and integration.",
+    "dom": [
+      "input[value='dynamicweb.com']"
+    ],
     "icon": "Dynamicweb.svg",
     "implies": [
       "Microsoft ASP.NET"
@@ -2796,7 +3202,7 @@
     "cats": [
       78
     ],
-    "description": "Dynatrace RUM is a AI powered, full stack, automated real user monutoring platform built by Dynatrace.",
+    "description": "Dynatrace RUM is an AI powered, full stack, automated real user monitoring platform built by Dynatrace.",
     "icon": "Dynatrace.svg",
     "implies": [
       "Dynatrace"
@@ -2852,6 +3258,9 @@
       "Tailwind CSS"
     ],
     "oss": true,
+    "scripts": [
+      "daisyUI"
+    ],
     "website": "https://daisyui.com"
   },
   "db-ip": {

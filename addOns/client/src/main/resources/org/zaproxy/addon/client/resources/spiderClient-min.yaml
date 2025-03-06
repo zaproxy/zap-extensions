@@ -1,0 +1,5 @@
+  - type: spiderClient                 # The client spider - a spider which explores modern web apps more effectively
+    parameters:
+      context:                         # String: Name of the context to spider, default: first context
+      user:                            # String: An optional user to use for authentication, must be defined in the env
+      url:                             # String: URL to start spidering from, default: first context URL

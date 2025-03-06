@@ -152,21 +152,33 @@ class HarImporterUnitTest extends TestUtils {
     @Test
     void serializedAndDeserializedShouldMatch() throws Exception {
         // Given
+        var requestHeader =
+                "POST http://example.com/path HTTP/1.1\r\nContent-Type: application/octet-stream\r\n\r\n";
+        var responseHeader = "HTTP/1.1 200 OK\r\nContent-Type: text/plain;charset=US-ASCII\r\n\r\n";
         byte[] requestBody = {0x01, 0x02};
         byte[] responseBody = {0x30, 0x31};
         HttpMessage httpMessage =
-                new HttpMessage(
-                        "POST /path HTTP/1.1\r\nContent-Type: application/octet-stream\r\n\r\n",
-                        requestBody,
-                        "HTTP/1.1 200 OK\r\nContent-Type: text/plain;charset=US-ASCII\r\n\r\n",
-                        responseBody);
+                new HttpMessage(requestHeader, requestBody, responseHeader, responseBody);
+        long timeSentMillis = 1234L;
+        httpMessage.setTimeSentMillis(timeSentMillis);
+        int timeElapsedMillis = 42;
+        httpMessage.setTimeElapsedMillis(timeElapsedMillis);
 
         HarLog harLog = createHarLog(httpMessage);
         // When
         List<HttpMessage> deserialized = HarImporter.getHttpMessages(harLog);
         // Then
         assertThat(deserialized, hasSize(1));
-        assertThat(deserialized.get(0), equalTo(httpMessage));
+        var deserializedHttpMessage = deserialized.get(0);
+        assertThat(
+                deserializedHttpMessage.getRequestHeader().toString(), is(equalTo(requestHeader)));
+        assertThat(deserializedHttpMessage.getRequestBody().getBytes(), is(equalTo(requestBody)));
+        assertThat(
+                deserializedHttpMessage.getResponseHeader().toString(),
+                is(equalTo(responseHeader)));
+        assertThat(deserializedHttpMessage.getResponseBody().getBytes(), is(equalTo(responseBody)));
+        assertThat(deserializedHttpMessage.getTimeSentMillis(), is(equalTo(timeSentMillis)));
+        assertThat(deserializedHttpMessage.getTimeElapsedMillis(), is(equalTo(timeElapsedMillis)));
     }
 
     @Test
@@ -226,6 +238,16 @@ class HarImporterUnitTest extends TestUtils {
         // Then
         assertThat(importer.isSuccess(), equalTo(true));
         verify(listener).completed();
+    }
+
+    @Test
+    void shouldCountNullMessagesTowardsTasksDone() {
+        // Given
+        ProgressPaneListener listener = mock(ProgressPaneListener.class);
+        // When
+        new HarImporter(getResourcePath("oneNullMessage.har").toFile(), listener);
+        // Then
+        verify(listener).setTasksDone(1);
     }
 
     @ParameterizedTest
@@ -333,6 +355,28 @@ class HarImporterUnitTest extends TestUtils {
         assertThat(
                 logMessages.get(0).trim(),
                 is(equalTo("Skipping local private entry: about:blank")));
+    }
+
+    @Test
+    void shouldBase64DecodeResponseBody() throws Exception {
+        // Given
+        HarLog harLog = getHarLog("response-base64.har", "");
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(1));
+        assertThat(messages.get(0).getResponseBody().toString(), is(equalTo("1234")));
+    }
+
+    @Test
+    void shouldFallbackToPlainTextOnMalformedBase64ResponseBody() throws Exception {
+        // Given
+        HarLog harLog = getHarLog("response-base64-invalid.har", "");
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(1));
+        assertThat(messages.get(0).getResponseBody().toString(), is(equalTo("Not base 64")));
     }
 
     private HarLog getHarLog(String path, String replacement) throws HarReaderException {

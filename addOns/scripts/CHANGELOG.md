@@ -4,7 +4,33 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Remove unnecessary custom parameter handling.
 
+## [45.8.0] - 2025-01-10
+### Added
+- Report indirect script errors while the Automation Framework plans are running (Issue 8586).
+- Standardized Policy Tags to the base Scripts Active Scanner.
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Fields with default or missing values are omitted for the `script` job in saved Automation Framework plans.
+- Depends on an updated version of the Common Library add-on.
+- Depend on Passive Scanner add-on (Issue 7959).
+
+### Fixed
+- Correct auto-complete suggestions for parameters of Passive Rules.
+- Some script errors were not being propagated to the output correctly.
+
+## [45.7.0] - 2024-10-07
+### Fixed
+- Reuse script cache for all passive scan threads to avoid recompilation of Passive Rules scripts.
+- Address a concurrency issue when using Graal.js Passive Rules scripts as first-class scan rules.
+- Handle gracefully the inability to force stop the running standalone script in newer Java versions.
+
+## [45.6.0] - 2024-09-02
+### Removed
+- Remove the active and passive script templates, superseded by the ones provided by the GraalVM JavaScript add-on.
 
 ## [45.5.0] - 2024-07-22
 ### Added
@@ -333,6 +359,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.8.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.8.0
+[45.7.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.7.0
+[45.6.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.6.0
 [45.5.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.5.0
 [45.4.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.4.0
 [45.3.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.3.0

@@ -4,8 +4,24 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.9.0] - 2025-01-31
+### Added
+- Link which is only shown if a localStorage item is set, for testing in browser spider authentication.
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [0.8.0] - 2024-11-13
+### Changed
+- Sequence performance test to make it actually possible to test it using automation.
+- CSS and JS responses are now set cache enabled.
+
+## [0.7.0] - 2024-10-07
 ### Added
 - Extra protected pages to simple-json-cookie to ensure spidering really works.
+- Sequence performance test.
 
 ### Fixed
 - Issue where folder level pages without a trailing slash did not link correctly to sub pages.
@@ -57,6 +73,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.9.0]: https://github.com/zaproxy/zap-extensions/releases/dev-v0.9.0
+[0.8.0]: https://github.com/zaproxy/zap-extensions/releases/dev-v0.8.0
+[0.7.0]: https://github.com/zaproxy/zap-extensions/releases/dev-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/dev-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/dev-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/dev-v0.4.0

@@ -619,7 +619,7 @@ class SarifReportIntegrationUnitTest {
     @SuppressWarnings("removal")
     private static ReportData createTestReportDataWithAlerts(Template template)
             throws URIException, HttpMalformedHeaderException {
-        ReportData reportData = new ReportData();
+        ReportData reportData = new ReportData("test");
         reportData.setTitle("Test Title");
         reportData.setDescription("Test Description");
         reportData.setIncludeAllConfidences(true);

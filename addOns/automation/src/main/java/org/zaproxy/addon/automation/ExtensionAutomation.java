@@ -36,9 +36,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.swing.Timer;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
@@ -60,13 +62,17 @@ import org.parosproxy.paros.view.View;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
 import org.zaproxy.addon.automation.gui.OptionsPanel;
+import org.zaproxy.addon.automation.jobs.ActiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
+import org.zaproxy.addon.automation.jobs.ActiveScanPolicyJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
+import org.zaproxy.addon.automation.jobs.ExitStatusJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.ZAP.ProcessType;
 import org.zaproxy.zap.eventBus.Event;
+import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ScriptVars;
 import org.zaproxy.zap.utils.Stats;
 
@@ -79,6 +85,9 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     public static final String PREFIX = "automation";
 
     public static final String RESOURCES_DIR = "/org/zaproxy/addon/automation/resources/";
+    public static final int OK_EXIT_VALUE = 0;
+    public static final int ERROR_EXIT_VALUE = 1;
+    public static final int WARN_EXIT_VALUE = 2;
 
     protected static final String PLANS_RUN_STATS = "stats.auto.plans.run";
     protected static final String TOTAL_JOBS_RUN_STATS = "stats.auto.jobs.run";
@@ -109,6 +118,8 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
     private AutomationPanel automationPanel;
 
+    private static Integer exitOverride;
+
     public ExtensionAutomation() {
         super(NAME);
         setI18nPrefix(PREFIX);
@@ -125,7 +136,14 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         registerAutomationJob(new org.zaproxy.addon.automation.jobs.AddOnJob());
         registerAutomationJob(new RequestorJob());
         registerAutomationJob(new DelayJob());
+        registerAutomationJob(new ExitStatusJob());
+        registerAutomationJob(
+                new ActiveScanConfigJob(
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionActiveScan.class)));
         registerAutomationJob(new ActiveScanJob());
+        registerAutomationJob(new ActiveScanPolicyJob());
         registerAutomationJob(new ParamsJob());
     }
 
@@ -287,15 +305,21 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             }
 
             jobs.values().stream()
+                    .filter(job -> job.getClass().getAnnotation(Deprecated.class) == null)
+                    .filter(Predicate.not(AutomationJob::isDataJob))
                     .sorted()
                     .forEach(
                             j -> {
                                 try {
-                                    if (incAll) {
-                                        fw.write(j.getTemplateDataMax());
-                                    } else {
-                                        fw.write(j.getTemplateDataMin());
+                                    String template =
+                                            incAll
+                                                    ? j.getTemplateDataMax()
+                                                    : j.getTemplateDataMin();
+                                    if (StringUtils.isBlank(template)) {
+                                        return;
                                     }
+                                    template = template.stripTrailing() + "\n\n";
+                                    fw.write(template);
                                 } catch (Exception e) {
                                     CommandLine.error(
                                             Constant.messages.getString(
@@ -359,6 +383,14 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
 
         for (AutomationJob job : jobsToRun) {
+
+            if (!job.isEnabled()) {
+                progress.info(
+                        Constant.messages.getString("automation.info.jobdisabled", job.getType()));
+                job.setStatus(AutomationJob.Status.NOT_ENABLED);
+                continue;
+            }
+
             job.applyParameters(progress);
             progress.info(Constant.messages.getString("automation.info.jobstart", job.getType()));
             job.setStatus(AutomationJob.Status.RUNNING);
@@ -369,7 +401,14 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                 timer = new Timer(1000, e -> getAutomationPanel().updateJob(job));
                 timer.start();
             }
-            job.runJob(env, progress);
+            try {
+                job.runJob(env, progress);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.unexpected.internal", e.getMessage()));
+            }
             job.setTimeFinished();
             if (timer != null) {
                 timer.stop();
@@ -664,11 +703,21 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         }
 
         AutomationProgress progress = runAutomationFile(source);
-        if (progress == null || progress.hasErrors()) {
-            setExitStatus(1, "plan errors", false);
+        if (exitOverride != null) {
+            setExitStatus(exitOverride, "set by user", false);
+        } else if (progress == null || progress.hasErrors()) {
+            setExitStatus(ERROR_EXIT_VALUE, "plan errors", false);
         } else if (progress.hasWarnings()) {
-            setExitStatus(2, "plan warnings", false);
+            setExitStatus(WARN_EXIT_VALUE, "plan warnings", false);
         }
+    }
+
+    public static Integer getExitOverride() {
+        return exitOverride;
+    }
+
+    public static void setExitOverride(Integer exitOverride) {
+        ExtensionAutomation.exitOverride = exitOverride;
     }
 
     private static URI createUri(String source) {

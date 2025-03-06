@@ -431,12 +431,12 @@ public class ReportDialog extends StandardFieldsDialog {
     }
 
     private ReportData getReportData(Template template) {
-        ReportData reportData = new ReportData();
+        ReportData reportData = new ReportData(template.getConfigName());
         reportData.setTitle(this.getStringValue(FIELD_TITLE));
         reportData.setDescription(this.getStringValue(FIELD_DESCRIPTION));
         reportData.setContexts(this.getContextsSelector().getSelectedValuesList());
         reportData.setSites(this.getSitesSelector().getSelectedValuesList());
-        reportData.setTheme(template.getThemeForName(getStringValue(FIELD_THEME)));
+        reportData.setTheme(template.getThemeForName(getStringValue(FIELD_TEMPLATE)));
         if (reportData.getSites().isEmpty()) {
             // None selected so add all
             reportData.setSites(ExtensionReports.getSites());

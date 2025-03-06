@@ -59,11 +59,9 @@ dependencies {
 
     implementation("org.thymeleaf:thymeleaf:3.1.2.RELEASE")
     implementation("org.xhtmlrenderer:flying-saucer-pdf:9.3.1")
-    implementation(libs.log4j.slf4j2) {
-        // Provided by ZAP.
-        exclude(group = "org.apache.logging.log4j")
-    }
+    implementation(libs.log4j.slf4j2)
 
+    testImplementation(project(":addOns:sequence"))
     testImplementation(project(":testutils"))
     testImplementation(libs.log4j.core)
 }
@@ -75,6 +73,7 @@ spotless {
             fileTree(projectDir) {
                 include("src/**/*.html")
                 exclude("src/main/zapHomeFiles/reports/risk-confidence-html/report.html")
+                exclude("src/main/zapHomeFiles/reports/traditional-html*/report.html")
                 exclude("src/test/**/*.html")
             },
         )

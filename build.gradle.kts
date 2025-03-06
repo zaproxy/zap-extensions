@@ -7,6 +7,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.50.0"
     id("org.sonarqube") version "4.3.0.3225"
     id("net.ltgt.errorprone") version "3.1.0"
+    id("io.freefair.lombok") version "8.10.2"
 }
 
 apply(from = "$rootDir/gradle/ci.gradle.kts")
@@ -23,6 +24,7 @@ allprojects {
     apply(plugin = "com.diffplug.spotless")
     apply(plugin = "com.github.ben-manes.versions")
     apply(plugin = "net.ltgt.errorprone")
+    apply(plugin = "io.freefair.lombok")
 
     repositories {
         mavenCentral()
@@ -44,10 +46,16 @@ allprojects {
     project.plugins.withType(JavaPlugin::class) {
         dependencies {
             "errorprone"("com.google.errorprone:error_prone_core:2.26.1")
+
+            // Include annotations used by Log4j2 Core library to avoid compiler warnings.
+            "compileOnly"("biz.aQute.bnd:biz.aQute.bnd.annotation:6.4.1")
+            "compileOnly"("com.google.code.findbugs:findbugs-annotations:3.0.1")
+            "testCompileOnly"("biz.aQute.bnd:biz.aQute.bnd.annotation:6.4.1")
+            "testCompileOnly"("com.google.code.findbugs:findbugs-annotations:3.0.1")
         }
 
         java {
-            val javaVersion = JavaVersion.VERSION_11
+            val javaVersion = JavaVersion.VERSION_17
             sourceCompatibility = javaVersion
             targetCompatibility = javaVersion
         }

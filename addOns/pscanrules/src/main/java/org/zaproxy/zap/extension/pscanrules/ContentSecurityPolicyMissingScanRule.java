@@ -87,7 +87,7 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner
         return getAlertAttribute("name");
     }
 
-    private String getAlertAttribute(String key) {
+    private static String getAlertAttribute(String key) {
         return Constant.messages.getString(MESSAGE_PREFIX + key);
     }
 

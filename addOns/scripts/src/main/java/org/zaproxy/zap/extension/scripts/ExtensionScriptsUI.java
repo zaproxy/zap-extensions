@@ -45,12 +45,12 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.OptionsDialog;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
@@ -196,10 +196,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             ExtensionHelp.enableHelpKey(getScriptsPanel(), "addon.scripts.tree");
         }
 
-        if (org.zaproxy.zap.extension.script.ScriptAPI.class.getAnnotation(Deprecated.class)
-                != null) {
-            extensionHook.addApiImplementor(new ScriptApi(getExtScript()));
-        }
+        extensionHook.addApiImplementor(new ScriptApi(getExtScript()));
     }
 
     @Override
@@ -656,7 +653,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             case ExtensionActiveScan.SCRIPT_TYPE_ACTIVE:
                 activeScriptSynchronizer.scriptAdded(script);
                 break;
-            case ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE:
+            case ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE:
                 passiveScriptSynchronizer.scriptAdded(script);
                 break;
         }
@@ -689,7 +686,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             case ExtensionActiveScan.SCRIPT_TYPE_ACTIVE:
                 activeScriptSynchronizer.scriptRemoved(script);
                 break;
-            case ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE:
+            case ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE:
                 passiveScriptSynchronizer.scriptRemoved(script);
                 break;
         }
@@ -744,7 +741,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             case ExtensionActiveScan.SCRIPT_TYPE_ACTIVE:
                 activeScriptSynchronizer.scriptAdded(script);
                 break;
-            case ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE:
+            case ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE:
                 passiveScriptSynchronizer.scriptAdded(script);
                 break;
         }

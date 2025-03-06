@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 /** Unit test for {@link PersistentXssScanRule}. */
 class PersistentXssScanRuleUnitTest extends ActiveScannerTest<PersistentXssScanRule> {
@@ -44,7 +45,7 @@ class PersistentXssScanRuleUnitTest extends ActiveScannerTest<PersistentXssScanR
         // Then
         assertThat(cwe, is(equalTo(79)));
         assertThat(wasc, is(equalTo(8)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(6)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -52,6 +53,9 @@ class PersistentXssScanRuleUnitTest extends ActiveScannerTest<PersistentXssScanR
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_02_STORED_XSS.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));

@@ -46,8 +46,8 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.authhelper.HeaderBasedSessionManagementMethodType.HeaderBasedSessionManagementMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
+import org.zaproxy.zap.extension.pscan.PassiveScanActions;
 import org.zaproxy.zap.extension.pscan.PassiveScanData;
-import org.zaproxy.zap.extension.pscan.PassiveScanTaskHelper;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
@@ -113,10 +113,9 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         AuthUtils.recordSessionToken(
                 new SessionToken(SessionToken.HEADER_SOURCE, "Authorization", token));
         PassiveScanData helper = mock(PassiveScanData.class);
-        PassiveScanTaskHelper taskHelper = mock(PassiveScanTaskHelper.class);
         SessionDetectionScanRule rule = this.createScanner();
         rule.setHelper(helper);
-        rule.setTaskHelper(taskHelper);
+        rule.setPassiveScanActions(mock(PassiveScanActions.class));
 
         // When
         rule.scanHttpResponseReceive(msg, 1, null);
@@ -168,10 +167,9 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         AuthUtils.recordSessionToken(
                 new SessionToken(SessionToken.HEADER_SOURCE, "Authorization", token));
         PassiveScanData helper = mock(PassiveScanData.class);
-        PassiveScanTaskHelper taskHelper = mock(PassiveScanTaskHelper.class);
         SessionDetectionScanRule rule = this.createScanner();
         rule.setHelper(helper);
-        rule.setTaskHelper(taskHelper);
+        rule.setPassiveScanActions(mock(PassiveScanActions.class));
 
         // When
         rule.scanHttpResponseReceive(msg, 1, null);

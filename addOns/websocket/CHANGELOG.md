@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [32] - 2025-01-10
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+### Fixed
+- Correct location/function of New Context context menu item.
+
 ## [31] - 2024-05-07
 ### Added
 - Support for menu weights (Issue 8369)
@@ -228,6 +235,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[32]: https://github.com/zaproxy/zap-extensions/releases/websocket-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/websocket-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/websocket-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/websocket-v29

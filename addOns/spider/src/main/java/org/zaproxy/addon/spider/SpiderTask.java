@@ -378,7 +378,9 @@ public class SpiderTask implements Runnable {
         ParseContext ctx =
                 new ParseContext(
                         parent.getSpiderParam(),
-                        parent.getExtensionSpider().getValueGenerator(),
+                        parent.getExtensionSpider().getValueProvider(),
+                        parent.getScanContext(),
+                        parent.getScanUser(),
                         message,
                         path,
                         depth);

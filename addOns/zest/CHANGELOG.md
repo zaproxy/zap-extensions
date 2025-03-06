@@ -1,10 +1,47 @@
 # Changelog
 All notable changes to this add-on will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
+
+## [48.3.0] - 2025-02-07
+### Changed
+- Enable ZAP API in the authentication runner so ZAP browser extension callbacks work.
+
+## [48.2.0] - 2025-02-04
+### Added
+- Firefox to recorder.
+- Added support for custom script authentication.
+
+### Changed
+- Record script order to be alphabetical.
+
+### Fixed
+- Record Client Submit statement.
+
+## [48.1.0] - 2025-01-23
+### Changed
+- Use ZAP for launching Firefox and Chrome.
+- Update Zest library to 0.23.0:
+  - Update Selenium to version 4.28.0.
+  - Update minimum Java version to 17.
+
+## [48.0.0] - 2025-01-10
+### Added
+- Allow other add-ons to create a Zest script from a list of messages.
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Use Semantic Version.
+- Maintenance changes.
+- Depend on Passive Scanner add-on (Issue 7959).
+
+## [47] - 2024-09-24
+### Fixed
+- Correctly handle added scripts with no engine name.
 
 ## [46] - 2024-06-28
 ### Added
@@ -338,6 +375,11 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[48.3.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.3.0
+[48.2.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.2.0
+[48.1.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.1.0
+[48.0.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.0.0
+[47]: https://github.com/zaproxy/zap-extensions/releases/zest-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/zest-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/zest-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/zest-v44

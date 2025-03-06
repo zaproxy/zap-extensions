@@ -31,6 +31,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.zaproxy.addon.commonlib.http.HttpDateUtilsUnitTest;
@@ -93,25 +94,25 @@ class CookieUtilsUnitTest {
     }
 
     @Test
-    void shouldNotFindAttributeInNamelessCookie() {
+    void shouldFindAttributeInNamelessCookie() {
         // Given
         String headerValue = "=Value; Attribute1; Attribute2=AV2; ;;";
         String attribute = "Attribute1";
         // When
         boolean found = CookieUtils.hasAttribute(headerValue, attribute);
         // Then
-        assertThat(found, is(equalTo(false)));
+        assertThat(found, is(equalTo(true)));
     }
 
     @Test
-    void shouldNotFindAttributeIfCookieHasNoNameValueSeparator() {
+    void shouldFindAttributeIfCookieHasNoNameValueSeparator() {
         // Given
-        String headerValue = "Name; Attribute1; Attribute2=AV2; ;;";
+        String headerValue = "Value; Attribute1; Attribute2=AV2; ;;";
         String attribute = "Attribute1";
         // When
         boolean found = CookieUtils.hasAttribute(headerValue, attribute);
         // Then
-        assertThat(found, is(equalTo(false)));
+        assertThat(found, is(equalTo(true)));
     }
 
     @Test
@@ -203,25 +204,36 @@ class CookieUtilsUnitTest {
     }
 
     @Test
-    void shouldNotFindCookiePlusNameIfNameIsNull() {
+    void shouldFindCookiePlusValueIfCookieHasNoNameValueSeparator() {
         // Given
         String fullHeader = "Set-Cookie: foo; Attribute1";
         String headerValue = "foo; Attribute1";
         // When
         String name = CookieUtils.getSetCookiePlusName(fullHeader, headerValue);
         // Then
-        assertThat(name, is(equalTo(null)));
+        assertThat(name, is(equalTo("Set-Cookie: foo")));
     }
 
     @Test
-    void shouldKnowThatNameDoesNotIncludeSemiColon() {
+    void shouldFindCookiePlusValueIfCookieHasNoNameValueSeparatorNorAttributes() {
+        // Given
+        String fullHeader = "Set-Cookie: foo";
+        String headerValue = "foo";
+        // When
+        String name = CookieUtils.getSetCookiePlusName(fullHeader, headerValue);
+        // Then
+        assertThat(name, is(equalTo("Set-Cookie: foo")));
+    }
+
+    @Test
+    void shouldKnowThatNamelessCookieValueDoesNotIncludeSemiColon() {
         // Given
         String fullHeader = "Set-Cookie: foo; Attribute1; Attribute2=AV2";
         String headerValue = "foo; Attribute1; Attribute2=AV2";
         // When
         String name = CookieUtils.getSetCookiePlusName(fullHeader, headerValue);
         // Then
-        assertThat(name, is(equalTo(null)));
+        assertThat(name, is(equalTo("Set-Cookie: foo")));
     }
 
     @Test
@@ -264,8 +276,8 @@ class CookieUtilsUnitTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", "a; expires=Sun, 06 Nov 1994 08:49:37 GMT", "name=value;"})
-    void shouldReportNotExpiredIfEmptyHeaderOrInvalidCookieOrExpiresMissing(String headerValue) {
+    @ValueSource(strings = {"", "name=value;"})
+    void shouldReportNotExpiredIfEmptyHeaderOrExpiresMissing(String headerValue) {
         // Given
         String header = headerValue;
         // When
@@ -275,21 +287,28 @@ class CookieUtilsUnitTest {
     }
 
     @ParameterizedTest
-    @ValueSource(
-            strings = {
-                "sessionId=38afes7a8",
-                "sessionId=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT",
-                "sessionId=a3fWa; Max-Age=2592000",
-                "sessionId=219ffwef9w0f; Domain=somecompany.pt",
-                "sessionId=34d8g; SameSite=None; Secure; Path=/; Partitioned;",
-                "sessionId=value123; HttpOnly",
-                "sessionId=value123; Path=/lala/",
-            })
-    void shouldGetTheCorrectCookieName(String headerValue) {
+    @CsvSource({
+        "'', ;",
+        "'', ; Attribute=AV;",
+        "'', value",
+        "'', value;",
+        "'', value; Attribute=AV;",
+        "'', =value",
+        "'', =value;",
+        "'', =value; Attribute=AV;",
+        "sessionId, sessionId=38afes7a8",
+        "sessionId,'sessionId=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT'",
+        "sessionId, sessionId=a3fWa; Max-Age=2592000",
+        "sessionId, sessionId=219ffwef9w0f; Domain=somecompany.pt",
+        "sessionId, sessionId=34d8g; SameSite=None; Secure; Path=/; Partitioned;",
+        "sessionId, sessionId=value123; HttpOnly",
+        "sessionId, sessionId=value123; Path=/lala/",
+    })
+    void shouldGetTheCorrectCookieName(String expectedName, String headerValue) {
         // When / When
         String name = CookieUtils.getCookieName(headerValue);
         // Then
-        assertThat(name, is(equalTo("sessionId")));
+        assertThat(name, is(equalTo(expectedName)));
     }
 
     static Stream<String> expiresFutureProvider() {

@@ -124,13 +124,13 @@ public class MixedContentScanRule extends PluginPassiveScanner
                 .setName(name)
                 .setRisk(risk)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(all)
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(first)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setCweId(311) // CWE Id 311 - Missing Encryption of Sensitive Data
+                .setWascId(4); // WASC Id 4 - Insufficient Transport Layer Protection
     }
 
     @Override
@@ -143,29 +143,9 @@ public class MixedContentScanRule extends PluginPassiveScanner
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 311; // CWE Id 311 - Missing Encryption of Sensitive Data
-    }
-
-    public int getWascId() {
-        return 4; // WASC Id 4 - Insufficient Transport Layer Protection
     }
 
     @Override

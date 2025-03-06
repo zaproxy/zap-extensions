@@ -42,6 +42,7 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 class ContentSecurityPolicyScanRuleUnitTest
         extends PassiveScannerTest<ContentSecurityPolicyScanRule> {
 
+    // Note: This policy does not include sandbox, report-uri, or plugin-types
     private static final String REASONABLE_POLICY =
             "default-src 'self'; script-src 'self' "
                     + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
@@ -61,12 +62,8 @@ class ContentSecurityPolicyScanRuleUnitTest
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(693)));
-        assertThat(wasc, is(equalTo(15)));
         assertThat(tags.size(), is(equalTo(2)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
@@ -653,15 +650,39 @@ class ContentSecurityPolicyScanRuleUnitTest
                 is(equalTo("Warnings:\nThe prefetch-src directive has been deprecated\n")));
     }
 
-    private HttpMessage createHttpMessageWithReasonableCsp(String cspHeaderName) {
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                // No form-action
+                "default-src 'self'; script-src 'self' "
+                        + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
+                        + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
+                        + "fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self';",
+                // No frame-ancestors
+                "default-src 'self'; script-src 'self' "
+                        + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
+                        + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
+                        + "fonts.gstatic.com; worker-src 'self'; form-action 'none'"
+            })
+    void shouldAlertWhenMissingRelevantDirectiveWithoutFallback(String policy) {
+        // Given
+        HttpMessage msg = createHttpMessage("", policy);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(equalTo(1)));
+        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
+    }
+
+    private static HttpMessage createHttpMessageWithReasonableCsp(String cspHeaderName) {
         return createHttpMessage(cspHeaderName, REASONABLE_POLICY);
     }
 
-    private HttpMessage createHttpMessage(String cspPolicy) {
+    private static HttpMessage createHttpMessage(String cspPolicy) {
         return createHttpMessage(HttpFieldsNames.CONTENT_SECURITY_POLICY, cspPolicy);
     }
 
-    private HttpMessage createHttpMessage(String cspHeaderName, String cspPolicy) {
+    private static HttpMessage createHttpMessage(String cspHeaderName, String cspPolicy) {
         HttpMessage msg = new HttpMessage();
 
         String header =
@@ -689,7 +710,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         return msg;
     }
 
-    private HttpMessage createHttpMessage() {
+    private static HttpMessage createHttpMessage() {
         HttpMessage msg = new HttpMessage();
         try {
             msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");

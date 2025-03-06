@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <TITLE>
+        Sites Tree File Format
+    </TITLE>
+</HEAD>
+<BODY>
+
+<H1>Sites Tree File Format</H1>
+
+The Sites Tree Format is a YAML representation of the ZAP Sites Tree.<br>
+It is a hierarchy of nodes, each of which represents all of the essential information needed to uniquely identify the corresponding node in the Sites tree.
+<p>
+Each node has the following format:
+
+<pre>
+  - node:              # The name of the node, as shown in the ZAP Sites Tree
+    url:               # The URL it represents, present for all apart from the top node
+    method:            # The HTTP method, present for all apart from the top node
+    responseLength:    # The length of the response, where relevant
+    statusCode:        # The HTTP status code, where relevant
+    data:              # The names of the data parameters, if any, separated with '=&amp;'s
+    children:          # A list of child nodes, present for all nodes apart from the leaves
+</pre>
+
+<p>
+This format is used by the <a href="automation.html">Automation Framework</a> export and prune jobs, and by the corresponding
+<a href="exim.html">desktop menus</a>.
+<p>
+
+A full simple example:
+
+<pre>
+- node: Sites
+  children:
+  - node: https://www.example.com
+    url: https://www.example.com
+    method: GET
+    children:
+    - node: missing
+      url: https://www.example.com/missing
+      method: GET
+      responseLength: 1221
+      statusCode: 404
+    - node: path
+      url: https://www.example.com/path
+      method: GET
+      responseLength: 1234
+      statusCode: 200
+      children:
+      - node: GET:query(q)
+        url: https://www.example.com/seq/query?q=search
+        method: GET
+        responseLength: 2345
+        statusCode: 200
+      - node: submit
+        url: https://www.example.com/seq/submit()(field1,field2,field3)
+        method: POST
+        data: field1=&amp;field2=&amp;field3=
+        responseLength: 3456
+        statusCode: 200
+</pre>
+
+</BODY>
+</HTML>

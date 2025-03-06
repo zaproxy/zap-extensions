@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
@@ -157,7 +159,7 @@ public class ImportJob extends AutomationJob {
         } catch (IOException e) {
             CommandLine.error(
                     Constant.messages.getString(
-                            "exim.automation.import.error.nofile", RESOURCES_DIR + name));
+                            "exim.automation.error.noresourcefile", RESOURCES_DIR + name));
         }
         return "";
     }
@@ -222,25 +224,11 @@ public class ImportJob extends AutomationJob {
         }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
         private String type;
         private String fileName;
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public void setFileName(String fileName) {
-            this.fileName = fileName;
-        }
     }
 
     public enum TypeOption {

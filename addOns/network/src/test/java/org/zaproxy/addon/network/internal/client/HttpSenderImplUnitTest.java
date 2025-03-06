@@ -34,6 +34,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
@@ -262,6 +263,16 @@ class HttpSenderImplUnitTest {
                                         + version
                                         + " 200 OK\r\ncontent-length: 0\r\nconnection: keep-alive\r\n\r\n")
                 .flatMap(response -> sendAndReceiveMethods().map(sm -> arguments(response, sm)));
+    }
+
+    static Stream<Arguments> statusCodesForRetryAndSendAndReceiveMethods() {
+        var statusCodes = new ArrayList<Integer>();
+        for (int i = 200; i < 600; i++) {
+            statusCodes.add(i);
+        }
+        return statusCodes.stream()
+                .flatMap(
+                        statusCode -> sendAndReceiveMethods().map(sm -> arguments(statusCode, sm)));
     }
 
     @Nested
@@ -570,6 +581,27 @@ class HttpSenderImplUnitTest {
             for (HttpMessage receivedMessage : server.getReceivedMessages()) {
                 assertRequest(receivedMessage, requestMethod, requestBody);
             }
+        }
+
+        @Timeout(10)
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#statusCodesForRetryAndSendAndReceiveMethods")
+        void shouldNotBeRetriedOnAnyStatusCode(int statusCode, SenderMethod method)
+                throws Exception {
+            // Given
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        msg.setResponseHeader(
+                                "HTTP/1.1 "
+                                        + statusCode
+                                        + "\r\nretry-after: 3600\r\ncontent-length: 13\r\n\r\n");
+                        msg.getResponseBody().setBody("Response Body");
+                    });
+            // When
+            httpSender.sendAndReceive(message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(1));
         }
 
         @Test
@@ -931,9 +963,11 @@ class HttpSenderImplUnitTest {
             assertThat(message.getResponseHeader().toString(), is(equalTo(responseHeader)));
             assertThat(message.getResponseBody().toString(), is(equalTo("")));
             assertThat(message.getUserObject(), is(instanceOf(Map.class)));
-            assertThat(
-                    (Map<?, ?>) message.getUserObject(),
-                    hasEntry("connection.closed", Boolean.TRUE));
+            @SuppressWarnings("unchecked")
+            Map<Object, Object> properties = (Map<Object, Object>) message.getUserObject();
+            assertThat(properties, hasEntry("connection.closed", Boolean.TRUE));
+            // Should be mutable.
+            assertDoesNotThrow(() -> properties.put("Something", "Value"));
         }
 
         @ParameterizedTest

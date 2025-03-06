@@ -1,4 +1,16 @@
 {
+  "Q1Media": {
+    "cats": [
+      36
+    ],
+    "description": "Q1Media is a platform that facilitates the creation, demand, and supply of digital advertising.",
+    "icon": "Q1Media.svg",
+    "saas": true,
+    "scriptSrc": [
+      "//q1mediahydraplatform\\.com/"
+    ],
+    "website": "https://www.q1media.com"
+  },
   "Q4": {
     "cats": [
       53
@@ -27,6 +39,18 @@
     ],
     "website": "https://q4mobile.github.io/q4widgets-jquery-ui/doc_html/q4.cookieMonster.html"
   },
+  "QForm": {
+    "cats": [
+      110
+    ],
+    "description": "QForm is a tool for designing and managing customizable forms for data collection and processing.",
+    "icon": "QForm.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.qform(?:24\\.com|\\.io)/"
+    ],
+    "website": "https://qform.io"
+  },
   "QUIC.cloud": {
     "cats": [
       92,
@@ -35,7 +59,9 @@
     ],
     "description": "QUIC.cloud is a content delivery network (CDN) and optimisation service that uses the QUIC protocol, a next-generation internet transport protocol developed by Google, to deliver content faster and more securely over the internet.",
     "dns": {
-      "SOA": "\\.quicns\\.(?:net|com)"
+      "SOA": [
+        "\\.quicns\\.(?:net|com)"
+      ]
     },
     "icon": "QUIC.cloud.svg",
     "pricing": [
@@ -141,6 +167,23 @@
     ],
     "website": "https://www.qonnex.nl"
   },
+  "Qooqie": {
+    "cats": [
+      10
+    ],
+    "description": "Qooqie is a call tracking tool designed to monitor and analyze inbound phone calls.",
+    "icon": "Qooqie.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.qooqie\\.com"
+    ],
+    "website": "https://qooqie.com"
+  },
   "Qstomizer": {
     "cats": [
       76
@@ -206,6 +249,21 @@
     ],
     "website": "https://www.qualified.com"
   },
+  "Qualitelis": {
+    "cats": [
+      90
+    ],
+    "description": "Qualitelis is a hotel guest review system designed to collect, manage, and analyze feedback, helping hospitality providers improve services by addressing customer experiences and satisfaction levels.",
+    "icon": "Qualitelis.svg",
+    "js": {
+      "InitWidgetQualitelis": "",
+      "resizeWidgetQualitelis": "",
+      "showHideWidgetQualitelis": "",
+      "widgetQualitelisFixed": ""
+    },
+    "saas": true,
+    "website": "https://www.qualitelis.septeo.com"
+  },
   "Qualtrics": {
     "cats": [
       73
@@ -224,6 +282,18 @@
       "\\.qualtrics\\.com/"
     ],
     "website": "https://www.qualtrics.com"
+  },
+  "Quant": {
+    "cats": [
+      1
+    ],
+    "description": "Quant is a Japanese content and creator management system designed to organize, manage, and distribute digital content.",
+    "icon": "Quant.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.quant\\.jp/"
+    ],
+    "website": "https://pf.quant.page"
   },
   "Quanta": {
     "cats": [
@@ -298,6 +368,23 @@
     ],
     "website": "https://www.quantummetric.com/"
   },
+  "Quarto": {
+    "cats": [
+      57
+    ],
+    "description": "Quarto is an open-source technical publishing system.",
+    "icon": "Quarto.svg",
+    "js": {
+      "quartoOpenSearch": "",
+      "quartoToggleHeadroom": "",
+      "quartoToggleReader": ""
+    },
+    "meta": {
+      "generator": "^quarto-([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://quarto.org"
+  },
   "Quasar": {
     "cats": [
       12
@@ -322,14 +409,14 @@
       }
     },
     "icon": "Quasar.svg",
+    "implies": [
+      "Vue.js"
+    ],
     "oss": true,
     "requires": [
       "Vue.js"
     ],
-    "website": "https://quasar.dev",
-    "implies": [
-      "Vue.js"
-    ]
+    "website": "https://quasar.dev"
   },
   "Qubit": {
     "cats": [
@@ -424,6 +511,25 @@
     ],
     "website": "https://queue-it.com"
   },
+  "Quform": {
+    "cats": [
+      110
+    ],
+    "description": "Quform is a WordPress plugin designed for building and managing forms.",
+    "icon": "Quform.svg",
+    "js": {
+      "Quform.captchaRefreshFormQueue": "",
+      "QuformRecaptchaLoaded": ""
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "website": "https://www.quform.com"
+  },
   "Quick.CMS": {
     "cats": [
       1
@@ -450,6 +556,27 @@
       "generator": "Quick\\.Cart(?: v([\\d.]+))?\\;version:\\1"
     },
     "website": "https://opensolution.org"
+  },
+  "QuickCEP": {
+    "cats": [
+      52
+    ],
+    "description": "QuickCEP is an AI-powered chatbot solution to improve business conversions, sales, and customer satisfaction through automated interactions.",
+    "icon": "QuickCEP.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.quickcep\\.com/"
+    ],
+    "scripts": [
+      "\\.quickcep\\.com"
+    ],
+    "website": "https://www.quickcep.com"
   },
   "QuickSell": {
     "cats": [
@@ -648,6 +775,24 @@
     "saas": true,
     "website": "https://www.qukasoft.com"
   },
+  "Qumra": {
+    "cats": [
+      6
+    ],
+    "description": "Qumra is a platform that enables users to create ecommerce websites without requiring any programming knowledge.",
+    "icon": "Qumra.svg",
+    "js": {
+      "Qumra.cart": "",
+      "__qumra__": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.qumra.cloud"
+  },
   "Quoli": {
     "cats": [
       100,
@@ -669,6 +814,21 @@
     ],
     "website": "https://quoli.io"
   },
+  "Quon": {
+    "cats": [
+      36
+    ],
+    "description": "Quon is a platform that provides control over website advertising and sales, integrating an end-to-end analytics system to optimize advertising management.",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "counter\\.quon\\.ru/"
+    ],
+    "website": "https://www.quon.ru"
+  },
   "Quora Pixel": {
     "cats": [
       10
@@ -682,6 +842,18 @@
       "\\.quora\\.com/"
     ],
     "website": "https://quoraadsupport.zendesk.com/hc/en-us/categories/115001573928-Pixels-Tracking"
+  },
+  "Quotemedia": {
+    "cats": [
+      10
+    ],
+    "description": "Quotemedia is a provider of stock market data and research solutions for online brokerages, clearing firms, banks, media portals, public companies, and financial service corporations.",
+    "icon": "QuoteMedia.svg",
+    "saas": true,
+    "scriptSrc": [
+      "qmod\\.quotemedia\\.com/"
+    ],
+    "website": "https://quotemedia.com"
   },
   "Qwik": {
     "cats": [

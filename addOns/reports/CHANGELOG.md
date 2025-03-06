@@ -4,6 +4,34 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Include correct alert instances in Traditional JSON Report with requests and responses (Issue 8861).
+
+## [0.36.0] - 2025-02-12
+### Changed
+- Allow multiple add-ons to provide report data.
+
+## [0.35.0] - 2025-01-10
+### Added
+- Stats counter to the main toolbar button (Issue 8375).
+- Sequence data to JSON & HTML reports.
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Update automation job help.
+- Fields with default or missing values are omitted for the `report` job in saved Automation Framework plans.
+
+### Fixed
+- Do not log an error when the statistics do not have a resource message (Issue 8788).
+
+## [0.34.0] - 2024-10-07
+### Changed
+- Checkmarx rebrand.
+
+### Fixed
+- An issue where alert details were missing from some Risk and Confidence HTML reports (Issue 8460).
+
+## [0.33.0] - 2024-09-02
 ### Changed
 - Maintenance changes related to Passive Scanner add-on (Issue 7959).
 
@@ -283,6 +311,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.36.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.36.0
+[0.35.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.35.0
+[0.34.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.34.0
+[0.33.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.33.0
 [0.32.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.32.0
 [0.31.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.31.0
 [0.30.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.30.0

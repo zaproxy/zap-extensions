@@ -4,6 +4,8 @@
          "http://java.sun.com/products/javahelp/map_1_0.dtd">
 
 <map version="1.0">
-    <mapID target="sequence-icon" url="contents/images/script-sequence.png" />
-    <mapID target="sequence" url="contents/sequence.html" />
+    <mapID target="addon.sequence-icon" url="contents/images/script-sequence.png" />
+    <mapID target="addon.sequence" url="contents/sequence.html" />
+    <mapID target="addon.sequence.automation" url="contents/automation.html" />
+    <mapID target="addon.sequence.policy" url="contents/policy-sequence.html" />
 </map>

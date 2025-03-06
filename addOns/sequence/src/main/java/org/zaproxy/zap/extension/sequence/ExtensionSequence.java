@@ -21,38 +21,51 @@ package org.zaproxy.zap.extension.sequence;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.ImageIcon;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.scanner.AbstractPlugin;
-import org.parosproxy.paros.core.scanner.Scanner;
-import org.parosproxy.paros.core.scanner.ScannerHook;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.ViewDelegate;
-import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.exim.ExtensionExim;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
+import org.zaproxy.zap.extension.ascan.ScanPolicy;
 import org.zaproxy.zap.extension.script.ExtensionScript;
-import org.zaproxy.zap.extension.script.ScriptCollection;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.extension.script.SequenceScript;
+import org.zaproxy.zap.extension.sequence.internal.ImportHarMenuItem;
+import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
+import org.zaproxy.zap.view.ZapMenuItem;
 
-public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
+public class ExtensionSequence extends ExtensionAdaptor {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            List.of(ExtensionScript.class);
+            List.of(
+                    ExtensionExim.class,
+                    ExtensionNetwork.class,
+                    ExtensionScript.class,
+                    ExtensionZest.class);
 
     private ExtensionScript extScript;
     private ExtensionActiveScan extActiveScan;
     private static final Logger LOGGER = LogManager.getLogger(ExtensionSequence.class);
     public static final String TYPE_SEQUENCE = "sequence";
 
+    private ImportHarMenuItem importHarMenuItem;
+
     private List<ScriptWrapper> directScripts = null;
-    private SequenceAscanPanel sequencePanel;
+    private ZapMenuItem activeScanMenu;
+    private SequenceAscanDialog ascanDialog;
 
     private ScriptType scriptType;
 
@@ -62,20 +75,20 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
     }
 
     @Override
-    public void initView(ViewDelegate view) {
-        super.initView(view);
+    public void init() {
+        super.init();
 
-        ExtensionActiveScan extAscan = getExtActiveScan();
-        if (extAscan != null) {
-            sequencePanel = new SequenceAscanPanel(getExtScript());
-        }
-    }
-
-    @Override
-    public void postInit() {
-        if (sequencePanel != null) {
-            getExtActiveScan().addCustomScanPanel(sequencePanel);
-        }
+        scriptType =
+                new ScriptType(
+                        TYPE_SEQUENCE,
+                        "script.type.sequence",
+                        hasView()
+                                ? new ImageIcon(
+                                        getClass()
+                                                .getResource("resources/icons/script-sequence.png"))
+                                : null,
+                        false,
+                        new String[] {ScriptType.CAPABILITY_APPEND});
     }
 
     @Override
@@ -91,104 +104,81 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
     @Override
     public void unload() {
         super.unload();
-        if (sequencePanel != null) {
-            getExtActiveScan().removeCustomScanPanel(sequencePanel);
-        }
         getExtScript().removeScriptType(scriptType);
+        if (ascanDialog != null) {
+            ascanDialog.dispose();
+        }
+        if (importHarMenuItem != null) {
+            importHarMenuItem.unload();
+        }
     }
 
-    @Override
-    public void scannerComplete() {
-        // Reset the sequence extension
-        this.directScripts = null;
+    public ScanPolicy getDefaultScanPolicy() throws ConfigurationException {
+        // FIXME: this should be read from the options
+        return getExtActiveScan().getPolicyManager().getPolicy("Sequence");
+    }
+
+    public Stream<ZestScriptWrapper> getSequences() {
+        return extScript.getScripts(ExtensionSequence.TYPE_SEQUENCE).stream()
+                .filter(ZestScriptWrapper.class::isInstance)
+                .map(ZestScriptWrapper.class::cast);
+    }
+
+    public List<String> getSequenceNames() {
+        return getSequences().map(ScriptWrapper::getName).collect(Collectors.toList());
+    }
+
+    public void activeScanSequences(String policy, List<String> sequences) {
+        List<Object> contextSpecificObjects = new ArrayList<>();
+        try {
+            contextSpecificObjects.add(getExtActiveScan().getPolicyManager().getPolicy(policy));
+        } catch (ConfigurationException e4) {
+            // Ignore
+        }
+
+        for (String seq : sequences) {
+            ScriptWrapper script = getExtScript().getScript(seq);
+            if (script instanceof ZestScriptWrapper) {
+                StdActiveScanRunner zzr =
+                        new StdActiveScanRunner(
+                                (ZestScriptWrapper) script, null, null, contextSpecificObjects);
+                try {
+                    zzr.run(null, null);
+                } catch (Exception e1) {
+                    LOGGER.error(e1.getMessage(), e1);
+                }
+            }
+        }
     }
 
     @Override
     public void hook(ExtensionHook extensionhook) {
         super.hook(extensionhook);
 
-        // Create a new sequence script type and register
-        scriptType =
-                new ScriptType(
-                        TYPE_SEQUENCE,
-                        "script.type.sequence",
-                        hasView()
-                                ? new ImageIcon(
-                                        getClass()
-                                                .getResource("resources/icons/script-sequence.png"))
-                                : null,
-                        false,
-                        new String[] {"append"});
         getExtScript().registerScriptType(scriptType);
 
         if (hasView()) {
+            importHarMenuItem =
+                    new ImportHarMenuItem(
+                            scriptType,
+                            getExtension(ExtensionExim.class),
+                            getExtension(ExtensionZest.class));
+            extensionhook.getHookMenu().addImportMenuItem(importHarMenuItem);
             extensionhook
                     .getHookMenu()
                     .addPopupMenuItem(new SequencePopupMenuItem(this, getExtScript()));
-        }
-
-        // Add class as a scannerhook (implements the scannerhook interface)
-        extensionhook.addScannerHook(this);
-    }
-
-    @Override
-    public void beforeScan(HttpMessage msg, AbstractPlugin plugin, Scanner scanner) {
-        // If the HttpMessage has a HistoryReference with an ID that is also in the HashMap of the
-        // Scanner,
-        // then the message has a specific Sequence script to scan.
-        SequenceScript seqScr = getIncludedSequenceScript(msg, scanner);
-
-        // If any script was found, send all the requests prior to the message to be scanned.
-        if (seqScr != null) {
-            HttpMessage newMsg = seqScr.runSequenceBefore(msg, plugin);
-            updateMessage(msg, newMsg);
+            extensionhook.getHookMenu().addToolsMenuItem(getActiveScanMenu());
+            extensionhook.addSessionListener(new SessionChangedListenerImpl());
         }
     }
 
-    @Override
-    public void afterScan(HttpMessage msg, AbstractPlugin plugin, Scanner scanner) {
-        // If the HttpMessage has a HistoryReference with an ID that is also in the HashMap of the
-        // Scanner,
-        // then the message has a specific Sequence script to scan.
-        SequenceScript seqScr = getIncludedSequenceScript(msg, scanner);
-
-        // If any script was found, send all the requests after the message that was scanned.
-        if (seqScr != null) {
-            seqScr.runSequenceAfter(msg, plugin);
-        }
-    }
-
-    private SequenceScript getIncludedSequenceScript(HttpMessage msg, Scanner scanner) {
-        List<ScriptWrapper> sequences = directScripts;
-        if (sequences == null) {
-            Set<ScriptCollection> scs = scanner.getScriptCollections();
-            if (scs != null) {
-                for (ScriptCollection sc : scs) {
-                    if (sc.getType().getName().equals(TYPE_SEQUENCE)) {
-                        sequences = sc.getScripts();
-                        break;
-                    }
-                }
-            }
-        }
-        if (sequences != null) {
-            for (ScriptWrapper wrapper : sequences) {
-                try {
-                    SequenceScript seqScr =
-                            getExtScript().getInterface(wrapper, SequenceScript.class);
-                    if (seqScr != null) {
-                        if (seqScr.isPartOfSequence(msg)) {
-                            return seqScr;
-                        }
-                    }
-                } catch (Exception e) {
-                    LOGGER.debug(
-                            "Exception occurred, while trying to fetch Included Sequence Script: {}",
-                            e.getMessage());
-                }
-            }
-        }
-        return null;
+    /**
+     * Gets the script type for sequences.
+     *
+     * @return the script type.
+     */
+    public ScriptType getScriptType() {
+        return scriptType;
     }
 
     public void setDirectScanScript(ScriptWrapper script) {
@@ -196,27 +186,62 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
         directScripts.add(script);
     }
 
-    private void updateMessage(HttpMessage msg, HttpMessage newMsg) {
-        msg.setRequestHeader(newMsg.getRequestHeader());
-        msg.setRequestBody(newMsg.getRequestBody());
-        msg.setCookies(new ArrayList<>());
-    }
-
     private ExtensionScript getExtScript() {
         if (extScript == null) {
-            extScript =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+            extScript = getExtension(ExtensionScript.class);
         }
         return extScript;
     }
 
-    private ExtensionActiveScan getExtActiveScan() {
+    private <T extends Extension> T getExtension(Class<T> clazz) {
+        return Control.getSingleton().getExtensionLoader().getExtension(clazz);
+    }
+
+    protected ExtensionActiveScan getExtActiveScan() {
         if (extActiveScan == null) {
-            extActiveScan =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionActiveScan.class);
+            extActiveScan = getExtension(ExtensionActiveScan.class);
         }
         return extActiveScan;
+    }
+
+    private SequenceAscanDialog getAscanDialog() {
+        if (ascanDialog == null) {
+            ascanDialog = new SequenceAscanDialog(this, View.getSingleton().getMainFrame());
+        }
+        return ascanDialog;
+    }
+
+    private ZapMenuItem getActiveScanMenu() {
+        if (activeScanMenu == null) {
+            activeScanMenu = new ZapMenuItem("sequence.tools.menu.ascan");
+            activeScanMenu.addActionListener(e -> getAscanDialog().setVisible(true));
+        }
+        return activeScanMenu;
+    }
+
+    private class SessionChangedListenerImpl implements SessionChangedListener {
+
+        @Override
+        public void sessionChanged(Session session) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void sessionAboutToChange(Session session) {
+            if (importHarMenuItem != null) {
+                importHarMenuItem.clear();
+            }
+        }
+
+        @Override
+        public void sessionScopeChanged(Session session) {
+            // Nothing to do.
+
+        }
+
+        @Override
+        public void sessionModeChanged(Mode mode) {
+            // Nothing to do.
+        }
     }
 }

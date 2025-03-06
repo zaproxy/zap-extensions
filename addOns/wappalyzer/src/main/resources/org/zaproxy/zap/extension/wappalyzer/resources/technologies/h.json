@@ -215,6 +215,7 @@
       1,
       11
     ],
+    "description": "Halo is a powerful, user-friendly open-source website building tool that supports dynamic themes, real-time editing, and multilingual setups.",
     "icon": "Halo.svg",
     "implies": [
       "Java"
@@ -222,9 +223,25 @@
     "meta": {
       "generator": "Halo ([\\d.]+)?\\;version:\\1"
     },
-    "website": "https://halo.run",
     "oss": true,
-    "description": "Halo is a powerful, user-friendly open-source website building tool that supports dynamic themes, real-time editing, and multilingual setups."
+    "website": "https://halo.run"
+  },
+  "Haloscan": {
+    "cats": [
+      11
+    ],
+    "description": "Haloscan is a tool that enables blogs to incorporate trackbacks and comments, allowing users to engage with blog content through discussions and feedback.",
+    "icon": "Haloscan.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "www\\.haloscan\\.com/"
+    ],
+    "website": "https://www.haloscan.com"
   },
   "Hamechio": {
     "cats": [
@@ -245,6 +262,7 @@
     "cats": [
       59
     ],
+    "description": "Hammer.js is a JavaScript library for adding touch gestures like swipe, pinch, and rotate to web applications.",
     "icon": "Hammer.js.svg",
     "js": {
       "Ha.VERSION": "^(.+)$\\;version:\\1",
@@ -254,8 +272,7 @@
     "scriptSrc": [
       "hammer(?:\\.min)?\\.js"
     ],
-    "website": "https://hammerjs.github.io",
-    "description": "Hammer.js is a JavaScript library for adding touch gestures like swipe, pinch, and rotate to web applications."
+    "website": "https://hammerjs.github.io"
   },
   "Handlebars": {
     "cats": [
@@ -283,18 +300,18 @@
     ],
     "description": "Handsontable is a JavaScript component that combines data grid features with spreadsheet-like UX.",
     "icon": "Handsontable.svg",
+    "js": {
+      "Handsontable": ""
+    },
     "oss": true,
-    "scriptSrc": [
-      "(?:((?:\\d+\\.)+\\d+)\\/)?(?:jquery\\.)?handsontable(?:\\.full)?(?:\\.min)?(?:\\.[\\w]+)?\\.js\\;version:\\1"
-    ],
-    "website": "https://handsontable.com",
     "pricing": [
       "poa"
     ],
     "saas": true,
-    "js": {
-      "Handsontable": ""
-    }
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/)?(?:jquery\\.)?handsontable(?:\\.full)?(?:\\.min)?(?:\\.[\\w]+)?\\.js\\;version:\\1"
+    ],
+    "website": "https://handsontable.com"
   },
   "Handtalk": {
     "cats": [
@@ -309,6 +326,24 @@
       "api\\.handtalk\\.me"
     ],
     "website": "https://www.handtalk.me/"
+  },
+  "Hanko": {
+    "cats": [
+      16
+    ],
+    "description": "Hanko is a passwordless authentication solution offering secure login integration.",
+    "icon": "Hanko.svg",
+    "js": {
+      "_hankoStyle": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.hanko.io"
   },
   "Hansel": {
     "cats": [
@@ -396,6 +431,22 @@
     ],
     "website": "https://www.happyfox.com/live-chat"
   },
+  "HappySync": {
+    "cats": [
+      32
+    ],
+    "description": "HappySync is a Korean-developed tool designed for marketing automation and conversion optimization.",
+    "icon": "HappySync.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.happysync\\.io/"
+    ],
+    "website": "https://www.happysync.io"
+  },
   "Haptik": {
     "cats": [
       52
@@ -422,25 +473,25 @@
       6
     ],
     "description": "Haravan is a multi-channel ecommerce services provider from Vietnam.",
+    "excludes": [
+      "PrestaShop",
+      "Shopify"
+    ],
     "icon": "Haravan.svg",
     "js": {
       "Haravan.shop": "",
       "HaravanAnalytics.meta": "",
       "hrvBeacon.host": "stats\\.hstatic\\.net"
     },
-    "scriptSrc": [
-      "haravan.*\\.js"
-    ],
-    "website": "https://www.haravan.com",
-    "excludes": [
-      "PrestaShop",
-      "Shopify"
-    ],
-    "saas": true,
     "pricing": [
       "low",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "haravan.*\\.js"
+    ],
+    "website": "https://www.haravan.com"
   },
   "Harbor": {
     "cats": [
@@ -562,6 +613,7 @@
       59,
       92
     ],
+    "description": "HeadJS is a JavaScript library that optimizes web performance by managing the loading and execution of scripts and stylesheets to ensure faster page loads and efficient resource handling.",
     "html": [
       "<[^>]*data-headjs-load"
     ],
@@ -569,12 +621,11 @@
     "js": {
       "head.browser.name": ""
     },
+    "oss": true,
     "scriptSrc": [
       "head\\.(?:core|load)(?:\\.min)?\\.js"
     ],
-    "website": "https://headjs.github.io",
-    "oss": true,
-    "description": "HeadJS is a JavaScript library that optimizes web performance by managing the loading and execution of scripts and stylesheets to ensure faster page loads and efficient resource handling."
+    "website": "https://headjs.github.io"
   },
   "Header Bidding Ai": {
     "cats": [
@@ -662,14 +713,38 @@
     ],
     "website": "https://www.heartlandpaymentsystems.com"
   },
+  "Heeet": {
+    "cats": [
+      10,
+      32
+    ],
+    "description": "Heeet is a lead tracking and marketing analytics tool.",
+    "icon": "Heeet.svg",
+    "js": {
+      "heeet": "",
+      "heeetJourneyParams": "",
+      "heeetParams": "",
+      "heeetSaveJourney": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.heeet.io"
+  },
   "Helhost": {
     "cats": [
       88
     ],
     "description": "Helhost is a web hosting provider and internet domain registrar from Democratic Republic of Congo.",
     "dns": {
-      "NS": "\\.helhost\\.com",
-      "SOA": "\\.helhost\\.com"
+      "NS": [
+        "\\.helhost\\.com"
+      ],
+      "SOA": [
+        "\\.helhost\\.com"
+      ]
     },
     "headers": {
       "x-powered-by": "Helhost"
@@ -680,10 +755,10 @@
       "recurring",
       "payg"
     ],
-    "website": "https://www.helhost.com",
     "scriptSrc": [
       "\\.helhost\\.com/"
-    ]
+    ],
+    "website": "https://www.helhost.com"
   },
   "HeliumWeb": {
     "cats": [
@@ -725,6 +800,21 @@
     ],
     "oss": true,
     "website": "https://www.joomshaper.com/joomla-templates/helixultimate"
+  },
+  "HelixPay": {
+    "cats": [
+      104
+    ],
+    "description": "HelixPay is an event ticketing platform providing online payment integration, digital tickets, and customizable event websites for large-scale events.",
+    "icon": "HelixPay.svg",
+    "js": {
+      "HELIXPAY.PAGE": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://helixpay.ph"
   },
   "Helixo UFE": {
     "cats": [
@@ -1023,8 +1113,12 @@
     ],
     "description": "Hetzner provides dedicated hosting, shared web hosting, virtual private servers, managed servers, domain names, SSL certificates, storage boxes, and cloud.",
     "dns": {
-      "NS": "\\.ns\\.hetzner\\.com",
-      "SOA": "\\.hetzner\\.com"
+      "NS": [
+        "\\.ns\\.hetzner\\.com"
+      ],
+      "SOA": [
+        "\\.hetzner\\.com"
+      ]
     },
     "headers": {
       "Server": "HeRay",
@@ -1098,6 +1192,24 @@
       "\\.hextom\\.com/js/ultimatesalesboost\\.js"
     ],
     "website": "https://hextom.com/case_study/ultimate-sales-boost"
+  },
+  "HeyLight": {
+    "cats": [
+      91
+    ],
+    "description": "HeyLight is a BNPL system allowing instalment payments for online purchases.",
+    "dom": [
+      "div#heidipay-container, div[data-heidipay], div#pagolight-pro-dialog, iframe#heidipay-iframe-product-description-pagolight, style#heyLightFonts"
+    ],
+    "icon": "HeyLight.svg",
+    "js": {
+      "closePagodilModal": "",
+      "openPagodilModal": "",
+      "pagodilLang": "",
+      "pagodilSprintf": ""
+    },
+    "saas": true,
+    "website": "https://heylight.com/it/it"
   },
   "HeySummit": {
     "cats": [
@@ -1186,13 +1298,13 @@
     "cats": [
       22
     ],
+    "description": "Hiawatha is a secure, lightweight web server developed by Hugo Leisink, designed for ease of use and advanced security features such as protection against SQL injections, XSS, and CSRF attacks.",
     "headers": {
       "Server": "Hiawatha v([\\d.]+)\\;version:\\1"
     },
     "icon": "Hiawatha.png",
-    "website": "https://gitlab.com/hsleisink/hiawatha",
     "oss": true,
-    "description": "Hiawatha is a secure, lightweight web server developed by Hugo Leisink, designed for ease of use and advanced security features such as protection against SQL injections, XSS, and CSRF attacks."
+    "website": "https://gitlab.com/hsleisink/hiawatha"
   },
   "HighLevel": {
     "cats": [
@@ -1236,6 +1348,7 @@
     "cats": [
       25
     ],
+    "cpe": "cpe:2.3:a:highcharts:highcharts:*:*:*:*:*:*:*:*",
     "description": "Highcharts is a charting library written in pure JavaScript, for adding interactive charts to a website or web application. Highcharts meets accessibility standards and works with Python, Angular, React, iOS, Android, and more.",
     "html": [
       "<svg[^>]*><desc>Created with Highcharts ([\\d.]*)\\;version:\\1"
@@ -1248,7 +1361,6 @@
     "scriptSrc": [
       "highcharts.*\\.js"
     ],
-    "cpe": "cpe:2.3:a:highcharts:highcharts:*:*:*:*:*:*:*:*",
     "website": "https://www.highcharts.com"
   },
   "Higher Logic": {
@@ -1322,6 +1434,7 @@
     "cats": [
       59
     ],
+    "description": "Highlight.js is a JavaScript library for syntax highlighting, supporting 192 languages and 496 themes.",
     "icon": "Highlight.js.svg",
     "js": {
       "hljs.highlightBlock": "",
@@ -1330,8 +1443,7 @@
     "scriptSrc": [
       "/(?:([\\d.])+/)?highlight(?:\\.min)?\\.js\\;version:\\1"
     ],
-    "website": "https://highlightjs.org/",
-    "description": "Highlight.js is a JavaScript library for syntax highlighting, supporting 192 languages and 496 themes."
+    "website": "https://highlightjs.org/"
   },
   "Highstock": {
     "cats": [
@@ -1346,20 +1458,39 @@
     ],
     "website": "https://highcharts.com/products/highstock"
   },
+  "HikaShop": {
+    "cats": [
+      6
+    ],
+    "description": "HikaShop is a Joomla extension for managing shop content, handling price management, and customizing store views with an intuitive interface.",
+    "icon": "HikaShop.svg",
+    "js": {
+      "hikashop": "",
+      "hikashopCheckField": ""
+    },
+    "requires": [
+      "Joomla"
+    ],
+    "saas": true,
+    "scripts": [
+      "com_hikashop"
+    ],
+    "website": "https://www.hikashop.com"
+  },
   "HikeOrders": {
     "cats": [
       68
     ],
     "description": "HikeOrders is a web accessibility overlay that claims to make your site disability friendly.",
     "icon": "HikeOrders.svg",
-    "scriptSrc": [
-      "hikeorders\\.com/main/assets/js/hko-accessibility\\.min\\.js"
-    ],
-    "website": "https://hikeorders.com",
     "pricing": [
       "low",
       "recurring"
-    ]
+    ],
+    "scriptSrc": [
+      "hikeorders\\.com/main/assets/js/hko-accessibility\\.min\\.js"
+    ],
+    "website": "https://hikeorders.com"
   },
   "Hinza Advanced CMS": {
     "cats": [
@@ -1524,17 +1655,55 @@
     "cats": [
       12
     ],
+    "description": "Hogan.js is a JavaScript templating engine developed by Twitter, designed for both client-side and server-side applications, and it follows the Mustache template syntax for efficient and flexible template rendering.",
     "icon": "Hogan.js.svg",
     "js": {
       "Hogan": ""
     },
+    "oss": true,
     "scriptSrc": [
       "hogan-[.-]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
       "([\\d.]+)/hogan(?:\\.min)?\\.js\\;version:\\1"
     ],
-    "website": "https://twitter.github.io/hogan.js/",
-    "oss": true,
-    "description": "Hogan.js is a JavaScript templating engine developed by Twitter, designed for both client-side and server-side applications, and it follows the Mustache template syntax for efficient and flexible template rendering."
+    "website": "https://twitter.github.io/hogan.js/"
+  },
+  "Holduix CMS": {
+    "cats": [
+      1
+    ],
+    "description": "Holduix CMS is a lightweight content management solution designed to offer developers and end users a customizable experience.",
+    "icon": "HolduixCMS.svg",
+    "js": {
+      "HolduixConfig.baseURL": ""
+    },
+    "meta": {
+      "author": "^Holduix$"
+    },
+    "pricing": [
+      "onetime",
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://www.holduix.dev"
+  },
+  "HollerBox": {
+    "cats": [
+      87
+    ],
+    "description": "HollerBox is a lead generation popup tool for WordPress.",
+    "icon": "HollerBox.svg",
+    "js": {
+      "HollerBox.active": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "website": "https://hollerwp.com"
   },
   "HomHero": {
     "cats": [
@@ -1610,13 +1779,32 @@
     "oss": true,
     "website": "https://hono.dev"
   },
+  "Horoshop": {
+    "cats": [
+      6
+    ],
+    "description": "Horoshop is an all-in-one platform designed to support launching and managing online stores tailored for businesses in  Ukraine.",
+    "js": {
+      "Horoshop.Widgets": "",
+      "horoshopReCaptcha": "",
+      "webpackChunkHoroshop": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://horoshop.ua"
+  },
   "HostEurope": {
     "cats": [
       88
     ],
     "description": "HostEurope is a European website hosting, email and domain name registrar company headquartered Hayes, West London.",
     "dns": {
-      "SOA": "\\.hosteurope\\.com"
+      "SOA": [
+        "\\.hosteurope\\.com"
+      ]
     },
     "icon": "HostEurope.svg",
     "pricing": [
@@ -1631,7 +1819,9 @@
     ],
     "description": "Hostens is a web hosting company specialising in hosting services, virtual private server hosting, and the domain name or transition.",
     "dns": {
-      "SOA": "\\.hostens\\.com"
+      "SOA": [
+        "\\.hostens\\.com"
+      ]
     },
     "icon": "Hostens.svg",
     "pricing": [
@@ -1646,7 +1836,9 @@
     ],
     "description": "HostGator is a Houston-based provider of shared, reseller, virtual private server, and dedicated web hosting with an additional presence in Austin, Texas.",
     "dns": {
-      "SOA": "\\.hostgator\\.com"
+      "SOA": [
+        "\\.hostgator\\.com"
+      ]
     },
     "icon": "Hostgator.svg",
     "pricing": [
@@ -1661,7 +1853,9 @@
     ],
     "description": "Hosting Ukraine is a web hosting provider and internet domain registrar.",
     "dns": {
-      "SOA": "ns\\d+\\.ukraine\\.com\\.ua"
+      "SOA": [
+        "ns\\d+\\.ukraine\\.com\\.ua"
+      ]
     },
     "icon": "Hosting Ukraine.png",
     "pricing": [
@@ -1677,7 +1871,9 @@
     "cpe": "cpe:2.3:a:hostinger:hostinger:*:*:*:*:*:*:*:*",
     "description": "Hostinger is an employee-owned Web hosting provider and internet domain registrar.",
     "dns": {
-      "SOA": "\\.(?:dns-parking|hostinger)\\.com"
+      "SOA": [
+        "\\.(?:dns-parking|hostinger)\\.com"
+      ]
     },
     "headers": {
       "platform": "hostinger"
@@ -1732,7 +1928,9 @@
     ],
     "description": "Hostiq is a web hosting provider and internet domain registrar.",
     "dns": {
-      "SOA": "\\.hostiq\\.ua"
+      "SOA": [
+        "\\.hostiq\\.ua"
+      ]
     },
     "icon": "Hostiq.png",
     "pricing": [
@@ -1764,7 +1962,9 @@
     ],
     "description": "Hostpoint is a Switzerland-based web hosting company.",
     "dns": {
-      "SOA": "\\.hostpoint\\.ch"
+      "SOA": [
+        "\\.hostpoint\\.ch"
+      ]
     },
     "icon": "Hostpoint.svg",
     "pricing": [
@@ -1936,10 +2136,10 @@
       "high"
     ],
     "saas": true,
-    "website": "https://www.hubspot.com",
     "scriptSrc": [
       "\\.hs-scripts\\.com/"
-    ]
+    ],
+    "website": "https://www.hubspot.com"
   },
   "HubSpot Analytics": {
     "cats": [
@@ -2096,6 +2296,23 @@
       "analytics\\.huberway\\.com/pixel/"
     ],
     "website": "https://www.huberway.com/analytics-software"
+  },
+  "Hubtiger": {
+    "cats": [
+      53,
+      101
+    ],
+    "description": "Hubtiger offers rental and workshop management software solutions to help businesses elevate their operations and efficiency.",
+    "icon": "Hubtiger.svg",
+    "meta": {
+      "author": "^Hubtiger$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://hubtiger.com"
   },
   "Huckabuy": {
     "cats": [
@@ -2260,6 +2477,25 @@
     "saas": true,
     "website": "https://www.hulkapps.com/products/product-reviews-shopify"
   },
+  "Hull": {
+    "cats": [
+      97
+    ],
+    "description": "Hull is a platform that collects, unifies, enriches product, marketing, and sales data, then synchronizes it across various tools.",
+    "icon": "Hull.svg",
+    "js": {
+      "Hull._initialized": "",
+      "Hull.js._initialized": "",
+      "HullShopify": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.hull.io"
+  },
   "Human Presence": {
     "cats": [
       16
@@ -2411,10 +2647,27 @@
     "oss": true,
     "website": "https://hydrogen.shopify.dev"
   },
+  "Hypercloudhost": {
+    "cats": [
+      88
+    ],
+    "description": "Hypercloudhost is a hosting service solution in Indonesia offering anti-DDoS protection and high-performance cloud hosting.",
+    "icon": "Hypercloudhost.svg",
+    "meta": {
+      "generator": "^hypercloudhost$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://hypercloudhost.com"
+  },
   "Hypercorn": {
     "cats": [
       22
     ],
+    "description": "Hypercorn is an ASGI web server that supports HTTP/1, HTTP/2, WebSockets, ASGI/2, and ASGI/3 specifications, and can utilize asyncio, uvloop, or trio for asynchronous operations.",
     "headers": {
       "Server": "hypercorn"
     },
@@ -2423,8 +2676,22 @@
       "Python"
     ],
     "oss": true,
-    "website": "https://pgjones.gitlab.io/hypercorn/",
-    "description": "Hypercorn is an ASGI web server that supports HTTP/1, HTTP/2, WebSockets, ASGI/2, and ASGI/3 specifications, and can utilize asyncio, uvloop, or trio for asynchronous operations."
+    "website": "https://pgjones.gitlab.io/hypercorn/"
+  },
+  "Hyperia": {
+    "cats": [
+      32,
+      71
+    ],
+    "description": "Hyperia is a tool designed for lead generation and affiliate marketing.",
+    "icon": "Hyperia.svg",
+    "js": {
+      "_config.base_url": "\\.hyperia\\.sk",
+      "_config.socket_url": "\\.hyperia\\.sk",
+      "_config.tracker_url": "\\.hyperia\\.sk"
+    },
+    "saas": true,
+    "website": "https://www.hyperia.sk"
   },
   "Hyperspeed": {
     "cats": [
@@ -2576,6 +2843,7 @@
     "cats": [
       10
     ],
+    "description": "Hantana provides user behavior analysis tools like heatmaps, surveys, and feedback widgets to enhance website user experience and customer satisfaction.",
     "icon": "hantana.svg",
     "js": {
       "Hantana": ""
@@ -2583,8 +2851,7 @@
     "scriptSrc": [
       "//hantana\\.org/widget"
     ],
-    "website": "https://hantana.org/",
-    "description": "Hantana provides user behavior analysis tools like heatmaps, surveys, and feedback widgets to enhance website user experience and customer satisfaction."
+    "website": "https://hantana.org/"
   },
   "hoolah": {
     "cats": [

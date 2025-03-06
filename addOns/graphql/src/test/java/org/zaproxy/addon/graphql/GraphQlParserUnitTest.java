@@ -20,10 +20,12 @@
 package org.zaproxy.addon.graphql;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
@@ -101,5 +103,21 @@ class GraphQlParserUnitTest extends TestUtils {
         assertThat(alert.getValue().getPluginId(), is(ExtensionGraphQl.TOOL_ALERT_ID));
         assertThat(alert.getValue().getAlertRef(), is(ExtensionGraphQl.TOOL_ALERT_ID + "-1"));
         assertThat(alert.getValue().getName(), is("!graphql.introspection.alert.name!"));
+    }
+
+    @Test
+    void shouldImportIntrospectionResponse() throws Exception {
+        // Given
+        GraphQlParser gqp = spy(new GraphQlParser(endpointUrl));
+        var schemaCaptor = ArgumentCaptor.forClass(String.class);
+        String expectedSchema =
+                "type Query {\n"
+                        + "  searchSongsByLyrics(lyrics: String = \"Never gonna give you up\"): String\n"
+                        + "}";
+        // When
+        gqp.importFile(getResourcePath("introspectionResponse.json").toString());
+        // Then
+        verify(gqp).parse(schemaCaptor.capture());
+        assertThat(schemaCaptor.getValue(), containsString(expectedSchema));
     }
 }

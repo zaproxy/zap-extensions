@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.script.ScriptsCache;
@@ -41,36 +41,42 @@ public class ScriptsPassiveScanner extends PassiveScriptHelper {
     private int currentHistoryType;
 
     public ScriptsPassiveScanner() {
+        this(createScriptsCache());
+    }
+
+    private static ScriptsCache<PassiveScript> createScriptsCache() {
         ExtensionScript extension =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-        scripts =
-                extension != null
-                        ? extension.createScriptsCache(
-                                Configuration.<PassiveScript>builder()
-                                        .setScriptType(ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE)
-                                        .setTargetInterface(PassiveScript.class)
-                                        .setInterfaceProvider(
-                                                (scriptWrapper, targetInterface) -> {
-                                                    if (ScriptSynchronizerUtils.providesMetadata(
-                                                            scriptWrapper)) {
-                                                        return null;
-                                                    }
-                                                    var s =
-                                                            extension.getInterface(
-                                                                    scriptWrapper,
-                                                                    PassiveScript.class);
-                                                    if (s != null) {
-                                                        return s;
-                                                    }
-                                                    extension.handleFailedScriptInterface(
-                                                            scriptWrapper,
-                                                            Constant.messages.getString(
-                                                                    "scripts.scanRules.pscan.interfaceError",
-                                                                    scriptWrapper.getName()));
-                                                    return null;
-                                                })
-                                        .build())
-                        : null;
+        if (extension == null) {
+            return null;
+        }
+        return extension.createScriptsCache(
+                Configuration.<PassiveScript>builder()
+                        .setScriptType(ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE)
+                        .setTargetInterface(PassiveScript.class)
+                        .setInterfaceProvider(
+                                (scriptWrapper, targetInterface) -> {
+                                    if (ScriptSynchronizerUtils.providesMetadata(scriptWrapper)) {
+                                        return null;
+                                    }
+                                    var s =
+                                            extension.getInterface(
+                                                    scriptWrapper, PassiveScript.class);
+                                    if (s != null) {
+                                        return s;
+                                    }
+                                    extension.handleFailedScriptInterface(
+                                            scriptWrapper,
+                                            Constant.messages.getString(
+                                                    "scripts.scanRules.pscan.interfaceError",
+                                                    scriptWrapper.getName()));
+                                    return null;
+                                })
+                        .build());
+    }
+
+    private ScriptsPassiveScanner(ScriptsCache<PassiveScript> scripts) {
+        this.scripts = scripts;
     }
 
     @Override
@@ -99,7 +105,7 @@ public class ScriptsPassiveScanner extends PassiveScriptHelper {
 
     @Override
     public ScriptsPassiveScanner copy() {
-        ScriptsPassiveScanner copy = new ScriptsPassiveScanner();
+        ScriptsPassiveScanner copy = new ScriptsPassiveScanner(scripts);
         copy.currentHistoryType = currentHistoryType;
         return copy;
     }

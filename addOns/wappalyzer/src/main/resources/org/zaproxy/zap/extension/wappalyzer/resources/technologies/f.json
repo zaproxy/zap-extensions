@@ -41,6 +41,9 @@
       29
     ],
     "description": "FAST ESP is a service-oriented architecture development platform which is geared towards production searchable indexes. It provided a flexible framework for creating ETL applications for efficient indexing of searchable content.",
+    "dom": [
+      "form[id^='fastsearch']"
+    ],
     "html": [
       "<form[^>]+id=\"fastsearch\""
     ],
@@ -52,6 +55,9 @@
       29
     ],
     "description": "FAST Search for SharePoint is the search engine for Microsoft's SharePoint collaboration platform. Its purpose is helping SharePoint users locate and retrieve stored enterprise content.",
+    "dom": [
+      "input[name*='ParametricSearch']"
+    ],
     "html": [
       "<input[^>]+ name=\"ParametricSearch"
     ],
@@ -64,6 +70,41 @@
       "Pages/SearchResults\\.aspx\\?k="
     ],
     "website": "https://sharepoint.microsoft.com/en-us/product/capabilities/search/Pages/Fast-Search.aspx"
+  },
+  "FC2 Analyzer": {
+    "cats": [
+      10
+    ],
+    "description": "FC2 Analyzer is a platform designed to track and analyze affiliate system performance, providing insights into traffic, conversions, and revenue metrics.",
+    "icon": "FC2Analyzer.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.fc2\\.com/"
+    ],
+    "website": "https://fc2.com"
+  },
+  "FMG Suite": {
+    "cats": [
+      32
+    ],
+    "description": "FMG Suite is an automated content marketing system for financial advisors.",
+    "icon": "FMGSuite.svg",
+    "js": {
+      "FMG.EbookBGType": "",
+      "fmgjQuery.Animation": ""
+    },
+    "meta": {
+      "generator": "^FMG Suite$"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "requires": [
+      "jQuery"
+    ],
+    "saas": true,
+    "website": "https://fmgsuite.com"
   },
   "FUDforum": {
     "cats": [
@@ -174,6 +215,22 @@
     ],
     "website": "https://facebook.com"
   },
+  "Facebook Pixel Advanced Matching": {
+    "cats": [
+      42
+    ],
+    "description": "Facebook Pixel Advanced Matching is a feature that allows the optimization of Meta ads by sending hashed customer information with Meta Pixel events, aiding in improved conversion attribution and broader audience reach.",
+    "icon": "Meta.svg",
+    "implies": [
+      "Facebook Pixel"
+    ],
+    "website": "https://www.facebook.com/business/help/611774685654668?id=1205376682832142",
+    "xhr": [
+      "facebook\\.com/tr/",
+      "udff\\[em\\]=[a-fA-F0-9]{64}",
+      "udff\\[.+\\]=[a-fA-F0-9]+"
+    ]
+  },
   "Facil-iti": {
     "cats": [
       68
@@ -194,18 +251,18 @@
       "<!-- Factfinder"
     ],
     "icon": "FactFinder.svg",
+    "js": {
+      "FactFinderInit": "",
+      "factfinder": "",
+      "factfinder.version": "^([\\d\\.])$\\;version:\\1"
+    },
     "scriptSrc": [
       "Suggest\\.ff"
     ],
     "url": [
       "(?:/ViewParametricSearch|ffsuggest\\.[a-z]htm)"
     ],
-    "website": "https://fact-finder.com",
-    "js": {
-      "FactFinderInit": "",
-      "factfinder": "",
-      "factfinder.version": "^([\\d\\.])$\\;version:\\1"
-    }
+    "website": "https://fact-finder.com"
   },
   "FalguniThemes Nisarg": {
     "cats": [
@@ -262,6 +319,24 @@
     ],
     "website": "https://www.famethemes.com/themes/screenr"
   },
+  "Famewall": {
+    "cats": [
+      90
+    ],
+    "description": "Famewall is a tool that converts social media mentions into visually appealing testimonials and automates the process of collecting them from customers using a custom collection feature.",
+    "icon": "Famewall.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "embed\\.famewall\\.io/"
+    ],
+    "website": "https://famewall.io"
+  },
   "FancyBox": {
     "cats": [
       59
@@ -303,6 +378,22 @@
     ],
     "website": "https://fanplayr.com"
   },
+  "FarCry": {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "FARCRYDEVICETYPE": ""
+    },
+    "description": "FarCry is a web application framework that helps CFML developers build tailor-made content solutions.",
+    "icon": "FarCry.svg",
+    "js": {
+      "farcryForgotPassword": "",
+      "farcryLogin": ""
+    },
+    "oss": true,
+    "website": "https://www.farcrycore.org"
+  },
   "FaraPy": {
     "cats": [
       1
@@ -322,6 +413,9 @@
       72
     ],
     "description": "FareHarbor is an booking and schedule management solution intended for tour and activity companies.",
+    "dom": [
+      "iframe[src*='fareharbor']"
+    ],
     "html": [
       "<iframe[^>]+fareharbor"
     ],
@@ -384,7 +478,9 @@
     ],
     "description": "FastComet is a hosting service company from San Francisco, California.",
     "dns": {
-      "SOA": "\\.fcomet\\.com"
+      "SOA": [
+        "\\.fcomet\\.com"
+      ]
     },
     "icon": "FastComet.svg",
     "pricing": [
@@ -399,6 +495,9 @@
       41
     ],
     "description": "FastSpring is a digital ecommerce platform that helps software and SaaS companies manage payments, subscriptions, tax compliance, and fraud prevention globally.",
+    "dom": [
+      "form[action*='sites.fastspring.com']"
+    ],
     "html": [
       "<a [^>]*href=\"https?://sites\\.fastspring\\.com",
       "<form [^>]*action=\"https?://sites\\.fastspring\\.com"
@@ -452,18 +551,18 @@
     "cats": [
       6
     ],
+    "description": "Fastcommerce is an ecommerce platform that offers tools and solutions for businesses to create and manage online stores in Brazil.",
     "icon": "Fastcommerce.svg",
     "meta": {
       "generator": "^Fastcommerce"
     },
-    "website": "https://www.fastcommerce.com.br",
-    "description": "Fastcommerce is an ecommerce platform that offers tools and solutions for businesses to create and manage online stores in Brazil.",
-    "saas": true,
     "pricing": [
       "freemium",
       "low",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "website": "https://www.fastcommerce.com.br"
   },
   "Fasterize": {
     "cats": [
@@ -533,6 +632,11 @@
       41
     ],
     "description": "Fat Zebra provides a process of accepting credit card payments online.",
+    "dom": [
+      "iframe[src*='paynow.pmnts.io']",
+      "form[action*='paynow.pmnts.io']",
+      "iframe[src*='FatZebraFrame']"
+    ],
     "html": [
       "<(?:iframe|img|form)[^>]+paynow\\.pmnts\\.io",
       "<(?:iframe)[^>]+FatZebraFrame"
@@ -547,6 +651,8 @@
     "cats": [
       18
     ],
+    "cpe": "cpe:2.3:a:fatfreeframework:fat-free_framework:*:*:*:*:*:*:*:*",
+    "description": "Fat-Free Framework (F3) is a lightweight PHP micro-framework that enables rapid development of dynamic web applications with built-in features like URL routing, caching, multilingual support, and database integration for high performance.",
     "headers": {
       "X-Powered-By": "^Fat-Free Framework$"
     },
@@ -554,10 +660,8 @@
     "implies": [
       "PHP"
     ],
-    "website": "https://fatfreeframework.com",
     "oss": true,
-    "description": "Fat-Free Framework (F3) is a lightweight PHP micro-framework that enables rapid development of dynamic web applications with built-in features like URL routing, caching, multilingual support, and database integration for high performance.",
-    "cpe": "cpe:2.3:a:fatfreeframework:fat-free_framework:*:*:*:*:*:*:*:*"
+    "website": "https://fatfreeframework.com"
   },
   "FatherShops": {
     "cats": [
@@ -709,6 +813,17 @@
     ],
     "website": "https://feedback.fish"
   },
+  "FeederNinja": {
+    "cats": [
+      5
+    ],
+    "description": "FeederNinja is a tool that allows users to create customizable RSS and social media feed widgets for embedding on websites.",
+    "saas": true,
+    "scriptSrc": [
+      "\\.feederninja\\.com/"
+    ],
+    "website": "https://www.feederninja.com"
+  },
   "Feefo": {
     "cats": [
       90
@@ -806,6 +921,40 @@
     "saas": true,
     "website": "https://apps.shopify.com/fera"
   },
+  "FiboSearch": {
+    "cats": [
+      29
+    ],
+    "description": "FiboSearch is a WooCommerce product search plugin, formerly known as AJAX Search.",
+    "icon": "FiboSearch.svg",
+    "js": {
+      "dgwt_wcas.ajax_search_endpoint": ""
+    },
+    "pricing": [
+      "onetime",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WooCommerce"
+    ],
+    "saas": true,
+    "website": "https://fibosearch.com"
+  },
+  "Filamentphp": {
+    "cats": [
+      47
+    ],
+    "description": "Filamentphp is a set of full-stack components designed to serve as a foundational starting point for developing applications.",
+    "icon": "Filament.svg",
+    "js": {
+      "FilamentNotification": "",
+      "filamentData": "",
+      "webpackChunkfilament": ""
+    },
+    "saas": true,
+    "website": "https://filamentphp.com"
+  },
   "FilePond": {
     "cats": [
       59
@@ -821,6 +970,19 @@
       "filepond.js"
     ],
     "website": "https://pqina.nl/filepond/"
+  },
+  "Fillout": {
+    "cats": [
+      5,
+      110
+    ],
+    "description": "Fillout is a form builder widget.",
+    "oss": false,
+    "saas": true,
+    "scriptSrc": [
+      "^https://server\\.fillout\\.com/embed/v(\\d)/\\;version:\\1"
+    ],
+    "website": "https://www.fillout.com/"
   },
   "FinanceAds": {
     "cats": [
@@ -1210,10 +1372,10 @@
     ],
     "description": "jQuery plugin for fluid width video embeds",
     "icon": "FitVids.JS.png",
+    "oss": true,
     "scriptSrc": [
       "fitvids(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
     ],
-    "oss": true,
     "website": "https://fitvidsjs.com/"
   },
   "Fixel": {
@@ -1278,6 +1440,9 @@
     ],
     "cpe": "cpe:2.3:a:flarum:flarum:*:*:*:*:*:*:*:*",
     "description": "Flarum is a discussion platform.",
+    "dom": [
+      "div[id*='flarum-loading']"
+    ],
     "html": [
       "<div id=\"flarum-loading\""
     ],
@@ -1297,8 +1462,8 @@
       18,
       22
     ],
-    "description": "Flask is a Python micro web framework ideal for rapidly constructing web applications, offering minimalism, flexibility, and modularity.",
     "cpe": "cpe:2.3:a:palletsprojects:flask:*:*:*:*:*:*:*:*",
+    "description": "Flask is a Python micro web framework ideal for rapidly constructing web applications, offering minimalism, flexibility, and modularity.",
     "headers": {
       "Server": "Werkzeug/?([\\d\\.]+)?\\;version:\\1"
     },
@@ -1393,6 +1558,7 @@
     "cats": [
       1
     ],
+    "description": "FlexCMP is a content management system (CMS) designed to facilitate the creation, management, and publishing of digital content.",
     "headers": {
       "X-Flex-Lang": "",
       "X-Powered-By": "FlexCMP.+\\[v\\. ([\\d.]+)\\;version:\\1"
@@ -1404,8 +1570,7 @@
     "meta": {
       "generator": "^FlexCMP"
     },
-    "website": "https://www.flexcmp.com/cms/home",
-    "description": "FlexCMP is a content management system (CMS) designed to facilitate the creation, management, and publishing of digital content."
+    "website": "https://www.flexcmp.com/cms/home"
   },
   "FlexSlider": {
     "cats": [
@@ -1720,10 +1885,43 @@
     "saas": true,
     "website": "https://flowplayer.com"
   },
+  "Fluid Player": {
+    "cats": [
+      14
+    ],
+    "description": "Fluid Player is an open-source HTML5 video player.",
+    "icon": "FluidPlayer.svg",
+    "js": {
+      "fluidPlayer": "",
+      "webpackChunkfluid_player": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "scriptSrc": [
+      "cdn\\.fluidplayer\\.com"
+    ],
+    "website": "https://www.fluidplayer.com"
+  },
+  "Flurry Analytics": {
+    "cats": [
+      10
+    ],
+    "cpe": "cpe:2.3:a:flurry:flurry-analytics-android:*:*:*:*:*:*:*:*",
+    "description": "Flurry Analytics is a tool that provides basic insights into user behavior and app performance, with the option to set up advanced analytics for a deeper understanding of complex user interactions and events.",
+    "icon": "Flurry.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.flurry\\.com/"
+    ],
+    "website": "https://www.flurry.com"
+  },
   "Flutter": {
     "cats": [
       66
     ],
+    "cpe": "cpe:2.3:a:flutter:flutter:*:*:*:*:*:*:*:*",
     "description": "Flutter is an open source framework by Google for building beautiful, natively compiled, multi-platform applications from a single codebase.",
     "icon": "Flutter.svg",
     "implies": [
@@ -1737,7 +1935,6 @@
     "meta": {
       "id": "^flutterweb-theme$"
     },
-    "cpe": "cpe:2.3:a:flutter:flutter:*:*:*:*:*:*:*:*",
     "oss": true,
     "website": "https://flutter.dev"
   },
@@ -1864,6 +2061,23 @@
       "PHP"
     ],
     "website": "https://flyspray.org"
+  },
+  "Flyvi": {
+    "cats": [
+      66
+    ],
+    "description": "Flyvi is a platform that generates visually engaging graphics optimized for social media.",
+    "icon": "Flyvi.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "widget\\.flyvi\\.io/"
+    ],
+    "website": "https://flyvi.io"
   },
   "Flywheel": {
     "cats": [
@@ -2039,6 +2253,22 @@
       "WordPress"
     ],
     "website": "https://fooplugins.com/foogallery-wordpress-gallery-plugin"
+  },
+  "FooTable": {
+    "cats": [
+      59
+    ],
+    "description": "FooTable is a jQuery plugin that converts HTML tables into expandable responsive tables.",
+    "icon": "FooPlugins.svg",
+    "js": {
+      "$FOOTABLE.init": "",
+      "footable.plugins": ""
+    },
+    "oss": true,
+    "requires": [
+      "jQuery"
+    ],
+    "website": "https://fooplugins.github.io/FooTable/index.html"
   },
   "Food-Ordering.co.uk": {
     "cats": [
@@ -2613,6 +2843,22 @@
     "saas": true,
     "website": "https://getframes.io"
   },
+  "Framework7": {
+    "cats": [
+      26
+    ],
+    "description": "Framework7 is a mobile HTML framework designed for creating iOS and Android applications with a native-like user experience.",
+    "icon": "Framework7.svg",
+    "js": {
+      "Framework7.Component": ""
+    },
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://framework7.io"
+  },
   "France Express": {
     "cats": [
       99
@@ -2631,6 +2877,7 @@
     "cats": [
       18
     ],
+    "cpe": "cpe:2.3:a:frappe:frappe:*:*:*:*:*:*:*:*",
     "description": "Frappe is a full stack, batteries-included, web framework written in Python and Javascript.",
     "icon": "Frappe.svg",
     "implies": [
@@ -2643,7 +2890,6 @@
     "meta": {
       "generator": "^frappe$"
     },
-    "cpe": "cpe:2.3:a:frappe:frappe:*:*:*:*:*:*:*:*",
     "oss": true,
     "website": "https://frappeframework.com"
   },
@@ -2739,6 +2985,7 @@
     "cats": [
       24
     ],
+    "cpe": "cpe:2.3:a:freetextbox:freetextbox:*:*:*:*:*:*:*:*",
     "description": "FreeTextBox is a free open-source HTML Editor.",
     "html": [
       "<!-- \\* FreeTextBox v\\d \\((\\d+\\.\\d+\\.\\d+)\\;version:\\1"
@@ -2751,8 +2998,25 @@
       "FTB_API": "",
       "FTB_AddEvent": ""
     },
-    "cpe": "cpe:2.3:a:freetextbox:freetextbox:*:*:*:*:*:*:*:*",
     "website": "https://freetextbox.com"
+  },
+  "Freemius": {
+    "cats": [
+      6
+    ],
+    "description": "Freemius is a managed ecommerce engine designed for selling WordPress plugins.",
+    "icon": "Freemius.svg",
+    "pricing": [
+      "payg"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "checkout\\.freemius\\.com/"
+    ],
+    "website": "https://freemius.com"
   },
   "Freespee": {
     "cats": [
@@ -2832,6 +3096,22 @@
     ],
     "oss": true,
     "website": "https://fresh.deno.dev"
+  },
+  "Fresh Relevance": {
+    "cats": [
+      76
+    ],
+    "description": "Fresh Relevance is a personalization platform designed to create cross-channel experiences, enabling businesses to deliver customized customer interactions.",
+    "dom": [
+      "link[href*='am.freshrelevance.com']"
+    ],
+    "icon": "FreshRelevance.svg",
+    "pricing": [
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.freshrelevance.com"
   },
   "Fresha": {
     "cats": [
@@ -2922,6 +3202,9 @@
       74
     ],
     "description": "Freshworks CRM is a cloud-based customer relationship management (CRM) solution. Key features include one-click phone, sales lead tracking, sales management, event tracking and more.",
+    "dom": [
+      "div[class*='Footer-PoweredBy'] > span > a[href*='www.freshworks.com/']"
+    ],
     "icon": "Freshworks CRM.svg",
     "js": {
       "ZargetForm": "",
@@ -2937,10 +3220,7 @@
       "cdn\\.freshmarketer\\.com",
       "cdn\\.zarget\\.com"
     ],
-    "website": "https://www.freshworks.com/crm",
-    "dom": [
-      "div[class*='Footer-PoweredBy'] > span > a[href*='www.freshworks.com/']"
-    ]
+    "website": "https://www.freshworks.com/crm"
   },
   "Friendbuy": {
     "cats": [
@@ -3071,10 +3351,10 @@
       "Remix",
       "Vite"
     ],
-    "website": "https://front-commerce.com",
     "meta": {
       "application-name": "^Front-Commerce$"
-    }
+    },
+    "website": "https://front-commerce.com"
   },
   "FrontPage": {
     "cats": [
@@ -3109,15 +3389,15 @@
     "dom": [
       "a[href*='.frontify.com/'], img[src*='.frontify.com/'], link[href*='.frontify.com/']"
     ],
+    "headers": {
+      "server": "^frontify$"
+    },
     "icon": "Frontify.svg",
     "pricing": [
       "poa"
     ],
     "saas": true,
-    "website": "https://www.frontify.com",
-    "headers": {
-      "server": "^frontify$"
-    }
+    "website": "https://www.frontify.com"
   },
   "Frontity": {
     "cats": [
@@ -3281,7 +3561,9 @@
     ],
     "description": "Funding Choices is a messaging tool that can help you comply with the EU General Data Protection Regulation (GDPR), and recover lost revenue from ad blocking users.",
     "dns": {
-      "SOA": "fundingchoicesmessages"
+      "SOA": [
+        "fundingchoicesmessages"
+      ]
     },
     "dom": [
       ".fc-consent-root, iframe[name='googlefcLoaded'], iframe[name='googlefcPresent'], .fc-dialog, .fc-choice-dialog"
@@ -3372,6 +3654,22 @@
     "saas": true,
     "website": "https://funnelish.com"
   },
+  "Funnelytics": {
+    "cats": [
+      32
+    ],
+    "description": "Funnelytics is a tool designed to increase lead and customer conversions by optimizing marketing funnels for better performance and results.",
+    "icon": "Funnelytics.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.funnelytics\\.io/"
+    ],
+    "website": "https://funnelytics.io"
+  },
   "Funraise": {
     "cats": [
       111
@@ -3441,17 +3739,17 @@
     "cats": [
       6
     ],
-    "icon": "futureshop.svg",
-    "scriptSrc": [
-      "future-shop.*\\.js"
-    ],
-    "website": "https://www.future-shop.jp",
     "description": "Future Shop is a SaaS-based ecommerce platform.",
-    "saas": true,
+    "icon": "futureshop.svg",
     "pricing": [
       "mid",
       "recurring"
-    ]
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "future-shop.*\\.js"
+    ],
+    "website": "https://www.future-shop.jp"
   },
   "Futurio": {
     "cats": [
@@ -3494,6 +3792,9 @@
       "payg"
     ],
     "saas": true,
+    "scriptSrc": [
+      "\\.fynd\\.com/"
+    ],
     "website": "https://platform.fynd.com"
   },
   "framework7": {

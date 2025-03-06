@@ -20,24 +20,33 @@
 package org.zaproxy.addon.automation.tests;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.AutomationEnvironment;
+import org.zaproxy.addon.automation.AutomationJob;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
@@ -52,9 +61,10 @@ class AutomationStatisticTestUnitTest extends TestUtils {
     @BeforeEach
     void setUp() {
         Constant.messages = new I18N(Locale.ENGLISH);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(mock(Model.class), extensionLoader);
-        extStats = mock(ExtensionStats.class);
+        extStats = mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
         when(extensionLoader.getExtension(ExtensionStats.class)).thenReturn(extStats);
         InMemoryStats inMemoryStats = mock(InMemoryStats.class);
         when(extStats.getInMemoryStats()).thenReturn(inMemoryStats);
@@ -334,5 +344,27 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         assertThat(progress.hasErrors(), is(false));
         assertThat(progress.hasWarnings(), is(false));
         assertThat(test.hasPassed(), is(true));
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {-1, 0, 1, 10})
+    void shouldSaveValueToPlan(long value, @TempDir Path tempDir) throws Exception {
+        // Given
+        Path planFile = tempDir.resolve("plan.yaml");
+        AutomationPlan plan = new AutomationPlan();
+        plan.setFile(planFile.toFile());
+        AutomationJob job = new ActiveScanJob();
+        plan.addJob(job);
+
+        AutomationStatisticTest test =
+                new AutomationStatisticTest(job, job.getPlan().getProgress());
+        test.getData().setValue(value);
+        job.addTest(test);
+
+        // When
+        plan.save();
+
+        // Then
+        assertThat(Files.readString(planFile), containsString("value: %s".formatted(value)));
     }
 }

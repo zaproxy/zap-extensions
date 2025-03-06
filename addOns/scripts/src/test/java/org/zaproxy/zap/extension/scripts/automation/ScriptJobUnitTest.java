@@ -45,8 +45,10 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -1278,6 +1280,16 @@ class ScriptJobUnitTest extends TestUtils {
         assertThat(progress.hasErrors(), is(equalTo(false)));
         verify(extScript).setEnabled(scriptWrapper, false);
         assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldNotHaveCustomParameters() {
+        // Given
+        ScriptJob job = new ScriptJob();
+        // When
+        Map<String, String> custParams = job.getCustomConfigParameters();
+        // Then
+        assertThat(custParams, is(equalTo(Collections.EMPTY_MAP)));
     }
 
     private ScriptJob setJobData(ScriptJob job, String yamlStr) {

@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -43,6 +44,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -55,6 +58,7 @@ import org.zaproxy.zap.testutils.TestUtils;
 class SeleniumAPIUnitTest extends TestUtils {
 
     private SeleniumOptions options;
+    private ExtensionSelenium extension;
     private SeleniumAPI api;
 
     @AfterAll
@@ -65,7 +69,8 @@ class SeleniumAPIUnitTest extends TestUtils {
     @BeforeEach
     void setUp() {
         options = mock(SeleniumOptions.class, withSettings().strictness(Strictness.LENIENT));
-        api = new SeleniumAPI(options);
+        extension = mock(ExtensionSelenium.class, withSettings().strictness(Strictness.LENIENT));
+        api = new SeleniumAPI(options, extension);
     }
 
     @Test
@@ -79,9 +84,9 @@ class SeleniumAPIUnitTest extends TestUtils {
     @Test
     void shouldAddApiElements() {
         // Given / When
-        api = new SeleniumAPI(options);
+        api = new SeleniumAPI(options, extension);
         // Then
-        assertThat(api.getApiActions(), hasSize(11));
+        assertThat(api.getApiActions(), hasSize(12));
         assertThat(api.getApiViews(), hasSize(10));
         assertThat(api.getApiOthers(), hasSize(0));
     }
@@ -257,7 +262,12 @@ class SeleniumAPIUnitTest extends TestUtils {
 
     @ParameterizedTest
     @ValueSource(
-            strings = {"addBrowserArgument", "removeBrowserArgument", "setBrowserArgumentEnabled"})
+            strings = {
+                "addBrowserArgument",
+                "removeBrowserArgument",
+                "setBrowserArgumentEnabled",
+                "launchBrowser"
+            })
     void shouldThrowApiExceptionForUnsupportedBrowsersInBrowserArgumentActions(String name)
             throws Exception {
         // Given
@@ -284,5 +294,39 @@ class SeleniumAPIUnitTest extends TestUtils {
         // Then
         assertThat(exception.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
         assertThat(exception.getMessage(), containsString(" (browser)"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("validBrowserNames")
+    void shouldLaunchBrowser(String browser) throws Exception {
+        // Given
+        String name = "launchBrowser";
+        JSONObject params = new JSONObject();
+        params.put("browser", browser);
+        given(extension.getProxiedBrowser(browser)).willReturn(mock(WebDriver.class));
+        // When
+        ApiResponse response = api.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+    }
+
+    @ParameterizedTest
+    @MethodSource("validBrowserNames")
+    void shouldReturnErrorIfFailedToLaunchBrowser(String browser) throws Exception {
+        // Given
+        String name = "launchBrowser";
+        JSONObject params = new JSONObject();
+        params.put("browser", browser);
+        WebDriverException ex = new WebDriverException();
+        given(extension.getProxiedBrowser(browser)).willThrow(ex);
+        given(extension.getWarnMessageFailedToStart(anyString(), eq(ex)))
+                .willReturn("Reason failed to start");
+
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> api.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_STATE)));
+        assertThat(exception.getMessage(), containsString("Reason failed to start"));
     }
 }

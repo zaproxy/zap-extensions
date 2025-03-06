@@ -26,9 +26,9 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Plugin;
-import org.zaproxy.addon.automation.jobs.ActiveScanJob;
-import org.zaproxy.addon.automation.jobs.ActiveScanJob.Rule;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition;
+import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 
 @SuppressWarnings("serial")
@@ -43,7 +43,7 @@ public class AscanRulesTableModel extends AbstractTableModel {
         Constant.messages.getString("automation.dialog.ascan.table.header.strength")
     };
 
-    private List<ActiveScanJob.Rule> rules = new ArrayList<>();
+    private List<PolicyDefinition.Rule> rules = new ArrayList<>();
 
     private ExtensionActiveScan extAscan;
 
@@ -63,7 +63,7 @@ public class AscanRulesTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        ActiveScanJob.Rule rule = this.rules.get(row);
+        PolicyDefinition.Rule rule = this.rules.get(row);
         if (rule != null) {
             switch (col) {
                 case 0:
@@ -96,11 +96,11 @@ public class AscanRulesTableModel extends AbstractTableModel {
         return String.class;
     }
 
-    public List<ActiveScanJob.Rule> getRules() {
+    public List<PolicyDefinition.Rule> getRules() {
         return rules;
     }
 
-    public void setRules(List<ActiveScanJob.Rule> rules) {
+    public void setRules(List<PolicyDefinition.Rule> rules) {
         if (rules == null) {
             this.rules = new ArrayList<>();
         } else {

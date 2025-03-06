@@ -53,7 +53,7 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
                     + "ZWN1cml0eUNvbnRleHQgd2l0aCBhbiBhbm9ueW1vdXMgVG9rZW4iLCJ1bmtub"
                     + "3duIiwiaW5mbyJdXSwicmVxdWVzdF91cmkiOiJcL2xvZ2luIn0=";
 
-    private HttpMessage createMessage() throws URIException {
+    private static HttpMessage createMessage() throws URIException {
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));
 
@@ -166,7 +166,8 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
         Map<String, String> tags1 = alert.getTags();
         assertThat(tags1.size(), is(equalTo(4)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
-        assertThat(tags1, hasKey("CWE-200"));
+        assertThat(alert.getCweId(), is(equalTo(532)));
+        assertThat(tags1, hasKey("CWE-532"));
         assertThat(
                 tags1.containsKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
                 is(equalTo(true)));

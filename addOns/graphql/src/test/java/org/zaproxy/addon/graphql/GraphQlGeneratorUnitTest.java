@@ -27,23 +27,23 @@ import graphql.schema.idl.SchemaParser;
 import graphql.schema.idl.UnExecutableSchemaGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.zaproxy.zap.model.ValueGenerator;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.testutils.TestUtils;
 
 class GraphQlGeneratorUnitTest extends TestUtils {
     GraphQlGenerator generator;
     GraphQlParam param;
-    private ValueGenerator valueGenerator;
+    private ValueProvider valueProvider;
 
     @BeforeEach
     void setup() throws Exception {
         setUpZap();
         param = new GraphQlParam(true, 5, true, 5, 5, true, null, null, null);
-        valueGenerator = mock(ValueGenerator.class);
+        valueProvider = mock(ValueProvider.class);
     }
 
     private GraphQlGenerator createGraphQlGenerator(String sdl) {
-        return new GraphQlGenerator(valueGenerator, sdl, null, param);
+        return new GraphQlGenerator(valueProvider, sdl, null, param);
     }
 
     @Test
@@ -98,11 +98,11 @@ class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    void nonNullableScalarArgumentsWithValueGenerator() {
+    void nonNullableScalarArgumentsWithValueProvider() {
         // Given
         String song = "Never Gonna Give You Up";
         String artist = "Rick Astley";
-        ValueGenerator vg =
+        ValueProvider vg =
                 (uri,
                         url,
                         fieldId,

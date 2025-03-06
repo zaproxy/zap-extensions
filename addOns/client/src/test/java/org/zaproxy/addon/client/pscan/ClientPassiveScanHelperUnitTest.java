@@ -20,16 +20,68 @@
 package org.zaproxy.addon.client.pscan;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.Base64;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.MockSettings;
+import org.mockito.quality.Strictness;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.model.HistoryReference;
+import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link ClientPassiveScanHelper}. */
 class ClientPassiveScanHelperUnitTest extends TestUtils {
+
+    private static final MockSettings LENIENT = withSettings().strictness(Strictness.LENIENT);
+    private ExtensionAlert extAlert;
+    private ExtensionHistory extHistory;
+
+    private ClientPassiveScanHelper helper;
+
+    @BeforeEach
+    void setup() {
+        mockMessages(new ExtensionClientIntegration());
+
+        extHistory = mock(ExtensionHistory.class, LENIENT);
+        extAlert = mock(ExtensionAlert.class, LENIENT);
+
+        helper = new ClientPassiveScanHelper(extAlert, extHistory);
+    }
+
+    @Test
+    void shouldFindHistoryRef() throws Exception {
+        // Given
+        given(extHistory.getLastHistoryId()).willReturn(3);
+        String url = "http://example.com/";
+        HistoryReference href1 = mockHistoryReference(url);
+        HistoryReference href2Deleted = null;
+        HistoryReference href3 = mockHistoryReference("http://not.example.com/");
+        given(extHistory.getHistoryReference(anyInt())).willReturn(href3, href2Deleted, href1);
+        // When
+        HistoryReference foundHref = helper.findHistoryRef(url);
+        // Then
+        assertThat(foundHref, is(equalTo(href1)));
+    }
+
+    private static HistoryReference mockHistoryReference(String url) throws URIException {
+        HistoryReference href = mock(HistoryReference.class, LENIENT);
+        given(href.getURI()).willReturn(new URI(url, true));
+        return href;
+    }
 
     @ParameterizedTest
     @ValueSource(strings = {"test123", "{\"'\\:, []]", "@!£$%^&*(_)\n\r\t\\u00A9"})

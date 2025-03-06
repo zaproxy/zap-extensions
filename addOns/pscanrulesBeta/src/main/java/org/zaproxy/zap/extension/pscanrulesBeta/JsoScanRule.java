@@ -125,7 +125,7 @@ public class JsoScanRule extends PluginPassiveScanner implements CommonPassiveSc
                 .setCweId(502); // CWE-502: Deserialization of Untrusted Data
     }
 
-    private boolean hasJsoMagicSequence(String value) {
+    private static boolean hasJsoMagicSequence(String value) {
         return hasJsoBase64MagicSequence(value) || hasUriEncodedMagicSequence(value);
     }
 

@@ -53,6 +53,8 @@ import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.wappalyzer.AppPattern.Result;
 import org.zaproxy.zap.extension.wappalyzer.ExtensionWappalyzer.Mode;
+import org.zaproxy.zap.model.SessionStructure;
+import org.zaproxy.zap.utils.Stats;
 
 public class TechPassiveScanner implements PassiveScanner, OptionsChangedListener {
 
@@ -61,6 +63,10 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
 
     private ApplicationHolder applicationHolder;
     private Map<String, Set<String>> tracker;
+
+    /** The number of requests analysed for each site */
+    private Map<String, Integer> siteReqCount;
+
     private Set<String> visitedSiteIdentifiers;
     private volatile boolean enabled = true;
     private volatile Mode mode = Mode.QUICK;
@@ -109,7 +115,9 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
 
         long startTime = System.currentTimeMillis();
         String site = getSite(msg);
-        tracker.putIfAbsent(site, new HashSet<String>());
+        tracker.putIfAbsent(site, new HashSet<>());
+        int reqCount = siteReqCount.merge(site, 1, Integer::sum);
+        Stats.setHighwaterMark(site, "stats.tech.reqcount.total", reqCount);
 
         for (Application app : this.getApps()) {
             // Track matched based on site (authority)
@@ -131,6 +139,7 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
                             appMatch);
                     raiseAlert(msg, appMatch);
                     tracker.get(site).add(app.getName());
+                    Stats.setHighwaterMark(site, "stats.tech.reqcount.id", reqCount);
                 }
             }
         }
@@ -141,7 +150,7 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     private static String getSite(HttpMessage msg) {
         String site = "";
         try {
-            site = msg.getRequestHeader().getURI().getAuthority();
+            site = SessionStructure.getHostName(msg);
         } catch (URIException e) {
             // Ignore - Should never happen
         }
@@ -424,7 +433,6 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setUri(url)
                 .setDescription(getDesc(app))
-                .setCweId(200)
                 .setWascId(13);
         if (!appMatch.getEvidences().isEmpty()) {
             builder.setEvidence(appMatch.getEvidences().stream().findFirst().get());
@@ -515,16 +523,19 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     }
 
     public List<Alert> getExampleAlerts() {
-        return List.of(createAlert("https://example.org/", getAppForExample()).build());
+        return List.of(
+                createAlert("https://example.org/", getAppForExample()).setName(getName()).build());
     }
 
     private static ApplicationMatch getAppForExample() {
         Application exampleApp = new Application();
-        exampleApp.setCpe("cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*");
+        exampleApp.setCategories(List.of("Widgets"));
+        exampleApp.setName("Example Software");
+        exampleApp.setCpe("cpe:2.3:a:example_vendor:example_software:55.4.3:*:*:*:*:*:*:*");
+
         ApplicationMatch exampleMatch = new ApplicationMatch(exampleApp);
-        exampleMatch.addEvidence("Apache");
-        exampleMatch.addVersion("2.4.7");
-        exampleApp.setWebsite("https://httpd.apache.org");
+        exampleMatch.addEvidence("Exampleware");
+        exampleMatch.addVersion("55.4.3");
         return exampleMatch;
     }
 
@@ -535,5 +546,6 @@ public class TechPassiveScanner implements PassiveScanner, OptionsChangedListene
     void reset() {
         tracker = Collections.synchronizedMap(new TreeMap<>());
         visitedSiteIdentifiers = Collections.synchronizedSet(new HashSet<>());
+        siteReqCount = Collections.synchronizedMap(new TreeMap<>());
     }
 }

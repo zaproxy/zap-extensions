@@ -35,15 +35,23 @@ public class RedirectScript implements BrowserHook {
 
     @Override
     public void browserLaunched(SeleniumScriptUtils ssutils) {
-        String zapurl = api.getCallbackUrl();
+        StringBuilder sb = new StringBuilder();
+        String apiurl = api.getCallbackUrl();
+        sb.append(apiurl);
+        if (apiurl.contains("?")) {
+            sb.append('&');
+        } else {
+            sb.append('?');
+        }
+        sb.append("zapenable=true");
+        if (ssutils.getRequester() == ZEST_CLIENT_RECORDER_INITIATOR) {
+            sb.append("&zaprecord=true");
+        }
+        String zapurl = sb.toString();
         ssutils.getWebDriver().get(zapurl);
         JavascriptExecutor jsExecutor = (JavascriptExecutor) ssutils.getWebDriver();
-        jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + zapurl + "')");
-        if (ssutils.getRequester() == ZEST_CLIENT_RECORDER_INITIATOR) {
-            jsExecutor.executeScript("localStorage.setItem('localzapenable',false)");
-        }
-
-        // This statement make sure that the ZAP browser extension is configured properly
+        jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + apiurl + "')");
+        // The second refresh seems to be needed sometimes - could be a browser timing issue?
         ssutils.getWebDriver().get(zapurl);
     }
 }

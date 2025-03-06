@@ -71,7 +71,7 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         return rule;
     }
 
-    private String getHeader(String contentType, int bodyLength) {
+    private static String getHeader(String contentType, int bodyLength) {
         return "HTTP/1.1 200 OK\r\n"
                 + "Content-Type: "
                 + contentType

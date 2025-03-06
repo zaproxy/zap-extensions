@@ -44,7 +44,7 @@ public abstract class TestAuthDirectory extends TestDirectory {
     }
 
     public String getToken(String username) {
-        String token = RandomStringUtils.randomAlphanumeric(32);
+        String token = RandomStringUtils.secure().nextAlphanumeric(32);
         sessions.put(token, username);
         return token;
     }

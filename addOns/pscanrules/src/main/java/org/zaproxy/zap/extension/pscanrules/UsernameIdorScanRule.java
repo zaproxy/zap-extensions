@@ -77,6 +77,9 @@ public class UsernameIdorScanRule extends PluginPassiveScanner
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (!msg.getResponseHeader().isText()) {
+            return;
+        }
         List<User> scanUsers = getUsers();
         if (scanUsers.isEmpty()) { // Should continue if not empty
             LOGGER.debug("There does not appear to be any contexts with configured users.");
@@ -116,15 +119,17 @@ public class UsernameIdorScanRule extends PluginPassiveScanner
     private AlertBuilder buildAlert(
             String username, String evidence, String hashType, int id, HttpMessage msg) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_HIGH)
-                .setDescription(getDescription(username))
-                .setOtherInfo(getOtherinfo(hashType, evidence))
-                .setSolution(getSolution())
-                .setReference(getReference())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc", username))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "otherinfo", hashType, evidence))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
-                .setCweId(getCweId())
-                .setWascId(getWascId());
+                .setCweId(284) // CWE-284: Improper Access Control
+                .setWascId(2); // WASC-02: Insufficient Authorization
     }
 
     @Override
@@ -144,42 +149,14 @@ public class UsernameIdorScanRule extends PluginPassiveScanner
         return PLUGIN_ID;
     }
 
-    public int getRisk() {
-        return Alert.RISK_INFO;
-    }
-
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getDescription(String username) {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc", username);
-    }
-
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    private String getOtherinfo(String hashType, String hashValue) {
-        return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", hashType, hashValue);
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 284; // CWE-284: Improper Access Control
-    }
-
-    public int getWascId() {
-        return 2; // WASC-02: Insufficient Authorization
     }
 
     public String match(String contents, Pattern pattern) {

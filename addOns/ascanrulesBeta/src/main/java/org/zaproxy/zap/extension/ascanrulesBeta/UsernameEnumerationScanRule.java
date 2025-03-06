@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeSet;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -69,11 +70,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                     CommonAlertTag.WSTG_V42_IDNT_04_ACCOUNT_ENUMERATION);
 
-    private static ExtensionAuthentication extAuth =
-            (ExtensionAuthentication)
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionAuthentication.NAME);
+    private ExtensionAuthentication extAuth;
 
     @Override
     public int getId() {
@@ -108,6 +105,11 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
     @Override
     public void init() {
         LOGGER.debug("Initialising");
+
+        extAuth =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionAuthentication.class);
 
         if (!shouldContinue(extAuth.getModel().getSession().getContexts())) {
             LOGGER.info(
@@ -153,7 +155,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
                         && requestUri.getScheme().equals(loginUri.getScheme())
                         && requestUri.getHost().equals(loginUri.getHost())
                         && requestUri.getPort() == loginUri.getPort()
-                        && requestUri.getPath().equals(loginUri.getPath())) {
+                        && Objects.equals(requestUri.getPath(), loginUri.getPath())) {
                     // we got this far.. only the method (GET/POST), user details, query params,
                     // fragment, and POST params are possibly different from the login page.
                     loginUrl = true;
@@ -393,7 +395,8 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
 
                 // get a random user name the same length as the original!
                 String invalidUsername =
-                        RandomStringUtils.randomAlphabetic(currentHtmlParameter.getValue().length())
+                        RandomStringUtils.secure()
+                                .nextAlphabetic(currentHtmlParameter.getValue().length())
                                 .toLowerCase(Locale.ROOT);
 
                 LOGGER.debug("The invalid username chosen was [{}]", invalidUsername);
@@ -730,7 +733,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
         return hirshberg.getLCS(a, b);
     }
 
-    private boolean shouldContinue(List<Context> contextList) {
+    private static boolean shouldContinue(List<Context> contextList) {
         boolean hasAuth = false;
         for (Context context : contextList) {
             if (context.getAuthenticationMethod() instanceof FormBasedAuthenticationMethod) {
@@ -743,7 +746,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
 
     @Override
     public int getCweId() {
-        return 200; // CWE-200: Information Exposure
+        return 204; // CWE-204: Observable Response Discrepancy
     }
 
     @Override

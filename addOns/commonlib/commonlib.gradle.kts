@@ -14,21 +14,6 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
-
-        extensions {
-            register("org.zaproxy.addon.commonlib.formhandler.ExtensionCommonlibFormHandler") {
-                classnames {
-                    allowed.set(listOf("org.zaproxy.addon.commonlib.formhandler"))
-                }
-                dependencies {
-                    addOns {
-                        register("formhandler") {
-                            version.set(">=6.0.0 & < 7.0.0")
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -40,8 +25,6 @@ crowdin {
 }
 
 dependencies {
-    zapAddOn("formhandler")
-
     api(platform("com.fasterxml.jackson:jackson-bom:2.17.0"))
     api("com.fasterxml.jackson.core:jackson-databind")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")

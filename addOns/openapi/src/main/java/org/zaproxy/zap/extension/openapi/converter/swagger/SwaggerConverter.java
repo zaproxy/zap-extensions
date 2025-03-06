@@ -52,6 +52,7 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.EmptyDefinitionException;
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidDefinitionException;
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidUrlException;
@@ -61,7 +62,6 @@ import org.zaproxy.zap.extension.openapi.generators.Generators;
 import org.zaproxy.zap.extension.openapi.network.RequestMethod;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
 import org.zaproxy.zap.model.Context;
-import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.utils.Pair;
 
 public class SwaggerConverter implements Converter {
@@ -94,8 +94,8 @@ public class SwaggerConverter implements Converter {
     private OpenAPI openApiModel;
     private List<OperationModel> operationModels;
 
-    public SwaggerConverter(String defn, ValueGenerator valGen) {
-        this(null, null, defn, valGen);
+    public SwaggerConverter(String defn, ValueProvider valueProvider) {
+        this(null, null, defn, valueProvider);
     }
 
     /**
@@ -110,7 +110,7 @@ public class SwaggerConverter implements Converter {
      *     is not specified in the definition or {@code targetUrl}, it's also used to resolve
      *     relative server URLs.
      * @param defn the OpenAPI definition.
-     * @param valueGenerator the value generator, might be {@code null} in which case only default
+     * @param valueProvider the value generator, might be {@code null} in which case only default
      *     values are used.
      * @throws IllegalArgumentException if the definition is empty or {@code null}.
      * @throws InvalidUrlException if any of the conditions is true:
@@ -125,7 +125,7 @@ public class SwaggerConverter implements Converter {
      *     </ul>
      */
     public SwaggerConverter(
-            String targetUrl, String definitionUrl, String defn, ValueGenerator valueGenerator) {
+            String targetUrl, String definitionUrl, String defn, ValueProvider valueProvider) {
         if (defn == null || defn.isEmpty()) {
             throw new EmptyDefinitionException();
         }
@@ -158,7 +158,7 @@ public class SwaggerConverter implements Converter {
                             BASE_KEY_I18N + "definitionurl.missingcomponents", definitionUrl));
         }
 
-        generators = new Generators(valueGenerator);
+        generators = new Generators(valueProvider);
         requestConverter = new RequestModelConverter();
         // Remove BOM, if any. Swagger library checks the first char to decide if it should be
         // parsed as JSON or YAML.
@@ -198,14 +198,17 @@ public class SwaggerConverter implements Converter {
     }
 
     @Override
-    public List<RequestModel> getRequestModels() throws SwaggerException {
-        return convertToRequest(getOperationModels());
+    public List<RequestModel> getRequestModels(Context context) throws SwaggerException {
+        return convertToRequest(context, getOperationModels());
     }
 
-    private List<RequestModel> convertToRequest(List<OperationModel> operations) {
+    private List<RequestModel> convertToRequest(Context context, List<OperationModel> operations) {
         List<RequestModel> requests = new LinkedList<>();
         for (OperationModel operation : operations) {
-            requests.add(requestConverter.convert(operation, generators));
+            var model = requestConverter.convert(operation, generators);
+            if (context == null || !context.isExcluded(model.getUrl())) {
+                requests.add(model);
+            }
         }
         return requests;
     }
@@ -479,15 +482,22 @@ public class SwaggerConverter implements Converter {
             if (PATH_PART_PATTERN.matcher(uri).find()) {
                 String regex = uri.replaceAll(PATH_PART_PATTERN.pattern(), "[^/?]+");
                 variantChecks.pathsWithParamsRegex.put(operation, Pattern.compile(regex));
-                if (!context.isIncluded(uri.replaceAll("[{}]", ""))) {
+                if (isContextIncludeNeeded(context, uri.replaceAll("[{}]", ""))) {
                     context.addIncludeInContextRegex(regex);
                 }
             } else {
                 variantChecks.pathsWithNoParams.add(operation);
-                if (!context.isIncluded(uri)) {
+                if (isContextIncludeNeeded(context, uri)) {
                     context.addIncludeInContextRegex(uri);
                 }
             }
         }
+    }
+
+    private static boolean isContextIncludeNeeded(Context context, String uri) {
+        if (context.isExcluded(uri)) {
+            return false;
+        }
+        return !context.isIncluded(uri);
     }
 }

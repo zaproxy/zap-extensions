@@ -8,6 +8,7 @@
         <tocitem text="Add Ons" tocid="addons">
             <tocitem text="OAST Support" image="oast-icon" target="oast">
                 <tocitem text="Tab" target="oast.tab"/>
+                <tocitem text="API" target="oast.api"/>
                 <tocitem text="Options" target="oast.options"/>
                 <tocitem text="Services" target="oast.services">
                     <tocitem text="BOAST" target="oast.boast">

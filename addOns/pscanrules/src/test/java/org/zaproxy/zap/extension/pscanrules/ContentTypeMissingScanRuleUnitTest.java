@@ -40,7 +40,7 @@ class ContentTypeMissingScanRuleUnitTest extends PassiveScannerTest<ContentTypeM
         return new ContentTypeMissingScanRule();
     }
 
-    private HttpMessage createMessage() throws HttpMalformedHeaderException {
+    private static HttpMessage createMessage() throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
 
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -60,12 +60,8 @@ class ContentTypeMissingScanRuleUnitTest extends PassiveScannerTest<ContentTypeM
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(345)));
-        assertThat(wasc, is(equalTo(12)));
         assertThat(tags.size(), is(equalTo(2)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),

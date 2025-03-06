@@ -35,8 +35,8 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.script.ExtensionScript;
-import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionImportWSDL extends ExtensionAdaptor {
@@ -55,7 +55,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     private int threadId = 1;
 
     private final TableWsdl table = new TableWsdl();
-    private final WSDLCustomParser parser = new WSDLCustomParser(this::getValueGenerator, table);
+    private final WSDLCustomParser parser = new WSDLCustomParser(this::getValueProvider, table);
 
     public ExtensionImportWSDL() {
         super(NAME);
@@ -67,11 +67,11 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         return DEPENDENCIES;
     }
 
-    private ValueGenerator getValueGenerator() {
+    private ValueProvider getValueProvider() {
         return Control.getSingleton()
                 .getExtensionLoader()
                 .getExtension(ExtensionCommonlib.class)
-                .getValueGenerator();
+                .getValueProvider();
     }
 
     public WSDLCustomParser getParser() {

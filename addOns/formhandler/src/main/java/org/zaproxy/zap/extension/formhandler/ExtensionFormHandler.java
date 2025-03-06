@@ -22,16 +22,23 @@ package org.zaproxy.zap.extension.formhandler;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.params.ExtensionParams;
+import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.utils.Stats;
 
 public class ExtensionFormHandler extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionFormHandler";
+
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionCommonlib.class);
 
     private static final String STATS_PREFIX = "stats.formhandler.";
     public static final String STATS_ADD = ExtensionFormHandler.STATS_PREFIX + "add";
@@ -41,7 +48,7 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
     protected static final String PREFIX = "formhandler";
 
     private FormHandlerParam param;
-    private ValueGenerator valueGenerator;
+    private ValueProvider valueProvider;
 
     private OptionsFormHandlerPanel optionsFormHandlerPanel;
     private PopupMenuAddFormhandlerParam popupMenuAddFormhandlerParam;
@@ -50,19 +57,27 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
         super(NAME);
     }
 
+    @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
+    }
+
     /**
      * Gets the value generator, with user provided values.
      *
      * @return the value generator.
      * @since 6.0.0
+     * @deprecated (6.7.0) Use {@link ExtensionCommonlib#getValueProvider()}.
      */
+    @SuppressWarnings("removal")
+    @Deprecated(since = "6.7.0", forRemoval = true)
     public ValueGenerator getValueGenerator() {
-        return valueGenerator;
+        return new DefaultValueGenerator();
     }
 
     @Override
     public void init() {
-        valueGenerator = new FormHandlerValueGenerator(getParam());
+        valueProvider = new FormHandlerValueProvider(getParam());
     }
 
     @Override
@@ -78,11 +93,26 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
                 extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAddFormhandlerParam());
             }
         }
+
+        setCustomValueProvider(valueProvider);
+    }
+
+    private static void setCustomValueProvider(ValueProvider valueProvider) {
+        getExtension(ExtensionCommonlib.class).setCustomValueProvider(valueProvider);
     }
 
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    private static <T extends Extension> T getExtension(Class<T> clazz) {
+        return Control.getSingleton().getExtensionLoader().getExtension(clazz);
+    }
+
+    @Override
+    public void unload() {
+        setCustomValueProvider(null);
     }
 
     // Method for creating and obtaining the Options Panel

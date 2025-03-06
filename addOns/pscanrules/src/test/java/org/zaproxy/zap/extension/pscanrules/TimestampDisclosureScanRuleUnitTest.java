@@ -55,12 +55,8 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(200)));
-        assertThat(wasc, is(equalTo(13)));
         assertThat(tags.size(), is(equalTo(2)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
@@ -85,6 +81,7 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
         Alert alert = alerts.get(0);
         assertThat(alert.getName(), is(equalTo("Timestamp Disclosure - Unix")));
         assertThat(alert.getParam(), is(equalTo("registeredAt")));
+        assertThat(alert.getCweId(), is(equalTo(497)));
     }
 
     @Test

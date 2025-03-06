@@ -86,6 +86,7 @@
     "cats": [
       25
     ],
+    "description": "JS Charts is a JavaScript-based tool for creating customizable charts, such as bar, pie, and line charts, with minimal coding required for integration into web projects.",
     "icon": "JS Charts.svg",
     "js": {
       "JSChart": ""
@@ -93,8 +94,7 @@
     "scriptSrc": [
       "jscharts.{0,32}\\.js"
     ],
-    "website": "https://www.jscharts.com",
-    "description": "JS Charts is a JavaScript-based tool for creating customizable charts, such as bar, pie, and line charts, with minimal coding required for integration into web projects."
+    "website": "https://www.jscharts.com"
   },
   "JS.org": {
     "cats": [
@@ -170,6 +170,9 @@
       "JTLSHOP": ""
     },
     "description": "JTL Shop is an ecommerce product created by JTL Software company.",
+    "dom": [
+      "input[name*='JTLSHOP']"
+    ],
     "html": [
       "(?:<input[^>]+name=\"JTLSHOP|<a href=\"jtl\\.php)"
     ],
@@ -256,6 +259,9 @@
       1,
       47
     ],
+    "dom": [
+      "script#staticAssetAggregatedJavascrip"
+    ],
     "html": [
       "<script id=\"staticAssetAggregatedJavascrip"
     ],
@@ -266,17 +272,17 @@
     "cats": [
       1
     ],
+    "description": "Jalios provides digital workplace solutions, including collaborative intranets, enterprise social networks, and document management systems, to enhance organizational communication and productivity.",
     "icon": "Jalios.svg",
     "meta": {
       "generator": "Jalios"
     },
-    "website": "https://www.jalios.com",
-    "saas": true,
     "pricing": [
       "recurring",
       "payg"
     ],
-    "description": "Jalios provides digital workplace solutions, including collaborative intranets, enterprise social networks, and document management systems, to enhance organizational communication and productivity."
+    "saas": true,
+    "website": "https://www.jalios.com"
   },
   "Jameda": {
     "cats": [
@@ -403,6 +409,9 @@
     ],
     "cpe": "cpe:2.3:a:jenkins:jenkins:*:*:*:*:*:*:*:*",
     "description": "Jenkins is an open-source automation tool written in Java with plugins built for Continuous Integration (CI) purposes.",
+    "dom": [
+      "span.jenkins_ver > a[href='https://jenkins.io/']"
+    ],
     "headers": {
       "X-Jenkins": "([\\d.]+)\\;version:\\1"
     },
@@ -436,6 +445,27 @@
       "\\.getjenny\\.com/"
     ],
     "website": "https://www.getjenny.com"
+  },
+  "JetEngine": {
+    "cats": [
+      87
+    ],
+    "description": "JetEngine is a content plugin for WordPress that allows users to create custom post types, taxonomies, and meta boxes, offering flexibility in building complex websites without requiring coding skills.",
+    "icon": "JetEngine.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/wp-content/plugins/jet-engine/"
+    ],
+    "website": "https://crocoblock.com/plugins/jetengine"
   },
   "Jetpack": {
     "cats": [
@@ -493,6 +523,7 @@
     "cats": [
       22
     ],
+    "description": "Jetty is an open-source web server and servlet container known for its scalability and efficiency, supporting protocols like HTTP and WebSocket for various applications from development tools to cloud services.",
     "headers": {
       "Server": "Jetty(?:\\(([\\d\\.]*\\d+))?\\;version:\\1"
     },
@@ -500,9 +531,8 @@
     "implies": [
       "Java"
     ],
-    "website": "https://www.eclipse.org/jetty",
     "oss": true,
-    "description": "Jetty is an open-source web server and servlet container known for its scalability and efficiency, supporting protocols like HTTP and WebSocket for various applications from development tools to cloud services."
+    "website": "https://www.eclipse.org/jetty"
   },
   "Jibres": {
     "cats": [
@@ -603,11 +633,11 @@
     "cpe": "cpe:2.3:a:jitsi:jitsi:*:*:*:*:*:*:*:*",
     "description": "Jitsi is a free and open-source multiplatform voice (VoIP), videoconferencing and instant messaging applications for the web platform.",
     "icon": "Jitsi.svg",
+    "oss": true,
     "scriptSrc": [
       "lib-jitsi-meet.*\\.js"
     ],
-    "website": "https://jitsi.org",
-    "oss": true
+    "website": "https://jitsi.org"
   },
   "Jive": {
     "cats": [
@@ -783,6 +813,9 @@
       "generator": "Joomla!(?: ([\\d.]+))?\\;version:\\1"
     },
     "oss": true,
+    "scriptSrc": [
+      "(?:^|/)(feed/com_|components/com_)"
+    ],
     "url": [
       "option=com_"
     ],
@@ -1115,6 +1148,7 @@
       12,
       59
     ],
+    "description": "jComponent is a platform offering open-source web components and icons for easy integration into web projects.",
     "icon": "jComponent.svg",
     "implies": [
       "jQuery"
@@ -1122,9 +1156,8 @@
     "js": {
       "MAIN.version": "(.*)\\;version:\\1"
     },
-    "website": "https://componentator.com",
     "oss": true,
-    "description": "jComponent is a platform offering open-source web components and icons for easy integration into web projects."
+    "website": "https://componentator.com"
   },
   "jPlayer": {
     "cats": [
@@ -1171,7 +1204,8 @@
     "icon": "jQuery.svg",
     "js": {
       "$.fn.jquery": "([\\d.]+)\\;version:\\1",
-      "jQuery.fn.jquery": "([\\d.]+)\\;version:\\1"
+      "jQuery.fn.jquery": "([\\d.]+)\\;version:\\1",
+      "jQuery.prototype.jquery": "([\\d.]+)\\;version:\\1"
     },
     "scriptSrc": [
       "jquery",
@@ -1223,7 +1257,7 @@
       "jQuery"
     ],
     "js": {
-      "jQuery.migrateVersion": "((?:\\d+\\.){1,2}\\d+)\\;version:\\1",
+      "jQuery.migrateVersion": "([\\d.]+)\\;version:\\1",
       "jQuery.migrateWarnings": "",
       "jqueryMigrate": ""
     },
