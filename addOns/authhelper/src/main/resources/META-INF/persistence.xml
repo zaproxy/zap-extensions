@@ -6,6 +6,7 @@
 
     <persistence-unit name="authhelper">
         <class>org.zaproxy.addon.authhelper.internal.db.Diagnostic</class>
+        <class>org.zaproxy.addon.authhelper.internal.db.DiagnosticBrowserStorageItem</class>
         <class>org.zaproxy.addon.authhelper.internal.db.DiagnosticMessage</class>
         <class>org.zaproxy.addon.authhelper.internal.db.DiagnosticScreenshot</class>
         <class>org.zaproxy.addon.authhelper.internal.db.DiagnosticStep</class>

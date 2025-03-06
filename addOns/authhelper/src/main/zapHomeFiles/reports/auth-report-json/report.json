@@ -63,7 +63,21 @@
 						}[/th:block]
 					][/th:block][#th:block th:if="${reportData.isIncludeSection('diagnosticsscreenshots') && step.screenshot}" th:with="screenshot=${step.screenshot}"]
 					,"screenshot": [[${screenshot.data}]]
-					[/th:block][#th:block th:if="${reportData.isIncludeSection('diagnosticsmessages')}" th:with="messages=${step.messages}"]
+					[/th:block][#th:block th:if="${reportData.isIncludeSection('diagnosticslocalstorage')}" th:with="storage=${step.getBrowserLocalStorage()}"]
+					,"localStorage": [[#th:block th:each="entry, state: ${storage}"][#th:block th:if="${! state.first}"],[/th:block]
+						{
+							"created": [[${entry.createTimestamp}]],
+							"key": [[${entry.key}]],
+							"value": [[${entry.value}]]
+						}[/th:block]
+					][/th:block][#th:block th:if="${reportData.isIncludeSection('diagnosticssessionstorage')}" th:with="storage=${step.getBrowserSessionStorage()}"]
+					,"sessionStorage": [[#th:block th:each="entry, state: ${storage}"][#th:block th:if="${! state.first}"],[/th:block]
+						{
+							"created": [[${entry.createTimestamp}]],
+							"key": [[${entry.key}]],
+							"value": [[${entry.value}]]
+						}[/th:block]
+					][/th:block][#th:block th:if="${reportData.isIncludeSection('diagnosticsmessages')}" th:with="messages=${step.messages}"]
 					,"messages": [[#th:block th:each="entry, state: ${messages}" th:with="message=${helper.getHttpMessage(entry.messageId)}"][#th:block th:if="${! state.first}"],[/th:block]
 						{[#th:block th:if="${message}"]
 							"created": [[${entry.createTimestamp}]],
