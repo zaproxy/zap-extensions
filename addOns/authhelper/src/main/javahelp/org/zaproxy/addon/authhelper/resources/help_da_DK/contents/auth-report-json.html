@@ -41,46 +41,57 @@
 	<table>
 		<tr>
 			<th align="left">Key</th>
+			<th align="left">Passed</th>
 			<th align="left">Description</th>
 		</tr>
 		<tr>
-			<td>auth.auth.fail</td>
+			<td>auth.summary.auth</td>
+			<td>false</td>
 			<td>Authentication failed</td>
 		</tr>
 		<tr>
-			<td>auth.auth.pass</td>
+			<td>auth.summary.auth</td>
+			<td>true</td>
 			<td>Authentication appeared to work</td>
 		</tr>
 		<tr>
-			<td>auth.password.fail</td>
+			<td>auth.summary.password</td>
+			<td>false</td>
 			<td>Password field not identified</td>
 		</tr>
 		<tr>
-			<td>auth.password.pass</td>
+			<td>auth.summary.password</td>
+			<td>true</td>
 			<td>Password field identified</td>
 		</tr>
 		<tr>
-			<td>auth.session.fail</td>
+			<td>auth.summary.session</td>
+			<td>false</td>
 			<td>Session Handling not identified</td>
 		</tr>
 		<tr>
-			<td>auth.session.pass</td>
+			<td>auth.summary.session</td>
+			<td>true</td>
 			<td>Session Handling identified</td>
 		</tr>
 		<tr>
-			<td>auth.username.fail</td>
+			<td>auth.summary.username</td>
+			<td>false</td>
 			<td>Username field not identified</td>
 		</tr>
 		<tr>
-			<td>auth.username.pass</td>
+			<td>auth.summary.username</td>
+			<td>true</td>
 			<td>Username field identified</td>
 		</tr>
 		<tr>
-			<td>auth.verif.fail</td>
+			<td>auth.summary.verif</td>
+			<td>false</td>
 			<td>Verification URL not identified</td>
 		</tr>
 		<tr>
-			<td>auth.verif.pass</td>
+			<td>auth.summary.verif</td>
+			<td>true</td>
 			<td>Verification URL identified</td>
 		</tr>
 	</table>
@@ -109,22 +120,22 @@
 	,"summaryItems": [
 		{
 			"description": "Username field identified",
-			"passed": "true",
+			"passed": true,
 			"key": "auth.summary.username"
 		},
 		{
 			"description": "Password field identified",
-			"passed": "true",
+			"passed": true,
 			"key": "auth.summary.password"
 		},
 		{
 			"description": "Session Handling identified",
-			"passed": "true",
+			"passed": true,
 			"key": "auth.summary.session"
 		},
 		{
 			"description": "Verification URL identified",
-			"passed": "true",
+			"passed": true,
 			"key": "auth.summary.verif"
 		}
 	]
@@ -133,72 +144,72 @@
 		{
 			"key": "stats.auth.browser.foundfields",
 			"scope": "site",
-			"value": "1"
+			"value": 1
 		},
 		{
 			"key": "stats.auth.browser.passed",
 			"scope": "site",
-			"value": "1"
+			"value": 1
 		},
 		{
 			"key": "stats.auth.configure.session.header",
 			"scope": "global",
-			"value": "1"
+			"value": 1
 		},
 		{
 			"key": "stats.auth.configure.verification",
 			"scope": "global",
-			"value": "1"
+			"value": 1
 		},
 		{
 			"key": "stats.auth.detect.auth.json",
 			"scope": "global",
-			"value": "5"
+			"value": 5
 		},
 		{
 			"key": "stats.auth.detect.session.accesstoken",
 			"scope": "global",
-			"value": "5"
+			"value": 5
 		},
 		{
 			"key": "stats.auth.detect.session.authorization",
 			"scope": "global",
-			"value": "1"
+			"value": 1
 		},
 		{
 			"key": "stats.auth.detect.session.token",
 			"scope": "global",
-			"value": "7"
+			"value": 7
 		},
 		{
 			"key": "stats.auth.session.set.header",
 			"scope": "global",
-			"value": "20"
+			"value": 20
 		},
 		{
 			"key": "stats.auth.sessiontoken.accesstoken",
 			"scope": "site",
-			"value": "9"
+			"value": 9
 		},
 		{
 			"key": "stats.auth.sessiontoken.token",
 			"scope": "site",
-			"value": "6"
+			"value": 6
 		},
 		{
 			"key": "stats.auth.sessiontokens.max",
 			"scope": "global",
-			"value": "2"
+			"value": 2
 		},
 		{
 			"key": "stats.auth.state.loggedin",
 			"scope": "site",
-			"value": "2"
+			"value": 2
 		},
 		{
 			"key": "stats.auth.success",
 			"scope": "site",
-			"value": "1"
+			"value": 1
 		}
 	]
 }
