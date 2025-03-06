@@ -22,6 +22,7 @@ package org.zaproxy.addon.authhelper.internal.db;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 import javax.jdo.annotations.Cacheable;
 import javax.jdo.annotations.Column;
 import javax.jdo.annotations.Element;
@@ -71,7 +72,24 @@ public class DiagnosticStep {
     @Order(column = "NUMBER")
     private List<DiagnosticWebElement> webElements = new ArrayList<>();
 
+    @Order(column = "NUMBER")
+    @Persistent(mappedBy = "step")
+    private List<DiagnosticBrowserStorageItem> browserStorageItems = new ArrayList<>();
+
     public DiagnosticStep(String description) {
         this.description = description;
+    }
+
+    public Stream<DiagnosticBrowserStorageItem> getBrowserLocalStorage() {
+        return getBrowerStorage(DiagnosticBrowserStorageItem.Type.LOCAL);
+    }
+
+    public Stream<DiagnosticBrowserStorageItem> getBrowserSessionStorage() {
+        return getBrowerStorage(DiagnosticBrowserStorageItem.Type.SESSION);
+    }
+
+    private Stream<DiagnosticBrowserStorageItem> getBrowerStorage(
+            DiagnosticBrowserStorageItem.Type type) {
+        return browserStorageItems.stream().filter(e -> e.getType() == type);
     }
 }
