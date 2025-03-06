@@ -21,6 +21,7 @@ package org.zaproxy.addon.authhelper;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
 import org.apache.logging.log4j.LogManager;
@@ -39,6 +40,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.authhelper.internal.db.Diagnostic;
+import org.zaproxy.addon.authhelper.internal.db.DiagnosticBrowserStorageItem;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticMessage;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticScreenshot;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticStep;
@@ -199,7 +201,35 @@ public class AuthenticationDiagnostics implements AutoCloseable {
             }
         }
 
+        if (wd instanceof JavascriptExecutor je) {
+            for (var type : DiagnosticBrowserStorageItem.Type.values()) {
+                processStorage(je, type);
+            }
+        }
+
         createStep();
+    }
+
+    private <T> void processStorage(JavascriptExecutor je, DiagnosticBrowserStorageItem.Type type) {
+        @SuppressWarnings("unchecked")
+        List<Map<String, String>> storage =
+                (List<Map<String, String>>) je.executeScript(type.getScript());
+        if (storage == null || storage.isEmpty()) {
+            return;
+        }
+
+        storage.stream()
+                .map(
+                        e -> {
+                            DiagnosticBrowserStorageItem item = new DiagnosticBrowserStorageItem();
+                            item.setCreateTimestamp(Instant.now());
+                            item.setStep(currentStep);
+                            item.setType(type);
+                            item.setKey(e.get("key"));
+                            item.setValue(e.get("value"));
+                            return item;
+                        })
+                .forEach(currentStep.getBrowserStorageItems()::add);
     }
 
     private DiagnosticWebElement createDiagnosticWebElement(
