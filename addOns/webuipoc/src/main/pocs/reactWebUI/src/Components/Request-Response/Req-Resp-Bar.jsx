@@ -49,14 +49,17 @@ function reqResp() {
           </div>            
           <div className="flex  ">
               <div className="p-4 overflow-x-auto">
-  {initialreqRep?.responseHeader.split('\n').map((line) =>  (<p>{line}</p>  ))}
+      
+      {initialreqRep?.responseHeader && !initialreqRep.responseHeader.includes('HTTP/1.0 0') && 
+ initialreqRep?.responseHeader.split('\n').map((line) =>  (<p>{line}</p>  ))}
        </div>       
           </div>
           
-          <p className=" justify-center text-center overflow-x-auto">{initialreqRep?.responseBody}</p>
-       
-        </div>
-      
+          <p className=" justify-center text-center overflow-x-auto">
+    
+   {initialreqRep?.responseHeader && !initialreqRep.responseHeader.includes('HTTP/1.0 0') && initialreqRep.responseBody}
+  </p>
+        </div>    
       </div> 
     </div>
   );
