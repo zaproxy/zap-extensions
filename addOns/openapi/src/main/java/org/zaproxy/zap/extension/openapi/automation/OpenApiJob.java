@@ -149,7 +149,7 @@ public class OpenApiJob extends AutomationJob {
                                 Constant.messages.getString(
                                         "openapi.automation.error.misc",
                                         this.getName(),
-                                        targetUrl,
+                                        targetUrl == null ? targetStr : targetUrl,
                                         error));
                     }
                 }
@@ -178,7 +178,7 @@ public class OpenApiJob extends AutomationJob {
                                 Constant.messages.getString(
                                         "openapi.automation.error.misc",
                                         this.getName(),
-                                        targetUrl,
+                                        targetUrl == null ? targetStr : targetUrl,
                                         error));
                     }
                 }
@@ -190,7 +190,10 @@ public class OpenApiJob extends AutomationJob {
             } catch (Exception e) {
                 progress.error(
                         Constant.messages.getString(
-                                "openapi.automation.error.url", this.getName(), targetUrl, apiUrl));
+                                "openapi.automation.error.url",
+                                this.getName(),
+                                targetUrl == null ? targetStr : targetUrl,
+                                apiUrl));
             }
         }
     }
