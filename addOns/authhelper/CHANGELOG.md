@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Document custom steps for Browser Based Authentication.
+- Sanitized post data to auth diagnostics.
 
 ### Changed
 - Add any session related cookies which are not being tracked.

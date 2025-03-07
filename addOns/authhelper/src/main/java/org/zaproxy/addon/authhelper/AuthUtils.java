@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import lombok.Setter;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
 import net.sf.json.JSONArray;
@@ -75,7 +76,6 @@ import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.Browser
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
-import org.zaproxy.zap.authentication.AuthenticationHelper;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
 import org.zaproxy.zap.authentication.AuthenticationMethod.UnsupportedAuthenticationCredentialsException;
@@ -150,6 +150,8 @@ public class AuthUtils {
     private static long timeToWaitMs = TimeUnit.SECONDS.toMillis(5);
 
     private static boolean demoMode;
+
+    @Setter private static HistoryProvider historyProvider = new HistoryProvider();
 
     /**
      * These are session tokens that have been seen in responses but not yet seen in use. When they
@@ -1228,7 +1230,7 @@ public class AuthUtils {
             HttpMessage msg = new HttpMessage(testUri);
             HttpSender unauthSender = new HttpSender(HttpSender.AUTHENTICATION_HELPER_INITIATOR);
             unauthSender.sendAndReceive(msg);
-            AuthenticationHelper.addAuthMessageToHistory(msg);
+            historyProvider.addAuthMessageToHistory(msg);
             int count = 0;
             while (HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode())) {
                 testUri =
@@ -1237,7 +1239,7 @@ public class AuthUtils {
                                 true);
                 msg = new HttpMessage(testUri);
                 unauthSender.sendAndReceive(msg);
-                AuthenticationHelper.addAuthMessageToHistory(msg);
+                historyProvider.addAuthMessageToHistory(msg);
                 if (count++ > 50) {
                     return false;
                 }
@@ -1269,7 +1271,7 @@ public class AuthUtils {
             // We've found a login link, now try an authenticated request
             HttpMessage authMsg = new HttpMessage(testUri);
             authSender.sendAndReceive(authMsg, true);
-            AuthenticationHelper.addAuthMessageToHistory(authMsg);
+            historyProvider.addAuthMessageToHistory(authMsg);
 
             String authBody = authMsg.getResponseBody().toString();
             if (authBody.contains(link)) {

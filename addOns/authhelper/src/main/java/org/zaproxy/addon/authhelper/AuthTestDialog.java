@@ -256,8 +256,12 @@ public class AuthTestDialog extends StandardFieldsDialog {
         StatsListener statsListener = null;
         boolean demoMode = getBoolValue(DEMO_LABEL);
         try {
+            String username = this.getStringValue(USERNAME_LABEL);
+            String password = this.getStringValue(PASSWORD_LABEL);
+
             this.diagnosticField.setText("");
             ext.enableAuthDiagCollector(true);
+            ext.setAuthDiagCollectorCredentials(username, password);
 
             // Delete the context if it already exists
             Session session = Model.getSingleton().getSession();
@@ -289,11 +293,9 @@ public class AuthTestDialog extends StandardFieldsDialog {
             context.setAuthenticationMethod(am);
 
             // Set up user
-            String username = this.getStringValue(USERNAME_LABEL);
             User user = new User(context.getId(), username);
             UsernamePasswordAuthenticationCredentials upCreds =
-                    new UsernamePasswordAuthenticationCredentials(
-                            username, this.getStringValue(PASSWORD_LABEL));
+                    new UsernamePasswordAuthenticationCredentials(username, password);
             user.setAuthenticationCredentials(upCreds);
             user.setEnabled(true);
             Control.getSingleton()
