@@ -1,6 +1,6 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
-
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,15 +22,13 @@ import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
-
-
-public class ReplayTotpActiveScanRule extends AbstractHostPlugin implements CommonActiveScanRuleInfo{
-    private static final Logger LOGGER = LogManager.getLogger(ReplayTotpActiveScanRule.class);
+public class CaptchaTotpActiveScanRule extends AbstractHostPlugin implements CommonActiveScanRuleInfo{
+    private static final Logger LOGGER = LogManager.getLogger(BlankTotpActiveScanRule.class);
     private static final Map<String, String> ALERT_TAGS = new HashMap<>();
                       
     @Override
     public int getId() {
-        return 40049;
+        return 40051;
     }
     @Override
     public String getName() {
@@ -127,34 +125,51 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin implements Comm
             UsernamePasswordAuthenticationCredentials credentials = (UsernamePasswordAuthenticationCredentials) user.getAuthenticationCredentials();
             SessionManagementMethod sessionManagementMethod = activeContext.getSessionManagementMethod();
 
-            //Check if user provided valid code & check if initial authentication works with normal passcode
-            if(totpStep.getValue() != null || !totpStep.getValue().isEmpty()){
-                WebSession webSession = browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
-                if (webSession == null) {
-                    //LOGGER.error("Normal Authentication unsuccessful. TOTP not configured correctly.");
-                    return;
-                }
-                // Check for passcode reuse vulnerability
-                WebSession webSession_redo = browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
-                if (webSession_redo != null) {
-                    LOGGER.error("Authentication with reused passcode. Vulnerability found.");
-                    buildAlert("TOTP Replay Attack Vulnerability", 
-                    "The application is vulnerable to replay attacks, allowing attackers to reuse previously intercepted TOTP codes to authenticate.",
-                    "Ensure that TOTP codes are validated only once per session and are invalidated after use.", msg).raise();
-                }
+            //Check if lockout or captcha mechanism is detected
+            boolean captchaDetected = false;
+            boolean lockoutDetected = false;
+
+            // Run 10 incorrect authentications and store the responses
+            // Check responses for any changes or any common captcha technology 
+            List<HttpMessage> httpResponses = new ArrayList<>();
+            for (int i = 0; i < 10; i++) {
+            WebSession testSession = testAuthenticatSession(totpStep, "111111", authSteps, browserAuthMethod, sessionManagementMethod, credentials, user);
+               //Add the response to the httpResponses list
+
+            }
+            for (HttpMessage response : httpResponses) {
+                // Check for changes to the response's indicating a potential lockout/captcha mechanism
+            }
+            for (HttpMessage response : httpResponses) {
+                // Check for captcha mechanism
+                // Check for lockout mechanism
+            }
+            if (!captchaDetected && !lockoutDetected) {
+                //LOGGER.error("Authentication successful with blank passcode.Vulernaibility found.");
+                buildAlert("No Lockout or Captcha Mechanism Detected", 
+                    "\"The application does not enforce CAPTCHA or account lockout mechanisms, making it vulnerable to brute-force attacks.",
+                    "Implement CAPTCHA verification and/or account lockout policies after multiple failed login attempts.", msg).raise();
             }
         } catch (Exception e) { 
             LOGGER.error("Error in TOTP Page Scan Rule: {}",e.getMessage(), e);
         }
     }
+
+    private WebSession testAuthenticatSession(AuthenticationStep totpStep, String newTotpValue, List<AuthenticationStep> authSteps , BrowserBasedAuthenticationMethod browserAuthMethod, SessionManagementMethod sessionManagementMethod, UsernamePasswordAuthenticationCredentials credentials, User user){
+        totpStep.setValue(newTotpValue);
+        browserAuthMethod.setAuthenticationSteps(authSteps); 
+        return browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
+    }
     private AlertBuilder buildAlert(String name, String description, String solution, HttpMessage msg) {
         return newAlert()
-        .setConfidence(Alert.CONFIDENCE_HIGH)
+        .setConfidence(Alert.CONFIDENCE_MEDIUM)
         .setName(name)
         .setDescription(description)
         .setSolution(solution)
         .setMessage(msg);
     }
 }
+
+
 
 

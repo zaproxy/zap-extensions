@@ -24,13 +24,13 @@ import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.Browser
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 
 
-public class ReplayTotpActiveScanRule extends AbstractHostPlugin implements CommonActiveScanRuleInfo{
-    private static final Logger LOGGER = LogManager.getLogger(ReplayTotpActiveScanRule.class);
+public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActiveScanRuleInfo{
+    private static final Logger LOGGER = LogManager.getLogger(TotpActiveScanRule.class);
     private static final Map<String, String> ALERT_TAGS = new HashMap<>();
                       
     @Override
     public int getId() {
-        return 40049;
+        return 40050;
     }
     @Override
     public String getName() {
@@ -126,26 +126,29 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin implements Comm
             User user = users.get(0);
             UsernamePasswordAuthenticationCredentials credentials = (UsernamePasswordAuthenticationCredentials) user.getAuthenticationCredentials();
             SessionManagementMethod sessionManagementMethod = activeContext.getSessionManagementMethod();
+        
+            //Checks if a valid username/password combination gives access with any passcode meeting the format
+            //Uses known static backup passcodes to check if any of them work 
+            List<String> backupPasscodes = List.of("000000", "0000000", "00000000", "123456", "1234567", "12345678", "888888", "8888888", "88888888");
+            //Test passcode 000-000 (check format- RFC-6238 (6,7,8)
+            for (String code : backupPasscodes){
+                WebSession webSessionBlankCode = testAuthenticatSession(totpStep, code , authSteps, browserAuthMethod, sessionManagementMethod, credentials, user);
+                if (webSessionBlankCode != null) {
+                    //LOGGER.error("Authentication successful with blank passcode.Vulernaibility found.");
+                    buildAlert("Passcode Authentication Bypass", 
+                        "The application allows authentication using passcodes that meet the expected format but are weak or known values. This poses a security risk as attackers could exploit predictable static backup passcodes to gain unauthorized access.",
+                        "", msg).raise();
+                }
+            }    
 
-            //Check if user provided valid code & check if initial authentication works with normal passcode
-            if(totpStep.getValue() != null || !totpStep.getValue().isEmpty()){
-                WebSession webSession = browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
-                if (webSession == null) {
-                    //LOGGER.error("Normal Authentication unsuccessful. TOTP not configured correctly.");
-                    return;
-                }
-                // Check for passcode reuse vulnerability
-                WebSession webSession_redo = browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
-                if (webSession_redo != null) {
-                    LOGGER.error("Authentication with reused passcode. Vulnerability found.");
-                    buildAlert("TOTP Replay Attack Vulnerability", 
-                    "The application is vulnerable to replay attacks, allowing attackers to reuse previously intercepted TOTP codes to authenticate.",
-                    "Ensure that TOTP codes are validated only once per session and are invalidated after use.", msg).raise();
-                }
-            }
         } catch (Exception e) { 
             LOGGER.error("Error in TOTP Page Scan Rule: {}",e.getMessage(), e);
         }
+    }
+    private WebSession testAuthenticatSession(AuthenticationStep totpStep, String newTotpValue, List<AuthenticationStep> authSteps , BrowserBasedAuthenticationMethod browserAuthMethod, SessionManagementMethod sessionManagementMethod, UsernamePasswordAuthenticationCredentials credentials, User user){
+        totpStep.setValue(newTotpValue);
+        browserAuthMethod.setAuthenticationSteps(authSteps); 
+        return browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
     }
     private AlertBuilder buildAlert(String name, String description, String solution, HttpMessage msg) {
         return newAlert()
@@ -156,5 +159,7 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin implements Comm
         .setMessage(msg);
     }
 }
+
+
 
 
