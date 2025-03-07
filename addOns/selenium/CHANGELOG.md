@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add debug log for the Firefox profile creation.
 
+### Changed
+- Create profiles with Firefox headless.
+
 ## [15.34.0] - 2025-02-27
 ### Changed
 - Update Selenium to version 4.29.0.

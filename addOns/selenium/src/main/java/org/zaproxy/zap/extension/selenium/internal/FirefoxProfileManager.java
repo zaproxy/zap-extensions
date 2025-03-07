@@ -141,7 +141,7 @@ public class FirefoxProfileManager implements ProfileManager {
         }
         FirefoxOptions firefoxOptions = new FirefoxOptions();
         String path = firefoxOptions.getBinary().getPath();
-        String[] args = {path, "-CreateProfile", profileName};
+        String[] args = {path, "-headless", "-CreateProfile", profileName};
         LOGGER.debug("Creating profile with: {}", () -> Arrays.toString(args));
 
         Process ps = runtime.exec(args);
