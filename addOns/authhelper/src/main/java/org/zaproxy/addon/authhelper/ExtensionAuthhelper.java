@@ -202,6 +202,13 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
         }
     }
 
+    public void setAuthDiagCollectorCredentials(String username, String password) {
+        if (this.authDiagCollector != null) {
+            this.authDiagCollector.setUsername(username);
+            this.authDiagCollector.setPassword(password);
+        }
+    }
+
     private ZapMenuItem getAuthTesterMenu() {
         if (authTesterMenu == null) {
             authTesterMenu =

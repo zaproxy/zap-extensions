@@ -31,7 +31,6 @@ import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -106,6 +105,36 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldSanitizeCookies() throws Exception {
+        // Given
+        adc.setEnabled(true);
+
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(),
+                        new HttpRequestBody(),
+                        new HttpResponseHeader(),
+                        new HttpResponseBody());
+        msg.getRequestHeader().setMethod("GET");
+        msg.getRequestHeader().setURI(new URI("https://www.example.com", true));
+        msg.getRequestHeader().setHeader(HttpHeader.COOKIE, "cookie1=aaa");
+
+        msg.getResponseHeader().setStatusCode(200);
+        msg.getResponseHeader().setReasonPhrase("OK");
+        msg.getResponseHeader().setHeader(HttpHeader.SET_COOKIE, "cookie2=bbb; HttpOnly");
+
+        // When
+        adc.onHttpResponseReceive(msg, 1, null);
+
+        // Then
+        assertThat(
+                sb.toString(),
+                is(
+                        ">>>>>\nGET https://example0/\ncookie: cookie1=\"token0\"\n<<<\n"
+                                + "HTTP/1.0 200 OK\nset-cookie: cookie2=token1\n"));
+    }
+
+    @Test
     void shouldAppendCookies() throws Exception {
         // Given
         List<HttpCookie> cookies = new ArrayList<>();
@@ -132,15 +161,15 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
     void shouldAppendStructuredData() throws Exception {
         // Given
         StringBuilder sb = new StringBuilder();
-        HttpHeader header = new HttpRequestHeader();
-        HttpBody body = new HttpRequestBody();
+        HttpRequestHeader header = new HttpRequestHeader();
+        HttpRequestBody body = new HttpRequestBody();
 
         header.setHeader(HttpHeader.CONTENT_TYPE, "somethingJsonSomething");
         body.setBody(
                 "[{\"user\":\"test@test.com\",\"password\":\"password123\"},{\"xxx\":\"yyy\"}]");
 
         // When
-        adc.appendStructuredData(header, body, sb);
+        adc.appendPostData(new HttpMessage(header, body), true, sb);
 
         // Then
         assertThat(
@@ -151,17 +180,58 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldAppendPostData() throws Exception {
+        // Given
+        StringBuilder sb = new StringBuilder();
+        HttpRequestHeader header = new HttpRequestHeader();
+        HttpRequestBody body = new HttpRequestBody();
+
+        header.setMethod(HttpRequestHeader.POST);
+        header.setURI(new URI("https://www.example.com", true));
+        header.setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.FORM_URLENCODED_CONTENT_TYPE);
+        body.setBody("aaa=bbb&ccc=ddd");
+
+        // When
+        adc.appendPostData(new HttpMessage(header, body), true, sb);
+
+        // Then
+        assertThat(sb.toString(), is(equalTo("\naaa=token0&ccc=token1&\n")));
+    }
+
+    @Test
+    void shouldAppendCredentialTokens() throws Exception {
+        // Given
+        adc.setUsername("test@example.org");
+        adc.setPassword("mySuperSecretPassword");
+        StringBuilder sb = new StringBuilder();
+        HttpRequestHeader header = new HttpRequestHeader();
+        HttpRequestBody body = new HttpRequestBody();
+
+        header.setMethod(HttpRequestHeader.POST);
+        header.setURI(new URI("https://www.example.com", true));
+        header.setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.FORM_URLENCODED_CONTENT_TYPE);
+        body.setBody("user=test@example.org&pass=mySuperSecretPassword");
+
+        // When
+        adc.appendPostData(new HttpMessage(header, body), true, sb);
+
+        // Then
+        assertThat(
+                sb.toString(), is(equalTo("\npass=F4keP4ssw0rd&user=FakeUserName@example.com&\n")));
+    }
+
+    @Test
     void shouldNotAppendNonJsonData() throws Exception {
         // Given
-        HttpHeader header = new HttpRequestHeader();
-        HttpBody body = new HttpRequestBody();
+        HttpRequestHeader header = new HttpRequestHeader();
+        HttpRequestBody body = new HttpRequestBody();
 
         header.setHeader(HttpHeader.CONTENT_TYPE, "something");
         body.setBody(
                 "[{\"user\":\"test@test.com\",\"password\":\"password123\"},{\"xxx\":\"yyy\"}]");
 
         // When
-        adc.appendStructuredData(header, body, sb);
+        adc.appendPostData(new HttpMessage(header, body), true, sb);
 
         // Then
         assertThat(sb.length(), is(equalTo(0)));

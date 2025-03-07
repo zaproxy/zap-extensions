@@ -22,6 +22,7 @@ package org.zaproxy.addon.authhelper.internal;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
+import lombok.Setter;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,11 +32,11 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.AuthUtils;
+import org.zaproxy.addon.authhelper.HistoryProvider;
 import org.zaproxy.addon.authhelper.SessionManagementRequestDetails;
 import org.zaproxy.addon.authhelper.SessionToken;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
-import org.zaproxy.zap.authentication.AuthenticationHelper;
 import org.zaproxy.zap.model.Context;
 
 public final class ClientSideHandler implements HttpMessageHandler {
@@ -46,6 +47,8 @@ public final class ClientSideHandler implements HttpMessageHandler {
     private HttpMessage authMsg;
     private HttpMessage fallbackMsg;
     private int firstHrefId;
+
+    @Setter private HistoryProvider historyProvider = new HistoryProvider();
 
     public ClientSideHandler(Context context) {
         this.context = context;
@@ -62,7 +65,7 @@ public final class ClientSideHandler implements HttpMessageHandler {
             return;
         }
 
-        AuthenticationHelper.addAuthMessageToHistory(msg);
+        historyProvider.addAuthMessageToHistory(msg);
 
         if (!context.isIncluded(msg.getRequestHeader().getURI().toString())) {
             return;
@@ -88,10 +91,7 @@ public final class ClientSideHandler implements HttpMessageHandler {
         Map<String, SessionToken> sessionTokens = AuthUtils.getResponseSessionTokens(msg);
         if (!sessionTokens.isEmpty()) {
             authMsg = msg;
-            LOGGER.debug(
-                    "Session token found in href {} {}",
-                    authMsg.getHistoryRef().getHistoryId(),
-                    isPost(msg));
+            LOGGER.debug("Session token found in href {} {}", getHrefId(authMsg), isPost(msg));
             smReqDetails =
                     new SessionManagementRequestDetails(
                             authMsg,
@@ -105,28 +105,29 @@ public final class ClientSideHandler implements HttpMessageHandler {
                     smReqDetails = AuthUtils.findSessionTokenSource(st.getValue(), firstHrefId);
                     if (smReqDetails != null) {
                         authMsg = smReqDetails.getMsg();
-                        LOGGER.debug(
-                                "Session token found in href {}",
-                                authMsg.getHistoryRef().getHistoryId());
+                        LOGGER.debug("Session token found in href {}", getHrefId(authMsg));
                         break;
                     }
                 }
             }
 
             if (authMsg != null && View.isInitialised()) {
-                String hrefId = "?";
-                if (msg.getHistoryRef() != null) {
-                    hrefId = "" + msg.getHistoryRef().getHistoryId();
-                }
                 AuthUtils.logUserMessage(
                         Level.INFO,
                         Constant.messages.getString(
-                                "authhelper.auth.method.browser.output.sessionid", hrefId));
+                                "authhelper.auth.method.browser.output.sessionid", getHrefId(msg)));
             }
         }
         if (firstHrefId == 0 && msg.getHistoryRef() != null) {
             firstHrefId = msg.getHistoryRef().getHistoryId();
         }
+    }
+
+    private String getHrefId(HttpMessage msg) {
+        if (msg.getHistoryRef() != null) {
+            return Integer.toString(msg.getHistoryRef().getHistoryId());
+        }
+        return "?";
     }
 
     public HttpMessage getAuthMsg() {
