@@ -3,12 +3,14 @@ import React, { useState } from "react";
 
 const Accordion = ({ site, fetchChildren, isChild }) => {
     const [isAccordionOpen, setAccordionOpen] = useState(false);
-    const [children, setChildren] = useState([])
+    const [children, setChildren] = useState([]);
+
   const handleExpand = async () => {
     if (isAccordionOpen == false && site.isLeaf == false) {
       const childNodes = await fetchChildren(site.name);
       setChildren(childNodes);
     }
+    };
 
     const getDisplayName = (name) => {
         if (isChild) {
@@ -42,22 +44,16 @@ const Accordion = ({ site, fetchChildren, isChild }) => {
         </span>
       </button>
 
-     {
-              isAccordionOpen && (
-                  <div>
-                    <p className="text-blue-200 dark:text-blue-900 break-all">
-                      {
-                          children.map((child) => (
-                              <Accordion site={child} fetchChildren={fetchChildren} isChild={true}/>
-                          )) 
-                      }
-                      </p>
+              {isAccordionOpen && (
+                <div>
+                    <div className="text-blue-200 dark:text-blue-900 break-all">
+                      {children.map((child) => (
+                            <Accordion site={child} fetchChildren={fetchChildren} isChild={true}/>
+                          ))}
                       </div>
-              )
-          }
+                      </div>
+              )}
       </div>
-
-
   );
 };
 
