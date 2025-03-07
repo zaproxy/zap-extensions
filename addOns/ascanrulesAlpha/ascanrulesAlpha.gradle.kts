@@ -12,6 +12,9 @@ zapAddOn {
                 register("commonlib") {
                     version.set(">= 1.22.0 & < 2.0.0")
                 }
+                 register("authhelper") {
+                    version.set("0.23.0")
+                }
             }
         }
     }
@@ -23,6 +26,7 @@ tasks.named("compileJava") {
 
 dependencies {
     zapAddOn("commonlib")
+    zapAddOn("authhelper")
 
     testImplementation(project(":testutils"))
 }
