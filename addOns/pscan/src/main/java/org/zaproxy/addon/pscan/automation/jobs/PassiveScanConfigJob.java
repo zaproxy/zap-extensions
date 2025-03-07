@@ -202,7 +202,7 @@ public class PassiveScanConfigJob extends AutomationJob {
                         Constant.messages.getString(
                                 "pscan.automation.info.pscan.rule.setthreshold",
                                 this.getName(),
-                                rule.getId(),
+                                String.valueOf(rule.getId()),
                                 pluginTh.name()));
             }
         }

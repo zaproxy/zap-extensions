@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Document how the TOTP data is defined for a user.
 
+### Changed
+- Progress and log messages with regard to setting scan rule threshold or strength no longer include commas in scan rule ID numbers.
+
 ## [0.48.0] - 2025-03-04
 ### Changed
 - Allow to use variables for the TOTP data.
