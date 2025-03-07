@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 
-
 const Accordion = ({ site, fetchChildren, isChild }) => {
     const [isAccordionOpen, setAccordionOpen] = useState(false);
-    const [children, setChildren] = useState([]);
+    const [children, setChildren] = useState([])
 
-  const handleExpand = async () => {
-    if (isAccordionOpen == false && site.isLeaf == false) {
-      const childNodes = await fetchChildren(site.name);
-      setChildren(childNodes);
+    const handleExpand = async () => {
+        if (isAccordionOpen == false && site.isLeaf == false) {
+            const childNodes = await fetchChildren(site.name)
+            setChildren(childNodes)
+        }
+        setAccordionOpen(!isAccordionOpen);
     }
-    };
-
     const getDisplayName = (name) => {
         if (isChild) {
             const parts = name.split('/');
@@ -20,12 +19,14 @@ const Accordion = ({ site, fetchChildren, isChild }) => {
         return name;
     };
 
-
   return (
     <div className="py-1 w-[380px]">
-      <button onClick={handleExpand} className="flex justify-between w-full">
+      <button
+        onClick={handleExpand}
+        className="flex justify-between w-full"
+      >
+        
         <span className="pl-2">
-
         {site.isLeaf? (
           <span className="mr-2">• {site.method} :</span>
         ) : (
@@ -37,23 +38,26 @@ const Accordion = ({ site, fetchChildren, isChild }) => {
       )}
     </>
         )}
-
           <span className="" key={site}>
             {getDisplayName(site.name)}
           </span>
         </span>
       </button>
-
-              {isAccordionOpen && (
-                <div>
-                    <div className="text-blue-200 dark:text-blue-900 break-all">
-                      {children.map((child) => (
-                            <Accordion site={child} fetchChildren={fetchChildren} isChild={true}/>
-                          ))}
+     {
+              isAccordionOpen && (
+                  <div>
+                    <p className="text-blue-200 dark:text-blue-900 break-all">
+                      {
+                          children.map((child) => (
+                              <Accordion site={child} fetchChildren={fetchChildren} isChild={true}/>
+                          )) 
+                      }
+                      </p>
                       </div>
-                      </div>
-              )}
+              )
+          }
       </div>
+
   );
 };
 
