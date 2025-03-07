@@ -180,7 +180,7 @@ public class PiiScanRule extends PluginPassiveScanner implements CommonPassiveSc
                 .setWascId(13); // WASC-13: Information Leakage
     }
 
-    private String getBinRecString(BinRecord binRec) {
+    private static String getBinRecString(BinRecord binRec) {
         StringBuilder recString = new StringBuilder(75);
         recString
                 .append(Constant.messages.getString(MESSAGE_PREFIX + "bin.field"))

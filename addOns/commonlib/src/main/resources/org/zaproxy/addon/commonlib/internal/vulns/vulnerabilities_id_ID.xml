@@ -417,8 +417,19 @@ Kegagalan untuk menggosok HTML/Script komentar sebelum mendorong ke lingkungan p
 Nomor versi perangkat lunak dan pesan kesalahan verbose (seperti nomor versi ASP.NET) adalah contoh konfigurasi server yang tidak semestinya. Informasi ini berguna untuk seorang penyerang dengan memberikan wawasan rinci untuk kerangka kerja, bahasa, atau pre-built fungsi yang digunakan oleh aplikasi web. Konfigurasi server paling default yang menyediakan perangkat lunak dan nomor versi verbose kesalahan pesan untuk debugging dan tujuan pemecahan masalah. Perubahan konfigurasi dapat dibuat untuk menonaktifkan fitur ini, mencegah tampilan dari informasi ini.
 
 Laman yang memberikan tanggapan berbeda berdasarkan validitas data juga dapat menyebabkan Kebocoran Informasi; khususnya ketika data dianggap rahasia sedang diungkapkan sebagai hasil dari desain aplikasi web. Contoh data sensitif termasuk (namun tidak terbatas pada): nomor rekening, pengenal pengguna (nomor lisensi Driver, nomor Paspor, Nomor Jaminan Sosial, dll.) Dan informasi khusus pengguna (kata sandi, sesi, alamat). Informasi Kebocoran dalam konteks ini berkaitan dengan pemaparan data pengguna kunci yang dianggap rahasia, atau rahasia, yang seharusnya tidak terpapar secara polos, bahkan untuk pengguna. Nomor kartu kredit dan informasi lain yang sangat diatur adalah contoh utama data pengguna yang perlu dilindungi lebih jauh dari paparan atau kebocoran bahkan dengan enkripsi dan kontrol akses yang benar.</desc>
-	<solution>Kompartemen sistem Anda untuk memiliki area "aman" dimana batas kepercayaan dapat ditarik dengan jelas. Jangan biarkan data sensitif keluar dari batas kepercayaan dan selalu berhati-hati saat berinteraksi dengan kompartemen di luar area aman.</solution>
-	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
+	<solution>
+    * Have a clear definition of which information is considered sensitive and which isn't. Take privacy laws, regulatory requirements, and business needs into account.
+    * Store sensitive data only if you have to.
+    * Implement checks for sensitive information in your devops pipeline. Steps that could be taken include stripping developer comments, removing debugging information and sensitive logs, as well as making error messages less verbose.
+    * In situations where the sensitive information must be used, for instance, backend microservices, ensure trust boundaries are appropriately drawn. Example: set up an isolated, well secured kubernetes cluster with well configured access controls, then only grant access to authorized clients.
+    * In situations where error messages need to be returned to the user, use messages that are as generic as possible eg "invalid credentials" instead of "invalid username" or "invalid password".
+    * When using third party technologies, understand how the software works, its configuration, as well as security risks of using it. After understanding the technology, use only the features that you need and disable everything else.
+    * Detailed debug messages are sometimes necessary, for instance, when adding a new feature to an application. In this case, separate the development environment from the production one. Ensure appropriate access controls are implemented for the development environments.
+    * All sensitive data should be encrypted before storage. Ensure up-to-date and strong standard algorithms, protocols, and keys are in place; use proper key management.
+</solution>
+<reference>https://portswigger.net/web-security/information-disclosure</reference>
+<reference>https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure</reference>
+<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
 <vuln_items>wasc_14</vuln_items>
@@ -967,7 +978,17 @@ Ada dua jenis proses utama yang memerlukan validasi: flow control dan logika bis
 "Flow control" mengacu pada proses multi langkah yang mengharuskan setiap langkah dilakukan dalam urutan tertentu oleh pengguna. Bila penyerang melakukan langkah yang salah atau tidak sesuai, kontrol akses mungkin dilewati dan kesalahan integritas aplikasi mungkin terjadi. Contoh proses multi langkah termasuk transfer kawat, pemulihan kata sandi, checkout pembelian, dan pendaftaran akun.
 
 "Logika bisnis" mengacu pada konteks di mana proses akan dijalankan sesuai dengan kebutuhan bisnis. Memanfaatkan kelemahan logika bisnis membutuhkan pengetahuan bisnis; Jika tidak ada pengetahuan yang dibutuhkan untuk memanfaatkannya, kemungkinan besar itu bukan kesalahan logika bisnis. Karena ini, tindakan pengamanan khas seperti pemindaian dan pengkajian kode tidak akan menemukan kelas kelemahan ini. Salah satu pendekatan pengujian ditawarkan oleh OWASP dalam Panduan Pengujian mereka.</desc>
-	<solution/>
+	<solution>Make sure that all operations within a multi-step process are either performed entirely or not at all. If one step fails, the changes made must be canceled. Fuzzing inputs is a good way to test for anomalies and to verify the results after the flow completes.
+
+Make sure the correct order of steps in the flow is enforced and that the order cannot be changed or bypassed by the user.
+
+Developers and testers must have a solid understanding of the domain that the application serves.
+
+Do not rely on implicit assumptions about how users or different application parts will behave.
+
+Identify all references to other code that interacts with each component and evaluate the possible side-effects if a malicious actor manipulates these dependencies in unexpected ways.
+
+Maintain clear code, design documents, and data flow diagrams for all transactions and workflows, noting any assumptions made at each stage and what the expected behavior is.</solution>
 	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
 	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>

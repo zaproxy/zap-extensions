@@ -52,6 +52,11 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+
+        if (!AuthUtils.isRelevantToAuth(msg)) {
+            return;
+        }
+
         Set<SessionToken> sessionTokens = AuthUtils.getRequestSessionTokens(msg);
         if (sessionTokens.isEmpty()) {
             return;

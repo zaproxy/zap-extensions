@@ -23,29 +23,40 @@ import java.awt.GridBagConstraints;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.OptionsParam;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastParam;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.LayoutHelper;
 
 /** Contains general options not specific to one OAST service. */
+@SuppressWarnings("serial")
 public class GeneralOastOptionsPanelTab extends OastOptionsPanelTab {
 
     private static final long serialVersionUID = 1L;
     private JComboBox<String> activeScanServices;
     private JCheckBox usePermanentDatabase;
+    private ZapNumberSpinner daysToKeepSpinner;
+    private JButton clearRecordsButton;
+    private ExtensionOast ext;
 
-    public GeneralOastOptionsPanelTab() {
+    public GeneralOastOptionsPanelTab(ExtensionOast ext) {
         super(Constant.messages.getString("oast.options.general.title"));
+        this.ext = ext;
         int rowIndex = -1;
         JLabel activeScanServiceLabel =
                 new JLabel(Constant.messages.getString("oast.options.activeScanService"));
         activeScanServiceLabel.setLabelFor(getActiveScanServicesComboBox());
+        JLabel daysToKeepLabel = new JLabel(Constant.messages.getString("oast.options.daysToKeep"));
+        daysToKeepLabel.setLabelFor(getDaysToKeepSpinner());
         add(
                 activeScanServiceLabel,
                 LayoutHelper.getGBC(0, ++rowIndex, GridBagConstraints.RELATIVE, 1.0, 0));
@@ -55,6 +66,15 @@ public class GeneralOastOptionsPanelTab extends OastOptionsPanelTab {
         add(
                 getUsePermanentDatabaseCheckbox(),
                 LayoutHelper.getGBC(0, ++rowIndex, GridBagConstraints.REMAINDER, 1.0, 0));
+        add(
+                daysToKeepLabel,
+                LayoutHelper.getGBC(0, ++rowIndex, GridBagConstraints.RELATIVE, 1.0, 0));
+        add(
+                getDaysToKeepSpinner(),
+                LayoutHelper.getGBC(1, rowIndex, GridBagConstraints.REMAINDER, 1.0, 0));
+        add(
+                getClearRecordsButton(),
+                LayoutHelper.getGBC(1, ++rowIndex, GridBagConstraints.REMAINDER, 1.0, 0));
         add(
                 new JLabel(),
                 LayoutHelper.getGBC(0, ++rowIndex, GridBagConstraints.REMAINDER, 1.0, 1.0));
@@ -75,6 +95,12 @@ public class GeneralOastOptionsPanelTab extends OastOptionsPanelTab {
                         .orElse(OastParam.NO_ACTIVE_SCAN_SERVICE_SELECTED_OPTION)
                         .toString());
         param.setUsePermanentDatabase(getUsePermanentDatabaseCheckbox().isSelected());
+        int prevDays = param.getDaysToKeepRecords();
+        int newDays = getDaysToKeepSpinner().getValue();
+        param.setDaysToKeepRecords(newDays);
+        if (newDays > 0 && newDays < prevDays) {
+            ext.trimDatabase(newDays);
+        }
     }
 
     private JComboBox<String> getActiveScanServicesComboBox() {
@@ -99,5 +125,33 @@ public class GeneralOastOptionsPanelTab extends OastOptionsPanelTab {
                     Constant.messages.getString("oast.options.usePermanentDatabase.tooltip"));
         }
         return usePermanentDatabase;
+    }
+
+    private ZapNumberSpinner getDaysToKeepSpinner() {
+        if (daysToKeepSpinner == null) {
+            daysToKeepSpinner = new ZapNumberSpinner(0, 45, Integer.MAX_VALUE);
+            daysToKeepSpinner.setToolTipText(
+                    Constant.messages.getString("oast.options.daysToKeep.tooltip"));
+        }
+        return daysToKeepSpinner;
+    }
+
+    private JButton getClearRecordsButton() {
+        if (clearRecordsButton == null) {
+            clearRecordsButton =
+                    new JButton(Constant.messages.getString("oast.options.clearRecords"));
+            clearRecordsButton.addActionListener(
+                    l -> {
+                        if (View.getSingleton()
+                                        .showConfirmDialog(
+                                                GeneralOastOptionsPanelTab.this,
+                                                Constant.messages.getString(
+                                                        "oast.options.clearRecords.confirm"))
+                                == JOptionPane.OK_OPTION) {
+                            ext.clearAllRecords();
+                        }
+                    });
+        }
+        return clearRecordsButton;
     }
 }

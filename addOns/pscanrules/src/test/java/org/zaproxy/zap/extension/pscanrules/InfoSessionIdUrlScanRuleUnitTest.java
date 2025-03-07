@@ -78,12 +78,8 @@ class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdU
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(200)));
-        assertThat(wasc, is(equalTo(13)));
         assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
@@ -117,6 +113,7 @@ class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdU
         assertThat(alert1.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
         assertThat(alert1.getParam(), is(equalTo("jsessionid")));
         assertThat(alert1.getEvidence(), is(equalTo("1A530637289A03B07199A44E8D531427")));
+        assertThat(alert1.getCweId(), is(equalTo(598)));
         assertThat(alert1.getAlertRef(), is(equalTo(rule.getPluginId() + "-1")));
 
         Alert alert2 = alerts.get(1);
@@ -124,12 +121,14 @@ class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdU
         assertThat(alert2.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
         assertThat(
                 alert2.getEvidence(), is(equalTo("jsessionid=1A530637289A03B07199A44E8D531427")));
+        assertThat(alert1.getCweId(), is(equalTo(598)));
         assertThat(alert2.getAlertRef(), is(equalTo(rule.getPluginId() + "-2")));
 
         Alert alert3 = alerts.get(2);
         assertThat(alert3.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertThat(alert3.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alert3.getEvidence(), is(equalTo("www.example.org")));
+        assertThat(alert1.getCweId(), is(equalTo(598)));
         assertThat(alert3.getAlertRef(), is(equalTo(rule.getPluginId() + "-3")));
     }
 
@@ -483,7 +482,7 @@ class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdU
         assertEquals(1, alertsRaised.size());
     }
 
-    private void setUpHttpSessionsParam() {
+    private static void setUpHttpSessionsParam() {
         OptionsParam options = Model.getSingleton().getOptionsParam();
         options.load(new ZapXmlConfiguration());
         HttpSessionsParam httpSessions = new HttpSessionsParam();

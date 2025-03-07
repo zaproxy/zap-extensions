@@ -41,8 +41,9 @@ import org.zaproxy.addon.encoder.EncodeDecodeOptions;
 import org.zaproxy.addon.encoder.ExtensionEncoder;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeProcessor;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
+import org.zaproxy.zap.testutils.TestUtils;
 
-public abstract class ProcessorTests<T extends EncodeDecodeProcessor> {
+public abstract class ProcessorTests<T extends EncodeDecodeProcessor> extends TestUtils {
 
     protected T processor;
 
@@ -58,7 +59,7 @@ public abstract class ProcessorTests<T extends EncodeDecodeProcessor> {
                 mock(ExtensionEncoder.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionEncoder.class)).willReturn(extEnc);
         Control.initSingletonForTesting(mock(Model.class), extensionLoader);
-        options = mock(EncodeDecodeOptions.class);
+        options = mock(EncodeDecodeOptions.class, withSettings().strictness(Strictness.LENIENT));
         given(extEnc.getOptions()).willReturn(options);
         given(options.getBase64Charset()).willReturn(EncodeDecodeOptions.DEFAULT_CHARSET);
     }

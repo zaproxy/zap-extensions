@@ -41,14 +41,15 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadataProvider;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
+import org.zaproxy.addon.pscan.PassiveScannersManager;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.testutils.TestUtils;
 
 class ActiveScriptSynchronizerUnitTest extends TestUtils {
 
-    private ExtensionPassiveScan extensionPassiveScan;
+    private ExtensionPassiveScan2 extensionPassiveScan;
     private ExtensionScript extensionScript;
     private ExtensionLoader extensionLoader;
     private Model model;
@@ -56,7 +57,7 @@ class ActiveScriptSynchronizerUnitTest extends TestUtils {
     @BeforeEach
     void setUp() throws Exception {
         setUpZap();
-        extensionPassiveScan = mock(ExtensionPassiveScan.class);
+        extensionPassiveScan = mock(ExtensionPassiveScan2.class);
         extensionScript = mock(ExtensionScript.class);
         extensionLoader = mock(ExtensionLoader.class);
         model = mock(Model.class);
@@ -175,8 +176,10 @@ class ActiveScriptSynchronizerUnitTest extends TestUtils {
             throws Exception {
         var script = mock(ScriptWrapper.class);
         given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extensionScript);
-        given(extensionLoader.getExtension(ExtensionPassiveScan.class))
+        given(extensionLoader.getExtension(ExtensionPassiveScan2.class))
                 .willReturn(extensionPassiveScan);
+        PassiveScannersManager scannersManager = mock(PassiveScannersManager.class);
+        given(extensionPassiveScan.getPassiveScannersManager()).willReturn(scannersManager);
         given(extensionScript.getInterface(script, scriptClass)).willReturn(scriptInterface);
         return script;
     }

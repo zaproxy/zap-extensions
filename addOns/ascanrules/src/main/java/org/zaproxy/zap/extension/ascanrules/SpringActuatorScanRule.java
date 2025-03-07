@@ -20,6 +20,9 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
@@ -33,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -54,11 +58,19 @@ public class SpringActuatorScanRule extends AbstractHostPlugin implements Common
                     "application\\/vnd\\.spring-boot\\.actuator\\.v[0-9]\\+json|application\\/json",
                     Pattern.MULTILINE);
     private static final Pattern JSON_PAYLOAD = Pattern.compile("\\{.*\\:.*\\}", Pattern.MULTILINE);
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
-                    CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                                CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
+                                CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE));
+        alertTags.put(PolicyTag.API.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public boolean targets(TechSet technologies) {
@@ -140,7 +152,9 @@ public class SpringActuatorScanRule extends AbstractHostPlugin implements Common
                             CONTENT_TYPE.matcher(contentType).find()
                                     && JSON_PAYLOAD.matcher(responseBody).find();
                     if (matches) {
-                        raiseAlert(testMsg, Alert.CONFIDENCE_MEDIUM, getRisk());
+                        createAlert(testMsg.getResponseBody().toString())
+                                .setMessage(testMsg)
+                                .raise();
                         break;
                     }
                 }
@@ -196,15 +210,17 @@ public class SpringActuatorScanRule extends AbstractHostPlugin implements Common
         return null;
     }
 
-    private void raiseAlert(HttpMessage msg, int confidence, int risk) {
-        newAlert()
-                .setRisk(risk)
-                .setConfidence(confidence)
+    private AlertBuilder createAlert(String evidence) {
+        return newAlert()
+                .setRisk(getRisk())
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setName(getAlertName())
-                .setEvidence(msg.getResponseHeader().getPrimeHeader())
                 .setReference(getReference())
-                .setMessage(msg)
-                .setEvidence(StringUtils.left(msg.getResponseBody().toString(), 100))
-                .raise();
+                .setEvidence(StringUtils.left(evidence, 100));
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("{\"status\" : \"UP\"}").build());
     }
 }

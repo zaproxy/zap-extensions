@@ -32,10 +32,13 @@ import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -60,7 +63,7 @@ class RemoteFileIncludeScanRuleUnitTest extends ActiveScannerTest<RemoteFileIncl
         // Then
         assertThat(cwe, is(equalTo(98)));
         assertThat(wasc, is(equalTo(5)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(9)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -70,6 +73,12 @@ class RemoteFileIncludeScanRuleUnitTest extends ActiveScannerTest<RemoteFileIncl
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.SEQUENCE.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
@@ -123,8 +132,10 @@ class RemoteFileIncludeScanRuleUnitTest extends ActiveScannerTest<RemoteFileIncl
         assertThat(alertsRaised, hasSize(1));
     }
 
-    @Test
-    void shouldRaiseAlertIfResponseHasRemoteFileContent() throws HttpMalformedHeaderException {
+    @ParameterizedTest
+    @ValueSource(strings = {"Google", "ZAP - Google Search"})
+    void shouldRaiseAlertIfResponseHasRemoteFileContent(String title)
+            throws HttpMalformedHeaderException {
         // Given
         this.nano.addHandler(
                 new NanoServerHandler("/") {
@@ -136,7 +147,7 @@ class RemoteFileIncludeScanRuleUnitTest extends ActiveScannerTest<RemoteFileIncl
                                     newFixedLengthResponse(
                                             NanoHTTPD.Response.Status.OK,
                                             NanoHTTPD.MIME_HTML,
-                                            "<html><title>Google</title></html>");
+                                            "<html><title>" + title + "</title></html>");
                             return response;
                         }
                         String response = "<html><body></body></html>";
@@ -148,6 +159,36 @@ class RemoteFileIncludeScanRuleUnitTest extends ActiveScannerTest<RemoteFileIncl
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(1));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {"My internship at Google", "My ZAP GSoC Project via Google", "ZAP+Google"})
+    void shouldNotRaiseAlertIfResponseHasTitleSuperStringContainingWordGoogle(String title)
+            throws HttpMalformedHeaderException {
+        // Given
+        this.nano.addHandler(
+                new NanoServerHandler("/") {
+                    @Override
+                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                        String file = getFirstParamValue(session, "file");
+                        if (file != null && file.length() > 1) {
+                            Response response =
+                                    newFixedLengthResponse(
+                                            NanoHTTPD.Response.Status.OK,
+                                            NanoHTTPD.MIME_HTML,
+                                            "<html><title>" + title + "</title></html>");
+                            return response;
+                        }
+                        String response = "<html><body></body></html>";
+                        return newFixedLengthResponse(response);
+                    }
+                });
+        rule.init(getHttpMessage("/?file=a"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test

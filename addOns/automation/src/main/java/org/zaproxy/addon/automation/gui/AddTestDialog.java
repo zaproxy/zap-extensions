@@ -25,8 +25,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.AutomationEventPublisher;
 import org.zaproxy.addon.automation.AutomationJob;
-import org.zaproxy.addon.automation.jobs.ActiveScanJob;
-import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationAlertTest;
 import org.zaproxy.addon.automation.tests.AutomationMonitorTest;
@@ -60,7 +58,7 @@ public class AddTestDialog extends StandardFieldsDialog {
         }
         testNames.add(Constant.messages.getString(URL_PRESENCE_TEST_NAME));
 
-        if (job instanceof PassiveScanWaitJob || job instanceof ActiveScanJob) {
+        if (job.supportsAlertTests()) {
             testNames.add(Constant.messages.getString(ALERT_TEST_NAME));
         }
 

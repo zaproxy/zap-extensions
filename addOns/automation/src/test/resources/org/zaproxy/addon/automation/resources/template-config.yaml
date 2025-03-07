@@ -9,13 +9,19 @@ env:                                   # The environment, mandatory
   parameters:
     failOnError: true                  # If set exit on an error         
     failOnWarning: false               # If set exit on a warning
+    continueOnFailure: false           # Continue running all jobs, even if one fails
     progressToStdout: true             # If set will write job progress to stdout
 
 jobs:
-
-  - type: passiveScan-config
-    name: passiveScan-config
+  - type: activeScan-config
+    name: activeScan-config
     parameters:
+
+  - type: activeScan-policy
+    name: activeScan-policy
+    parameters:
+      name: 
+
 
   - type: requestor
     name: requestor
@@ -28,13 +34,12 @@ jobs:
     name: delay
     parameters:
 
-  - type: passiveScan-wait
-    name: passiveScan-wait
-    parameters:
-      maxDuration: 0
-
   - type: activeScan
     name: activeScan
     parameters:
       context: 
+
+  - type: exitStatus
+    name: exitStatus
+    parameters:
 

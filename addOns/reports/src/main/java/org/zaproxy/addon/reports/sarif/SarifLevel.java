@@ -57,7 +57,10 @@ public enum SarifLevel {
         this.alertRisk = alertRisk;
     }
 
-    public static SarifLevel fromAlertRisk(int alertRisk) {
+    public static SarifLevel fromAlertRisk(int alertRisk, int alertConfidence) {
+        if (alertConfidence == Alert.CONFIDENCE_FALSE_POSITIVE) {
+            return NONE;
+        }
         for (SarifLevel level : values()) {
             if (level.alertRisk == alertRisk) {
                 return level;

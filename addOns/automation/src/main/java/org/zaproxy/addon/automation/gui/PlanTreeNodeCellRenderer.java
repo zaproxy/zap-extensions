@@ -83,6 +83,9 @@ public class PlanTreeNodeCellRenderer extends DefaultTreeCellRenderer {
                 case RUNNING:
                     this.setIcon(AutomationPanel.YELLOW_BALL_ICON);
                     break;
+                case NOT_ENABLED:
+                    this.setIcon(AutomationPanel.GREY_BALL_ICON);
+                    break;
                 default:
                     break;
             }

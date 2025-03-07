@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -35,6 +37,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.timing.TimingUtils;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
@@ -50,11 +53,22 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin implements CommonA
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.sstiblind.";
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION,
-                    CommonAlertTag.WSTG_V42_INPV_18_SSTI);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION,
+                                CommonAlertTag.WSTG_V42_INPV_18_SSTI));
+        alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
+        alertTags.put(PolicyTag.API.getTag(), "");
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static final String SECONDS_PLACEHOLDER = "X_SECONDS_X";
 
@@ -222,8 +236,8 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin implements CommonA
      * Check if the given payloadFormat causes an time delay in the server
      *
      * @param paramName the name of the parameter where to search for or injection
-     * @param payloadFormat format string that when formated with 1 argument makes a string that may
-     *     cause a delay equal to the number of second inserted by the format
+     * @param payloadFormat format string that when formatted with 1 argument makes a string that
+     *     may cause a delay equal to the number of second inserted by the format
      */
     private boolean checkIfCausesTimeDelay(String paramName, String payloadFormat) {
         AtomicReference<HttpMessage> message = new AtomicReference<>();

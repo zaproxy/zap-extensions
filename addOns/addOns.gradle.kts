@@ -18,11 +18,11 @@ import org.zaproxy.gradle.crowdin.CrowdinExtension
 plugins {
     eclipse
     jacoco
-    id("org.cyclonedx.bom") version "1.8.2" apply false
+    id("org.cyclonedx.bom") version "2.2.0" apply false
     id("org.rm3l.datanucleus-gradle-plugin") version "2.0.0" apply false
-    id("org.zaproxy.add-on") version "0.11.0" apply false
-    id("org.zaproxy.crowdin") version "0.4.0" apply false
-    id("me.champeau.gradle.japicmp") version "0.4.3" apply false
+    id("org.zaproxy.add-on") version "0.13.1" apply false
+    id("org.zaproxy.crowdin") version "0.6.0" apply false
+    id("me.champeau.gradle.japicmp") version "0.4.6" apply false
 }
 
 description = "Common configuration of the add-ons."
@@ -131,9 +131,11 @@ subprojects {
     }
 
     tasks.withType<JavaCompile>().configureEach {
+        val lintFlags = mutableListOf("-processing")
         if (JavaVersion.current().getMajorVersion() >= "21") {
-            options.compilerArgs = options.compilerArgs + "-Xlint:-this-escape"
+            lintFlags.add("-this-escape")
         }
+        options.compilerArgs = options.compilerArgs + "-Xlint:${lintFlags.joinToString(",")}"
     }
 
     tasks.named<JacocoReport>("jacocoTestReport") {
@@ -148,6 +150,11 @@ subprojects {
             exclude(group = "org.apache.logging.log4j", module = "log4j-1.2-api")
         }
 
+        "runtimeClasspath" {
+            exclude(group = "org.apache.logging.log4j", module = "log4j-core")
+            exclude(group = "org.apache.logging.log4j", module = "log4j-api")
+        }
+
         val zapAddOn by creating
 
         "compileOnly" {
@@ -159,7 +166,7 @@ subprojects {
         }
     }
 
-    val zapGav = "org.zaproxy:zap:2.15.0"
+    val zapGav = "org.zaproxy:zap:2.16.0"
     dependencies {
         "zap"(zapGav)
     }
@@ -172,7 +179,7 @@ subprojects {
         )
 
         manifest {
-            zapVersion.set("2.15.0")
+            zapVersion.set("2.16.0")
 
             changesFile.set(tasks.named<ConvertMarkdownToHtml>("generateManifestChanges").flatMap { it.html })
             repo.set("https://github.com/zaproxy/zap-extensions/")

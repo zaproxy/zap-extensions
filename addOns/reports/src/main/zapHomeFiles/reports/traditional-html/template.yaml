@@ -6,3 +6,4 @@ sections:
  - alertcount
  - instancecount
  - alertdetails
+ - sequencedetails

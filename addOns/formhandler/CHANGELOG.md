@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [6.7.0] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Depend on Common Library add-on, to provide the default/custom values to the other add-ons (Issue 8016).
+
+### Fixed
+- Fixed an issue in the help which may cause images to be displayed inline impacting the flow of the text.
+
 ## [6.6.0] - 2024-05-07
 ### Changed
 - Update minimum ZAP version to 2.15.0.
@@ -78,6 +86,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[6.7.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.7.0
 [6.6.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.6.0
 [6.5.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.5.0
 [6.4.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.4.0

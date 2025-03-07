@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Supplier;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Element;
@@ -77,36 +78,42 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER =
             () -> DEFAULT_PAYLOADS;
 
+    // https://github.com/antlr/grammars-v4/blob/c82c128d980f4ce46fb3536f87b06b45b9619922/javascript/javascript/JavaScriptLexer.g4#L49-L50
+    private static final Pattern JS_MULTILINE_COMMENT =
+            Pattern.compile("/\\*.*?\\*/", Pattern.DOTALL);
+    private static final Pattern JS_SINGLELINE_COMMENT = Pattern.compile("//.*");
+
     private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
 
     private List<Pattern> patterns = null;
 
+    private static List<String> getJsComments(String content) {
+        List<String> results = new ArrayList<>();
+        JS_SINGLELINE_COMMENT
+                .matcher(content)
+                .results()
+                .map(MatchResult::group)
+                .forEach(results::add);
+        JS_MULTILINE_COMMENT
+                .matcher(content)
+                .results()
+                .map(MatchResult::group)
+                .forEach(results::add);
+        return results;
+    }
+
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
-        List<Pattern> patterns = getPatterns();
+        patterns = getPatterns();
         Map<String, List<AlertSummary>> alertMap = new HashMap<>();
 
-        if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
+        if (msg.getResponseBody().length() > 0
+                && msg.getResponseHeader().isText()
+                && !ResourceIdentificationUtils.isFont(msg)) {
 
             if (ResourceIdentificationUtils.isJavaScript(msg)) {
-                // Just treat as text
-                String[] lines = msg.getResponseBody().toString().split("\n");
-                for (String line : lines) {
-                    for (Pattern pattern : patterns) {
-                        Matcher m = pattern.matcher(line);
-                        if (m.find()) {
-                            recordAlertSummary(
-                                    alertMap,
-                                    new AlertSummary(
-                                            pattern.toString(),
-                                            line,
-                                            Alert.CONFIDENCE_LOW,
-                                            m.group()));
-                            break; // Only need to record this line once
-                        }
-                    }
-                }
+                checkJsComments(patterns, alertMap, msg.getResponseBody().toString());
             } else {
                 // Can use the parser
 
@@ -132,20 +139,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                 Element el;
                 int offset = 0;
                 while ((el = source.getNextElement(offset, HTMLElementName.SCRIPT)) != null) {
-                    for (Pattern pattern : patterns) {
-                        String elStr = el.toString();
-                        Matcher m = pattern.matcher(elStr);
-                        if (m.find()) {
-                            recordAlertSummary(
-                                    alertMap,
-                                    new AlertSummary(
-                                            pattern.toString(),
-                                            elStr,
-                                            Alert.CONFIDENCE_LOW,
-                                            m.group()));
-                            break; // Only need to record this script once
-                        }
-                    }
+                    checkJsComments(patterns, alertMap, el.toString());
                     offset = el.getEnd();
                 }
             }
@@ -174,12 +168,38 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         }
     }
 
+    private static void checkJsComments(
+            List<Pattern> patterns, Map<String, List<AlertSummary>> alertMap, String target) {
+        if (!isGoodCandidate(target)) {
+            return;
+        }
+        for (String candidate : getJsComments(target)) {
+            for (Pattern pattern : patterns) {
+                Matcher m = pattern.matcher(candidate);
+                if (m.find()) {
+                    recordAlertSummary(
+                            alertMap,
+                            new AlertSummary(
+                                    pattern.toString(),
+                                    candidate,
+                                    Alert.CONFIDENCE_LOW,
+                                    m.group()));
+                    return;
+                }
+            }
+        }
+    }
+
+    private static boolean isGoodCandidate(String target) {
+        return target.contains("//") || target.contains("/*");
+    }
+
     private static void recordAlertSummary(
             Map<String, List<AlertSummary>> alertMap, AlertSummary summary) {
         alertMap.computeIfAbsent(summary.getPattern(), k -> new ArrayList<>()).add(summary);
     }
 
-    private String truncateString(String str) {
+    private static String truncateString(String str) {
         if (str.length() > MAX_ELEMENT_CHRS_TO_REPORT) {
             return str.substring(0, MAX_ELEMENT_CHRS_TO_REPORT);
         }
@@ -188,13 +208,14 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
 
     private AlertBuilder createAlert(String detail, int confidence, String evidence) {
         return newAlert()
-                .setRisk(getRisk())
+                .setRisk(Alert.RISK_INFO)
                 .setConfidence(confidence)
-                .setDescription(getDescription())
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(detail)
-                .setSolution(getSolution())
-                .setCweId(getCweId())
-                .setWascId(getWascId())
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
+                // CWE-615: Inclusion of Sensitive Information in Source Code Comments
+                .setCweId(615)
+                .setWascId(13) // WASC Id - Info leakage
                 .setEvidence(evidence);
     }
 
@@ -205,7 +226,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         return patterns;
     }
 
-    private List<Pattern> initPatterns() {
+    private static List<Pattern> initPatterns() {
         List<Pattern> targetPatterns = new ArrayList<>();
         for (String payload : payloadProvider.get()) {
             targetPatterns.add(compilePayload(payload));
@@ -213,7 +234,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         return targetPatterns;
     }
 
-    private Pattern compilePayload(String payload) {
+    private static Pattern compilePayload(String payload) {
         return Pattern.compile("\\b" + payload + "\\b", Pattern.CASE_INSENSITIVE);
     }
 
@@ -221,34 +242,14 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         payloadProvider = provider == null ? DEFAULT_PAYLOAD_PROVIDER : provider;
     }
 
-    public int getRisk() {
-        return Alert.RISK_INFO;
-    }
-
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public int getCweId() {
-        return 200; // CWE Id 200 - Information Exposure
-    }
-
-    public int getWascId() {
-        return 13; // WASC Id - Info leakage
     }
 
     @Override

@@ -49,9 +49,10 @@ Skips responses that contain ISO control characters (those which are likely bina
 At HIGH Threshold don’t alert on HTTP 500 (but do for other error patterns). Also, such known error strings are much less likely to be relevant in static pages like JS / CSS so these files are only scanned at LOW threshold.<br>
 For Internal Server Error (HTTP 500) the Alert is set to Low risk and in other case it is set to Medium risk.
 
-<p><strong>Note:</strong> If the Custom Payloads addon is installed you can add your own Application Error strings (payloads) in the Custom Payloads options panel. 
+<p><strong>Note:</strong> If the Custom Payloads add-on is installed you can add your own Application Error strings (payloads) in the Custom Payloads options panel. 
 They will also be searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the 
-amount of time needed to passively scan.
+amount of time needed to passively scan.<br>
+The Custom Payloads category for this rule is: <code>Application-Errors</code>.
 <p>It is also possible to add patterns to the <code>xml/application_errors.xml</code> file in ZAP's user directory.<br>
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ApplicationErrorScanRule.java">ApplicationErrorScanRule.java</a>
@@ -213,7 +214,13 @@ Any FORMs with a name or ID that matches one of these identifiers will be ignore
 Only use this feature to ignore FORMs that you know are safe, for example search forms.
 Form element names are sorted and de-duplicated when they are printed in the ZAP Report.
 <br>
-Note: The rule also takes into account the Partial match setting within the Anti-CSRF Options.
+Note:
+<ul>
+    <li>The rule also takes into account the Partial match setting within the Anti-CSRF Options.</li>
+    <li>Forms submitted via GET are only evaluated at Low Threshold.</li>
+</ul>
+
+<p>]
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CsrfCountermeasuresScanRule.java">CsrfCountermeasuresScanRule.java</a>
 <br>
@@ -228,9 +235,14 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10033/">10033</a>.
 
 <H2 id="id-10097">Hash Disclosure</H2>
 Passively scans for password hashes disclosed by the web server. <br>
-Various formats are including, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes.
+Various formats are included, including some formats such as MD4, MD5, and SHA*, which are sometimes used for purposes other than to contain password hashes.
 <br>
-<strong>Note:</strong> This scan rule will only analyze JavaScript responses on LOW Threshold. 
+<strong>Note:</strong>
+<ul>
+    <li>This scan rule will only analyze text responses, and only analyze JavaScript responses on LOW Threshold.<li>
+    <li>The selection of Hash patterns which are evaluated is tied to the Confidence we have in the pattern and the Threshold set for the scan rule.
+        In other words: Low confidence patterns will only be included for evaluation at Low Threshold, etc.</li>
+</ul> 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/HashDisclosureScanRule.java">HashDisclosureScanRule.java</a>
 <br>
@@ -299,7 +311,8 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10025/">10025</a>.
 <H2 id="id-10027">Information Disclosure: Suspicious Comments</H2>
 Analyzes web content to identify comments which contain potentially sensitive details. Which may lead to 
 further attack or exposure of unintended data.
-<p><strong>Note:</strong> The strings to look for can be extended by using the Custom Payloads addon.
+<p><strong>Note:</strong> The strings to look for can be extended by using the Custom Payloads add-on.<br>
+The Custom Payloads category for this rule is: <code>Suspicious-Comments</code>.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InformationDisclosureSuspiciousCommentsScanRule.java">InformationDisclosureSuspiciousCommentsScanRule.java</a>
 <br>
@@ -377,6 +390,8 @@ such as vp09.02.51.10.01.09.16, where the latter 4 octets appear to be a RFC 191
 After review an analyst can mark such alerts as False Positives in ZAP. For handling during 
 repeated scans the "Context Alert Filters" add-on could be leveraged.
 <p>
+This scan rule will only analyze text responses. 
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InfoPrivateAddressDisclosureScanRule.java">InfoPrivateAddressDisclosureScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/2/">2</a>.
@@ -397,6 +412,28 @@ At HIGH threshold it will only report links that use the "_blank" target.<br>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/LinkTargetScanRule.java">LinkTargetScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10108/">10108</a>.
+
+<H2 id="id-10115">Script Served From Malicious Domain (polyfill)</H2>
+This checks for scripts being served from one of the 'polyfill' domains, which are known to have been compromised.<br>
+It will raise an alert with a High confidence if a script is loaded from one of the malicious domains, 
+and a Low confidence if it just finds an apparent reference to one of the malicious domains in the script contents.
+<p>
+The known malicious 'polyfill' domains are:
+<ul>
+<li>polyfill.io</li>
+<li>bootcdn.net</li>
+<li>bootcss.com</li>
+<li>staticfile.net</li>
+<li>staticfile.org</li>
+<li>unionadjs.com</li>
+<li>xhsbpza.com</li>
+<li>union.macoms.la</li>
+<li>newcrbpc.com</li>
+</ul>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/PolyfillCdnScriptScanRule.java">PolyfillCdnScriptScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10115/">10115</a>.
 
 <H2 id="id-10037">Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)</H2>
 This checks response headers for the presence of X-Powered-By details.
@@ -440,6 +477,7 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10035/">10035</a>.
 <H2 id="id-10096">Timestamp Disclosure</H2>
 A timestamp was disclosed by the application/web server.<br>
 At HIGH threshold this rule does not alert on potential timestamps that are not within a range of plus or minus one year.<br>
+At HIGH threshold this rule ignores timestamps in JavaScript files.<br>
 At MEDIUM threshold this rule does not alert on potential timestamps beyond 10 years.<br>
 At all thresholds, this rule will not alert on timestamps beyond the Y2038 epoch edge.<br>
 
@@ -471,10 +509,13 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10043/">10043</a>.
 
 <H2 id="id-10057">Username Hash Found</H2>
 If any context contains defined users this scan rule checks all responses for the presence of hashed values representing those usernames.
-<p><strong>Note:</strong> If the Custom Payloads addon is installed you can add your own Username strings (payloads) in the Custom Payloads options panel. 
+<p><strong>Note:</strong> If the Custom Payloads add-on is installed you can add your own Username strings (payloads) in the Custom Payloads options panel. 
 They will also be hashed and searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the 
 amount of time needed to passively scan. (The default payloads are "Admin" and "admin".)<br>
+The Custom Payloads category for this rule is: <code>Username-Idor</code>.<br>
 <p>Discovery of any such value may represent an Insecure Direct Object Reference (IDOR) vulnerability. Alerts are only raised as informational items as further manual testing is required in order to confirm and assess impact.
+<p>
+This scan rule will only analyze text responses. 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/UsernameIdorScanRule.java">UsernameIdorScanRule.java</a>
 <br>

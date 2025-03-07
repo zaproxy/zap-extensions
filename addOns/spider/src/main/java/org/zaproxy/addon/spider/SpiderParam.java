@@ -55,7 +55,7 @@ public class SpiderParam extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 2;
+    private static final int CURRENT_CONFIG_VERSION = 3;
 
     /**
      * The key for the version of the configurations.
@@ -78,9 +78,6 @@ public class SpiderParam extends VersionedAbstractParam {
 
     /** The Constant SPIDER_SKIP_URL. */
     private static final String SPIDER_SKIP_URL = "spider.skipurl";
-
-    /** The Constant SPIDER_REQUEST_WAIT. */
-    private static final String SPIDER_REQUEST_WAIT = "spider.requestwait";
 
     /** The Constant SPIDER_PARSE_COMMENTS. */
     private static final String SPIDER_PARSE_COMMENTS = "spider.parseComments";
@@ -148,7 +145,7 @@ public class SpiderParam extends VersionedAbstractParam {
      *
      * @see #maxParseSizeBytes
      */
-    private static final int DEFAULT_MAX_PARSE_SIZE_BYTES = 2621440; // 2.5 MiB
+    public static final int DEFAULT_MAX_PARSE_SIZE_BYTES = 2621440; // 2.5 MiB
 
     private ExtensionHttpSessions extensionHttpSessions;
 
@@ -213,9 +210,6 @@ public class SpiderParam extends VersionedAbstractParam {
      * if the forms are not processed at all (processForm).
      */
     private boolean postForm = true;
-
-    /** The waiting time between new requests to server - safe from DDOS. */
-    private int requestWait = 200;
 
     /** Which urls are skipped. */
     private String skipURL = "";
@@ -334,8 +328,6 @@ public class SpiderParam extends VersionedAbstractParam {
             getConfig().setProperty(SPIDER_POST_FORM, String.valueOf(postForm));
         }
 
-        this.requestWait = getInt(SPIDER_REQUEST_WAIT, 200);
-
         this.parseComments = getBoolean(SPIDER_PARSE_COMMENTS, true);
 
         this.parseRobotsTxt = getBoolean(SPIDER_PARSE_ROBOTS_TXT, true);
@@ -378,13 +370,17 @@ public class SpiderParam extends VersionedAbstractParam {
                 setIrrelevantParameters(
                         Collections.singletonList(
                                 new IrrelevantParameter(Pattern.compile("utm_.*"))));
-                // Fallthrough
+            // Fallthrough
             case 1:
                 if (getInt(SPIDER_THREAD, 2) == 2) {
                     // the old default
                     this.setThreadCount(Constants.getDefaultThreadCount());
                 }
+            // Fallthrough
+            case 2:
+                getConfig().clearProperty("spider.requestwait");
                 break;
+
             default:
         }
     }
@@ -568,25 +564,6 @@ public class SpiderParam extends VersionedAbstractParam {
         skipURL = skipURL.replaceAll("\\*", ".*?").replaceAll("(\\s+$)|(^\\s+)", "");
         skipURL = "\\A(" + skipURL.replaceAll("\\s+", "|") + ")";
         patternSkipURL = Pattern.compile(skipURL, Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-    }
-
-    /**
-     * Gets the time between the requests sent to a server.
-     *
-     * @return the request wait time
-     */
-    public int getRequestWaitTime() {
-        return requestWait;
-    }
-
-    /**
-     * Sets the time between the requests sent to a server.
-     *
-     * @param requestWait the new request wait time
-     */
-    public void setRequestWaitTime(int requestWait) {
-        this.requestWait = requestWait;
-        this.getConfig().setProperty(SPIDER_REQUEST_WAIT, Integer.toString(requestWait));
     }
 
     /**

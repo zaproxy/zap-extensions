@@ -34,9 +34,9 @@ public class ImportJobDialog extends StandardFieldsDialog {
     private static final long serialVersionUID = 1L;
 
     private static final String TITLE = "exim.automation.import.dialog.title";
-    private static final String NAME_PARAM = "exim.automation.import.dialog.name";
-    private static final String TYPE_PARAM = "exim.automation.import.dialog.type";
-    private static final String FILE_NAME_PARAM = "exim.automation.import.dialog.filename";
+    private static final String NAME_PARAM = "exim.automation.dialog.name";
+    private static final String TYPE_PARAM = "exim.automation.dialog.type";
+    private static final String FILE_NAME_PARAM = "exim.automation.dialog.filename";
 
     private ImportJob job;
 

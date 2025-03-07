@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -139,13 +141,13 @@ public class ReportJob extends AutomationJob {
 
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
-        ReportData reportData = new ReportData();
 
         String templateName = this.getParameters().getTemplate();
         if (StringUtils.isEmpty(templateName)) {
             templateName = ReportParam.DEFAULT_TEMPLATE;
         }
         Template template = getExtReport().getTemplateByConfigName(templateName);
+        ReportData reportData = new ReportData(templateName);
 
         if (template == null) {
             progress.error(
@@ -441,6 +443,8 @@ public class ReportJob extends AutomationJob {
         return data;
     }
 
+    @Getter
+    @Setter
     public static class Data extends JobData {
         private Parameters parameters;
         private List<String> risks;
@@ -452,111 +456,17 @@ public class ReportJob extends AutomationJob {
             super(job);
             this.parameters = parameters;
         }
-
-        public Parameters getParameters() {
-            return parameters;
-        }
-
-        public List<String> getRisks() {
-            return risks;
-        }
-
-        public void setRisks(List<String> risks) {
-            this.risks = risks;
-        }
-
-        public List<String> getConfidences() {
-            return confidences;
-        }
-
-        public void setConfidences(List<String> confidences) {
-            this.confidences = confidences;
-        }
-
-        public List<String> getSections() {
-            return sections;
-        }
-
-        public void setSections(List<String> sections) {
-            this.sections = sections;
-        }
-
-        public List<String> getSites() {
-            return sites;
-        }
-
-        public void setSites(List<String> sites) {
-            this.sites = sites;
-        }
-
-        public void setParameters(Parameters parameters) {
-            this.parameters = parameters;
-        }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
-        private String template;
-        private String theme;
-        private String reportDir;
-        private String reportFile;
-        private String reportTitle;
-        private String reportDescription;
-        private Boolean displayReport;
-
-        public String getTemplate() {
-            return template;
-        }
-
-        public void setTemplate(String template) {
-            this.template = template;
-        }
-
-        public String getTheme() {
-            return theme;
-        }
-
-        public void setTheme(String theme) {
-            this.theme = theme;
-        }
-
-        public String getReportDir() {
-            return reportDir;
-        }
-
-        public void setReportDir(String reportDir) {
-            this.reportDir = reportDir;
-        }
-
-        public String getReportFile() {
-            return reportFile;
-        }
-
-        public void setReportFile(String reportFile) {
-            this.reportFile = reportFile;
-        }
-
-        public String getReportTitle() {
-            return reportTitle;
-        }
-
-        public void setReportTitle(String reportTitle) {
-            this.reportTitle = reportTitle;
-        }
-
-        public String getReportDescription() {
-            return reportDescription;
-        }
-
-        public void setReportDescription(String reportDescription) {
-            this.reportDescription = reportDescription;
-        }
-
-        public Boolean getDisplayReport() {
-            return displayReport;
-        }
-
-        public void setDisplayReport(Boolean displayReport) {
-            this.displayReport = displayReport;
-        }
+        private String template = ReportParam.DEFAULT_TEMPLATE;
+        private String theme = "";
+        private String reportDir = "";
+        private String reportFile = ReportParam.DEFAULT_NAME_PATTERN;
+        private String reportTitle = "";
+        private String reportDescription = "";
+        private Boolean displayReport = false;
     }
 }

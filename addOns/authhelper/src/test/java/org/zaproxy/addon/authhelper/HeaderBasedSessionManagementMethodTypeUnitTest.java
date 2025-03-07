@@ -88,7 +88,7 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
         map.put("token2", new SessionToken(SessionToken.ENV_SOURCE, "token2", "-value2-"));
         map.put("token3", new SessionToken(SessionToken.ENV_SOURCE, "token3", "-value3-"));
         // When
-        String res = HeaderBasedSessionManagementMethod.replaceTokens(baseString, map);
+        String res = HeaderBasedSessionManagementMethod.replaceTokens(0, "", baseString, map);
         // Then
         assertThat(res, is(equalTo("Prefix-value1-middle-value2-Postfix")));
     }
@@ -101,9 +101,21 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
         map.put("token1", new SessionToken(SessionToken.ENV_SOURCE, "token1", "-value1-"));
         map.put("token3", new SessionToken(SessionToken.ENV_SOURCE, "token3", "-value3-"));
         // When
-        String res = HeaderBasedSessionManagementMethod.replaceTokens(baseString, map);
+        String res = HeaderBasedSessionManagementMethod.replaceTokens(0, "", baseString, map);
         // Then
         assertThat(res, is(equalTo("Prefix-value1-middle{%token2%}Postfix")));
+    }
+
+    @Test
+    void shouldReplaceRecordedToken() throws Exception {
+        // Given
+        String baseString = "Prefix{%token1%}Postfix";
+        Map<String, SessionToken> map = new HashMap<>();
+        AuthUtils.recordRequestSessionToken(1, "token1", "-value1-");
+        // When
+        String res = HeaderBasedSessionManagementMethod.replaceTokens(1, "token1", baseString, map);
+        // Then
+        assertThat(res, is(equalTo("Prefix-value1-Postfix")));
     }
 
     @Test

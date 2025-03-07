@@ -193,6 +193,14 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
     }
 
     @Override
+    public void scan() {
+        if (isClientError(getBaseMsg()) || isServerError(getBaseMsg())) {
+            return;
+        }
+        super.scan();
+    }
+
+    @Override
     public void scan(HttpMessage msg, NameValuePair originalParam) {
         /*
          * Scan everything _except_ URL path parameters.
@@ -210,7 +218,6 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
      */
     @Override
     public void scan(HttpMessage originalmsg, String paramname, String paramvalue) {
-
         // for the purposes of our logic, we can handle a NULL parameter as an empty string. Saves
         // on NPEs.
         if (paramvalue == null) paramvalue = "";
@@ -235,7 +242,8 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
             // to see if a placebo attack has the same effect
             // the parameter will be the same length as the actual attack, but will contain purely
             // alphanumeric characters
-            String placeboAttack = RandomStringUtils.randomAlphanumeric(errorAttack.length());
+            String placeboAttack =
+                    RandomStringUtils.secure().nextAlphanumeric(errorAttack.length());
             HttpMessage placeboAttackMsg = getNewMsg();
             this.setParameter(placeboAttackMsg, paramname, placeboAttack);
             sendAndReceive(placeboAttackMsg);
@@ -279,7 +287,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
             // in output substantially DIFFERENT to the original
             // get a random parameter value the same length as the original!
             String randomparameterAttack =
-                    RandomStringUtils.random(paramvalue.length(), RANDOM_PARAMETER_CHARS);
+                    RandomStringUtils.secure().next(paramvalue.length(), RANDOM_PARAMETER_CHARS);
             LOGGER.debug("The random parameter chosen was [{}]", randomparameterAttack);
 
             HttpMessage randomParamMsg1 = getNewMsg();

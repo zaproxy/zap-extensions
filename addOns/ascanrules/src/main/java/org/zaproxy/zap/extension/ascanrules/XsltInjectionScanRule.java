@@ -21,7 +21,10 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import org.apache.commons.httpclient.URIException;
@@ -33,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 /**
  * Active scan rule which checks for signs of XSLT injection vulnerabilities with requests
@@ -124,10 +128,23 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin
     }
 
     private static final Logger LOGGER = LogManager.getLogger(XsltInjectionScanRule.class);
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION));
+        alertTags.put(PolicyTag.API.getTag(), "");
+        alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     // used to check against the attack strength
     private int requestsSent = 0;
@@ -184,12 +201,9 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin
                         }
 
                         if (raiseAlert) {
-                            raiseAlert(
-                                    msg,
-                                    param,
-                                    payload,
-                                    evidence,
-                                    checkType.getResourceIdentifier());
+                            createAlert(param, payload, evidence, checkType.getResourceIdentifier())
+                                    .setMessage(msg)
+                                    .raise();
                             return true;
                         }
                     }
@@ -242,20 +256,14 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin
                 MESSAGE_PREFIX + resourceIdentifier + ".otherinfo", param);
     }
 
-    private void raiseAlert(
-            HttpMessage msg,
-            String param,
-            String attack,
-            String evidence,
-            String resourceIdentifier) {
-        newAlert()
+    private AlertBuilder createAlert(
+            String param, String attack, String evidence, String resourceIdentifier) {
+        return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setParam(param)
                 .setAttack(attack)
                 .setOtherInfo(getOtherInfo(resourceIdentifier, evidence))
-                .setEvidence(evidence)
-                .setMessage(msg)
-                .raise();
+                .setEvidence(evidence);
     }
 
     @Override
@@ -306,5 +314,16 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin
     @Override
     public int getRisk() {
         return Alert.RISK_MEDIUM;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert(
+                                "foo",
+                                XSLTInjectionType.ERROR.getPayloads(null)[0],
+                                XSLTInjectionType.ERROR.getEvidences()[1],
+                                XSLTInjectionType.ERROR.getResourceIdentifier())
+                        .build());
     }
 }

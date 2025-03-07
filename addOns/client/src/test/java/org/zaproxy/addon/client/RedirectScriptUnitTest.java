@@ -36,9 +36,6 @@ import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 /** Unit test for {@link RedirectScript}. */
 class RedirectScriptUnitTest {
 
-    private static final String DISABLE_CLIENT_SCRIPT =
-            "localStorage.setItem('localzapenable',false)";
-
     private TestWebDriver wd;
     private SeleniumScriptUtils ssutils;
     private ClientIntegrationAPI api;
@@ -63,7 +60,7 @@ class RedirectScriptUnitTest {
         // When
         script.browserLaunched(ssutils);
         // Then
-        verify(wd, times(0)).executeScript(DISABLE_CLIENT_SCRIPT);
+        verify(wd, times(2)).get("callback-url?zapenable=true");
     }
 
     @Test
@@ -73,7 +70,7 @@ class RedirectScriptUnitTest {
         // When
         script.browserLaunched(ssutils);
         // Then
-        verify(wd).executeScript(DISABLE_CLIENT_SCRIPT);
+        verify(wd, times(2)).get("callback-url?zapenable=true&zaprecord=true");
     }
 
     private interface TestWebDriver extends WebDriver, JavascriptExecutor {}

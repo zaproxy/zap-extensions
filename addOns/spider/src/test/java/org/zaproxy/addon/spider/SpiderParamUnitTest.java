@@ -22,6 +22,7 @@ package org.zaproxy.addon.spider;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 
@@ -119,6 +120,18 @@ class SpiderParamUnitTest {
             // Then
             assertThat(param.getThreadCount(), is(equalTo(3)));
         }
+    }
+
+    @Test
+    void shouldRemoveRequestWaitOnUpdate() {
+        // Given
+        String key = "spider.requestwait";
+        configuration = new ZapXmlConfiguration();
+        configuration.setProperty(key, 200);
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(configuration.getProperty(key), is(nullValue()));
     }
 
     @Test

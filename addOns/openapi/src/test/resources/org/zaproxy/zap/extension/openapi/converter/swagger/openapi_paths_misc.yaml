@@ -1,0 +1,55 @@
+openapi: 3.0.0
+info:
+  title: Paths Misc
+  version: 1.0.0
+servers:
+  - url: http://server.localhost/
+paths:
+  /path/a/:
+    get:
+      operationId: path/a/
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}
+  /path/b/:
+    get:
+      operationId: path/b/
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}
+  /path/b/1/:
+    get:
+      operationId: path/b/1/
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}
+  /path/c/:
+    get:
+      operationId: path/c/
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}
+  /path/c/1/:
+    get:
+      operationId: path/c/1/
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}
+  /path/c/2/:
+    get:
+      operationId: path/c/2/
+      responses:
+        default:
+          description:
+          content:
+            text/plain: {}

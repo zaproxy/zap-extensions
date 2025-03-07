@@ -20,19 +20,20 @@
 package org.zaproxy.zap.extension.custompayloads;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public abstract class EditableSelectColumn<T> extends EditableColumn<T> {
+abstract class EditableSelectColumn<T> extends EditableColumn<T> {
 
-    public EditableSelectColumn(Class<?> columnClass, String name) {
+    EditableSelectColumn(Class<?> columnClass, String name) {
         super(columnClass, name);
     }
 
-    public abstract ArrayList<Object> getSelectableValues(T model);
+    public abstract List<Object> getSelectableValues(T model);
 
-    public <V> ArrayList<V> getTypedSelectableValues(T model) {
-        ArrayList<Object> values = getSelectableValues(model);
+    public <V> List<V> getTypedSelectableValues(T model) {
+        List<Object> values = getSelectableValues(model);
 
-        ArrayList<V> typedValues = new ArrayList<>();
+        List<V> typedValues = new ArrayList<>();
         for (Object value : values) {
             V typedValue = getTypedObject(value);
             typedValues.add(typedValue);

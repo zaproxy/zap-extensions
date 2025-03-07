@@ -55,6 +55,8 @@ public class ExtensionDatabase extends ExtensionAdaptor {
     public void init() {
         super.init();
 
+        // Reduce verbose INFO
+        setLogLevel(List.of("org.flywaydb.core"), Level.WARN);
         // Suppress warn that HSQLDB is not official supported yet.
         setLogLevel(List.of("org.flywaydb.core.internal.database.base.Database"), Level.ERROR);
     }

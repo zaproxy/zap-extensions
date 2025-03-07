@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.spiderAjax.automation;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +26,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -41,8 +42,6 @@ import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
-import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.addon.commonlib.Constants;
@@ -250,6 +249,7 @@ public class AjaxSpiderJob extends AutomationJob {
     }
 
     @Override
+    @SuppressWarnings("removal")
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
         ContextWrapper context = getContextWrapper(env, progress);
@@ -273,18 +273,23 @@ public class AjaxSpiderJob extends AutomationJob {
         }
 
         if (Boolean.TRUE.equals(this.getParameters().getRunOnlyIfModern())) {
-            JobResultData resultData = progress.getJobResultData(PassiveScanJobResultData.KEY);
+            JobResultData resultData =
+                    progress.getJobResultData(
+                            org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.KEY);
             if (resultData == null) {
                 // They havnt run the passive scan wait job
                 progress.warn(
                         Constant.messages.getString("spiderajax.automation.error.nopscanresults"));
-            } else if (resultData instanceof PassiveScanJobResultData) {
-                PassiveScanJobResultData pscanResultData = (PassiveScanJobResultData) resultData;
+            } else if (resultData
+                    instanceof org.zaproxy.addon.automation.jobs.PassiveScanJobResultData) {
+                org.zaproxy.addon.automation.jobs.PassiveScanJobResultData pscanResultData =
+                        (org.zaproxy.addon.automation.jobs.PassiveScanJobResultData) resultData;
 
-                List<RuleData> modernRuleData =
-                        pscanResultData.getAllRuleData().stream()
-                                .filter(r -> r.getId() == MODERN_WEB_DETECTION_RULE_ID)
-                                .collect(Collectors.toList());
+                List<org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData>
+                        modernRuleData =
+                                pscanResultData.getAllRuleData().stream()
+                                        .filter(r -> r.getId() == MODERN_WEB_DETECTION_RULE_ID)
+                                        .collect(Collectors.toList());
 
                 if (modernRuleData.isEmpty()
                         || AlertThreshold.OFF.equals(modernRuleData.get(0).getThreshold())) {
@@ -369,7 +374,7 @@ public class AjaxSpiderJob extends AutomationJob {
     private ContextWrapper getContextWrapper(
             AutomationEnvironment env, AutomationProgress progress) {
         String contextName = this.getParameters().getContext();
-        if (contextName == null) {
+        if (StringUtils.isEmpty(contextName)) {
             return env.getDefaultContextWrapper();
         }
 
@@ -512,28 +517,30 @@ public class AjaxSpiderJob extends AutomationJob {
         }
     }
 
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
-        private String context;
-        private String user;
-        private String url;
+        private String context = "";
+        private String user = "";
+        private String url = "";
         private Integer maxDuration = AjaxSpiderParam.DEFAULT_MAX_DURATION;
         private Integer maxCrawlDepth = AjaxSpiderParam.DEFAULT_MAX_CRAWL_DEPTH;
-        private Integer numberOfBrowsers = Constants.getDefaultThreadCount();
+        private Integer numberOfBrowsers = Constants.getDefaultThreadCount() / 2;
 
-        private String browserId;
-        private Integer maxCrawlStates;
-        private Integer eventWait;
-        private Integer reloadWait;
-        private Boolean clickDefaultElems;
-        private Boolean clickElemsOnce;
-        private Boolean randomInputs;
+        private String browserId = "";
+        private Integer maxCrawlStates = AjaxSpiderParam.DEFAULT_CRAWL_STATES;
+        private Integer eventWait = AjaxSpiderParam.DEFAULT_EVENT_WAIT_TIME;
+        private Integer reloadWait = AjaxSpiderParam.DEFAULT_RELOAD_WAIT_TIME;
+        private Boolean clickDefaultElems = AjaxSpiderParam.DEFAULT_CLICK_DEFAULT_ELEMS;
+        private Boolean clickElemsOnce = AjaxSpiderParam.DEFAULT_CLICK_ELEMS_ONCE;
+        private Boolean randomInputs = AjaxSpiderParam.DEFAULT_RANDOM_INPUTS;
         private Boolean inScopeOnly = Boolean.TRUE;
+        private Boolean enableExtensions = Boolean.FALSE;
 
-        private Boolean runOnlyIfModern;
+        private Boolean runOnlyIfModern = Boolean.FALSE;
 
-        private List<String> elements;
+        private List<String> elements = List.of();
 
-        @JsonInclude(JsonInclude.Include.NON_EMPTY)
         private List<ExcludedElementAuto> excludedElements = List.of();
 
         // These 2 fields are deprecated
@@ -541,130 +548,6 @@ public class AjaxSpiderJob extends AutomationJob {
         private Boolean warnIfFoundUrlsLessThan;
 
         public Parameters() {}
-
-        public String getContext() {
-            return context;
-        }
-
-        public void setContext(String context) {
-            this.context = context;
-        }
-
-        public String getUser() {
-            return user;
-        }
-
-        public void setUser(String user) {
-            this.user = user;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-
-        public Integer getMaxDuration() {
-            return maxDuration;
-        }
-
-        public void setMaxDuration(Integer maxDuration) {
-            this.maxDuration = maxDuration;
-        }
-
-        public Integer getMaxCrawlDepth() {
-            return maxCrawlDepth;
-        }
-
-        public void setMaxCrawlDepth(Integer maxCrawlDepth) {
-            this.maxCrawlDepth = maxCrawlDepth;
-        }
-
-        public Integer getNumberOfBrowsers() {
-            return numberOfBrowsers;
-        }
-
-        public void setNumberOfBrowsers(Integer numberOfBrowsers) {
-            this.numberOfBrowsers = numberOfBrowsers;
-        }
-
-        public String getBrowserId() {
-            return browserId;
-        }
-
-        public void setBrowserId(String browserId) {
-            this.browserId = browserId;
-        }
-
-        public Boolean getClickDefaultElems() {
-            return clickDefaultElems;
-        }
-
-        public void setClickDefaultElems(Boolean clickDefaultElems) {
-            this.clickDefaultElems = clickDefaultElems;
-        }
-
-        public Boolean getClickElemsOnce() {
-            return clickElemsOnce;
-        }
-
-        public void setClickElemsOnce(Boolean clickElemsOnce) {
-            this.clickElemsOnce = clickElemsOnce;
-        }
-
-        public Integer getEventWait() {
-            return eventWait;
-        }
-
-        public void setEventWait(Integer eventWait) {
-            this.eventWait = eventWait;
-        }
-
-        public Integer getMaxCrawlStates() {
-            return maxCrawlStates;
-        }
-
-        public void setMaxCrawlStates(Integer maxCrawlStates) {
-            this.maxCrawlStates = maxCrawlStates;
-        }
-
-        public Boolean getRandomInputs() {
-            return randomInputs;
-        }
-
-        public void setRandomInputs(Boolean randomInputs) {
-            this.randomInputs = randomInputs;
-        }
-
-        public Boolean getInScopeOnly() {
-            return inScopeOnly;
-        }
-
-        public void setInScopeOnly(Boolean inScopeOnly) {
-            this.inScopeOnly = inScopeOnly;
-        }
-
-        public Integer getReloadWait() {
-            return reloadWait;
-        }
-
-        public void setReloadWait(Integer reloadWait) {
-            this.reloadWait = reloadWait;
-        }
-
-        public Boolean getRunOnlyIfModern() {
-            return runOnlyIfModern;
-        }
-
-        public void setRunOnlyIfModern(Boolean runOnlyIfModern) {
-            this.runOnlyIfModern = runOnlyIfModern;
-        }
-
-        public Boolean getFailIfFoundUrlsLessThan() {
-            return failIfFoundUrlsLessThan;
-        }
 
         public List<String> getElements() {
             if (JobUtils.unBox(this.clickDefaultElems)) {
@@ -675,26 +558,6 @@ public class AjaxSpiderJob extends AutomationJob {
 
         public void setExcludedElements(List<ExcludedElementAuto> excludedElements) {
             this.excludedElements = Objects.requireNonNullElse(excludedElements, List.of());
-        }
-
-        public List<ExcludedElementAuto> getExcludedElements() {
-            return excludedElements;
-        }
-
-        public void setElements(List<String> elements) {
-            this.elements = elements;
-        }
-
-        public void setFailIfFoundUrlsLessThan(Boolean failIfFoundUrlsLessThan) {
-            this.failIfFoundUrlsLessThan = failIfFoundUrlsLessThan;
-        }
-
-        public Boolean getWarnIfFoundUrlsLessThan() {
-            return warnIfFoundUrlsLessThan;
-        }
-
-        public void setWarnIfFoundUrlsLessThan(Boolean warnIfFoundUrlsLessThan) {
-            this.warnIfFoundUrlsLessThan = warnIfFoundUrlsLessThan;
         }
     }
 }

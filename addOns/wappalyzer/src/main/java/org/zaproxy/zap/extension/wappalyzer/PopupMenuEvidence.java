@@ -83,7 +83,7 @@ public class PopupMenuEvidence extends ExtensionPopupMenu {
                                 domSelectorObject.getValue().entrySet()) {
                             for (Map.Entry<String, AppPattern> objvalue :
                                     nodeSelectorObject.getValue().entrySet()) {
-                                if (nodeSelectorObject.getKey() == "text") {
+                                if (nodeSelectorObject.getKey().equals("text")) {
                                     Pattern pat =
                                             Pattern.compile(
                                                     domSelectorObject.getKey()

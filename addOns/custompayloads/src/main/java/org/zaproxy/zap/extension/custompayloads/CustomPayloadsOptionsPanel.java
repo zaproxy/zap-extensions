@@ -31,6 +31,9 @@ public class CustomPayloadsOptionsPanel extends AbstractParamPanel {
     private static final long serialVersionUID = 1L;
     private static final String OPTIONS_TITLE =
             Constant.messages.getString("custompayloads.options.title");
+    private static final String OPTIONS_TITLE_DISABLED =
+            Constant.messages.getString("custompayloads.options.dialog.disabled");
+    private JLabel titleLabel;
     CustomPayloadsMultipleOptionsTablePanel tablePanel;
     CustomPayloadMultipleOptionsTableModel tableModel;
 
@@ -46,7 +49,8 @@ public class CustomPayloadsOptionsPanel extends AbstractParamPanel {
         gbc.anchor = GridBagConstraints.LINE_START;
         gbc.fill = GridBagConstraints.BOTH;
 
-        this.add(new JLabel(OPTIONS_TITLE), gbc);
+        titleLabel = new JLabel(OPTIONS_TITLE);
+        this.add(titleLabel, gbc);
         gbc.weighty = 1.0;
         this.add(tablePanel, gbc);
     }
@@ -55,10 +59,16 @@ public class CustomPayloadsOptionsPanel extends AbstractParamPanel {
     public void initParam(Object obj) {
         OptionsParam optionsParam = (OptionsParam) obj;
         CustomPayloadsParam param = optionsParam.getParamSet(CustomPayloadsParam.class);
+        if (param.getCategoriesNames().isEmpty()) {
+            tablePanel.setComponentEnabled(false);
+            titleLabel.setText(OPTIONS_TITLE_DISABLED);
+        } else {
+            tablePanel.setComponentEnabled(true);
+            titleLabel.setText(OPTIONS_TITLE);
+        }
         tableModel.clear();
         tableModel.addModels(param.getPayloads());
         tableModel.setDefaultPayloads(param.getDefaultPayloads());
-        tableModel.setNextPayloadId(param.getNextPayloadId());
         tablePanel.setRemoveWithoutConfirmation(param.isConfirmRemoveToken());
     }
 
@@ -67,7 +77,11 @@ public class CustomPayloadsOptionsPanel extends AbstractParamPanel {
         OptionsParam optionsParam = (OptionsParam) obj;
         CustomPayloadsParam param = optionsParam.getParamSet(CustomPayloadsParam.class);
         param.setPayloads(tableModel.getElements());
-        param.setNextPayloadId(tableModel.getNextPayloadId());
         param.setConfirmRemoveToken(tablePanel.isRemoveWithoutConfirmation());
+    }
+
+    @Override
+    public String getHelpIndex() {
+        return "custompayloads.options";
     }
 }

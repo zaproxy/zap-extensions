@@ -21,6 +21,9 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.apache.commons.httpclient.URIException;
@@ -32,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 /**
  * CWE-917: Improper Neutralization of Special Elements used in an Expression Language Statement
@@ -51,13 +55,22 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin
     private static final int MAX_NUM_TRIES = 1000;
     private static final int DEVIATION_VALUE = 999999;
     private static final int MEAN_VALUE = 100000;
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION,
+                                CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ));
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.API.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static final Random RAND = new Random();
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION,
-                    CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ);
 
     @Override
     public int getId() {
@@ -167,13 +180,7 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin
                         paramName,
                         payload);
 
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setParam(paramName)
-                        .setAttack(payload)
-                        .setEvidence(addedString)
-                        .setMessage(msg)
-                        .raise();
+                createAlert(paramName, payload, addedString).setMessage(msg).raise();
             }
 
         } catch (IOException ex) {
@@ -185,5 +192,18 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin
                     payload,
                     ex);
         }
+    }
+
+    private AlertBuilder createAlert(String paramName, String attack, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(paramName)
+                .setAttack(attack)
+                .setEvidence(evidence);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("foo", "${719117+853088}", "1572205").build());
     }
 }

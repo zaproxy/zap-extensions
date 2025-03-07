@@ -54,6 +54,7 @@ import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Pair;
+import org.zaproxy.zap.utils.Stats;
 
 /**
  * The base implementation of {@link CloseableHttpSenderImpl}.
@@ -410,7 +411,13 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
         if (ctx.getInitiator() != CHECK_FOR_UPDATES_INITIATOR) {
             rateLimiter.throttle(message, ctx.getInitiator());
         }
-        sendImpl(ctx, requestCtx, requestConfig, message, responseBodyConsumer);
+        try {
+            sendImpl(ctx, requestCtx, requestConfig, message, responseBodyConsumer);
+            Stats.incCounter("stats.network.send.success");
+        } catch (IOException e) {
+            Stats.incCounter("stats.network.send.failure");
+            throw e;
+        }
     }
 
     protected abstract void sendImpl(

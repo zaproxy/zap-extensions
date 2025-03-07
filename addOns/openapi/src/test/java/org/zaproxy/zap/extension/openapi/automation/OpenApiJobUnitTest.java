@@ -23,12 +23,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +45,9 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 
@@ -87,11 +91,12 @@ class OpenApiJobUnitTest extends TestUtils {
         Map<String, String> params = job.getCustomConfigParameters();
 
         // Then
-        assertThat(params.size(), is(equalTo(4)));
+        assertThat(params.size(), is(equalTo(5)));
         assertThat(params.get("apiFile"), is(equalTo("")));
         assertThat(params.get("apiUrl"), is(equalTo("")));
         assertThat(params.get("targetUrl"), is(equalTo("")));
         assertThat(params.get("context"), is(equalTo("")));
+        assertThat(params.get("user"), is(equalTo("")));
     }
 
     @Test
@@ -102,6 +107,7 @@ class OpenApiJobUnitTest extends TestUtils {
         String apiUrl = "https://example.com/test%20file.json";
         String targetUrl = "https://example.com/endpoint/";
         String context = "My Context";
+        String user = "My User";
         String yamlStr =
                 "parameters:\n"
                         + "  apiUrl: "
@@ -114,11 +120,18 @@ class OpenApiJobUnitTest extends TestUtils {
                         + targetUrl
                         + "\n"
                         + "  context: "
-                        + context;
+                        + context
+                        + "\n"
+                        + "  user: "
+                        + user;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
 
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.getAllUserNames()).willReturn(List.of(user));
+
         OpenApiJob job = new OpenApiJob();
+        job.setEnv(env);
         job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
@@ -130,6 +143,7 @@ class OpenApiJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getApiUrl(), is(equalTo(apiUrl)));
         assertThat(job.getParameters().getTargetUrl(), is(equalTo(targetUrl)));
         assertThat(job.getParameters().getContext(), is(equalTo(context)));
+        assertThat(job.getParameters().getUser(), is(equalTo(user)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
@@ -140,6 +154,8 @@ class OpenApiJobUnitTest extends TestUtils {
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class));
+        given(env.getContextWrapper(any())).willReturn(contextWrapper);
         String yamlStr = "parameters:\n" + "  apiUrl: 'Invalid URL.'";
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -163,7 +179,9 @@ class OpenApiJobUnitTest extends TestUtils {
         mockMessages(new ExtensionOpenApi());
         AutomationPlan plan = new AutomationPlan();
         AutomationProgress progress = plan.getProgress();
-        AutomationEnvironment env = plan.getEnv();
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class));
+        given(env.getContextWrapper(any())).willReturn(contextWrapper);
         String yamlStr = "parameters:\n" + "  apiFile: 'Invalid file path'";
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);

@@ -35,7 +35,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
-import org.zaproxy.addon.client.ReportedEvent;
+import org.zaproxy.addon.client.internal.ReportedEvent;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link JwtInStorageScanRule}. */
@@ -96,7 +96,7 @@ class JwtInStorageScanRuleUnitTest extends TestUtils {
         assertThat(exList.get(0).getAlertRef(), is("120002-1"));
         assertThat(exList.get(0).getConfidence(), is(3));
         assertThat(exList.get(0).getRisk(), is(2));
-        assertThat(exList.get(0).getCweId(), is(200));
+        assertThat(exList.get(0).getCweId(), is(922));
         assertThat(exList.get(0).getWascId(), is(13));
         assertThat(
                 exList.get(1).getName(),
@@ -106,7 +106,7 @@ class JwtInStorageScanRuleUnitTest extends TestUtils {
         assertThat(exList.get(1).getAlertRef(), is("120002-2"));
         assertThat(exList.get(1).getConfidence(), is(3));
         assertThat(exList.get(1).getRisk(), is(0));
-        assertThat(exList.get(1).getCweId(), is(200));
+        assertThat(exList.get(1).getCweId(), is(922));
         assertThat(exList.get(1).getWascId(), is(13));
     }
 

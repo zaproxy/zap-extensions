@@ -5,7 +5,50 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Add debug log for the Firefox profile creation.
 
+## [15.34.0] - 2025-02-27
+### Changed
+- Update Selenium to version 4.29.0.
+
+## [15.33.0] - 2025-01-23
+### Added
+- Allow to log browser's `console.log`, done at DEBUG level with the name `org.zaproxy.webdriver`.
+
+### Changed
+- Use WebDriver BiDi with Chrome.
+- Update Selenium to version 4.28.0.
+
+## [15.32.0] - 2025-01-10
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [15.31.0] - 2024-12-23
+### Changed
+- Update Selenium to version 4.27.0.
+- Use WebDriver BiDi with Firefox.
+
+## [15.30.0] - 2024-09-24
+### Changed
+- Update Selenium to version 4.25.0.
+- Update script template:
+  - selenium/Selenium default template.js - update documentation.
+
+## [15.29.0] - 2024-09-02
+### Added
+- Link to "no browser" FAQ in warning messages.
+
+### Changed
+- Update Selenium to version 4.24.0.
+
+## [15.28.0] - 2024-08-12
+### Changed
+- Update Selenium to version 4.23.1.
+
+## [15.27.0] - 2024-07-22
+### Changed
+- Update Selenium to version 4.23.0.
 
 ## [15.26.0] - 2024-06-21
 ### Changed
@@ -248,6 +291,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.34.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.34.0
+[15.33.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.33.0
+[15.32.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.32.0
+[15.31.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.31.0
+[15.30.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.30.0
+[15.29.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.29.0
+[15.28.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.28.0
+[15.27.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.27.0
 [15.26.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.26.0
 [15.25.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.25.0
 [15.24.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.24.0

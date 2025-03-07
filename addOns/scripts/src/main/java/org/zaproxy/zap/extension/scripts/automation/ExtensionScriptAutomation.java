@@ -22,6 +22,8 @@ package org.zaproxy.zap.extension.scripts.automation;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.parosproxy.paros.CommandLine;
@@ -30,8 +32,15 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.addon.automation.AutomationEventPublisher;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.ExtensionAutomation;
+import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.eventBus.Event;
+import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.script.ExtensionScript;
+import org.zaproxy.zap.extension.script.ScriptEventListener;
+import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class ExtensionScriptAutomation extends ExtensionAdaptor {
 
@@ -42,6 +51,10 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             List.of(ExtensionScript.class, ExtensionAutomation.class);
+
+    private ExtensionAutomation extAuto;
+    private ExtensionScript extensionScript;
+    private ScriptErrorHandler scriptErrorHandler;
 
     public ExtensionScriptAutomation() {
         super(NAME);
@@ -55,10 +68,24 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        ExtensionAutomation extAuto =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
+        extAuto = getExtension(ExtensionAutomation.class);
         job = new ScriptJob();
         extAuto.registerAutomationJob(job);
+
+        extensionScript = getExtension(ExtensionScript.class);
+        scriptErrorHandler = new ScriptErrorHandler();
+        extensionScript.addListener(scriptErrorHandler);
+
+        ZAP.getEventBus()
+                .registerConsumer(
+                        scriptErrorHandler,
+                        AutomationEventPublisher.getPublisher().getPublisherName(),
+                        AutomationEventPublisher.PLAN_STARTED,
+                        AutomationEventPublisher.PLAN_FINISHED);
+    }
+
+    private static <T extends Extension> T getExtension(Class<T> clazz) {
+        return Control.getSingleton().getExtensionLoader().getExtension(clazz);
     }
 
     @Override
@@ -68,10 +95,10 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        ExtensionAutomation extAuto =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutomation.class);
-
         extAuto.unregisterAutomationJob(job);
+
+        extensionScript.removeListener(scriptErrorHandler);
+        ZAP.getEventBus().unregisterConsumer(scriptErrorHandler);
     }
 
     @Override
@@ -102,5 +129,81 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
                             "scripts.automation.error.nofile", RESOURCES_DIR + name));
         }
         return "";
+    }
+
+    private class ScriptErrorHandler implements ScriptEventListener, EventConsumer {
+
+        private List<AutomationPlan> runningPlans = Collections.synchronizedList(new ArrayList<>());
+
+        @Override
+        public void refreshScript(ScriptWrapper script) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void scriptAdded(ScriptWrapper script, boolean display) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void scriptRemoved(ScriptWrapper script) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void preInvoke(ScriptWrapper script) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void scriptChanged(ScriptWrapper script) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void scriptError(ScriptWrapper script) {
+            if (ExtensionScript.TYPE_STANDALONE.equals(script.getTypeName())) {
+                // Errors of stand alone scripts are handled directly by the job.
+                return;
+            }
+
+            synchronized (runningPlans) {
+                runningPlans.forEach(
+                        plan ->
+                                plan.getProgress()
+                                        .error(
+                                                Constant.messages.getString(
+                                                        "scripts.automation.error.script",
+                                                        script.getName(),
+                                                        script.getLastErrorDetails())));
+            }
+        }
+
+        @Override
+        public void scriptSaved(ScriptWrapper script) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void templateAdded(ScriptWrapper script, boolean display) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void templateRemoved(ScriptWrapper script) {
+            // Nothing to do.
+        }
+
+        @Override
+        public void eventReceived(Event event) {
+            int planId =
+                    Integer.parseInt(event.getParameters().get(AutomationEventPublisher.PLAN_ID));
+            AutomationPlan plan = extAuto.getPlan(planId);
+            if (AutomationEventPublisher.PLAN_STARTED.equals(event.getEventType())) {
+                runningPlans.add(plan);
+            } else {
+                runningPlans.remove(plan);
+            }
+        }
     }
 }

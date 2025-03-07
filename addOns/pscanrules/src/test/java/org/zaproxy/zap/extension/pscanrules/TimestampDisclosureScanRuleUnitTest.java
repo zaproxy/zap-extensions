@@ -36,6 +36,7 @@ import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -55,12 +56,8 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
-        int cwe = rule.getCweId();
-        int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(200)));
-        assertThat(wasc, is(equalTo(13)));
         assertThat(tags.size(), is(equalTo(2)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
@@ -85,6 +82,7 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
         Alert alert = alerts.get(0);
         assertThat(alert.getName(), is(equalTo("Timestamp Disclosure - Unix")));
         assertThat(alert.getParam(), is(equalTo("registeredAt")));
+        assertThat(alert.getCweId(), is(equalTo(497)));
     }
 
     @Test
@@ -502,6 +500,40 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
+    }
+
+    private static HttpMessage createJavaScriptReponseWithTimeStamp() throws URIException {
+        Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        HttpMessage msg = createMessage(strTestDate);
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "javascript");
+        return msg;
+    }
+
+    @Test
+    void shouldNotRaiseAlertOnTimeStampInJavaScriptFilesAtHighThreshold() throws Exception {
+        // Given
+        HttpMessage msg = createJavaScriptReponseWithTimeStamp();
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = AlertThreshold.class,
+            names = {"MEDIUM", "LOW"})
+    void shouldRaiseAlertBelowHighThresholdOnTimeStampInJavaScriptFiles(AlertThreshold threshold)
+            throws URIException {
+        // Given
+        HttpMessage msg = createJavaScriptReponseWithTimeStamp();
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(1, alertsRaised.size());
     }
 
     private static HttpMessage createMessage(String timestamp) throws URIException {

@@ -21,6 +21,9 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
@@ -50,11 +54,25 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
 
     // Get the correct vulnerability description from WASC
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_43");
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A04_XXE,
-                    CommonAlertTag.WSTG_V42_INPV_07_XMLI);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A04_XXE,
+                                CommonAlertTag.WSTG_V42_INPV_07_XMLI));
+        alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
+        alertTags.put(PolicyTag.API.getTag(), "");
+        alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     // Payload built on examples retrieved in:
     // https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
@@ -325,12 +343,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
                 String response = msg.getResponseBody().toString();
                 Matcher matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
                 if (matcher.find()) {
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setAttack(payload)
-                            .setEvidence(matcher.group())
-                            .setMessage(msg)
-                            .raise();
+                    createAlert(payload, matcher.group()).setMessage(msg).raise();
                 }
                 if (isStop()) {
                     return;
@@ -383,12 +396,7 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
             String response = msg.getResponseBody().toString();
             Matcher matcher = LOCAL_FILE_PATTERNS[idx].matcher(response);
             if (matcher.find()) {
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setAttack(payload)
-                        .setEvidence(matcher.group())
-                        .setMessage(msg)
-                        .raise();
+                createAlert(payload, matcher.group()).setMessage(msg).raise();
                 return true;
             }
             if (isStop()) {
@@ -404,5 +412,26 @@ public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRu
         sb.append(ATTACK_ENTITY);
         sb.append(requestBody.substring(tagMatcher.end(1)));
         return sb.toString();
+    }
+
+    private AlertBuilder createAlert(String attack, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setAttack(attack)
+                .setEvidence(evidence);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert(
+                                "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                                        + "<!DOCTYPE foo [\n"
+                                        + "  <!ELEMENT foo ANY >\n"
+                                        + "  <!ENTITY zapxxe SYSTEM \"file:///etc/passwd\">\n"
+                                        + "]>\n"
+                                        + "<comment><text>&zapxxe;</text></comment>",
+                                "root:*:0:0")
+                        .build());
     }
 }

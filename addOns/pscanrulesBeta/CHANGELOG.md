@@ -4,8 +4,32 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [43] - 2025-03-04
+### Changed
+- Replace usage of CWE-200 for the In Page Banner Information Leak scan rule (Issue 8731).
+- Add support for 'credentialless' COEP value in the Insufficient Site Isolation Against Spectre Vulnerability scan rule (Issue 8840).
+
+## [42] - 2025-01-15
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Updated help with specific Category identifier for use with the Custom Payloads add-on for the "Dangerous JS Functions" rule.
+
 ### Fixed
-- Typo in Polyfill.io script detection alert description.
+- Fix typo in log message.
+- Fix Insufficient Site Isolation scan rule check that filters responses based on whether a response is a success or not.
+
+### Changed
+- Maintenance changes.
+
+## [41] - 2024-09-02
+### Fixed
+- A possible false positive condition with the Dangerous JS Functions scan rule with substrings in certain circumstances (Issue 8553).
+
+## [40] - 2024-07-24
+### Removed
+- Polyfill scan rule, promoted to release.
 
 ## [39] - 2024-06-28
 ### Added
@@ -332,6 +356,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[43]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v43
+[42]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v42
+[41]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v41
+[40]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v37

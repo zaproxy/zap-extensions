@@ -11,7 +11,7 @@
     "html": [
       "<!--[^>]+W3 Total Cache"
     ],
-    "icon": "W3 Total Cache.png",
+    "icon": "W3 Total Cache.svg",
     "requires": [
       "WordPress"
     ],
@@ -22,7 +22,9 @@
       66
     ],
     "description": "W3.CSS is a CSS framework developed by the World Wide Web Consortium (W3C), the main international standards organisation for the World Wide Web.",
-    "dom": "link[href*='/w3.css']",
+    "dom": [
+      "link[href*='/w3.css']"
+    ],
     "icon": "W3.CSS.svg",
     "oss": true,
     "website": "https://www.w3schools.com/w3css/"
@@ -31,7 +33,14 @@
     "cats": [
       10
     ],
-    "icon": "W3Counter.png",
+    "description": "W3Counter is a web analytics service that provides free and paid tools for tracking visitor statistics and offers customizable website widgets to enhance user engagement.",
+    "icon": "W3Counter.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
     "scriptSrc": [
       "w3counter\\.com/tracker\\.js"
     ],
@@ -41,14 +50,14 @@
     "cats": [
       20
     ],
-    "description": "WEBDEV is a tool to develop internet and intranet sites and applications that support data and processes",
+    "description": "WEBDEV is a tool to develop internet and intranet sites and applications that support data and processes.",
     "headers": {
       "WebDevSrc": ""
     },
     "html": [
       "<!-- [a-zA-Z0-9_]+ [\\d/]+ [\\d:]+ WebDev \\d\\d ([\\d.]+) -->\\;version:\\1"
     ],
-    "icon": "webdev.png",
+    "icon": "webdev.svg",
     "meta": {
       "generator": "^WEBDEV$"
     },
@@ -79,7 +88,7 @@
     "headers": {
       "Server": "^WEBrick/([\\d\\.]+)\\;version:\\1"
     },
-    "icon": "Ruby.png",
+    "icon": "Ruby.svg",
     "oss": true,
     "website": "https://docs.ruby-lang.org/en/2.4.0/WEBrick.html"
   },
@@ -88,7 +97,7 @@
       80
     ],
     "description": "WEN Themes Education Hub is a clean and elegant WordPress education theme.",
-    "icon": "WEN Themes.png",
+    "icon": "WEN Themes.svg",
     "js": {
       "EducationHubScreenReaderText": ""
     },
@@ -109,7 +118,7 @@
       80
     ],
     "description": "Signify Dark is a free dark blog and corporate WordPress theme that is trendy, responsive, and dynamic by WEN Themes.",
-    "icon": "WEN Themes.png",
+    "icon": "WEN Themes.svg",
     "js": {
       "signifyOptions": ""
     },
@@ -127,7 +136,7 @@
       1
     ],
     "description": "WHMCS is an automation platform that simplifies and automates all aspects of operating an online web hosting and domain registrar business.",
-    "icon": "WHMCS.png",
+    "icon": "WHMCS.svg",
     "js": {
       "WHMCS": ""
     },
@@ -138,12 +147,29 @@
     ],
     "website": "https://www.whmcs.com"
   },
+  "WOW": {
+    "cats": [
+      12,
+      18,
+      25
+    ],
+    "description": "Reveal CSS animation as you scroll down a page.",
+    "oss": true,
+    "pricing": [
+      "low",
+      "onetime"
+    ],
+    "scriptSrc": [
+      "wow(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
+    "website": "https://www.delac.io/WOW"
+  },
   "WP Automatic": {
     "cats": [
       87
     ],
     "description": "WP Automatic is a WordPress plugin that automates the process of creating posts on your WordPress site by automatically fetching content from various sources like RSS feeds, Amazon, eBay, ClickBank, and more.",
-    "icon": "WP Automatic.png",
+    "icon": "WP Automatic.svg",
     "pricing": [
       "onetime"
     ],
@@ -154,6 +180,29 @@
       "/wp-content/plugins/wp-automatic/"
     ],
     "website": "https://wpautomatic.com"
+  },
+  "WP Courseware": {
+    "cats": [
+      87,
+      21
+    ],
+    "description": "WP Courseware is an LMS plugin that allows novice and professional users to build online courses using its easy-to-use drag and drop course builder.",
+    "icon": "WP Courseware.svg",
+    "js": {
+      "wpcw_course_note_params.api_url": "/wp-json/wpcw/"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/wp-content/plugins/wp-courseware/.+frontend\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
+    "website": "https://flyplugins.com/wp-courseware-wordpress-lms"
   },
   "WP Engine": {
     "cats": [
@@ -179,7 +228,9 @@
       92
     ],
     "description": "WP Fastest Cache is one of a number of plugins for WordPress designed to accelerate the performance of your website.",
-    "dom": "link[href*='/wp-content/cache/wpfc-minified/']",
+    "dom": [
+      "link[href*='/wp-content/cache/wpfc-minified/']"
+    ],
     "icon": "WP Fastest Cache.png",
     "js": {
       "Wpfcll": ""
@@ -201,7 +252,7 @@
       87
     ],
     "description": "WP Featherlight is a WordPress lightbox plugin for adding a minimal, high-performance, responsive jQuery lightbox to your WordPress website.",
-    "icon": "WP_Featherlight.png",
+    "icon": "WP_Featherlight.svg",
     "requires": [
       "WordPress"
     ],
@@ -210,13 +261,36 @@
     ],
     "website": "https://wordpress.org/plugins/wp-featherlight"
   },
+  "WP Google Map Embed": {
+    "cats": [
+      87
+    ],
+    "description": "WP Google Map Embed is a lightweight WordPress plugin for embedding Google Maps with custom markers via shortcodes in posts, pages, and sidebars.",
+    "dom": [
+      "link#wp-gmap-embed-front-css-css"
+    ],
+    "icon": "WP Google Map Embed.svg",
+    "implies": [
+      "Google Maps"
+    ],
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "website": "https://wpgooglemap.com"
+  },
   "WP Google Map Plugin": {
     "cats": [
-      87,
-      35
+      87
     ],
     "description": "WP Google Map Plugin allows you to create google maps shortcodes to display responsive google maps on pages, widgets and custom templates.",
     "icon": "WP Google Map Plugin.png",
+    "implies": [
+      "Google Maps"
+    ],
     "js": {
       "wpgmp_local": ""
     },
@@ -231,6 +305,25 @@
       "/wp-content/plugins/wp-google-map-plugin/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
     ],
     "website": "https://www.wpmapspro.com"
+  },
+  "WP Grid Builder": {
+    "cats": [
+      87
+    ],
+    "description": "WP Grid Builder is a WordPress plugin that enables the creation of advanced grid layouts.",
+    "icon": "WpGridBuilder.svg",
+    "js": {
+      "WP_Grid_Builder": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/wp-content/plugins/wp-grid-builder/frontend/assets/js/layout\\.js\\?ver=([\\d.]+)\\;version:\\1"
+    ],
+    "website": "https://wpgridbuilder.com"
   },
   "WP Job Openings": {
     "cats": [
@@ -263,7 +356,9 @@
       5
     ],
     "description": "WP Live Visitor Counter is a WordPress plugin that displays the number of online visitors on a website in real-time.",
-    "dom": "link[href*='/wp-content/plugins/wp-visitors-widget/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/wp-visitors-widget/']"
+    ],
     "icon": "default.svg",
     "requires": [
       "WordPress"
@@ -331,7 +426,9 @@
       87
     ],
     "description": "WP Rocket is a caching and performance optimisation plugin to improve the loading speed of WordPress websites.",
-    "dom": "style#wpr-usedcss",
+    "dom": [
+      "style#wpr-usedcss"
+    ],
     "headers": {
       "X-Powered-By": "WP Rocket(?:/([\\d.]+))?\\;version:\\1",
       "X-Rocket-Nginx-Bypass": ""
@@ -339,11 +436,13 @@
     "html": [
       "<!--[^>]+WP Rocket"
     ],
-    "icon": "WP Rocket.png",
+    "icon": "WP Rocket.svg",
     "js": {
+      "RocketBrowserCompatibilityChecker": "",
       "RocketLazyLoadScripts": "",
       "RocketPreloadLinksConfig": "",
-      "rocket_lazy": ""
+      "rocket_lazy": "",
+      "rocket_lazyload_css_data": ""
     },
     "pricing": [
       "low",
@@ -367,7 +466,7 @@
     "html": [
       "<!--[^>]+Cached by WP-Optimize"
     ],
-    "icon": "WP-Optimize.png",
+    "icon": "WP-Optimize.svg",
     "pricing": [
       "freemium",
       "low",
@@ -383,7 +482,9 @@
       87
     ],
     "description": "WP-PageNavi is a WordPress plugin which adds a more advanced paging navigation interface to your WordPress blog.",
-    "dom": "link[href*='/wp-content/plugins/wp-pagenavi/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/wp-pagenavi/']"
+    ],
     "icon": "WP-PageNavi.svg",
     "oss": true,
     "requires": [
@@ -396,8 +497,10 @@
       80
     ],
     "description": "WP-Royal Ashe is a personal and multi-author WordPress blog theme.",
-    "dom": "link#ashe-style-css",
-    "icon": "WP-Royal.png",
+    "dom": [
+      "link#ashe-style-css"
+    ],
+    "icon": "WP-Royal.svg",
     "js": {
       "ashePreloader": "",
       "asheStickySidebar": ""
@@ -419,8 +522,10 @@
       80
     ],
     "description": "WP-Royal Bard is a personal and multi-author WordPress blog theme.",
-    "dom": "link#bard-style-css, style#bard_predefined_custom_css",
-    "icon": "WP-Royal.png",
+    "dom": [
+      "link#bard-style-css, style#bard_predefined_custom_css"
+    ],
+    "icon": "WP-Royal.svg",
     "pricing": [
       "freemium",
       "onetime"
@@ -439,7 +544,9 @@
       87
     ],
     "description": "WP-Statistics is a WordPress plugin which allows you to know your website statistics.",
-    "dom": "link[href*='/wp-content/plugins/wp-statistics/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/wp-statistics/']"
+    ],
     "html": [
       "<!-- Analytics by WP-Statistics v([\\d\\.]+)\\;version:\\1"
     ],
@@ -466,7 +573,7 @@
     "headers": {
       "x-powered-by": "^Optimized by WPCacheOn"
     },
-    "icon": "WPCacheOn.png",
+    "icon": "WPCacheOn.svg",
     "requires": [
       "WordPress"
     ],
@@ -502,10 +609,10 @@
       87,
       89
     ],
-    "cpe": "cpe:2.3:a:wpml:wpml:*:*:*:*:*:wordpress:*:*",
     "cookies": {
       "wp-wpml_current_language": ""
     },
+    "cpe": "cpe:2.3:a:wpml:wpml:*:*:*:*:*:wordpress:*:*",
     "description": "WPML plugin makes it possible to build and run fully multilingual WordPress sites.",
     "icon": "WPML.svg",
     "meta": {
@@ -529,7 +636,7 @@
       87
     ],
     "description": "WPMU DEV Smush is a WordPress plugin that allows you to optimise images without losing quality.",
-    "icon": "WPMU DEV.png",
+    "icon": "WPMU DEV.svg",
     "pricing": [
       "freemium",
       "low",
@@ -557,6 +664,26 @@
     ],
     "website": "https://wordpress.org/plugins/wps-visitor-counter/"
   },
+  "Wabi": {
+    "cats": [
+      53
+    ],
+    "description": "Wabi is a platform facilitating customer engagement through WhatsApp.",
+    "icon": "Wabi.svg",
+    "js": {
+      "Wabi": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.wabi-app\\.com/"
+    ],
+    "website": "https://wabi-app.com"
+  },
   "Wagtail": {
     "cats": [
       1
@@ -571,30 +698,30 @@
       },
       "[style*='images/']": {
         "attributes": {
-          "style": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+          "style": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w\\-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
         }
       },
       "img[src*='images/']": {
         "attributes": {
-          "src": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+          "src": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w\\-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
         }
       },
       "img[srcset*='images/'], source[srcset*='images/']": {
         "attributes": {
-          "srcset": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+          "srcset": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w\\-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
         }
       },
       "meta[content*='images/']": {
         "attributes": {
-          "content": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+          "content": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w\\-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
         }
       },
       "style, script": {
-        "text": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+        "text": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w\\-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
       },
       "video[poster*='images/']": {
         "attributes": {
-          "poster": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
+          "poster": "(?:\\.[a-z]+|/media)(?:/[\\w-]+)?/(?:original_images/[\\w-]+|images/[\\w\\-.]+\\.(?:(?:fill|max|min)-\\d+x\\d+(?:-c\\d+)?|(?:width|height|scale)-\\d+|original))\\."
         }
       }
     },
@@ -612,7 +739,7 @@
       5
     ],
     "description": "Wair is the widget to personalised fit.",
-    "icon": "Wair.png",
+    "icon": "Wair.svg",
     "js": {
       "PredictV3.default.version": "([\\d.]+)\\;version:\\1",
       "predictWidget": ""
@@ -649,7 +776,7 @@
       78
     ],
     "description": "Wakav Performance Monitoring is a real user monitoring (RUM), Web/App performance and availability test platform.",
-    "icon": "Wakav Performance Monitoring.png",
+    "icon": "Wakav Performance Monitoring.svg",
     "pricing": [
       "payg"
     ],
@@ -659,12 +786,38 @@
     ],
     "website": "https://www.wakav.ir"
   },
+  "Wake Commerce": {
+    "cats": [
+      6
+    ],
+    "description": "Wake Commerce is a headless ecommerce platform.",
+    "dom": [
+      "link[href*='.fbitsstatic.net/']"
+    ],
+    "icon": "Wake.svg",
+    "js": {
+      "Fbits": "",
+      "fbits": "",
+      "fbitsSearch": "",
+      "fbitsSearchConfig": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "requires": [
+      "Cart Functionality"
+    ],
+    "saas": true,
+    "website": "https://wake.tech/wake-commerce"
+  },
   "WalkMe": {
     "cats": [
       58
     ],
     "description": "WalkMe is a cloud-based interactive guidance and engagement platform.",
-    "dom": "link[href*='.walkme.com']",
+    "dom": [
+      "link[href*='.walkme.com']"
+    ],
     "icon": "WalkMe.svg",
     "js": {
       "WalkMeAPI": "",
@@ -677,12 +830,32 @@
     "saas": true,
     "website": "https://www.walkme.com"
   },
+  "Wallkit": {
+    "cats": [
+      41
+    ],
+    "description": "Wallkit is a plug-and-play subscription management system.",
+    "icon": "Wallkit.svg",
+    "js": {
+      "WALLKIT_CDN_URL": "\\.wallkit\\.net"
+    },
+    "pricing": [
+      "high",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.wallkit\\.net/js/integration/latest/wallkit-integration-library\\.min\\.js\\?ver=([\\d\\.]+)\\;version:\\1"
+    ],
+    "website": "https://wallkit.net"
+  },
   "Wangsu": {
     "cats": [
       31
     ],
     "description": "Wangsu is a China-based company that provides content delivery network and internet data center services.",
-    "icon": "Wangsu.png",
+    "icon": "Wangsu.svg",
     "js": {
       "__cdnRoute": "^wangsu$",
       "playurl.wangsu": ""
@@ -702,6 +875,33 @@
     ],
     "website": "https://www.stackage.org/package/warp"
   },
+  "Warp Store": {
+    "cats": [
+      108
+    ],
+    "description": "Warp Store is a website creation platform, where you can create a website for any type of game and sell products automatically.",
+    "dom": [
+      "link[href*='.warpstore.app/']"
+    ],
+    "icon": "WarpStore.svg",
+    "implies": [
+      "Next.js",
+      "React",
+      "Node.js",
+      "Cloudflare",
+      "Tailwind CSS"
+    ],
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.warpstore\\.app/"
+    ],
+    "website": "https://warpstore.app"
+  },
   "Wask": {
     "cats": [
       10
@@ -717,6 +917,43 @@
     ],
     "saas": true,
     "website": "https://www.wask.co"
+  },
+  "WatchThem": {
+    "cats": [
+      10
+    ],
+    "description": "WatchThem is a behavioural tool that allows website owners to view video recordings of their visitors' journeys on their website.",
+    "icon": "WatchThem.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.watchthem\\.live/"
+    ],
+    "website": "https://watchthem.live"
+  },
+  "Wati": {
+    "cats": [
+      53
+    ],
+    "description": "Wati is a WhatsApp Business API platform facilitating multiple-agent customer support.",
+    "icon": "Wati.svg",
+    "js": {
+      "wati_options": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "wati-integration-prod-service\\.clare\\.ai/"
+    ],
+    "website": "https://www.wati.io"
   },
   "Waveform": {
     "cats": [
@@ -737,7 +974,9 @@
       80
     ],
     "description": "Waveme is a WordPress theme that is suitable for individuals or businesses involved in the music industry, such as music producers, record labels, artist managers, or independent artists.",
-    "dom": "link[href*='/wp-content/themes/waveme/']",
+    "dom": [
+      "link[href*='/wp-content/themes/waveme/']"
+    ],
     "icon": "Waveme.svg",
     "implies": [
       "Gutenberg",
@@ -756,23 +995,85 @@
       41
     ],
     "description": "WayForPay is a payment processing service provider based in Europe.",
-    "dom": "form[action*='secure.wayforpay.com']",
+    "dom": [
+      "form[action*='secure.wayforpay.com']"
+    ],
     "icon": "WayForPay.svg",
     "scriptSrc": [
       "secure\\.wayforpay\\.com"
     ],
     "website": "https://wayforpay.com"
   },
+  "Wazala": {
+    "cats": [
+      6
+    ],
+    "description": "Wazala is an ecommerce shopping cart solution, enabling users to open and manage online stores.",
+    "icon": "Wazala.svg",
+    "js": {
+      "WazalaWidget": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.wazala\\.com/"
+    ],
+    "website": "https://www.wazala.com"
+  },
   "Wazimo": {
     "cats": [
       36
     ],
     "description": "Wazimo is a digital media company focused on combining engaging content with advanced real-time tendering (RTB) capabilities.",
-    "icon": "wazimo.png",
+    "icon": "wazimo.svg",
     "js": {
       "wz.mmConfig.buildVersion": ""
     },
     "website": "https://wazimo.com"
+  },
+  "WeBlocks": {
+    "cats": [
+      12
+    ],
+    "description": "WeBlocks is an educational platform for creating custom JavaScript and Webflow projects using Blocks.",
+    "icon": "WeBlocks.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "Webflow"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "//weblocks\\.io/"
+    ],
+    "website": "https://www.weblocks.com"
+  },
+  "WeTravel": {
+    "cats": [
+      104
+    ],
+    "description": "WeTravel is a platform providing booking and payment solutions tailored for travel companies.",
+    "dom": [
+      "link[href*='cdn.wetravel.com/']"
+    ],
+    "icon": "WeTravel.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.wetravel\\.com/"
+    ],
+    "website": "https://www.wetravel.com"
   },
   "WeWeb": {
     "cats": [
@@ -796,7 +1097,9 @@
       80
     ],
     "description": "Weaver Xtreme is the orginal options-based WordPress theme.",
-    "dom": "link#weaverx-style-sheet-css",
+    "dom": [
+      "link#weaverx-style-sheet-css"
+    ],
     "icon": "Weaver Xtreme.png",
     "js": {
       "weaverxBottomFooter": "",
@@ -815,12 +1118,64 @@
     ],
     "website": "https://weavertheme.com"
   },
+  "Weaverse": {
+    "cats": [
+      51
+    ],
+    "description": "Weaverse is a theme customizer and headless CMS for Shopify Hydrogen.",
+    "icon": "Weaverse.svg",
+    "js": {
+      "__weaverses": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://weaverse.io"
+  },
+  "Web CEO": {
+    "cats": [
+      10,
+      32,
+      54
+    ],
+    "description": "Web CEO is an all-in-one platform offering tools for SEO, digital marketing, and performance analytics.",
+    "icon": "WebCEO.svg",
+    "meta": {
+      "application-name": "^WebCEO$"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.webceo\\.com/"
+    ],
+    "website": "https://www.webceo.com"
+  },
+  "Web Font Loader": {
+    "cats": [
+      59
+    ],
+    "description": "WebFont Loader is a versatile JavaScript library that provides enhanced control and flexibility in managing web fonts.",
+    "oss": true,
+    "scriptSrc": [
+      "(?:((?:\\d+\\.)+\\d+)\\/)?webfontloader(?:\\.min)?(?:[-\\.][\\d\\w]{0,32})?\\.js\\;version:\\1"
+    ],
+    "website": "https://github.com/typekit/webfontloader"
+  },
   "Web Shop Manager": {
     "cats": [
       6
     ],
     "description": "Web Shop Manager is an ecommerce and search platform for the automotive industry and markets with complex product catalogs.",
-    "icon": "Web Shop Manager.png",
+    "icon": "Web Shop Manager.svg",
     "js": {
       "WSM.Tracking": "",
       "WSM_CHART_COLORS_OPAQUE": "",
@@ -839,7 +1194,9 @@
       5
     ],
     "description": "Web Stories is a format for visual storytelling for the open web.",
-    "dom": "amp-story",
+    "dom": [
+      "amp-story"
+    ],
     "icon": "Web-Stories.svg",
     "implies": [
       "AMP"
@@ -884,6 +1241,7 @@
     "cats": [
       18
     ],
+    "cpe": "cpe:2.3:a:web2py:web2py:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Powered-By": "web2py"
     },
@@ -899,6 +1257,23 @@
       "web2py\\.js"
     ],
     "website": "https://web2py.com"
+  },
+  "Web3Forms": {
+    "cats": [
+      110
+    ],
+    "description": "Web3Forms is a contact form to email service utilising the Web3 API.",
+    "dom": [
+      "form[action*='api.web3forms.com/']"
+    ],
+    "icon": "Web3Forms.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://web3forms.com"
   },
   "WebAssembly": {
     "cats": [
@@ -926,7 +1301,7 @@
       76
     ],
     "description": "WebEngage is a customer data platform and marketing automation suite.",
-    "icon": "WebEngage.png",
+    "icon": "WebEngage.svg",
     "js": {
       "webengage.__v": "([\\d.]+)\\;version:\\1"
     },
@@ -945,8 +1320,10 @@
       87
     ],
     "description": "WebFactory Maintenance is a WordPress plugin which allows you to create an maintenance page.",
-    "dom": "link[href*='/wp-content/plugins/maintenance/']",
-    "icon": "WebFactory.png",
+    "dom": [
+      "link[href*='/wp-content/plugins/maintenance/']"
+    ],
+    "icon": "WebFactory_Maintence.svg",
     "js": {
       "mtnc_front_options": ""
     },
@@ -961,8 +1338,10 @@
       87
     ],
     "description": "WebFactory Under Construction is a WordPress plugin which allows you to create an under construction page.",
-    "dom": "link[href*='/wp-content/plugins/under-construction-page/']",
-    "icon": "WebFactory.png",
+    "dom": [
+      "link[href*='/wp-content/plugins/under-construction-page/']"
+    ],
+    "icon": "WebFactory_Under_Construction.svg",
     "oss": true,
     "requires": [
       "WordPress"
@@ -991,10 +1370,14 @@
     ],
     "description": "WebHostUK is a UK based web hosting company offering cheap yet reliable and secure web hosting solutions on both Linux and Windows servers.",
     "dns": {
-      "NS": "ns2\\d\\.dnshostcentral\\.com",
-      "SOA": "ns2\\d\\.dnshostcentral\\.com"
+      "NS": [
+        "ns2\\d\\.dnshostcentral\\.com"
+      ],
+      "SOA": [
+        "ns2\\d\\.dnshostcentral\\.com"
+      ]
     },
-    "icon": "WebHostUK.png",
+    "icon": "WebHostUK.svg",
     "pricing": [
       "recurring",
       "low"
@@ -1040,6 +1423,23 @@
     "saas": true,
     "website": "https://www.webnode.com"
   },
+  "WebQnA": {
+    "cats": [
+      52,
+      53
+    ],
+    "description": "WebQnA is a platform that offers generative AI chatbots for businesses to enhance customer interactions and support.",
+    "icon": "WebQnA.svg",
+    "js": {
+      "webqna": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://webqna.ai"
+  },
   "WebRTC": {
     "cats": [
       19
@@ -1051,21 +1451,44 @@
   },
   "WebSite X5": {
     "cats": [
-      20
+      1,
+      51
     ],
     "description": "WebSite X5 is a tools to create and publish websites.",
-    "icon": "WebSite X5.png",
+    "icon": "WebSite X5.svg",
     "meta": {
       "generator": "Incomedia WebSite X5 (\\w+ [\\d.]+)\\;version:\\1"
     },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
     "website": "https://websitex5.com"
+  },
+  "WebSocket": {
+    "cats": [
+      19
+    ],
+    "description": "WebSocket is a communication protocol that provides full-duplex communication channels over a single, long-lived connection, enabling interactive communication between web browsers and servers.",
+    "dom": [
+      "link[rel='web-socket']"
+    ],
+    "html": [
+      "<(?:link|a)[^>]+href=[\"']wss?://"
+    ],
+    "icon": "WebSocket.svg",
+    "oss": true,
+    "website": "https://en.wikipedia.org/wiki/WebSocket"
   },
   "WebToffee Stripe Payment Plugin for WooCommerce": {
     "cats": [
       87
     ],
     "description": "WebToffee Stripe Payment Plugin for WooCommerce is a software add-on that allows online retailers using the WooCommerce ecommerce platform to accept payments through the Stripe payment gateway.",
-    "dom": "link[href*='/wp-content/plugins/payment-gateway-stripe-and-woocommerce-integration/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/payment-gateway-stripe-and-woocommerce-integration/']"
+    ],
     "icon": "WebToffee.svg",
     "implies": [
       "Stripe",
@@ -1143,12 +1566,53 @@
     "saas": true,
     "website": "https://www.shop-script.com"
   },
+  "Webeo": {
+    "cats": [
+      76
+    ],
+    "description": "Webeo is a platform that enables website owners to customize the content on their website for each individual visitor, creating a unique experience for them.",
+    "dom": [
+      "script#__webeoCoreScript"
+    ],
+    "icon": "Webeo.svg",
+    "js": {
+      "__webeoEventQueue": "",
+      "__webeoGlobals": "",
+      "__webeoRunPersonalisation": "",
+      "__webeoScriptStart": "",
+      "__webeoStarted": "",
+      "__webeoUnmask": "",
+      "__webeoVisitData": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.webeo.com"
+  },
+  "Weberlo": {
+    "cats": [
+      10
+    ],
+    "description": "Weberlo is a platform that enables users to track their Return on Investment (ROI) and Return on Advertising Spend (ROAS).",
+    "icon": "Weberlo.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.weberlo\\.com/"
+    ],
+    "website": "https://www.weberlo.com"
+  },
   "Webeyez": {
     "cats": [
       10
     ],
     "description": "Webeyez is an ecommerce monitoring and analytics solution designed to assist teams in identifying, alerting, prioritising, and resolving operational and technical issues for revenue recovery.",
-    "icon": "Webeyez.png",
+    "icon": "Webeyez.svg",
     "js": {
       "___WEBEYEZ_CACHE": "",
       "___WEBEYEZ_REGISTER_ERROR": "",
@@ -1169,10 +1633,13 @@
       51
     ],
     "description": "Webflow is Software-as-a-Service (SaaS) for website building and hosting.",
-    "dom": "html[data-wf-site]",
+    "dom": [
+      "html[data-wf-site]"
+    ],
     "icon": "webflow.svg",
     "js": {
-      "Webflow": ""
+      "Webflow": "",
+      "Webflow._.VERSION": "([\\d.]+)\\;version:\\1"
     },
     "meta": {
       "generator": "Webflow"
@@ -1204,17 +1671,6 @@
     "saas": true,
     "website": "https://webflow.com/ecommerce"
   },
-  "Web Font Loader": {
-    "cats": [
-      59
-    ],
-    "description": "WebFont Loader is a versatile JavaScript library that provides enhanced control and flexibility in managing web fonts.",
-    "oss": true,
-    "scriptSrc": [
-      "(?:((?:\\d+\\.)+\\d+)\\/)?webfontloader(?:\\.min)?(?:[-\\.][\\d\\w]{0,32})?\\.js\\;version:\\1"
-    ],
-    "website": "https://github.com/typekit/webfontloader"
-  },
   "Webgains": {
     "cats": [
       71
@@ -1229,14 +1685,71 @@
     ],
     "website": "https://www.webgains.com/"
   },
+  "Webica": {
+    "cats": [
+      36
+    ],
+    "description": "Webica is a web-based platform designed to manage online advertising campaigns for your website.",
+    "icon": "Webica.svg",
+    "js": {
+      "WebicaWidget": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://webica.pro"
+  },
+  "Webim": {
+    "cats": [
+      52
+    ],
+    "description": "Webim is a platform offering live chat service for website visitors, facilitating real-time communication between businesses and their online audience.",
+    "icon": "Webim.svg",
+    "js": {
+      "webim": "",
+      "webim.version": "^(.+)$\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.webim\\.ru/"
+    ],
+    "website": "https://webim.ru"
+  },
+  "Webinaris": {
+    "cats": [
+      32
+    ],
+    "description": "Webinaris is a platform that automates customer acquisition, allowing businesses to attract more customers with significantly reduced effort.",
+    "icon": "Webinaris.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "webinaris_load"
+    ],
+    "website": "https://www.webinaris.com"
+  },
   "Webix": {
     "cats": [
       12
     ],
-    "icon": "Webix.png",
+    "description": "Webix is a JavaScript UI library that offers over 100 customizable UI components for creating web applications, supporting integration with frameworks like Angular, React, and Vue.js.",
+    "icon": "Webix.svg",
     "js": {
       "webix": ""
     },
+    "oss": true,
+    "pricing": [
+      "onetime"
+    ],
     "scriptSrc": [
       "\\bwebix\\.js"
     ],
@@ -1269,7 +1782,9 @@
       6
     ],
     "description": "Weblium let's you create a web site or online store without the need for a web developer or designer.",
-    "dom": "link[href*='res2.weblium.site']",
+    "dom": [
+      "link[href*='res2.weblium.site']"
+    ],
     "icon": "Weblium.svg",
     "implies": [
       "Node.js",
@@ -1310,12 +1825,27 @@
     ],
     "cpe": "cpe:2.3:a:webmin:webmin:*:*:*:*:*:*:*:*",
     "description": "Webmin is a free, open-source application for Linux server administration.",
-    "icon": "Webmin.png",
+    "icon": "Webmin.svg",
     "implies": [
       "Perl"
     ],
     "oss": true,
     "website": "https://www.webmin.com"
+  },
+  "WeboLead": {
+    "cats": [
+      10
+    ],
+    "description": "WeboLead is an analytics tool designed to convert anonymous website visitors into qualified prospects by analysing user behaviour and providing actionable insights.",
+    "icon": "WeboLead.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.webolead\\.com/"
+    ],
+    "website": "https://www.webolead.com/"
   },
   "Webolytics": {
     "cats": [
@@ -1325,6 +1855,9 @@
     "description": "Webolytics is an open API platform designed to track return on advertising spend.",
     "icon": "Webolytics.svg",
     "js": {
+      "webo_gtm_id": "",
+      "webo_gtm_label": "",
+      "webo_gtm_prefix": "",
       "webolytics_site_tag": "",
       "webolytics_webhook_call": ""
     },
@@ -1344,6 +1877,7 @@
       "webpackChunk": "",
       "webpackJsonp": ""
     },
+    "oss": true,
     "website": "https://webpack.js.org/"
   },
   "Webpushr": {
@@ -1365,6 +1899,22 @@
       "cdn\\.webpushr\\.com/app\\.min\\.js"
     ],
     "website": "https://www.webpushr.com"
+  },
+  "Webready": {
+    "cats": [
+      51
+    ],
+    "description": "Webready is a platform that enables users to create custom vacation rental websites.",
+    "icon": "Webready.svg",
+    "js": {
+      "Webready": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://usewebready.com"
   },
   "Webriti Busiprof": {
     "cats": [
@@ -1424,6 +1974,7 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:websitebaker:websitebaker:*:*:*:*:*:*:*:*",
     "icon": "WebsiteBaker.png",
     "implies": [
       "PHP",
@@ -1480,7 +2031,9 @@
       6
     ],
     "description": "Webx is a hosted ecommerce solution from Pakistan.",
-    "dom": "div#divPowered > div > p > a[href*='.webx.pk']",
+    "dom": [
+      "div#divPowered > div > p > a[href*='.webx.pk']"
+    ],
     "icon": "Webx.svg",
     "pricing": [
       "low",
@@ -1488,6 +2041,28 @@
     ],
     "saas": true,
     "website": "https://www.webx.pk"
+  },
+  "Webyn": {
+    "cats": [
+      76
+    ],
+    "description": "Webyn is a SaaS platform employing AI to analyse website traffic and implement automated, personalised enhancements aimed at improving user experience and potentially increasing conversions for clients.",
+    "dom": [
+      "link[href*='files.webyn.ai']"
+    ],
+    "icon": "Webyn.svg",
+    "js": {
+      "WebynInstance": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "files\\.webyn\\.ai/"
+    ],
+    "website": "https://www.webyn.ai"
   },
   "Webzie": {
     "cats": [
@@ -1535,10 +2110,17 @@
     "cats": [
       89
     ],
+    "description": "Weglot is a website translation solution facilitating automatic and manual multilingual content management for website owners and developers.",
     "headers": {
       "Weglot-Translated": ""
     },
-    "icon": "Weglot.png",
+    "icon": "Weglot.svg",
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "saas": true,
     "scriptSrc": [
       "cdn\\.weglot\\.com",
       "wp-content/plugins/weglot"
@@ -1573,7 +2155,9 @@
       19
     ],
     "description": "Pearl Theme for Magento 2 by WeltPixel. Pearl Theme is following the Magento architecture, layouts and best practice in order to assure highest compatibility with 3rd party extensions.",
-    "dom": "body.theme-pearl",
+    "dom": [
+      "body.theme-pearl"
+    ],
     "icon": "WeltPixel.svg",
     "implies": [
       "Magento\\;version:2"
@@ -1586,6 +2170,42 @@
       "onetime"
     ],
     "website": "https://www.weltpixel.com/magento-2-theme-pearl"
+  },
+  "Wepay": {
+    "cats": [
+      41
+    ],
+    "description": "Wepay is a provider of integrated payments processing solutions tailored for platforms, facilitating transaction management across diverse service offerings.",
+    "dom": [
+      "link[href*='.wepay.com']"
+    ],
+    "icon": "WePay.svg",
+    "js": {
+      "WePay": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.wepay\\.com/"
+    ],
+    "website": "https://go.wepay.com"
+  },
+  "Weply": {
+    "cats": [
+      52
+    ],
+    "description": "Weply is a Nordic lead generation chat system designed to enhance lead generation from existing website traffic.",
+    "icon": "Weply.svg",
+    "js": {
+      "$$weply": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.weply\\.chat/"
+    ],
+    "website": "https://weply.chat"
   },
   "Whatfix": {
     "cats": [
@@ -1612,8 +2232,13 @@
       52
     ],
     "description": "WhatsApp Business is a free to download app available on Android and iPhone using which businesses can connect with their customers.",
-    "dom": "a[href*='api.whatsapp.com/send'], a[href*='web.whatsapp.com/send'], a[href*='wa.me/'], div[class*='wptwa-container'], a[href*='wa.link'][target='_blank']",
+    "dom": [
+      "a[href*='api.whatsapp.com/send'], a[href*='web.whatsapp.com/send'], div[class*='wptwa-container'], a[href*='wa.link'][target='_blank'], link[href*='plugins/creame-whatsapp-me']"
+    ],
     "icon": "WhatsApp.svg",
+    "scriptSrc": [
+      "/plugins/creame-whatsapp-me.*joinchat\\.min\\.js"
+    ],
     "website": "https://www.whatsapp.com/business"
   },
   "Wheelio": {
@@ -1621,7 +2246,7 @@
       5
     ],
     "description": "Wheelio is gamified pop-up/widget for ecommerce sites.",
-    "icon": "Wheelio.png",
+    "icon": "Wheelio.svg",
     "pricing": [
       "low",
       "recurring"
@@ -1631,6 +2256,22 @@
       "wheelioapp\\.azureedge\\.net"
     ],
     "website": "https://wheelio-app.com/"
+  },
+  "Wheely Sales": {
+    "cats": [
+      32
+    ],
+    "description": "Wheely Sales is a tool that boosts email opt-in rates using a gamified exit intent popup designed to engage users as they leave a website.",
+    "icon": "WheelSales.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.wheelysales\\.com/"
+    ],
+    "website": "https://wheelysales.com"
   },
   "Whistl": {
     "cats": [
@@ -1661,7 +2302,7 @@
       100
     ],
     "description": "WideBundle is a Shopify application that allows a merchant to set up bundles on his store.",
-    "icon": "WideBundle.png",
+    "icon": "WideBundle.svg",
     "implies": [
       "Shopify"
     ],
@@ -1695,12 +2336,24 @@
     ],
     "website": "https://www.widen.com"
   },
+  "WiderPlanet": {
+    "cats": [
+      36
+    ],
+    "description": "WiderPlanet is a real-time advertising platform that utilises user behaviour data to deliver targeted advertisements.",
+    "icon": "WiderPlanet.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.widerplanet\\.com/"
+    ],
+    "website": "https://widerplanet.com"
+  },
   "WidgetWhats": {
     "cats": [
       52
     ],
     "description": "WidgetWhats is a fully customizable chat widget with appearance, text, color, button style and position.",
-    "icon": "WidgetWhats.png",
+    "icon": "WidgetWhats.svg",
     "js": {
       "wwwa_loaded": ""
     },
@@ -1730,12 +2383,31 @@
     ],
     "website": "https://www.wigzo.com/"
   },
+  "Wijmo": {
+    "cats": [
+      59
+    ],
+    "description": "Wijmo is a JavaScript UI component library built in TypeScript, ideal for developing lightweight, high-speed HTML5/JavaScript applications with no dependencies, and designed for enterprise use.",
+    "icon": "Wijmo.svg",
+    "js": {
+      "wijmo": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "/Scripts/Acts/Wijmo/wijmo\\.min\\.js\\?v=([\\d]+\\.\\d+)\\;version:\\1"
+    ],
+    "website": "https://developer.mescius.com/wijmo"
+  },
   "Wiki.js": {
     "cats": [
       4
     ],
     "description": "Wiki.js is a wiki engine running on Node.js and written in JavaScript.",
-    "icon": "Wiki.js.png",
+    "icon": "Wiki.js.svg",
     "implies": [
       "Node.js"
     ],
@@ -1750,11 +2422,17 @@
     "cats": [
       6
     ],
+    "description": "Wikinggruppen is a Swedish company specializing in ecommerce solutions, offering custom platform development, CMS integration, and technical support.",
     "html": [
-      "<!-- WIKINGGRUPPEN"
+      "<!-- WIKINGGRUPPEN\\s([\\d\\.]+)\\;version:\\1"
     ],
-    "icon": "wikinggruppen.png",
-    "website": "https://wikinggruppen.se/"
+    "icon": "wikinggruppen.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://wikinggruppen.se"
   },
   "WikkaWiki": {
     "cats": [
@@ -1776,7 +2454,7 @@
       10
     ],
     "description": "WildJar is a call tracking and intelligence platform which helps you understand where your leads are coming from, who is calling you, what your conversations are about and connect that data into other platforms.",
-    "icon": "WildJar.png",
+    "icon": "WildJar.svg",
     "pricing": [
       "freemium",
       "payg",
@@ -1855,6 +2533,42 @@
     },
     "website": "https://winstone.sourceforge.net"
   },
+  "Winter CMS": {
+    "cats": [
+      1
+    ],
+    "description": "Winter CMS is an open source content management framework built on the Laravel PHP framework for rapid development.",
+    "icon": "WinterCMS.svg",
+    "implies": [
+      "Laravel"
+    ],
+    "meta": {
+      "author": "^Winter CMS$",
+      "generator": "^Winter CMS$"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://wintercms.com"
+  },
+  "Wipe Analytics": {
+    "cats": [
+      10
+    ],
+    "description": "Wipe Analytics provides user behavior analysis for high-traffic and dynamically generated websites.",
+    "icon": "Wipe Analytics.svg",
+    "pricing": [
+      "recurring",
+      "high"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.wipe\\.de/wwa\\.js"
+    ],
+    "website": "https://wipe-analytics.de"
+  },
   "Wirecard": {
     "cats": [
       41
@@ -1895,12 +2609,56 @@
     ],
     "website": "https://wisepops.com"
   },
+  "WiserNotify": {
+    "cats": [
+      76
+    ],
+    "description": "WiserNotify is a platform offering social proof and FOMO features for ecommerce sites.",
+    "dom": [
+      "link[href*='app.wisernotify.com/']"
+    ],
+    "icon": "WiserNotify.svg",
+    "js": {
+      "wiser": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa",
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://wisernotify.com"
+  },
+  "Wisetracker": {
+    "cats": [
+      10,
+      32
+    ],
+    "description": "Wisetracker is a behavioral analytics and marketing automation tool.",
+    "icon": "Wisetracker.svg",
+    "js": {
+      "DOP_SDK_CONF.adClkEndPoint": "\\.analytics\\.wisetracker\\.co\\.kr",
+      "DOT_ADCLK_ENDPOINT": "\\.analytics\\.wisetracker\\.co\\.kr"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.wisetracker\\.co\\.kr"
+    ],
+    "website": "https://www.wisetracker.co.kr"
+  },
   "Wishlist King": {
     "cats": [
       100
     ],
     "description": "Wishlist King is a Shopify app which helps you to add your favorite products or share the wishlist with your friends built by Appmate.",
-    "icon": "Wishlist King.png",
+    "icon": "Wishlist King.svg",
     "js": {
       "Appmate.version": "([\\d\\.]+)\\;version:\\1\\;confidence:1",
       "Appmate.wk": ""
@@ -1994,7 +2752,9 @@
       52
     ],
     "description": "Wix Answers is a cloud-based help desk software.",
-    "dom": "iframe[src*='.wixanswers.com/']",
+    "dom": [
+      "iframe[src*='.wixanswers.com/']"
+    ],
     "icon": "Wix Answers.svg",
     "pricing": [
       "recurring",
@@ -2026,6 +2786,23 @@
     "saas": true,
     "website": "https://www.wix.com/freesitebuilder/tae-store"
   },
+  "Wized": {
+    "cats": [
+      51
+    ],
+    "description": "Wized is a web application builder that enables the creation of apps without requiring any coding knowledge.",
+    "icon": "Wized.svg",
+    "js": {
+      "Wized.data": "",
+      "wized_config": "",
+      "wized_config_dev": ""
+    },
+    "requires": [
+      "Webflow"
+    ],
+    "saas": true,
+    "website": "https://www.wized.io"
+  },
   "WiziShop": {
     "cats": [
       6
@@ -2034,7 +2811,7 @@
     "headers": {
       "Server": "^WiziServer$"
     },
-    "icon": "WiziShop.png",
+    "icon": "WiziShop.svg",
     "js": {
       "WIZIBLOCK_ARRAY": "",
       "wiziblocks_list": "",
@@ -2052,7 +2829,7 @@
       91
     ],
     "description": "Wizpay is a buy now pay later solution.",
-    "icon": "Wizpay.png",
+    "icon": "Wizpay.svg",
     "pricing": [
       "payg"
     ],
@@ -2062,10 +2839,30 @@
     ],
     "website": "https://www.wizpay.com.au"
   },
+  "Wizzy": {
+    "cats": [
+      29
+    ],
+    "description": "Wizzy is a tool that simplifies ecommerce site search, enabling users to find relevant products, pages, and information.",
+    "icon": "Wizzy.svg",
+    "js": {
+      "WizzyFrontend": "",
+      "foundWizzyConfig": "",
+      "wizzyConfig.analytics": "",
+      "wizzyScriptLoaded": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://wizzy.ai"
+  },
   "Wolf CMS": {
     "cats": [
       1
     ],
+    "description": "Wolf CMS is an open-source, lightweight content management system written in PHP.",
     "html": [
       "(?:<a href=\"[^>]+wolfcms\\.org[^>]+>Wolf CMS(?:</a>)? inside|Thank you for using <a[^>]+>Wolf CMS)"
     ],
@@ -2073,13 +2870,44 @@
     "implies": [
       "PHP"
     ],
-    "website": "https://www.wolfcms.org"
+    "oss": true,
+    "website": "https://github.com/wolfcms/wolfcms"
+  },
+  "Wolfeo": {
+    "cats": [
+      32,
+      71
+    ],
+    "cookies": {
+      "wolfeo_new_session_5": ""
+    },
+    "description": "Wolfeo is an online platform for selling digital products and services, catering to coaches, consultants, and entrepreneurs.",
+    "icon": "Wolfeo.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://wolfeo.fr"
+  },
+  "WolframAlpha": {
+    "cats": [
+      5
+    ],
+    "description": "WolframAlpha is a tool that integrates live computational knowledge into blogs or websites.",
+    "icon": "WolframAlpha.svg",
+    "js": {
+      "WolframAlphaWidget": ""
+    },
+    "saas": true,
+    "website": "https://www.wolframalpha.com/widgets"
   },
   "Woltlab Community Framework": {
     "cats": [
       1
     ],
-    "icon": "Woltlab Community Framework.png",
+    "description": "WoltLab Community Framework is a modular and extensible software platform designed for building and managing online communities with features like forums, blogs, and galleries.",
+    "icon": "Woltlab Community Framework.svg",
     "implies": [
       "PHP"
     ],
@@ -2088,6 +2916,42 @@
     ],
     "website": "https://www.woltlab.com"
   },
+  "Wonder": {
+    "cats": [
+      10,
+      32
+    ],
+    "description": "Wonder is an analytics and marketing tool that uses offline and online data to implement optimal marketing strategies aimed at achieving website goals, such as conversions.",
+    "icon": "Wonder.svg",
+    "js": {
+      "vmwondertracking": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.wonder-ma\\.com/"
+    ],
+    "website": "https://www.wonder-ma.com"
+  },
+  "WooChat": {
+    "cats": [
+      32
+    ],
+    "description": "WooChat is a marketing automation tool that helps store owners to grow their business.",
+    "dom": [
+      "link[href*='app.woochat.io/']"
+    ],
+    "icon": "WooChat.svg",
+    "js": {
+      "woochat_wa_chat_init": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://woochat.io"
+  },
   "WooCommerce": {
     "cats": [
       6,
@@ -2095,7 +2959,9 @@
     ],
     "cpe": "cpe:2.3:a:woocommerce:woocommerce:*:*:*:*:*:wordpress:*:*",
     "description": "WooCommerce is an open-source ecommerce plugin for WordPress.",
-    "dom": ".woocommerce, .woocommerce-no-js, link[rel*='woocommerce']",
+    "dom": [
+      ".woocommerce, .woocommerce-no-js, link[rel*='woocommerce']"
+    ],
     "icon": "WooCommerce.svg",
     "js": {
       "woocommerce_params": ""
@@ -2139,7 +3005,7 @@
       89
     ],
     "description": "WooCommerce Multilingual plugin makes it possible to run fully multilingual ecommerce sites using WooCommerce and WPML.",
-    "icon": "WooCommerce Multilingual.png",
+    "icon": "WooCommerce Multilingual.svg",
     "requires": [
       "WordPress",
       "WooCommerce"
@@ -2154,7 +3020,9 @@
       87
     ],
     "description": "WooCommerce PayPal Checkout Payment Gateway is a WordPress plugin which allows you to securely sell your products and subscriptions online using in-context checkout.",
-    "dom": "link[href*='/wp-content/plugins/woocommerce-gateway-paypal-express-checkout/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/woocommerce-gateway-paypal-express-checkout/']"
+    ],
     "icon": "WooCommerce PayPal.png",
     "implies": [
       "PayPal"
@@ -2176,7 +3044,9 @@
       87
     ],
     "description": "WooCommerce PayPal Payments is a latest WordPress plugin with most complete payment processing solution. Accept PayPal exclusives, credit/debit cards and local payment methods.",
-    "dom": "link[href*='/wp-content/plugins/woocommerce-paypal-payments/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/woocommerce-paypal-payments/']"
+    ],
     "icon": "WooCommerce PayPal.png",
     "implies": [
       "PayPal"
@@ -2195,8 +3065,10 @@
       87
     ],
     "description": "WooCommerce Stripe Payment Gateway plugin extends WooCommerce allowing you to take payments directly on your store via Stripe’s API.",
-    "dom": "link[href*='/wp-content/plugins/woocommerce-gateway-stripe/']",
-    "icon": "WooCommerce Stripe Payment Gateway.png",
+    "dom": [
+      "link[href*='/wp-content/plugins/woocommerce-gateway-stripe/']"
+    ],
+    "icon": "WooCommerce Stripe Payment Gateway.svg",
     "implies": [
       "Stripe"
     ],
@@ -2216,7 +3088,9 @@
       87
     ],
     "description": "WooCommerce Subscriptions primarily allows you to create and sell subscription products from your WooCommerce shop.",
-    "dom": "link[href*='/wp-content/plugins/woocommerce-subscriptions/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/woocommerce-subscriptions/']"
+    ],
     "icon": "WooCommerce.svg",
     "implies": [
       "WooCommerce"
@@ -2230,11 +3104,55 @@
     ],
     "website": "https://woocommerce.com/products/woocommerce-subscriptions"
   },
+  "Woodmart": {
+    "cats": [
+      80
+    ],
+    "description": "Woodmart is a multipurpose WordPress theme offering for website creation and customization.",
+    "icon": "Woodmart.svg",
+    "js": {
+      "woodmartThemeModule": "",
+      "woodmart_settings": ""
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "website": "https://woodmart.xtemos.com"
+  },
+  "WookMark": {
+    "cats": [
+      59
+    ],
+    "description": "WookMark is a plugin for laying out elements of varying heights in a column-based grid.",
+    "icon": "WookMark.svg",
+    "js": {
+      "Wookmark": ""
+    },
+    "oss": true,
+    "requires": [
+      "jQuery"
+    ],
+    "scriptSrc": [
+      "wookmark\\.min\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1"
+    ],
+    "website": "https://wookmark.com"
+  },
   "Woopra": {
     "cats": [
       10
     ],
-    "icon": "Woopra.png",
+    "description": "Woopra is a customer journey and product analytics software tool that helps businesses track user behavior and analyze customer interactions in real-time.",
+    "icon": "Woopra.svg",
+    "pricing": [
+      "freemium",
+      "high",
+      "recurring"
+    ],
+    "saas": true,
     "scriptSrc": [
       "static\\.woopra\\.com"
     ],
@@ -2245,7 +3163,7 @@
       80
     ],
     "description": "Woostify is fast, lightweight, responsive and flexible WooCommerce theme built with SEO, speed, and usability in mind.",
-    "icon": "Woostify.png",
+    "icon": "Woostify.svg",
     "implies": [
       "WooCommerce"
     ],
@@ -2266,12 +3184,30 @@
     ],
     "website": "https://woostify.com"
   },
+  "Wootric": {
+    "cats": [
+      97
+    ],
+    "description": "Wootric is a customer feedback platform designed to enhance customer experience management for digital applications and B2B SaaS.",
+    "icon": "Wootric.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.wootric\\.com"
+    ],
+    "scripts": [
+      "\\.wootric\\.com"
+    ],
+    "website": "https://www.wootric.com"
+  },
   "WoowUp": {
     "cats": [
       53
     ],
     "description": "WoowUp is a tool of CRM and predictive marketing.",
-    "icon": "WoowUp.png",
+    "icon": "WoowUp.svg",
     "js": {
       "WU._trackProductVTEXField": ""
     },
@@ -2284,12 +3220,26 @@
     ],
     "website": "https://www.woowup.com"
   },
+  "Word of Mouth": {
+    "cats": [
+      90
+    ],
+    "description": "Word of Mouth is a feedback platform that allows users to compare reviews and ratings for various services and businesses.",
+    "icon": "WOMO.svg",
+    "saas": true,
+    "scriptSrc": [
+      "www\\.womo\\.com\\.au/"
+    ],
+    "website": "https://www.wordofmouth.com.au"
+  },
   "WordAds": {
     "cats": [
       36
     ],
     "description": "WordAds is an advertising platform run by Automatic that allows bloggers and website owners to place advertisements on their blogs and websites.",
-    "dom": "link[href*='.pubmine.com']",
+    "dom": [
+      "link[href*='.pubmine.com']"
+    ],
     "icon": "WordAds.png",
     "pricing": [
       "freemium",
@@ -2301,6 +3251,23 @@
     ],
     "website": "https://wordads.co"
   },
+  "WordLift": {
+    "cats": [
+      54
+    ],
+    "description": "WordLift is an AI tool that analyzes content, identifies key business topics, and enables the insertion of semantic markup without needing technical skills.",
+    "icon": "WordLift.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cloud\\.wordlift\\.io/"
+    ],
+    "website": "https://wordlift.io"
+  },
   "WordPress": {
     "cats": [
       1,
@@ -2310,8 +3277,7 @@
     "description": "WordPress is a free and open-source content management system written in PHP and paired with a MySQL or MariaDB database. Features include a plugin architecture and a template system.",
     "headers": {
       "X-Pingback": "/xmlrpc\\.php$",
-      "link": "rel=\"https://api\\.w\\.org/\"",
-      "X-Redirect-By": "WordPress"
+      "link": "rel=\"https://api\\.w\\.org/\""
     },
     "html": [
       "<link rel=[\"']stylesheet[\"'] [^>]+/wp-(?:content|includes)/",
@@ -2323,6 +3289,7 @@
       "MySQL"
     ],
     "js": {
+      "wp.receiveEmbedMessage": "",
       "wp_username": ""
     },
     "meta": {
@@ -2347,7 +3314,9 @@
       80
     ],
     "description": "WordPress Default is a default WordPress theme.",
-    "dom": "link[href*='/wp-content/themes/default/']",
+    "dom": [
+      "link[href*='/wp-content/themes/default/']"
+    ],
     "icon": "WordPress.svg",
     "pricing": [
       "freemium"
@@ -2387,6 +3356,24 @@
       "WordPress"
     ],
     "website": "https://wordpress.org/documentation/article/create-a-network/"
+  },
+  "WordPress Popular Posts": {
+    "cats": [
+      87,
+      5
+    ],
+    "description": "WordPress Popular Posts is a plugin for the WordPress content management system that allows users to display a widget or shortcode featuring a list of the most popular posts on their website based on criteria such as pageviews or comments.",
+    "headers": {
+      "WordPressPopularPosts": ""
+    },
+    "icon": "WordPress Popular Posts.svg",
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/plugins/wordpress-popular-posts/.+wpp\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
+    "website": "https://wordpress.org/plugins/wordpress-popular-posts/"
   },
   "WordPress Super Cache": {
     "cats": [
@@ -2432,6 +3419,9 @@
     "implies": [
       "WordPress"
     ],
+    "js": {
+      "WordPressPopularPosts": ""
+    },
     "website": "https://wordpress.com"
   },
   "Wordfence": {
@@ -2483,7 +3473,9 @@
       101
     ],
     "description": "Workable is the all-in-one hiring solution.",
-    "dom": "a[href*='.workable.com/']",
+    "dom": [
+      "a[href*='.workable.com/']"
+    ],
     "icon": "Workable.svg",
     "js": {
       "webpackChunk_workable_candidate": ""
@@ -2517,13 +3509,31 @@
     "saas": true,
     "website": "https://www.workarea.com"
   },
+  "Workstand": {
+    "cats": [
+      6,
+      32
+    ],
+    "description": "Workstand is a marketing and ecommerce solution designed for bike shops.",
+    "icon": "Workstand.svg",
+    "meta": {
+      "author": "^SmartEtailing Inc$"
+    },
+    "saas": true,
+    "scriptSrc": [
+      "smartetailing\\.piwik\\.pro/"
+    ],
+    "website": "https://workstand.com"
+  },
   "World4You": {
     "cats": [
       88
     ],
     "description": "World4You operates homepage and domain solutions. World4Youu operates data centers in Austria and provides data protection.",
     "dns": {
-      "SOA": "ns\\d+\\.world4you\\.at"
+      "SOA": [
+        "ns\\d+\\.world4you\\.at"
+      ]
     },
     "icon": "World4You.svg",
     "pricing": [
@@ -2537,7 +3547,9 @@
       41
     ],
     "description": "WorldPay is a merchant services and payment processing provider offering a payment gateway for online transactions.",
-    "dom": "img[src*='secure.worldpay.com'], img[alt='Powered by WorldPay'], a[href*='worldpay.com'][target='_blank']",
+    "dom": [
+      "img[src*='secure.worldpay.com'], img[alt='Powered by WorldPay'], a[href*='worldpay.com'][target='_blank']"
+    ],
     "icon": "WorldPay.svg",
     "pricing": [
       "payg"
@@ -2550,7 +3562,7 @@
       106
     ],
     "description": "WorldShopping makes online purchases in Japan easier for international visitors.",
-    "icon": "worldshopping.png",
+    "icon": "worldshopping.svg",
     "scriptSrc": [
       "checkout-api\\.worldshopping\\.jp/(v\\d+)?\\;version:\\1"
     ],
@@ -2562,7 +3574,7 @@
       76
     ],
     "description": "Worldz calculates the economic value of a user’s social popularity (qualitatively and quantitatively). In proportion to this value, it provides a personalised discount, which can be applied in exchange for a social sharing by the user on their Instagram or Facebook profile.",
-    "icon": "Worldz.png",
+    "icon": "Worldz.svg",
     "pricing": [
       "mid",
       "recurring"
@@ -2573,22 +3585,43 @@
     ],
     "website": "https://www.worldz-business.net"
   },
-  "WOW": {
+  "WotNot": {
     "cats": [
-      12,
-      18,
-      25
+      52
     ],
-    "description": "Reveal CSS animation as you scroll down a page.",
+    "description": "WotNot is a no-code chatbot platform enabling users to create and deploy chatbots without programming skills.",
+    "icon": "WotNot.svg",
+    "js": {
+      "WotNot.GetChatWindow": ""
+    },
     "pricing": [
-      "low",
-      "onetime"
+      "freemium",
+      "mid",
+      "recurring"
     ],
-    "oss": true,
+    "saas": true,
     "scriptSrc": [
-      "wow(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+      "app\\.wotnot\\.io/"
     ],
-    "website": "https://www.delac.io/WOW"
+    "website": "https://wotnot.io"
+  },
+  "Wowee": {
+    "cats": [
+      5
+    ],
+    "description": "Wowee is a wishlist creation tool designed to help users organise and manage their desired items.",
+    "dom": [
+      "script#wowee-script"
+    ],
+    "icon": "Wowee.svg",
+    "js": {
+      "woweeScriptUrl": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://wowee.cz"
   },
   "Wowza Video Player": {
     "cats": [
@@ -2607,12 +3640,28 @@
     ],
     "website": "https://www.wowza.com/video/player"
   },
+  "Wt": {
+    "cats": [
+      18
+    ],
+    "description": "Wt is a C++ library for developing web applications.",
+    "icon": "Wt.svg",
+    "js": {
+      "Wt.WT.$": "",
+      "WtOnLoad": "",
+      "WtSignalEmit": ""
+    },
+    "oss": true,
+    "website": "https://www.webtoolkit.eu/wt"
+  },
   "Wufoo": {
     "cats": [
       73
     ],
     "description": "Wufoo is an online form builder that creates forms including contact forms, online payments, online surveys and event registrations.",
-    "dom": "a[href*='.wufoo.com/forms/'][target='_blank']",
+    "dom": [
+      "a[href*='.wufoo.com/forms/'][target='_blank']"
+    ],
     "icon": "Wufoo.svg",
     "pricing": [
       "freemium",
@@ -2635,7 +3684,7 @@
         }
       }
     },
-    "icon": "Wuilt.png",
+    "icon": "Wuilt.svg",
     "implies": [
       "React",
       "Node.js"
@@ -2652,7 +3701,9 @@
       32
     ],
     "description": "Wunderkind (Formerly BounceX) is a software for behavioural marketing technologies, created to de-anonymise site visitors, analyse their digital behaviour and create relevant digital experiences regardless of channel or device.",
-    "dom": "link[href*='.smarterhq.io']",
+    "dom": [
+      "link[href*='.smarterhq.io']"
+    ],
     "headers": {
       "Content-Security-Policy": "\\.smarterhq\\.io"
     },
@@ -2675,7 +3726,7 @@
       59
     ],
     "description": "WURFL.js is JavaScript that detects device models of smartphones, tablets, smart TVs and game consoles accessing your website.",
-    "icon": "Wurfl.png",
+    "icon": "Wurfl.svg",
     "js": {
       "WURFL": ""
     },
@@ -2683,6 +3734,21 @@
       "\\.wurfl\\.io"
     ],
     "website": "https://web.wurfl.io/"
+  },
+  "Wyng": {
+    "cats": [
+      32
+    ],
+    "description": "Wyng is a platform that connects audiences and drives consumer actions across various marketing channels.",
+    "dom": [
+      "iframe[src*='//offerpop.com/']"
+    ],
+    "icon": "Wyng.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.offerpop\\.com/"
+    ],
+    "website": "https://www.wyng.com"
   },
   "WysiBB": {
     "cats": [
@@ -2722,7 +3788,8 @@
     "description": "waitForImages is a lightweight, high-performance JavaScript library that simplifies the handling of image preloading events.",
     "oss": true,
     "scriptSrc": [
-      "(?:((?:\\d+\\.)+\\d+)\\/(?:jquery\\.)?)?waitforimages(?:-((?:\\d+\\.)+\\d+)-modded)?(?:\\.min)?\\.js\\;version:\\1\\2"
+      "(?:((?:\\d+\\.)+\\d+)\\/(?:jquery\\.)?)?waitforimages(?:-modded)?(?:\\.min)?\\.js\\;version:\\1",
+      "(?:(?:jquery\\.)?)?waitforimages(?:-((?:\\d+\\.)+\\d+)-modded)?(?:\\.min)?\\.js\\;version:\\1"
     ],
     "website": "https://github.com/alexanderdickson/waitForImages"
   },

@@ -9,7 +9,8 @@
         "<!-- (?:End )?Test Entry -->"
       ],
       "headers": {
-        "Test": "Test Entry"
+        "Test": "Test Entry",
+        "Foo": ""
       },
       "icon": "Test Entry.svg",
       "js": {

@@ -19,6 +19,10 @@
  */
 package org.zaproxy.addon.automation;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +32,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
@@ -47,6 +54,7 @@ import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.Script
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.model.StandardParameterParser;
 import org.zaproxy.zap.users.User;
 
 public class ContextWrapper {
@@ -86,7 +94,7 @@ public class ContextWrapper {
 
         this.data.setSessionManagement(new SessionManagementData(context));
         this.data.setTechnology(new TechnologyData(context));
-        this.data.setAuthentication(new AuthenticationData(context));
+        this.data.setStructure(new StructureData(context));
 
         if (getExtUserMgmt() != null) {
             ArrayList<UserData> users = new ArrayList<>();
@@ -123,6 +131,7 @@ public class ContextWrapper {
                 this.getData().setUsers(users);
             }
         }
+        this.data.setAuthentication(new AuthenticationData(context, getData().getUsers()));
     }
 
     public ContextWrapper(
@@ -175,6 +184,9 @@ public class ContextWrapper {
                 case "technology":
                     data.setTechnology(new TechnologyData(value, env, progress));
                     break;
+                case "structure":
+                    data.setStructure(new StructureData(value, progress));
+                    break;
                 case "users":
                     if (!(value instanceof ArrayList)) {
                         progress.error(
@@ -190,6 +202,8 @@ public class ContextWrapper {
                                                 "automation.error.context.baduser", userObj));
                             } else {
                                 UserData ud = new UserData();
+                                readTotpData(ud, userObj);
+                                forceCredentialsStringType(userObj);
                                 JobUtils.applyParamsToObject(
                                         (LinkedHashMap<?, ?>) userObj, ud, "users", null, progress);
                                 if (env.getUser(ud.getName()) != null) {
@@ -222,6 +236,43 @@ public class ContextWrapper {
         if (data.getUrls().isEmpty()) {
             progress.error(
                     Constant.messages.getString("automation.error.context.nourl", contextData));
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void readTotpData(UserData ud, Object userObj) {
+        Object credentials = ((LinkedHashMap) userObj).get("credentials");
+        if (!(credentials instanceof LinkedHashMap map)) {
+            return;
+        }
+
+        Object data = map.remove("totp");
+        if (!(data instanceof LinkedHashMap)) {
+            return;
+        }
+
+        try {
+            ud.getInternalCredentials()
+                    .setTotp(
+                            JsonMapper.builder()
+                                    .build()
+                                    .convertValue(data, UserData.TotpData.class));
+        } catch (Exception e) {
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private void forceCredentialsStringType(Object userObj) {
+        Object credentials = ((LinkedHashMap) userObj).get("credentials");
+        if (credentials instanceof LinkedHashMap) {
+            ((LinkedHashMap) credentials)
+                    .replaceAll(
+                            (k, v) -> {
+                                if (v instanceof Number) {
+                                    return v.toString();
+                                }
+                                return v;
+                            });
         }
     }
 
@@ -318,10 +369,15 @@ public class ContextWrapper {
             getData().getSessionManagement().initContextSessionManagement(context, progress, env);
         }
         if (getData().getAuthentication() != null) {
-            getData().getAuthentication().initContextAuthentication(context, progress, env);
+            getData()
+                    .getAuthentication()
+                    .initContextAuthentication(context, progress, env, getData().getUsers());
         }
         if (getData().getTechnology() != null) {
             getData().getTechnology().initContextTechnology(context, progress);
+        }
+        if (getData().getStructure() != null) {
+            getData().getStructure().initContext(context, env, progress);
         }
         if (getData().getUsers() != null) {
             initContextUsers(context, env);
@@ -405,79 +461,18 @@ public class ContextWrapper {
         return extUserMgmt;
     }
 
+    @Getter
+    @Setter
     public static class Data extends AutomationData {
         private String name;
         private List<String> urls = new ArrayList<>();
-        private List<String> includePaths;
-        private List<String> excludePaths;
+        private List<String> includePaths = new ArrayList<>();
+        private List<String> excludePaths = new ArrayList<>();
         private AuthenticationData authentication;
         private SessionManagementData sessionManagement;
         private TechnologyData technology;
-        private List<UserData> users;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public List<String> getUrls() {
-            return urls;
-        }
-
-        public void setUrls(List<String> urls) {
-            this.urls = urls;
-        }
-
-        public List<String> getIncludePaths() {
-            return includePaths;
-        }
-
-        public void setIncludePaths(List<String> includePaths) {
-            this.includePaths = includePaths;
-        }
-
-        public List<String> getExcludePaths() {
-            return excludePaths;
-        }
-
-        public void setExcludePaths(List<String> excludePaths) {
-            this.excludePaths = excludePaths;
-        }
-
-        public AuthenticationData getAuthentication() {
-            return authentication;
-        }
-
-        public void setAuthentication(AuthenticationData authentication) {
-            this.authentication = authentication;
-        }
-
-        public SessionManagementData getSessionManagement() {
-            return sessionManagement;
-        }
-
-        public void setSessionManagement(SessionManagementData sessionManagement) {
-            this.sessionManagement = sessionManagement;
-        }
-
-        public TechnologyData getTechnology() {
-            return technology;
-        }
-
-        public void setTechnology(TechnologyData technology) {
-            this.technology = technology;
-        }
-
-        public List<UserData> getUsers() {
-            return users;
-        }
-
-        public void setUsers(List<UserData> users) {
-            this.users = users;
-        }
+        private StructureData structure;
+        private List<UserData> users = new ArrayList<>();
     }
 
     public static class UserData extends AutomationData {
@@ -486,7 +481,7 @@ public class ContextWrapper {
         public static final String PASSWORD_CREDENTIAL = "password";
 
         private String name;
-        private Map<String, String> credentials = new HashMap<>();
+        private Credentials credentials = new Credentials();
 
         public UserData() {}
 
@@ -496,8 +491,8 @@ public class ContextWrapper {
 
         public UserData(String name, String username, String password) {
             this.name = name;
-            this.credentials.put(USERNAME_CREDENTIAL, username);
-            this.credentials.put(PASSWORD_CREDENTIAL, password);
+            this.credentials.getParameters().put(USERNAME_CREDENTIAL, username);
+            this.credentials.getParameters().put(PASSWORD_CREDENTIAL, password);
         }
 
         public String getName() {
@@ -510,24 +505,140 @@ public class ContextWrapper {
 
         public void setUsername(String username) {
             // Required for backwards compatibility
-            this.credentials.put(USERNAME_CREDENTIAL, username);
+            this.credentials.getParameters().put(USERNAME_CREDENTIAL, username);
         }
 
         public void setPassword(String password) {
             // Required for backwards compatibility
-            this.credentials.put(PASSWORD_CREDENTIAL, password);
+            this.credentials.getParameters().put(PASSWORD_CREDENTIAL, password);
         }
 
+        @JsonIgnore
         public Map<String, String> getCredentials() {
-            return credentials;
+            return credentials.getParameters();
         }
 
         public String getCredential(String key) {
-            return this.credentials.get(key);
+            return this.credentials.getParameters().get(key);
         }
 
         public void setCredentials(Map<String, String> credentials) {
-            this.credentials = credentials;
+            this.credentials.setParameters(credentials);
+        }
+
+        @JsonGetter("credentials")
+        public Credentials getInternalCredentials() {
+            return credentials;
+        }
+
+        @Getter
+        @Setter
+        public static class Credentials {
+
+            @JsonAnyGetter private Map<String, String> parameters = new HashMap<>();
+
+            private TotpData totp;
+
+            @JsonIgnore
+            public Map<String, String> getParameters() {
+                return parameters;
+            }
+        }
+
+        @Getter
+        @Setter
+        public static class TotpData {
+
+            private String secret;
+            private String period;
+            private String digits;
+            private String algorithm;
+        }
+    }
+
+    public static class StructureData {
+
+        private List<String> structuralParameters;
+
+        public StructureData() {
+            structuralParameters = new ArrayList<>();
+        }
+
+        StructureData(Context context) {
+            this();
+
+            var urlParamParser = context.getUrlParamParser();
+            if (urlParamParser instanceof StandardParameterParser) {
+                var spp = (StandardParameterParser) urlParamParser;
+                structuralParameters = new ArrayList<>(spp.getStructuralParameters());
+            }
+        }
+
+        StructureData(Object data, AutomationProgress progress) {
+            this();
+
+            if (!(data instanceof Map)) {
+                progress.error(
+                        Constant.messages.getString(
+                                "automation.error.context.badstructure",
+                                data.getClass().getSimpleName()));
+                return;
+            }
+
+            Map<?, ?> dataMap = (Map<?, ?>) data;
+            for (Entry<?, ?> cdata : dataMap.entrySet()) {
+                if ("structuralParameters".equals(cdata.getKey().toString())) {
+                    Object value = cdata.getValue();
+                    if (!(value instanceof List)) {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.context.badstructuralparameterslist",
+                                        value));
+
+                    } else {
+                        ((List<?>) value)
+                                .stream().map(Object::toString).forEach(structuralParameters::add);
+                    }
+
+                } else {
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "automation.error.options.unknown",
+                                    AutomationEnvironment.AUTOMATION_CONTEXT_NAME,
+                                    cdata.getKey().toString()));
+                }
+            }
+        }
+
+        void initContext(Context context, AutomationEnvironment env, AutomationProgress progress) {
+            var urlParamParser = new StandardParameterParser();
+            urlParamParser.setStructuralParameters(
+                    structuralParameters.stream()
+                            .map(env::replaceVars)
+                            .filter(
+                                    e -> {
+                                        if (e.matches("\\w+")) {
+                                            return true;
+                                        }
+
+                                        progress.error(
+                                                Constant.messages.getString(
+                                                        "automation.error.context.badstructuralparametername",
+                                                        e));
+                                        return false;
+                                    })
+                            .collect(Collectors.toList()));
+
+            context.setUrlParamParser(urlParamParser);
+            urlParamParser.setContext(context);
+        }
+
+        public List<String> getStructuralParameters() {
+            return structuralParameters;
+        }
+
+        public void setStructuralParameters(List<String> structuralParameters) {
+            this.structuralParameters = structuralParameters;
         }
     }
 }

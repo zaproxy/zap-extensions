@@ -9,14 +9,14 @@ Active Scan Rules - Alpha
 <H1>Active Scan Rules - Alpha</H1>
 The following alpha status active scan rules are included in this add-on:
 
-<H2>An example active scan rule which loads data from a file</H2>
+<H2 id="id-60101">An example active scan rule which loads data from a file</H2>
 This implements an example active scan rule that loads strings from a file that the user can edit.<br>
 For more details see: 
 <a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExampleFileActiveScanRule.java">ExampleFileActiveScanRule.java</a>
 
-<H2>Example Active Scan Rule: Denial of Service</H2>
+<H2 id="id-60100">Example Active Scan Rule: Denial of Service</H2>
 This implements a very simple example active scan rule.<br>
 For more details see: 
 <a href="https://www.zaproxy.org/blog/2014-04-30-hacking-zap-4-active-scan-rules/">Hacking ZAP Part 4: Active Scan Rules</a>.
@@ -25,6 +25,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 
 <H2 id="id-40015">LDAP Injection</H2>
 LDAP Injection may be possible. It may be possible for an attacker to bypass authentication controls, and to view and modify arbitrary data in the LDAP directory.
+Skips messages which originally resulted in a client or server error response status code.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/LdapInjectionScanRule.java">LdapInjectionScanRule.java</a>
 <br>

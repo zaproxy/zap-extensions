@@ -1,7 +1,11 @@
 import React from "react";
 import { SidebarData } from "./SidebarData";
 
-function Sidebar() {
+const Sidebar = ({ darkMode, setDarkMode }) => {
+  const toggleDarkMode = () => {
+    setDarkMode(prevMode => !prevMode);
+  };
+
   return (
     <div className="Sidebar w-10 bg-gray-800 ">
       <ul className="SidebarList h-auto p-0 w-full ">
@@ -23,6 +27,16 @@ function Sidebar() {
           );
         })}
       </ul>
+      <button
+        onClick={toggleDarkMode}
+        className="mt-4 p-2 text-gray-300 hover:text-white"
+      >
+        {darkMode ? (
+          <span className="text-xl">🔅 </span>
+        ) : (
+          <span className="text-xl">🌒</span>
+        )}
+      </button>
     </div>
   );
 }

@@ -23,6 +23,8 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
@@ -33,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -43,10 +46,17 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
     private static final String MESSAGE_PREFIX = "ascanbeta.integeroverflow.";
 
     private static final int PLUGIN_ID = 30003;
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION));
+        alertTags.put(PolicyTag.API.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static final Logger LOGGER = LogManager.getLogger(IntegerOverflowScanRule.class);
 
@@ -85,7 +95,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private String getError(char c) {
+    private static String getError(char c) {
         return Constant.messages.getString(MESSAGE_PREFIX + "error" + c);
     }
 
@@ -145,7 +155,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
         return ALERT_TAGS;
     }
 
-    private String randomIntegerString(int length) {
+    private static String randomIntegerString(int length) {
 
         int numbercounter = 0;
         int character = 0;
@@ -169,7 +179,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
         return sb1.toString();
     }
 
-    private String singleString(int length, char c) // Single Character String
+    private static String singleString(int length, char c) // Single Character String
             {
 
         int numbercounter = 0;
@@ -241,7 +251,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
                 .setUri(url)
                 .setParam(param)
                 .setAttack(attack)
-                .setOtherInfo(this.getError(type))
+                .setOtherInfo(getError(type))
                 .setEvidence(evidence);
     }
 }

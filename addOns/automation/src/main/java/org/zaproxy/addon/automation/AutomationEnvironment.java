@@ -414,9 +414,14 @@ public class AutomationEnvironment {
         return this.getData().getParameters().getFailOnWarning();
     }
 
+    public boolean isContinueOnFailure() {
+        return this.getData().getParameters().getContinueOnFailure();
+    }
+
     public boolean isTimeToQuit() {
-        return (isFailOnError() && progress.hasErrors())
-                || (isFailOnWarning() && progress.hasWarnings());
+        return !isContinueOnFailure()
+                && ((isFailOnError() && progress.hasErrors())
+                        || (isFailOnWarning() && progress.hasWarnings()));
     }
 
     public void showDialog() {
@@ -487,14 +492,20 @@ public class AutomationEnvironment {
         private boolean failOnError = true;
         private boolean failOnWarning;
         private boolean progressToStdout = true;
+        private boolean continueOnFailure = false;
 
         public Parameters() {}
 
-        public Parameters(boolean failOnError, boolean failOnWarning, boolean progressToStdout) {
+        public Parameters(
+                boolean failOnError,
+                boolean failOnWarning,
+                boolean progressToStdout,
+                boolean continueOnFailure) {
             super();
             this.failOnError = failOnError;
             this.failOnWarning = failOnWarning;
             this.progressToStdout = progressToStdout;
+            this.continueOnFailure = continueOnFailure;
         }
 
         public boolean getFailOnError() {
@@ -503,6 +514,10 @@ public class AutomationEnvironment {
 
         public boolean getFailOnWarning() {
             return failOnWarning;
+        }
+
+        public boolean getContinueOnFailure() {
+            return continueOnFailure;
         }
 
         public boolean getProgressToStdout() {
@@ -515,6 +530,10 @@ public class AutomationEnvironment {
 
         public void setFailOnWarning(boolean failOnWarning) {
             this.failOnWarning = failOnWarning;
+        }
+
+        public void setContinueOnFailure(boolean continueOnFailure) {
+            this.continueOnFailure = continueOnFailure;
         }
 
         public void setProgressToStdout(boolean progressToStdout) {

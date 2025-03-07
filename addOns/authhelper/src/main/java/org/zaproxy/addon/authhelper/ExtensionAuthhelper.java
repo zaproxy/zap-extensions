@@ -35,6 +35,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.DatabaseUnsupportedException;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -43,12 +46,13 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.authhelper.internal.db.TableJdo;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.PostBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.PostBasedAuthenticationMethodType.PostBasedAuthenticationMethod;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.sessions.ExtensionSessionManagement;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
@@ -58,7 +62,7 @@ import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChangedListener {
+public class ExtensionAuthhelper extends ExtensionAdaptor {
 
     private Map<Integer, AuthenticationRequestDetails> contextIdToLoginDetails = new HashMap<>();
 
@@ -66,7 +70,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
             List.of(
-                    ExtensionPassiveScan.class,
+                    ExtensionPassiveScan2.class,
                     ExtensionSelenium.class,
                     ExtensionUserManagement.class);
 
@@ -306,10 +310,16 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
         @Override
         public void sessionChanged(Session session) {
             contextIdToLoginDetails.clear();
+            AuthUtils.clean();
         }
 
         @Override
-        public void sessionAboutToChange(Session session) {}
+        public void sessionAboutToChange(Session session) {
+            BrowserBasedAuthenticationMethodType.stopProxies();
+            if (authDiagCollector != null) {
+                authDiagCollector.reset();
+            }
+        }
 
         @Override
         public void sessionScopeChanged(Session session) {}
@@ -319,25 +329,19 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
     }
 
     @Override
-    public void sessionChanged(Session session) {
-        AuthUtils.clean();
+    public boolean supportsDb(String type) {
+        return true;
     }
 
     @Override
-    public void sessionAboutToChange(Session session) {
-        BrowserBasedAuthenticationMethodType.stopProxies();
-        if (this.authDiagCollector != null) {
-            this.authDiagCollector.reset();
+    public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
+        try {
+            TableJdo table = new TableJdo();
+            db.addDatabaseListener(table);
+            table.databaseOpen(db.getDatabaseServer());
+
+        } catch (Exception e) {
+            LOGGER.warn(e.getMessage(), e);
         }
-    }
-
-    @Override
-    public void sessionScopeChanged(Session session) {
-        // Ignore
-    }
-
-    @Override
-    public void sessionModeChanged(Mode mode) {
-        // Ignore
     }
 }

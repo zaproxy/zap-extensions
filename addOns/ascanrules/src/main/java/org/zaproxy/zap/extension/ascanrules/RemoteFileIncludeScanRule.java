@@ -22,6 +22,8 @@ package org.zaproxy.zap.extension.ascanrules;
 import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
 
 import java.net.UnknownHostException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -34,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
@@ -44,11 +47,23 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.remotefileinclude.";
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION,
-                    CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION,
+                                CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ));
+        alertTags.put(PolicyTag.API.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     /** the various prefixes to try, for each of the remote file targets below */
     private static final String[] REMOTE_FILE_TARGET_PREFIXES = {
@@ -87,8 +102,8 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin
         Pattern.compile("<title>Google</title>"),
         Pattern.compile("<title>Google</title>"),
         Pattern.compile("<title>Google</title>"),
-        Pattern.compile("<title.*?Google.*?/title>"),
-        Pattern.compile("<title.*?Google.*?/title>"),
+        Pattern.compile("<title.*?ZAP[ -]*?Google.*?/title>"),
+        Pattern.compile("<title.*?ZAP[ -]*?Google.*?/title>"),
     };
 
     /** The number of requests we will send per parameter, based on the attack strength */

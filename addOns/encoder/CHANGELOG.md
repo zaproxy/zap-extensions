@@ -5,7 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Fixed
+- Address malformed HTML in the help.
 
+## [1.6.0] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+### Added
+- A predefined processor "ASCify" which converts text removing accents/diacritics/ligatures (perhaps not fully, due to operation in compatibility mode) leaving only ASCII characters.
+- Predefined processors for encoding and decoding Morse Code.
 
 ## [1.5.0] - 2024-05-07
 ### Added
@@ -103,6 +112,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First version.
 
+[1.6.0]: https://github.com/zaproxy/zap-extensions/releases/encoder-v1.6.0
 [1.5.0]: https://github.com/zaproxy/zap-extensions/releases/encoder-v1.5.0
 [1.4.0]: https://github.com/zaproxy/zap-extensions/releases/encoder-v1.4.0
 [1.3.0]: https://github.com/zaproxy/zap-extensions/releases/encoder-v1.3.0

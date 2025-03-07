@@ -49,6 +49,8 @@ Post 2.5.0 you can specify a comma separated list of identifiers in the
 Any FORMs with a name or ID that matches one of these identifiers will be ignored when scanning for missing Anti-CSRF tokens.
 Only use this feature to ignore FORMs that you know are safe, for example search forms.
 <p>
+Note: GET requests are only evaluated at Low Threshold.
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/CsrfTokenScanRule.java">CsrfTokenScanRule.java</a>
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/20012/">20012</a>.
@@ -177,6 +179,7 @@ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/42/">42</a>.
 
 <H2 id="id-43">Source Code Disclosure - File Inclusion</H2>
 Uses local file inclusion techniques to scan for files containing source code on the web server.
+Skips messages which originally resulted in a client or server error response status code.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureFileInclusionScanRule.java">SourceCodeDisclosureFileInclusionScanRule.java</a>
 <br>

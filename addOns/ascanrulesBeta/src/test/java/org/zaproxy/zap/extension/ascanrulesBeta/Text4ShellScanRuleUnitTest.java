@@ -37,6 +37,8 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -115,11 +117,42 @@ class Text4ShellScanRuleUnitTest extends ActiveScannerTest<Text4ShellScanRule> {
     }
 
     @Test
-    void shouldHaveExpectedNumberOfAlertTags() {
+    void shouldReturnExpectedMappings() {
         // Given / When
-        Map<String, String> alertTags = rule.getAlertTags();
+        int cwe = rule.getCweId();
+        int wasc = rule.getWascId();
+        Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(alertTags.size(), is(equalTo(5)));
+        assertThat(cwe, is(equalTo(117)));
+        assertThat(wasc, is(equalTo(20)));
+        assertThat(tags.size(), is(equalTo(8)));
+
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
+                is(equalTo(true)));
+        assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getTag()),
+                is(equalTo(true)));
+        assertThat(tags.containsKey(ExtensionOast.OAST_ALERT_TAG_KEY), is(equalTo(true)));
+        assertThat(tags.containsKey(Text4ShellScanRule.CVE), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.SEQUENCE.getTag()), is(equalTo(true)));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
+                is(equalTo(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getValue())));
+        assertThat(
+                tags.get(ExtensionOast.OAST_ALERT_TAG_KEY),
+                is(equalTo(ExtensionOast.OAST_ALERT_TAG_VALUE)));
     }
 
     private static class Log4ShellServerHandler extends NanoServerHandler {

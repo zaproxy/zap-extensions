@@ -59,6 +59,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
     private JCheckBox clickDefaultElems = null;
     private JCheckBox clickElemsOnce = null;
     private JCheckBox randomInputs = null;
+    private JCheckBox enableExtensions;
 
     private JLabel browsers = null;
     private JLabel depth = null;
@@ -165,6 +166,15 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         return randomInputs;
     }
 
+    private JCheckBox getEnableExtensions() {
+        if (enableExtensions == null) {
+            enableExtensions = new JCheckBox();
+            enableExtensions.setText(
+                    resourceBundle.getString("spiderajax.options.label.enableexts"));
+        }
+        return enableExtensions;
+    }
+
     /** */
     @Override
     public void initParam(Object obj) {
@@ -184,6 +194,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         getClickDefaultElems().setSelected(ajaxSpiderParam.isClickDefaultElems());
         getClickElemsOnce().setSelected(ajaxSpiderParam.isClickElemsOnce());
         getRandomInputs().setSelected(ajaxSpiderParam.isRandomInputs());
+        getEnableExtensions().setSelected(ajaxSpiderParam.isEnableExtensions());
 
         setClickElemsEnabled(!ajaxSpiderParam.isClickDefaultElems());
 
@@ -202,6 +213,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         OptionsParam optionsParam = (OptionsParam) obj;
         AjaxSpiderParam ajaxSpiderParam = optionsParam.getParamSet(AjaxSpiderParam.class);
 
+        ajaxSpiderParam.setEnableExtensions(enableExtensions.isSelected());
         ajaxSpiderParam.setClickElemsOnce(getClickElemsOnce().isSelected());
         ajaxSpiderParam.setClickDefaultElems(getClickDefaultElems().isSelected());
         ajaxSpiderParam.setRandomInputs(getRandomInputs().isSelected());
@@ -322,6 +334,12 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
             gbc.gridx = 1;
             gbc.anchor = GridBagConstraints.LINE_END;
             innerPanel.add(getReloadWaitNumberSpinner(), gbc);
+
+            // Enable extensions
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.anchor = GridBagConstraints.LINE_START;
+            innerPanel.add(getEnableExtensions(), gbc);
 
             // Click Once Option
             gbc.gridx = 0;

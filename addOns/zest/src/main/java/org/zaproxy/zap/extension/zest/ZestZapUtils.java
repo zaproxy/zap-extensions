@@ -1009,10 +1009,14 @@ public class ZestZapUtils {
 
     public static HttpMessage toHttpMessage(ZestRequest request, ZestResponse response)
             throws URIException, HttpMalformedHeaderException {
-        if (request == null || request.getUrl() == null) {
+        if (request == null) {
             return null;
         }
-        HttpMessage msg = new HttpMessage(new URI(request.getUrl().toString(), false));
+        String url = request.getUrl() != null ? request.getUrl().toString() : request.getUrlToken();
+        if (url == null) {
+            return null;
+        }
+        HttpMessage msg = new HttpMessage(new URI(url, false));
         msg.setTimeSentMillis(request.getTimestamp());
         if (request.getHeaders() != null) {
             try {
@@ -1040,8 +1044,12 @@ public class ZestZapUtils {
     }
 
     public static ZestResponse toZestResponse(HttpMessage msg) throws MalformedURLException {
+        return toZestResponse(new URL(msg.getRequestHeader().getURI().toString()), msg);
+    }
+
+    private static ZestResponse toZestResponse(URL url, HttpMessage msg) {
         return new ZestResponse(
-                new URL(msg.getRequestHeader().getURI().toString()),
+                url,
                 msg.getResponseHeader().toString(),
                 msg.getResponseBody().toString(),
                 msg.getResponseHeader().getStatusCode(),
@@ -1057,56 +1065,35 @@ public class ZestZapUtils {
     public static ZestRequest toZestRequest(
             HttpMessage msg, boolean replaceTokens, boolean incAllHeaders, ZestParam params)
             throws MalformedURLException, HttpMalformedHeaderException, SQLException {
-        if (replaceTokens) {
-            ZestRequest req = new ZestRequest();
-            req.setTimestamp(msg.getTimeSentMillis());
-            req.setMethod(msg.getRequestHeader().getMethod());
-            if (msg.getRequestHeader().getURI() != null) {
-                req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
-            }
-            req.setUrlToken(correctTokens(msg.getRequestHeader().getURI().toString()));
+        ZestRequest req = new ZestRequest();
+        var uri = msg.getRequestHeader().getURI();
+        if (uri == null) {
+            throw new HttpMalformedHeaderException("The request header does not have a URI.");
+        }
 
-            if (incAllHeaders) {
-                setAllHeaders(req, msg);
-            } else {
-                setHeaders(req, msg, true, params.getIgnoredHeaders());
-            }
+        req.setUrl(new URL(uri.toString()));
+        if (replaceTokens) {
+            req.setUrlToken(correctTokens(uri.toString()));
             req.setData(correctTokens(msg.getRequestBody().toString()));
-            req.setFollowRedirects(false);
-            if (params.isIncludeResponses()) {
-                req.setResponse(
-                        new ZestResponse(
-                                req.getUrl(),
-                                msg.getResponseHeader().toString(),
-                                msg.getResponseBody().toString(),
-                                msg.getResponseHeader().getStatusCode(),
-                                msg.getTimeElapsedMillis()));
-            }
-            return req;
 
         } else {
-            ZestRequest req = new ZestRequest();
-            req.setTimestamp(msg.getTimeSentMillis());
-            req.setUrl(new URL(msg.getRequestHeader().getURI().toString()));
-            req.setMethod(msg.getRequestHeader().getMethod());
-            if (incAllHeaders) {
-                setAllHeaders(req, msg);
-            } else {
-                setHeaders(req, msg, true, params.getIgnoredHeaders());
-            }
             req.setData(msg.getRequestBody().toString());
-            req.setFollowRedirects(false);
-            if (params.isIncludeResponses()) {
-                req.setResponse(
-                        new ZestResponse(
-                                req.getUrl(),
-                                msg.getResponseHeader().toString(),
-                                msg.getResponseBody().toString(),
-                                msg.getResponseHeader().getStatusCode(),
-                                msg.getTimeElapsedMillis()));
-            }
-            return req;
         }
+
+        req.setMethod(msg.getRequestHeader().getMethod());
+        req.setTimestamp(msg.getTimeSentMillis());
+        if (incAllHeaders) {
+            setAllHeaders(req, msg);
+        } else {
+            setHeaders(req, msg, true, params.getIgnoredHeaders());
+        }
+
+        req.setFollowRedirects(false);
+        if (params.isIncludeResponses()) {
+            req.setResponse(toZestResponse(req.getUrl(), msg));
+        }
+
+        return req;
     }
 
     private static void setHeaders(

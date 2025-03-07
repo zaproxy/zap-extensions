@@ -4,7 +4,7 @@
       100
     ],
     "description": "YMQ Product Options Variant Option help add an unlimited number of product options to your items so you're not restricted by Shopify's limit of 3 options and 100 variants.",
-    "icon": "YMQ Product Options Variant Option.png",
+    "icon": "YMQ Product Options Variant Option.svg",
     "implies": [
       "Shopify"
     ],
@@ -40,7 +40,7 @@
     ],
     "cpe": "cpe:2.3:a:yahoo:yui:*:*:*:*:*:*:*:*",
     "description": "YUI is a JavaScript and CSS library with more than 30 unique components including low-level DOM utilities and high-level user-interface widgets.",
-    "icon": "YUI.png",
+    "icon": "YUI.svg",
     "js": {
       "YAHOO.VERSION": "^(.+)$\\;version:\\1",
       "YUI.version": "^(.+)$\\;version:\\1"
@@ -73,13 +73,32 @@
     "icon": "YaBB.png",
     "website": "https://www.yabbforum.com"
   },
+  "YachtSys": {
+    "cats": [
+      72
+    ],
+    "description": "YachtSys is a booking management system.",
+    "icon": "YachtSys.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "apps\\.yachtsys\\.com/"
+    ],
+    "website": "https://www.yachtsys.com"
+  },
   "Yahoo Advertising": {
     "cats": [
       36,
       77
     ],
     "description": "Yahoo Advertising includes a comprehensive suite of web, mobile, and video ad products across native, audience, and premium display, which are accessible through a new buying platform.",
-    "dom": "link[href*='bc.yahoo.com']",
+    "dom": [
+      "link[href*='bc.yahoo.com']"
+    ],
     "icon": "Yahoo.svg",
     "js": {
       "adxinserthtml": "",
@@ -141,10 +160,14 @@
     ],
     "description": "YalinHost is a web hosting service provider.",
     "dns": {
-      "NS": "\\.yalinhost\\.com",
-      "SOA": "\\.yalinhost\\.com"
+      "NS": [
+        "\\.yalinhost\\.com"
+      ],
+      "SOA": [
+        "\\.yalinhost\\.com"
+      ]
     },
-    "icon": "YalinHost.png",
+    "icon": "YalinHost.svg",
     "website": "https://yalinhost.com"
   },
   "Yampi Checkout": {
@@ -190,7 +213,9 @@
       16
     ],
     "description": "Yandex SmartCaptcha is a service for verifying queries to identify user requests and block bots.",
-    "dom": "div#smartcaptcha-status",
+    "dom": [
+      "div#smartcaptcha-status"
+    ],
     "headers": {
       "x-yandex-captcha": ""
     },
@@ -219,7 +244,9 @@
       31
     ],
     "description": "Yandex.Cloud CDN helps you streamline static content delivery for your web service.",
-    "dom": "[href*='storage.yandexcloud.net'], [src*='storage.yandexcloud.net']",
+    "dom": [
+      "[href*='storage.yandexcloud.net'], [src*='storage.yandexcloud.net']"
+    ],
     "icon": "Yandex.Cloud.svg",
     "implies": [
       "Yandex.Cloud"
@@ -234,15 +261,15 @@
     "html": [
       "<yatag class=\"ya-partner__ads\">"
     ],
-    "icon": "Yandex.Direct.png",
+    "icon": "Yandex.Direct.svg",
     "js": {
       "yandex_ad_format": "",
       "yandex_partner_id": ""
     },
     "scriptSrc": [
-      "https?://an\\.yandex\\.ru/"
+      "//an\\.yandex\\.ru/"
     ],
-    "website": "https://partner.yandex.com"
+    "website": "https://ads.yandex.com"
   },
   "Yandex.Messenger": {
     "cats": [
@@ -267,7 +294,7 @@
       10
     ],
     "description": "Yandex.Metrica is a free web analytics service that tracks and reports website traffic.",
-    "icon": "Yandex.Metrika.png",
+    "icon": "Yandex.Metrika.svg",
     "js": {
       "yandex_metrika": ""
     },
@@ -282,8 +309,10 @@
       111
     ],
     "description": "Yapla is a web-based software platform that provides event management and fundraising solutions for non-profit organisations, associations, and event planners.",
-    "dom": "a[href*='\\.yapla\\.com/'][target='_blank']",
-    "icon": "Yapla.png",
+    "dom": [
+      "a[href*='\\.yapla\\.com/'][target='_blank']"
+    ],
+    "icon": "Yapla.svg",
     "js": {
       "yaplaConsent.cookieName": "yapla-consent"
     },
@@ -311,12 +340,56 @@
     "oss": true,
     "website": "https://github.com/erlyaws/yaws"
   },
+  "Ybug": {
+    "cats": [
+      13
+    ],
+    "description": "Ybug is a visual feedback and bug tracking tool designed for users and clients, enabling identification and reporting of issues.",
+    "icon": "Ybug.svg",
+    "js": {
+      "Ybug": "",
+      "ybug_settings": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.ybug\\.io/"
+    ],
+    "website": "https://ybug.io"
+  },
+  "Yclas": {
+    "cats": [
+      6
+    ],
+    "cpe": "cpe:2.3:a:open-classifieds:open_classifieds:*:*:*:*:*:*:*:*",
+    "description": "Yclas is a platform that allows users to create and manage customizable online classified ads websites, available as both a hosted service and an open-source self-hosted solution​ .",
+    "icon": "Yclas.svg",
+    "meta": {
+      "author": "open-classifieds\\.com",
+      "copyright": "(?:Open Classifieds|Yclas)\\s([0-9.]+)?\\;version:\\1"
+    },
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "saas": true,
+    "website": "https://yclas.com"
+  },
   "Ycode": {
     "cats": [
       51
     ],
     "description": "Ycode is a no-code development platform that allows users to create web and mobile applications without any coding skills.",
-    "dom": "link[href*='.ycodeapp.com/']",
+    "dom": [
+      "link[href*='.ycodeapp.com/']"
+    ],
     "icon": "Ycode.svg",
     "pricing": [
       "freemium",
@@ -331,7 +404,7 @@
       36
     ],
     "description": "Yektanet is the biggest and most advanced native advertising network in Iran.",
-    "icon": "Yektanet.png",
+    "icon": "Yektanet.svg",
     "js": {
       "yektanet": ""
     },
@@ -377,12 +450,46 @@
     "cats": [
       6
     ],
-    "icon": "yepcomm.png",
+    "icon": "yepcomm.svg",
     "meta": {
       "author": "Yepcomm Tecnologia",
       "copyright": "Yepcomm Tecnologia"
     },
     "website": "https://www.yepcomm.com.br"
+  },
+  "Yeps": {
+    "cats": [
+      32,
+      75
+    ],
+    "description": "Yeps is a minimalist bar that can be added to the top or bottom of your website to collect visitor’s emails and promote content.",
+    "icon": "Yeps.svg",
+    "js": {
+      "Yeps": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "app\\.yeps\\.io/"
+    ],
+    "website": "https://yeps.io"
+  },
+  "YesWiki": {
+    "cats": [
+      8
+    ],
+    "description": "YesWiki is a collaborative website creation and management Free Software under the AGPL license, enabling any web user to create, delete, edit, or comment on site pages with unlimited editors or pages.",
+    "dom": [
+      "#yw-container"
+    ],
+    "icon": "YesWiki.svg",
+    "implies": [
+      "PHP"
+    ],
+    "oss": true,
+    "scriptSrc": [
+      "javascripts/yeswiki-base\\.js"
+    ],
+    "website": "https://yeswiki.net"
   },
   "Yett": {
     "cats": [
@@ -405,7 +512,9 @@
       19
     ],
     "description": "Yext is a technology company that provides a cloud-based platform for managing digital knowledge and online reputation.",
-    "dom": "form.yxt-SearchBar-form",
+    "dom": [
+      "form.yxt-SearchBar-form"
+    ],
     "icon": "Yext.svg",
     "js": {
       "ANSWERS._analyticsReporterService._baseUrl": "\\.yext-pixel\\.com",
@@ -445,7 +554,8 @@
     "cats": [
       36
     ],
-    "icon": "Yieldlab.png",
+    "description": "Yieldlab is a German company that provides programmatic advertising technology solutions to optimize ad performance and maximize digital ad spend returns.",
+    "icon": "Yieldlab.svg",
     "scriptSrc": [
       "^https?://(?:[^/]+\\.)?yieldlab\\.net/"
     ],
@@ -458,19 +568,24 @@
     "cookies": {
       "YII_CSRF_TOKEN": ""
     },
+    "cpe": "cpe:2.3:a:yiiframework:yii:*:*:*:*:*:*:*:*",
     "description": "Yii is an open-source, object-oriented, component-based MVC PHP web application framework.",
+    "dom": [
+      "input[name='YII_CSRF_TOKEN'][type='hidden'], a[href*='//www.yiiframework.com/'][rel='external']"
+    ],
     "html": [
       "Powered by <a href=\"http://www\\.yiiframework\\.com/\" rel=\"external\">Yii Framework</a>",
       "<input type=\"hidden\" value=\"[a-zA-Z0-9]{40}\" name=\"YII_CSRF_TOKEN\" \\/>",
       "<!\\[CDATA\\[YII-BLOCK-(?:HEAD|BODY-BEGIN|BODY-END)\\]"
     ],
-    "icon": "Yii.png",
+    "icon": "Yii.svg",
     "implies": [
       "PHP"
     ],
+    "oss": true,
     "scriptSrc": [
       "/assets/[a-zA-Z0-9]{8}\\/yii\\.js$",
-      "/yii\\.(?:validation|activeForm)\\.js"
+      "yii(?:\\.|)?(?:validation|activeform)\\.js"
     ],
     "website": "https://www.yiiframework.com"
   },
@@ -479,7 +594,9 @@
       87
     ],
     "description": "Yoast Duplicate Post is a WordPress plugin which allows users to clone posts of any type, or copy them to new drafts for further editing.",
-    "dom": "link[href*='/wp-content/plugins/duplicate-post/']",
+    "dom": [
+      "link[href*='/wp-content/plugins/duplicate-post/']"
+    ],
     "icon": "Yoast SEO.png",
     "requires": [
       "WordPress"
@@ -573,7 +690,7 @@
       51
     ],
     "description": "Yola is a website builder and website hosting company headquartered in San Francisco.",
-    "icon": "Yola.png",
+    "icon": "Yola.svg",
     "pricing": [
       "freemium",
       "low",
@@ -585,12 +702,36 @@
     ],
     "website": "https://www.yola.com"
   },
+  "Yonder": {
+    "cats": [
+      52,
+      93
+    ],
+    "description": "Yonder is a booking automation solution that helps tourism businesses increase bookings, collect feedback, garner positive reviews, convert website visitors, automate FAQs with an AI chatbot, and communicate with customers.",
+    "icon": "Yonder.svg",
+    "js": {
+      "YONDER_APP_LOADED": "",
+      "toggleYonderChat": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.yonderhq\\.com/"
+    ],
+    "website": "https://www.yonderhq.com"
+  },
   "YooMoney": {
     "cats": [
       41
     ],
     "description": "YooMoney is an IT company working with electronic payments on the Internet, creating and supporting financial services for individuals and businesses.",
-    "dom": "a[href*='yoomoney.ru'][target='_blank'], iframe[src*='yoomoney.ru'], img[src*='yoomoney.ru']",
+    "dom": [
+      "a[href*='yoomoney.ru'][target='_blank'], iframe[src*='yoomoney.ru'], img[src*='yoomoney.ru']"
+    ],
     "headers": {
       "Content-Security-Policy": "\\.yoomoney\\.ru"
     },
@@ -609,8 +750,10 @@
       6
     ],
     "description": "Yoori is a multi-vendor PWA ecommerce CMS.",
-    "dom": "div.yoori--cookies",
-    "icon": "Yoori.png",
+    "dom": [
+      "div.yoori--cookies"
+    ],
+    "icon": "Yoori.svg",
     "implies": [
       "Laravel",
       "PHP",
@@ -679,6 +822,21 @@
     },
     "website": "https://www.yotpo.com/platform/smsbump-sms-marketing/"
   },
+  "Yotpo Subscriptions": {
+    "cats": [
+      100
+    ],
+    "description": "Yotpo Subscriptions is a Shopify app designed for merchants to provide subscription services to customers.",
+    "html": [
+      "<!-- BEGIN app block: shopify://apps/yotpo-subscriptions/blocks/app-embed-block"
+    ],
+    "icon": "Yotpo.svg",
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "website": "https://www.yotpo.com/platform/subscriptions/"
+  },
   "Yottaa": {
     "cats": [
       42,
@@ -701,7 +859,7 @@
       105
     ],
     "description": "YouCam Makeup is a cross-platform virtual makeup solution for omnichannel ecommerce.",
-    "icon": "YouCam Makeup.png",
+    "icon": "YouCam Makeup.svg",
     "js": {
       "YMK.applyMakeupByLook": "",
       "YMK.calDeltaE": ""
@@ -729,8 +887,25 @@
       "PHP",
       "MySQL",
       "Redis",
-      "Laravel"
+      "Laravel",
+      "YouCan Pay"
     ],
+    "js": {
+      "YCPay": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://youcan.shop"
+  },
+  "YouCan Pay": {
+    "cats": [
+      41
+    ],
+    "description": "YouCan Pay is a developed electronic payment platform that provides effective solutions for the payment gatways issue in ecommerce in Morocco.",
+    "icon": "YouCan Pay.svg",
     "js": {
       "YCPay": ""
     },
@@ -738,7 +913,7 @@
       "payg"
     ],
     "saas": true,
-    "website": "https://youcan.shop"
+    "website": "https://youcanpay.com"
   },
   "YouPay": {
     "cats": [
@@ -773,7 +948,7 @@
       "data-reactid=\"[^\"]+\">youTrack ([0-9.]+)<\\;version:\\1",
       "type=\"application/opensearchdescription\\+xml\" title=\"YouTrack\"/>"
     ],
-    "icon": "YouTrack.png",
+    "icon": "YouTrack.svg",
     "website": "https://www.jetbrains.com/youtrack/"
   },
   "YouTube": {
@@ -784,11 +959,28 @@
     "html": [
       "<(?:param|embed|iframe)[^>]+youtube(?:-nocookie)?\\.com/(?:v|embed)"
     ],
-    "icon": "YouTube.png",
+    "icon": "YouTube.svg",
     "scriptSrc": [
       "\\.youtube\\.com/"
     ],
     "website": "https://www.youtube.com"
+  },
+  "Youform": {
+    "cats": [
+      110
+    ],
+    "description": "Youform is a no-code form builder to create conversational style forms for collecting leads, surveys, and feedback.",
+    "icon": "Youform.svg",
+    "js": {
+      "youForm.blurActiveElement": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://youform.com"
   },
   "YunoHost": {
     "cats": [
@@ -805,6 +997,21 @@
       "/ynh_portal\\.js"
     ],
     "website": "https://yunohost.org"
+  },
+  "Yupop": {
+    "cats": [
+      6
+    ],
+    "description": "Yupop is a platform that enables users to create an online store, requiring no monthly subscription and only charging fees when sales are made.",
+    "icon": "Yupop.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scripts": [
+      "\\.yupopstorecdn\\.com"
+    ],
+    "website": "https://yupop.com"
   },
   "yellow.ai": {
     "cats": [

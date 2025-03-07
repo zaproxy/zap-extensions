@@ -19,25 +19,46 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
+import io.github.bonigarcia.seljup.BrowsersTemplate.Browser;
+import io.github.bonigarcia.seljup.SeleniumJupiter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
+import lombok.Setter;
 import org.apache.commons.httpclient.URI;
+import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.parosproxy.paros.network.HttpHeader;
@@ -47,6 +68,7 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.Pair;
 
@@ -61,6 +83,36 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldCheckContainsSessionTokenWhileAddingAndRemoving() throws Exception {
+        // Given
+        AtomicBoolean concurrentModification = new AtomicBoolean();
+        CountDownLatch cdl = new CountDownLatch(2500);
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
+        SessionToken token = new SessionToken("source", "key", "value");
+        executor.scheduleAtFixedRate(
+                () -> AuthUtils.recordSessionToken(token), 0, 1, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(
+                () -> AuthUtils.removeSessionToken(token), 0, 1, TimeUnit.MILLISECONDS);
+        // When
+        executor.scheduleAtFixedRate(
+                () -> {
+                    try {
+                        AuthUtils.containsSessionToken(token.getValue());
+                    } catch (Exception e) {
+                        concurrentModification.set(true);
+                    }
+                    cdl.countDown();
+                },
+                0,
+                1,
+                TimeUnit.MILLISECONDS);
+        // Then
+        cdl.await(5000, TimeUnit.SECONDS);
+        executor.shutdownNow();
+        assertThat(concurrentModification.get(), is(equalTo(false)));
+    }
+
+    @Test
     void shouldReturnUserTextField() throws Exception {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
@@ -69,11 +121,89 @@ class AuthUtilsUnitTest extends TestUtils {
         inputElements.add(new TestWebElement("input", "checkbox"));
 
         // When
-        WebElement field = AuthUtils.getUserField(inputElements);
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("type"), is(equalTo("text")));
+        assertThat(field.getDomAttribute("type"), is(equalTo("text")));
+    }
+
+    @Test
+    void shouldReturnUserTextFieldByDomProperty() throws Exception {
+        // Given
+        List<WebElement> inputElements = new ArrayList<>();
+        inputElements.add(new TestWebElement("input", "password"));
+        TestWebElement inputField = new TestWebElement("input", "text");
+        inputField.setUseDomProperty(true);
+        inputElements.add(inputField);
+        inputElements.add(new TestWebElement("input", "checkbox"));
+
+        // When
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
+
+        // Then
+        assertThat(field, is(notNullValue()));
+        assertThat(field.getDomAttribute("type"), is(equalTo("text")));
+    }
+
+    @Test
+    void shouldReturnUserTextFieldIgnoringNonDisplayedFields() throws Exception {
+        // Given
+        List<WebElement> inputElements = new ArrayList<>();
+        // Registration form, not displayed.
+        TestWebElement inputField = new TestWebElement("input", "text");
+        inputField.setDisplayed(false);
+        inputElements.add(inputField);
+        inputField = new TestWebElement("input", "password");
+        inputField.setDisplayed(false);
+        inputElements.add(inputField);
+        // Login form, displayed.
+        inputElements.add(new TestWebElement("input", "text"));
+        inputElements.add(new TestWebElement("input", "password"));
+
+        // When
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
+
+        // Then
+        assertThat(field, is(notNullValue()));
+        assertThat(field.getDomAttribute("type"), is(equalTo("text")));
+        assertThat(field.isDisplayed(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldReturnSingleFieldAsUserField() throws Exception {
+        // Given
+        List<WebElement> inputElements = new ArrayList<>();
+        // Starting form with just username with custom input type.
+        inputElements.add(new TestWebElement("input", "customtype"));
+
+        // When
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
+
+        // Then
+        assertThat(field, is(notNullValue()));
+        assertThat(field.getDomAttribute("type"), is(equalTo("customtype")));
+        assertThat(field.isDisplayed(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldReturnDisplayedSingleFieldAsUserField() throws Exception {
+        // Given
+        List<WebElement> inputElements = new ArrayList<>();
+        // Some other form, not displayed.
+        TestWebElement inputField = new TestWebElement("input", "text");
+        inputField.setDisplayed(false);
+        inputElements.add(inputField);
+        // Starting form with just username with custom input type, displayed.
+        inputElements.add(new TestWebElement("input", "customtype"));
+
+        // When
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
+
+        // Then
+        assertThat(field, is(notNullValue()));
+        assertThat(field.getDomAttribute("type"), is(equalTo("customtype")));
+        assertThat(field.isDisplayed(), is(equalTo(true)));
     }
 
     @Test
@@ -85,11 +215,11 @@ class AuthUtilsUnitTest extends TestUtils {
         inputElements.add(new TestWebElement("input", "checkbox"));
 
         // When
-        WebElement field = AuthUtils.getUserField(inputElements);
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("type"), is(equalTo("email")));
+        assertThat(field.getDomAttribute("type"), is(equalTo("email")));
     }
 
     @Test
@@ -102,11 +232,11 @@ class AuthUtilsUnitTest extends TestUtils {
         inputElements.add(new TestWebElement("input", "checkbox"));
 
         // When
-        WebElement field = AuthUtils.getUserField(inputElements);
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("id"), is(equalTo("email")));
+        assertThat(field.getDomAttribute("id"), is(equalTo("email")));
     }
 
     @Test
@@ -119,11 +249,11 @@ class AuthUtilsUnitTest extends TestUtils {
         inputElements.add(new TestWebElement("input", "checkbox"));
 
         // When
-        WebElement field = AuthUtils.getUserField(inputElements);
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("name"), is(equalTo("username")));
+        assertThat(field.getDomAttribute("name"), is(equalTo("username")));
     }
 
     @Test
@@ -135,7 +265,7 @@ class AuthUtilsUnitTest extends TestUtils {
         inputElements.add(new TestWebElement("input", "checkbox"));
 
         // When
-        WebElement field = AuthUtils.getUserField(inputElements);
+        WebElement field = AuthUtils.getUserField(null, inputElements, null);
 
         // Then
         assertThat(field, is(nullValue()));
@@ -154,7 +284,49 @@ class AuthUtilsUnitTest extends TestUtils {
 
         // Then
         assertThat(field, is(notNullValue()));
-        assertThat(field.getAttribute("type"), is(equalTo("password")));
+        assertThat(field.getDomAttribute("type"), is(equalTo("password")));
+    }
+
+    @Test
+    void shouldReturnPasswordFieldByDomProperty() throws Exception {
+        // Given
+        List<WebElement> inputElements = new ArrayList<>();
+        inputElements.add(new TestWebElement("input", "email"));
+        inputElements.add(new TestWebElement("input", "checkbox"));
+        TestWebElement inputField = new TestWebElement("input", "password");
+        inputField.setUseDomProperty(true);
+        inputElements.add(inputField);
+
+        // When
+        WebElement field = AuthUtils.getPasswordField(inputElements);
+
+        // Then
+        assertThat(field, is(notNullValue()));
+        assertThat(field.getDomAttribute("type"), is(equalTo("password")));
+    }
+
+    @Test
+    void shouldReturnPasswordFieldIgnoringNonDisplayedFields() throws Exception {
+        // Given
+        List<WebElement> inputElements = new ArrayList<>();
+        // Registration form, not displayed.
+        TestWebElement inputField = new TestWebElement("input", "email");
+        inputField.setDisplayed(false);
+        inputElements.add(inputField);
+        inputField = new TestWebElement("input", "password");
+        inputField.setDisplayed(false);
+        inputElements.add(inputField);
+        // Login form, displayed.
+        inputElements.add(new TestWebElement("input", "email"));
+        inputElements.add(new TestWebElement("input", "password"));
+
+        // When
+        WebElement field = AuthUtils.getPasswordField(inputElements);
+
+        // Then
+        assertThat(field, is(notNullValue()));
+        assertThat(field.getDomAttribute("type"), is(equalTo("password")));
+        assertThat(field.isDisplayed(), is(equalTo(true)));
     }
 
     @Test
@@ -279,7 +451,7 @@ class AuthUtilsUnitTest extends TestUtils {
                                         + "Header2: Value2\r\n"),
                         new HttpResponseBody("Response Body"));
         // When
-        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, false);
 
         // Then
         assertThat(tokens.size(), is(equalTo(2)));
@@ -298,7 +470,7 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("Response Body"));
         // When
-        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, false);
 
         // Then
         assertThat(tokens.size(), is(equalTo(2)));
@@ -328,7 +500,7 @@ class AuthUtilsUnitTest extends TestUtils {
                                         + "  }\n"
                                         + "}}"));
         // When
-        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, false);
 
         // Then
         assertThat(tokens.size(), is(equalTo(8)));
@@ -347,7 +519,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldExtractCookies() throws Exception {
+    void shouldExtractAllCookies() throws Exception {
         // Given
         HttpMessage msg =
                 new HttpMessage(
@@ -360,12 +532,35 @@ class AuthUtilsUnitTest extends TestUtils {
                                 "HTTP/1.1 200 OK\r\n" + "Set-Cookie: ccc=ddd; HttpOnly; Secure"),
                         new HttpResponseBody("Response Body"));
         // When
-        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, true);
 
         // Then
-        System.out.println(tokens);
         assertThat(tokens.size(), is(equalTo(3)));
         assertThat(tokens.get("cookie:aaa").getValue(), is(equalTo("bbb")));
+        assertThat(tokens.get("cookie:ccc").getValue(), is(equalTo("ddd")));
+        assertThat(
+                tokens.get("header:Set-Cookie").getValue(),
+                is(equalTo("ccc=ddd; HttpOnly; Secure")));
+    }
+
+    @Test
+    void shouldExtractResponseCookies() throws Exception {
+        // Given
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                "GET https://example.com/ HTTP/1.1\r\n"
+                                        + "Host: example.com\r\n"
+                                        + "Cookie: aaa=bbb\r\n\r\n"),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader(
+                                "HTTP/1.1 200 OK\r\n" + "Set-Cookie: ccc=ddd; HttpOnly; Secure"),
+                        new HttpResponseBody("Response Body"));
+        // When
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, false);
+
+        // Then
+        assertThat(tokens.size(), is(equalTo(2)));
         assertThat(tokens.get("cookie:ccc").getValue(), is(equalTo("ddd")));
         assertThat(
                 tokens.get("header:Set-Cookie").getValue(),
@@ -406,7 +601,7 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("Response Body"));
         msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, "Bearer " + token1);
-        msg.getRequestHeader().addHeader(HttpHeader.COOKIE, token2 + "; SameSite=Strict");
+        msg.getRequestHeader().addHeader(HttpHeader.COOKIE, "test=" + token2 + "; SameSite=Strict");
         msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, token3);
         List<SessionToken> tokens = new ArrayList<>();
         tokens.add(new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, token1));
@@ -420,7 +615,7 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(headerTokens.get(0).first, is(equalTo(HttpHeader.AUTHORIZATION)));
         assertThat(headerTokens.get(0).second, is(equalTo("Bearer {%header:authorization%}")));
         assertThat(headerTokens.get(1).first, is(equalTo(HttpHeader.COOKIE)));
-        assertThat(headerTokens.get(1).second, is(equalTo("{%json:set.cookie%}; SameSite=Strict")));
+        assertThat(headerTokens.get(1).second, is(equalTo("test={%json:set.cookie%}")));
     }
 
     @Test
@@ -451,6 +646,36 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(headerTokens.size(), is(equalTo(1)));
         assertThat(headerTokens.get(0).first, is(equalTo(HttpHeader.AUTHORIZATION)));
         assertThat(headerTokens.get(0).second, is(equalTo("Bearer {%header:authorization%}")));
+    }
+
+    @Test
+    void shouldGetHeaderTokensIgnoringIrrelevantCookies() throws Exception {
+        // Given
+        String token1 = "96438673498764398";
+        String token2 = "bndkdfsojhgkdshgk";
+        String token3 = "89jdhf9834herg03s";
+
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                "GET https://example.com/?att1=val1&att2=val2 HTTP/1.1\r\nHost: example.com\r\n\r\n"),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
+                        new HttpResponseBody("Response Body"));
+        msg.getRequestHeader()
+                .addHeader(
+                        HttpHeader.COOKIE,
+                        "test1=" + token1 + "; test2=" + token2 + "; test3=" + token3);
+        List<SessionToken> tokens = new ArrayList<>();
+        tokens.add(new SessionToken(SessionToken.JSON_SOURCE, "set.cookie", token2));
+
+        // When
+        List<Pair<String, String>> headerTokens = AuthUtils.getHeaderTokens(msg, tokens, true);
+
+        // Then
+        assertThat(headerTokens.size(), is(equalTo(1)));
+        assertThat(headerTokens.get(0).first, is(equalTo(HttpHeader.COOKIE)));
+        assertThat(headerTokens.get(0).second, is(equalTo("test2={%json:set.cookie%}")));
     }
 
     @Test
@@ -567,12 +792,235 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(st2, is(nullValue()));
     }
 
+    @ParameterizedTest
+    @CsvSource({
+        "text/html; charset=utf-8, true",
+        "multipart/form-data; boundary=ExampleBoundaryString, true",
+        "application/x-www-form-urlencoded, true",
+        "application/json, true",
+        "application/xhtml+xml, true",
+        "application/xml, true",
+        "text/xml, true",
+        "application/x-font-ttf, false",
+        "text/css, false",
+        "text/javascript; charset=utf-8, false",
+        "image/gif, false",
+        "image/svg+xml, false",
+    })
+    void shouldReportIfRelevantToAuth(String contentType, String result) throws Exception {
+        // Given
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                HttpRequestHeader.GET,
+                                new URI("https://www.example.com", true),
+                                HttpHeader.HTTP11),
+                        new HttpRequestBody(),
+                        new HttpResponseHeader(),
+                        new HttpResponseBody());
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, contentType);
+
+        // When
+        boolean res = AuthUtils.isRelevantToAuth(msg);
+
+        // Then
+        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "https://www.example.com, true",
+        "https://www.example.com/page.html, true",
+        "https://www.example.com/page.html?type=x.css, true",
+        "https://www.example.com/page.css, false",
+        "https://www.example.com/page.png, false",
+        "https://www.example.com/page.jpg, false",
+        "https://www.example.com/page.jpeg?aaa=bbb, false",
+    })
+    void shouldReportRelevantRequestHeaderUrlToAuthDiags(String url, String result)
+            throws Exception {
+        // Given
+        HttpRequestHeader header = new HttpRequestHeader();
+        header.setURI(new URI(url, true));
+        HttpMessage msg = new HttpMessage(header, new HttpRequestBody());
+
+        // When
+        boolean res = AuthUtils.isRelevantToAuthDiags(msg);
+
+        // Then
+        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "https://www.example.com, true",
+        "https://www.clients2.google.com, false",
+        "https://www.detectportal.firefox.com, false",
+        "https://google-analytics.com, false",
+        "https://www.mozilla.com, false",
+        "https://www.safebrowsing-cache.co.uk, false",
+    })
+    void shouldReportRelevantHostsToAuthDiags(String url, String result) throws Exception {
+        // Given
+        HttpRequestHeader header = new HttpRequestHeader();
+        header.setURI(new URI(url, true));
+        HttpMessage msg = new HttpMessage(header, new HttpRequestBody());
+
+        // When
+        boolean res = AuthUtils.isRelevantToAuthDiags(msg);
+
+        // Then
+        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "text/html, true",
+        "app/random, true",
+        "app/css, false",
+        "app/Image, false",
+        "app/JavaScript, false",
+    })
+    void shouldReportRelevantResponseHeaderTypeToAuthDiags(String type, String result)
+            throws Exception {
+        // Given
+        HttpResponseHeader header = new HttpResponseHeader();
+        header.setHeader(HttpHeader.CONTENT_TYPE, type);
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(),
+                        new HttpRequestBody(),
+                        header,
+                        new HttpResponseBody());
+        msg.getRequestHeader().setURI(new URI("https://www.example.com", true));
+
+        // When
+        boolean res = AuthUtils.isRelevantToAuthDiags(msg);
+
+        // Then
+        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
+    }
+
+    static class BrowserTest extends TestUtils {
+
+        @RegisterExtension static SeleniumJupiter seleniumJupiter = new SeleniumJupiter();
+
+        private String url;
+        private Supplier<String> pageContent = () -> "";
+
+        @BeforeAll
+        static void setup() {
+            seleniumJupiter.addBrowsers(
+                    new Browser(
+                            "firefox",
+                            null,
+                            null,
+                            new String[] {"-headless"},
+                            new String[] {"remote.active-protocols=1"},
+                            Map.of("webSocketUrl", true)));
+        }
+
+        @BeforeEach
+        void setupEach() throws IOException {
+            startServer();
+
+            String path = "/test";
+            url = "http://localhost:" + nano.getListeningPort() + path;
+            nano.addHandler(
+                    new NanoServerHandler(path) {
+                        @Override
+                        protected Response serve(IHTTPSession session) {
+                            return newFixedLengthResponse(pageContent.get());
+                        }
+                    });
+        }
+
+        @AfterEach
+        void cleanupEach() {
+            stopServer();
+        }
+
+        @TestTemplate
+        void shouldReturnUserFieldCommonToPasswordForm(WebDriver wd) {
+            // Given
+            pageContent =
+                    () ->
+                            """
+                                <input type="text" name="randomA" />
+                                <form>
+                                <input type="text" name="randomB">
+                                <input type="password" name="passw">
+                                <input type="text" name="user">
+                                </form>
+                             """;
+            wd.get(url);
+            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            WebElement pwdField = AuthUtils.getPasswordField(inputElements);
+            // When
+            WebElement field = AuthUtils.getUserField(wd, inputElements, pwdField);
+
+            // Then
+            assertThat(field, is(notNullValue()));
+            assertThat(field.getDomAttribute("name"), is(equalTo("user")));
+        }
+
+        @TestTemplate
+        void shouldReturnOnlyFieldCommonToPasswordForm(WebDriver wd) {
+            // Given
+            pageContent =
+                    () ->
+                            """
+                                <input type="text" name="randomA" />
+                                <form>
+                                <input type="text" name="randomB">
+                                <input type="password" name="passw">
+                                </form>
+                             """;
+            wd.get(url);
+            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            WebElement pwdField = AuthUtils.getPasswordField(inputElements);
+            // When
+            WebElement field = AuthUtils.getUserField(wd, inputElements, pwdField);
+
+            // Then
+            assertThat(field, is(notNullValue()));
+            assertThat(field.getDomAttribute("name"), is(equalTo("randomB")));
+        }
+
+        @TestTemplate
+        void shouldReturnFirstOfManyFieldsCommonToPasswordForm(WebDriver wd) {
+            // Given
+            pageContent =
+                    () ->
+                            """
+                                <input type="text" name="randomA" />
+                                <form>
+                                <input type="password" name="passw">
+                                <input type="text" name="randomB">
+                                <input type="text" name="randomC">
+                                </form>
+                             """;
+            wd.get(url);
+            List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
+            WebElement pwdField = AuthUtils.getPasswordField(inputElements);
+            // When
+            WebElement field = AuthUtils.getUserField(wd, inputElements, pwdField);
+
+            // Then
+            assertThat(field, is(notNullValue()));
+            assertThat(field.getDomAttribute("name"), is(equalTo("randomB")));
+        }
+    }
+
     class TestWebElement implements WebElement {
 
         private String tag;
         private String type;
         private String id;
         private String name;
+        @Setter private boolean displayed = true;
+        @Setter private boolean useDomAttribute = true;
+        @Setter private boolean useDomProperty;
 
         TestWebElement(String tag, String type) {
             this.tag = tag;
@@ -608,7 +1056,14 @@ class AuthUtilsUnitTest extends TestUtils {
         }
 
         @Override
-        public String getAttribute(String name) {
+        public String getDomAttribute(String name) {
+            if (useDomAttribute) {
+                return getAttributeImpl(name);
+            }
+            return null;
+        }
+
+        private String getAttributeImpl(String name) {
             switch (name) {
                 case "id":
                     return id;
@@ -619,6 +1074,20 @@ class AuthUtilsUnitTest extends TestUtils {
                 default:
                     return null;
             }
+        }
+
+        @Override
+        public @Nullable String getDomProperty(String name) {
+            if (useDomProperty) {
+                return getAttributeImpl(name);
+            }
+            return null;
+        }
+
+        @Override
+        @Deprecated
+        public String getAttribute(String name) {
+            return null;
         }
 
         @Override
@@ -648,7 +1117,7 @@ class AuthUtilsUnitTest extends TestUtils {
 
         @Override
         public boolean isDisplayed() {
-            return false;
+            return displayed;
         }
 
         @Override

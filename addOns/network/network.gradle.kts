@@ -60,16 +60,15 @@ spotless {
 }
 
 dependencies {
+    compileOnly(libs.log4j.core)
+
     val nettyVersion = "4.1.100.Final"
     implementation("io.netty:netty-codec:$nettyVersion")
     implementation("io.netty:netty-handler:$nettyVersion")
     implementation("io.netty:netty-codec-http2:$nettyVersion")
 
     hc("org.apache.httpcomponents.client5:httpclient5:5.2.1")
-    implementation(libs.log4j.slf4j) {
-        // Provided by ZAP.
-        exclude(group = "org.apache.logging.log4j")
-    }
+    implementation(libs.log4j.slf4j)
 
     val bcVersion = "1.77"
     val bcJava = "jdk18on"

@@ -5,6 +5,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Caps fix in Import menu (Issue 2000).
+
+## [0.13.0] - 2025-01-09
+### Added
+- Add Automation Framework job to export data (e.g. HAR, URLs).
+- Support for Sites Tree export and prune.
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Update dependency.
+- Maintenance changes.
+
+### Fixed
+- Import HAR entry sent and elapsed time.
+- Duplicate or missing "Save URLs..." entries in the Export menu.
+- The "Save All URLs..." export option was saving only the selected URLs.
+- Correct bundled dependencies to avoid conflicts with core logging libraries.
+
+## [0.12.0] - 2024-10-07
+### Changed
+- Improved HTTP 1.1 traffic detection in PCAP files
+
+### Fixed
+- Count invalid messages as tasks done toward progress when importing HARs.
+
+## [0.11.0] - 2024-09-24
+### Changed
+- Leverage Jackson library from the Common Library add-on.
+- Depend on newer version of Common Library add-on.
+- Leverage aboutsip's pkts.io library for parsing pcap files and organizing tcp streams
+- PCAP importing for simple HTTP/1.1 traffic, works for traces with: No duplicates or missing TCP segments, with no missing HTTP responses to HTTP requests, and for HTTP 1.1 only
+
+### Fixed
+- Correctly load Automation Framework template plans.
+- Base64 decode the response body when importing HARs.
+
+## [0.10.0] - 2024-07-22
+### Changed
 - HAR importing now uses Sebastian Stöhr's har-reader library. It should be much more tolerant of 'weird' HAR things, and thus be able to import more samples. (If you come across HAR that won't import please open an issue and provide a sample so we can work on further improvements!)
 
 ## [0.9.0] - 2024-05-07
@@ -82,6 +120,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release.
 
+[0.13.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.13.0
+[0.12.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.12.0
+[0.11.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.11.0
+[0.10.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.10.0
 [0.9.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.8.0
 [0.7.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.7.0

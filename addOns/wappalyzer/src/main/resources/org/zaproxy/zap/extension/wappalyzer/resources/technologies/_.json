@@ -1,4 +1,26 @@
 {
+  "11Sight": {
+    "cats": [
+      52,
+      53
+    ],
+    "description": "11Sight is an AI-powered, omnichannel platform enabling users to receive inbound video calls from any online channel, facilitating sales conversations and lead conversions.",
+    "icon": "11Sight.svg",
+    "js": {
+      "elevensight": "",
+      "elevensightApp": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.11sight\\.com/"
+    ],
+    "website": "https://www.11sight.com"
+  },
   "1C-Bitrix": {
     "cats": [
       1,
@@ -29,6 +51,26 @@
     ],
     "website": "https://www.1c-bitrix.ru"
   },
+  "24nettbutikk": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      " _gat_24nb": "\\;confidence:50",
+      "24nb": "\\;confidence:50"
+    },
+    "description": "24nettbutikk is an ecommerce platform from Norway.",
+    "icon": "24nettbutikk.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "requires": [
+      "Cart Functionality"
+    ],
+    "saas": true,
+    "website": "https://www.24nettbutikk.no"
+  },
   "2B Advice": {
     "cats": [
       67
@@ -44,12 +86,30 @@
     ],
     "website": "https://www.2b-advice.com/en/data-privacy-software/cookie-consent-plugin/"
   },
+  "2ClickShop": {
+    "cats": [
+      6
+    ],
+    "description": "2ClickShop is an ecommerce platform integrated with ERP systems, catering to both B2B and B2C transactions.",
+    "icon": "2ClickShop.svg",
+    "meta": {
+      "author": "^Trol Intermedia / 2ClickShop$"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://2click.pl"
+  },
   "30namaPlayer": {
     "cats": [
       14
     ],
     "description": "30namaPlayer is a modified version of Video.js to work with videos on HTML using javascript.",
-    "dom": "section[class*='player30nama']",
+    "dom": [
+      "section[class*='player30nama']"
+    ],
     "icon": "30namaPlayer.png",
     "website": "https://30nama.com/"
   },
@@ -58,8 +118,10 @@
       36
     ],
     "description": "33Across is a technology company focused on solving the challenge of consumer attention for automated advertising.",
-    "dom": "iframe[src*='.33across.com'], link[href*='.33across.com'], link[href*='.tynt.com']",
-    "icon": "33Across.png",
+    "dom": [
+      "iframe[src*='.33across.com'], link[href*='.33across.com'], link[href*='.tynt.com']"
+    ],
+    "icon": "33Across.svg",
     "js": {
       "Tynt": ""
     },
@@ -79,7 +141,9 @@
     ],
     "description": "34SP.com specialises in website hosting, discount domain names, low cost VPS servers and dedicated servers.",
     "dns": {
-      "SOA": "ns(?:\\d+)?\\.34sp\\.com"
+      "SOA": [
+        "ns(?:\\d+)?\\.34sp\\.com"
+      ]
     },
     "icon": "34SP.com.svg",
     "pricing": [
@@ -98,7 +162,7 @@
       "4TellSession": ""
     },
     "description": "4-Tell is an ecommerce software company for retailers with AI-powered personalisation and recommendations products.",
-    "icon": "4-Tell.png",
+    "icon": "4-Tell.svg",
     "js": {
       "_4TellBoost": ""
     },
@@ -116,16 +180,46 @@
       6
     ],
     "description": "42stores is a French SaaS ecommerce solution that was established in 2008. It offers a range of features such as monitoring, customer support, and regular updates. The platform is known for its flexibility and modularity, making it possible to integrate with various ERP systems.",
-    "icon": "42stores.svg",
     "headers": {
       "Powered-By": "^42stores$"
     },
+    "icon": "42stores.svg",
     "pricing": [
       "poa",
       "recurring"
     ],
     "saas": true,
     "website": "https://www.42stores.com"
+  },
+  "4Partners": {
+    "cats": [
+      99
+    ],
+    "description": "4Partners is an international dropshipping service that allows you to launch a ready-made online store.",
+    "icon": "4Partners.svg",
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://4partners.io/en/"
+  },
+  "4Partners CMS": {
+    "cats": [
+      6
+    ],
+    "description": "4Partners CMS is a cloud-based solution designed for ecommerce shops.",
+    "icon": "4Partners.svg",
+    "implies": [
+      "PHP",
+      "4Partners",
+      "Nginx"
+    ],
+    "meta": {
+      "author": "^4CMS$"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://4partners.io/en/4p-cms"
   },
   "51.LA": {
     "cats": [
@@ -149,7 +243,9 @@
       31
     ],
     "description": "5centsCDN is a content delivery networks service provider.",
-    "dom": "link[href*='.5centscdn.com/']",
+    "dom": [
+      "link[href*='.5centscdn.com/']"
+    ],
     "headers": {
       "x-cdn": "^5centsCDN$"
     },
@@ -162,6 +258,24 @@
       "\\.5centscdn\\.com/"
     ],
     "website": "https://www.5centscdn.net"
+  },
+  "6Valley eCommerce CMS": {
+    "cats": [
+      1,
+      6
+    ],
+    "cookies": {
+      "6valley_session": ""
+    },
+    "description": "6Valley eCommerce CMS is a multi-vendor platform designed to facilitate business launches by providing tools for managing vendors, products, and transactions within an ecommerce ecosystem.",
+    "icon": "6ValleyEcommerceCMS.svg",
+    "pricing": [
+      "onetime"
+    ],
+    "scripts": [
+      "6valley_cookie_consent"
+    ],
+    "website": "https://6valley.app"
   },
   "6sense": {
     "cats": [
@@ -183,6 +297,36 @@
       "\\.6sc\\.co/"
     ],
     "website": "https://6sense.com"
+  },
+  "7Shifts": {
+    "cats": [
+      101
+    ],
+    "description": "7Shifts is an all-in-one team management platform designed to streamline restaurant operations, providing tools for scheduling, communication, and task management to simplify day-to-day activities for both managers and staff.",
+    "dom": [
+      "a[href*='7shifts.com/'] > img[src*='.7shifts.com/']"
+    ],
+    "icon": "7Shifts.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.7shifts.com"
+  },
+  "7moor": {
+    "cats": [
+      32,
+      53
+    ],
+    "description": "7moor is an integrated customer service marketing solution that combines communication, customer support, and marketing tools.",
+    "icon": "7moor.svg",
+    "js": {
+      "moor7Source": ""
+    },
+    "saas": true,
+    "website": "https://www.7moor.com"
   },
   "8base": {
     "cats": [
@@ -207,7 +351,9 @@
       105
     ],
     "description": "<model-viewer> is an open-source web component developed by Google and maintained through GitHub. <model-viewer> aims at putting 3D content on the web easily with a few lines of HTML code. This was first introduced with Chrome 72 in July 2019 and enables users to view 3D in the browser and mobile devices.",
-    "dom": "model-viewer",
+    "dom": [
+      "model-viewer"
+    ],
     "icon": "model-viewer.svg",
     "oss": true,
     "scriptSrc": [
@@ -225,11 +371,11 @@
     },
     "website": "https://github.com/sulu/web-js"
   },
-  "_hyperscript ": {
+  "_hyperscript": {
     "cats": [
       59
     ],
-    "description": "_​hyperscript is a scripting language for adding interactivity to the front-end.",
+    "description": "_hyperscript is a scripting language for adding interactivity to the front-end.",
     "icon": "_hyperscript.png",
     "js": {
       "_hyperscript": ""

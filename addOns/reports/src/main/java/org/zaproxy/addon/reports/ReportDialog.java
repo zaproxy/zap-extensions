@@ -431,7 +431,7 @@ public class ReportDialog extends StandardFieldsDialog {
     }
 
     private ReportData getReportData(Template template) {
-        ReportData reportData = new ReportData();
+        ReportData reportData = new ReportData(template.getConfigName());
         reportData.setTitle(this.getStringValue(FIELD_TITLE));
         reportData.setDescription(this.getStringValue(FIELD_DESCRIPTION));
         reportData.setContexts(this.getContextsSelector().getSelectedValuesList());

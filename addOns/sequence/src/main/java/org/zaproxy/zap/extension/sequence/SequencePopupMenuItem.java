@@ -21,6 +21,9 @@ package org.zaproxy.zap.extension.sequence;
 
 import java.awt.Component;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
@@ -30,6 +33,7 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.script.SequenceScript;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 
 @SuppressWarnings("serial")
 public class SequencePopupMenuItem extends ExtensionPopupMenuItem {
@@ -58,9 +62,32 @@ public class SequencePopupMenuItem extends ExtensionPopupMenuItem {
                                 (ScriptWrapper)
                                         extScript.getScriptUI().getSelectedNode().getUserObject();
                         SequenceScript scr = extScript.getInterface(wrapper, SequenceScript.class);
-                        if (scr != null) {
-                            extension.setDirectScanScript(wrapper);
-                            scr.scanSequence();
+                        if (scr != null && wrapper instanceof ZestScriptWrapper) {
+                            List<Object> contextSpecificObjects = new ArrayList<>();
+                            try {
+                                contextSpecificObjects.add(extension.getDefaultScanPolicy());
+                            } catch (ConfigurationException e4) {
+                                // Ignore
+                            }
+
+                            StdActiveScanRunner zzr =
+                                    new StdActiveScanRunner(
+                                            (ZestScriptWrapper) wrapper,
+                                            null,
+                                            null,
+                                            contextSpecificObjects);
+
+                            new Thread(
+                                            () -> {
+                                                try {
+                                                    zzr.run(null, null);
+                                                } catch (Exception e1) {
+                                                    LOGGER.error(e1.getMessage(), e1);
+                                                }
+                                            },
+                                            "ZAP-Seq-ActiveScan-" + wrapper.getName())
+                                    .start();
+
                         } else {
                             String msg =
                                     extension

@@ -24,15 +24,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.scanner.Plugin;
-import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
-import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
-import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
@@ -40,6 +37,7 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.addon.automation.gui.ActiveScanJobDialog;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
@@ -55,8 +53,6 @@ public class ActiveScanJob extends AutomationJob {
     private static final String PARAM_POLICY = "policy";
     private static final String PARAM_USER = "user";
 
-    private static final String RULES_ELEMENT_NAME = "rules";
-
     private ExtensionActiveScan extAScan;
 
     private Parameters parameters = new Parameters();
@@ -65,6 +61,16 @@ public class ActiveScanJob extends AutomationJob {
 
     public ActiveScanJob() {
         data = new Data(this, this.parameters, this.policyDefinition);
+    }
+
+    @Override
+    public boolean supportsAlertTests() {
+        return true;
+    }
+
+    @Override
+    public String getKeyAlertTestsResultData() {
+        return ActiveScanJobResultData.KEY;
     }
 
     private ExtensionActiveScan getExtAScan() {
@@ -92,9 +98,6 @@ public class ActiveScanJob extends AutomationJob {
                             params, this.parameters, this.getName(), null, progress);
                     break;
                 case "policyDefinition":
-                    // Parse the policy defn
-                    parsePolicyDefinition(jobData.get(key), progress);
-                    break;
                 case "name":
                 case "tests":
                 case "type":
@@ -108,77 +111,9 @@ public class ActiveScanJob extends AutomationJob {
                     break;
             }
         }
-
+        policyDefinition.parsePolicyDefinition(
+                jobData.get("policyDefinition"), this.getName(), progress);
         this.verifyUser(this.getParameters().getUser(), progress);
-    }
-
-    private void parsePolicyDefinition(Object policyDefn, AutomationProgress progress) {
-        if (policyDefn instanceof LinkedHashMap<?, ?>) {
-            LinkedHashMap<?, ?> policyDefnData = (LinkedHashMap<?, ?>) policyDefn;
-
-            JobUtils.applyParamsToObject(
-                    policyDefnData,
-                    this.policyDefinition,
-                    this.getName(),
-                    new String[] {RULES_ELEMENT_NAME},
-                    progress);
-
-            ScanPolicy scanPolicy = new ScanPolicy();
-            PluginFactory pluginFactory = scanPolicy.getPluginFactory();
-
-            Object o = policyDefnData.get(RULES_ELEMENT_NAME);
-            if (o instanceof ArrayList<?>) {
-                ArrayList<?> ruleData = (ArrayList<?>) o;
-                for (Object ruleObj : ruleData) {
-                    if (ruleObj instanceof LinkedHashMap<?, ?>) {
-                        LinkedHashMap<?, ?> ruleMap = (LinkedHashMap<?, ?>) ruleObj;
-                        Integer id = (Integer) ruleMap.get("id");
-                        Plugin plugin = pluginFactory.getPlugin(id);
-                        if (plugin != null) {
-                            AttackStrength strength =
-                                    JobUtils.parseAttackStrength(
-                                            ruleMap.get("strength"), this.getName(), progress);
-                            AlertThreshold threshold =
-                                    JobUtils.parseAlertThreshold(
-                                            ruleMap.get("threshold"), this.getName(), progress);
-
-                            Rule rule = new Rule();
-                            rule.setId(id);
-                            rule.setName(plugin.getName());
-                            if (threshold != null) {
-                                rule.setThreshold(threshold.name().toLowerCase());
-                            }
-                            if (strength != null) {
-                                rule.setStrength(strength.name().toLowerCase());
-                            }
-                            this.getData().getPolicyDefinition().addRule(rule);
-
-                        } else {
-                            progress.warn(
-                                    Constant.messages.getString(
-                                            "automation.error.ascan.rule.unknown",
-                                            this.getName(),
-                                            id));
-                        }
-                    }
-                }
-            } else if (o != null) {
-                progress.warn(
-                        Constant.messages.getString(
-                                "automation.error.options.badlist",
-                                this.getName(),
-                                RULES_ELEMENT_NAME,
-                                o));
-            }
-
-        } else if (policyDefn != null) {
-            progress.warn(
-                    Constant.messages.getString(
-                            "automation.error.options.badlist",
-                            this.getName(),
-                            "policyDefinition",
-                            policyDefn));
-        }
     }
 
     @Override
@@ -210,7 +145,7 @@ public class ActiveScanJob extends AutomationJob {
         getExtAScan().setPanelSwitch(false);
 
         ContextWrapper context;
-        if (this.getParameters().getContext() != null) {
+        if (StringUtils.isNotEmpty(this.getParameters().getContext())) {
             context = env.getContextWrapper(this.getParameters().getContext());
             if (context == null) {
                 progress.error(
@@ -239,7 +174,8 @@ public class ActiveScanJob extends AutomationJob {
                 // Error already raised above
             }
         } else {
-            scanPolicy = this.getScanPolicy(progress);
+            scanPolicy =
+                    this.getData().getPolicyDefinition().getScanPolicy(this.getName(), progress);
         }
         if (scanPolicy != null) {
             contextSpecificObjects.add(scanPolicy);
@@ -295,78 +231,6 @@ public class ActiveScanJob extends AutomationJob {
         List<JobResultData> list = new ArrayList<>();
         list.add(new ActiveScanJobResultData(this.getName(), this.getExtAScan().getScan(scanId)));
         return list;
-    }
-
-    protected ScanPolicy getScanPolicy(AutomationProgress progress) {
-        ScanPolicy scanPolicy = new ScanPolicy();
-
-        // Set default strength
-        AttackStrength st =
-                JobUtils.parseAttackStrength(
-                        this.getData().getPolicyDefinition().getDefaultStrength(),
-                        this.getName(),
-                        progress);
-        if (st != null) {
-            scanPolicy.setDefaultStrength(st);
-            progress.info(
-                    Constant.messages.getString(
-                            "automation.info.ascan.setdefstrength", this.getName(), st.name()));
-        }
-
-        // Set default threshold
-        PluginFactory pluginFactory = scanPolicy.getPluginFactory();
-        AlertThreshold th =
-                JobUtils.parseAlertThreshold(
-                        this.getData().getPolicyDefinition().getDefaultThreshold(),
-                        this.getName(),
-                        progress);
-        if (th != null) {
-            scanPolicy.setDefaultThreshold(th);
-            if (th == AlertThreshold.OFF) {
-                for (Plugin plugin : pluginFactory.getAllPlugin()) {
-                    plugin.setEnabled(false);
-                }
-            } else {
-                scanPolicy.setDefaultThreshold(th);
-            }
-            progress.info(
-                    Constant.messages.getString(
-                            "automation.info.ascan.setdefthreshold", this.getName(), th.name()));
-        }
-
-        // Configure any rules
-        for (Rule rule : this.getData().getPolicyDefinition().getRules()) {
-            Plugin plugin = pluginFactory.getPlugin(rule.getId());
-            if (plugin == null) {
-                // Will have already warned about this
-                continue;
-            }
-            AttackStrength pluginSt =
-                    JobUtils.parseAttackStrength(rule.getStrength(), this.getName(), progress);
-            if (pluginSt != null) {
-                plugin.setAttackStrength(pluginSt);
-                plugin.setEnabled(true);
-                progress.info(
-                        Constant.messages.getString(
-                                "automation.info.ascan.rule.setstrength",
-                                this.getName(),
-                                rule.getId(),
-                                pluginSt.name()));
-            }
-            AlertThreshold pluginTh =
-                    JobUtils.parseAlertThreshold(rule.getThreshold(), this.getName(), progress);
-            if (pluginTh != null) {
-                plugin.setAlertThreshold(pluginTh);
-                plugin.setEnabled(!AlertThreshold.OFF.equals(pluginTh));
-                progress.info(
-                        Constant.messages.getString(
-                                "automation.info.ascan.rule.setthreshold",
-                                this.getName(),
-                                rule.getId(),
-                                pluginTh.name()));
-            }
-        }
-        return scanPolicy;
     }
 
     @Override
@@ -434,239 +298,41 @@ public class ActiveScanJob extends AutomationJob {
         new ActiveScanJobDialog(this).setVisible(true);
     }
 
-    public static class Rule extends AutomationData {
-        private int id;
-        private String name;
-        private String threshold;
-        private String strength;
-
-        public Rule() {}
-
-        public Rule(int id, String name, String threshold, String strength) {
-            this.id = id;
-            this.name = name;
-            this.threshold = threshold;
-            this.strength = strength;
-        }
-
-        public Rule copy() {
-            return new Rule(id, name, threshold, strength);
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getThreshold() {
-            return threshold;
-        }
-
-        public void setThreshold(String threshold) {
-            this.threshold = threshold;
-        }
-
-        public String getStrength() {
-            return strength;
-        }
-
-        public void setStrength(String strength) {
-            this.strength = strength;
-        }
-    }
-
+    @Getter
     public static class Data extends JobData {
-        private Parameters parameters;
-        private PolicyDefinition policyDefinition;
+        private final Parameters parameters;
+        private final PolicyDefinition policyDefinition;
 
         public Data(AutomationJob job, Parameters parameters, PolicyDefinition policyDefinition) {
             super(job);
             this.parameters = parameters;
             this.policyDefinition = policyDefinition;
         }
-
-        public Parameters getParameters() {
-            return parameters;
-        }
-
-        public PolicyDefinition getPolicyDefinition() {
-            return policyDefinition;
-        }
     }
 
-    public static class PolicyDefinition extends AutomationData {
-        private String defaultStrength;
-        private String defaultThreshold;
-        private List<Rule> rules = new ArrayList<>();
-
-        public String getDefaultStrength() {
-            return defaultStrength;
-        }
-
-        public void setDefaultStrength(String defaultStrength) {
-            this.defaultStrength = defaultStrength;
-        }
-
-        public String getDefaultThreshold() {
-            return defaultThreshold;
-        }
-
-        public void setDefaultThreshold(String defaultThreshold) {
-            this.defaultThreshold = defaultThreshold;
-        }
-
-        public List<Rule> getRules() {
-            return rules.stream().map(Rule::copy).collect(Collectors.toList());
-        }
-
-        public void addRule(Rule rule) {
-            this.rules.add(rule);
-        }
-
-        public void removeRule(Rule rule) {
-            this.rules.remove(rule);
-        }
-
-        public void setRules(List<Rule> rules) {
-            this.rules = rules;
-        }
-    }
-
+    @Getter
+    @Setter
     public static class Parameters extends AutomationData {
-
-        private String context;
-        private String user;
-        private String policy;
-        private Integer maxRuleDurationInMins;
-        private Integer maxScanDurationInMins;
-        private Boolean addQueryParam;
-        private String defaultPolicy;
-        private Integer delayInMs;
-        private Boolean handleAntiCSRFTokens;
-        private Boolean injectPluginIdInHeader;
-        private Boolean scanHeadersAllRequests;
-        private Integer threadPerHost;
-        private Integer maxAlertsPerRule;
-
-        public Parameters() {}
-
-        public String getContext() {
-            return context;
-        }
-
-        public void setContext(String context) {
-            this.context = context;
-        }
-
-        public String getUser() {
-            return user;
-        }
-
-        public void setUser(String user) {
-            this.user = user;
-        }
-
-        public String getPolicy() {
-            return policy;
-        }
-
-        public void setPolicy(String policy) {
-            this.policy = policy;
-        }
-
-        public Integer getMaxRuleDurationInMins() {
-            return maxRuleDurationInMins;
-        }
-
-        public void setMaxRuleDurationInMins(Integer maxRuleDurationInMins) {
-            this.maxRuleDurationInMins = maxRuleDurationInMins;
-        }
-
-        public Integer getMaxScanDurationInMins() {
-            return maxScanDurationInMins;
-        }
-
-        public void setMaxScanDurationInMins(Integer maxScanDurationInMins) {
-            this.maxScanDurationInMins = maxScanDurationInMins;
-        }
-
-        public Boolean getAddQueryParam() {
-            return addQueryParam;
-        }
-
-        public void setAddQueryParam(Boolean addQueryParam) {
-            this.addQueryParam = addQueryParam;
-        }
-
-        public String getDefaultPolicy() {
-            return defaultPolicy;
-        }
-
-        public void setDefaultPolicy(String defaultPolicy) {
-            this.defaultPolicy = defaultPolicy;
-        }
-
-        public Integer getDelayInMs() {
-            return delayInMs;
-        }
-
-        public void setDelayInMs(Integer delayInMs) {
-            this.delayInMs = delayInMs;
-        }
-
-        public Boolean getHandleAntiCSRFTokens() {
-            return handleAntiCSRFTokens;
-        }
-
-        public void setHandleAntiCSRFTokens(Boolean handleAntiCSRFTokens) {
-            this.handleAntiCSRFTokens = handleAntiCSRFTokens;
-        }
-
-        public Boolean getInjectPluginIdInHeader() {
-            return injectPluginIdInHeader;
-        }
-
-        public void setInjectPluginIdInHeader(Boolean injectPluginIdInHeader) {
-            this.injectPluginIdInHeader = injectPluginIdInHeader;
-        }
-
-        public Boolean getScanHeadersAllRequests() {
-            return scanHeadersAllRequests;
-        }
-
-        public void setScanHeadersAllRequests(Boolean scanHeadersAllRequests) {
-            this.scanHeadersAllRequests = scanHeadersAllRequests;
-        }
+        private String context = "";
+        private String user = "";
+        private String policy = "";
+        private Integer maxRuleDurationInMins = 0;
+        private Integer maxScanDurationInMins = 0;
+        private Boolean addQueryParam = false;
+        private String defaultPolicy = "";
+        private Integer delayInMs = 0;
+        private Boolean handleAntiCSRFTokens = true;
+        private Boolean injectPluginIdInHeader = false;
+        private Boolean scanHeadersAllRequests = false;
+        private Integer threadPerHost = Constants.getDefaultThreadCount();
+        private Integer maxAlertsPerRule = 0;
 
         public Integer getThreadPerHost() {
             if (JobUtils.unBox(threadPerHost) <= 0) {
-                // Dont return zero or less - this will cause problems
+                // Don't return zero or less - this will cause problems
                 return null;
             }
             return threadPerHost;
-        }
-
-        public void setThreadPerHost(Integer threadPerHost) {
-            this.threadPerHost = threadPerHost;
-        }
-
-        public Integer getMaxAlertsPerRule() {
-            return maxAlertsPerRule;
-        }
-
-        public void setMaxAlertsPerRule(Integer maxAlertsPerRule) {
-            this.maxAlertsPerRule = maxAlertsPerRule;
         }
     }
 }

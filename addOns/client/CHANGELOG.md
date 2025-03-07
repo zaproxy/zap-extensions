@@ -4,11 +4,57 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Add API endpoints for the Client Spider.
+
+## [0.14.0] - 2025-03-04
+### Added
+- Added an API action to export the Client Map.
+
+### Fixed
+- Correct Client Passive Scan Queue counter, which could be showing one when none left.
+- Correctly fill input elements when spidering (Issue 8851).
+
+## [0.13.0] - 2025-02-04
+### Added
+- Added support for Client Script Authentication when installed in conjunction with the Authentication Helper add-on.
+
+## [0.12.0] - 2025-01-24
+### Fixed
+- Extension not enabled when launched from ZAP.
+- Browser recording not enabled when launched from ZAP recorder.
+
+## [0.11.0] - 2025-01-17
+### Fixed
+- Fix concurrency issue with page components which could lead to exceptions in the GUI.
+
 ### Changed
-- Update minimum ZAP version to 2.15.0.
+- Updated Chrome and Firefox extensions to v0.0.11.
 
 ### Added
-- Support for menu weights (Issue 8369)
+- A context menu allowing users to Export Client Map.
+
+## [0.10.0] - 2025-01-10
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Maintenance changes.
+- The current passive scan rules now uses a more specific CWE (Issue 8712).
+- Updated Chrome and Firefox extensions to v0.0.10.
+
+### Added
+- Added support for Browser Based Authentication when installed in conjunction with the Auth Helper add-on.
+- Client spider, along with Automation Framework support.
+
+## [0.9.0] - 2024-11-29
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Updated Chrome and Firefox extensions to v0.0.9.
+
+### Added
+- Support for menu weights (Issue 8369).
+
+### Fixed
+- Address exception with deleted messages while handling client event.
 
 ## [0.8.0] - 2024-01-16
 ### Changed
@@ -86,6 +132,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.14.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.14.0
+[0.13.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.13.0
+[0.12.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.12.0
+[0.11.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.11.0
+[0.10.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.10.0
+[0.9.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.8.0
 [0.7.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.6.0

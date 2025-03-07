@@ -41,6 +41,7 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.spider.filters.FetchFilter;
 import org.zaproxy.addon.spider.filters.HttpPrefixFetchFilter;
 import org.zaproxy.addon.spider.filters.ParseFilter;
@@ -52,7 +53,6 @@ import org.zaproxy.zap.model.ScanController;
 import org.zaproxy.zap.model.StructuralNode;
 import org.zaproxy.zap.model.StructuralSiteNode;
 import org.zaproxy.zap.model.Target;
-import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -118,11 +118,11 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
         SpiderEventPublisher.getPublisher();
     }
 
-    ValueGenerator getValueGenerator() {
+    ValueProvider getValueProvider() {
         return Control.getSingleton()
                 .getExtensionLoader()
                 .getExtension(ExtensionCommonlib.class)
-                .getValueGenerator();
+                .getValueProvider();
     }
 
     @Override
@@ -554,7 +554,7 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
                             "Scans are not allowed on targets not in scope when in Protected mode: "
                                     + uri);
                 }
-                // $FALL-THROUGH$
+            // $FALL-THROUGH$
             case standard:
             case attack:
                 // No problem
