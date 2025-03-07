@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Allow add-ons to obtain (empty) tags before the extension is fully initialised to prevent exceptions.
 
+### Changed
+- Automation Framework progress and log messages with regard to setting scan rule threshold no longer include commas in scan rule ID numbers.
+
 ## [0.2.0] - 2025-02-12
 ### Added
 - Allow add-ons to obtain the auto tagging tags.

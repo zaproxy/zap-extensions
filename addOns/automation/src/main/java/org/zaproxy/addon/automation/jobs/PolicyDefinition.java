@@ -213,7 +213,7 @@ public class PolicyDefinition extends AutomationData {
                         Constant.messages.getString(
                                 "automation.info.ascan.rule.setthreshold",
                                 jobName,
-                                rule.getId(),
+                                String.valueOf(rule.getId()),
                                 pluginTh.name()));
             }
         }
