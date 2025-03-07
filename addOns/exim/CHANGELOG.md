@@ -18,6 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 
 ### Fixed
+- Sites Tree export now correctly handles node names with newlines and special characters (Issue 8858).
 - Import HAR entry sent and elapsed time.
 - Duplicate or missing "Save URLs..." entries in the Export menu.
 - The "Save All URLs..." export option was saving only the selected URLs.
