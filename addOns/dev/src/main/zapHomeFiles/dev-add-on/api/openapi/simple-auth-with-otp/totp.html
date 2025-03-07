@@ -31,23 +31,15 @@
 </div>
 <script>
 function submitTOTP() {
-	// Remove previous messages
-	let element = document.getElementById("result");
-	while (element.firstChild) {
-		element.removeChild(element.firstChild);
-	}
-
 	// Make the TOTP verification request
 	var xhr = new XMLHttpRequest();
 	var url = "user";
-	xhr.open("GET", url, true);
+	xhr.open("POST", url, true);
 	xhr.setRequestHeader("Authorization", sessionStorage.getItem("accesstoken"));
-	xhr.setRequestHeader("X-TOTP", document.getElementById("totp").value);
-	console.log("ReadyState:", xhr.readyState, "Status:", xhr.status);
+	xhr.setRequestHeader("Content-Type", "application/json");
 	xhr.onreadystatechange = function () {
 	    if (xhr.readyState === 4 && xhr.status === 200) {
 	        var json = JSON.parse(xhr.responseText);
-	        
 	        if (json.result === "OK") {
 	        	window.location.replace("home.html");
 	        } else {
@@ -60,15 +52,16 @@ function submitTOTP() {
 	};
 	var data = JSON.stringify({
 		"code": document.getElementById("totp").value
+		
 	});
 	xhr.send(data);
 }
 
 document.getElementById('totp').onkeydown = function(e){
-	if (e.keyCode == 13) {
-		// Handle return key
-		submitTOTP();
-	}
+    if (e.keyCode == 13) {
+        // Handle return key
+        submitTOTP();
+    }
 };
 
 </script>
