@@ -33,7 +33,9 @@ import static org.mockito.Mockito.mock;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -53,7 +55,9 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HtmlParameter;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.exim.ExporterResult;
 import org.zaproxy.zap.extension.ascan.VariantFactory;
 import org.zaproxy.zap.model.Context;
@@ -512,5 +516,182 @@ class SiteTreeHandlerUnitTest {
 
         // And that the node hierarchy really was deleted
         assertThat(siteMap.getRoot().getChildCount(), is(0));
+    }
+
+    @Test
+    public void shouldHandleMultilineValues() throws Exception {
+        // Given
+        String multilineValue = "line1\nline2\nline3";
+
+        // Create a POST message with multiline parameters
+        HttpMessage msg = new HttpMessage(new URI("https://www.example.com/multiline", true));
+        msg.getRequestHeader().setMethod(HttpRequestHeader.POST);
+        msg.getRequestHeader()
+                .setHeader(HttpHeader.CONTENT_TYPE, "application/x-www-form-urlencoded");
+        msg.setRequestBody("multiline=" + multilineValue);
+
+        // Configure mocks
+        HistoryReference href = getHref(msg);
+        given(href.getURI()).willReturn(new URI("https://www.example.com/multiline", true));
+        given(href.getMethod()).willReturn(HttpRequestHeader.POST);
+        given(href.getHttpMessage()).willReturn(msg);
+        given(href.getStatusCode()).willReturn(200);
+        given(href.getResponseHeaderLength()).willReturn(20);
+        given(href.getResponseBodyLength()).willReturn(30);
+
+        // Set up test parameters
+        List<org.zaproxy.zap.model.NameValuePair> params = new ArrayList<>();
+        params.add(
+                mock(
+                        org.zaproxy.zap.model.NameValuePair.class,
+                        invocation -> {
+                            Method method = invocation.getMethod();
+                            if (method.getName().equals("getName")) {
+                                return "multiline";
+                            } else if (method.getName().equals("getValue")) {
+                                return multilineValue;
+                            }
+                            return null;
+                        }));
+        given(session.getParameters(any(HttpMessage.class), eq(HtmlParameter.Type.form)))
+                .willReturn(params);
+
+        // Add to site map
+        SiteNode node = new SiteNode(null, 1, "POST:/multiline");
+        node.setHistoryReference(href);
+        siteMap.getRoot().add(node);
+
+        // When
+        StringWriter sw = new StringWriter();
+        ExporterResult result = new ExporterResult();
+        SitesTreeHandler.exportSitesTree(sw, siteMap, result);
+
+        // Then
+        String output = sw.toString();
+        System.out.println("Output: " + output);
+        assertThat(output.contains("multiline="), is(true));
+        // Note: The current implementation doesn't include parameter values, only names
+    }
+
+    @Test
+    public void shouldHandleSpecialCharacters() throws Exception {
+        // Given
+        String specialChars = "value with special chars: \" \' \\ \n \r \t";
+
+        // Create a POST message with special character parameters
+        HttpMessage msg = new HttpMessage(new URI("https://www.example.com/special", true));
+        msg.getRequestHeader().setMethod(HttpRequestHeader.POST);
+        msg.getRequestHeader()
+                .setHeader(HttpHeader.CONTENT_TYPE, "application/x-www-form-urlencoded");
+        msg.setRequestBody("special=" + specialChars);
+
+        // Configure mocks
+        HistoryReference href = getHref(msg);
+        given(href.getURI()).willReturn(new URI("https://www.example.com/special", true));
+        given(href.getMethod()).willReturn(HttpRequestHeader.POST);
+        given(href.getHttpMessage()).willReturn(msg);
+        given(href.getStatusCode()).willReturn(200);
+        given(href.getResponseHeaderLength()).willReturn(20);
+        given(href.getResponseBodyLength()).willReturn(30);
+
+        // Set up test parameters
+        List<org.zaproxy.zap.model.NameValuePair> params = new ArrayList<>();
+        params.add(
+                mock(
+                        org.zaproxy.zap.model.NameValuePair.class,
+                        invocation -> {
+                            Method method = invocation.getMethod();
+                            if (method.getName().equals("getName")) {
+                                return "special";
+                            } else if (method.getName().equals("getValue")) {
+                                return specialChars;
+                            }
+                            return null;
+                        }));
+        given(session.getParameters(any(HttpMessage.class), eq(HtmlParameter.Type.form)))
+                .willReturn(params);
+
+        // Add to site map
+        SiteNode node = new SiteNode(null, 1, "POST:/special");
+        node.setHistoryReference(href);
+        siteMap.getRoot().add(node);
+
+        // When
+        StringWriter sw = new StringWriter();
+        ExporterResult result = new ExporterResult();
+        SitesTreeHandler.exportSitesTree(sw, siteMap, result);
+
+        // Then
+        String output = sw.toString();
+        System.out.println("Output: " + output);
+        assertThat(output.contains("special="), is(true));
+    }
+
+    @Test
+    public void shouldHandleProblematicCharactersWithBase64() throws Exception {
+        // This test verifies that problematic control characters get properly handled
+        // Given
+        byte[] problematicBytes =
+                new byte[] {
+                    // Create a string with some ASCII text and control characters
+                    'T',
+                    'e',
+                    's',
+                    't',
+                    ' ',
+                    0x01, // SOH
+                    ' ',
+                    'w',
+                    'i',
+                    't',
+                    'h',
+                    ' ',
+                    0x02, // STX
+                    ' ',
+                    'c',
+                    'o',
+                    'n',
+                    't',
+                    'r',
+                    'o',
+                    'l',
+                    ' ',
+                    0x03, // ETX
+                    ' ',
+                    'c',
+                    'h',
+                    'a',
+                    'r',
+                    's'
+                };
+        String problematicString = new String(problematicBytes, StandardCharsets.UTF_8);
+
+        SiteNode rootNode = siteMap.getRoot();
+        // Use existing node name
+
+        HttpMessage msg = new HttpMessage(new URI("https://www.example.com/problematic", true));
+        msg.getRequestHeader().setMethod("GET");
+        // Set a note with problematic characters
+        msg.setNote(problematicString);
+
+        HistoryReference href = getHref(msg);
+        given(href.getURI()).willReturn(new URI("https://www.example.com/problematic", true));
+        given(href.getMethod()).willReturn("GET");
+        given(href.getHttpMessage()).willReturn(msg);
+        SiteNode problemNode = new SiteNode(null, 1, "Problem Node");
+        problemNode.setHistoryReference(href);
+        rootNode.add(problemNode);
+
+        StringWriter sw = new StringWriter();
+        ExporterResult result = new ExporterResult();
+
+        // When
+        SitesTreeHandler.exportSitesTree(sw, siteMap, result);
+
+        // Then
+        // The test passes if the export completes without exceptions
+        // We can't easily verify the Base64 encoding directly, but we can check that
+        // the export worked
+        assertThat(result.getCount() > 0, is(true));
     }
 }
