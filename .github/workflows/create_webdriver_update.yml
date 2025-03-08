@@ -95,6 +95,10 @@ jobs:
         fi
         ## If there are changes: push and PR
         if [ $IS_UPDT -eq 1 ]; then
+          ./gradlew :aO:webdrivers:webdriverlinux:prepareRelease
+          ./gradlew :aO:webdrivers:webdrivermacos:prepareRelease
+          ./gradlew :aO:webdrivers:webdriverwindows:prepareRelease
+          git commit -a --amend --no-edit --signoff
           git push --set-upstream origin $BRANCH --force
           # Open the PR
           gh pr create -f
