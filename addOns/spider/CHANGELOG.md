@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Do not add seeds to the found list (Issue 7737).
+- Changed Spider not to notify as a found URI when a seed is added from addRootFileSeed() or addFileSeed() (Issue 7737).
 
 ## [0.13.0] - 2025-01-10
 ### Changed
