@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Replace usage of CWE-200 for the Insecure HTTP Method scan rule (Issue 8714).
 - Include exception message of failed attacks in the Server Side Request Forgery scan rule.
+- The Shell Shock scan rule now has the TEST_TIMING alert tag.
 
 ### Fixed
 - Address potential/theoretical reDoS issue in the Insecure HTTP Method scan rule.

@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -46,7 +47,8 @@ public class ShellShockScanRule extends AbstractAppParamPlugin implements Common
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A06_VULN_COMP,
                     CommonAlertTag.OWASP_2017_A09_VULN_COMP,
-                    CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ);
+                    CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ,
+                    CommonAlertTag.TEST_TIMING);
 
     /** the logger object */
     private static final Logger LOGGER = LogManager.getLogger(ShellShockScanRule.class);
@@ -199,6 +201,7 @@ public class ShellShockScanRule extends AbstractAppParamPlugin implements Common
                 .setParam(paramName)
                 .setAttack(attack)
                 .setEvidence(EVIDENCE)
+                .setTags(getNeededAlertTags(true))
                 .setAlertRef(getId() + "-1");
     }
 
@@ -231,6 +234,15 @@ public class ShellShockScanRule extends AbstractAppParamPlugin implements Common
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    private Map<String, String> getNeededAlertTags(boolean isReflectionBased) {
+        Map<String, String> alertTags = new HashMap<>();
+        alertTags.putAll(getAlertTags());
+        if (isReflectionBased) {
+            alertTags.remove(CommonAlertTag.TEST_TIMING.getTag());
+        }
+        return alertTags;
     }
 
     @Override
