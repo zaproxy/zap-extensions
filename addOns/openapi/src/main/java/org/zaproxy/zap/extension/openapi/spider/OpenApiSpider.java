@@ -78,10 +78,9 @@ public class OpenApiSpider extends SpiderParser {
                     StringUtils.left(message.getResponseBody().toString(), 250)
                             .toLowerCase(Locale.ROOT);
             if (contentType.startsWith("application/vnd.oai.openapi")
-                    || (contentType.contains("json")
-                            || contentType.contains("yaml")
-                                    && (responseBodyStart.contains("swagger")
-                                            || responseBodyStart.contains("openapi")))) {
+                    || ((contentType.contains("json") || contentType.contains("yaml"))
+                            && (responseBodyStart.contains("swagger")
+                                    || responseBodyStart.contains("openapi")))) {
                 return true;
             }
         } catch (Exception e) {
