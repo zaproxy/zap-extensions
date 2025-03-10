@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Add any session related cookies which are not being tracked.
+- Ignore non proxied requests in auth tester diagnostics.
+- Replace credentials with special tokens.
 
 ### Fixed
 - Bug where some of the data structures were not being reset when the session changed.
