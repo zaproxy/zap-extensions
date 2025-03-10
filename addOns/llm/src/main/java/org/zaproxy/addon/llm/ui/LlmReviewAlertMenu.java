@@ -21,6 +21,7 @@ package org.zaproxy.addon.llm.ui;
 
 import java.awt.Component;
 import java.util.Set;
+import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -35,6 +36,8 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
 
     private static final long serialVersionUID = 1L;
     private ExtensionLlm extensionLlm;
+    private static final Logger LOGGER = LogManager.getLogger(LlmReviewAlertMenu.class);
+
 
     public LlmReviewAlertMenu(ExtensionLlm ext) {
         super(Constant.messages.getString("llm.menu.review.title"), true);
@@ -43,17 +46,22 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
 
     @Override
     public void performAction(Alert alert) {
-        LlmOptionsParam llmOptionsParam = extensionLlm.getOptionsParam();
-        LlmCommunicationService llmCommunicationService =
-                new LlmCommunicationService(
-                        llmOptionsParam.getModelName(),
-                        llmOptionsParam.getApiKey(),
-                        llmOptionsParam.getEndpoint());
+
+
         try {
-            llmCommunicationService.reviewAlert(alert);
+            // Prevent GUI from freezing using threads
+            final Runnable r = new Runnable() {
+                @Override
+                public void run() {
+                    reviewAlert(alert);
+                }
+            };
+
+            // Start a new thread to run the reviewAlert method
+            new Thread(r).start();
         } catch (Exception e) {
             showWarningDialog(Constant.messages.getString("llm.reviewalert.error"));
-            throw new RuntimeException(e);
+            LOGGER.error(e);
         }
     }
 
@@ -76,6 +84,16 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
     @Override
     public boolean isSafe() {
         return true;
+    }
+
+    private void reviewAlert(Alert alert){
+        LlmOptionsParam llmOptionsParam = extensionLlm.getOptionsParam();
+        LlmCommunicationService llmCommunicationService =
+                new LlmCommunicationService(
+                        llmOptionsParam.getModelName(),
+                        llmOptionsParam.getApiKey(),
+                        llmOptionsParam.getEndpoint());
+        llmCommunicationService.reviewAlert(alert);
     }
 
     public void showWarningDialog(String message) {
