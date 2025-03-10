@@ -22,6 +22,8 @@ package org.zaproxy.zap.extension.openapi.spider;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -31,6 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.addon.spider.parser.ParseContext;
@@ -47,6 +51,39 @@ class OpenApiSpiderUnitTest extends AbstractServerTest {
     void setupSpider() {
         valueProvider = mock(ValueProvider.class);
         spider = new OpenApiSpider(() -> valueProvider);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "application/vnd.oai.openapi, , true",
+        "json, swagger, true",
+        "json, openapi, true",
+        "yaml, swagger, true",
+        "yaml, openapi, true",
+        "json, not swag ger, false",
+        "json, not open api, false",
+        "yaml, not swag ger, false",
+        "yaml, not open api, false",
+        "not y aml or j son, swagger, false",
+        "not y aml or j son, openapi, false"
+    })
+    void shouldProperlyDetectLikelyOpenApiResource(
+            String contentType, String body, boolean expected) throws Exception {
+        // Given
+        HttpMessage message = new HttpMessage();
+        message.setResponseHeader(
+                """
+                HTTP/1.1 200
+                Content-Type: %s
+                """
+                        .formatted(contentType));
+        message.setResponseBody(body);
+        ParseContext ctx = mock(ParseContext.class);
+        given(ctx.getHttpMessage()).willReturn(message);
+        // When
+        boolean canParse = spider.canParseResource(ctx, false);
+        // Then
+        assertThat(canParse, is(equalTo(expected)));
     }
 
     @Test
