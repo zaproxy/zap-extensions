@@ -71,7 +71,15 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
         adc.onHttpResponseReceive(msg, 1, null);
 
         // Then
-        assertThat(sb.toString(), is(">>>>>\nGET https://example0/\n<<<\nHTTP/1.0 200 OK\n"));
+        assertThat(
+                sb.toString(),
+                is(
+                        """
+                        >>>>>
+                        GET https://example0/
+                        <<<
+                        HTTP/1.0 200 OK
+                        """));
     }
 
     @Test
@@ -130,8 +138,14 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
         assertThat(
                 sb.toString(),
                 is(
-                        ">>>>>\nGET https://example0/\ncookie: cookie1=\"token0\"\n<<<\n"
-                                + "HTTP/1.0 200 OK\nset-cookie: cookie2=token1\n"));
+                        """
+                        >>>>>
+                        GET https://example0/
+                        cookie: cookie1=\"sanitizedtoken0\"
+                        <<<
+                        HTTP/1.0 200 OK
+                        set-cookie: cookie2=sanitizedtoken1
+                        """));
     }
 
     @Test
@@ -154,7 +168,10 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
                 sb.toString(),
                 is(
                         equalTo(
-                                "TestHeader: name=\"token0\"\nTestHeader: name2=\"token1\";$Domain=\"https://example0/\"\n")));
+                                """
+                                TestHeader: name=\"sanitizedtoken0\"
+                                TestHeader: name2=\"sanitizedtoken1\";$Domain=\"https://example0/\"
+                                """)));
     }
 
     @Test
@@ -176,7 +193,7 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
                 sb.toString(),
                 is(
                         equalTo(
-                                "\n[{\"user\":\"token0\",\"password\":\"token1\"},{\"xxx\":\"token2\"}]\n")));
+                                "\n[{\"user\":\"sanitizedtoken0\",\"password\":\"sanitizedtoken1\"},{\"xxx\":\"sanitizedtoken2\"}]\n")));
     }
 
     @Test
@@ -195,7 +212,7 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
         adc.appendPostData(new HttpMessage(header, body), true, sb);
 
         // Then
-        assertThat(sb.toString(), is(equalTo("\naaa=token0&ccc=token1&\n")));
+        assertThat(sb.toString(), is(equalTo("\naaa=sanitizedtoken0&ccc=sanitizedtoken1&\n")));
     }
 
     @Test
@@ -266,7 +283,9 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
         adc.appendSanitisedHeaders(header, "ThisHeader", sb);
 
         // Then
-        assertThat(sb.toString(), is(equalTo("ThisHeader: token0\nThisHeader: token1\n")));
+        assertThat(
+                sb.toString(),
+                is(equalTo("ThisHeader: sanitizedtoken0\nThisHeader: sanitizedtoken1\n")));
     }
 
     @Test
@@ -279,7 +298,9 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
         Object res = adc.sanitiseJson(json);
 
         // Then
-        assertThat(res.toString(), is(equalTo("{\"user\":\"token0\",\"password\":\"token1\"}")));
+        assertThat(
+                res.toString(),
+                is(equalTo("{\"user\":\"sanitizedtoken0\",\"password\":\"sanitizedtoken1\"}")));
     }
 
     @Test
@@ -292,6 +313,8 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
         Object res = adc.sanitiseJson(json);
 
         // Then
-        assertThat(res.toString(), is(equalTo("[{\"user\":\"token0\",\"password\":\"token1\"}]")));
+        assertThat(
+                res.toString(),
+                is(equalTo("[{\"user\":\"sanitizedtoken0\",\"password\":\"sanitizedtoken1\"}]")));
     }
 }

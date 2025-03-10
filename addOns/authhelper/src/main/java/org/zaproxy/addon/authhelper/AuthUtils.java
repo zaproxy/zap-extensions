@@ -60,10 +60,7 @@ import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.Extension;
-import org.parosproxy.paros.extension.history.ExtensionHistory;
-import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
@@ -131,9 +128,7 @@ public class AuthUtils {
     protected static List<String> LOGIN_LABELS_P2 =
             List.of("account", "signup", "sign up", "sign-up");
 
-    private static final int MIN_SESSION_COOKIE_LENGTH = 10;
-
-    private static int MAX_NUM_RECORDS_TO_CHECK = 200;
+    protected static final int MIN_SESSION_COOKIE_LENGTH = 10;
 
     public static final int TIME_TO_SLEEP_IN_MSECS = 100;
 
@@ -824,8 +819,7 @@ public class AuthUtils {
         map.put(token.getToken(), token);
     }
 
-    protected static Map<String, SessionToken> getAllTokens(
-            HttpMessage msg, boolean incReqCookies) {
+    public static Map<String, SessionToken> getAllTokens(HttpMessage msg, boolean incReqCookies) {
         Map<String, SessionToken> tokens = new HashMap<>();
         String responseData = msg.getResponseBody().toString();
         if (msg.getResponseHeader().isJson() && StringUtils.isNotBlank(responseData)) {
@@ -923,42 +917,7 @@ public class AuthUtils {
 
     public static SessionManagementRequestDetails findSessionTokenSource(
             String token, int firstId) {
-        ExtensionHistory extHist = AuthUtils.getExtension(ExtensionHistory.class);
-        int lastId = extHist.getLastHistoryId();
-        if (firstId == -1) {
-            firstId = Math.max(0, lastId - MAX_NUM_RECORDS_TO_CHECK);
-        }
-
-        LOGGER.debug("Searching for session token from {} down to {} ", lastId, firstId);
-
-        for (int i = lastId; i >= firstId; i--) {
-            HistoryReference hr = extHist.getHistoryReference(i);
-            if (hr != null) {
-                try {
-                    HttpMessage msg = hr.getHttpMessage();
-                    Optional<SessionToken> es =
-                            AuthUtils.getAllTokens(msg, false).values().stream()
-                                    .filter(v -> v.getValue().equals(token))
-                                    .findFirst();
-                    if (es.isPresent()) {
-                        AuthUtils.incStatsCounter(
-                                msg.getRequestHeader().getURI(),
-                                AuthUtils.AUTH_SESSION_TOKEN_STATS_PREFIX + es.get().getKey());
-                        List<SessionToken> tokens = new ArrayList<>();
-                        tokens.add(
-                                new SessionToken(
-                                        es.get().getSource(),
-                                        es.get().getKey(),
-                                        es.get().getValue()));
-                        return new SessionManagementRequestDetails(
-                                msg, tokens, Alert.CONFIDENCE_HIGH);
-                    }
-                } catch (Exception e) {
-                    LOGGER.debug(e.getMessage(), e);
-                }
-            }
-        }
-        return null;
+        return historyProvider.findSessionTokenSource(token, firstId);
     }
 
     public static void extractJsonTokens(

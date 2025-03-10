@@ -1,0 +1,22 @@
+>>>>>
+GET https://example0/login.jsp
+<<<
+HTTP/1.1 200 
+content-type: text/html;charset=UTF-8
+set-cookie: JSESSIONID=sanitizedtoken0
+>>>>>
+POST https://example0/login.jsp
+content-type: application/x-www-form-urlencoded
+cookie: JSESSIONID="sanitizedtoken0"
+
+password=F4keP4ssw0rd&username=FakeUserName@example.com&
+<<<
+HTTP/1.1 200 
+content-type: text/html;charset=UTF-8
+>>>>>
+GET https://example0/login.jsp
+cookie: JSESSIONID="sanitizedtoken0"
+<<<
+HTTP/1.1 200 
+content-type: text/html;charset=UTF-8
+>>>>>

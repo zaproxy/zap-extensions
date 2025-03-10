@@ -67,7 +67,10 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
     @Override
     public void onHttpResponseReceive(HttpMessage msg, int initiator, HttpSender sender) {
 
-        if (!enabled || collector == null || !AuthUtils.isRelevantToAuthDiags(msg)) {
+        if (!enabled
+                || collector == null
+                || !AuthUtils.isRelevantToAuthDiags(msg)
+                || initiator != HttpSender.PROXY_INITIATOR) {
             return;
         }
 
@@ -224,7 +227,7 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
         if (token.equals(password)) {
             return "F4keP4ssw0rd";
         }
-        return tokenMap.computeIfAbsent(token, s -> "token" + tokenId++);
+        return tokenMap.computeIfAbsent(token, s -> "sanitizedtoken" + tokenId++);
     }
 
     protected JSONObject sanitiseJson(JSONObject jsonObject) {

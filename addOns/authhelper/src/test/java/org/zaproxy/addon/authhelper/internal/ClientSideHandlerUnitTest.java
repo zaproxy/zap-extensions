@@ -22,6 +22,7 @@ package org.zaproxy.addon.authhelper.internal;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -30,16 +31,24 @@ import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.authhelper.AuthUtils;
+import org.zaproxy.addon.authhelper.DiagnosticDataLoader;
 import org.zaproxy.addon.authhelper.HistoryProvider;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.testutils.TestUtils;
 
-public class ClientSideHandlerUnitTest {
+@MockitoSettings(strictness = Strictness.LENIENT)
+public class ClientSideHandlerUnitTest extends TestUtils {
 
     private Context context;
     private ClientSideHandler csh;
@@ -53,18 +62,19 @@ public class ClientSideHandlerUnitTest {
     void setUp() throws Exception {
         Session session = mock(Session.class);
         context = new Context(session, 0);
-        context.addIncludeInContextRegex("https://www.example.com.*");
+        context.addIncludeInContextRegex("https://example0.*");
         csh = new ClientSideHandler(context);
         ctx = new TestHttpMessageHandlerContext();
         history = new ArrayList<>();
         historyProvider = new TestHistoryProvider();
         csh.setHistoryProvider(historyProvider);
+        AuthUtils.setHistoryProvider(historyProvider);
     }
 
     @Test
     void shouldAddMessageToHistory() throws Exception {
         // Given
-        HttpMessage msg = new HttpMessage(new URI("https://www.example.com/", true));
+        HttpMessage msg = new HttpMessage(new URI("https://example0/", true));
         // When
         csh.handleMessage(ctx, msg);
         // Then
@@ -74,7 +84,7 @@ public class ClientSideHandlerUnitTest {
     @Test
     void shouldDetectSimpleLogin() throws Exception {
         // Given
-        HttpMessage postMsg = new HttpMessage(new URI("https://www.example.com/", true));
+        HttpMessage postMsg = new HttpMessage(new URI("https://example0/", true));
         postMsg.getRequestHeader().setMethod(HttpRequestHeader.POST);
         postMsg.getRequestHeader()
                 .setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.FORM_URLENCODED_CONTENT_TYPE);
@@ -92,17 +102,47 @@ public class ClientSideHandlerUnitTest {
 
         // Then
         assertThat(history.size(), is(equalTo(2)));
-        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(1)));
+        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(0)));
+    }
+
+    @Test
+    void shouldDetectBodgeitLogin() throws Exception {
+        // Given
+        List<HttpMessage> msgs =
+                DiagnosticDataLoader.loadTestData(this.getResourcePath("bodgeit.diags").toFile());
+
+        // When
+        msgs.forEach(msg -> csh.handleMessage(ctx, msg));
+
+        // Then
+        assertThat(history.size(), is(equalTo(3)));
+        assertThat(csh.getAuthMsg(), is(notNullValue()));
+        /* In theory this should be 1 - the POST request rather than the GET request.
+         * But bodgeit sets the session token on the first GET and does not change it - it is a vulnerable
+         * app after all :)
+         */
+        assertThat(csh.getAuthMsg().getHistoryRef().getHistoryId(), is(equalTo(0)));
     }
 
     class TestHistoryProvider extends HistoryProvider {
         @Override
         public void addAuthMessageToHistory(HttpMessage msg) {
             history.add(msg);
-            int id = history.size();
+            int id = history.size() - 1;
             HistoryReference href = mock(HistoryReference.class);
             given(href.getHistoryId()).willReturn(id);
             msg.setHistoryRef(href);
+        }
+
+        @Override
+        public HttpMessage getHttpMessage(int historyId)
+                throws HttpMalformedHeaderException, DatabaseException {
+            return history.get(historyId);
+        }
+
+        @Override
+        public int getLastHistoryId() {
+            return history.size() - 1;
         }
     }
 
