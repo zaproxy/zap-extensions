@@ -22,7 +22,11 @@ Client Script Authentication can be configured in the environment section of an 
         parameters:
           script: /path/to/RecordedAuth.zst  # String, the path to the Zest login script
           scriptEngine: Mozilla Zest         # The script engine used for the login script
+          diagnostics:                       # Bool, enables the recording of diagnostic data during the authentication. Default: false.
 </pre>
+
+<p>
+Refer to the <a href="auth-report-json.html">Authentication Report</a> for more details on the diagnostics.
 
 <H2>Client Spider and AJAX Spider Integration</H2>
 
