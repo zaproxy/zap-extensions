@@ -34,6 +34,7 @@ jobs:
         ## If there are changes: comment, commit, PR
         if ! git diff-index --quiet HEAD --; then
           ./gradlew :addOns:evalvillain:updateChangelog --change="- Updated with new version of Eval Villain."
+          ./gradlew :aO:evalvillain:prepareRelease
           git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
           git add .
           git commit -m "Eval Villain Update $SHORT_DATE" -m "Updates based on https://addons.mozilla.org/firefox/addon/eval-villain/" --signoff
