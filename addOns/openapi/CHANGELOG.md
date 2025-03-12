@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Correct definition detection while spidering.
 
+### Changed
+- Clarified an error message which occurs in automation if there's a problem importing.
+
 ## [44] - 2025-01-09
 ### Changed
 - Update minimum ZAP version to 2.16.0.
