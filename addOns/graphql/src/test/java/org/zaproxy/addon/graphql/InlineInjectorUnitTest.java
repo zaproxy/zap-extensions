@@ -34,6 +34,11 @@ class InlineInjectorUnitTest extends TestUtils {
         setUpZap();
     }
 
+    @Override
+    protected void setUpMessages() {
+        mockMessages(new ExtensionGraphQl());
+    }
+
     // Extraction Tests
 
     @Test

@@ -59,6 +59,11 @@ class GraphQlParserUnitTest extends TestUtils {
         stopServer();
     }
 
+    @Override
+    protected void setUpMessages() {
+        mockMessages(new ExtensionGraphQl());
+    }
+
     @Test
     void shouldFailIntrospectionWhenResponseIsEmpty() throws Exception {
         // Given

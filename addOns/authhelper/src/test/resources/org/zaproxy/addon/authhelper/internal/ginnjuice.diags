@@ -1,0 +1,44 @@
+>>>>>
+GET https://example0/login
+<<<
+HTTP/1.1 200 OK
+content-type: text/html; charset=utf-8
+set-cookie: AWSALB=sanitizedtoken0
+set-cookie: AWSALBCORS=sanitizedtoken0
+set-cookie: session=sanitizedtoken1
+>>>>>
+POST https://example0/login
+content-type: application/x-www-form-urlencoded
+cookie: AWSALB="sanitizedtoken2"
+cookie: AWSALBCORS="sanitizedtoken2"
+cookie: session="sanitizedtoken1"
+
+csrf=sanitizedtoken3&username=FakeUserName@example.com&
+<<<
+HTTP/1.1 200 OK
+content-type: text/html; charset=utf-8
+set-cookie: AWSALB=sanitizedtoken4
+set-cookie: AWSALBCORS=sanitizedtoken4
+>>>>>
+POST https://example0/login
+content-type: application/x-www-form-urlencoded
+cookie: AWSALB="sanitizedtoken5"
+cookie: AWSALBCORS="sanitizedtoken5"
+cookie: session="sanitizedtoken1"
+
+csrf=sanitizedtoken6&password=F4keP4ssw0rd&username=FakeUserName@example.com&
+<<<
+HTTP/1.1 302 Found
+set-cookie: AWSALB=sanitizedtoken7
+set-cookie: AWSALBCORS=sanitizedtoken7
+set-cookie: session=sanitizedtoken8
+>>>>>
+GET https://example0/my-account
+cookie: AWSALB="sanitizedtoken7"
+cookie: AWSALBCORS="sanitizedtoken7"
+cookie: session="sanitizedtoken8"
+<<<
+HTTP/1.1 200 OK
+content-type: text/html; charset=utf-8
+set-cookie: AWSALB=sanitizedtoken9
+set-cookie: AWSALBCORS=sanitizedtoken9

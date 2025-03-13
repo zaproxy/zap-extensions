@@ -179,7 +179,7 @@ public abstract class TestUtils {
         Constant.getInstance();
         setUpMessages();
         Control.initSingletonForTesting();
-        Model.getSingleton();
+        Model.setSingletonForTesting(new Model());
     }
 
     /**

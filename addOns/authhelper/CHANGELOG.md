@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add any session related cookies which are not being tracked.
 - Ignore non proxied requests in auth tester diagnostics.
 - Replace credentials with special tokens.
+- Rewrite of the auth request detection code to handle more cases.
+- Add domain to context if creds posted to it and using using auto-detect for session management.
 
 ### Fixed
 - Bug where some of the data structures were not being reset when the session changed.
