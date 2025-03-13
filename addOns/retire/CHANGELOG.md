@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.46.0] - 2025-03-13
 ### Changed
 - Updated with upstream retire.js pattern changes.
 
@@ -245,6 +245,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - First release.
 
+[0.46.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.46.0
 [0.45.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.45.0
 [0.44.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.44.0
 [0.43.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.43.0
