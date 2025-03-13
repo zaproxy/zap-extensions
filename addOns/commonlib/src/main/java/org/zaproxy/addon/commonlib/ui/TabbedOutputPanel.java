@@ -378,6 +378,23 @@ public class TabbedOutputPanel extends OutputPanel {
         }
     }
 
+    /**
+     * Sets the selected output tab, creating it if it doesn't exist.
+     *
+     * @param sourceName the name of the corresponding output source
+     */
+    public void setSelectedOutputTab(String sourceName) {
+        addNewOutputSource(sourceName);
+        tabbedPanel.getTabList().stream()
+                .filter(t -> t.getName().equals(sourceName))
+                .findFirst()
+                .ifPresent(
+                        component -> {
+                            tabbedPanel.setVisible(component, true);
+                            tabbedPanel.setSelectedComponent(component);
+                        });
+    }
+
     private void doAppend(ZapTextArea txtOutput, String message) {
         if (Model.getSingleton()
                 .getOptionsParam()

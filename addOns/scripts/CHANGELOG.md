@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Remove unnecessary custom parameter handling.
 
+### Changed
+- Use the main Output panel for script output.
+
 ## [45.8.0] - 2025-01-10
 ### Added
 - Report indirect script errors while the Automation Framework plans are running (Issue 8586).
