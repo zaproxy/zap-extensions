@@ -21,52 +21,42 @@ package org.zaproxy.zap.extension.scripts;
 
 import java.io.IOException;
 import java.io.Writer;
+import org.parosproxy.paros.view.OutputPanel;
 
 public class OutputPanelWriter extends Writer {
 
-    private OutputPanel outputPanel;
-    private boolean enabled = true;
+    private final OutputPanel outputPanel;
+    private final String sourceName;
+    private final StringBuffer buffer = new StringBuffer();
 
-    public OutputPanelWriter(OutputPanel outputPanel) {
+    public OutputPanelWriter(OutputPanel outputPanel, String sourceName) {
         this.outputPanel = outputPanel;
+        this.sourceName = sourceName;
     }
 
     @Override
     public void write(int c) throws IOException {
-        if (enabled) {
-            outputPanel.append(String.valueOf((char) c));
-        }
+        buffer.append(c);
     }
 
     @Override
     public void write(String str, int off, int len) throws IOException {
-        if (enabled) {
-            outputPanel.append(str.substring(off, len));
-        }
+        buffer.append(str, off, len);
     }
 
     @Override
     public void write(char[] cbuf, int off, int len) throws IOException {
-        if (enabled) {
-            outputPanel.append(new String(cbuf, off, len));
-        }
+        buffer.append(cbuf, off, len);
     }
 
     @Override
-    public void flush() throws IOException {
-        // Ignore
+    public void flush() {
+        outputPanel.append(buffer.toString(), sourceName);
+        buffer.setLength(0);
     }
 
     @Override
     public void close() throws IOException {
         // Ignore
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 }
