@@ -79,6 +79,10 @@ class AuthUtilsUnitTest extends TestUtils {
         setUpZap();
 
         mockMessages(new ExtensionAuthhelper());
+    }
+
+    @AfterEach
+    void cleanUp() {
         AuthUtils.clean();
     }
 
@@ -654,6 +658,7 @@ class AuthUtilsUnitTest extends TestUtils {
         String token1 = "96438673498764398";
         String token2 = "bndkdfsojhgkdshgk";
         String token3 = "89jdhf9834herg03s";
+        String token4 = "h6qb79djz02mgy12n";
 
         HttpMessage msg =
                 new HttpMessage(
@@ -665,9 +670,17 @@ class AuthUtilsUnitTest extends TestUtils {
         msg.getRequestHeader()
                 .addHeader(
                         HttpHeader.COOKIE,
-                        "test1=" + token1 + "; test2=" + token2 + "; test3=" + token3);
+                        "test1="
+                                + token1
+                                + "; test2="
+                                + token2
+                                + "; test3="
+                                + token3
+                                + "; test4="
+                                + token4);
         List<SessionToken> tokens = new ArrayList<>();
         tokens.add(new SessionToken(SessionToken.JSON_SOURCE, "set.cookie", token2));
+        tokens.add(new SessionToken(SessionToken.COOKIE_SOURCE, "test4", token4));
 
         // When
         List<Pair<String, String>> headerTokens = AuthUtils.getHeaderTokens(msg, tokens, true);

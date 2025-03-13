@@ -22,6 +22,7 @@ package org.zaproxy.addon.authhelper;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.BDDMockito.given;
 
 import java.net.HttpCookie;
 import java.util.ArrayList;
@@ -31,6 +32,10 @@ import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -44,11 +49,20 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
     private AuthDiagnosticCollector adc;
     private StringBuilder sb;
 
+    @Mock(strictness = org.mockito.Mock.Strictness.LENIENT)
+    Model model;
+
+    @Mock(strictness = org.mockito.Mock.Strictness.LENIENT)
+    Session session;
+
     @BeforeEach
     void setUp() throws Exception {
         adc = new AuthDiagnosticCollector();
         sb = new StringBuilder();
         adc.setCollector(str -> sb.append(str));
+
+        given(model.getSession()).willReturn(session);
+        Control.initSingletonForTesting(model);
     }
 
     @Test

@@ -30,16 +30,22 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
@@ -56,6 +62,9 @@ import org.zaproxy.zap.utils.I18N;
 
 /** Unit test for {@link SessionDetectionScanRule}. */
 class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetectionScanRule> {
+
+    private List<HttpMessage> history;
+    private HistoryProvider historyProvider;
 
     @Override
     protected SessionDetectionScanRule createScanner() {
@@ -178,5 +187,191 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         assertThat(AuthUtils.getSessionToken(token), is(notNullValue()));
         assertThat(AuthUtils.getSessionToken(token).getKey(), is("Authorization"));
         assertThat(AuthUtils.getSessionToken(token).getValue(), is(token));
+    }
+
+    @Test
+    void shouldDetectBodgeitSession() throws Exception {
+        // Given
+        List<HttpMessage> msgs =
+                DiagnosticDataLoader.loadTestData(
+                        this.getResourcePath("internal/bodgeit.diags").toFile());
+
+        // When
+        msgs.forEach(
+                msg -> {
+                    PassiveScanData helper2 = new PassiveScanData(msg);
+                    rule.setHelper(helper2);
+                    rule.setPassiveScanActions(actions);
+                    rule.scanHttpResponseReceive(msg, 1, null);
+                });
+
+        // Then
+        assertThat(alertsRaised.size(), is(equalTo(1)));
+        assertThat(alertsRaised.get(0).getUri(), is(equalTo("https://example0/login.jsp")));
+        assertThat(alertsRaised.get(0).getMethod(), is(equalTo("GET")));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("sanitizedtoken0")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("\ncookie:JSESSIONID")));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+    }
+
+    @Test
+    void shouldDetectCtflearnSession() throws Exception {
+        // Given
+        history = new ArrayList<>();
+        historyProvider = new TestHistoryProvider();
+        AuthUtils.setHistoryProvider(historyProvider);
+
+        List<HttpMessage> msgs =
+                DiagnosticDataLoader.loadTestData(
+                        this.getResourcePath("internal/ctflearn.diags").toFile());
+
+        // When
+        msgs.forEach(
+                msg -> {
+                    PassiveScanData helper2 = new PassiveScanData(msg);
+                    rule.setHelper(helper2);
+                    rule.setPassiveScanActions(actions);
+                    rule.scanHttpResponseReceive(msg, 1, null);
+                });
+
+        // Then
+        assertThat(alertsRaised.size(), is(equalTo(3)));
+        assertThat(alertsRaised.get(0).getUri(), is(equalTo("https://example0/login")));
+        assertThat(alertsRaised.get(0).getMethod(), is(equalTo("GET")));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("sanitizedtoken17")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("\ncookie:session")));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alertsRaised.get(1).getUri(), is(equalTo("https://example0/dashboard")));
+        assertThat(alertsRaised.get(1).getMethod(), is(equalTo("GET")));
+        assertThat(alertsRaised.get(1).getEvidence(), is(equalTo("sanitizedtoken25")));
+        assertThat(alertsRaised.get(1).getOtherInfo(), is(equalTo("\ncookie:session")));
+        assertThat(alertsRaised.get(1).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alertsRaised.get(2).getUri(), is(equalTo("https://example0/login")));
+        assertThat(alertsRaised.get(2).getMethod(), is(equalTo("GET")));
+        assertThat(alertsRaised.get(2).getEvidence(), is(equalTo("sanitizedtoken25")));
+        assertThat(alertsRaised.get(2).getOtherInfo(), is(equalTo("\ncookie:session")));
+        assertThat(alertsRaised.get(2).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+    }
+
+    @Test
+    void shouldDetectDefthewebSession() throws Exception {
+        // Given
+        history = new ArrayList<>();
+        historyProvider = new TestHistoryProvider();
+        AuthUtils.setHistoryProvider(historyProvider);
+
+        List<HttpMessage> msgs =
+                DiagnosticDataLoader.loadTestData(
+                        this.getResourcePath("internal/deftheweb.diags").toFile());
+
+        // When
+        msgs.forEach(
+                msg -> {
+                    PassiveScanData helper2 = new PassiveScanData(msg);
+                    rule.setHelper(helper2);
+                    rule.setPassiveScanActions(actions);
+                    rule.scanHttpResponseReceive(msg, 1, null);
+                });
+
+        // Then
+        assertThat(alertsRaised.size(), is(equalTo(1)));
+        assertThat(alertsRaised.get(0).getUri(), is(equalTo("https://example0/auth")));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("sanitizedtoken10")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("\ncookie:PHPSESSID")));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+    }
+
+    @Test
+    void shouldDetectGinnjuiceSession() throws Exception {
+        // Given
+        history = new ArrayList<>();
+        historyProvider = new TestHistoryProvider();
+        AuthUtils.setHistoryProvider(historyProvider);
+
+        List<HttpMessage> msgs =
+                DiagnosticDataLoader.loadTestData(
+                        this.getResourcePath("internal/ginnjuice.diags").toFile());
+
+        // When
+        msgs.forEach(
+                msg -> {
+                    PassiveScanData helper2 = new PassiveScanData(msg);
+                    rule.setHelper(helper2);
+                    rule.setPassiveScanActions(actions);
+                    rule.scanHttpResponseReceive(msg, 1, null);
+                });
+
+        // Then
+        assertThat(alertsRaised.size(), is(equalTo(1)));
+        assertThat(alertsRaised.get(0).getUri(), is(equalTo("https://example0/login")));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("sanitizedtoken1")));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(equalTo("\ncookie:session\ncookie:AWSALBCORS\ncookie:AWSALB")));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+    }
+
+    @Test
+    void shouldDetectInfosecexSession() throws Exception {
+        // Given
+        history = new ArrayList<>();
+        historyProvider = new TestHistoryProvider();
+        AuthUtils.setHistoryProvider(historyProvider);
+
+        List<HttpMessage> msgs =
+                DiagnosticDataLoader.loadTestData(
+                        this.getResourcePath("internal/infosecex.diags").toFile());
+
+        // When
+        msgs.forEach(
+                msg -> {
+                    PassiveScanData helper2 = new PassiveScanData(msg);
+                    rule.setHelper(helper2);
+                    rule.setPassiveScanActions(actions);
+                    rule.scanHttpResponseReceive(msg, 1, null);
+                });
+
+        // Then
+        assertThat(alertsRaised.size(), is(equalTo(3)));
+        assertThat(alertsRaised.get(0).getUri(), is(equalTo("https://example0/sign_in")));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("sanitizedtoken0")));
+        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("\ncookie:_mastodon_session")));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+
+        assertThat(alertsRaised.get(1).getUri(), is(equalTo("https://example0/")));
+        assertThat(alertsRaised.get(1).getEvidence(), is(equalTo("sanitizedtoken5")));
+        assertThat(
+                alertsRaised.get(1).getOtherInfo(),
+                is(equalTo("\ncookie:_session_id\ncookie:_mastodon_session")));
+        assertThat(alertsRaised.get(1).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+
+        assertThat(alertsRaised.get(2).getUri(), is(equalTo("https://example0/")));
+        assertThat(alertsRaised.get(2).getEvidence(), is(equalTo("sanitizedtoken4747")));
+        assertThat(
+                alertsRaised.get(2).getOtherInfo(),
+                is(equalTo("\ncookie:_session_id\ncookie:_mastodon_session")));
+        assertThat(alertsRaised.get(2).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+    }
+
+    class TestHistoryProvider extends HistoryProvider {
+        @Override
+        public void addAuthMessageToHistory(HttpMessage msg) {
+            history.add(msg);
+            int id = history.size() - 1;
+            HistoryReference href = mock(HistoryReference.class);
+            given(href.getHistoryId()).willReturn(id);
+            msg.setHistoryRef(href);
+        }
+
+        @Override
+        public HttpMessage getHttpMessage(int historyId)
+                throws HttpMalformedHeaderException, DatabaseException {
+            return history.get(historyId);
+        }
+
+        @Override
+        public int getLastHistoryId() {
+            return history.size() - 1;
+        }
     }
 }
