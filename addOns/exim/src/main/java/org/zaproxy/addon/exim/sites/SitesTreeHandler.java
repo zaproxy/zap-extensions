@@ -19,6 +19,11 @@
  */
 package org.zaproxy.addon.exim.sites;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,13 +31,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -48,10 +49,8 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.representer.Representer;
 import org.zaproxy.addon.exim.ExporterResult;
 import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.model.NameValuePair;
@@ -61,27 +60,27 @@ public class SitesTreeHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(SitesTreeHandler.class);
 
-    private static final Yaml YAML;
+    private static final ObjectMapper YAML_MAPPER;
+    private static final Yaml YAML_PARSER;
 
     static {
-        // YAML is used for encoding with improved configuration
-        DumperOptions options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        options.setPrettyFlow(true);
-        options.setIndent(2);
-        options.setIndicatorIndent(0);
-        options.setWidth(Integer.MAX_VALUE); // Prevent wrapping
-        options.setAllowUnicode(true); // Better Unicode handling
-        options.setNonPrintableStyle(
-                DumperOptions.NonPrintableStyle.ESCAPE); // Escape problematic chars
+        // Configure YAML mapper with appropriate settings
+        YAML_MAPPER =
+                new ObjectMapper(
+                        new YAMLFactory()
+                                .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+                                .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                                .enable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE)
+                                .configure(YAMLGenerator.Feature.SPLIT_LINES, false)
+                                .configure(
+                                        YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS,
+                                        false));
 
-        Representer representer = new Representer(options);
-        representer.setDefaultScalarStyle(DumperOptions.ScalarStyle.DOUBLE_QUOTED);
+        YAML_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        YAML_MAPPER.configure(SerializationFeature.INDENT_OUTPUT, true);
 
-        // For handling special chars
-        representer.getPropertyUtils().setSkipMissingProperties(true);
-
-        YAML = new Yaml(representer, options);
+        // Use snake yaml only for parsing
+        YAML_PARSER = new Yaml(new LoaderOptions());
     }
 
     public static void exportSitesTree(File file, ExporterResult result) throws IOException {
@@ -113,9 +112,14 @@ public class SitesTreeHandler {
         fw.write(key);
         fw.write(": ");
 
-        // Convert value to YAML and handle formatting
-        Object sanitizedValue = sanitizeForYaml(value);
-        String yamlValue = YAML.dump(sanitizedValue).trim();
+        // Let Jackson handle the YAML formatting
+        if (value == null) {
+            fw.write("null");
+            fw.newLine();
+            return;
+        }
+
+        String yamlValue = YAML_MAPPER.writeValueAsString(value).trim();
 
         // For simple single-line values
         if (!yamlValue.contains("\n")) {
@@ -272,86 +276,15 @@ public class SitesTreeHandler {
     protected static PruneSiteResult pruneSiteNodes(InputStream is, SiteMap siteMap) {
         PruneSiteResult res = new PruneSiteResult();
         // Don't load yaml using the Constructor class - that throws exceptions that
-        // don't give
-        // enough info
-        Yaml yaml = new Yaml(new LoaderOptions());
-
-        Object obj = yaml.load(is);
+        // don't give enough info
+        Object obj = YAML_PARSER.load(is);
         if (obj instanceof ArrayList<?> list) {
             EximSiteNode rootNode = new EximSiteNode((LinkedHashMap<?, ?>) list.get(0));
             pruneSiteNodes(rootNode, res, siteMap);
         } else {
+            LOGGER.error("Unexpected root node in yaml");
             res.setError(Constant.messages.getString("exim.sites.error.prune.badformat"));
         }
         return res;
-    }
-
-    private static Object sanitizeForYaml(Object value) {
-        if (value == null) {
-            return "";
-        }
-
-        if (value instanceof String strValue) {
-
-            // Remove control characters that might break YAML
-            strValue = strValue.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
-
-            // Handle known problematic sequences
-            strValue = strValue.replace("\u0000", "");
-
-            // For especially problematic strings, consider Base64 encoding
-            if (containsProhibitedYamlCharacters(strValue)) {
-                return Base64.getEncoder()
-                        .encodeToString(strValue.getBytes(StandardCharsets.UTF_8));
-            }
-
-            return strValue;
-        } else if (value instanceof Map) {
-            // Process map values recursively
-            Map<Object, Object> sanitizedMap = new LinkedHashMap<>();
-            ((Map<?, ?>) value)
-                    .forEach((k, v) -> sanitizedMap.put(sanitizeForYaml(k), sanitizeForYaml(v)));
-            return sanitizedMap;
-        } else if (value instanceof Collection) {
-            // Process collection values recursively
-            List<Object> sanitizedList = new ArrayList<>();
-            ((Collection<?>) value).forEach(item -> sanitizedList.add(sanitizeForYaml(item)));
-            return sanitizedList;
-        }
-
-        // For other types, return as is
-        return value;
-    }
-
-    private static boolean containsProhibitedYamlCharacters(String inputText) {
-        // Character code constants
-        final int TAB = 9;
-        final int LINE_FEED = 10;
-        final int CARRIAGE_RETURN = 13;
-        final int CONTROL_CHARS_UPPER_BOUND = 32;
-        final int LINE_SEPARATOR = 0x2028;
-        final int PARAGRAPH_SEPARATOR = 0x2029;
-        final int BYTE_ORDER_MARK = 0xFEFF;
-        final int SURROGATE_PAIR_START = 0xD800;
-        final int SURROGATE_PAIR_END = 0xDFFF;
-
-        // Check for characters known to cause YAML issues
-        return inputText
-                .chars()
-                .anyMatch(
-                        characterCode ->
-                                (characterCode < CONTROL_CHARS_UPPER_BOUND
-                                                && characterCode != TAB
-                                                && characterCode != LINE_FEED
-                                                && characterCode != CARRIAGE_RETURN)
-                                        || // Control chars except tab, LF, CR
-                                        (characterCode == LINE_SEPARATOR)
-                                        || (characterCode == PARAGRAPH_SEPARATOR)
-                                        || // Line/paragraph separators
-                                        (characterCode == BYTE_ORDER_MARK)
-                                        || // BOM (Byte Order Mark)
-                                        (characterCode >= SURROGATE_PAIR_START
-                                                && characterCode
-                                                        <= SURROGATE_PAIR_END)); // Surrogate pairs
     }
 }
