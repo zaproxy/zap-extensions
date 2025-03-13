@@ -45,7 +45,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.quality.Strictness;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -76,7 +75,6 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
     void teardown() {
         stopServer();
 
-        Constant.messages = null;
         GraphQlFingerprinter.resetHandlers();
     }
 

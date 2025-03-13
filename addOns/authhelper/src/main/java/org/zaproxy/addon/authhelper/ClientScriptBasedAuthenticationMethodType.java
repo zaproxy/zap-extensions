@@ -88,9 +88,9 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
     public ClientScriptBasedAuthenticationMethodType() {}
 
-    private HttpMessageHandler getHandler(Context context) {
+    private HttpMessageHandler getHandler(User user) {
         if (handler == null) {
-            handler = new ClientSideHandler(context);
+            handler = new ClientSideHandler(user);
         }
         return handler;
     }
@@ -334,7 +334,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 }
 
                 if (authScript instanceof ZestAuthenticationRunner zestRunner) {
-                    zestRunner.registerHandler(getHandler(user.getContext()));
+                    zestRunner.registerHandler(getHandler(user));
                     appendCloseStatements(zestRunner.getScript().getZestScript());
                 } else {
                     LOGGER.warn("Expected authScript to be a Zest script");

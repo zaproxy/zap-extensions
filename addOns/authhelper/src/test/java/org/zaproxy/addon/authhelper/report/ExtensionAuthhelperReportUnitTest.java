@@ -74,7 +74,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         Model.setSingletonForTesting(model);
         ExtensionLoader extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+        Control.initSingletonForTesting(model, extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
 
         Constant.PROGRAM_VERSION = "Test Build";

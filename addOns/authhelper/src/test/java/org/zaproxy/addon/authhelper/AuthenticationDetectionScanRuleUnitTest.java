@@ -30,6 +30,7 @@ import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -46,6 +47,7 @@ import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.model.StandardParameterParser;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class AuthenticationDetectionScanRuleUnitTest
@@ -65,6 +67,10 @@ class AuthenticationDetectionScanRuleUnitTest
     public void setUp() throws Exception {
         super.setUp();
 
+        StandardParameterParser spp = new StandardParameterParser();
+        given(session.getUrlParamParser(any())).willReturn(spp);
+        given(session.getFormParamParser(any())).willReturn(spp);
+
         given(model.getSession()).willReturn(session);
         extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
@@ -72,7 +78,12 @@ class AuthenticationDetectionScanRuleUnitTest
         extAuth.initModel(model);
         given(extensionLoader.getExtension(ExtensionAuthhelper.class)).willReturn(extAuth);
 
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+        Control.initSingletonForTesting(model, extensionLoader);
+    }
+
+    @AfterEach
+    void cleanUp() {
+        AuthUtils.clean();
     }
 
     @Override
@@ -116,6 +127,7 @@ class AuthenticationDetectionScanRuleUnitTest
                         + "\r\n");
         // When
         scanHttpResponseReceive(msg);
+
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getName(), equalTo("Authentication Request Identified"));
