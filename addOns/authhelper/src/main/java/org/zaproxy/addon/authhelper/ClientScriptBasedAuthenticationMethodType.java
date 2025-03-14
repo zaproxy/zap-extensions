@@ -59,6 +59,7 @@ import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethodType;
 import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
+import org.zaproxy.zap.extension.api.ApiDynamicActionImplementor;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestAuthenticationRunner;
@@ -78,6 +79,7 @@ import org.zaproxy.zest.core.v1.ZestStatement;
 public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthenticationMethodType {
 
     public static final int METHOD_IDENTIFIER = 8;
+    private static final String API_METHOD_NAME = "clientScriptBasedAuthentication";
 
     private static final Logger LOGGER =
             LogManager.getLogger(ClientScriptBasedAuthenticationMethodType.class);
@@ -737,5 +739,12 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             sList.add(o.toString());
         }
         return sList;
+    }
+
+    @Override
+    public ApiDynamicActionImplementor getSetMethodForContextApiAction() {
+        ApiDynamicActionImplementor impl = super.getSetMethodForContextApiAction();
+        impl.setName(API_METHOD_NAME);
+        return impl;
     }
 }
