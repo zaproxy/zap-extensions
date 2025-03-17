@@ -19,60 +19,61 @@
  */
 package org.zaproxy.addon.authhelper.internal.db;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Properties;
 import javax.jdo.Constants;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
 import org.datanucleus.PropertyNames;
 import org.flywaydb.core.Flyway;
-import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.DatabaseListener;
 import org.parosproxy.paros.db.DatabaseServer;
-import org.parosproxy.paros.db.DatabaseUnsupportedException;
-import org.parosproxy.paros.db.paros.ParosAbstractTable;
 
-public class TableJdo extends ParosAbstractTable {
-
-    private static final String USER = "sa";
+public class TableJdo implements DatabaseListener {
 
     private static PersistenceManagerFactory pmf;
 
+    private final Database db;
+
+    public TableJdo(Database db) {
+        this.db = db;
+
+        db.addDatabaseListener(this);
+        databaseOpen(db.getDatabaseServer());
+    }
+
     @Override
-    public void databaseOpen(DatabaseServer server)
-            throws DatabaseException, DatabaseUnsupportedException {
+    public void databaseOpen(DatabaseServer db) {
+        String dbUrl = db.getUrl();
+        ClassLoader classLoader = this.getClass().getClassLoader();
+        Flyway.configure(classLoader)
+                .table("AUTHHELPER_FLYWAY_SCHEMA_HISTORY")
+                .baselineOnMigrate(true)
+                .baselineVersion("0")
+                .dataSource(dbUrl, db.getUser(), db.getPassword())
+                .load()
+                .migrate();
+
+        Properties jdoProperties = new Properties();
+        jdoProperties.setProperty(Constants.PROPERTY_CONNECTION_URL, dbUrl);
+        jdoProperties.setProperty(Constants.PROPERTY_CONNECTION_USER_NAME, db.getUser());
+        jdoProperties.setProperty(Constants.PROPERTY_CONNECTION_PASSWORD, db.getPassword());
+
+        jdoProperties.put(PropertyNames.PROPERTY_CLASSLOADER_PRIMARY, classLoader);
+
+        pmf = JDOHelper.getPersistenceManagerFactory(jdoProperties, "authhelper", classLoader);
+    }
+
+    @Override
+    public void closing(DatabaseServer db) {
         if (pmf != null) {
             pmf.close();
             pmf = null;
         }
-
-        super.databaseOpen(server);
     }
 
-    @Override
-    protected void reconnect(Connection conn) throws DatabaseException {
-        try {
-            String dbUrl = conn.getMetaData().getURL();
-            ClassLoader classLoader = this.getClass().getClassLoader();
-            Flyway.configure(classLoader)
-                    .table("AUTHHELPER_FLYWAY_SCHEMA_HISTORY")
-                    .baselineOnMigrate(true)
-                    .baselineVersion("0")
-                    .dataSource(dbUrl, USER, "")
-                    .load()
-                    .migrate();
-
-            Properties jdoProperties = new Properties();
-            jdoProperties.setProperty(Constants.PROPERTY_CONNECTION_URL, dbUrl);
-            jdoProperties.setProperty(Constants.PROPERTY_CONNECTION_USER_NAME, USER);
-
-            jdoProperties.put(PropertyNames.PROPERTY_CLASSLOADER_PRIMARY, classLoader);
-
-            pmf = JDOHelper.getPersistenceManagerFactory(jdoProperties, "authhelper", classLoader);
-
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
+    public void unload() {
+        db.removeDatabaseListener(this);
     }
 
     public static PersistenceManagerFactory getPmf() {
