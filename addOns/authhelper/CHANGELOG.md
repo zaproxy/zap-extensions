@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Use TOTP data defined under user credentials for Client Script and Browser Based Authentication, when available.
+- Maintenance changes.
 
 ## [0.24.0] - 2025-03-21
 ### Added

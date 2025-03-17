@@ -110,6 +110,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
 
     private AuthDiagnosticCollector authDiagCollector;
     private AuthhelperParam param;
+    private TableJdo tableJdo;
 
     public ExtensionAuthhelper() {
         super();
@@ -194,6 +195,13 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
     public void stop() {
         BrowserBasedAuthenticationMethodType.stopProxies();
         AuthUtils.clean();
+    }
+
+    @Override
+    public void destroy() {
+        if (tableJdo != null) {
+            tableJdo.unload();
+        }
     }
 
     @Override
@@ -382,9 +390,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
     @Override
     public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
         try {
-            TableJdo table = new TableJdo();
-            db.addDatabaseListener(table);
-            table.databaseOpen(db.getDatabaseServer());
+            tableJdo = new TableJdo(db);
 
         } catch (Exception e) {
             LOGGER.warn(e.getMessage(), e);
