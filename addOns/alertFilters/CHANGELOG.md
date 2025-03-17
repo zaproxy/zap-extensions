@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Use the alert reference for statistics.
 
+### Added
+- Added parameter descriptions for the ZAP API.
+
 ## [23] - 2025-01-09
 ### Changed
 - Update minimum ZAP version to 2.16.0.
