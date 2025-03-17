@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Bug where some of the data structures were not being reset when the session changed.
+- Address concurrent modification exceptions.
 
 ## [0.23.0] - 2025-03-04
 ### Added
