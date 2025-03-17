@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Progress and log messages with regard to setting scan rule threshold or strength no longer include commas in scan rule ID numbers.
 
+### Fixed
+- Address exception when loading Client Script authentication method.
+
 ## [0.48.0] - 2025-03-04
 ### Changed
 - Allow to use variables for the TOTP data.
