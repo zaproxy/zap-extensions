@@ -452,7 +452,7 @@ public class AuthenticationData extends AutomationData {
                             JobUtils.setPrivateField(
                                     clientScriptMethod,
                                     "diagnostics",
-                                    parameters.getOrDefault(PARAM_DIAGNOSTICS, "false"));
+                                    parameters.getOrDefault(PARAM_DIAGNOSTICS, false));
 
                             try {
                                 MethodUtils.invokeMethod(clientScriptMethod, "loadScript", sw);
