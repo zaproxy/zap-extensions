@@ -1,0 +1,134 @@
+>>>>>
+GET https://example0/login
+<<<
+HTTP/1.1 200 OK
+content-type: text/html; charset=utf-8
+set-cookie: session=sanitizedtoken17
+>>>>>
+GET https://example1/ads
+<<<
+HTTP/1.1 200 OK
+content-type: text/html; charset=UTF-8
+>>>>>
+GET https://example1/zrt_lookup_fy2021.html
+<<<
+HTTP/1.1 200 OK
+content-type: text/html; charset=UTF-8
+>>>>>
+GET https://example2/sodar
+<<<
+HTTP/1.1 200 OK
+content-type: application/json; charset=UTF-8
+
+{"sodar_query_id":"sanitizedtoken18","injector_basename":"sanitizedtoken2","bg_hash_basename":"sanitizedtoken3","bg_binary":"sanitizedtoken19","rc_enable":"sanitizedtoken5","bg_snapshot_delay_ms":"sanitizedtoken6","is_gen_204":"sanitizedtoken7"}
+>>>>>
+POST https://example1/ping
+content-type: text/plain;charset=UTF-8
+<<<
+HTTP/1.1 204 No Content
+content-type: text/html; charset=UTF-8
+>>>>>
+GET https://example3/runner.html
+<<<
+HTTP/1.1 200 OK
+content-type: text/html
+>>>>>
+POST https://example1/ping
+content-type: text/plain;charset=UTF-8
+<<<
+HTTP/1.1 204 No Content
+content-type: text/html; charset=UTF-8
+>>>>>
+GET https://example3/generate_204
+<<<
+HTTP/1.1 204 No Content
+>>>>>
+GET https://example2/sodar
+<<<
+HTTP/1.1 204 No Content
+content-type: text/html; charset=UTF-8
+>>>>>
+POST https://example0/login
+content-type: application/x-www-form-urlencoded
+cookie: _ga="sanitizedtoken20"
+cookie: _gat_UA-86115073-8="sanitizedtoken9"
+cookie: _gid="sanitizedtoken21"
+cookie: session="sanitizedtoken22"
+
+csrf_token=sanitizedtoken23&identifier=FakeUserName@example.com&password=F4keP4ssw0rd&
+<<<
+HTTP/1.1 302 FOUND
+content-type: text/html; charset=utf-8
+set-cookie: session=sanitizedtoken24
+>>>>>
+GET https://example0/dashboard
+cookie: _ga="sanitizedtoken20"
+cookie: _gat_UA-86115073-8="sanitizedtoken9"
+cookie: _gid="sanitizedtoken21"
+cookie: session="sanitizedtoken24"
+<<<
+HTTP/1.1 200 OK
+content-type: text/html; charset=utf-8
+set-cookie: session=sanitizedtoken25
+>>>>>
+GET https://example0/login
+cookie: _ga="sanitizedtoken20"
+cookie: _gat_UA-86115073-8="sanitizedtoken9"
+cookie: _gid="sanitizedtoken21"
+cookie: session="sanitizedtoken24"
+<<<
+HTTP/1.1 200 OK
+content-type: text/html; charset=utf-8
+set-cookie: session=sanitizedtoken25
+>>>>>
+POST https://example1/ping
+content-type: text/plain;charset=UTF-8
+<<<
+HTTP/1.1 204 No Content
+content-type: text/html; charset=UTF-8
+>>>>>
+GET https://example4/a
+<<<
+HTTP/1.1 200 OK
+content-type: text/html
+>>>>>
+GET https://example4/a
+<<<
+HTTP/1.1 200 OK
+content-type: text/html
+>>>>>
+GET https://example4/a
+<<<
+HTTP/1.1 200 OK
+content-type: text/html
+>>>>>
+GET https://example4/a
+<<<
+HTTP/1.1 200 OK
+content-type: text/html
+>>>>>
+GET https://example1/ads
+<<<
+HTTP/1.1 200 OK
+content-type: text/html; charset=UTF-8
+>>>>>
+GET https://example4/a
+<<<
+HTTP/1.1 200 OK
+content-type: text/html
+>>>>>
+GET https://example2/sodar
+<<<
+HTTP/1.1 200 OK
+content-type: application/json; charset=UTF-8
+
+{"sodar_query_id":"sanitizedtoken26","injector_basename":"sanitizedtoken2","bg_hash_basename":"sanitizedtoken3","bg_binary":"sanitizedtoken27","rc_enable":"sanitizedtoken5","bg_snapshot_delay_ms":"sanitizedtoken6","is_gen_204":"sanitizedtoken7"}
+>>>>>
+GET https://example3/generate_204
+<<<
+HTTP/1.1 204 No Content
+>>>>>
+GET https://example2/sodar
+<<<
+HTTP/1.1 204 No Content
+content-type: text/html; charset=UTF-8

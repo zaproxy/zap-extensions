@@ -166,19 +166,30 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                             instanceof
                             BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod) {
 
+                        Long passedCount =
+                                inMemoryStats.getStat(
+                                        hostname, AuthUtils.AUTH_BROWSER_PASSED_STATS);
+
+                        /*
+                         * The AUTH_SUCCESS_STATS / AUTH_FAILURE_STATS stats can get raised on another domain.
+                         * Any successes are good, but just failures are bad.
+                         */
                         addSummaryItem(
                                 ard,
                                 "auth",
                                 sessionPassed
                                         && verificationPassed
-                                        && inMemoryStats.getStat(
-                                                        hostname,
-                                                        AuthUtils.AUTH_BROWSER_PASSED_STATS)
-                                                != null);
-
-                        Long passedCount =
-                                inMemoryStats.getStat(
-                                        hostname, AuthUtils.AUTH_BROWSER_PASSED_STATS);
+                                        && passedCount != null
+                                        && (inMemoryStats.getStat(
+                                                                hostname,
+                                                                AuthenticationHelper
+                                                                        .AUTH_SUCCESS_STATS)
+                                                        != null
+                                                || inMemoryStats.getStat(
+                                                                hostname,
+                                                                AuthenticationHelper
+                                                                        .AUTH_FAILURE_STATS)
+                                                        == null));
 
                         if (passedCount != null) {
                             addSummaryItem(ard, "username", true);

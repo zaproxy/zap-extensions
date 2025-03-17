@@ -796,7 +796,9 @@ public class AuthUtils {
             }
             if (incCookies) {
                 for (HttpCookie cookie : msg.getRequestHeader().getHttpCookies()) {
-                    if (cookie.getValue().contains(token.getValue())) {
+                    if (!(SessionToken.COOKIE_SOURCE.equals(token.getSource())
+                                    && cookie.getName().equals(token.getKey()))
+                            && cookie.getValue().contains(token.getValue())) {
                         String hv =
                                 cookie.getValue()
                                         .replace(token.getValue(), "{%" + token.getToken() + "%}");

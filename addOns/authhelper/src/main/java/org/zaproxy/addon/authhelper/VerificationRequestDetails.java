@@ -19,6 +19,9 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
 import org.parosproxy.paros.control.Control;
@@ -36,6 +39,7 @@ public class VerificationRequestDetails {
     private final HttpMessage msg;
     private final String token;
     private boolean containsUserDetails;
+    private boolean passwordInData;
     private boolean structuredResponse;
     private String evidence = "";
     private int contextId;
@@ -43,6 +47,14 @@ public class VerificationRequestDetails {
     public VerificationRequestDetails() {
         this.msg = null;
         this.token = null;
+    }
+
+    private String urlEncode(String str) {
+        try {
+            return URLEncoder.encode(str, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            return str;
+        }
     }
 
     public VerificationRequestDetails(HttpMessage msg, String token, Context context) {
@@ -60,20 +72,23 @@ public class VerificationRequestDetails {
 
             List<User> users = extUsers.getContextUserAuthManager(contextId).getUsers();
             for (User user : users) {
-                if (responseBody.contains(user.getName())) {
-                    containsUserDetails = true;
-                    this.setEvidence(user.getName());
-                    break;
-                }
                 AuthenticationCredentials creds = user.getAuthenticationCredentials();
-                if (creds instanceof UsernamePasswordAuthenticationCredentials) {
-                    UsernamePasswordAuthenticationCredentials upCreds =
-                            (UsernamePasswordAuthenticationCredentials) creds;
+                if (creds instanceof UsernamePasswordAuthenticationCredentials upCreds) {
+                    if (msg.getRequestBody()
+                            .toString()
+                            .contains(urlEncode(upCreds.getPassword()))) {
+                        passwordInData = true;
+                    }
                     if (responseBody.contains(upCreds.getUsername())) {
                         containsUserDetails = true;
                         this.setEvidence(upCreds.getUsername());
                         break;
                     }
+                }
+                if (responseBody.contains(user.getName())) {
+                    containsUserDetails = true;
+                    this.setEvidence(user.getName());
+                    break;
                 }
             }
         }
@@ -115,6 +130,10 @@ public class VerificationRequestDetails {
 
     public int getScore() {
         if (msg == null) {
+            return -1;
+        }
+        if (passwordInData) {
+            // Almost certainly the auth request
             return -1;
         }
         int score = 0;

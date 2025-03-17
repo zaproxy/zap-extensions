@@ -140,10 +140,10 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         this.httpSender = httpSender;
     }
 
-    private Server getProxy(Context context) {
+    private Server getProxy(User user) {
         if (proxy == null) {
             ExtensionNetwork extNet = AuthUtils.getExtension(ExtensionNetwork.class);
-            handler = new ClientSideHandler(context);
+            handler = new ClientSideHandler(user);
             proxy =
                     extNet.createHttpServer(
                             HttpServerConfig.builder()
@@ -314,7 +314,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                             .getExtension(ExtensionSelenium.class);
 
             try {
-                proxyPort = getProxy(user.getContext()).start(proxyHost, 0);
+                proxyPort = getProxy(user).start(proxyHost, 0);
 
                 WebDriver wd = null;
                 try {
