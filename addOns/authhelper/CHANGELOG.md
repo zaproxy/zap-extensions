@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Document custom steps for Browser Based Authentication.
 - Document Authentication Report diagnostics data.
 - Sanitized post data to auth diagnostics.
+- Help content for configuration and use of Header Based Session Management via ZAP API.
 
 ### Changed
 - Add any session related cookies which are not being tracked.

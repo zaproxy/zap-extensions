@@ -464,24 +464,28 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                         ApiUtils.getContextByParamId(params, SessionManagementAPI.PARAM_CONTEXT_ID);
                 HeaderBasedSessionManagementMethod smm =
                         createSessionManagementMethod(context.getId());
-                List<Pair<String, String>> headers = new ArrayList<>();
                 // Headers are newline separated key: value pairs
                 String[] headerArray = params.getString(PARAM_HEADERS).split("\n");
-                for (String kv : headerArray) {
-                    int colonIndex = kv.indexOf(":");
-                    if (colonIndex < 0) {
-                        throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_HEADERS);
-                    }
-                    headers.add(
-                            new Pair<>(
-                                    kv.substring(0, colonIndex - 1).strip(),
-                                    kv.substring(colonIndex).strip()));
-                }
-
-                smm.setHeaderConfigs(headers);
+                smm.setHeaderConfigs(getHeaderPairs(headerArray));
                 context.setSessionManagementMethod(smm);
             }
         };
+    }
+
+    protected List<Pair<String, String>> getHeaderPairs(String[] headerArray) throws ApiException {
+        List<Pair<String, String>> headers = new ArrayList<>();
+
+        for (String kv : headerArray) {
+            int colonIndex = kv.indexOf(":");
+            if (colonIndex < 0) {
+                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_HEADERS);
+            }
+            headers.add(
+                    new Pair<>(
+                            kv.substring(0, colonIndex).strip(),
+                            kv.substring(colonIndex + 1).strip()));
+        }
+        return headers;
     }
 
     @SuppressWarnings("serial")
