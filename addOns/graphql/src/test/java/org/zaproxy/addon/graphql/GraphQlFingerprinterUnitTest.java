@@ -25,19 +25,29 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.withSettings;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.WriterAppender;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,6 +67,9 @@ import org.zaproxy.zap.testutils.TestUtils;
 
 class GraphQlFingerprinterUnitTest extends TestUtils {
 
+    private Logger logger;
+    private StringWriter writer;
+    private WriterAppender appender;
     String endpointUrl;
 
     @BeforeEach
@@ -64,6 +77,20 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
         setUpZap();
         startServer();
         endpointUrl = "http://localhost:" + nano.getListeningPort() + "/graphql";
+        logger = (Logger) LogManager.getLogger(GraphQlFingerprinter.class);
+        writer = new StringWriter();
+        appender =
+                WriterAppender.newBuilder()
+                        .setName("TestAppender")
+                        .setLayout(
+                                PatternLayout.newBuilder()
+                                        .withPattern(PatternLayout.TTCC_CONVERSION_PATTERN)
+                                        .build())
+                        .setTarget(writer)
+                        .build();
+        appender.start();
+        logger.addAppender(appender);
+        logger.setLevel(Level.ALL);
     }
 
     @Override
@@ -74,8 +101,8 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
     @AfterEach
     void teardown() {
         stopServer();
-
         GraphQlFingerprinter.resetHandlers();
+        logger.removeAppender(appender);
     }
 
     @Test
@@ -329,6 +356,39 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
         // Check "handled" values
         assertThat(discoveredEngine.get(0).getUri().toString(), is(equalTo(endpointUrl)));
         assertThat(discoveredEngine.get(0).getName(), is(equalTo(graphqlImpl)));
+    }
+
+    @Test
+    void shouldFingerprintWithoutAddedHandler() throws Exception {
+        // Given
+        ExtensionAlert extensionAlert = mockExtensionAlert();
+        var url = UrlBuilder.build(endpointUrl);
+        nano.addHandler(new GraphQlResponseHandler(errorResponse("The query must be a string.")));
+        var fp = new GraphQlFingerprinter(url);
+        // When
+        fp.fingerprint();
+        // Then
+        assertNoErrors(extensionAlert, writer.toString());
+    }
+
+    @Test
+    void shouldFingerprintAfterHandlerReset() throws Exception {
+        // Given
+        ExtensionAlert extensionAlert = mockExtensionAlert();
+        var url = UrlBuilder.build(endpointUrl);
+        nano.addHandler(new GraphQlResponseHandler(errorResponse("The query must be a string.")));
+        var fp = new GraphQlFingerprinter(url);
+        // When
+        GraphQlFingerprinter.resetHandlers();
+        fp.fingerprint();
+        // Then
+        assertNoErrors(extensionAlert, writer.toString());
+    }
+
+    private static void assertNoErrors(ExtensionAlert extMock, String loggerOutput) {
+        assertThat(loggerOutput, not(containsString("WARN")));
+        assertThat(loggerOutput, not(containsString("Null")));
+        verify(extMock, times(1)).alertFound(any(), any());
     }
 
     private static ExtensionAlert mockExtensionAlert() {
