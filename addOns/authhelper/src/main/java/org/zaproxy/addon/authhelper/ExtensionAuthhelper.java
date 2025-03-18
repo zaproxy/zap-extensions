@@ -232,7 +232,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
         return authTesterMenu;
     }
 
-    private static String urlEncode(String parameter) {
+    public static String urlEncode(String parameter) {
         try {
             return URLEncoder.encode(parameter, "UTF-8");
         } catch (UnsupportedEncodingException ignore) {

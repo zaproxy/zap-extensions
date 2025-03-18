@@ -37,6 +37,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.authhelper.AuthUtils;
+import org.zaproxy.addon.authhelper.ExtensionAuthhelper;
 import org.zaproxy.addon.authhelper.HeaderBasedSessionManagementMethodType;
 import org.zaproxy.addon.authhelper.HistoryProvider;
 import org.zaproxy.addon.authhelper.SessionManagementRequestDetails;
@@ -74,6 +75,11 @@ public final class ClientSideHandler implements HttpMessageHandler {
         return HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod());
     }
 
+    private boolean containsMaybeEncodedString(String contents, String testStr) {
+        return contents.contains(testStr)
+                || contents.contains(ExtensionAuthhelper.urlEncode(testStr));
+    }
+
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
 
@@ -93,8 +99,8 @@ public final class ClientSideHandler implements HttpMessageHandler {
                     && authCreds != null
                     && StringUtils.isNotEmpty(authCreds.getUsername())
                     && StringUtils.isNotEmpty(authCreds.getPassword())
-                    && reqBody.contains(authCreds.getUsername())
-                    && reqBody.contains(authCreds.getPassword())
+                    && containsMaybeEncodedString(reqBody, authCreds.getUsername())
+                    && containsMaybeEncodedString(reqBody, authCreds.getPassword())
                     && AuthUtils.getSessionManagementDetailsForContext(user.getContext().getId())
                             != null) {
                 // The app is sending user creds to another site. Assume this is part of the valid
@@ -162,8 +168,15 @@ public final class ClientSideHandler implements HttpMessageHandler {
         }
     }
 
+    protected AuthRequestDetails getAuthReqDetails() {
+        return authReq;
+    }
+
     public HttpMessage getAuthMsg() {
-        return authReq.getMsg();
+        if (authReq != null) {
+            return authReq.getMsg();
+        }
+        return null;
     }
 
     public void resetAuthMsg() {
@@ -218,22 +231,20 @@ public final class ClientSideHandler implements HttpMessageHandler {
     @Getter
     class AuthRequestDetails {
         private HttpMessage msg;
-        private List<SessionToken> tokens;
-        private boolean incAllTokens;
         private boolean incUsername;
         private boolean incPassword;
 
         public AuthRequestDetails(HttpMessage msg) {
             this.msg = msg;
-            String body = msg.getResponseBody().toString();
+            String body = msg.getRequestBody().toString();
             incUsername =
                     authCreds != null
                             && StringUtils.isNotBlank(authCreds.getUsername())
-                            && body.contains(authCreds.getUsername());
+                            && containsMaybeEncodedString(body, authCreds.getUsername());
             incPassword =
                     authCreds != null
                             && StringUtils.isNotBlank(authCreds.getPassword())
-                            && body.contains(authCreds.getPassword());
+                            && containsMaybeEncodedString(body, authCreds.getPassword());
         }
 
         /**

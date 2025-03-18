@@ -50,6 +50,7 @@ import org.zaproxy.addon.authhelper.DiagnosticDataLoader;
 import org.zaproxy.addon.authhelper.ExtensionAuthhelper;
 import org.zaproxy.addon.authhelper.HistoryProvider;
 import org.zaproxy.addon.authhelper.SessionManagementRequestDetails;
+import org.zaproxy.addon.authhelper.internal.ClientSideHandler.AuthRequestDetails;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.model.Context;
@@ -61,6 +62,9 @@ import org.zaproxy.zap.utils.Pair;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class ClientSideHandlerUnitTest extends TestUtils {
+
+    private static final String TEST_USERNAME = "test@example.org.com";
+    private static final String TEST_PASSWORD = "mySuperSecretPassword";
 
     private User user;
     private Context context;
@@ -85,6 +89,10 @@ public class ClientSideHandlerUnitTest extends TestUtils {
         context.addIncludeInContextRegex("https://example0.*");
         user = mock(User.class);
         given(user.getContext()).willReturn(context);
+        UsernamePasswordAuthenticationCredentials creds =
+                new UsernamePasswordAuthenticationCredentials(TEST_USERNAME, TEST_PASSWORD);
+        given(user.getAuthenticationCredentials()).willReturn(creds);
+
         csh = new ClientSideHandler(user);
         ctx = new TestHttpMessageHandlerContext();
         history = new ArrayList<>();
@@ -230,13 +238,6 @@ public class ClientSideHandlerUnitTest extends TestUtils {
     @Test
     void shouldAddDomainIfCredsDetected() throws Exception {
         // Given
-        UsernamePasswordAuthenticationCredentials creds =
-                new UsernamePasswordAuthenticationCredentials(
-                        "test@example.org.com", "mySuperSecretPassword");
-        given(user.getAuthenticationCredentials()).willReturn(creds);
-        // Need to init with the creds
-        csh = new ClientSideHandler(user);
-
         // This is used to indicate the session management is auto-detect
         AuthUtils.setSessionManagementDetailsForContext(
                 0, new SessionManagementRequestDetails(null, null, 0));
@@ -245,7 +246,13 @@ public class ClientSideHandlerUnitTest extends TestUtils {
         postMsg.getRequestHeader().setMethod(HttpRequestHeader.POST);
         postMsg.getRequestHeader()
                 .setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.FORM_URLENCODED_CONTENT_TYPE);
-        postMsg.getRequestBody().setBody("user=test@example.org.com&pass=mySuperSecretPassword");
+        postMsg.getRequestBody()
+                .setBody(
+                        "user="
+                                + ExtensionAuthhelper.urlEncode(TEST_USERNAME)
+                                + "&pass="
+                                + ExtensionAuthhelper.urlEncode(TEST_PASSWORD)
+                                + "");
         postMsg.getResponseHeader().setHeader(HttpHeader.SET_COOKIE, "session=" + SESSION_TOKEN1);
 
         // When
@@ -261,10 +268,6 @@ public class ClientSideHandlerUnitTest extends TestUtils {
     @Test
     void shouldNotAddDomainIfPasswordNotDetected() throws Exception {
         // Given
-        UsernamePasswordAuthenticationCredentials creds =
-                new UsernamePasswordAuthenticationCredentials(
-                        "test@example.org.com", "aDifferentPassword");
-        given(user.getAuthenticationCredentials()).willReturn(creds);
         // This is used to indicate the session management is auto-detect
         AuthUtils.setSessionManagementDetailsForContext(
                 0, new SessionManagementRequestDetails(null, null, 0));
@@ -273,7 +276,7 @@ public class ClientSideHandlerUnitTest extends TestUtils {
         postMsg.getRequestHeader().setMethod(HttpRequestHeader.POST);
         postMsg.getRequestHeader()
                 .setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.FORM_URLENCODED_CONTENT_TYPE);
-        postMsg.getRequestBody().setBody("user=test@example.org.com&pass=mySuperSecretPassword");
+        postMsg.getRequestBody().setBody("user=" + ExtensionAuthhelper.urlEncode(TEST_USERNAME));
         postMsg.getResponseHeader().setHeader(HttpHeader.SET_COOKIE, "session=" + SESSION_TOKEN1);
 
         // When
@@ -285,13 +288,72 @@ public class ClientSideHandlerUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldInitAuthRequestDetailsWithGet() throws Exception {
+        // Given
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                "GET https://example0.com/test?url1=urlval1&url2=urlval2 HTTP/1.1"));
+
+        // When
+        csh.handleMessage(ctx, msg);
+        AuthRequestDetails arb = csh.getAuthReqDetails();
+
+        // Then
+        assertThat(arb.isIncUsername(), is(equalTo(false)));
+        assertThat(arb.isIncPassword(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldInitAuthRequestDetailsWithPostEncodedData() throws Exception {
+        // Given
+        HttpMessage postMsg = new HttpMessage(new URI("https://example0/", true));
+        postMsg.getRequestHeader().setMethod(HttpRequestHeader.POST);
+        postMsg.getRequestHeader()
+                .setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.FORM_URLENCODED_CONTENT_TYPE);
+        postMsg.getRequestBody()
+                .setBody(
+                        "user="
+                                + ExtensionAuthhelper.urlEncode(TEST_USERNAME)
+                                + "&pass="
+                                + TEST_PASSWORD
+                                + "");
+
+        // When
+        csh.handleMessage(ctx, postMsg);
+        AuthRequestDetails arb = csh.getAuthReqDetails();
+
+        // Then
+        assertThat(arb.isIncUsername(), is(equalTo(true)));
+        assertThat(arb.isIncPassword(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldInitAuthRequestDetailsWithPostUnencodedData() throws Exception {
+        // Given
+        HttpMessage postMsg = new HttpMessage(new URI("https://example0/", true));
+        postMsg.getRequestHeader().setMethod(HttpRequestHeader.POST);
+        postMsg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.JSON_CONTENT_TYPE);
+        postMsg.getRequestBody()
+                .setBody("{'user':'" + TEST_USERNAME + "', 'pass':'" + TEST_PASSWORD + "'}");
+
+        // When
+        csh.handleMessage(ctx, postMsg);
+        AuthRequestDetails arb = csh.getAuthReqDetails();
+
+        // Then
+        assertThat(arb.isIncUsername(), is(equalTo(true)));
+        assertThat(arb.isIncPassword(), is(equalTo(true)));
+    }
+
+    @Test
     void shouldDetectSimpleLogin() throws Exception {
         // Given
         HttpMessage postMsg = new HttpMessage(new URI("https://example0/", true));
         postMsg.getRequestHeader().setMethod(HttpRequestHeader.POST);
         postMsg.getRequestHeader()
                 .setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.FORM_URLENCODED_CONTENT_TYPE);
-        postMsg.getRequestBody().setBody("user=test@example.org.com&pass=mySuperSecretPassword");
+        postMsg.getRequestBody().setBody("user=" + TEST_USERNAME + "&pass=" + TEST_PASSWORD + "");
         postMsg.getResponseHeader().setHeader(HttpHeader.SET_COOKIE, "session=" + SESSION_TOKEN1);
 
         HttpMessage getMsg = new HttpMessage(new URI("https://www.example.com/", true));
