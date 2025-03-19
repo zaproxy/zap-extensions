@@ -20,9 +20,7 @@
 package org.zaproxy.addon.authhelper;
 
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,9 +31,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import org.apache.commons.configuration.Configuration;
@@ -75,6 +71,7 @@ import org.zaproxy.zap.authentication.AuthenticationHelper;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethodType;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
+import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials.UsernamePasswordAuthenticationCredentialsOptionsPanel;
 import org.zaproxy.zap.extension.api.ApiDynamicActionImplementor;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiResponse;
@@ -688,86 +685,6 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
     @Override
     public ApiDynamicActionImplementor getSetCredentialsForUserApiAction() {
         return UsernamePasswordAuthenticationCredentials.getSetCredentialsForUserApiAction(this);
-    }
-
-    protected static class UsernamePasswordAuthenticationCredentialsOptionsPanel
-            extends AbstractCredentialsOptionsPanel<UsernamePasswordAuthenticationCredentials> {
-
-        private static final long serialVersionUID = 8881019014296985804L;
-
-        private static final String USERNAME_LABEL =
-                Constant.messages.getString(
-                        "authentication.method.fb.credentials.field.label.user");
-        private static final String PASSWORD_LABEL =
-                Constant.messages.getString(
-                        "authentication.method.fb.credentials.field.label.pass");
-
-        private ZapTextField usernameTextField;
-        private JPasswordField passwordTextField;
-
-        public UsernamePasswordAuthenticationCredentialsOptionsPanel(
-                UsernamePasswordAuthenticationCredentials credentials) {
-            super(credentials);
-            initialize();
-        }
-
-        private void initialize() {
-            this.setLayout(new GridBagLayout());
-
-            this.add(new JLabel(USERNAME_LABEL), LayoutHelper.getGBC(0, 0, 1, 0.0d));
-            this.usernameTextField = new ZapTextField();
-            if (this.getCredentials().getUsername() != null)
-                this.usernameTextField.setText(this.getCredentials().getUsername());
-            this.add(
-                    this.usernameTextField,
-                    LayoutHelper.getGBC(1, 0, 1, 0.0d, new Insets(0, 4, 0, 0)));
-
-            this.add(new JLabel(PASSWORD_LABEL), LayoutHelper.getGBC(0, 1, 1, 0.0d));
-            this.passwordTextField = new JPasswordField();
-            if (this.getCredentials().getPassword() != null)
-                this.passwordTextField.setText(this.getCredentials().getPassword());
-            this.add(
-                    this.passwordTextField,
-                    LayoutHelper.getGBC(1, 1, 1, 1.0d, new Insets(0, 4, 0, 0)));
-        }
-
-        @Override
-        public boolean validateFields() {
-            if (usernameTextField.getText().isEmpty()) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        Constant.messages.getString(
-                                "authentication.method.fb.credentials.dialog.error.user.text"),
-                        Constant.messages.getString("authentication.method.fb.dialog.error.title"),
-                        JOptionPane.WARNING_MESSAGE);
-                usernameTextField.requestFocusInWindow();
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public void saveCredentials() {
-            try {
-                FieldUtils.writeField(
-                        getField(getCredentials(), "username"),
-                        getCredentials(),
-                        usernameTextField.getText(),
-                        true);
-                FieldUtils.writeField(
-                        getField(getCredentials(), "password"),
-                        getCredentials(),
-                        new String(passwordTextField.getPassword()),
-                        true);
-            } catch (Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
-
-        private Field getField(Object obj, String fieldName)
-                throws NoSuchFieldException, SecurityException {
-            return obj.getClass().getDeclaredField(fieldName);
-        }
     }
 
     /** The Options Panel used for configuring a {@link BrowserBasedAuthenticationMethod}. */
