@@ -44,9 +44,6 @@ The header values can include the following tokens:
 </tr>
 </table>
 
-When adding Header Based Session Management via the API the <code>headers</code> parameter is a string of 
-<code>header:value</code> pairs separated by newline characters: <code>\n</code>.
-
 <H2>Automation Framework</H2>
 
 Header Based Session Management can be configured in the environment section of an Automation Framework plan using:
@@ -57,12 +54,27 @@ Header Based Session Management can be configured in the environment section of 
           Authorization: "Bearer: {%json:AuthenticationResult.AccessToken%}"
 </pre>
 
-<p>
+<H2>API</H2>
 
+Header Based Session Management can be configured via the ZAP API, using the following parameters:
+<pre>
+    contextId
+    methodName
+    methodConfigParams
+</pre>
+For example:
+<table border="1">
+  <tr><td>contextId</td><td>1</td></tr>
+  <tr><td>methodName</td><td>headerBasedSessionManagement</td></tr>
+  <tr><td>methodConfigParams</td><td>headers=Authorization:Bearer 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918</td></tr>
+</table>
+<p>
+When adding Header Based Session Management via the API the <code>headers</code> parameter is a string of 
+<code>header:value</code> pairs separated by newline characters: <code>\n</code>.
+<p>
 Note that due to restrictions in the core:
 <ul>
 <li>Existing contexts are not updated in the GUI if you add or remove this add-on
-<li>Header Based Session Management cannot be added to a context via the API
 </ul>
 These restrictions will be addressed in a future release. 
 
