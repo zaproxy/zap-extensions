@@ -33,6 +33,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.zaproxy.addon.authhelper.AuthUtils;
 import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType;
+import org.zaproxy.addon.authhelper.report.AuthReportData.FailureDetail;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
@@ -174,22 +175,41 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                          * The AUTH_SUCCESS_STATS / AUTH_FAILURE_STATS stats can get raised on another domain.
                          * Any successes are good, but just failures are bad.
                          */
-                        addSummaryItem(
-                                ard,
-                                "auth",
+                        boolean hasSuccessStats =
+                                inMemoryStats.getStat(
+                                                hostname, AuthenticationHelper.AUTH_SUCCESS_STATS)
+                                        != null;
+                        boolean hasFailureStats =
+                                inMemoryStats.getStat(
+                                                hostname, AuthenticationHelper.AUTH_FAILURE_STATS)
+                                        != null;
+                        boolean overallStatus =
                                 sessionPassed
                                         && verificationPassed
                                         && passedCount != null
-                                        && (inMemoryStats.getStat(
-                                                                hostname,
-                                                                AuthenticationHelper
-                                                                        .AUTH_SUCCESS_STATS)
-                                                        != null
-                                                || inMemoryStats.getStat(
-                                                                hostname,
-                                                                AuthenticationHelper
-                                                                        .AUTH_FAILURE_STATS)
-                                                        == null));
+                                        && (hasSuccessStats || !hasFailureStats);
+                        addSummaryItem(ard, "auth", overallStatus);
+                        if (!overallStatus) {
+                            if (!sessionPassed) {
+                                ard.addFailureDetail(FailureDetail.SESSION_MGMT);
+                            }
+                            if (!verificationPassed) {
+                                ard.addFailureDetail(FailureDetail.VERIF_IDENT);
+                            }
+                            if (passedCount == null) {
+                                ard.addFailureDetail(FailureDetail.PASS_COUNT);
+                            }
+                            if (!hasSuccessStats) {
+                                ard.addFailureDetail(FailureDetail.NO_SUCCESSFUL_LOGINS);
+                            }
+                            if (hasFailureStats) {
+                                ard.addFailureDetail(FailureDetail.LOGIN_FAILURES);
+                            }
+                            // We got this far so did fail overall
+                            if (!ard.hasFailureDetails()) {
+                                ard.addFailureDetail(FailureDetail.OVERALL);
+                            }
+                        }
 
                         if (passedCount != null) {
                             addSummaryItem(ard, "username", true);

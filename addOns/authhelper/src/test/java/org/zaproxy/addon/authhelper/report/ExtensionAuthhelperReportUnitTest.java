@@ -53,6 +53,7 @@ import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.ExtensionAuthhelper;
+import org.zaproxy.addon.authhelper.report.AuthReportData.FailureDetail;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReportData;
 import org.zaproxy.addon.reports.Template;
@@ -173,6 +174,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         ard.setAfEnv(afEnv);
         ard.addSummaryItem(true, "summary.1", "First Item");
         ard.addSummaryItem(false, "summary.2", "Second Item");
+        ard.addFailureDetail(FailureDetail.NO_SUCCESSFUL_LOGINS);
         ard.addStatsItem("stats.auth.1", "global", 123);
         ard.addStatsItem("stats.other.1", "site", 456);
         ard.addStatsItem("stats.other.2", "site", 5678);
@@ -183,6 +185,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         JSONObject json = JSONObject.fromObject(report);
         JSONArray summaryItems = json.getJSONArray("summaryItems");
         JSONArray statistics = json.getJSONArray("statistics");
+        JSONArray failureReasons = json.getJSONArray("failureReasons");
 
         // Then
         assertThat(json.getString("site"), is(equalTo("https://www.example.com")));
@@ -198,6 +201,14 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         assertThat(summaryItems.getJSONObject(1).getString("key"), is(equalTo("summary.2")));
         assertThat(
                 summaryItems.getJSONObject(1).getString("description"), is(equalTo("Second Item")));
+
+        assertThat(failureReasons.size(), is(equalTo(1)));
+        assertThat(
+                failureReasons.getJSONObject(0).getString("key"),
+                is(equalTo(FailureDetail.NO_SUCCESSFUL_LOGINS.getKey())));
+        assertThat(
+                failureReasons.getJSONObject(0).getString("description"),
+                is(equalTo("No successful logins.")));
 
         assertThat(statistics.size(), is(equalTo(3)));
         assertThat(statistics.getJSONObject(0), is(notNullValue()));
@@ -263,6 +274,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
                 			"key": "summary.\\\"2\\\""
                 		}
                 	]
+                \t
                 \t
                 \t
                 	,"afEnv": "  env:\\n  contexts:\\n      name: 'some \\\"quote\\\" name'\\n"
