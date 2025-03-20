@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Replace credentials with special tokens.
 - Rewrite of the auth request detection code to handle more cases.
 - Add domain to context if creds posted to it and using using auto-detect for session management.
+- Skip disabled authentication steps when creating the context from the Authentication Tester dialog.
 
 ### Fixed
 - Allow the Client Script Authentication, and Browser Based Authentication method types as well as Header Based Session Management to be configured via the API.
