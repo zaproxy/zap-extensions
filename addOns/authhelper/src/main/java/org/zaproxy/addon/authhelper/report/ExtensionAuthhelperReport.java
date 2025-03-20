@@ -108,6 +108,10 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                         "authhelper.authreport.summary." + key + (pass ? ".pass" : ".fail")));
     }
 
+    private static void addFailureReason(AuthReportData ard, String reason) {
+        ard.addFailureReason(reason);
+    }
+
     private static Context getFirstAuthConfiguredContext(ReportData reportData) {
         List<Context> contexts = reportData.getContexts();
         for (Context c : contexts) {
@@ -174,22 +178,59 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                          * The AUTH_SUCCESS_STATS / AUTH_FAILURE_STATS stats can get raised on another domain.
                          * Any successes are good, but just failures are bad.
                          */
-                        addSummaryItem(
-                                ard,
-                                "auth",
+                        boolean hasSuccessStats =
+                                (inMemoryStats.getStat(
+                                                hostname, AuthenticationHelper.AUTH_SUCCESS_STATS)
+                                        != null);
+                        boolean notHasFailureStats =
+                                (inMemoryStats.getStat(
+                                                hostname, AuthenticationHelper.AUTH_FAILURE_STATS)
+                                        == null);
+                        boolean overAllStatus =
                                 sessionPassed
                                         && verificationPassed
                                         && passedCount != null
-                                        && (inMemoryStats.getStat(
-                                                                hostname,
-                                                                AuthenticationHelper
-                                                                        .AUTH_SUCCESS_STATS)
-                                                        != null
-                                                || inMemoryStats.getStat(
-                                                                hostname,
-                                                                AuthenticationHelper
-                                                                        .AUTH_FAILURE_STATS)
-                                                        == null));
+                                        && (hasSuccessStats || notHasFailureStats);
+                        addSummaryItem(ard, "auth", overAllStatus);
+                        if (!overAllStatus) {
+                            if (!sessionPassed) {
+                                addFailureReason(
+                                        ard,
+                                        Constant.messages.getString(
+                                                "authhelper.authreport.summary.fail.reason.sessmgmt.failed"));
+                            }
+                            if (!verificationPassed) {
+                                addFailureReason(
+                                        ard,
+                                        Constant.messages.getString(
+                                                "authhelper.authreport.summary.fail.reason.verif.failed"));
+                            }
+                            if (passedCount == null) {
+                                addFailureReason(
+                                        ard,
+                                        Constant.messages.getString(
+                                                "authhelper.authreport.summary.fail.reason.pass.count.failed"));
+                            }
+                            if (!hasSuccessStats) {
+                                addFailureReason(
+                                        ard,
+                                        Constant.messages.getString(
+                                                "authhelper.authreport.summary.fail.reason.stats.success.failed"));
+                            }
+                            if (!notHasFailureStats) {
+                                addFailureReason(
+                                        ard,
+                                        Constant.messages.getString(
+                                                "authhelper.authreport.summary.fail.reason.stats.failure.failed"));
+                            }
+                            // We got this far so did fail overall
+                            if (!ard.isFailureReasons()) {
+                                addFailureReason(
+                                        ard,
+                                        Constant.messages.getString(
+                                                "authhelper.authreport.summary.fail.reason.overall.failed"));
+                            }
+                        }
 
                         if (passedCount != null) {
                             addSummaryItem(ard, "username", true);

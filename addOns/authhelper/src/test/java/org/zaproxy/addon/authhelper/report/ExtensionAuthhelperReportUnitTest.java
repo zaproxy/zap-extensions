@@ -173,6 +173,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         ard.setAfEnv(afEnv);
         ard.addSummaryItem(true, "summary.1", "First Item");
         ard.addSummaryItem(false, "summary.2", "Second Item");
+        ard.addFailureReason("A failure reason");
         ard.addStatsItem("stats.auth.1", "global", 123);
         ard.addStatsItem("stats.other.1", "site", 456);
         ard.addStatsItem("stats.other.2", "site", 5678);
@@ -183,6 +184,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         JSONObject json = JSONObject.fromObject(report);
         JSONArray summaryItems = json.getJSONArray("summaryItems");
         JSONArray statistics = json.getJSONArray("statistics");
+        JSONArray failureReasons = json.getJSONArray("failureReasons");
 
         // Then
         assertThat(json.getString("site"), is(equalTo("https://www.example.com")));
@@ -198,6 +200,9 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         assertThat(summaryItems.getJSONObject(1).getString("key"), is(equalTo("summary.2")));
         assertThat(
                 summaryItems.getJSONObject(1).getString("description"), is(equalTo("Second Item")));
+
+        assertThat(failureReasons.size(), is(equalTo(1)));
+        assertThat(failureReasons.getString(0), is(equalTo("A failure reason")));
 
         assertThat(statistics.size(), is(equalTo(3)));
         assertThat(statistics.getJSONObject(0), is(notNullValue()));
@@ -261,8 +266,9 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
                 			"description": "Foo bar",
                 			"passed": true,
                 			"key": "summary.\\\"2\\\""
-                		}
-                	]
+                		}]
+                		,"failureReasons":
+                		[]
                 \t
                 \t
                 	,"afEnv": "  env:\\n  contexts:\\n      name: 'some \\\"quote\\\" name'\\n"
@@ -290,6 +296,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         report =
                 report.replaceAll(
                         "[a-zA-Z]{3}, \\d{1,2} [a-zA-Z]{3} \\d{4} \\d{2}:\\d{2}:\\d{2}", current);
+        System.out.println(report);
         assertThat(report, is(equalTo(expected)));
     }
 
