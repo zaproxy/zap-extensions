@@ -44,6 +44,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType.AutoDetectSessionManagementMethod;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
+import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 import org.zaproxy.addon.authhelper.internal.StepsPanel;
 import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.ZAP;
@@ -288,7 +289,8 @@ public class AuthTestDialog extends StandardFieldsDialog {
             String browserId = ((BrowserUI) browserCombo.getSelectedItem()).getBrowser().getId();
             am.setBrowserId(browserId);
             am.setLoginPageWait(this.getIntValue(WAIT_LABEL));
-            am.setAuthenticationSteps(stepsPanel.getSteps());
+            am.setAuthenticationSteps(
+                    stepsPanel.getSteps().stream().filter(AuthenticationStep::isEnabled).toList());
             reloadAuthenticationMethod(am);
             context.setAuthenticationMethod(am);
 
