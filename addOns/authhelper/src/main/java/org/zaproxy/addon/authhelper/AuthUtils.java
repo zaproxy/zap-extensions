@@ -160,7 +160,8 @@ public class AuthUtils {
      * the last known good value, in the case where we don't see the token set in the authentication
      * response.
      */
-    private static Map<Integer, Map<String, String>> requestTokenMap = new HashMap<>();
+    private static Map<Integer, Map<String, String>> requestTokenMap =
+            Collections.synchronizedMap(new HashMap<>());
 
     /**
      * The best verification request we have found for a context. There will only be a verification
@@ -168,7 +169,8 @@ public class AuthUtils {
      * session management to auto-detect, setting the checking strategy to "poll" but not specified
      * a URL.
      */
-    private static Map<Integer, VerificationRequestDetails> contextVerifMap = new HashMap<>();
+    private static Map<Integer, VerificationRequestDetails> contextVerifMap =
+            Collections.synchronizedMap(new HashMap<>());
 
     /**
      * The best session management request we have found for a context. There will only be a
@@ -176,13 +178,14 @@ public class AuthUtils {
      * by setting session management to auto-detect.
      */
     private static Map<Integer, SessionManagementRequestDetails> contextSessionMgmtMap =
-            new HashMap<>();
+            Collections.synchronizedMap(new HashMap<>());
 
     /**
      * The URLs (and methods) we've checked for finding good verification requests. These will only
      * be recorded if the user has set verification to auto-detect.
      */
-    private static Map<Integer, Set<String>> contextVerificationMap = new HashMap<>();
+    private static Map<Integer, Set<String>> contextVerificationMap =
+            Collections.synchronizedMap(new HashMap<>());
 
     public static long getTimeToWaitMs() {
         return timeToWaitMs;
@@ -1058,7 +1061,7 @@ public class AuthUtils {
                         + details.getMsg().getRequestHeader().getURI().toString();
 
         if (contextVerificationMap
-                .computeIfAbsent(context.getId(), c -> new HashSet<>())
+                .computeIfAbsent(context.getId(), c -> Collections.synchronizedSet(new HashSet<>()))
                 .add(methodUrl)) {
             // Have not already checked this method + url
             getExecutorService().submit(new VerificationDetectionProcessor(context, details, rule));
@@ -1069,10 +1072,14 @@ public class AuthUtils {
         recordRequestSessionToken(context.getId(), key, value);
     }
 
+    private static Map<String, String> computeIfAbsent(
+            Map<Integer, Map<String, String>> inputMap, int contextId) {
+        return inputMap.computeIfAbsent(
+                contextId, c -> Collections.synchronizedMap(new HashMap<>()));
+    }
+
     public static void recordRequestSessionToken(int contextId, String key, String value) {
-        requestTokenMap
-                .computeIfAbsent(contextId, c -> new HashMap<>())
-                .put(key.toLowerCase(Locale.ROOT), value);
+        computeIfAbsent(requestTokenMap, contextId).put(key.toLowerCase(Locale.ROOT), value);
     }
 
     public static String getRequestSessionToken(Context context, String key) {
@@ -1080,9 +1087,7 @@ public class AuthUtils {
     }
 
     public static String getRequestSessionToken(int contextId, String key) {
-        return requestTokenMap
-                .computeIfAbsent(contextId, c -> new HashMap<>())
-                .get(key.toLowerCase(Locale.ROOT));
+        return computeIfAbsent(requestTokenMap, contextId).get(key.toLowerCase(Locale.ROOT));
     }
 
     static class AuthenticationBrowserHook implements BrowserHook {

@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Allow the Client Script Authentication, and Browser Based Authentication method types as well as Header Based Session Management to be configured via the API.
 - Bug where some of the data structures were not being reset when the session changed.
+- Address concurrent modification exceptions.
 
 ## [0.23.0] - 2025-03-04
 ### Added
