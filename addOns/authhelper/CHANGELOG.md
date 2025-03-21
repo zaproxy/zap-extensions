@@ -3,12 +3,12 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.24.0] - 2025-03-21
 ### Added
 - Document custom steps for Browser Based Authentication.
 - Document Authentication Report diagnostics data.
 - Sanitized post data to auth diagnostics.
-- Help content for configuration and use of Header Based Session Management via ZAP API.
+- Help content for configuration and use of Header Based Session Management via ZAP API (these additions will only work properly when used with ZAP 2.16.1 or later).
 
 ### Changed
 - Add any session related cookies which are not being tracked.
@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Skip disabled authentication steps when creating the context from the Authentication Tester dialog.
 
 ### Fixed
-- Allow the Client Script Authentication, and Browser Based Authentication method types as well as Header Based Session Management to be configured via the API.
+- Allow the Client Script Authentication, and Browser Based Authentication method types as well as Header Based Session Management to be configured via the API (these fixes will only work properly when used with ZAP 2.16.1 or later).
 - Bug where some of the data structures were not being reset when the session changed.
 - Address concurrent modification exceptions.
 
@@ -190,6 +190,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.24.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.24.0
 [0.23.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.23.0
 [0.22.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.21.0
