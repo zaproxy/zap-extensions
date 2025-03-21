@@ -21,7 +21,6 @@ package org.zaproxy.addon.llm.ui;
 
 import java.awt.Component;
 import java.util.Set;
-import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -32,6 +31,7 @@ import org.zaproxy.addon.llm.services.LlmCommunicationService;
 import org.zaproxy.addon.llm.ui.settings.LlmOptionsParam;
 import org.zaproxy.zap.extension.alert.PopupMenuItemAlert;
 
+@SuppressWarnings("serial")
 public class LlmReviewAlertMenu extends PopupMenuItemAlert {
 
     private static final long serialVersionUID = 1L;

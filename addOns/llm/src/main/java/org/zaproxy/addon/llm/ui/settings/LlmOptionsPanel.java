@@ -129,27 +129,25 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         String endpoint = this.llmendpointTextField.getText();
         String apiKey = this.apiKeyTextField.getText();
 
-        if (StringUtils.isEmpty(apiKey)) {
-            throw new IllegalArgumentException(
-                    Constant.messages.getString("llm.options.apikey.error.undefinded"));
-        }
+        if (StringUtils.isNoneEmpty(apiKey)) {
 
-        java.net.HttpURLConnection connection = null;
+            java.net.HttpURLConnection connection = null;
 
-        try {
-            URL url = new URL(endpoint);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod(HttpRequestHeader.GET);
-            connection.setConnectTimeout(5000); // Set timeout as per your need
-            connection.setReadTimeout(5000); // Set timeout as per your need
-        } catch (Exception e) {
-            // Endpoint is not reachable
-            LOGGER.error("Failed to reach the LLM endpoint: HTTP error code: {}", e.getMessage());
-            throw new IllegalArgumentException(
-                    Constant.messages.getString("llm.options.endpoint.error.unreachable"));
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
+            try {
+                URL url = new URL(endpoint);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod(HttpRequestHeader.GET);
+                connection.setConnectTimeout(5000);
+                connection.setReadTimeout(5000);
+            } catch (Exception e) {
+                // Endpoint is not reachable
+                LOGGER.error("Failed to reach the LLM endpoint: HTTP error code: {}", e.getMessage());
+                throw new IllegalArgumentException(
+                        Constant.messages.getString("llm.options.endpoint.error.unreachable"));
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
             }
         }
     }
