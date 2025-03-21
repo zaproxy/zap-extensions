@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Address exception when loading Client Script authentication method.
+- Address exception that would happen when running a plan while having unsaved scripts.
 
 ## [0.48.0] - 2025-03-04
 ### Changed
