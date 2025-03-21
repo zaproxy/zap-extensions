@@ -394,7 +394,6 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
                     HttpMessage newMsg = getNewMsg();
                     setParameter(newMsg, paramName, renderTest);
                     sendAndReceive(newMsg, false);
-                    sendAndReceive(newMsg, true);
 
                     for (SinkPoint sink : sinksToTest) {
 
@@ -432,6 +431,44 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
                             }
                         }
                     }
+                    sendAndReceive(newMsg, true);
+                    for (SinkPoint sink : sinksToTest) {
+
+                        String output = sink.getCurrentStateInString(newMsg, paramName, renderTest);
+
+                        for (String renderResult : renderExpectedResults) {
+                            // Some rendering tests add html tags so we can not only search for
+                            // the delimiters with the arithmetic result inside. Regex searches
+                            // may be expensive, so first we check if the result exist in the
+                            // response and only then we check if it inside the delimiters and
+                            // was originated by our payload.
+                            String regex =
+                                    "[\\w\\W]*"
+                                            + DELIMITER
+                                            + ".*"
+                                            + renderResult
+                                            + ".*"
+                                            + DELIMITER
+                                            + "[\\w\\W]*";
+
+                            if (output.contains(renderResult)
+                                    && output.matches(regex)
+                                    && sstiPayload.engineSpecificCheck(regex, output, renderTest)) {
+
+                                String attack = getOtherInfo(sink.getLocation(), output);
+
+                                createAlert(
+                                                newMsg.getRequestHeader().getURI().toString(),
+                                                paramName,
+                                                renderTest,
+                                                attack)
+                                        .setMessage(newMsg)
+                                        .raise();
+                                found = true;
+                            }
+                        }
+                    }
+                    
                 } catch (SocketException ex) {
                     LOGGER.debug("Caught {} {}", ex.getClass().getName(), ex.getMessage());
                 } catch (IOException ex) {
