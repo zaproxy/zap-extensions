@@ -394,6 +394,7 @@ public class SstiScanRule extends AbstractAppParamPlugin implements CommonActive
                     HttpMessage newMsg = getNewMsg();
                     setParameter(newMsg, paramName, renderTest);
                     sendAndReceive(newMsg, false);
+                    sendAndReceive(newMsg, true);
 
                     for (SinkPoint sink : sinksToTest) {
 
