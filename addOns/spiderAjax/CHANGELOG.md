@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Only count processed URLs. Browsers can make lots of background requests which distort the numbers.
+
 ## [23.22.0] - 2025-01-10
 ### Added
 - Option to enable browser extensions added by other add-ons, previously they were always enabled but now the default is false.
