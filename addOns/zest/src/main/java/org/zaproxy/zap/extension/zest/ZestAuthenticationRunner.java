@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.internal.TotpSupport;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
@@ -37,9 +38,16 @@ import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.authentication.AuthenticationHelper;
 import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.AuthenticationScript;
+import org.zaproxy.zest.core.v1.ZestActionFailException;
+import org.zaproxy.zest.core.v1.ZestAssertFailException;
+import org.zaproxy.zest.core.v1.ZestAssignFailException;
 import org.zaproxy.zest.core.v1.ZestClient;
+import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
+import org.zaproxy.zest.core.v1.ZestClientFailException;
+import org.zaproxy.zest.core.v1.ZestInvalidCommonTestException;
 import org.zaproxy.zest.core.v1.ZestRequest;
 import org.zaproxy.zest.core.v1.ZestResponse;
+import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.core.v1.ZestStatement;
 import org.zaproxy.zest.core.v1.ZestVariables;
 import org.zaproxy.zest.impl.ZestBasicRunner;
@@ -48,10 +56,14 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
 
     private static final Logger LOGGER = LogManager.getLogger(ZestAuthenticationRunner.class);
 
+    private static final String TOTP_VAR_NAME = "TOTP";
+
     private static final String PROXY_ADDRESS = "127.0.0.1";
 
     private static final String USERNAME = "Username";
     private static final String PASSWORD = "Password";
+
+    private final String totpVar;
 
     private ZestScriptWrapper script = null;
     private AuthenticationHelper helper;
@@ -60,6 +72,10 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
             ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper script) {
         super(extension, extensionNetwork, script);
         this.script = script;
+        totpVar =
+                script.getZestScript().getParameters().getTokenStart()
+                        + TOTP_VAR_NAME
+                        + script.getZestScript().getParameters().getTokenEnd();
     }
 
     @Override
@@ -177,6 +193,24 @@ public class ZestAuthenticationRunner extends ZestZapRunner implements Authentic
             next = next.getNext();
         }
         return false;
+    }
+
+    @Override
+    public ZestResponse runStatement(
+            ZestScript script, ZestStatement stmt, ZestResponse lastResponse)
+            throws ZestAssertFailException,
+                    ZestActionFailException,
+                    ZestInvalidCommonTestException,
+                    IOException,
+                    ZestAssignFailException,
+                    ZestClientFailException {
+        if (stmt instanceof ZestClientElementSendKeys sendKeys
+                && totpVar.equals(sendKeys.getValue())) {
+            String code =
+                    TotpSupport.getCode(helper.getRequestingUser().getAuthenticationCredentials());
+            setVariable(TOTP_VAR_NAME, code);
+        }
+        return super.runStatement(script, stmt, lastResponse);
     }
 
     @Override

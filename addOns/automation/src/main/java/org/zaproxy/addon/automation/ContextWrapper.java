@@ -44,6 +44,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.commonlib.internal.TotpSupport;
+import org.zaproxy.zap.authentication.AuthenticationCredentials;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType.FormBasedAuthenticationMethod;
 import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
@@ -104,9 +106,11 @@ public class ContextWrapper {
                     UsernamePasswordAuthenticationCredentials upCreds =
                             (UsernamePasswordAuthenticationCredentials)
                                     user.getAuthenticationCredentials();
-                    users.add(
+                    UserData ud =
                             new UserData(
-                                    user.getName(), upCreds.getUsername(), upCreds.getPassword()));
+                                    user.getName(), upCreds.getUsername(), upCreds.getPassword());
+                    setTotpData(upCreds, ud);
+                    users.add(ud);
                 } else if (user.getAuthenticationCredentials()
                         instanceof GenericAuthenticationCredentials) {
                     GenericAuthenticationCredentials genCreds =
@@ -116,6 +120,8 @@ public class ContextWrapper {
                             (Map<String, String>) JobUtils.getPrivateField(genCreds, "paramValues");
                     UserData ud = new UserData(user.getName());
                     ud.setCredentials(paramValues);
+                    setTotpData(genCreds, ud);
+                    ud.getInternalCredentials().setTotp(null);
                     users.add(ud);
                 } else if (MANUAL_AUTH_CREDS_CANONICAL_NAME.equals(
                         user.getAuthenticationCredentials().getClass().getCanonicalName())) {
@@ -132,6 +138,20 @@ public class ContextWrapper {
             }
         }
         this.data.setAuthentication(new AuthenticationData(context, getData().getUsers()));
+    }
+
+    private static void setTotpData(AuthenticationCredentials credentials, UserData ud) {
+        TotpSupport.TotpData coreData = TotpSupport.getTotpData(credentials);
+        if (coreData == null) {
+            return;
+        }
+
+        UserData.TotpData totpData = new UserData.TotpData();
+        totpData.setSecret(coreData.secret());
+        totpData.setPeriod(String.valueOf(coreData.period()));
+        totpData.setDigits(String.valueOf(coreData.digits()));
+        totpData.setAlgorithm(coreData.algorithm());
+        ud.getInternalCredentials().setTotp(totpData);
     }
 
     public ContextWrapper(
@@ -398,25 +418,25 @@ public class ContextWrapper {
                                 .getCanonicalName()
                                 .equals(AuthenticationData.BROWSER_BASED_AUTH_METHOD_CLASSNAME)) {
                     UsernamePasswordAuthenticationCredentials upCreds =
-                            new UsernamePasswordAuthenticationCredentials(
+                            TotpSupport.createUsernamePasswordAuthenticationCredentials(
+                                    authMethod,
                                     env.replaceVars(ud.getCredential(UserData.USERNAME_CREDENTIAL)),
                                     env.replaceVars(
                                             ud.getCredential(UserData.PASSWORD_CREDENTIAL)));
+
+                    setTotpData(ud, upCreds, env);
                     user.setAuthenticationCredentials(upCreds);
                 } else if (authMethod instanceof ManualAuthenticationMethod) {
                     user.setAuthenticationCredentials(
                             authMethod.getType().createAuthenticationCredentials());
                 } else if (authMethod instanceof ScriptBasedAuthenticationMethod) {
-                    ScriptBasedAuthenticationMethod scriptMethod =
-                            (ScriptBasedAuthenticationMethod) authMethod;
-                    String[] credName =
-                            (String[])
-                                    JobUtils.getPrivateField(scriptMethod, "credentialsParamNames");
                     GenericAuthenticationCredentials genCreds =
-                            new GenericAuthenticationCredentials(credName);
+                            (GenericAuthenticationCredentials)
+                                    authMethod.createAuthenticationCredentials();
                     for (Entry<String, String> cred : ud.getCredentials().entrySet()) {
                         genCreds.setParam(cred.getKey(), env.replaceVars(cred.getValue()));
                     }
+                    setTotpData(ud, genCreds, env);
                     user.setAuthenticationCredentials(genCreds);
                 } else {
                     LOGGER.error(
@@ -426,6 +446,39 @@ public class ContextWrapper {
                 extUserMgmt.getContextUserAuthManager(context.getId()).addUser(user);
             }
         }
+    }
+
+    private static void setTotpData(
+            UserData ud, AuthenticationCredentials credentials, AutomationEnvironment env) {
+        if (ud.getInternalCredentials().getTotp() == null) {
+            return;
+        }
+
+        String algorithm = env.replaceVars(ud.getInternalCredentials().getTotp().getAlgorithm());
+        TotpSupport.TotpData totpData =
+                new TotpSupport.TotpData(
+                        env.replaceVars(ud.getInternalCredentials().getTotp().getSecret()),
+                        getInt(
+                                env.replaceVars(ud.getInternalCredentials().getTotp().getPeriod()),
+                                30),
+                        getInt(
+                                env.replaceVars(ud.getInternalCredentials().getTotp().getDigits()),
+                                6),
+                        algorithm == null ? "SHA1" : algorithm);
+        TotpSupport.setTotpData(totpData, credentials);
+    }
+
+    private static int getInt(String value, int defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            LOGGER.warn("An error occurred while parsing: {}", value, e);
+        }
+        return defaultValue;
     }
 
     public List<String> getUserNames() {

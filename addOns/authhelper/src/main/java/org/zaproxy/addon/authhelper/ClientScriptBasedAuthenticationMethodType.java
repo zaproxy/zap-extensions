@@ -50,6 +50,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.internal.ClientSideHandler;
+import org.zaproxy.addon.commonlib.internal.TotpSupport;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.zap.authentication.AbstractAuthenticationMethodOptionsPanel;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
@@ -246,7 +247,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
         @Override
         public AuthenticationCredentials createAuthenticationCredentials() {
-            return new GenericAuthenticationCredentials(this.credentialsParamNames);
+            return TotpSupport.createGenericAuthenticationCredentials(credentialsParamNames);
         }
 
         @Override
