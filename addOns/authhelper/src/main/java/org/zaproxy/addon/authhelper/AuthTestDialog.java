@@ -24,6 +24,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.util.List;
+import java.util.Optional;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -46,6 +48,7 @@ import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType.AutoDe
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 import org.zaproxy.addon.authhelper.internal.StepsPanel;
+import org.zaproxy.addon.commonlib.internal.TotpSupport;
 import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
@@ -297,7 +300,9 @@ public class AuthTestDialog extends StandardFieldsDialog {
             // Set up user
             User user = new User(context.getId(), username);
             UsernamePasswordAuthenticationCredentials upCreds =
-                    new UsernamePasswordAuthenticationCredentials(username, password);
+                    TotpSupport.createUsernamePasswordAuthenticationCredentials(
+                            am, username, password);
+            setTotp(stepsPanel.getSteps(), upCreds);
             user.setAuthenticationCredentials(upCreds);
             user.setEnabled(true);
             Control.getSingleton()
@@ -438,6 +443,30 @@ public class AuthTestDialog extends StandardFieldsDialog {
             }
             ext.enableAuthDiagCollector(false);
         }
+    }
+
+    private void setTotp(
+            List<AuthenticationStep> steps, UsernamePasswordAuthenticationCredentials credentials) {
+        if (!TotpSupport.isTotpInCore()) {
+            return;
+        }
+
+        Optional<AuthenticationStep> optStep =
+                steps.stream()
+                        .filter(e -> e.getType() == AuthenticationStep.Type.TOTP_FIELD)
+                        .findFirst();
+        if (optStep.isEmpty()) {
+            return;
+        }
+
+        AuthenticationStep totpStep = optStep.get();
+        TotpSupport.TotpData totpData =
+                new TotpSupport.TotpData(
+                        totpStep.getTotpSecret(),
+                        totpStep.getTotpPeriod(),
+                        totpStep.getTotpDigits(),
+                        totpStep.getTotpAlgorithm());
+        TotpSupport.setTotpData(totpData, credentials);
     }
 
     private void reloadAuthenticationMethod(AuthenticationMethod am) throws ConfigurationException {

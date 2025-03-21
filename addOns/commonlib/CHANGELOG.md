@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Replace the default Output panel with a tabbed version to allow multiple sources of output to be displayed in separate tabs.
+- Add support functionality for usage of TOTP data defined under user credentials.
 
 ## [1.30.0] - 2025-01-09
 ### Added
