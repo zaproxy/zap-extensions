@@ -50,6 +50,7 @@ import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParamElem;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener;
+import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
 import org.zaproxy.zap.extension.spiderAjax.SpiderThread;
 import org.zaproxy.zap.extension.spiderAjax.internal.ExcludedElement;
 import org.zaproxy.zap.users.User;
@@ -444,7 +445,9 @@ public class AjaxSpiderJob extends AutomationJob {
         @Override
         public void foundMessage(
                 HistoryReference historyReference, HttpMessage httpMessage, ResourceState state) {
-            messagesFound++;
+            if (state == ResourceState.PROCESSED) {
+                messagesFound++;
+            }
         }
 
         @Override
