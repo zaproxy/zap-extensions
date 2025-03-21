@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Document custom steps for Browser Based Authentication.
 - Document Authentication Report diagnostics data.
 - Sanitized post data to auth diagnostics.
-- Help content for configuration and use of Header Based Session Management via ZAP API.
+- Help content for configuration and use of Header Based Session Management via ZAP API (these additions will only work properly when used with ZAP 2.16.1 or later).
 
 ### Changed
 - Add any session related cookies which are not being tracked.
@@ -19,7 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Skip disabled authentication steps when creating the context from the Authentication Tester dialog.
 
 ### Fixed
-- Allow the Client Script Authentication, and Browser Based Authentication method types as well as Header Based Session Management to be configured via the API.
+- Allow the Client Script Authentication, and Browser Based Authentication method types as well as Header Based Session Management to be configured via the API (these fixes will only work properly when used with ZAP 2.16.1 or later).
 - Bug where some of the data structures were not being reset when the session changed.
 - Address concurrent modification exceptions.
 
