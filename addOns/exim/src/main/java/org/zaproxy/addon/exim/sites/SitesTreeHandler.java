@@ -19,6 +19,11 @@
  */
 package org.zaproxy.addon.exim.sites;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,21 +35,22 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HtmlParameter.Type;
 import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.representer.Representer;
 import org.zaproxy.addon.exim.ExporterResult;
 import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.model.NameValuePair;
@@ -54,16 +60,25 @@ public class SitesTreeHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(SitesTreeHandler.class);
 
-    private static final Yaml YAML;
+    private static final ObjectMapper YAML_MAPPER;
+    private static final Yaml YAML_PARSER;
 
     static {
-        // YAML is used for encoding
-        DumperOptions options = new DumperOptions();
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-        options.setPrettyFlow(true);
-        Representer representer = new Representer(options);
-        representer.setDefaultScalarStyle(DumperOptions.ScalarStyle.DOUBLE_QUOTED);
-        YAML = new Yaml(representer, options);
+        YAML_MAPPER =
+                new ObjectMapper(
+                        new YAMLFactory()
+                                .disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER)
+                                .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                                .enable(YAMLGenerator.Feature.LITERAL_BLOCK_STYLE)
+                                .configure(YAMLGenerator.Feature.SPLIT_LINES, false)
+                                .configure(
+                                        YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS,
+                                        false));
+
+        YAML_MAPPER.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        YAML_MAPPER.configure(SerializationFeature.INDENT_OUTPUT, true);
+
+        YAML_PARSER = new Yaml(new LoaderOptions());
     }
 
     public static void exportSitesTree(File file, ExporterResult result) throws IOException {
@@ -94,12 +109,37 @@ public class SitesTreeHandler {
         }
         fw.write(key);
         fw.write(": ");
-        fw.write(YAML.dump(value));
+
+        // Let Jackson handle the YAML formatting
+        if (value == null) {
+            fw.write("null");
+            fw.newLine();
+            return;
+        }
+
+        String yamlValue = YAML_MAPPER.writeValueAsString(value).trim();
+
+        // For simple single-line values
+        if (!yamlValue.contains("\n")) {
+            fw.write(yamlValue);
+            fw.newLine(); // Add consistent newline
+        } else {
+            // For multi-line values, handle indentation
+            fw.newLine(); // Start value on next line
+            String extraIndent = indent + (first ? "- " : "  ").replaceAll("\\.", " ") + "  ";
+            String[] lines = yamlValue.split("\n");
+            for (String line : lines) {
+                fw.write(extraIndent);
+                fw.write(line);
+                fw.newLine();
+            }
+        }
     }
 
     private static void outputNode(
             BufferedWriter fw, SiteNode node, int level, ExporterResult result) throws IOException {
-        // We could create a set of data structures and use snakeyaml, but the format is very simple
+        // We could create a set of data structures and use snakeyaml, but the format is
+        // very simple
         // and this is much more memory efficient - it still uses snakeyaml for encoding
         String indent = " ".repeat(level * 2);
         HistoryReference href = node.getHistoryReference();
@@ -144,7 +184,7 @@ public class SitesTreeHandler {
                                 });
                         outputKV(fw, indent, false, EximSiteNode.DATA_KEY, sb.toString());
                     }
-                } catch (Exception e) {
+                } catch (IOException | DatabaseException e) {
                     LOGGER.error(e.getMessage(), e);
                 }
             }
@@ -213,7 +253,7 @@ public class SitesTreeHandler {
                             sn.getChildCount());
                 }
             }
-        } catch (Exception e) {
+        } catch (NullPointerException | URIException | HttpMalformedHeaderException e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
@@ -233,16 +273,12 @@ public class SitesTreeHandler {
 
     protected static PruneSiteResult pruneSiteNodes(InputStream is, SiteMap siteMap) {
         PruneSiteResult res = new PruneSiteResult();
-        // Don't load yaml using the Constructor class - that throws exceptions that don't give
-        // enough info
-        Yaml yaml = new Yaml(new LoaderOptions());
-
-        Object obj = yaml.load(is);
-        if (obj instanceof ArrayList<?>) {
-            ArrayList<?> list = (ArrayList<?>) obj;
+        Object obj = YAML_PARSER.load(is);
+        if (obj instanceof ArrayList<?> list) {
             EximSiteNode rootNode = new EximSiteNode((LinkedHashMap<?, ?>) list.get(0));
             pruneSiteNodes(rootNode, res, siteMap);
         } else {
+            LOGGER.error("Unexpected root node in yaml");
             res.setError(Constant.messages.getString("exim.sites.error.prune.badformat"));
         }
         return res;
