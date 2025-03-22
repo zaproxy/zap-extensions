@@ -49,9 +49,21 @@ public class AuthReportData implements Closeable {
     private List<String> nextSteps = new ArrayList<>();
     private PersistenceManager pm;
     private List<Diagnostic> diagnostics;
+    private List<String> failureReasons;
 
     public void addSummaryItem(boolean passed, String key, String description) {
         summaryItems.add(new SummaryItem(passed, key, description));
+    }
+
+    public void addFailureReason(String reason) {
+        if (failureReasons == null) {
+            failureReasons = new ArrayList<>();
+        }
+        failureReasons.add(reason);
+    }
+
+    public boolean isFailureReasons() {
+        return failureReasons != null && !failureReasons.isEmpty();
     }
 
     public void addStatsItem(String key, String scope, long value) {

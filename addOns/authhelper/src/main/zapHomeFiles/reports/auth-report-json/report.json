@@ -9,8 +9,11 @@
 			"description": [[${sumItem.description}]],
 			"passed": [[${sumItem.passed}]],
 			"key": [[${sumItem.key}]]
-		}[/th:block]
-	]
+		}[/th:block]]
+		,"failureReasons":
+		[[#th:block th:each="failureItem, state: ${rptData.getFailureReasons()}"]
+			[[${failureItem}]][#th:block th:if="${!state.last}"],[/th:block]
+		[/th:block]]
 	[/th:block]
 	[#th:block th:if="${reportData.isIncludeSection('afenv')}"]
 	,"afEnv": [[${rptData.getAfEnv()}]]
