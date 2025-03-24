@@ -33,6 +33,31 @@
 			<td>Statistics</td>
 			<td>statistics</td>
 		</tr>
+
+		<tr>
+			<td>Diagnostics</td>
+			<td>diagnostics</td>
+		</tr>
+		<tr>
+			<td>HTTP Messages for Diagnostics</td>
+			<td>diagnosticsmessages</td>
+		</tr>
+		<tr>
+			<td>Local Storage for Diagnostics</td>
+			<td>diagnosticslocalstorage</td>
+		</tr>
+		<tr>
+			<td>Screenshots for Diagnostics</td>
+			<td>diagnosticsscreenshots</td>
+		</tr>
+		<tr>
+			<td>Session Storage for Diagnostics</td>
+			<td>diagnosticssessionstorage</td>
+		</tr>
+		<tr>
+			<td>Web Elements for Diagnostics</td>
+			<td>diagnosticswebelements</td>
+		</tr>
 	</table>
 
 	<H3>Summary</H3>
@@ -106,9 +131,112 @@
 
 	<H3>Statistics</H3>
 	
-	These are all of the statistcis that have been recorded by ZAP.<br>
+	These are all of the statistics that have been recorded by ZAP.<br>
 	For more details of what they mean see 
 	<a href="https://www.zaproxy.org/docs/internal-statistics/">https://www.zaproxy.org/docs/internal-statistics/</a>
+
+	<H3>Diagnostics</H3>
+	The <a href="browser-auth.html">Browser Based</a> and <a href="client-script.html">Client Script</a> authentication methods allow to record diagnostic data, which can be included in the Authentication Report, to help diagnose authentication problems.
+	<p>
+	Diagnostic data can also be recorded with the <a href="auth-tester.html">Authentication Tester Dialog</a>.
+	<p>
+	The report will contain an array of diagnostic objects, one for each recorded authentication attempt. The diagnostic objet has the authentication method used, the name of the context and user, and each step performed during the authentication.
+<pre>
+	"diagnostics": [
+		{
+			"created": "0000-00-00T00:00:00.000000Z",
+			"authenticationMethod": "Browser-based Authentication",
+			"context": "Context Name",
+			"user": "User Name",
+			"steps": [
+				{ … }
+			]
+		}
+	]
+</pre>
+
+	<p>
+	Each step has at least the URL and the description, it can, optionally, contain also the input element that's being acted upon (e.g. username field being filled).
+<pre>
+	{
+		"created": "0000-00-00T00:00:00.000000Z",
+		"url": "http://example.com/login/",
+		"description": "Auto Fill Username",
+		"webElement": {
+			"formIndex": 1,
+			"attributeType": "text",
+			"attributeId": "email",
+			"attributeName": "email",
+			"attributeValue": "",
+			"text": "",
+			"displayed": true,
+			"enabled": true
+		}
+		…
+	}
+</pre>
+	More data can be included in each step depending on the additional diagnostics sections enabled for the report.
+
+	<H4>HTTP Messages for Diagnostics</H4>
+	When this section is enabled the step can, optionally, include HTTP messages that were sent during the step. Each message contains the request/response headers and bodies.
+<pre>
+	"messages": [
+		{
+			"created": "0000-00-00T00:00:00.000000Z",
+			"requestHeader": "GET http://example.com/login HTTP/1.1",
+			"requestBody": "",
+			"responseHeader": "HTTP/1.1 200 OK",
+			"responseBody": ""
+		}
+	]
+</pre>
+
+	<H4>Local Storage for Diagnostics</H4>
+	When this section is enabled the step can, optionally, include the browser's local storage.
+<pre>
+	"localStorage": [
+		{
+			"created": "0000-00-00T00:00:00.000000Z",
+			"key": "key",
+			"value": "value"
+		}
+	]
+</pre>
+
+	<H4>Screenshots for Diagnostics</H4>
+	When this section is enabled the step can, optionally, include a screenshot of the page with the image data Base64 encoded.
+<pre>
+	"screenshot": "…"
+</pre>
+
+	<H4>Session Storage for Diagnostics</H4>
+	When this section is enabled the step can, optionally, include the browser's session storage.
+<pre>
+	"sessionStorage": [
+		{
+			"created": "0000-00-00T00:00:00.000000Z",
+			"key": "key",
+			"value": "value"
+		}
+	]
+</pre>
+
+	<H4>Web Elements for Diagnostics</H4>
+	When this section is enabled the step can, optionally, include all the input elements present in the page.
+<pre>
+	"webElements": [
+		{
+			"formIndex": 0,
+			"attributeType": "text",
+			"attributeId": "id",
+			"attributeName": "name",
+			"attributeValue": "",
+			"text": "",
+			"displayed": true,
+			"enabled": true
+		}
+	]
+</pre>
 
 	<H3>Sample</H3>
 <pre>

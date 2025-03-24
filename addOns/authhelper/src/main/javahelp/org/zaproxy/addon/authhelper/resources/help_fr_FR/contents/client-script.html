@@ -22,7 +22,11 @@ Client Script Authentication can be configured in the environment section of an 
         parameters:
           script: /path/to/RecordedAuth.zst  # String, the path to the Zest login script
           scriptEngine: Mozilla Zest         # The script engine used for the login script
+          diagnostics:                       # Bool, enables the recording of diagnostic data during the authentication. Default: false.
 </pre>
+
+<p>
+Refer to the <a href="auth-report-json.html">Authentication Report</a> for more details on the diagnostics.
 
 <H2>Client Spider and AJAX Spider Integration</H2>
 
@@ -34,11 +38,11 @@ Client or AJAX spider is performing an authenticated scan using Client Script Au
 <H2>Selenium Integration</H2>
 
 Any browsers launched by ZAP can be configured to always first login using the details configured in a context.
-
+<p>
 Note that due to restrictions in the core:
 <ul>
 <li>Existing contexts are not updated in the GUI if you add or remove this add-on
-<li>Client Script Authentication cannot be added to a context via the API
+<li>Client Script Based Authentication cannot be added to a context via the API (unless used with ZAP 2.16.1 or later)
 </ul>
 These restrictions will be addressed in a future release. 
 
