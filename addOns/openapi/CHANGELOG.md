@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45] - 2025-03-24
 ### Fixed
 - Correct definition detection while spidering.
 
@@ -338,6 +338,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[45]: https://github.com/zaproxy/zap-extensions/releases/openapi-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/openapi-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/openapi-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/openapi-v42
