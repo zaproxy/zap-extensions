@@ -397,8 +397,6 @@ public class AuthUtils {
             List<AuthenticationStep> steps) {
 
         UsernamePasswordAuthenticationCredentials credentials = getCredentials(user);
-        String username = credentials.getUsername();
-        String password = credentials.getPassword();
 
         Context context = user.getContext();
 
@@ -406,7 +404,7 @@ public class AuthUtils {
         wd.get(loginPageUrl);
         boolean auth =
                 internalAuthenticateAsUser(
-                        diags, wd, context, loginPageUrl, username, password, waitInSecs, steps);
+                        diags, wd, context, loginPageUrl, credentials, waitInSecs, steps);
 
         if (auth) {
             return true;
@@ -430,14 +428,7 @@ public class AuthUtils {
                 sleep(AUTH_PAGE_SLEEP_IN_MSECS);
                 auth =
                         internalAuthenticateAsUser(
-                                diags,
-                                wd,
-                                context,
-                                loginPageUrl,
-                                username,
-                                password,
-                                waitInSecs,
-                                steps);
+                                diags, wd, context, loginPageUrl, credentials, waitInSecs, steps);
                 if (auth) {
                     return true;
                 }
@@ -460,8 +451,7 @@ public class AuthUtils {
             WebDriver wd,
             Context context,
             String loginPageUrl,
-            String username,
-            String password,
+            UsernamePasswordAuthenticationCredentials credentials,
             int waitInSecs,
             List<AuthenticationStep> steps) {
 
@@ -471,6 +461,9 @@ public class AuthUtils {
         if (demoMode) {
             sleep(DEMO_SLEEP_IN_MSECS);
         }
+
+        String username = credentials.getUsername();
+        String password = credentials.getPassword();
 
         WebElement userField = null;
         WebElement pwdField = null;
@@ -488,7 +481,7 @@ public class AuthUtils {
                 break;
             }
 
-            WebElement element = step.execute(wd, username, password);
+            WebElement element = step.execute(wd, credentials);
             diags.recordStep(wd, step.getDescription(), element);
 
             switch (step.getType()) {
@@ -552,7 +545,7 @@ public class AuthUtils {
                     continue;
                 }
 
-                step.execute(wd, username, password);
+                step.execute(wd, credentials);
                 diags.recordStep(wd, step.getDescription());
 
                 sleep(demoMode ? DEMO_SLEEP_IN_MSECS : TIME_TO_SLEEP_IN_MSECS);

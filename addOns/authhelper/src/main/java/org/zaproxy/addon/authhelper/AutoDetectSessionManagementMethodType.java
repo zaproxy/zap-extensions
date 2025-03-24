@@ -167,7 +167,7 @@ public class AutoDetectSessionManagementMethodType extends SessionManagementMeth
 
     @Override
     public ApiDynamicActionImplementor getSetMethodForContextApiAction() {
-        return new ApiDynamicActionImplementor(API_METHOD_NAME, null, null) {
+        return new ApiDynamicActionImplementor(API_METHOD_NAME, (String[]) null, (String[]) null) {
 
             @Override
             public void handleAction(JSONObject params) throws ApiException {

@@ -60,6 +60,7 @@ import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep.ValidationResult;
 import org.zaproxy.addon.authhelper.internal.ClientSideHandler;
 import org.zaproxy.addon.authhelper.internal.StepsPanel;
+import org.zaproxy.addon.commonlib.internal.TotpSupport;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderContextApache;
 import org.zaproxy.addon.network.server.HttpServerConfig;
@@ -224,7 +225,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
         @Override
         public AuthenticationCredentials createAuthenticationCredentials() {
-            return new UsernamePasswordAuthenticationCredentials();
+            return TotpSupport.createUsernamePasswordAuthenticationCredentials();
         }
 
         @Override

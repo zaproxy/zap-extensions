@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Document how the TOTP data is defined for a user.
+- Use TOTP data defined under user credentials when creating or setting up a context.
 
 ### Changed
 - Progress and log messages with regard to setting scan rule threshold or strength no longer include commas in scan rule ID numbers.

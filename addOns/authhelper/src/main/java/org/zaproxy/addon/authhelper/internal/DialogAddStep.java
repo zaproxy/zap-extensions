@@ -33,6 +33,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.commonlib.internal.TotpSupport;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.AbstractFormDialog;
@@ -177,6 +178,17 @@ class DialogAddStep extends AbstractFormDialog {
     }
 
     public void setEnableable(boolean enableable) {
+        if (TotpSupport.isTotpInCore()) {
+            totpSecretLabel.setVisible(enableable);
+            getTotpSecretTextField().setVisible(enableable);
+            totpPeriodLabel.setVisible(enableable);
+            getTotpPeriodNumberSpinner().setVisible(enableable);
+            totpDigitsLabel.setVisible(enableable);
+            getTotpDigitsNumberSpinner().setVisible(enableable);
+            totpAlgorithmLabel.setVisible(enableable);
+            getTotpAlgorithmComboBox().setVisible(enableable);
+        }
+
         getEnabledLabel().setVisible(enableable);
         getEnabledCheckBox().setVisible(enableable);
         if (!enableable) {
@@ -278,6 +290,10 @@ class DialogAddStep extends AbstractFormDialog {
         newStep.setValue(getValueTextField().getText());
         newStep.setTimeout(getTimeoutNumberSpinner().getValue());
 
+        if (TotpSupport.isTotpInCore() && !getTotpSecretTextField().isVisible()) {
+            // Secret is read from the user credentials.
+            getTotpSecretTextField().setText("UserCredentials");
+        }
         newStep.setTotpSecret(getTotpSecretTextField().getText());
         newStep.setTotpPeriod(getTotpPeriodNumberSpinner().getValue());
         newStep.setTotpDigits(getTotpDigitsNumberSpinner().getValue());
