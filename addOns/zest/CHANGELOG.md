@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Use TOTP data defined under user credentials during authentication when available.
+- Update Zest library to 0.25.0:
+  - Update Selenium to version 4.30.0.
 
 ## [48.4.0] - 2025-02-27
 ### Changed
