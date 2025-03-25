@@ -120,6 +120,7 @@ var addOns =
         "websocket",
         "webuipoc",
         "zest",
+        "llm"
     )
 
 addOns.forEach { include("$addOnsProjectName:$it") }
