@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45.9.0] - 2025-03-25
 ### Fixed
 - Remove unnecessary custom parameter handling.
 
@@ -362,6 +362,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.9.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.9.0
 [45.8.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.8.0
 [45.7.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.7.0
 [45.6.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.6.0
