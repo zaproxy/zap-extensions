@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Progress and log messages with regard to setting scan rule threshold or strength no longer include commas in scan rule ID numbers.
+- Depend on newer version of Common Library add-on.
 
 ### Fixed
 - Address exception when loading Client Script authentication method.
