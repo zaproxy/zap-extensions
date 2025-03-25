@@ -11,6 +11,14 @@
 			"key": [[${sumItem.key}]]
 		}[/th:block]
 	]
+	[#th:block th:if="${rptData.hasFailureDetails()}"]
+	,"failureReasons": [[#th:block th:each="failureItem, failureState: ${rptData.getFailureDetails()}"][#th:block th:if="${!failureState.first}"],[/th:block]
+		{
+			"key": [[${failureItem.getKey()}]],
+			"description": [[${failureItem.getDetail()}]]
+		}[/th:block]
+	]
+	[/th:block]
 	[/th:block]
 	[#th:block th:if="${reportData.isIncludeSection('afenv')}"]
 	,"afEnv": [[${rptData.getAfEnv()}]]

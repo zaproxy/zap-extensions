@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - Depend on newer version of Common Library add-on.
 
+### Added
+- The Authentication Report now includes information around authentication failures (if applicable).
+
 ## [0.24.0] - 2025-03-21
 ### Added
 - Document custom steps for Browser Based Authentication.
