@@ -20,6 +20,7 @@
 package org.zaproxy.addon.exim.sites;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -33,14 +34,19 @@ import static org.mockito.Mockito.mock;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.StringWriter;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.VariantMultipartFormParameters;
@@ -145,7 +151,7 @@ class SiteTreeHandlerUnitTest {
         // Given
         String expectedYaml =
                 "- node: Sites\n"
-                        + "  children: \n"
+                        + "  children:\n"
                         + "  - node: https://www.example.com\n"
                         + "    url: https://www.example.com?aa=bb&cc=dd\n"
                         + "    method: POST\n"
@@ -176,7 +182,7 @@ class SiteTreeHandlerUnitTest {
         // Given
         String expectedYaml =
                 "- node: Sites\n"
-                        + "  children: \n"
+                        + "  children:\n"
                         + "  - node: https://www.example.com\n"
                         + "    url: https://www.example.com?aa=bb&cc=dd\n"
                         + "    method: POST\n"
@@ -206,11 +212,11 @@ class SiteTreeHandlerUnitTest {
         // Given
         String expectedYaml =
                 "- node: Sites\n"
-                        + "  children: \n"
+                        + "  children:\n"
                         + "  - node: https://www.example.com\n"
                         + "    url: https://www.example.com\n"
                         + "    method: GET\n"
-                        + "    children: \n"
+                        + "    children:\n"
                         + "    - node: POST:/()(aaa)\n"
                         + "      url: https://www.example.com/\n"
                         + "      method: POST\n"
@@ -245,12 +251,12 @@ class SiteTreeHandlerUnitTest {
         // Given
         String expectedYaml =
                 "- node: Sites\n"
-                        + "  children: \n"
+                        + "  children:\n"
                         + "  - node: https://www.example.com\n"
                         + "    url: https://www.example.com\n"
                         + "    method: GET\n"
-                        + "    children: \n"
-                        + "    - node: POST:/(bb,dd)(multipart/form-data)\n"
+                        + "    children:\n"
+                        + "    - node: \"POST:/(bb,dd)(multipart/form-data)\"\n"
                         + "      url: https://www.example.com/?bb=bcc&dd=ee\n"
                         + "      method: POST\n"
                         + "      responseLength: 61\n"
@@ -286,19 +292,19 @@ class SiteTreeHandlerUnitTest {
         spp.setContext(context);
         String expectedYaml =
                 "- node: Sites\n"
-                        + "  children: \n"
+                        + "  children:\n"
                         + "  - node: https://www.example.com\n"
                         + "    url: https://www.example.com\n"
                         + "    method: GET\n"
-                        + "    children: \n"
+                        + "    children:\n"
                         + "    - node: app\n"
                         + "      url: https://www.example.com/app\n"
                         + "      method: GET\n"
-                        + "      children: \n"
+                        + "      children:\n"
                         + "      - node: «DDN1»\n"
                         + "        url: https://www.example.com/app/company1\n"
                         + "        method: GET\n"
-                        + "        children: \n"
+                        + "        children:\n"
                         + "        - node: GET:aaa?ddd=eee(ddd)\n"
                         + "          url: https://www.example.com/app/company1/aaa?ddd=eee\n"
                         + "          method: GET\n";
@@ -470,7 +476,7 @@ class SiteTreeHandlerUnitTest {
     }
 
     @Test
-    void shoulPrubeDdnNode() throws Exception {
+    void shoulPruneDdnNode() throws Exception {
         // Given
         Context context = new Context(session, 1);
         context.addIncludeInContextRegex("https://www.example.com.*");
@@ -480,19 +486,19 @@ class SiteTreeHandlerUnitTest {
         spp.setContext(context);
         String yaml =
                 "- node: Sites\n"
-                        + "  children: \n"
+                        + "  children:\n"
                         + "  - node: https://www.example.com\n"
                         + "    url: https://www.example.com\n"
                         + "    method: GET\n"
-                        + "    children: \n"
+                        + "    children:\n"
                         + "    - node: app\n"
                         + "      url: https://www.example.com/app\n"
                         + "      method: GET\n"
-                        + "      children: \n"
+                        + "      children:\n"
                         + "      - node: «DDN1»\n"
                         + "        url: https://www.example.com/app/company1\n"
                         + "        method: GET\n"
-                        + "        children: \n"
+                        + "        children:\n"
                         + "        - node: GET:aaa?ddd=eee(ddd)\n"
                         + "          url: https://www.example.com/app/company1/aaa?ddd=eee\n"
                         + "          method: GET\n";
@@ -512,5 +518,88 @@ class SiteTreeHandlerUnitTest {
 
         // And that the node hierarchy really was deleted
         assertThat(siteMap.getRoot().getChildCount(), is(0));
+    }
+
+    static Stream<Arguments> specialParameterNames() {
+        return Stream.of(
+                Arguments.of("\"", "%22"),
+                Arguments.of("'", "%27"),
+                Arguments.of("\\", "%5C"),
+                Arguments.of("\n", "%0A"),
+                Arguments.of("\r", "%0D"),
+                Arguments.of("\u0001", "%01"),
+                Arguments.of("\u0002", "%02"),
+                Arguments.of("\u0003", "%03"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("specialParameterNames")
+    void shouldHandleSpecialCharactersInParameterNames(
+            String parameterName, String persistedParameterName) throws Exception {
+        // Given
+        HttpMessage msg =
+                new HttpMessage(
+                        "POST https://www.example.com HTTP/1.1\r\nContent-Type: application/x-www-form-urlencoded; charset=UTF-8\r\n",
+                        (parameterName + "=fff").getBytes(),
+                        "HTTP/1.1 200 OK\r\ncontent-length: 0",
+                        "".getBytes());
+        siteMap.addPath(getHref(msg));
+
+        StringWriter sw = new StringWriter();
+        ExporterResult result = new ExporterResult();
+
+        // When
+        SitesTreeHandler.exportSitesTree(sw, siteMap, result);
+
+        // Then
+        assertThat(
+                sw.toString(),
+                containsString(
+                        """
+                        data: '%s='
+                        """
+                                .formatted(persistedParameterName)));
+    }
+
+    static Stream<Arguments> specialNodeNames() {
+        return Stream.of(
+                Arguments.of("\"", "POST:\"()"),
+                Arguments.of("'", "POST:'()"),
+                Arguments.of("\\", "POST:\\()"),
+                Arguments.of("\n", "|-\n        POST:\n        ()"),
+                Arguments.of("\r", "\"POST:\\r()\""),
+                Arguments.of("\u0001", "\"POST:\\x01()\""),
+                Arguments.of("\u0002", "\"POST:\\x02()\""),
+                Arguments.of("\u0003", "\"POST:\\x03()\""));
+    }
+
+    @ParameterizedTest
+    @MethodSource("specialNodeNames")
+    void shouldHandleSpecialCharactersInNodeNames(String nodeName, String persistedNodeName)
+            throws Exception {
+        // Given
+        HttpMessage msg =
+                new HttpMessage(
+                        "POST https://www.example.com/%s HTTP/1.1\r\n"
+                                .formatted(URLEncoder.encode(nodeName, StandardCharsets.UTF_8)),
+                        "".getBytes(),
+                        "HTTP/1.1 200 OK\r\ncontent-length: 0",
+                        "".getBytes());
+        siteMap.addPath(getHref(msg));
+
+        StringWriter sw = new StringWriter();
+        ExporterResult result = new ExporterResult();
+
+        // When
+        SitesTreeHandler.exportSitesTree(sw, siteMap, result);
+
+        // Then
+        assertThat(
+                sw.toString(),
+                containsString(
+                        """
+                        - node: %s
+                        """
+                                .formatted(persistedNodeName)));
     }
 }
