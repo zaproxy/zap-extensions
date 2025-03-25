@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [64] - 2025-03-25
 ### Changed
 - The CSP scan rule now treats Wildcard directives separately from those which are undefined but have no fallback (Issue 8700).
 
@@ -606,6 +606,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[64]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v64
 [63]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v63
 [62]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v62
 [61]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v61
