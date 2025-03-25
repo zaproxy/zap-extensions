@@ -23,6 +23,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -46,6 +47,7 @@ import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.OutputPanel;
 import org.parosproxy.paros.view.View;
+import org.parosproxy.paros.view.WorkbenchPanel;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
@@ -142,7 +144,7 @@ public class TabbedOutputPanel extends OutputPanel {
         }
     }
 
-    private void addNewOutputSource(String name) {
+    private synchronized void addNewOutputSource(String name) {
         if (txtOutputs.containsKey(name)) {
             return;
         }
@@ -274,8 +276,23 @@ public class TabbedOutputPanel extends OutputPanel {
 
     private void setOutputPanelIcon(Icon icon) {
         setIcon(icon);
-        TabbedPanel2 statusPanel = View.getSingleton().getWorkbench().getTabbedStatus();
-        statusPanel.setIconAt(statusPanel.indexOfComponent(this), icon);
+        TabbedPanel2 containingPanel;
+        WorkbenchPanel workbench = View.getSingleton().getWorkbench();
+        if (workbench.getWorkbenchLayout() == WorkbenchPanel.Layout.FULL) {
+            try {
+                Method method = WorkbenchPanel.class.getDeclaredMethod("getTabbedFull");
+                method.setAccessible(true);
+                containingPanel = (TabbedPanel2) method.invoke(workbench);
+            } catch (Exception e) {
+                return;
+            }
+        } else {
+            containingPanel = workbench.getTabbedStatus();
+        }
+        int outputPanelIndex = containingPanel.indexOfComponent(this);
+        if (outputPanelIndex != -1) {
+            containingPanel.setIconAt(outputPanelIndex, icon);
+        }
     }
 
     private static JToolBar buildToolbar(ZapTextArea txtOutput, Map<String, Object> attributes) {
@@ -376,6 +393,23 @@ public class TabbedOutputPanel extends OutputPanel {
         if (txtOutputs.containsKey(sourceName)) {
             txtOutputs.get(sourceName).setText("");
         }
+    }
+
+    /**
+     * Sets the selected output tab, creating it if it doesn't exist.
+     *
+     * @param sourceName the name of the corresponding output source
+     */
+    public void setSelectedOutputTab(String sourceName) {
+        addNewOutputSource(sourceName);
+        tabbedPanel.getTabList().stream()
+                .filter(t -> t.getName().equals(sourceName))
+                .findFirst()
+                .ifPresent(
+                        component -> {
+                            tabbedPanel.setVisible(component, true);
+                            tabbedPanel.setSelectedComponent(component);
+                        });
     }
 
     private void doAppend(ZapTextArea txtOutput, String message) {
