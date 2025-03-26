@@ -20,6 +20,7 @@
 package org.zaproxy.addon.authhelper.internal;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.logging.log4j.Level;
@@ -46,7 +47,8 @@ public final class ClientSideHandler implements HttpMessageHandler {
     private HttpMessage authMsg;
     private HttpMessage fallbackMsg;
     private int firstHrefId;
-
+    private List<HttpMessage> httpMessages = new ArrayList<>();
+    
     public ClientSideHandler(Context context) {
         this.context = context;
     }
@@ -57,7 +59,7 @@ public final class ClientSideHandler implements HttpMessageHandler {
 
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
-
+        httpMessages.add(msg);
         if (ctx.isFromClient()) {
             return;
         }
@@ -130,5 +132,12 @@ public final class ClientSideHandler implements HttpMessageHandler {
 
     public HttpMessage getFallbackMsg() {
         return fallbackMsg;
+    }
+    public List<HttpMessage> getHttpMessages() {
+        return httpMessages;
+    }
+
+    public void resetHttpMsgs() {
+        this.httpMessages = new ArrayList<>();
     }
 }

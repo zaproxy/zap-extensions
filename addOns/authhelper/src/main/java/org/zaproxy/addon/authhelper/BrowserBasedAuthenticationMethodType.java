@@ -148,6 +148,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         return proxy;
     }
 
+
     public Object getCookieStore() {
         try {
             HttpSender temp = getHttpSender();
@@ -204,6 +205,13 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             this.loginPageWait = method.loginPageWait;
             authenticationSteps =
                     method.getAuthenticationSteps().stream().map(AuthenticationStep::new).toList();
+        }
+
+        public List<HttpMessage> getRecordedHttpMessages() {
+            if (handler != null) {
+                return handler.getHttpMessages();
+            }
+            return null;
         }
 
         @Override
@@ -269,6 +277,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                 throws UnsupportedAuthenticationCredentialsException {
             if (handler != null) {
                 handler.resetAuthMsg();
+                handler.resetHttpMsgs();
             }
             if (this.loginPageWait > 0) {
                 AuthUtils.setTimeToWaitMs(TimeUnit.SECONDS.toMillis(loginPageWait));

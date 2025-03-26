@@ -34,7 +34,7 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin implements Comm
     }
     @Override
     public String getName() {
-        return "Blank code TOTP Scan Rule";
+        return "Replay TOTP Scan Rule";
     }
     @Override
     public String getDescription() {

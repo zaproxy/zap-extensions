@@ -34,7 +34,7 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
     }
     @Override
     public String getName() {
-        return "Blank code TOTP Scan Rule";
+        return "TOTP Scan Rule";
     }
     @Override
     public String getDescription() {

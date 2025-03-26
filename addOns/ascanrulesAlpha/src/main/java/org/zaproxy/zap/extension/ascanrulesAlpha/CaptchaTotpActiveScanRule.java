@@ -20,6 +20,7 @@ import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
+import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 public class CaptchaTotpActiveScanRule extends AbstractHostPlugin implements CommonActiveScanRuleInfo{
@@ -32,7 +33,7 @@ public class CaptchaTotpActiveScanRule extends AbstractHostPlugin implements Com
     }
     @Override
     public String getName() {
-        return "Blank code TOTP Scan Rule";
+        return "Captcha or Lockout TOTP Scan Rule";
     }
     @Override
     public String getDescription() {
@@ -127,25 +128,69 @@ public class CaptchaTotpActiveScanRule extends AbstractHostPlugin implements Com
 
             //Check if lockout or captcha mechanism is detected
             boolean captchaDetected = false;
-            boolean lockoutDetected = false;
+            boolean lockoutDetected = false; 
 
             // Run 10 incorrect authentications and store the responses
             // Check responses for any changes or any common captcha technology 
-            List<HttpMessage> httpResponses = new ArrayList<>();
+            List<List<HttpMessage>> allHttpResponses = new ArrayList<>();
             for (int i = 0; i < 10; i++) {
-            WebSession testSession = testAuthenticatSession(totpStep, "111111", authSteps, browserAuthMethod, sessionManagementMethod, credentials, user);
+                LOGGER.error("Session number: " + i);
+                WebSession testSession = testAuthenticatSession(totpStep, "111111", authSteps, browserAuthMethod, sessionManagementMethod, credentials, user);
                //Add the response to the httpResponses list
+                List <HttpMessage> messages= browserAuthMethod.getRecordedHttpMessages();
 
+               //Check for key captcha words in the responses
+                String[] captchaKeywords = {
+                "captcha", "g-recaptcha", "hcaptcha", "data-sitekey", "verify you are human",
+                "challenge-response", "bot detection", "recaptcha/api.js", "hcaptcha.com/1/api.js",
+                "please solve the captcha", "captcha verification", "input type=\"hidden\" name=\"g-recaptcha-response\""};
+                for (String keyword : captchaKeywords) {
+                    for (HttpMessage response : messages) {
+                        if (response.getResponseBody().toString().toLowerCase().contains(keyword)) {
+                            LOGGER.error("Captcha detected");
+                            captchaDetected = true;
+                            return;
+                        }
+                    }
+                }
+
+                //Check for lockout words in the responses
+                String[] lockoutKeywords = {
+                "lockout", "locked", "too many failed attempts", "too many login attempts","reset your password", "account disabled", "unlock"};
+                for (String keyword : lockoutKeywords) {
+                    for (HttpMessage response : messages) {
+                        if (response.getResponseBody().toString().toLowerCase().contains(keyword)) {
+                            LOGGER.error("lockout detected" + response.getResponseBody().toString() );
+                            LOGGER.error("keyword" + keyword );
+                            lockoutDetected = true;
+                            return;
+                        }
+                        else if (response.getResponseHeader().getStatusCode() == 403){
+                            lockoutDetected = true;
+                            LOGGER.error("lockout detected");
+                            return;
+                        }
+                    }
+                }
+               LOGGER.error("responseLength: " + messages.size());
+               allHttpResponses.add(messages);
             }
-            for (HttpMessage response : httpResponses) {
-                // Check for changes to the response's indicating a potential lockout/captcha mechanism
-            }
-            for (HttpMessage response : httpResponses) {
-                // Check for captcha mechanism
-                // Check for lockout mechanism
-            }
+            LOGGER.error("No lockout or captcha detected yet");
+            //Iterate over the messages from each web session and check for any changes in the response (could indicate lockout/captcha)
+            // for (List<HttpMessage> httpResponsesFromSession : allHttpResponses) {
+            //     for (HttpMessage response : httpResponsesFromSession) {
+            //         // Check for changes to the response's indicating a potential lockout/captcha mechanism
+            //         if (response.getResponseBody().toString().toLowerCase().contains("captcha")) {
+            //             captchaDetected = true;
+            //         }
+            //         if (response.getResponseBody().toString().contains("lockout")) {
+            //             lockoutDetected = true;
+            //         }
+            //     }
+            // }
+            
             if (!captchaDetected && !lockoutDetected) {
-                //LOGGER.error("Authentication successful with blank passcode.Vulernaibility found.");
+                //LOGGER.error("");
                 buildAlert("No Lockout or Captcha Mechanism Detected", 
                     "\"The application does not enforce CAPTCHA or account lockout mechanisms, making it vulnerable to brute-force attacks.",
                     "Implement CAPTCHA verification and/or account lockout policies after multiple failed login attempts.", msg).raise();
