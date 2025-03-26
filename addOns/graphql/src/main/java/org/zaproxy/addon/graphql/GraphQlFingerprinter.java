@@ -641,6 +641,9 @@ public class GraphQlFingerprinter {
     }
 
     public static void addEngineHandler(DiscoveredGraphQlEngineHandler handler) {
+        if (handlers == null) {
+            resetHandlers();
+        }
         handlers.add(handler);
     }
 
