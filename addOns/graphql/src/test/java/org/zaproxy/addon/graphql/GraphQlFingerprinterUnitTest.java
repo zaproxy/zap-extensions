@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -50,7 +51,10 @@ import org.apache.logging.log4j.core.appender.WriterAppender;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -65,6 +69,7 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.StaticContentServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
 
+@TestMethodOrder(OrderAnnotation.class)
 class GraphQlFingerprinterUnitTest extends TestUtils {
 
     private Logger logger;
@@ -383,6 +388,15 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
         fp.fingerprint();
         // Then
         assertNoErrors(extensionAlert, writer.toString());
+    }
+
+    @Test
+    @Order(1)
+    void shouldStaticallyAddHandlerWithoutException() throws Exception {
+        // Given
+        List<DiscoveredGraphQlEngine> handler = new ArrayList<>();
+        // When / Then
+        assertDoesNotThrow(() -> GraphQlFingerprinter.addEngineHandler(handler::add));
     }
 
     private static void assertNoErrors(ExtensionAlert extMock, String loggerOutput) {
