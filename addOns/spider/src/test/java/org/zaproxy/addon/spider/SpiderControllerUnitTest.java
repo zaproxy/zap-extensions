@@ -55,6 +55,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.spider.parser.SpiderResourceFound;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link SpiderController}. */
 class SpiderControllerUnitTest extends TestUtils {
@@ -75,7 +76,9 @@ class SpiderControllerUnitTest extends TestUtils {
 
         spider = mock(Spider.class);
 
-        given(spider.getSpiderParam()).willReturn(new SpiderParam());
+        SpiderParam spiderParam = new SpiderParam();
+        spiderParam.load(new ZapXmlConfiguration());
+        given(spider.getSpiderParam()).willReturn(spiderParam);
         Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         given(spider.getModel()).willReturn(model);
 
