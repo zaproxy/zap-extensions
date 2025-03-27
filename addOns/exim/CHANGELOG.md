@@ -4,8 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.14.0] - 2025-03-25
 ### Changed
 - Caps fix in Import menu (Issue 2000).
+
+### Fixed
+- Sites Tree export now correctly handles node names with newlines and special characters (Issue 8858).
 
 ## [0.13.0] - 2025-01-09
 ### Added
@@ -120,6 +126,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release.
 
+[0.14.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.12.0
 [0.11.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.11.0

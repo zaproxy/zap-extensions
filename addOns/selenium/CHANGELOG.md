@@ -5,8 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [15.36.0] - 2025-03-25
 ### Changed
-- Update Selenium to version 4.28.1.
+- Update Selenium to version 4.30.0.
+
+## [15.35.0] - 2025-03-11
+### Added
+- Add debug log for the Firefox profile creation.
+
+### Changed
+- Create profiles with Firefox headless.
+
+## [15.34.0] - 2025-02-27
+### Changed
+- Update Selenium to version 4.29.0.
 
 ## [15.33.0] - 2025-01-23
 ### Added
@@ -287,6 +301,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.36.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.36.0
+[15.35.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.35.0
+[15.34.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.34.0
 [15.33.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.33.0
 [15.32.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.32.0
 [15.31.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.31.0

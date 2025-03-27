@@ -619,7 +619,8 @@ public class JobUtils {
             // Use existing script if its already loaded
             for (ScriptWrapper sw : extScript.getScripts(type)) {
                 try {
-                    if (Files.isSameFile(sw.getFile().toPath(), file.toPath())
+                    if (sw.getFile() != null
+                            && Files.isSameFile(sw.getFile().toPath(), file.toPath())
                             && sw.getEngineName().equals(engineName)) {
                         wrapper = sw;
                         break;

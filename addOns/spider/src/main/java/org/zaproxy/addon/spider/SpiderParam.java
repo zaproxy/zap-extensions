@@ -355,7 +355,8 @@ public class SpiderParam extends VersionedAbstractParam {
 
         this.acceptCookies = getBoolean(SPIDER_ACCEPT_COOKIES, true);
 
-        this.maxParseSizeBytes = getInt(SPIDER_MAX_PARSE_SIZE_BYTES, DEFAULT_MAX_PARSE_SIZE_BYTES);
+        this.maxParseSizeBytes =
+                Math.max(0, getInt(SPIDER_MAX_PARSE_SIZE_BYTES, DEFAULT_MAX_PARSE_SIZE_BYTES));
 
         loadIrrelevantParameters();
         this.confirmRemoveIrrelevantParameter =
@@ -370,13 +371,13 @@ public class SpiderParam extends VersionedAbstractParam {
                 setIrrelevantParameters(
                         Collections.singletonList(
                                 new IrrelevantParameter(Pattern.compile("utm_.*"))));
-                // Fallthrough
+            // Fallthrough
             case 1:
                 if (getInt(SPIDER_THREAD, 2) == 2) {
                     // the old default
                     this.setThreadCount(Constants.getDefaultThreadCount());
                 }
-                // Fallthrough
+            // Fallthrough
             case 2:
                 getConfig().clearProperty("spider.requestwait");
                 break;
@@ -1021,14 +1022,14 @@ public class SpiderParam extends VersionedAbstractParam {
     /**
      * Sets the maximum size, in bytes, that a response might have to be parsed.
      *
-     * <p>This allows the spider to skip big responses/files.
+     * <p>This allows the spider to skip big responses/files. 0 for no limit.
      *
      * @param maxParseSizeBytes the maximum size, in bytes, that a response might have to be parsed.
      * @see #getMaxParseSizeBytes()
      */
     public void setMaxParseSizeBytes(int maxParseSizeBytes) {
-        this.maxParseSizeBytes = maxParseSizeBytes;
-        getConfig().setProperty(SPIDER_MAX_PARSE_SIZE_BYTES, maxParseSizeBytes);
+        this.maxParseSizeBytes = Math.max(0, maxParseSizeBytes);
+        getConfig().setProperty(SPIDER_MAX_PARSE_SIZE_BYTES, this.maxParseSizeBytes);
     }
 
     /**

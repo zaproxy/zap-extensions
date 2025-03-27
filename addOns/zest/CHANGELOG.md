@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [48.5.0] - 2025-03-25
+### Changed
+- Use TOTP data defined under user credentials during authentication when available.
+- Update Zest library to 0.25.0:
+  - Update Selenium to version 4.30.0.
+- Depend on newer version of Common Library add-on.
+
+## [48.4.0] - 2025-02-27
+### Changed
+- Update Zest library to 0.24.0:
+  - Update Selenium to version 4.29.0.
+  - Remove workaround that was now causing exceptions.
+
 ## [48.3.0] - 2025-02-07
 ### Changed
 - Enable ZAP API in the authentication runner so ZAP browser extension callbacks work.
@@ -375,6 +388,8 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[48.5.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.5.0
+[48.4.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.4.0
 [48.3.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.3.0
 [48.2.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.2.0
 [48.1.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.1.0

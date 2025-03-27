@@ -63,10 +63,15 @@ public class FirefoxProfileManager implements ProfileManager {
                 LOGGER.error(
                         "Do not know how to find Firefox directory for {}",
                         System.getProperty("os.name"));
+                return profileDirectory;
             }
         }
         if (!profileDirectory.toFile().isDirectory()) {
+            LOGGER.debug(
+                    "The profiles path is not a directory or does not exist: {}", profileDirectory);
             profileDirectory = null;
+        } else {
+            LOGGER.debug("The profiles directory was found under: {}", profileDirectory);
         }
         return profileDirectory;
     }
@@ -105,6 +110,7 @@ public class FirefoxProfileManager implements ProfileManager {
                             .map(s -> s.substring(9))
                             .collect(Collectors.toList());
             Collections.sort(profiles);
+            LOGGER.debug("Found profiles: {}", profiles);
         }
         return List.copyOf(profiles);
     }
@@ -119,8 +125,11 @@ public class FirefoxProfileManager implements ProfileManager {
         Optional<String> fullName =
                 Arrays.stream(profileDir.toFile().list()).filter(p.asPredicate()).findFirst();
         if (fullName.isPresent()) {
-            return profileDir.resolve(fullName.get());
+            Path dir = profileDir.resolve(fullName.get());
+            LOGGER.debug("Profile directory found for {} under: {}", profileName, dir);
+            return dir;
         }
+        LOGGER.debug("Profile directory not found for {}", profileName);
         return null;
     }
 
@@ -132,11 +141,14 @@ public class FirefoxProfileManager implements ProfileManager {
         }
         FirefoxOptions firefoxOptions = new FirefoxOptions();
         String path = firefoxOptions.getBinary().getPath();
+        String[] args = {path, "-headless", "-CreateProfile", profileName};
+        LOGGER.debug("Creating profile with: {}", () -> Arrays.toString(args));
 
-        Process ps = runtime.exec(new String[] {path, "-CreateProfile", profileName});
+        Process ps = runtime.exec(args);
 
         try {
-            ps.waitFor();
+            int result = ps.waitFor();
+            LOGGER.debug("Executed Firefox with exit code: {}", result);
         } catch (InterruptedException e) {
             // Ignore
         }

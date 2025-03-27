@@ -27,6 +27,8 @@ import org.zaproxy.zap.extension.selenium.Browser;
 
 public class AuthhelperParam extends AbstractParam {
 
+    public static final int DEFAULT_WAIT = 2;
+    public static final Browser DEFAULT_BROWSER = Browser.FIREFOX;
     private static final String AUTO_KEY = "authhelper";
 
     private static final String LOGIN_URL_KEY = AUTO_KEY + ".loginurl";
@@ -34,13 +36,15 @@ public class AuthhelperParam extends AbstractParam {
     private static final String BROWSER_KEY = AUTO_KEY + ".browser";
     private static final String WAIT_KEY = AUTO_KEY + ".wait";
     private static final String DEMO_MODE_KEY = AUTO_KEY + ".demo";
+    private static final String RECORD_DIAGNOSTICS_KEY = AUTO_KEY + ".diagnostics";
     private static final String STEP_KEY = AUTO_KEY + ".steps.step";
 
     private String loginUrl;
     private String username;
     private String browser;
-    private int wait = 2;
+    private int wait = DEFAULT_WAIT;
     private boolean demoMode;
+    private boolean recordDiagnostics;
     private List<AuthenticationStep> steps = List.of();
 
     public AuthhelperParam() {}
@@ -49,9 +53,10 @@ public class AuthhelperParam extends AbstractParam {
     protected void parse() {
         this.loginUrl = this.getString(LOGIN_URL_KEY, "");
         this.username = this.getString(USERNAME_KEY, null);
-        this.browser = this.getString(BROWSER_KEY, Browser.FIREFOX.getId());
-        this.wait = getInteger(WAIT_KEY, 2);
+        this.browser = this.getString(BROWSER_KEY, DEFAULT_BROWSER.getId());
+        this.wait = getInteger(WAIT_KEY, DEFAULT_WAIT);
         this.demoMode = getBoolean(DEMO_MODE_KEY, false);
+        this.recordDiagnostics = getBoolean(RECORD_DIAGNOSTICS_KEY, false);
 
         steps =
                 getConfig().getList(STEP_KEY).stream()
@@ -104,6 +109,15 @@ public class AuthhelperParam extends AbstractParam {
     public void setWait(int wait) {
         this.wait = wait;
         getConfig().setProperty(WAIT_KEY, wait);
+    }
+
+    public boolean isRecordDiagnostics() {
+        return recordDiagnostics;
+    }
+
+    public void setRecordDiagnostics(boolean recordDiagnostics) {
+        this.recordDiagnostics = recordDiagnostics;
+        getConfig().setProperty(RECORD_DIAGNOSTICS_KEY, recordDiagnostics);
     }
 
     public List<AuthenticationStep> getSteps() {

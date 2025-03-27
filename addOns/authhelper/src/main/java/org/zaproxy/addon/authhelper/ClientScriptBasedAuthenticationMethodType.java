@@ -50,6 +50,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.internal.ClientSideHandler;
+import org.zaproxy.addon.commonlib.internal.TotpSupport;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.zap.authentication.AbstractAuthenticationMethodOptionsPanel;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
@@ -59,6 +60,7 @@ import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethodType;
 import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
+import org.zaproxy.zap.extension.api.ApiDynamicActionImplementor;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestAuthenticationRunner;
@@ -78,6 +80,7 @@ import org.zaproxy.zest.core.v1.ZestStatement;
 public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthenticationMethodType {
 
     public static final int METHOD_IDENTIFIER = 8;
+    private static final String API_METHOD_NAME = "clientScriptBasedAuthentication";
 
     private static final Logger LOGGER =
             LogManager.getLogger(ClientScriptBasedAuthenticationMethodType.class);
@@ -88,9 +91,9 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
     public ClientScriptBasedAuthenticationMethodType() {}
 
-    private HttpMessageHandler getHandler(Context context) {
+    private HttpMessageHandler getHandler(User user) {
         if (handler == null) {
-            handler = new ClientSideHandler(context);
+            handler = new ClientSideHandler(user);
         }
         return handler;
     }
@@ -116,11 +119,21 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
     }
 
     public class ClientScriptBasedAuthenticationMethod extends ScriptBasedAuthenticationMethod {
+
+        private boolean diagnostics;
         private ScriptWrapper script;
 
         private String[] credentialsParamNames;
 
         private Map<String, String> paramValues;
+
+        public void setDiagnostics(boolean diagnostics) {
+            this.diagnostics = diagnostics;
+        }
+
+        public boolean isDiagnostics() {
+            return diagnostics;
+        }
 
         /**
          * Load a script and fills in the method's parameters according to the values specified by
@@ -209,6 +222,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         public AuthenticationMethod duplicate() {
             ClientScriptBasedAuthenticationMethod method =
                     new ClientScriptBasedAuthenticationMethod();
+            method.diagnostics = diagnostics;
             method.script = script;
             method.paramValues = this.paramValues != null ? new HashMap<>(this.paramValues) : null;
             method.credentialsParamNames = this.credentialsParamNames;
@@ -233,7 +247,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
         @Override
         public AuthenticationCredentials createAuthenticationCredentials() {
-            return new GenericAuthenticationCredentials(this.credentialsParamNames);
+            return TotpSupport.createGenericAuthenticationCredentials(credentialsParamNames);
         }
 
         @Override
@@ -323,7 +337,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 }
 
                 if (authScript instanceof ZestAuthenticationRunner zestRunner) {
-                    zestRunner.registerHandler(getHandler(user.getContext()));
+                    zestRunner.registerHandler(getHandler(user));
                     appendCloseStatements(zestRunner.getScript().getZestScript());
                 } else {
                     LOGGER.warn("Expected authScript to be a Zest script");
@@ -333,10 +347,19 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 HttpSender sender = getHttpSender();
                 sender.setUser(user);
 
-                authScript.authenticate(
-                        new AuthenticationHelper(sender, sessionManagementMethod, user),
-                        this.paramValues,
-                        cred);
+                try (AuthenticationDiagnostics diags =
+                        new AuthenticationDiagnostics(
+                                diagnostics,
+                                getName(),
+                                user.getContext().getName(),
+                                user.getName())) {
+                    diags.insertDiagnostics(zestRunner.getScript().getZestScript());
+
+                    authScript.authenticate(
+                            new AuthenticationHelper(sender, sessionManagementMethod, user),
+                            this.paramValues,
+                            cred);
+                }
             } catch (Exception e) {
                 // Catch Exception instead of ScriptException and IOException because script engine
                 // implementations might throw other exceptions on script errors (e.g.
@@ -365,6 +388,12 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 // Update the session as it may have changed
                 WebSession session = sessionManagementMethod.extractWebSession(authMsg);
                 user.setAuthenticatedSession(session);
+
+                AuthUtils.checkLoginLinkVerification(
+                        getHttpSender(),
+                        user,
+                        session,
+                        authMsg.getRequestHeader().getURI().toString());
 
                 if (this.isAuthenticated(authMsg, user, true)) {
                     // Let the user know it worked
@@ -711,5 +740,12 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             sList.add(o.toString());
         }
         return sList;
+    }
+
+    @Override
+    public ApiDynamicActionImplementor getSetMethodForContextApiAction() {
+        ApiDynamicActionImplementor impl = super.getSetMethodForContextApiAction();
+        impl.setName(API_METHOD_NAME);
+        return impl;
     }
 }

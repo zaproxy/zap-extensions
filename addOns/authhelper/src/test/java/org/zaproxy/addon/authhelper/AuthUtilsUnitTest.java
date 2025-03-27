@@ -51,6 +51,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
@@ -77,6 +79,10 @@ class AuthUtilsUnitTest extends TestUtils {
         setUpZap();
 
         mockMessages(new ExtensionAuthhelper());
+    }
+
+    @AfterEach
+    void cleanUp() {
         AuthUtils.clean();
     }
 
@@ -599,7 +605,7 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("Response Body"));
         msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, "Bearer " + token1);
-        msg.getRequestHeader().addHeader(HttpHeader.COOKIE, token2 + "; SameSite=Strict");
+        msg.getRequestHeader().addHeader(HttpHeader.COOKIE, "test=" + token2 + "; SameSite=Strict");
         msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, token3);
         List<SessionToken> tokens = new ArrayList<>();
         tokens.add(new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, token1));
@@ -613,7 +619,7 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(headerTokens.get(0).first, is(equalTo(HttpHeader.AUTHORIZATION)));
         assertThat(headerTokens.get(0).second, is(equalTo("Bearer {%header:authorization%}")));
         assertThat(headerTokens.get(1).first, is(equalTo(HttpHeader.COOKIE)));
-        assertThat(headerTokens.get(1).second, is(equalTo("{%json:set.cookie%}; SameSite=Strict")));
+        assertThat(headerTokens.get(1).second, is(equalTo("test={%json:set.cookie%}")));
     }
 
     @Test
@@ -644,6 +650,45 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(headerTokens.size(), is(equalTo(1)));
         assertThat(headerTokens.get(0).first, is(equalTo(HttpHeader.AUTHORIZATION)));
         assertThat(headerTokens.get(0).second, is(equalTo("Bearer {%header:authorization%}")));
+    }
+
+    @Test
+    void shouldGetHeaderTokensIgnoringIrrelevantCookies() throws Exception {
+        // Given
+        String token1 = "96438673498764398";
+        String token2 = "bndkdfsojhgkdshgk";
+        String token3 = "89jdhf9834herg03s";
+        String token4 = "h6qb79djz02mgy12n";
+
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                "GET https://example.com/?att1=val1&att2=val2 HTTP/1.1\r\nHost: example.com\r\n\r\n"),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
+                        new HttpResponseBody("Response Body"));
+        msg.getRequestHeader()
+                .addHeader(
+                        HttpHeader.COOKIE,
+                        "test1="
+                                + token1
+                                + "; test2="
+                                + token2
+                                + "; test3="
+                                + token3
+                                + "; test4="
+                                + token4);
+        List<SessionToken> tokens = new ArrayList<>();
+        tokens.add(new SessionToken(SessionToken.JSON_SOURCE, "set.cookie", token2));
+        tokens.add(new SessionToken(SessionToken.COOKIE_SOURCE, "test4", token4));
+
+        // When
+        List<Pair<String, String>> headerTokens = AuthUtils.getHeaderTokens(msg, tokens, true);
+
+        // Then
+        assertThat(headerTokens.size(), is(equalTo(1)));
+        assertThat(headerTokens.get(0).first, is(equalTo(HttpHeader.COOKIE)));
+        assertThat(headerTokens.get(0).second, is(equalTo("test2={%json:set.cookie%}")));
     }
 
     @Test
@@ -758,6 +803,115 @@ class AuthUtilsUnitTest extends TestUtils {
         // Then
         assertThat(st1, is(notNullValue()));
         assertThat(st2, is(nullValue()));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "text/html; charset=utf-8, true",
+        "multipart/form-data; boundary=ExampleBoundaryString, true",
+        "application/x-www-form-urlencoded, true",
+        "application/json, true",
+        "application/xhtml+xml, true",
+        "application/xml, true",
+        "text/xml, true",
+        "application/x-font-ttf, false",
+        "text/css, false",
+        "text/javascript; charset=utf-8, false",
+        "image/gif, false",
+        "image/svg+xml, false",
+    })
+    void shouldReportIfRelevantToAuth(String contentType, String result) throws Exception {
+        // Given
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                HttpRequestHeader.GET,
+                                new URI("https://www.example.com", true),
+                                HttpHeader.HTTP11),
+                        new HttpRequestBody(),
+                        new HttpResponseHeader(),
+                        new HttpResponseBody());
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, contentType);
+
+        // When
+        boolean res = AuthUtils.isRelevantToAuth(msg);
+
+        // Then
+        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "https://www.example.com, true",
+        "https://www.example.com/page.html, true",
+        "https://www.example.com/page.html?type=x.css, true",
+        "https://www.example.com/page.css, false",
+        "https://www.example.com/page.png, false",
+        "https://www.example.com/page.jpg, false",
+        "https://www.example.com/page.jpeg?aaa=bbb, false",
+    })
+    void shouldReportRelevantRequestHeaderUrlToAuthDiags(String url, String result)
+            throws Exception {
+        // Given
+        HttpRequestHeader header = new HttpRequestHeader();
+        header.setURI(new URI(url, true));
+        HttpMessage msg = new HttpMessage(header, new HttpRequestBody());
+
+        // When
+        boolean res = AuthUtils.isRelevantToAuthDiags(msg);
+
+        // Then
+        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "https://www.example.com, true",
+        "https://www.clients2.google.com, false",
+        "https://www.detectportal.firefox.com, false",
+        "https://google-analytics.com, false",
+        "https://www.mozilla.com, false",
+        "https://www.safebrowsing-cache.co.uk, false",
+    })
+    void shouldReportRelevantHostsToAuthDiags(String url, String result) throws Exception {
+        // Given
+        HttpRequestHeader header = new HttpRequestHeader();
+        header.setURI(new URI(url, true));
+        HttpMessage msg = new HttpMessage(header, new HttpRequestBody());
+
+        // When
+        boolean res = AuthUtils.isRelevantToAuthDiags(msg);
+
+        // Then
+        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "text/html, true",
+        "app/random, true",
+        "app/css, false",
+        "app/Image, false",
+        "app/JavaScript, false",
+    })
+    void shouldReportRelevantResponseHeaderTypeToAuthDiags(String type, String result)
+            throws Exception {
+        // Given
+        HttpResponseHeader header = new HttpResponseHeader();
+        header.setHeader(HttpHeader.CONTENT_TYPE, type);
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(),
+                        new HttpRequestBody(),
+                        header,
+                        new HttpResponseBody());
+        msg.getRequestHeader().setURI(new URI("https://www.example.com", true));
+
+        // When
+        boolean res = AuthUtils.isRelevantToAuthDiags(msg);
+
+        // Then
+        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
     }
 
     static class BrowserTest extends TestUtils {

@@ -4,8 +4,28 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.49.0] - 2025-03-25
+### Added
+- Document how the TOTP data is defined for a user.
+- Use TOTP data defined under user credentials when creating or setting up a context.
+
+### Changed
+- Progress and log messages with regard to setting scan rule threshold or strength no longer include commas in scan rule ID numbers.
+- Depend on newer version of Common Library add-on.
+
+### Fixed
+- Address exception when loading Client Script authentication method.
+- Address exception that would happen when running a plan while having unsaved scripts.
+
+## [0.48.0] - 2025-03-04
 ### Changed
 - Allow to use variables for the TOTP data.
+- Allow to enable diagnostics for Client Script and Browser Based Authentication methods.
+
+### Fixed
+- Ensure that the Exit Status job accounts for False Positive alerts (Issue 8875).
 
 ## [0.47.0] - 2025-02-12
 ### Added
@@ -474,6 +494,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.49.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.49.0
+[0.48.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.48.0
 [0.47.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.47.0
 [0.46.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.46.0
 [0.45.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.45.0

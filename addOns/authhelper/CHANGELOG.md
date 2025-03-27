@@ -4,11 +4,55 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.25.0] - 2025-03-25
+### Changed
+- Use TOTP data defined under user credentials for Client Script and Browser Based Authentication, when available.
+- Maintenance changes.
+- Depend on newer version of Common Library add-on.
+
+### Added
+- The Authentication Report now includes information around authentication failures (if applicable).
+
+## [0.24.0] - 2025-03-21
+### Added
+- Document custom steps for Browser Based Authentication.
+- Document Authentication Report diagnostics data.
+- Sanitized post data to auth diagnostics.
+- Help content for configuration and use of Header Based Session Management via ZAP API (these additions will only work properly when used with ZAP 2.16.1 or later).
+
+### Changed
+- Add any session related cookies which are not being tracked.
+- Ignore non proxied requests in auth tester diagnostics.
+- Replace credentials with special tokens.
+- Rewrite of the auth request detection code to handle more cases.
+- Add domain to context if creds posted to it and using using auto-detect for session management.
+- Skip disabled authentication steps when creating the context from the Authentication Tester dialog.
+
+### Fixed
+- Allow the Client Script Authentication, and Browser Based Authentication method types as well as Header Based Session Management to be configured via the API (these fixes will only work properly when used with ZAP 2.16.1 or later).
+- Bug where some of the data structures were not being reset when the session changed.
+- Address concurrent modification exceptions.
+
+## [0.23.0] - 2025-03-04
+### Added
+- If authentication fails then try to find a likely looking login link.
+- Persist diagnostics to the session and include it in the Authentication Report (JSON) for Client Script and Browser Based Authentication methods.
+- A reset button.
+- Checks to try to find a verification URL with a login link, if nothing better has been found.
+
 ### Changed
 - Prefer form related fields in Browser Based Authentication for the selection of username field.
+- Tweaked the auth report summary keys.
+- Only check URLs and methods once for being good verification requests.
+- Added API support to the browser based auth method proxy.
 
 ### Fixed
 - Correctly read the API parameters when setting up Browser Based Authentication.
+- Tweaked auth report output to ensure that values are properly escaped.
+- Report to use better stats with browser based auth.
+- Session handling to cope with X-CSRF-Token headers.
 
 ## [0.22.0] - 2025-02-12
 ### Added
@@ -158,6 +202,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.25.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.25.0
+[0.24.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.24.0
+[0.23.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.23.0
 [0.22.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.20.0

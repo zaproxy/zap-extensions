@@ -23,11 +23,13 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.swing.AbstractButton;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -45,6 +47,7 @@ import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.OutputPanel;
 import org.parosproxy.paros.view.View;
+import org.parosproxy.paros.view.WorkbenchPanel;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
@@ -84,18 +87,20 @@ public class TabbedOutputPanel extends OutputPanel {
             getImageIcon("/org/zaproxy/addon/commonlib/resources/ui-scroll-lock-pane.png");
     private static final ImageIcon GREEN_BADGE_CORNER_ICON =
             getImageIcon("/org/zaproxy/addon/commonlib/resources/green-badge-corner.png");
+    private static final OverlayIcon UNREAD_DOC_ICON = new OverlayIcon(DOC_ICON);
+
+    static {
+        UNREAD_DOC_ICON.add(GREEN_BADGE_CORNER_ICON);
+    }
 
     private final TabbedPanel2 tabbedPanel;
 
-    private final Map<String, ZapTextArea> txtOutputs;
-    private final Map<String, OutputSource> registeredOutputSources;
-    private final Map<String, ChangeListener> outputSourceChangeListeners;
+    private final Map<String, ZapTextArea> txtOutputs = new HashMap<>();
+    private final Map<String, OutputSource> registeredOutputSources = new HashMap<>();
+    private final Map<String, ChangeListener> outputSourceChangeListeners = new HashMap<>();
+    private final AtomicInteger unreadTabsCounter = new AtomicInteger(0);
 
     public TabbedOutputPanel() {
-        txtOutputs = new HashMap<>();
-        registeredOutputSources = new HashMap<>();
-        outputSourceChangeListeners = new HashMap<>();
-
         setLayout(new BorderLayout());
         setName(Constant.messages.getString("commonlib.output.panel.title"));
         setIcon(DOC_ICON);
@@ -139,7 +144,7 @@ public class TabbedOutputPanel extends OutputPanel {
         }
     }
 
-    private void addNewOutputSource(String name) {
+    private synchronized void addNewOutputSource(String name) {
         if (txtOutputs.containsKey(name)) {
             return;
         }
@@ -148,35 +153,48 @@ public class TabbedOutputPanel extends OutputPanel {
                         ? registeredOutputSources.get(name).getAttributes()
                         : Map.of();
 
-        var outputPanel = new AbstractPanel();
-        outputPanel.setName(name);
-        outputPanel.setLayout(new BorderLayout());
+        var outputTab = new AbstractPanel();
+        outputTab.setName(name);
+        outputTab.setLayout(new BorderLayout());
         Icon icon =
                 attributes.containsKey(ATTRIBUTE_ICON)
                                 && attributes.get(ATTRIBUTE_ICON) instanceof Icon
                         ? (Icon) attributes.get(ATTRIBUTE_ICON)
                         : DOC_ICON;
-        outputPanel.setIcon(icon);
+        outputTab.setIcon(icon);
 
-        ChangeListener changeListener = e -> markTabRead(outputPanel, icon);
+        ChangeListener changeListener =
+                e -> {
+                    if (outputTab.isShowing()
+                            && outputTab.equals(tabbedPanel.getSelectedComponent())) {
+                        markTabRead(outputTab, icon);
+                    }
+                };
         tabbedPanel.addChangeListener(changeListener);
         outputSourceChangeListeners.put(name, changeListener);
 
-        ZapTextArea txtOutput = buildOutputTextArea(outputPanel, icon);
+        ZapTextArea txtOutput = buildOutputTextArea(outputTab, icon);
         JToolBar toolBar = buildToolbar(txtOutput, attributes);
-        outputPanel.add(toolBar, BorderLayout.PAGE_START);
+        toolBar.addMouseListener(
+                new java.awt.event.MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        markTabRead(outputTab, icon);
+                    }
+                });
+        outputTab.add(toolBar, BorderLayout.PAGE_START);
         var jScrollPane = new JScrollPane();
         jScrollPane.setViewportView(txtOutput);
         jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        outputPanel.add(jScrollPane, BorderLayout.CENTER);
+        outputTab.add(jScrollPane, BorderLayout.CENTER);
 
         boolean hideable = !DEFAULT_OUTPUT_SOURCE_NAME.equals(name);
         boolean visible = tabbedPanel.getTabCount() < 8;
-        tabbedPanel.addTab(name, outputPanel.getIcon(), outputPanel, hideable, visible, -1);
+        tabbedPanel.addTab(name, outputTab.getIcon(), outputTab, hideable, visible, -1);
         txtOutputs.put(name, txtOutput);
     }
 
-    private ZapTextArea buildOutputTextArea(AbstractPanel outputPanel, Icon icon) {
+    private ZapTextArea buildOutputTextArea(AbstractPanel outputTab, Icon icon) {
         var txtOutput = new ZapTextArea();
         txtOutput.setEditable(false);
         txtOutput.setLineWrap(true);
@@ -195,7 +213,7 @@ public class TabbedOutputPanel extends OutputPanel {
 
                     @Override
                     public void mouseEntered(MouseEvent e) {
-                        markTabRead(outputPanel, icon);
+                        markTabRead(outputTab, icon);
                     }
 
                     private void showPopupMenuIfTriggered(java.awt.event.MouseEvent e) {
@@ -219,8 +237,12 @@ public class TabbedOutputPanel extends OutputPanel {
                             new DocumentListener() {
                                 @Override
                                 public void insertUpdate(DocumentEvent e) {
-                                    if (outputPanel.getIcon() != overlayIcon) {
-                                        setTabIcon(outputPanel, overlayIcon);
+                                    if (outputTab.getIcon() != overlayIcon) {
+                                        setTabIcon(outputTab, overlayIcon);
+                                        unreadTabsCounter.getAndIncrement();
+                                        if (getIcon() != UNREAD_DOC_ICON) {
+                                            setOutputPanelIcon(UNREAD_DOC_ICON);
+                                        }
                                     }
                                 }
 
@@ -235,17 +257,41 @@ public class TabbedOutputPanel extends OutputPanel {
         return txtOutput;
     }
 
-    private void markTabRead(AbstractPanel outputPanel, Icon originalIcon) {
-        if (outputPanel.isShowing() && outputPanel.equals(tabbedPanel.getSelectedComponent())) {
-            setTabIcon(outputPanel, originalIcon);
+    private void markTabRead(AbstractPanel outputTab, Icon originalIcon) {
+        if (outputTab.getIcon() != originalIcon) {
+            setTabIcon(outputTab, originalIcon);
+            if (unreadTabsCounter.decrementAndGet() == 0) {
+                setOutputPanelIcon(DOC_ICON);
+            }
         }
     }
 
-    private void setTabIcon(AbstractPanel outputPanel, Icon icon) {
-        outputPanel.setIcon(icon);
-        int index = tabbedPanel.indexOfComponent(outputPanel);
+    private void setTabIcon(AbstractPanel outputTab, Icon icon) {
+        outputTab.setIcon(icon);
+        int index = tabbedPanel.indexOfComponent(outputTab);
         if (index != -1) {
             tabbedPanel.setIconAt(index, icon);
+        }
+    }
+
+    private void setOutputPanelIcon(Icon icon) {
+        setIcon(icon);
+        TabbedPanel2 containingPanel;
+        WorkbenchPanel workbench = View.getSingleton().getWorkbench();
+        if (workbench.getWorkbenchLayout() == WorkbenchPanel.Layout.FULL) {
+            try {
+                Method method = WorkbenchPanel.class.getDeclaredMethod("getTabbedFull");
+                method.setAccessible(true);
+                containingPanel = (TabbedPanel2) method.invoke(workbench);
+            } catch (Exception e) {
+                return;
+            }
+        } else {
+            containingPanel = workbench.getTabbedStatus();
+        }
+        int outputPanelIndex = containingPanel.indexOfComponent(this);
+        if (outputPanelIndex != -1) {
+            containingPanel.setIconAt(outputPanelIndex, icon);
         }
     }
 
@@ -338,6 +384,8 @@ public class TabbedOutputPanel extends OutputPanel {
         tabbedPanel.removeAll();
         txtOutputs.clear();
         addNewOutputSource(DEFAULT_OUTPUT_SOURCE_NAME);
+        unreadTabsCounter.set(0);
+        setOutputPanelIcon(DOC_ICON);
     }
 
     @Override
@@ -345,6 +393,23 @@ public class TabbedOutputPanel extends OutputPanel {
         if (txtOutputs.containsKey(sourceName)) {
             txtOutputs.get(sourceName).setText("");
         }
+    }
+
+    /**
+     * Sets the selected output tab, creating it if it doesn't exist.
+     *
+     * @param sourceName the name of the corresponding output source
+     */
+    public void setSelectedOutputTab(String sourceName) {
+        addNewOutputSource(sourceName);
+        tabbedPanel.getTabList().stream()
+                .filter(t -> t.getName().equals(sourceName))
+                .findFirst()
+                .ifPresent(
+                        component -> {
+                            tabbedPanel.setVisible(component, true);
+                            tabbedPanel.setSelectedComponent(component);
+                        });
     }
 
     private void doAppend(ZapTextArea txtOutput, String message) {

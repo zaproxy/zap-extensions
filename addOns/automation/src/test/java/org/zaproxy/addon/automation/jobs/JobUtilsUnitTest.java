@@ -325,6 +325,29 @@ class JobUtilsUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldGetExistingScriptWrapperSkippingUnsavedScripts() {
+        // Given
+        ExtensionScript extensionScript = mockExtensionLoader(mock(ExtensionScript.class));
+        File file = new File("/script.ext");
+        String type = "type";
+        String engineName = "engine";
+        AutomationProgress progress = mock(AutomationProgress.class);
+        ScriptWrapper unsavedScriptWrapper = mock(ScriptWrapper.class);
+        given(unsavedScriptWrapper.getFile()).willReturn(null);
+        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
+        given(scriptWrapper.getFile()).willReturn(file);
+        given(scriptWrapper.getEngineName()).willReturn(engineName);
+        given(extensionScript.getScripts(type))
+                .willReturn(List.of(unsavedScriptWrapper, scriptWrapper));
+        // When
+        ScriptWrapper obtainedScriptWrapper =
+                JobUtils.getScriptWrapper(file, type, engineName, progress);
+        // Then
+        assertThat(obtainedScriptWrapper, is(sameInstance(scriptWrapper)));
+        verifyNoInteractions(progress);
+    }
+
+    @Test
     void shouldAddScriptWrapperIfNotPresent() throws Exception {
         // Given
         ExtensionScript extensionScript = mockExtensionLoader(mock(ExtensionScript.class));

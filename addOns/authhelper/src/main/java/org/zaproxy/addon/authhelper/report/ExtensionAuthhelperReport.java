@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -34,6 +33,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.zaproxy.addon.authhelper.AuthUtils;
 import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType;
+import org.zaproxy.addon.authhelper.report.AuthReportData.FailureDetail;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
@@ -106,7 +106,7 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                 pass,
                 "auth.summary." + key,
                 Constant.messages.getString(
-                        "authhelper.authreport." + key + (pass ? ".pass" : ".fail")));
+                        "authhelper.authreport.summary." + key + (pass ? ".pass" : ".fail")));
     }
 
     private static Context getFirstAuthConfiguredContext(ReportData reportData) {
@@ -123,7 +123,7 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
         return SessionStructure.getHostName(new URI(regexStr.replace(".*", ""), false));
     }
 
-    private static class AuthReportDataHandler implements ExtensionReports.ReportDataHandler {
+    protected static class AuthReportDataHandler implements ExtensionReports.ReportDataHandler {
 
         @Override
         public void handle(ReportData reportData) {
@@ -140,6 +140,15 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
             }
             ard.setValidReport(true);
 
+            boolean sessionPassed =
+                    !(authContext.getSessionManagementMethod()
+                            instanceof
+                            AutoDetectSessionManagementMethodType
+                                    .AutoDetectSessionManagementMethod);
+            boolean verificationPassed =
+                    !(AuthCheckingStrategy.AUTO_DETECT.equals(
+                            authContext.getAuthenticationMethod().getAuthCheckingStrategy()));
+
             List<String> incRegexes = authContext.getIncludeInContextRegexs();
 
             InMemoryStats inMemoryStats =
@@ -154,22 +163,57 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                     hostname = getHostName(incRegexes.get(0));
                     ard.setSite(hostname);
 
-                    addSummaryItem(
-                            ard,
-                            "summary.auth",
-                            inMemoryStats.getStat(hostname, AuthenticationHelper.AUTH_SUCCESS_STATS)
-                                    != null);
-
                     if (authContext.getAuthenticationMethod()
                             instanceof
                             BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod) {
+
                         Long passedCount =
                                 inMemoryStats.getStat(
                                         hostname, AuthUtils.AUTH_BROWSER_PASSED_STATS);
 
+                        /*
+                         * The AUTH_SUCCESS_STATS / AUTH_FAILURE_STATS stats can get raised on another domain.
+                         * Any successes are good, but just failures are bad.
+                         */
+                        boolean hasSuccessStats =
+                                inMemoryStats.getStat(
+                                                hostname, AuthenticationHelper.AUTH_SUCCESS_STATS)
+                                        != null;
+                        boolean hasFailureStats =
+                                inMemoryStats.getStat(
+                                                hostname, AuthenticationHelper.AUTH_FAILURE_STATS)
+                                        != null;
+                        boolean overallStatus =
+                                sessionPassed
+                                        && verificationPassed
+                                        && passedCount != null
+                                        && (hasSuccessStats || !hasFailureStats);
+                        addSummaryItem(ard, "auth", overallStatus);
+                        if (!overallStatus) {
+                            if (!sessionPassed) {
+                                ard.addFailureDetail(FailureDetail.SESSION_MGMT);
+                            }
+                            if (!verificationPassed) {
+                                ard.addFailureDetail(FailureDetail.VERIF_IDENT);
+                            }
+                            if (passedCount == null) {
+                                ard.addFailureDetail(FailureDetail.PASS_COUNT);
+                            }
+                            if (!hasSuccessStats) {
+                                ard.addFailureDetail(FailureDetail.NO_SUCCESSFUL_LOGINS);
+                            }
+                            if (hasFailureStats) {
+                                ard.addFailureDetail(FailureDetail.LOGIN_FAILURES);
+                            }
+                            // We got this far so did fail overall
+                            if (!ard.hasFailureDetails()) {
+                                ard.addFailureDetail(FailureDetail.OVERALL);
+                            }
+                        }
+
                         if (passedCount != null) {
-                            addSummaryItem(ard, "summary.username", true);
-                            addSummaryItem(ard, "summary.password", true);
+                            addSummaryItem(ard, "username", true);
+                            addSummaryItem(ard, "password", true);
                         } else {
                             Long noUserCount =
                                     inMemoryStats.getStat(
@@ -178,9 +222,19 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                                     inMemoryStats.getStat(
                                             hostname, AuthUtils.AUTH_NO_PASSWORD_FIELD_STATS);
 
-                            addSummaryItem(ard, "summary.username", noUserCount != null);
-                            addSummaryItem(ard, "summary.password", noPwdCount != null);
+                            addSummaryItem(ard, "username", noUserCount != null);
+                            addSummaryItem(ard, "password", noPwdCount != null);
                         }
+                    } else {
+                        addSummaryItem(
+                                ard,
+                                "auth",
+                                sessionPassed
+                                        && verificationPassed
+                                        && inMemoryStats.getStat(
+                                                        hostname,
+                                                        AuthenticationHelper.AUTH_SUCCESS_STATS)
+                                                != null);
                     }
 
                     // Add all of the stats
@@ -194,32 +248,18 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                 }
 
             } else {
-                addSummaryItem(ard, "summary.stats", false);
+                addSummaryItem(ard, "stats", false);
             }
 
-            addSummaryItem(
-                    ard,
-                    "summary.session",
-                    !(authContext.getSessionManagementMethod()
-                            instanceof
-                            AutoDetectSessionManagementMethodType
-                                    .AutoDetectSessionManagementMethod));
-            addSummaryItem(
-                    ard,
-                    "summary.verif",
-                    !(AuthCheckingStrategy.AUTO_DETECT.equals(
-                            authContext.getAuthenticationMethod().getAuthCheckingStrategy())));
+            addSummaryItem(ard, "session", sessionPassed);
+            addSummaryItem(ard, "verif", verificationPassed);
 
             AutomationProgress progress = new AutomationProgress();
             AutomationEnvironment env = new AutomationEnvironment(progress);
             env.addContext(authContext);
             AutomationPlan plan = new AutomationPlan(env, new ArrayList<>(), progress);
             try {
-                if (reportData.getTemplateName().endsWith("-json")) {
-                    ard.setAfEnv(StringEscapeUtils.escapeJson(plan.toYaml()));
-                } else {
-                    ard.setAfEnv(plan.toYaml());
-                }
+                ard.setAfEnv(plan.toYaml());
             } catch (IOException e) {
                 LOGGER.error(e.getMessage(), e);
             }

@@ -56,12 +56,13 @@ public class GraphQlFingerprinter {
     private String matchedString;
 
     public GraphQlFingerprinter(URI endpointUrl) {
+        resetHandlers();
         requestor = new Requestor(endpointUrl, HttpSender.MANUAL_REQUEST_INITIATOR);
         queryCache = new HashMap<>();
     }
 
     public void fingerprint() {
-        Map<String, BooleanSupplier> fingerprinters = new LinkedHashMap<>(29);
+        Map<String, BooleanSupplier> fingerprinters = new LinkedHashMap<>();
         // TODO: Check whether the order of the fingerprint checks matters.
         fingerprinters.put("lighthouse", this::checkLighthouseEngine);
         fingerprinters.put("caliban", this::checkCalibanEngine);
@@ -641,13 +642,13 @@ public class GraphQlFingerprinter {
 
     public static void addEngineHandler(DiscoveredGraphQlEngineHandler handler) {
         if (handlers == null) {
-            handlers = new ArrayList<>();
+            resetHandlers();
         }
         handlers.add(handler);
     }
 
     public static void resetHandlers() {
-        handlers = null;
+        handlers = new ArrayList<>(2);
     }
 
     public static class DiscoveredGraphQlEngine {

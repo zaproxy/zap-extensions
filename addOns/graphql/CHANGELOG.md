@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## Unreleased
 
 
+## [0.28.0] - 2025-03-26
+### Fixed
+- A Null Pointer Exception which occurred when installing the add-on when Tech Detection (Wappalyzer) add-on was already installed (Issue 8902).
+
+## [0.27.0] - 2025-03-21
+### Fixed
+- A Null Pointer Exception which occurred when Fingerprinting and the Tech Detection (Wappalyzer) add-on wasn't available (Issue 8890).
+
 ## [0.26.0] - 2025-01-09
 ### Changed
 - Update minimum ZAP version to 2.16.0.
@@ -212,6 +220,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
   - Import a GraphQL Schema
   - Generate Queries from an imported Schema
 
+[0.28.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.28.0
+[0.27.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.27.0
 [0.26.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.26.0
 [0.25.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.25.0
 [0.24.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.24.0

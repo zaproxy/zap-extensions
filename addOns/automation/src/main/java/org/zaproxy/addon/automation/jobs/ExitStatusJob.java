@@ -81,6 +81,9 @@ public class ExitStatusJob extends AutomationJob {
         try {
             for (JobResultData data : progress.getAllJobResultData()) {
                 for (Alert alert : data.getAllAlertData()) {
+                    if (alert.getConfidence() == Alert.CONFIDENCE_FALSE_POSITIVE) {
+                        continue;
+                    }
                     if (errorRisk != null && errorRisk <= alert.getRisk()) {
                         progress.error(
                                 Constant.messages.getString(

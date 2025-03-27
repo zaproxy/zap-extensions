@@ -195,7 +195,7 @@ public class ActiveScanPolicyJob extends AutomationJob {
                         Constant.messages.getString(
                                 "automation.info.ascan.rule.setstrength",
                                 this.getName(),
-                                rule.getId(),
+                                String.valueOf(rule.getId()),
                                 pluginSt.name()));
             }
             AlertThreshold pluginTh =
@@ -207,7 +207,7 @@ public class ActiveScanPolicyJob extends AutomationJob {
                         Constant.messages.getString(
                                 "automation.info.ascan.rule.setthreshold",
                                 this.getName(),
-                                rule.getId(),
+                                String.valueOf(rule.getId()),
                                 pluginTh.name()));
             }
         }

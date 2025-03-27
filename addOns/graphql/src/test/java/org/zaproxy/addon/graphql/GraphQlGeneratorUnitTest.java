@@ -42,6 +42,11 @@ class GraphQlGeneratorUnitTest extends TestUtils {
         valueProvider = mock(ValueProvider.class);
     }
 
+    @Override
+    protected void setUpMessages() {
+        mockMessages(new ExtensionGraphQl());
+    }
+
     private GraphQlGenerator createGraphQlGenerator(String sdl) {
         return new GraphQlGenerator(valueProvider, sdl, null, param);
     }

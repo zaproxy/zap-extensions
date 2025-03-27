@@ -233,7 +233,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
             try {
                 // Send the request and retrieve the response
                 // Be careful: we haven't to follow redirect
-                sendAndReceive(testMsg, false, false);
+                sendAndReceive(testMsg, false);
 
                 String payloadScheme =
                         StringUtils.containsIgnoreCase(payload, HttpHeader.HTTPS)

@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [45] - 2025-03-24
+### Fixed
+- Correct definition detection while spidering.
+
+### Changed
+- Clarified an error message which occurs in automation if there's a problem importing.
+
 ## [44] - 2025-01-09
 ### Changed
 - Update minimum ZAP version to 2.16.0.
@@ -334,6 +341,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[45]: https://github.com/zaproxy/zap-extensions/releases/openapi-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/openapi-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/openapi-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/openapi-v42

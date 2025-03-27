@@ -24,13 +24,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeSet;
+import lombok.Getter;
+import lombok.Setter;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
+import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.network.HttpSenderListener;
@@ -46,6 +51,9 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
     private Map<String, String> tokenMap = new HashMap<>();
     private int tokenId;
 
+    @Getter @Setter private String username;
+    @Getter @Setter private String password;
+
     @Override
     public int getListenerOrder() {
         return 970;
@@ -59,7 +67,10 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
     @Override
     public void onHttpResponseReceive(HttpMessage msg, int initiator, HttpSender sender) {
 
-        if (!enabled || collector == null || !isRelevant(msg)) {
+        if (!enabled
+                || collector == null
+                || !AuthUtils.isRelevantToAuthDiags(msg)
+                || initiator != HttpSender.PROXY_INITIATOR) {
             return;
         }
 
@@ -87,7 +98,7 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
             appendExactHeaders(msg.getRequestHeader(), HttpHeader.CONTENT_TYPE, sb);
             appendSanitisedHeaders(msg.getRequestHeader(), HttpHeader.AUTHORIZATION, sb);
             appendCookies(msg.getRequestHeader().getHttpCookies(), HttpHeader.COOKIE, sb);
-            appendStructuredData(msg.getRequestHeader(), msg.getRequestBody(), sb);
+            appendPostData(msg, true, sb);
 
             // The response
             sb.append("<<<\n");
@@ -101,7 +112,7 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
             appendExactHeaders(msg.getResponseHeader(), HttpHeader.CONTENT_TYPE, sb);
             appendSanitisedHeaders(msg.getResponseHeader(), HttpHeader.AUTHORIZATION, sb);
             appendCookies(msg.getResponseHeader().getHttpCookies(null), HttpHeader.SET_COOKIE, sb);
-            appendStructuredData(msg.getResponseHeader(), msg.getResponseBody(), sb);
+            appendPostData(msg, false, sb);
             logString(sb.toString());
         } catch (URIException e) {
             logString(e.getMessage());
@@ -117,11 +128,8 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
 
     protected void appendCookies(List<HttpCookie> cookies, String header, StringBuilder sb) {
         for (HttpCookie cookie : cookies) {
+            cookie.setValue(getSanitizedToken(cookie.getValue()));
             String cookieStr = cookie.toString();
-            cookieStr =
-                    cookieStr.replace(
-                            "\"" + cookie.getValue() + "\"",
-                            "\"" + getSanitizedToken(cookie.getValue()) + "\"");
             String domain = cookie.getDomain();
             if (StringUtils.isNotBlank(domain)) {
                 cookieStr =
@@ -135,7 +143,10 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
         }
     }
 
-    protected void appendStructuredData(HttpHeader header, HttpBody body, StringBuilder sb) {
+    protected void appendPostData(HttpMessage msg, boolean isReq, StringBuilder sb) {
+        HttpHeader header = isReq ? msg.getRequestHeader() : msg.getResponseHeader();
+        HttpBody body = isReq ? msg.getRequestBody() : msg.getResponseBody();
+
         if (header.hasContentType("json")) {
             try {
                 JSONObject jsonObj = JSONObject.fromObject(body.toString());
@@ -151,6 +162,18 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
                 } catch (Exception e2) {
                     sb.append("\n<<Failed to parse JSON>>\n");
                 }
+            }
+        } else if (isReq && HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod())) {
+            TreeSet<HtmlParameter> params = msg.getFormParams();
+            if (!params.isEmpty()) {
+                sb.append('\n');
+                params.forEach(
+                        p ->
+                                sb.append(p.getName())
+                                        .append('=')
+                                        .append(getSanitizedToken(p.getValue()))
+                                        .append('&'));
+                sb.append('\n');
             }
         }
     }
@@ -198,7 +221,13 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
     }
 
     protected synchronized String getSanitizedToken(String token) {
-        return tokenMap.computeIfAbsent(token, s -> "token" + tokenId++);
+        if (token.equals(username)) {
+            return "FakeUserName@example.com";
+        }
+        if (token.equals(password)) {
+            return "F4keP4ssw0rd";
+        }
+        return tokenMap.computeIfAbsent(token, s -> "sanitizedtoken" + tokenId++);
     }
 
     protected JSONObject sanitiseJson(JSONObject jsonObject) {
@@ -232,29 +261,12 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
         }
     }
 
-    protected boolean isRelevant(HttpMessage msg) {
-        if (msg.getRequestHeader().isCss() || msg.getRequestHeader().isImage()) {
-            return false;
-        }
-        if (msg.getResponseHeader().isCss()
-                || msg.getResponseHeader().isImage()
-                || msg.getResponseHeader().isJavaScript()) {
-            return false;
-        }
-        String url = msg.getRequestHeader().getURI().toString().toLowerCase();
-        // Strip out a few requests that can be expected to be unrelated
-        if (url.contains("clients2.google")
-                || url.contains("detectportal.firefox")
-                || url.contains("google-analytics")
-                || url.contains("mozilla")
-                || url.contains("safebrowsing-cache")) {
-            return false;
-        }
-        return true;
-    }
-
     public void setEnabled(boolean enable) {
         this.enabled = enable;
+        if (!enabled) {
+            this.username = null;
+            this.password = null;
+        }
     }
 
     public void reset() {

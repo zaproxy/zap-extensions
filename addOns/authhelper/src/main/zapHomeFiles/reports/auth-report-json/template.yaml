@@ -6,3 +6,9 @@ sections:
  - summary
  - afenv
  - statistics
+ - diagnostics
+ - diagnosticsmessages
+ - diagnosticsscreenshots
+ - diagnosticswebelements
+ - diagnosticslocalstorage
+ - diagnosticssessionstorage

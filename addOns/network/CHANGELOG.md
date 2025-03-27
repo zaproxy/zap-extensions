@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [0.21.0] - 2025-03-04
 ### Fixed
 - Ensure message properties are kept mutable even in case of connection close.
 
@@ -222,6 +225,7 @@ would not be cleared when reusing the same message.
   - Options panel to manage the root CA certificate and issued certificates.
   - API endpoints to configure the validity of the root CA certificate and issued certificates ([Issue 4673](https://github.com/zaproxy/zaproxy/issues/4673)).
 
+[0.21.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.19.0
 [0.18.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.18.0

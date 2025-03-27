@@ -323,7 +323,8 @@ class SarifResultUnitTest {
         Alert alert = mock(Alert.class);
         when(alert.getPluginId()).thenReturn(creationOrderData.pluginId);
         when(alert.getRisk()).thenReturn(creationOrderData.level.getAlertRisk());
-        HttpMessage message = new HttpMessage(); // mock(HttpMessage.class);
+        when(alert.getConfidence()).thenReturn(Alert.CONFIDENCE_MEDIUM);
+        HttpMessage message = new HttpMessage();
         when(alert.getMessage()).thenReturn(message);
         return alert;
     }

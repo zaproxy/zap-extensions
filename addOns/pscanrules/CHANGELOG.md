@@ -4,8 +4,20 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [64] - 2025-03-25
+### Changed
+- The CSP scan rule now treats Wildcard directives separately from those which are undefined but have no fallback (Issue 8700).
+
+## [63] - 2025-03-04
 ### Fixed
+- Refactored Loosely Scoped Cookie to comply with the latest RFC standards and streamline the loosely scoped cookie check (Issue 8863).
 - The Absence of Anti-CSRF Tokens scan rule now only considers forms with GET method at Low Threshold. (Forms submitted via GET, not forms delivered via GET.)
+- The Information Disclosure - Suspicious Comments scan rule:
+    - Should now be less false positive prone on JavaScript findings (Issues 6622 & 6736).
+    - Now skips obvious font requests even if their content type is text/html or text related.
+- Updated Timestamp Disclosure Scan Rule to skip JavaScript files when Alert Threshold is set to High (Issue 8380).
 
 ### Changed
 - Replace usage of CWE-200 for the following rules (Issue 8712):
@@ -597,6 +609,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[64]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v64
+[63]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v63
 [62]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v62
 [61]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v61
 [60]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v60

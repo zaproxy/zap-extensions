@@ -5,8 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [0.2.1] - 2025-03-25
 ### Fixed
 - Allow add-ons to obtain (empty) tags before the extension is fully initialised to prevent exceptions.
+
+### Changed
+- Automation Framework progress and log messages with regard to setting scan rule threshold no longer include commas in scan rule ID numbers.
 
 ## [0.2.0] - 2025-02-12
 ### Added
@@ -45,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `passiveScan-wait`
 - Dynamically un/load add-on passive scan rules (Issue 7959).
 
+[0.2.1]: https://github.com/zaproxy/zap-extensions/releases/pscan-v0.2.1
 [0.2.0]: https://github.com/zaproxy/zap-extensions/releases/pscan-v0.2.0
 [0.1.0]: https://github.com/zaproxy/zap-extensions/releases/pscan-v0.1.0
 [0.0.1]: https://github.com/zaproxy/zap-extensions/releases/pscan-v0.0.1

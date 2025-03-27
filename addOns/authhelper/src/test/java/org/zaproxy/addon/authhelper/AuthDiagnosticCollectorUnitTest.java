@@ -22,6 +22,7 @@ package org.zaproxy.addon.authhelper;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.BDDMockito.given;
 
 import java.net.HttpCookie;
 import java.util.ArrayList;
@@ -31,9 +32,10 @@ import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.parosproxy.paros.network.HttpBody;
+import org.mockito.Mock;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -47,11 +49,20 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
     private AuthDiagnosticCollector adc;
     private StringBuilder sb;
 
+    @Mock(strictness = org.mockito.Mock.Strictness.LENIENT)
+    Model model;
+
+    @Mock(strictness = org.mockito.Mock.Strictness.LENIENT)
+    Session session;
+
     @BeforeEach
     void setUp() throws Exception {
         adc = new AuthDiagnosticCollector();
         sb = new StringBuilder();
         adc.setCollector(str -> sb.append(str));
+
+        given(model.getSession()).willReturn(session);
+        Control.initSingletonForTesting(model);
     }
 
     @Test
@@ -74,7 +85,15 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
         adc.onHttpResponseReceive(msg, 1, null);
 
         // Then
-        assertThat(sb.toString(), is(">>>>>\nGET https://example0/\n<<<\nHTTP/1.0 200 OK\n"));
+        assertThat(
+                sb.toString(),
+                is(
+                        """
+                        >>>>>
+                        GET https://example0/
+                        <<<
+                        HTTP/1.0 200 OK
+                        """));
     }
 
     @Test
@@ -108,6 +127,42 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldSanitizeCookies() throws Exception {
+        // Given
+        adc.setEnabled(true);
+
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(),
+                        new HttpRequestBody(),
+                        new HttpResponseHeader(),
+                        new HttpResponseBody());
+        msg.getRequestHeader().setMethod("GET");
+        msg.getRequestHeader().setURI(new URI("https://www.example.com", true));
+        msg.getRequestHeader().setHeader(HttpHeader.COOKIE, "cookie1=aaa");
+
+        msg.getResponseHeader().setStatusCode(200);
+        msg.getResponseHeader().setReasonPhrase("OK");
+        msg.getResponseHeader().setHeader(HttpHeader.SET_COOKIE, "cookie2=bbb; HttpOnly");
+
+        // When
+        adc.onHttpResponseReceive(msg, 1, null);
+
+        // Then
+        assertThat(
+                sb.toString(),
+                is(
+                        """
+                        >>>>>
+                        GET https://example0/
+                        cookie: cookie1=\"sanitizedtoken0\"
+                        <<<
+                        HTTP/1.0 200 OK
+                        set-cookie: cookie2=sanitizedtoken1
+                        """));
+    }
+
+    @Test
     void shouldAppendCookies() throws Exception {
         // Given
         List<HttpCookie> cookies = new ArrayList<>();
@@ -127,43 +182,87 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
                 sb.toString(),
                 is(
                         equalTo(
-                                "TestHeader: name=\"token0\"\nTestHeader: name2=\"token1\";$Domain=\"https://example0/\"\n")));
+                                """
+                                TestHeader: name=\"sanitizedtoken0\"
+                                TestHeader: name2=\"sanitizedtoken1\";$Domain=\"https://example0/\"
+                                """)));
     }
 
     @Test
     void shouldAppendStructuredData() throws Exception {
         // Given
         StringBuilder sb = new StringBuilder();
-        HttpHeader header = new HttpRequestHeader();
-        HttpBody body = new HttpRequestBody();
+        HttpRequestHeader header = new HttpRequestHeader();
+        HttpRequestBody body = new HttpRequestBody();
 
         header.setHeader(HttpHeader.CONTENT_TYPE, "somethingJsonSomething");
         body.setBody(
                 "[{\"user\":\"test@test.com\",\"password\":\"password123\"},{\"xxx\":\"yyy\"}]");
 
         // When
-        adc.appendStructuredData(header, body, sb);
+        adc.appendPostData(new HttpMessage(header, body), true, sb);
 
         // Then
         assertThat(
                 sb.toString(),
                 is(
                         equalTo(
-                                "\n[{\"user\":\"token0\",\"password\":\"token1\"},{\"xxx\":\"token2\"}]\n")));
+                                "\n[{\"user\":\"sanitizedtoken0\",\"password\":\"sanitizedtoken1\"},{\"xxx\":\"sanitizedtoken2\"}]\n")));
+    }
+
+    @Test
+    void shouldAppendPostData() throws Exception {
+        // Given
+        StringBuilder sb = new StringBuilder();
+        HttpRequestHeader header = new HttpRequestHeader();
+        HttpRequestBody body = new HttpRequestBody();
+
+        header.setMethod(HttpRequestHeader.POST);
+        header.setURI(new URI("https://www.example.com", true));
+        header.setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.FORM_URLENCODED_CONTENT_TYPE);
+        body.setBody("aaa=bbb&ccc=ddd");
+
+        // When
+        adc.appendPostData(new HttpMessage(header, body), true, sb);
+
+        // Then
+        assertThat(sb.toString(), is(equalTo("\naaa=sanitizedtoken0&ccc=sanitizedtoken1&\n")));
+    }
+
+    @Test
+    void shouldAppendCredentialTokens() throws Exception {
+        // Given
+        adc.setUsername("test@example.org");
+        adc.setPassword("mySuperSecretPassword");
+        StringBuilder sb = new StringBuilder();
+        HttpRequestHeader header = new HttpRequestHeader();
+        HttpRequestBody body = new HttpRequestBody();
+
+        header.setMethod(HttpRequestHeader.POST);
+        header.setURI(new URI("https://www.example.com", true));
+        header.setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.FORM_URLENCODED_CONTENT_TYPE);
+        body.setBody("user=test@example.org&pass=mySuperSecretPassword");
+
+        // When
+        adc.appendPostData(new HttpMessage(header, body), true, sb);
+
+        // Then
+        assertThat(
+                sb.toString(), is(equalTo("\npass=F4keP4ssw0rd&user=FakeUserName@example.com&\n")));
     }
 
     @Test
     void shouldNotAppendNonJsonData() throws Exception {
         // Given
-        HttpHeader header = new HttpRequestHeader();
-        HttpBody body = new HttpRequestBody();
+        HttpRequestHeader header = new HttpRequestHeader();
+        HttpRequestBody body = new HttpRequestBody();
 
         header.setHeader(HttpHeader.CONTENT_TYPE, "something");
         body.setBody(
                 "[{\"user\":\"test@test.com\",\"password\":\"password123\"},{\"xxx\":\"yyy\"}]");
 
         // When
-        adc.appendStructuredData(header, body, sb);
+        adc.appendPostData(new HttpMessage(header, body), true, sb);
 
         // Then
         assertThat(sb.length(), is(equalTo(0)));
@@ -198,7 +297,9 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
         adc.appendSanitisedHeaders(header, "ThisHeader", sb);
 
         // Then
-        assertThat(sb.toString(), is(equalTo("ThisHeader: token0\nThisHeader: token1\n")));
+        assertThat(
+                sb.toString(),
+                is(equalTo("ThisHeader: sanitizedtoken0\nThisHeader: sanitizedtoken1\n")));
     }
 
     @Test
@@ -211,7 +312,9 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
         Object res = adc.sanitiseJson(json);
 
         // Then
-        assertThat(res.toString(), is(equalTo("{\"user\":\"token0\",\"password\":\"token1\"}")));
+        assertThat(
+                res.toString(),
+                is(equalTo("{\"user\":\"sanitizedtoken0\",\"password\":\"sanitizedtoken1\"}")));
     }
 
     @Test
@@ -224,78 +327,8 @@ class AuthDiagnosticCollectorUnitTest extends TestUtils {
         Object res = adc.sanitiseJson(json);
 
         // Then
-        assertThat(res.toString(), is(equalTo("[{\"user\":\"token0\",\"password\":\"token1\"}]")));
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-        "https://www.example.com, true",
-        "https://www.example.com/page.html, true",
-        "https://www.example.com/page.html?type=x.css, true",
-        "https://www.example.com/page.css, false",
-        "https://www.example.com/page.png, false",
-        "https://www.example.com/page.jpg, false",
-        "https://www.example.com/page.jpeg?aaa=bbb, false",
-    })
-    void shouldReportRelevantRequestHeaderUrl(String url, String result) throws Exception {
-        // Given
-        HttpRequestHeader header = new HttpRequestHeader();
-        header.setURI(new URI(url, true));
-        HttpMessage msg = new HttpMessage(header, new HttpRequestBody());
-
-        // When
-        boolean res = adc.isRelevant(msg);
-
-        // Then
-        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-        "https://www.example.com, true",
-        "https://www.clients2.google.com, false",
-        "https://www.detectportal.firefox.com, false",
-        "https://google-analytics.com, false",
-        "https://www.mozilla.com, false",
-        "https://www.safebrowsing-cache.co.uk, false",
-    })
-    void shouldReportRelevantHosts(String url, String result) throws Exception {
-        // Given
-        HttpRequestHeader header = new HttpRequestHeader();
-        header.setURI(new URI(url, true));
-        HttpMessage msg = new HttpMessage(header, new HttpRequestBody());
-
-        // When
-        boolean res = adc.isRelevant(msg);
-
-        // Then
-        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-        "text/html, true",
-        "app/random, true",
-        "app/css, false",
-        "app/Image, false",
-        "app/JavaScript, false",
-    })
-    void shouldReportRelevantResponseHeaderType(String type, String result) throws Exception {
-        // Given
-        HttpResponseHeader header = new HttpResponseHeader();
-        header.setHeader(HttpHeader.CONTENT_TYPE, type);
-        HttpMessage msg =
-                new HttpMessage(
-                        new HttpRequestHeader(),
-                        new HttpRequestBody(),
-                        header,
-                        new HttpResponseBody());
-        msg.getRequestHeader().setURI(new URI("https://www.example.com", true));
-
-        // When
-        boolean res = adc.isRelevant(msg);
-
-        // Then
-        assertThat(res, is(equalTo(Boolean.parseBoolean(result))));
+        assertThat(
+                res.toString(),
+                is(equalTo("[{\"user\":\"sanitizedtoken0\",\"password\":\"sanitizedtoken1\"}]")));
     }
 }

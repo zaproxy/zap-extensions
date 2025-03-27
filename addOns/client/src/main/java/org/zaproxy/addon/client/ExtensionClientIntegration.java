@@ -72,6 +72,7 @@ import org.zaproxy.addon.client.pscan.ClientPassiveScanHelper;
 import org.zaproxy.addon.client.pscan.OptionsPassiveScan;
 import org.zaproxy.addon.client.spider.AuthenticationHandler;
 import org.zaproxy.addon.client.spider.ClientSpider;
+import org.zaproxy.addon.client.spider.ClientSpiderApi;
 import org.zaproxy.addon.client.spider.ClientSpiderDialog;
 import org.zaproxy.addon.client.spider.ClientSpiderPanel;
 import org.zaproxy.addon.client.spider.PopupMenuSpider;
@@ -196,6 +197,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
         extensionHook.addOptionsParamSet(getClientParam());
         extensionHook.addApiImplementor(this.api);
+        extensionHook.addApiImplementor(new ClientSpiderApi(this));
         extensionHook.addSessionListener(new SessionChangeListener());
 
         if (hasView()) {
@@ -889,16 +891,18 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         }
     }
 
-    public void exportClientMap(String path) {
+    protected boolean exportClientMap(String path, boolean isApi) {
         File file = new File(path);
+        boolean result = false;
         try (Writer fileWriter = new FileWriter(file, false)) {
             ClientMapWriter.exportClientMap(fileWriter, clientTree);
+            result = true;
         } catch (IOException | UncheckedIOException e) {
             LOGGER.warn(
                     "An error occurred while exporting the Client Map: {}",
                     file.getAbsolutePath(),
                     e);
-            if (hasView()) {
+            if (hasView() && !isApi) {
                 this.getView()
                         .showWarningDialog(
                                 Constant.messages.getString(
@@ -906,5 +910,10 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             }
         }
         Stats.incCounter(STATS_EXPORT_CLIENTMAP);
+        return result;
+    }
+
+    public boolean exportClientMap(String path) {
+        return exportClientMap(path, false);
     }
 }

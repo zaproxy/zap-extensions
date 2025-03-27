@@ -70,6 +70,7 @@ public class AuthenticationData extends AutomationData {
     public static final String PARAM_REALM = "realm";
     public static final String PARAM_PORT = "port";
     public static final String PARAM_BROWSER_ID = "browserId";
+    public static final String PARAM_DIAGNOSTICS = "diagnostics";
     public static final String PARAM_LOGIN_PAGE_URL = "loginPageUrl";
     public static final String PARAM_LOGIN_PAGE_WAIT = "loginPageWait";
     public static final String PARAM_LOGIN_REQUEST_URL = "loginRequestUrl";
@@ -300,6 +301,7 @@ public class AuthenticationData extends AutomationData {
                                             BAD_FIELD_ERROR_MSG, PARAM_PORT, data));
                         }
                         break;
+                    case PARAM_DIAGNOSTICS:
                     case "steps":
                         break;
                     default:
@@ -447,6 +449,11 @@ public class AuthenticationData extends AutomationData {
                                             "automation.error.env.auth.script.bad",
                                             clientScript.getAbsolutePath()));
                         } else {
+                            JobUtils.setPrivateField(
+                                    clientScriptMethod,
+                                    "diagnostics",
+                                    parameters.getOrDefault(PARAM_DIAGNOSTICS, false));
+
                             try {
                                 MethodUtils.invokeMethod(clientScriptMethod, "loadScript", sw);
                             } catch (Exception e) {
@@ -514,6 +521,11 @@ public class AuthenticationData extends AutomationData {
                     if (authBrowserType != null) {
                         AuthenticationMethod am =
                                 authBrowserType.createAuthenticationMethod(context.getId());
+
+                        JobUtils.setPrivateField(
+                                am,
+                                "diagnostics",
+                                parameters.getOrDefault(PARAM_DIAGNOSTICS, false));
 
                         JobUtils.setPrivateField(
                                 am,

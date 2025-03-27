@@ -19,14 +19,19 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import com.bastiaanjansen.otp.HMACAlgorithm;
+import com.bastiaanjansen.otp.TOTPGenerator;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.swing.ImageIcon;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +40,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.DatabaseUnsupportedException;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -43,6 +51,10 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.authhelper.internal.db.TableJdo;
+import org.zaproxy.addon.commonlib.internal.TotpSupport;
+import org.zaproxy.addon.commonlib.internal.TotpSupport.TotpData;
+import org.zaproxy.addon.commonlib.internal.TotpSupport.TotpGenerator;
 import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType;
@@ -58,7 +70,7 @@ import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChangedListener {
+public class ExtensionAuthhelper extends ExtensionAdaptor {
 
     private Map<Integer, AuthenticationRequestDetails> contextIdToLoginDetails = new HashMap<>();
 
@@ -98,6 +110,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
 
     private AuthDiagnosticCollector authDiagCollector;
     private AuthhelperParam param;
+    private TableJdo tableJdo;
 
     public ExtensionAuthhelper() {
         super();
@@ -107,6 +120,35 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
     @Override
     public List<Class<? extends Extension>> getDependencies() {
         return EXTENSION_DEPENDENCIES;
+    }
+
+    @Override
+    public void init() {
+        List<String> supportedAlgorithms =
+                Stream.of(HMACAlgorithm.values()).map(HMACAlgorithm::name).toList();
+
+        TotpSupport.setTotpGenerator(
+                new TotpGenerator() {
+
+                    @Override
+                    public List<String> getSupportedAlgorithms() {
+                        return supportedAlgorithms;
+                    }
+
+                    @Override
+                    public String generate(TotpData data, Instant when) {
+                        return new TOTPGenerator.Builder(data.secret())
+                                .withHOTPGenerator(
+                                        builder ->
+                                                builder.withAlgorithm(
+                                                                HMACAlgorithm.valueOf(
+                                                                        data.algorithm()))
+                                                        .withPasswordLength(data.digits()))
+                                .withPeriod(Duration.ofSeconds(data.period()))
+                                .build()
+                                .at(when);
+                    }
+                });
     }
 
     public AuthhelperParam getParam() {
@@ -145,12 +187,21 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
         AuthUtils.disableBrowserAuthentication();
         BrowserBasedAuthenticationMethodType.stopProxies();
         AuthUtils.clean();
+
+        TotpSupport.setTotpGenerator(null);
     }
 
     @Override
     public void stop() {
         BrowserBasedAuthenticationMethodType.stopProxies();
         AuthUtils.clean();
+    }
+
+    @Override
+    public void destroy() {
+        if (tableJdo != null) {
+            tableJdo.unload();
+        }
     }
 
     @Override
@@ -198,6 +249,13 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
         }
     }
 
+    public void setAuthDiagCollectorCredentials(String username, String password) {
+        if (this.authDiagCollector != null) {
+            this.authDiagCollector.setUsername(username);
+            this.authDiagCollector.setPassword(password);
+        }
+    }
+
     private ZapMenuItem getAuthTesterMenu() {
         if (authTesterMenu == null) {
             authTesterMenu =
@@ -221,7 +279,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
         return authTesterMenu;
     }
 
-    private static String urlEncode(String parameter) {
+    public static String urlEncode(String parameter) {
         try {
             return URLEncoder.encode(parameter, "UTF-8");
         } catch (UnsupportedEncodingException ignore) {
@@ -306,10 +364,16 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
         @Override
         public void sessionChanged(Session session) {
             contextIdToLoginDetails.clear();
+            AuthUtils.clean();
         }
 
         @Override
-        public void sessionAboutToChange(Session session) {}
+        public void sessionAboutToChange(Session session) {
+            BrowserBasedAuthenticationMethodType.stopProxies();
+            if (authDiagCollector != null) {
+                authDiagCollector.reset();
+            }
+        }
 
         @Override
         public void sessionScopeChanged(Session session) {}
@@ -319,25 +383,17 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
     }
 
     @Override
-    public void sessionChanged(Session session) {
-        AuthUtils.clean();
+    public boolean supportsDb(String type) {
+        return true;
     }
 
     @Override
-    public void sessionAboutToChange(Session session) {
-        BrowserBasedAuthenticationMethodType.stopProxies();
-        if (this.authDiagCollector != null) {
-            this.authDiagCollector.reset();
+    public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
+        try {
+            tableJdo = new TableJdo(db);
+
+        } catch (Exception e) {
+            LOGGER.warn(e.getMessage(), e);
         }
-    }
-
-    @Override
-    public void sessionScopeChanged(Session session) {
-        // Ignore
-    }
-
-    @Override
-    public void sessionModeChanged(Mode mode) {
-        // Ignore
     }
 }

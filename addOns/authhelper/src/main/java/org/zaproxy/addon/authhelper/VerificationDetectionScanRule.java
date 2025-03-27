@@ -53,11 +53,7 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
-        if (msg.getResponseHeader().isImage()
-                || !(msg.getResponseHeader().isHtml()
-                        || msg.getResponseHeader().isJson()
-                        || msg.getResponseHeader().isXml())) {
-            // An "image/svg+xml" will look like XML
+        if (!AuthUtils.isRelevantToAuth(msg)) {
             return;
         }
 
@@ -75,16 +71,17 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
             for (Context context : contextList) {
                 VerificationRequestDetails currentVerifDetails =
                         AuthUtils.getVerificationDetailsForContext(context.getId());
-                VerificationRequestDetails newVerfiDetails =
+                VerificationRequestDetails newVerifDetails =
                         new VerificationRequestDetails(msg, token, context);
                 if (currentVerifDetails != null
-                        && COMPARATOR.compare(newVerfiDetails, currentVerifDetails) > 0) {
+                        && newVerifDetails.getScore() > 0
+                        && COMPARATOR.compare(newVerifDetails, currentVerifDetails) > 0) {
                     // We've potentially found a better verification request
                     LOGGER.debug(
                             "Identified potentially better verification req {} for context {}",
                             msg.getRequestHeader().getURI(),
                             context.getName());
-                    AuthUtils.processVerificationDetails(context, newVerfiDetails, this);
+                    AuthUtils.processVerificationDetails(context, newVerifDetails, this);
                 }
             }
         }

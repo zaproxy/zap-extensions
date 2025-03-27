@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [43] - 2025-03-04
 ### Changed
 - Replace usage of CWE-200 for the In Page Banner Information Leak scan rule (Issue 8731).
 - Add support for 'credentialless' COEP value in the Insufficient Site Isolation Against Spectre Vulnerability scan rule (Issue 8840).
@@ -353,6 +356,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[43]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v40

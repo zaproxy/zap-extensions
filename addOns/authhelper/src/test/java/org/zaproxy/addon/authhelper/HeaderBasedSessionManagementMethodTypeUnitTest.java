@@ -48,6 +48,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.authhelper.HeaderBasedSessionManagementMethodType.HeaderBasedSessionManagementMethod;
 import org.zaproxy.addon.authhelper.HeaderBasedSessionManagementMethodType.HttpHeaderBasedSession;
+import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.script.ScriptVars;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.network.HttpRequestBody;
@@ -88,7 +89,7 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
         map.put("token2", new SessionToken(SessionToken.ENV_SOURCE, "token2", "-value2-"));
         map.put("token3", new SessionToken(SessionToken.ENV_SOURCE, "token3", "-value3-"));
         // When
-        String res = HeaderBasedSessionManagementMethod.replaceTokens(baseString, map);
+        String res = HeaderBasedSessionManagementMethod.replaceTokens(0, "", baseString, map);
         // Then
         assertThat(res, is(equalTo("Prefix-value1-middle-value2-Postfix")));
     }
@@ -101,9 +102,21 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
         map.put("token1", new SessionToken(SessionToken.ENV_SOURCE, "token1", "-value1-"));
         map.put("token3", new SessionToken(SessionToken.ENV_SOURCE, "token3", "-value3-"));
         // When
-        String res = HeaderBasedSessionManagementMethod.replaceTokens(baseString, map);
+        String res = HeaderBasedSessionManagementMethod.replaceTokens(0, "", baseString, map);
         // Then
         assertThat(res, is(equalTo("Prefix-value1-middle{%token2%}Postfix")));
+    }
+
+    @Test
+    void shouldReplaceRecordedToken() throws Exception {
+        // Given
+        String baseString = "Prefix{%token1%}Postfix";
+        Map<String, SessionToken> map = new HashMap<>();
+        AuthUtils.recordRequestSessionToken(1, "token1", "-value1-");
+        // When
+        String res = HeaderBasedSessionManagementMethod.replaceTokens(1, "token1", baseString, map);
+        // Then
+        assertThat(res, is(equalTo("Prefix-value1-Postfix")));
     }
 
     @Test
@@ -308,5 +321,27 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
         assertThat(map.get(HEADER_3), is(equalTo(VALUE_3)));
         assertThat(map.get(HEADER_4), is(equalTo(VALUE_4)));
         assertThat(map.get(HEADER_5), is(equalTo(VALUE_5)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "a:b,a,b",
+        "a: B,a,B",
+        " A:b,A,b",
+        "a:b c,a,b c",
+        "a:b:c,a,b:c",
+        "Authorization:Bearer 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918,Authorization,"
+                + "Bearer 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"
+    })
+    void shouldParseHeaderValuesProperly(String entry, String expectedFirst, String expectedSecond)
+            throws ApiException {
+        HeaderBasedSessionManagementMethodType type = new HeaderBasedSessionManagementMethodType();
+        String[] headerArray = {entry};
+        // When
+        List<Pair<String, String>> headers = type.getHeaderPairs(headerArray);
+        // Then
+        Pair<String, String> header = headers.get(0);
+        assertThat(header.first, is(equalTo(expectedFirst)));
+        assertThat(header.second, is(equalTo(expectedSecond)));
     }
 }

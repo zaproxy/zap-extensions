@@ -4,12 +4,23 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.15.0] - 2025-03-25
+### Added
+- Add API endpoints for the Client Spider.
+
+## [0.14.0] - 2025-03-04
+### Added
+- Added an API action to export the Client Map.
+
 ### Fixed
 - Correct Client Passive Scan Queue counter, which could be showing one when none left.
+- Correctly fill input elements when spidering (Issue 8851).
 
 ## [0.13.0] - 2025-02-04
 ### Added
-- Added support for Client Script Authentication when installed in conjunction with the Authentication Helper add-on. 
+- Added support for Client Script Authentication when installed in conjunction with the Authentication Helper add-on.
 
 ## [0.12.0] - 2025-01-24
 ### Fixed
@@ -124,6 +135,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.15.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.15.0
+[0.14.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.12.0
 [0.11.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.11.0

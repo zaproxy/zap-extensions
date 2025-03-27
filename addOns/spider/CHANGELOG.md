@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [0.14.0] - 2025-03-25
+### Changed
+- Maintenance changes.
+- Handle zero max parse size as unlimited.
+
 ## [0.13.0] - 2025-01-10
 ### Changed
 - Update minimum ZAP version to 2.16.0.
@@ -118,6 +123,7 @@ The following table illustrates the changes versus the previous core release(s) 
 |                                                                                                                                         | SVG image files are parsed to identify HREF attributes and extract/resolve any contained links. (Issue 4984)                                                                                                        |
 |                                                                                                                                         | Irrelevant Parameters - Allows to manage the parameters that should be removed when canonicalising the URLs found. The session token names defined in the HTTP Sessions options are taken into account and removed (Issue 4388). |
 
+[0.14.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.12.0
 [0.11.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.11.0

@@ -37,7 +37,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import lombok.Setter;
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.Source;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -51,21 +56,26 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.Extension;
-import org.parosproxy.paros.extension.history.ExtensionHistory;
-import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
+import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
+import org.zaproxy.zap.authentication.AuthenticationMethod.UnsupportedAuthenticationCredentialsException;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.extension.selenium.BrowserHook;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
@@ -73,6 +83,7 @@ import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.SessionStructure;
+import org.zaproxy.zap.session.WebSession;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Pair;
 import org.zaproxy.zap.utils.Stats;
@@ -87,17 +98,43 @@ public class AuthUtils {
     public static final String AUTH_BROWSER_PASSED_STATS = "stats.auth.browser.passed";
     public static final String AUTH_BROWSER_FAILED_STATS = "stats.auth.browser.failed";
 
-    public static final String[] HEADERS = {HttpHeader.AUTHORIZATION};
+    public static final String[] HEADERS = {HttpHeader.AUTHORIZATION, "X-CSRF-Token"};
     public static final String[] JSON_IDS = {"accesstoken", "token"};
-    private static final String[] USERNAME_FIELD_INDICATORS = {
-        "email", "signinname", "uname", "user"
-    };
+    private static final List<String> USERNAME_FIELD_INDICATORS =
+            List.of("email", "signinname", "uname", "user", "name", "nome", "nombre");
+    /* A selection of the most common login label links - just European languages for now - more suggestions appreciated */
+    protected static List<String> LOGIN_LABELS_P1 =
+            List.of(
+                    "login",
+                    "log in",
+                    "log-in",
+                    "signin",
+                    "sign in",
+                    "sign-in",
+                    "iniciar sesión", // Spanish: login
+                    "acceder", // Spanish: sign in
+                    "connexion", // French: login
+                    "se connecter", // French: sign in
+                    "anmeldung", // German: login
+                    "einloggen", // German: sign in
+                    "accesso", // Italian: login
+                    "accedi", // Italian: sign in
+                    "entrar", // Portuguese: sign in (login is login;)
+                    "inloggen", // Dutch: login
+                    "aanmelden" // Dutch: sign in
+                    );
 
-    private static final int MIN_SESSION_COOKIE_LENGTH = 10;
+    /* Less likely labels, but still worth trying */
+    protected static List<String> LOGIN_LABELS_P2 =
+            List.of("account", "signup", "sign up", "sign-up");
 
-    private static int MAX_NUM_RECORDS_TO_CHECK = 200;
+    protected static final int MIN_SESSION_COOKIE_LENGTH = 10;
 
     public static final int TIME_TO_SLEEP_IN_MSECS = 100;
+
+    private static final int DEMO_SLEEP_IN_MSECS = 2000;
+
+    private static final int AUTH_PAGE_SLEEP_IN_MSECS = 2000;
 
     private static final Logger LOGGER = LogManager.getLogger(AuthUtils.class);
 
@@ -109,6 +146,8 @@ public class AuthUtils {
 
     private static boolean demoMode;
 
+    @Setter private static HistoryProvider historyProvider = new HistoryProvider();
+
     /**
      * These are session tokens that have been seen in responses but not yet seen in use. When they
      * are seen in use then they are removed.
@@ -117,12 +156,21 @@ public class AuthUtils {
             Collections.synchronizedMap(new HashMap<>());
 
     /**
+     * Session tokens used in authentication requests. We keep track of them so that we can reuse
+     * the last known good value, in the case where we don't see the token set in the authentication
+     * response.
+     */
+    private static Map<Integer, Map<String, String>> requestTokenMap =
+            Collections.synchronizedMap(new HashMap<>());
+
+    /**
      * The best verification request we have found for a context. There will only be a verification
      * request recorded if the user has indicated that they want ZAP to auto-detect one by: setting
      * session management to auto-detect, setting the checking strategy to "poll" but not specified
      * a URL.
      */
-    private static Map<Integer, VerificationRequestDetails> contextVerifMap = new HashMap<>();
+    private static Map<Integer, VerificationRequestDetails> contextVerifMap =
+            Collections.synchronizedMap(new HashMap<>());
 
     /**
      * The best session management request we have found for a context. There will only be a
@@ -130,7 +178,14 @@ public class AuthUtils {
      * by setting session management to auto-detect.
      */
     private static Map<Integer, SessionManagementRequestDetails> contextSessionMgmtMap =
-            new HashMap<>();
+            Collections.synchronizedMap(new HashMap<>());
+
+    /**
+     * The URLs (and methods) we've checked for finding good verification requests. These will only
+     * be recorded if the user has set verification to auto-detect.
+     */
+    private static Map<Integer, Set<String>> contextVerificationMap =
+            Collections.synchronizedMap(new HashMap<>());
 
     public static long getTimeToWaitMs() {
         return timeToWaitMs;
@@ -145,6 +200,12 @@ public class AuthUtils {
     }
 
     static WebElement getUserField(
+            WebDriver wd, List<WebElement> inputElements, WebElement passwordField) {
+        return ignoreSeleniumExceptions(
+                () -> getUserFieldInternal(wd, inputElements, passwordField));
+    }
+
+    private static WebElement getUserFieldInternal(
             WebDriver wd, List<WebElement> inputElements, WebElement passwordField) {
         List<WebElement> filteredList = displayed(inputElements).toList();
         if (filteredList.size() == 1) {
@@ -253,7 +314,7 @@ public class AuthUtils {
         return elements.stream().filter(WebElement::isDisplayed);
     }
 
-    static boolean attributeContains(WebElement we, String attribute, String[] strings) {
+    static boolean attributeContains(WebElement we, String attribute, List<String> strings) {
         String att = getAttribute(we, attribute);
         if (att == null) {
             return false;
@@ -268,35 +329,141 @@ public class AuthUtils {
     }
 
     static WebElement getPasswordField(List<WebElement> inputElements) {
-        return displayed(inputElements)
-                .filter(element -> "password".equalsIgnoreCase(getAttribute(element, "type")))
-                .findFirst()
-                .orElse(null);
+        return ignoreSeleniumExceptions(
+                () ->
+                        displayed(inputElements)
+                                .filter(
+                                        element ->
+                                                "password"
+                                                        .equalsIgnoreCase(
+                                                                getAttribute(element, "type")))
+                                .findFirst()
+                                .orElse(null));
+    }
+
+    /**
+     * Executes the given supplier and ignores specific exceptions.
+     *
+     * @param supplier The function to execute.
+     * @param exceptions The exceptions to ignore.
+     * @return The result of the function or null if an exception is ignored.
+     */
+    public static <T> T ignoreSeleniumExceptions(Supplier<T> supplier) {
+        try {
+            return supplier.get();
+        } catch (WebDriverException e) {
+            // Ignore all selenium exceptions, especially StaleElementReferenceException
+            LOGGER.debug(e.getMessage(), e);
+        } catch (Exception e) {
+            // These might be more relevant?
+            LOGGER.warn(e.getMessage(), e);
+        }
+        return null;
     }
 
     /**
      * Authenticate as the given user, by filling in and submitting the login form
      *
+     * @param diagnostics {@code true} if diagnostics should be recorded, {@code false} otherwise.
      * @param wd the WebDriver controlling the browser
-     * @param context the context which is being used for authentication
+     * @param user the user which is being used for authentication
      * @param loginPageUrl the URL of the login page
-     * @param username the username
-     * @param password the password
      * @return true if the login form was successfully submitted.
      */
     public static boolean authenticateAsUser(
+            boolean diagnostics,
+            WebDriver wd,
+            User user,
+            String loginPageUrl,
+            int waitInSecs,
+            List<AuthenticationStep> steps) {
+
+        try (AuthenticationDiagnostics diags =
+                new AuthenticationDiagnostics(
+                        diagnostics,
+                        new BrowserBasedAuthenticationMethodType().getName(),
+                        user.getContext().getName(),
+                        user.getName())) {
+            return authenticateAsUserImpl(diags, wd, user, loginPageUrl, waitInSecs, steps);
+        }
+    }
+
+    static boolean authenticateAsUserImpl(
+            AuthenticationDiagnostics diags,
+            WebDriver wd,
+            User user,
+            String loginPageUrl,
+            int waitInSecs,
+            List<AuthenticationStep> steps) {
+
+        UsernamePasswordAuthenticationCredentials credentials = getCredentials(user);
+
+        Context context = user.getContext();
+
+        // Try with the given URL
+        wd.get(loginPageUrl);
+        boolean auth =
+                internalAuthenticateAsUser(
+                        diags, wd, context, loginPageUrl, credentials, waitInSecs, steps);
+
+        if (auth) {
+            return true;
+        }
+
+        // Try to find a login link - loop through the sets in priority order
+        for (List<String> labelList : List.of(LOGIN_LABELS_P1, LOGIN_LABELS_P2)) {
+            wd.get(loginPageUrl);
+            sleep(AUTH_PAGE_SLEEP_IN_MSECS);
+            List<WebElement> links = LoginLinkDetector.getLoginLinks(wd, labelList);
+            if (!links.isEmpty()) {
+                // Only try the first as we're only likely to get 1, and once we follow that then
+                // subsequent links will be invalid. This may change based on real world feedback of
+                // course.
+                WebElement element = links.get(0);
+                diags.recordStep(
+                        wd,
+                        Constant.messages.getString("authhelper.auth.method.diags.steps.loginlink"),
+                        element);
+                element.click();
+                sleep(AUTH_PAGE_SLEEP_IN_MSECS);
+                auth =
+                        internalAuthenticateAsUser(
+                                diags, wd, context, loginPageUrl, credentials, waitInSecs, steps);
+                if (auth) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static UsernamePasswordAuthenticationCredentials getCredentials(User user) {
+        AuthenticationCredentials credentials = user.getAuthenticationCredentials();
+        if (credentials instanceof UsernamePasswordAuthenticationCredentials creds) {
+            return creds;
+        }
+        throw new UnsupportedAuthenticationCredentialsException(
+                "Only username and password credential currently supported");
+    }
+
+    private static boolean internalAuthenticateAsUser(
+            AuthenticationDiagnostics diags,
             WebDriver wd,
             Context context,
             String loginPageUrl,
-            String username,
-            String password,
+            UsernamePasswordAuthenticationCredentials credentials,
             int waitInSecs,
             List<AuthenticationStep> steps) {
-        wd.get(loginPageUrl);
+
         sleep(50);
+        diags.recordStep(
+                wd, Constant.messages.getString("authhelper.auth.method.diags.steps.start"));
         if (demoMode) {
-            sleep(2000);
+            sleep(DEMO_SLEEP_IN_MSECS);
         }
+
+        String username = credentials.getUsername();
+        String password = credentials.getPassword();
 
         WebElement userField = null;
         WebElement pwdField = null;
@@ -314,7 +481,8 @@ public class AuthUtils {
                 break;
             }
 
-            WebElement element = step.execute(wd, username, password);
+            WebElement element = step.execute(wd, credentials);
+            diags.recordStep(wd, step.getDescription(), element);
 
             switch (step.getType()) {
                 case USERNAME:
@@ -330,7 +498,7 @@ public class AuthUtils {
                 default:
             }
 
-            sleep(demoMode ? 2000 : TIME_TO_SLEEP_IN_MSECS);
+            sleep(demoMode ? DEMO_SLEEP_IN_MSECS : TIME_TO_SLEEP_IN_MSECS);
         }
 
         for (int i = 0; i < getWaitLoopCount(); i++) {
@@ -345,14 +513,8 @@ public class AuthUtils {
             if (i > 1 && userField != null && pwdField == null && !userAdded) {
                 // Handle pages which require you to submit the username first
                 LOGGER.debug("Submitting just user field on {}", loginPageUrl);
-                userField.sendKeys(username);
-                if (demoMode) {
-                    sleep(2000);
-                }
-                userField.sendKeys(Keys.RETURN);
-                if (demoMode) {
-                    sleep(2000);
-                }
+                fillUserName(diags, wd, username, userField);
+                sendReturnAndSleep(diags, wd, userField);
                 userAdded = true;
             }
             sleep(TIME_TO_SLEEP_IN_MSECS);
@@ -360,33 +522,21 @@ public class AuthUtils {
         if (userField != null && pwdField != null) {
             if (!userAdded) {
                 LOGGER.debug("Entering user field on {}", wd.getCurrentUrl());
-                userField.sendKeys(username);
-                if (demoMode) {
-                    sleep(2000);
-                }
+                fillUserName(diags, wd, username, userField);
             }
             try {
                 if (!pwdAdded) {
                     LOGGER.debug("Submitting password field on {}", wd.getCurrentUrl());
-                    pwdField.sendKeys(password);
-                    if (demoMode) {
-                        sleep(2000);
-                    }
+                    fillPassword(diags, wd, password, pwdField);
                 }
-                pwdField.sendKeys(Keys.RETURN);
+                sendReturn(diags, wd, pwdField);
             } catch (Exception e) {
                 // Handle the case where the password field was present but hidden / disabled
                 LOGGER.debug("Handling hidden password field on {}", wd.getCurrentUrl());
-                userField.sendKeys(Keys.RETURN);
-                if (demoMode) {
-                    sleep(2000);
-                }
+                sendReturnAndSleep(diags, wd, userField);
                 sleep(TIME_TO_SLEEP_IN_MSECS);
-                pwdField.sendKeys(password);
-                if (demoMode) {
-                    sleep(2000);
-                }
-                pwdField.sendKeys(Keys.RETURN);
+                fillPassword(diags, wd, password, pwdField);
+                sendReturn(diags, wd, pwdField);
             }
 
             for (; it.hasNext(); ) {
@@ -395,10 +545,13 @@ public class AuthUtils {
                     continue;
                 }
 
-                step.execute(wd, username, password);
+                step.execute(wd, credentials);
+                diags.recordStep(wd, step.getDescription());
 
-                sleep(demoMode ? 2000 : TIME_TO_SLEEP_IN_MSECS);
+                sleep(demoMode ? DEMO_SLEEP_IN_MSECS : TIME_TO_SLEEP_IN_MSECS);
             }
+            diags.recordStep(
+                    wd, Constant.messages.getString("authhelper.auth.method.diags.steps.finish"));
 
             incStatsCounter(loginPageUrl, AUTH_FOUND_FIELDS_STATS);
             incStatsCounter(loginPageUrl, AUTH_BROWSER_PASSED_STATS);
@@ -411,6 +564,10 @@ public class AuthUtils {
                     // its a good option.
                     wd.get(wd.getCurrentUrl());
                     AuthUtils.sleep(TimeUnit.SECONDS.toMillis(1));
+                    diags.recordStep(
+                            wd,
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.diags.steps.refresh"));
                 }
             }
             return true;
@@ -423,6 +580,45 @@ public class AuthUtils {
         }
         incStatsCounter(loginPageUrl, AUTH_BROWSER_FAILED_STATS);
         return false;
+    }
+
+    private static void fillUserName(
+            AuthenticationDiagnostics diags, WebDriver wd, String username, WebElement field) {
+        field.sendKeys(username);
+        diags.recordStep(
+                wd,
+                Constant.messages.getString("authhelper.auth.method.diags.steps.username"),
+                field);
+        if (demoMode) {
+            sleep(DEMO_SLEEP_IN_MSECS);
+        }
+    }
+
+    private static void fillPassword(
+            AuthenticationDiagnostics diags, WebDriver wd, String password, WebElement field) {
+        field.sendKeys(password);
+        diags.recordStep(
+                wd,
+                Constant.messages.getString("authhelper.auth.method.diags.steps.password"),
+                field);
+        if (demoMode) {
+            sleep(DEMO_SLEEP_IN_MSECS);
+        }
+    }
+
+    private static void sendReturn(
+            AuthenticationDiagnostics diags, WebDriver wd, WebElement field) {
+        field.sendKeys(Keys.RETURN);
+        diags.recordStep(
+                wd, Constant.messages.getString("authhelper.auth.method.diags.steps.return"));
+    }
+
+    private static void sendReturnAndSleep(
+            AuthenticationDiagnostics diags, WebDriver wd, WebElement field) {
+        sendReturn(diags, wd, field);
+        if (demoMode) {
+            sleep(DEMO_SLEEP_IN_MSECS);
+        }
     }
 
     public static void incStatsCounter(String url, String stat) {
@@ -583,7 +779,8 @@ public class AuthUtils {
         List<Pair<String, String>> list = new ArrayList<>();
         for (SessionToken token : tokens) {
             for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
-                if (!incCookies && HttpHeader.COOKIE.equalsIgnoreCase(header.getName())) {
+                if (HttpHeader.COOKIE.equalsIgnoreCase(header.getName())) {
+                    // Handle cookies below so we can separate them out
                     continue;
                 }
                 if (header.getValue().contains(token.getValue())) {
@@ -591,6 +788,18 @@ public class AuthUtils {
                             header.getValue()
                                     .replace(token.getValue(), "{%" + token.getToken() + "%}");
                     list.add(new Pair<String, String>(header.getName(), hv));
+                }
+            }
+            if (incCookies) {
+                for (HttpCookie cookie : msg.getRequestHeader().getHttpCookies()) {
+                    if (!(SessionToken.COOKIE_SOURCE.equals(token.getSource())
+                                    && cookie.getName().equals(token.getKey()))
+                            && cookie.getValue().contains(token.getValue())) {
+                        String hv =
+                                cookie.getValue()
+                                        .replace(token.getValue(), "{%" + token.getToken() + "%}");
+                        list.add(new Pair<>(HttpHeader.COOKIE, cookie.getName() + "=" + hv));
+                    }
                 }
             }
         }
@@ -608,8 +817,7 @@ public class AuthUtils {
         map.put(token.getToken(), token);
     }
 
-    protected static Map<String, SessionToken> getAllTokens(
-            HttpMessage msg, boolean incReqCookies) {
+    public static Map<String, SessionToken> getAllTokens(HttpMessage msg, boolean incReqCookies) {
         Map<String, SessionToken> tokens = new HashMap<>();
         String responseData = msg.getResponseBody().toString();
         if (msg.getResponseHeader().isJson() && StringUtils.isNotBlank(responseData)) {
@@ -707,42 +915,7 @@ public class AuthUtils {
 
     public static SessionManagementRequestDetails findSessionTokenSource(
             String token, int firstId) {
-        ExtensionHistory extHist = AuthUtils.getExtension(ExtensionHistory.class);
-        int lastId = extHist.getLastHistoryId();
-        if (firstId == -1) {
-            firstId = Math.max(0, lastId - MAX_NUM_RECORDS_TO_CHECK);
-        }
-
-        LOGGER.debug("Searching for session token from {} down to {} ", lastId, firstId);
-
-        for (int i = lastId; i >= firstId; i--) {
-            HistoryReference hr = extHist.getHistoryReference(i);
-            if (hr != null) {
-                try {
-                    HttpMessage msg = hr.getHttpMessage();
-                    Optional<SessionToken> es =
-                            AuthUtils.getAllTokens(msg, false).values().stream()
-                                    .filter(v -> v.getValue().equals(token))
-                                    .findFirst();
-                    if (es.isPresent()) {
-                        AuthUtils.incStatsCounter(
-                                msg.getRequestHeader().getURI(),
-                                AuthUtils.AUTH_SESSION_TOKEN_STATS_PREFIX + es.get().getKey());
-                        List<SessionToken> tokens = new ArrayList<>();
-                        tokens.add(
-                                new SessionToken(
-                                        es.get().getSource(),
-                                        es.get().getKey(),
-                                        es.get().getValue()));
-                        return new SessionManagementRequestDetails(
-                                msg, tokens, Alert.CONFIDENCE_HIGH);
-                    }
-                } catch (Exception e) {
-                    LOGGER.debug(e.getMessage(), e);
-                }
-            }
-        }
-        return null;
+        return historyProvider.findSessionTokenSource(token, firstId);
     }
 
     public static void extractJsonTokens(
@@ -806,8 +979,11 @@ public class AuthUtils {
         knownTokenMap.clear();
         contextVerifMap.clear();
         contextSessionMgmtMap.clear();
+        contextVerificationMap.clear();
+        requestTokenMap.clear();
         if (executorService != null) {
             executorService.shutdown();
+            executorService = null;
         }
     }
 
@@ -871,45 +1047,68 @@ public class AuthUtils {
             Context context,
             VerificationRequestDetails details,
             VerificationDetectionScanRule rule) {
-        getExecutorService().submit(new VerificationDetectionProcessor(context, details, rule));
+
+        String methodUrl =
+                details.getMsg().getRequestHeader().getMethod()
+                        + " "
+                        + details.getMsg().getRequestHeader().getURI().toString();
+
+        if (contextVerificationMap
+                .computeIfAbsent(context.getId(), c -> Collections.synchronizedSet(new HashSet<>()))
+                .add(methodUrl)) {
+            // Have not already checked this method + url
+            getExecutorService().submit(new VerificationDetectionProcessor(context, details, rule));
+        }
+    }
+
+    public static void recordRequestSessionToken(Context context, String key, String value) {
+        recordRequestSessionToken(context.getId(), key, value);
+    }
+
+    private static Map<String, String> computeIfAbsent(
+            Map<Integer, Map<String, String>> inputMap, int contextId) {
+        return inputMap.computeIfAbsent(
+                contextId, c -> Collections.synchronizedMap(new HashMap<>()));
+    }
+
+    public static void recordRequestSessionToken(int contextId, String key, String value) {
+        computeIfAbsent(requestTokenMap, contextId).put(key.toLowerCase(Locale.ROOT), value);
+    }
+
+    public static String getRequestSessionToken(Context context, String key) {
+        return getRequestSessionToken(context.getId(), key);
+    }
+
+    public static String getRequestSessionToken(int contextId, String key) {
+        return computeIfAbsent(requestTokenMap, contextId).get(key.toLowerCase(Locale.ROOT));
     }
 
     static class AuthenticationBrowserHook implements BrowserHook {
 
         private BrowserBasedAuthenticationMethod bbaMethod;
-        private UsernamePasswordAuthenticationCredentials userCreds;
-        private Context context;
+        private User user;
 
         AuthenticationBrowserHook(Context context, String userName) {
             this(context, getUser(context, userName));
         }
 
         AuthenticationBrowserHook(Context context, User user) {
-            this.context = context;
+            this.user = user;
             AuthenticationMethod method = context.getAuthenticationMethod();
             if (!(method instanceof BrowserBasedAuthenticationMethod)) {
                 throw new IllegalStateException("Unsupported method " + method.getType().getName());
             }
             bbaMethod = (BrowserBasedAuthenticationMethod) method;
-
-            AuthenticationCredentials creds = user.getAuthenticationCredentials();
-            if (!(creds instanceof UsernamePasswordAuthenticationCredentials)) {
-                throw new IllegalStateException(
-                        "Unsupported user credentials type " + creds.getClass().getCanonicalName());
-            }
-            userCreds = (UsernamePasswordAuthenticationCredentials) creds;
         }
 
         @Override
         public void browserLaunched(SeleniumScriptUtils ssutils) {
-            LOGGER.debug(
-                    "AuthenticationBrowserHook - authenticating as {}", userCreds.getUsername());
+            LOGGER.debug("AuthenticationBrowserHook - authenticating as {}", user.getName());
             AuthUtils.authenticateAsUser(
+                    bbaMethod.isDiagnostics(),
                     ssutils.getWebDriver(),
-                    context,
+                    user,
                     bbaMethod.getLoginPageUrl(),
-                    userCreds.getUsername(),
-                    userCreds.getPassword(),
                     bbaMethod.getLoginPageWait(),
                     bbaMethod.getAuthenticationSteps());
         }
@@ -938,5 +1137,142 @@ public class AuthUtils {
             }
             return t;
         }
+    }
+
+    public static boolean isRelevantToAuth(HttpMessage msg) {
+        return !(ResourceIdentificationUtils.isImage(msg)
+                || ResourceIdentificationUtils.isFont(msg)
+                || ResourceIdentificationUtils.isCss(msg)
+                || ResourceIdentificationUtils.isJavaScript(msg));
+    }
+
+    /**
+     * If the auth checking strategy is set to auto-detect then this method will try to find a
+     * suitable verification URL. This works best with more traditional web apps where a login link
+     * is returned in HTML. The method first tries the URL without a path before falling back to the
+     * given URL.
+     */
+    public static void checkLoginLinkVerification(
+            HttpSender authSender, User user, WebSession session, String loginUrl) {
+        AuthCheckingStrategy verif =
+                user.getContext().getAuthenticationMethod().getAuthCheckingStrategy();
+        if (!AuthCheckingStrategy.AUTO_DETECT.equals(verif)) {
+            return;
+        }
+        try {
+            URI testUri = new URI(loginUrl, true);
+            if (!StringUtils.isEmpty(testUri.getPath())) {
+                // Try to top level link first, if the page has the login form then its less likely
+                // to have a link to one
+                testUri.setPath("");
+                if (checkLoginLinkVerification(authSender, user, session, testUri)) {
+                    // The top level URL worked :)
+                    return;
+                }
+                testUri = new URI(loginUrl, true);
+            }
+            checkLoginLinkVerification(authSender, user, session, testUri);
+
+        } catch (Exception e) {
+            LOGGER.warn(
+                    "Failed accessing potential login link verification URL {}, {}",
+                    loginUrl,
+                    e.getMessage(),
+                    e);
+        }
+    }
+
+    private static boolean checkLoginLinkVerification(
+            HttpSender authSender, User user, WebSession session, URI testUri) {
+        try {
+            // Send an unauthenticated req to the test site, manually following redirects as needed
+            HttpMessage msg = new HttpMessage(testUri);
+            HttpSender unauthSender = new HttpSender(HttpSender.AUTHENTICATION_HELPER_INITIATOR);
+            unauthSender.sendAndReceive(msg);
+            historyProvider.addAuthMessageToHistory(msg);
+            int count = 0;
+            while (HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode())) {
+                testUri =
+                        new URI(
+                                msg.getResponseHeader().getHeader(HttpResponseHeader.LOCATION),
+                                true);
+                msg = new HttpMessage(testUri);
+                unauthSender.sendAndReceive(msg);
+                historyProvider.addAuthMessageToHistory(msg);
+                if (count++ > 50) {
+                    return false;
+                }
+            }
+
+            if (!msg.getResponseHeader().isHtml()) {
+                LOGGER.debug(
+                        "Response to {} is no good as a login link verification req, it is not HTML {}",
+                        testUri,
+                        msg.getResponseHeader().getNormalisedContentTypeValue());
+                return false;
+            }
+            String unauthBody = msg.getResponseBody().toString();
+            Source src = new Source(unauthBody);
+            List<Element> elements = LoginLinkDetector.getLoginLinks(src, LOGIN_LABELS_P1);
+            if (elements.isEmpty()) {
+                elements = LoginLinkDetector.getLoginLinks(src, LOGIN_LABELS_P2);
+            }
+            if (elements.isEmpty()) {
+                return false;
+            }
+            String link = elements.get(0).toString();
+            if (!unauthBody.contains(link)) {
+                LOGGER.debug(
+                        "Response to {} is no good as a login link verification req, no login link found",
+                        testUri);
+                return false;
+            }
+            // We've found a login link, now try an authenticated request
+            HttpMessage authMsg = new HttpMessage(testUri);
+            authSender.sendAndReceive(authMsg, true);
+            historyProvider.addAuthMessageToHistory(authMsg);
+
+            String authBody = authMsg.getResponseBody().toString();
+            if (authBody.contains(link)) {
+                LOGGER.debug(
+                        "Response to {} is no good as a login link verification req, an authenticated request also includes the link {}",
+                        testUri,
+                        link.toString());
+                return false;
+            }
+            LOGGER.debug(
+                    "Found good login link verification req {}, contains login link {}",
+                    testUri,
+                    link.toString());
+
+            AuthenticationMethod authMethod = user.getContext().getAuthenticationMethod();
+            authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+            authMethod.setPollUrl(testUri.toString());
+            authMethod.setLoggedOutIndicatorPattern(Pattern.quote(link));
+            return true;
+
+        } catch (Exception e) {
+            LOGGER.warn(
+                    "Failed accessing potential login link verification URL {}, {}",
+                    testUri,
+                    e.getMessage(),
+                    e);
+            return false;
+        }
+    }
+
+    public static boolean isRelevantToAuthDiags(HttpMessage msg) {
+        if (!isRelevantToAuth(msg)) {
+            return false;
+        }
+
+        String host =
+                new String(msg.getRequestHeader().getURI().getRawHost()).toLowerCase(Locale.ROOT);
+        // Strip out a few requests that can be expected to be unrelated
+        return !(host.contains("clients2.google")
+                || host.contains("detectportal.firefox")
+                || host.contains("google-analytics")
+                || host.contains("mozilla")
+                || host.contains("safebrowsing-cache"));
     }
 }

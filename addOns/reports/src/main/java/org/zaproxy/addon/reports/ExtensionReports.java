@@ -21,6 +21,7 @@ package org.zaproxy.addon.reports;
 
 import com.lowagie.text.DocumentException;
 import java.awt.Desktop;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -478,6 +479,18 @@ public class ExtensionReports extends ExtensionAdaptor {
         } catch (IOException e) {
             Stats.incCounter("stats.reports.error." + template.getConfigName());
             throw e;
+        } finally {
+            reportData.getReportObjects().values().stream()
+                    .filter(Closeable.class::isInstance)
+                    .map(Closeable.class::cast)
+                    .forEach(
+                            e -> {
+                                try {
+                                    e.close();
+                                } catch (Exception ex) {
+                                    LOGGER.error("Failed to close the report data:", ex);
+                                }
+                            });
         }
     }
 

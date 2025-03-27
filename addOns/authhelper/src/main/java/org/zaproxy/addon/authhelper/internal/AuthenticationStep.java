@@ -43,6 +43,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.commonlib.internal.TotpSupport;
+import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.utils.EnableableInterface;
 import org.zaproxy.zap.utils.Orderable;
 
@@ -177,7 +179,7 @@ public class AuthenticationStep
         this.order = order;
     }
 
-    public WebElement execute(WebDriver wd, String username, String password) {
+    public WebElement execute(WebDriver wd, UsernamePasswordAuthenticationCredentials credentials) {
         By by = createtBy();
 
         WebElement element =
@@ -198,7 +200,7 @@ public class AuthenticationStep
                 break;
 
             case PASSWORD:
-                element.sendKeys(password);
+                element.sendKeys(credentials.getPassword());
                 break;
 
             case RETURN:
@@ -206,11 +208,11 @@ public class AuthenticationStep
                 break;
 
             case TOTP_FIELD:
-                element.sendKeys(getTotpCode());
+                element.sendKeys(getTotpCode(credentials));
                 break;
 
             case USERNAME:
-                element.sendKeys(username);
+                element.sendKeys(credentials.getUsername());
                 break;
 
             default:
@@ -220,7 +222,13 @@ public class AuthenticationStep
         return element;
     }
 
-    private CharSequence getTotpCode() {
+    private CharSequence getTotpCode(UsernamePasswordAuthenticationCredentials credentials) {
+        CharSequence code = TotpSupport.getCode(credentials);
+        if (code != null) {
+            return code;
+        }
+
+        // Fallback to data from the step for now.
         return new TOTPGenerator.Builder(totpSecret)
                 .withHOTPGenerator(
                         builder ->

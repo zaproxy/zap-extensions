@@ -323,7 +323,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                 boolean crawlInDepth = getBoolean(crawlInDepthKey, false);
                 getConfig().setProperty(CLICK_DEFAULT_ELEMS_KEY, Boolean.valueOf(!crawlInDepth));
                 getConfig().clearProperty(crawlInDepthKey);
-                // $FALL-THROUGH$
+            // $FALL-THROUGH$
             case 2:
                 // Remove old version element, from now on the version is saved as an attribute of
                 // root element
