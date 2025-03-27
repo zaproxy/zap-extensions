@@ -216,10 +216,17 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
         public List<HttpMessage> getRecordedHttpMessages() {
             if (handler != null) {
-                return handler.getHttpMessages();
+                return handler.getHttpMessages(); 
             }
-            return null;
+            return new ArrayList<>();
         }
+
+        public void resetRecordedHttpMessages() {
+            if (handler != null) {
+                handler.resetHttpMessages(); 
+            }
+        }
+
 
         @Override
         public boolean isConfigured() {
@@ -309,7 +316,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                 User user) {
             if (handler != null) {
                 handler.resetAuthMsg();
-                handler.resetHttpMsgs();
+                handler.resetHttpMessages();
             }
             if (this.loginPageWait > 0) {
                 AuthUtils.setTimeToWaitMs(TimeUnit.SECONDS.toMillis(loginPageWait));

@@ -60,6 +60,7 @@ public final class ClientSideHandler implements HttpMessageHandler {
     private AuthRequestDetails authReq;
     private HttpMessage fallbackMsg;
     private int firstHrefId;
+    private List<HttpMessage> httpMessages = new ArrayList<>();
 
     @Setter private HistoryProvider historyProvider = new HistoryProvider();
 
@@ -68,9 +69,16 @@ public final class ClientSideHandler implements HttpMessageHandler {
         if (user.getAuthenticationCredentials()
                 instanceof UsernamePasswordAuthenticationCredentials authCreds) {
             this.authCreds = authCreds;
-        }
-    //private List<HttpMessage> httpMessages = new ArrayList<>();
-    
+                }
+    }
+
+    public List<HttpMessage> getHttpMessages() {
+        return new ArrayList<>(httpMessages);
+    }
+
+    public void resetHttpMessages() {
+        httpMessages.clear(); 
+    }
 
     private boolean isPost(HttpMessage msg) {
         return HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod());
@@ -83,7 +91,7 @@ public final class ClientSideHandler implements HttpMessageHandler {
 
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
-        //httpMessages.add(msg);
+        httpMessages.add(msg);
         if (ctx.isFromClient()) {
             return;
         }
