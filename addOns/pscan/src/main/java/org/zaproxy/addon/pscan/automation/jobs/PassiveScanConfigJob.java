@@ -134,7 +134,7 @@ public class PassiveScanConfigJob extends AutomationJob {
                                     Constant.messages.getString(
                                             "pscan.automation.error.pscan.rule.unknown",
                                             this.getName(),
-                                            id));
+                                            String.valueOf(id)));
                             continue;
                         }
                         AlertThreshold pluginTh =
