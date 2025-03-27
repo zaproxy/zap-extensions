@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Correctly handle missing script engines.
 
+### Changed
+- Adjusted further dialog, progress, and log messages with regard to preventing inclusion of commas in scan rule ID numbers. As well as ensuring consistency in use of ID (full caps) for table column headings, and the Add Add-ons dialog.
+
 ## [0.49.0] - 2025-03-25
 ### Added
 - Document how the TOTP data is defined for a user.
