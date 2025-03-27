@@ -63,6 +63,11 @@ env:                                   # The environment, mandatory
         credentials:                   # List of user credentials - may include any required for scripts
           username:                    # String, the username to use when authenticating, vars supported
           password:                    # String, the password to use when authenticating, vars supported
+          totp:                        # The TOTP data, supported by Browser Based Authentication.
+            secret:                    # String, the secret.
+            period:                    # Int, the period. Default: 30
+            digits:                    # Int, the number of digits. Default: 6
+            algorithm:                 # String, the algorithm. Default: SHA1
   vars:                                # List of 0 or more custom variables to be used throughout the config file
     myVarOne: CustomConfigVarOne       # Can be used as ${myVarOne} anywhere throughout the config
     myVarTwo: ${myVarOne}.VarTwo       # Can refer other vars
