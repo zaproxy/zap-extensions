@@ -664,7 +664,11 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     public void scriptChanged(ScriptWrapper script) {
         if (hasView()) {
             getConsolePanel().updateButtonStates();
-            if (!script.getName().equals(outputSources.get(script).getName())) {
+            if (outputSources.get(script) == null) {
+                // We don't know about this script, register it
+                registerScriptOutputSource(script);
+            } else if (!script.getName().equals(outputSources.get(script).getName())) {
+                // The script was renamed, re-register it with the new name
                 unregisterScriptOutputSource(script);
                 registerScriptOutputSource(script);
             }
