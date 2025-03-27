@@ -17,49 +17,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.api.openapi.simpleAuthWithOTP;
+package org.zaproxy.addon.dev.api.openapi.simpleAuthTotpBlankCodeVuln;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-public class OpenApiWithOtpVerificationPage extends TestPage {
+public class OpenApiWithBlankOtpLoginPage extends TestPage {
 
-    private static final Logger LOGGER = LogManager.getLogger(OpenApiWithOtpVerificationPage.class);
+    private static final Logger LOGGER = LogManager.getLogger(OpenApiWithBlankOtpLoginPage.class);
 
-    public OpenApiWithOtpVerificationPage(TestProxyServer server) {
-        super(server, "user");
+    public OpenApiWithBlankOtpLoginPage(TestProxyServer server) {
+        super(server, "login");
     }
 
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
-        String totp = null;
-        
+        String username = null;
+        String password = null;
+
         if (msg.getRequestHeader().hasContentType("json")) {
             String postData = msg.getRequestBody().toString();
             JSONObject jsonObject;
             try {
                 jsonObject = JSONObject.fromObject(postData);
-                totp = jsonObject.getString("code");
+                username = jsonObject.getString("user");
+                password = jsonObject.getString("password");
             } catch (JSONException e) {
                 LOGGER.debug("Unable to parse as JSON: {}", postData, e);
             }
         }
 
-        String token = msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
-        String user = getParent().getUser(token);
-        LOGGER.debug("Token: {} user: {} TOTP: {}", token, user, totp);
-
         JSONObject response = new JSONObject();
-        if (user != null && totp != null && totp.equals("123456")) {
+        if (getParent().isValid(username, password)) {
             response.put("result", "OK");
-            response.put("user", user);
+            response.put("accesstoken", getParent().getToken(username));
         } else {
             response.put("result", "FAIL");
         }
@@ -67,7 +64,7 @@ public class OpenApiWithOtpVerificationPage extends TestPage {
     }
 
     @Override
-    public OpenApiWithOtpSimpleAuthDir getParent() {
-        return (OpenApiWithOtpSimpleAuthDir) super.getParent();
+    public OpenApiWithBlankOtpSimpleAuthDir getParent() {
+        return (OpenApiWithBlankOtpSimpleAuthDir) super.getParent();
     }
 }

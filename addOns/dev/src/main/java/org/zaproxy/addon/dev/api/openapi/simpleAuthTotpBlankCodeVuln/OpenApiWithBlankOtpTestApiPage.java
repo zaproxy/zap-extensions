@@ -17,9 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.api.openapi.simpleAuthWithOTP;
+package org.zaproxy.addon.dev.api.openapi.simpleAuthTotpBlankCodeVuln;
 
-import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,45 +28,32 @@ import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-public class OpenApiWithOtpVerificationPage extends TestPage {
+public class OpenApiWithBlankOtpTestApiPage extends TestPage {
 
-    private static final Logger LOGGER = LogManager.getLogger(OpenApiWithOtpVerificationPage.class);
+    private static final Logger LOGGER = LogManager.getLogger(OpenApiWithBlankOtpTestApiPage.class);
 
-    public OpenApiWithOtpVerificationPage(TestProxyServer server) {
-        super(server, "user");
+    public OpenApiWithBlankOtpTestApiPage(TestProxyServer server) {
+        super(server, "test-api");
     }
 
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
-        String totp = null;
-        
-        if (msg.getRequestHeader().hasContentType("json")) {
-            String postData = msg.getRequestBody().toString();
-            JSONObject jsonObject;
-            try {
-                jsonObject = JSONObject.fromObject(postData);
-                totp = jsonObject.getString("code");
-            } catch (JSONException e) {
-                LOGGER.debug("Unable to parse as JSON: {}", postData, e);
-            }
-        }
-
         String token = msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
         String user = getParent().getUser(token);
-        LOGGER.debug("Token: {} user: {} TOTP: {}", token, user, totp);
+        LOGGER.debug("Token: {} user: {}", token, user);
 
         JSONObject response = new JSONObject();
-        if (user != null && totp != null && totp.equals("123456")) {
-            response.put("result", "OK");
-            response.put("user", user);
+        if (user != null) {
+            response.put("result", "Success");
+            this.getServer().setJsonResponse(TestProxyServer.STATUS_OK, response, msg);
         } else {
             response.put("result", "FAIL");
+            this.getServer().setJsonResponse(TestProxyServer.STATUS_FORBIDDEN, response, msg);
         }
-        this.getServer().setJsonResponse(response, msg);
     }
 
     @Override
-    public OpenApiWithOtpSimpleAuthDir getParent() {
-        return (OpenApiWithOtpSimpleAuthDir) super.getParent();
+    public OpenApiWithBlankOtpSimpleAuthDir getParent() {
+        return (OpenApiWithBlankOtpSimpleAuthDir) super.getParent();
     }
 }

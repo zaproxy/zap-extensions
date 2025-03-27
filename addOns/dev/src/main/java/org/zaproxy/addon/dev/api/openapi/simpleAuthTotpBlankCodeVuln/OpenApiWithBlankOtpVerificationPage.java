@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.api.openapi.simpleAuthWithOTP;
+package org.zaproxy.addon.dev.api.openapi.simpleAuthTotpBlankCodeVuln;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -29,11 +29,11 @@ import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-public class OpenApiWithOtpVerificationPage extends TestPage {
+public class OpenApiWithBlankOtpVerificationPage extends TestPage {
 
-    private static final Logger LOGGER = LogManager.getLogger(OpenApiWithOtpVerificationPage.class);
+    private static final Logger LOGGER = LogManager.getLogger(OpenApiWithBlankOtpVerificationPage.class);
 
-    public OpenApiWithOtpVerificationPage(TestProxyServer server) {
+    public OpenApiWithBlankOtpVerificationPage(TestProxyServer server) {
         super(server, "user");
     }
 
@@ -57,7 +57,8 @@ public class OpenApiWithOtpVerificationPage extends TestPage {
         LOGGER.debug("Token: {} user: {} TOTP: {}", token, user, totp);
 
         JSONObject response = new JSONObject();
-        if (user != null && totp != null && totp.equals("123456")) {
+        if (user != null && (totp != null && (totp.equals("123456") || totp.isEmpty()))) {
+            // Vulnerability: bypass TOTP check if passcode is blank
             response.put("result", "OK");
             response.put("user", user);
         } else {
@@ -67,7 +68,7 @@ public class OpenApiWithOtpVerificationPage extends TestPage {
     }
 
     @Override
-    public OpenApiWithOtpSimpleAuthDir getParent() {
-        return (OpenApiWithOtpSimpleAuthDir) super.getParent();
+    public OpenApiWithBlankOtpSimpleAuthDir getParent() {
+        return (OpenApiWithBlankOtpSimpleAuthDir) super.getParent();
     }
 }
