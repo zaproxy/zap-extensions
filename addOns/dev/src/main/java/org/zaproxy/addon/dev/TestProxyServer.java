@@ -46,6 +46,7 @@ import org.zaproxy.addon.dev.auth.simpleJsonBearer.SimpleJsonBearerDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerCookie.SimpleJsonBearerCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerJsCookie.SimpleJsonBearerJsCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonCookie.SimpleJsonCookieDir;
+import org.zaproxy.addon.dev.csrf.basic.BasicCsrfDir;
 import org.zaproxy.addon.dev.seq.performance.PerformanceDir;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
@@ -93,6 +94,10 @@ public class TestProxyServer {
         openapiDir.addDirectory(new OpenApiSimpleAuthDir(this, "simple-auth"));
         openapiDir.addDirectory(new OpenApiSimpleUnauthDir(this, "simple-unauth"));
 
+        TestDirectory csrfDir = new TestDirectory(this, "csrf");
+        TestDirectory csrfBasicDir = new BasicCsrfDir(this, "basic");
+        csrfDir.addDirectory(csrfBasicDir);
+
         TestDirectory htmlDir = new TestDirectory(this, "html");
         TestDirectory locStoreDir = new TestDirectory(this, "localStorage");
         TestDirectory sessStoreDir = new TestDirectory(this, "sessionStorage");
@@ -104,6 +109,7 @@ public class TestProxyServer {
 
         root.addDirectory(authDir);
         root.addDirectory(apiDir);
+        root.addDirectory(csrfDir);
         root.addDirectory(htmlDir);
         root.addDirectory(seqDir);
     }
@@ -158,6 +164,7 @@ public class TestProxyServer {
         File f = new File(sb.toString());
 
         if (!f.exists()) {
+            LOGGER.debug("No such file {}", f.getAbsolutePath());
             return null;
         }
         // Quick way to read a small text file
