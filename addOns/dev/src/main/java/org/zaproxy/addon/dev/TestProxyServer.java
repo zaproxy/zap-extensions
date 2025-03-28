@@ -37,6 +37,7 @@ import org.zaproxy.addon.dev.api.openapi.simpleAuth.OpenApiSimpleAuthDir;
 import org.zaproxy.addon.dev.api.openapi.simpleAuthWithOTP.OpenApiWithOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.api.openapi.simpleAuthTotpBlankCodeVuln.OpenApiWithBlankOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.api.openapi.simpleAuthTotpLockout.OpenApiWithLockoutOtpSimpleAuthDir;
+import org.zaproxy.addon.dev.api.openapi.simpleAuthTotpCaptcha.OpenApiWithCaptchaOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.api.openapi.simpleUnauth.OpenApiSimpleUnauthDir;
 import org.zaproxy.addon.dev.auth.jsonMultipleCookies.JsonMultipleCookiesDir;
 import org.zaproxy.addon.dev.auth.nonStdJsonBearer.NonStdJsonBearerDir;
@@ -97,6 +98,7 @@ public class TestProxyServer {
         openapiDir.addDirectory(new OpenApiWithOtpSimpleAuthDir(this, "simple-auth-with-otp"));
         openapiDir.addDirectory(new OpenApiWithBlankOtpSimpleAuthDir(this, "simple-auth-otp-blank-code-vuln"));
         openapiDir.addDirectory(new OpenApiWithLockoutOtpSimpleAuthDir(this, "simple-auth-otp-lockout"));
+        openapiDir.addDirectory(new OpenApiWithCaptchaOtpSimpleAuthDir(this, "simple-auth-otp-captcha"));
         openapiDir.addDirectory(new OpenApiSimpleUnauthDir(this, "simple-unauth"));
 
         TestDirectory htmlDir = new TestDirectory(this, "html");
