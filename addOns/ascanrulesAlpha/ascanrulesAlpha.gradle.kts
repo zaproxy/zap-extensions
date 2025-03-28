@@ -21,6 +21,7 @@ zapAddOn {
 }
 
 tasks.named("compileJava") {
+    dependsOn(":addOns:authhelper:enhance")
     mustRunAfter(parent!!.childProjects.get("oast")!!.tasks.named("enhance"))
 }
 
