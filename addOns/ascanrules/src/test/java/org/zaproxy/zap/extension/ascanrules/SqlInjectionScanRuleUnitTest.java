@@ -44,6 +44,7 @@ import org.parosproxy.paros.core.scanner.AbstractPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.model.Tech;
@@ -875,6 +876,100 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             // When
             rule.scan();
 
+            // Then
+            assertThat(alertsRaised, hasSize(0));
+        }
+    }
+
+    @Nested
+    class FiveHundredErrors {
+
+        private Response error500Response() {
+            return newFixedLengthResponse(
+                    NanoHTTPD.Response.Status.INTERNAL_ERROR,
+                    NanoHTTPD.MIME_HTML,
+                    "500 error handling request");
+        }
+
+        @Test
+        void shouldAlertIf500OnSingleQuote() throws Exception {
+            // Given
+            String param = "id";
+
+            nano.addHandler(
+                    new NanoServerHandler("/") {
+                        @Override
+                        protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                            String value = getFirstParamValue(session, param);
+                            if (StringUtils.countMatches(value, "'") == 1) {
+                                return error500Response();
+                            }
+                            String response = "<html><body></body></html>";
+                            return newFixedLengthResponse(response);
+                        }
+                    });
+
+            rule.init(getHttpMessage("/?" + param + "=test"), parent);
+            // When
+            rule.scan();
+            // Then
+            assertThat(httpMessagesSent, hasSize(equalTo(2)));
+            assertThat(alertsRaised, hasSize(1));
+            assertThat(
+                    alertsRaised.get(0).getEvidence(),
+                    is(equalTo("HTTP/1.1 500 Internal Server Error")));
+            assertThat(alertsRaised.get(0).getParam(), is(equalTo(param)));
+            assertThat(alertsRaised.get(0).getAttack(), is(equalTo("'")));
+            assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
+            assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+        }
+
+        @Test
+        void shouldNotAlertIfAlways500() throws Exception {
+            // Given
+            String param = "id";
+
+            nano.addHandler(
+                    new NanoServerHandler("/") {
+                        @Override
+                        protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                            return error500Response();
+                        }
+                    });
+
+            HttpMessage msg = getHttpMessage("/?" + param + "=test");
+            msg.getResponseHeader().setStatusCode(500);
+            msg.getResponseHeader().setReasonPhrase("Internal Server Error");
+
+            rule.init(msg, parent);
+            // When
+            rule.scan();
+            // Then
+            assertThat(alertsRaised, hasSize(0));
+        }
+
+        @Test
+        void shouldNotAlertIfInvalidValuesResultIn500() throws Exception {
+            // Given
+            String param = "id";
+
+            nano.addHandler(
+                    new NanoServerHandler("/") {
+                        @Override
+                        protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                            String value = getFirstParamValue(session, param);
+                            if ("test".equals(value)) {
+                                return newFixedLengthResponse("<html><body></body></html>");
+                            }
+                            return error500Response();
+                        }
+                    });
+
+            HttpMessage msg = getHttpMessage("/?" + param + "=test");
+
+            rule.init(msg, parent);
+            // When
+            rule.scan();
             // Then
             assertThat(alertsRaised, hasSize(0));
         }

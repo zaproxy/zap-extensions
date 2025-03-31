@@ -812,6 +812,41 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 }
                 countErrorBasedRequests++;
 
+                if (msg1.getResponseHeader().getStatusCode() == 500
+                        && this.getBaseMsg().getResponseHeader().getStatusCode() != 500) {
+                    // Double check that the service doesn't respond with a 500 for all invalid
+                    // values
+                    HttpMessage msgSafe = getNewMsg();
+                    setParameter(msgSafe, param, "S4feV4lu3");
+
+                    try {
+                        sendAndReceive(msgSafe, false);
+                    } catch (SocketException ex) {
+                        LOGGER.debug(
+                                "Caught {} {} when accessing: {}",
+                                ex.getClass().getName(),
+                                ex.getMessage(),
+                                msgSafe.getRequestHeader().getURI());
+                    }
+                    if (msgSafe.isResponseFromTargetHost()
+                            && msgSafe.getResponseHeader().getStatusCode() != 500) {
+                        // Internal Server Error only when its an SQLi attack, a good enough
+                        // indication in this case
+                        sqlInjectionFoundForUrl = true;
+                        sqlInjectionAttack = sqlErrValue;
+
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_LOW)
+                                .setName(getName())
+                                .setParam(param)
+                                .setAttack(sqlInjectionAttack)
+                                .setEvidence(msg1.getResponseHeader().getPrimeHeader())
+                                .setMessage(msg1)
+                                .raise();
+                        continue;
+                    }
+                }
+
                 // now check the results against each pattern in turn, to try to identify a
                 // database, or even better: a specific database.
                 // Note: do NOT check the HTTP error code just yet, as the result could come
