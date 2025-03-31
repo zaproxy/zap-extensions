@@ -34,6 +34,7 @@ import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -378,7 +379,8 @@ class JobUtilsUnitTest extends TestUtils {
         File file = new File("/script.ext");
         String type = "type";
         String engineName = "engine";
-        given(extensionScript.getEngineWrapper(engineName)).willReturn(null);
+        given(extensionScript.getEngineWrapper(engineName))
+                .willThrow(InvalidParameterException.class);
         AutomationProgress progress = mock(AutomationProgress.class);
         // When
         ScriptWrapper obtainedScriptWrapper =
