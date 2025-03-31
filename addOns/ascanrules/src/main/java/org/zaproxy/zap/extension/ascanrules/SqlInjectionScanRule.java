@@ -126,12 +126,16 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
      */
     public static final String SQL_ONE_LINE_COMMENT = " -- ";
 
+    public static final String SQL_SINGLE_QUOTE = "'";
+
     /**
      * used to inject to check for SQL errors: some basic SQL metacharacters ordered so as to
      * maximise SQL errors Note that we do separate runs for each family of characters, in case one
      * family are filtered out, the others might still get past
      */
-    private static final String[] SQL_CHECK_ERR = {"'", "\"", ";", "'(", ")", "(", "NULL", "'\""};
+    static final String[] SQL_CHECK_ERR = {
+        SQL_SINGLE_QUOTE, "\"", ";", "'(", ")", "(", "NULL", "'\""
+    };
 
     /**
      * A collection of RDBMS with its error message fragments and {@code Tech}.
@@ -456,17 +460,19 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
         "%\" " + SQL_ONE_LINE_COMMENT, // attack for SQL LIKE statements
     };
 
+    static final String SQL_UNION_SELECT = " UNION ALL select NULL";
+
     /**
      * generic UNION statements. Hoping these will cause a specific error message that we will
      * recognise
      */
-    private static String[] SQL_UNION_APPENDAGES = {
-        " UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
-        "' UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
-        "\" UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
-        ") UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
-        "') UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
-        "\") UNION ALL select NULL" + SQL_ONE_LINE_COMMENT,
+    static String[] SQL_UNION_APPENDAGES = {
+        SQL_UNION_SELECT + SQL_ONE_LINE_COMMENT,
+        "'" + SQL_UNION_SELECT + SQL_ONE_LINE_COMMENT,
+        "\"" + SQL_UNION_SELECT + SQL_ONE_LINE_COMMENT,
+        ")" + SQL_UNION_SELECT + SQL_ONE_LINE_COMMENT,
+        "')" + SQL_UNION_SELECT + SQL_ONE_LINE_COMMENT,
+        "\")" + SQL_UNION_SELECT + SQL_ONE_LINE_COMMENT,
     };
 
     private static final Logger LOGGER = LogManager.getLogger(SqlInjectionScanRule.class);

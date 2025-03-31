@@ -31,8 +31,10 @@ import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.Map;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
@@ -381,6 +383,186 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         Alert actual = alertsRaised.get(0);
         assertThat(actual.getParam(), is(equalTo(param)));
         assertThat(actual.getAttack(), is(equalTo(attackPayload)));
+    }
+
+    @Nested
+    class ErrorBasedSqlInjection {
+        @Test
+        void shouldAlertEmptyPrefix() throws Exception {
+            // Given
+            String param = "param";
+            String normalValue = "test";
+            String emptyPrefixErrorValue = SqlInjectionScanRule.SQL_SINGLE_QUOTE;
+
+            UrlParamValueHandler handler =
+                    UrlParamValueHandler.builder()
+                            .targetParam(param)
+                            .whenParamValueIs(param)
+                            .thenReturnHtml(normalValue)
+                            .whenParamValueIs(emptyPrefixErrorValue)
+                            .thenReturnHtml("You have an error in your SQL syntax")
+                            .build();
+            nano.addHandler(handler);
+            rule.init(getHttpMessage("/?param=" + normalValue), parent);
+
+            // When
+            rule.scan();
+
+            // Then
+            assertThat(alertsRaised, hasSize(1));
+        }
+
+        @Test
+        void shouldAlertOriginalParamPrefix() throws Exception {
+            // Given
+            String param = "param";
+            String normalValue = "test";
+            String originalParamErrorValue = normalValue + SqlInjectionScanRule.SQL_SINGLE_QUOTE;
+
+            UrlParamValueHandler handler =
+                    UrlParamValueHandler.builder()
+                            .targetParam(param)
+                            .whenParamValueIs(param)
+                            .thenReturnHtml(normalValue)
+                            .whenParamValueIs(originalParamErrorValue)
+                            .thenReturnHtml("You have an error in your SQL syntax")
+                            .build();
+            nano.addHandler(handler);
+            rule.init(getHttpMessage("/?param=" + normalValue), parent);
+
+            // When
+            rule.scan();
+
+            // Then
+            assertThat(alertsRaised, hasSize(1));
+        }
+
+        @Test
+        void shouldNotAlertNonSqlMessage() throws Exception {
+            // Given
+            String param = "param";
+            String normalValue = "test";
+            String originalParamErrorValue = normalValue + SqlInjectionScanRule.SQL_SINGLE_QUOTE;
+
+            UrlParamValueHandler handler =
+                    UrlParamValueHandler.builder()
+                            .targetParam(param)
+                            .whenParamValueIs(param)
+                            .thenReturnHtml(normalValue)
+                            .whenParamValueIs(originalParamErrorValue)
+                            .thenReturnHtml("Not a SQL error message")
+                            .build();
+            nano.addHandler(handler);
+            rule.init(getHttpMessage("/?param=" + normalValue), parent);
+
+            // When
+            rule.scan();
+
+            // Then
+            assertThat(alertsRaised, hasSize(0));
+        }
+
+        @Test
+        void shouldAlertGenericRdbmsErrorOnLowThreshold() throws Exception {
+            // Given
+            rule.setAlertThreshold(AlertThreshold.LOW);
+            String param = "param";
+            String normalValue = "test";
+            String originalParamErrorValue = normalValue + SqlInjectionScanRule.SQL_SINGLE_QUOTE;
+
+            UrlParamValueHandler handler =
+                    UrlParamValueHandler.builder()
+                            .targetParam(param)
+                            .whenParamValueIs(param)
+                            .thenReturnHtml(normalValue)
+                            .whenParamValueIs(originalParamErrorValue)
+                            .thenReturnHtml("java.sql.SQLException")
+                            .build();
+            nano.addHandler(handler);
+            rule.init(getHttpMessage("/?param=" + normalValue), parent);
+
+            // When
+            rule.scan();
+
+            // Then
+            assertThat(alertsRaised, hasSize(1));
+        }
+    }
+
+    @Nested
+    class UnionBasedSqlInjection {
+
+        private UrlParamValueHandler serverWithRdbmsError() {
+            String param = "param";
+            String normalValue = "test";
+            String unionValueString =
+                    normalValue
+                            + SqlInjectionScanRule.SQL_UNION_SELECT
+                            + SqlInjectionScanRule.SQL_ONE_LINE_COMMENT;
+
+            return UrlParamValueHandler.builder()
+                    .targetParam(param)
+                    .whenParamValueIs(param)
+                    .thenReturnHtml(normalValue)
+                    .whenParamValueIs(unionValueString)
+                    .thenReturnHtml("You have an error in your SQL syntax")
+                    .build();
+        }
+
+        @Test
+        void shouldAlertRdbmsErrorMessage() throws Exception {
+            // Given
+            nano.addHandler(serverWithRdbmsError());
+            rule.init(getHttpMessage("/?param=test"), parent);
+
+            // When
+            rule.scan();
+
+            // Then
+            assertThat(alertsRaised, hasSize(1));
+        }
+
+        @Test
+        void shouldNotRunStrengthLow() throws Exception {
+            // Given
+            nano.addHandler(serverWithRdbmsError());
+            rule.setAttackStrength(AttackStrength.LOW);
+            rule.init(getHttpMessage("/?param=test"), parent);
+
+            // When
+            rule.scan();
+
+            // Then
+            assertThat(alertsRaised, hasSize(0));
+        }
+
+        @Test
+        void shouldNotAlertNonErrorMessageResponse() throws Exception {
+            // Given
+            String param = "param";
+            String normalValue = "test";
+            String unionValueString =
+                    normalValue
+                            + SqlInjectionScanRule.SQL_UNION_SELECT
+                            + SqlInjectionScanRule.SQL_ONE_LINE_COMMENT;
+
+            UrlParamValueHandler handler =
+                    UrlParamValueHandler.builder()
+                            .targetParam(param)
+                            .whenParamValueIs(param)
+                            .thenReturnHtml(normalValue)
+                            .whenParamValueIs(unionValueString)
+                            .thenReturnHtml("This is not a sql error message")
+                            .build();
+            nano.addHandler(handler);
+            rule.init(getHttpMessage("/?param=" + normalValue), parent);
+
+            // When
+            rule.scan();
+
+            // Then
+            assertThat(alertsRaised, hasSize(0));
+        }
     }
 
     private static class ExpressionBasedHandler extends NanoServerHandler {
