@@ -26,6 +26,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -631,7 +632,7 @@ public class JobUtils {
             }
             if (wrapper == null) {
                 // Register the script
-                ScriptEngineWrapper engineWrapper = extScript.getEngineWrapper(engineName);
+                ScriptEngineWrapper engineWrapper = getEngineWrapper(extScript, engineName);
                 if (engineWrapper == null) {
                     progress.error(
                             Constant.messages.getString(
@@ -661,6 +662,14 @@ public class JobUtils {
             }
         }
         return wrapper;
+    }
+
+    private static ScriptEngineWrapper getEngineWrapper(ExtensionScript extension, String name) {
+        try {
+            return extension.getEngineWrapper(name);
+        } catch (InvalidParameterException e) {
+            return null;
+        }
     }
 
     public static File getFile(String name, AutomationPlan plan) {
