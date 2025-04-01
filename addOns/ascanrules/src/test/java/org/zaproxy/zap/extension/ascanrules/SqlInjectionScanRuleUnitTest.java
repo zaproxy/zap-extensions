@@ -30,12 +30,15 @@ import static org.hamcrest.Matchers.is;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -54,6 +57,85 @@ import org.zaproxy.zap.testutils.UrlParamValueHandler;
 
 /** Unit test for {@link SqlInjectionScanRule}. */
 class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRule> {
+
+    static final List<String> ALL_EXCEPT_GENERIC_SQL_ERRORS =
+            List.of(
+                    "You have an error in your SQL syntax",
+                    "com.mysql.jdbc.exceptions",
+                    "org.gjt.mm.mysql",
+                    "ODBC driver does not support",
+                    "The used SELECT statements have a different number of columns",
+                    "You have an error in your SQL syntax",
+                    "The used SELECT statements have a different number of columns",
+                    "com.microsoft.sqlserver.jdbc",
+                    "com.microsoft.jdbc",
+                    "com.inet.tds",
+                    "com.microsoft.sqlserver.jdbc",
+                    "com.ashna.jturbo",
+                    "weblogic.jdbc.mssqlserver",
+                    "[Microsoft]",
+                    "[SQLServer]",
+                    "[SQLServer 2000 Driver for JDBC]",
+                    "net.sourceforge.jtds.jdbc",
+                    "80040e14",
+                    "800a0bcd",
+                    "80040e57",
+                    "ODBC driver does not support",
+                    "All queries in an SQL statement containing a UNION operator must have an equal number of expressions in their target lists",
+                    "All queries combined using a UNION, INTERSECT or EXCEPT operator must have an equal number of expressions in their target lists",
+                    "oracle.jdbc",
+                    "SQLSTATE[HY",
+                    "ORA-00933",
+                    "ORA-06512",
+                    "SQL command not properly ended",
+                    "ORA-00942",
+                    "ORA-29257",
+                    "ORA-00932",
+                    "query block has incorrect number of result columns",
+                    "ORA-01789",
+                    "com.ibm.db2.jcc",
+                    "COM.ibm.db2.jdbc",
+                    "org.postgresql.util.PSQLException",
+                    "org.postgresql",
+                    "each UNION query must have the same number of columns",
+                    "unterminated quoted string at or near",
+                    "syntax error at or near",
+                    "com.sybase.jdbc",
+                    "net.sourceforge.jtds.jdbc",
+                    "com.informix.jdbc",
+                    "org.firebirdsql.jdbc",
+                    "ids.sql",
+                    "org.enhydra.instantdb.jdbc",
+                    "jdbc.idb",
+                    "interbase.interclient",
+                    "org.hsql",
+                    "hSql.",
+                    "Unexpected token , requires FROM in statement",
+                    "Unexpected end of command in statement",
+                    "Column count does not match in statement",
+                    "Table not found in statement",
+                    "Unexpected token:",
+                    "Unexpected end of command in statement",
+                    "Column count does not match in statement",
+                    "sybase.jdbc.sqlanywhere",
+                    "com.pointbase.jdbc",
+                    "db2j.",
+                    "COM.cloudscape",
+                    "RmiJdbc.RJDriver",
+                    "com.ingres.jdbc",
+                    "near \".+\": syntax error",
+                    "SQLITE_ERROR",
+                    "SELECTs to the left and right of UNION do not have the same number of result columns");
+
+    static final List<String> GENERIC_SQL_ERRORS =
+            List.of(
+                    "com.ibatis.common.jdbc",
+                    "org.hibernate",
+                    "sun.jdbc.odbc",
+                    "[ODBC Driver Manager]",
+                    "ODBC driver does not support",
+                    "System.Data.OleDb",
+                    "java.sql.SQLException");
 
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
@@ -180,6 +262,25 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         boolean targets = rule.targets(techSet);
         // Then
         assertThat(targets, is(equalTo(false)));
+    }
+
+    private static String getRawString(Pattern p) {
+        return p.toString().replace("\\Q", "").replace("\\E", "");
+    }
+
+    @Test
+    void allErrorsListShouldBeComplete() {
+        Stream.of(SqlInjectionScanRule.RDBMS.values())
+                .filter(db -> !db.equals(SqlInjectionScanRule.RDBMS.GenericRDBMS))
+                .forEach(
+                        db ->
+                                db.getErrorPatterns().stream()
+                                        .forEach(
+                                                e ->
+                                                        assertThat(
+                                                                ALL_EXCEPT_GENERIC_SQL_ERRORS,
+                                                                Matchers.hasItem(
+                                                                        getRawString(e)))));
     }
 
     @Test
@@ -703,8 +804,20 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
 
     @Nested
     class ErrorBasedSqlInjection {
-        @Test
-        void shouldAlertEmptyPrefix() throws Exception {
+
+        static List<String> allExceptGenericSqlErrors() {
+            return ALL_EXCEPT_GENERIC_SQL_ERRORS;
+        }
+
+        static List<String> allSqlErrors() {
+            ArrayList<String> list = new ArrayList<>(ALL_EXCEPT_GENERIC_SQL_ERRORS);
+            list.addAll(GENERIC_SQL_ERRORS);
+            return list;
+        }
+
+        @ParameterizedTest
+        @MethodSource("allExceptGenericSqlErrors")
+        void shouldAlertEmptyPrefixMediumThreshold(String error) throws Exception {
             // Given
             String param = "param";
             String normalValue = "test";
@@ -716,7 +829,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
                             .whenParamValueIs(param)
                             .thenReturnHtml(normalValue)
                             .whenParamValueIs(emptyPrefixErrorValue)
-                            .thenReturnHtml("You have an error in your SQL syntax")
+                            .thenReturnHtml(error)
                             .build();
             nano.addHandler(handler);
             rule.init(getHttpMessage("/?param=" + normalValue), parent);
@@ -726,10 +839,12 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
 
             // Then
             assertThat(alertsRaised, hasSize(1));
+            assertThat(alertsRaised.get(0).getEvidence(), equalTo(error));
         }
 
-        @Test
-        void shouldAlertOriginalParamPrefix() throws Exception {
+        @ParameterizedTest
+        @MethodSource("allExceptGenericSqlErrors")
+        void shouldAlertOriginalParamPrefixMediumThreshold(String error) throws Exception {
             // Given
             String param = "param";
             String normalValue = "test";
@@ -741,7 +856,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
                             .whenParamValueIs(param)
                             .thenReturnHtml(normalValue)
                             .whenParamValueIs(originalParamErrorValue)
-                            .thenReturnHtml("You have an error in your SQL syntax")
+                            .thenReturnHtml(error)
                             .build();
             nano.addHandler(handler);
             rule.init(getHttpMessage("/?param=" + normalValue), parent);
@@ -751,6 +866,63 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
 
             // Then
             assertThat(alertsRaised, hasSize(1));
+            assertThat(alertsRaised.get(0).getEvidence(), equalTo(error));
+        }
+
+        @ParameterizedTest
+        @MethodSource("allSqlErrors")
+        void shouldAlertEmptyPrefixLowThreshold(String error) throws Exception {
+            // Given
+            String param = "param";
+            String normalValue = "test";
+            String emptyPrefixErrorValue = SqlInjectionScanRule.SQL_SINGLE_QUOTE;
+
+            UrlParamValueHandler handler =
+                    UrlParamValueHandler.builder()
+                            .targetParam(param)
+                            .whenParamValueIs(param)
+                            .thenReturnHtml(normalValue)
+                            .whenParamValueIs(emptyPrefixErrorValue)
+                            .thenReturnHtml(error)
+                            .build();
+            nano.addHandler(handler);
+            rule.setAlertThreshold(AlertThreshold.LOW);
+            rule.init(getHttpMessage("/?param=" + normalValue), parent);
+
+            // When
+            rule.scan();
+
+            // Then
+            assertThat(alertsRaised, hasSize(1));
+            assertThat(alertsRaised.get(0).getEvidence(), equalTo(error));
+        }
+
+        @ParameterizedTest
+        @MethodSource("allSqlErrors")
+        void shouldAlertOriginalParamPrefixLowThreshold(String error) throws Exception {
+            // Given
+            String param = "param";
+            String normalValue = "test";
+            String originalParamErrorValue = normalValue + SqlInjectionScanRule.SQL_SINGLE_QUOTE;
+
+            UrlParamValueHandler handler =
+                    UrlParamValueHandler.builder()
+                            .targetParam(param)
+                            .whenParamValueIs(param)
+                            .thenReturnHtml(normalValue)
+                            .whenParamValueIs(originalParamErrorValue)
+                            .thenReturnHtml(error)
+                            .build();
+            nano.addHandler(handler);
+            rule.setAlertThreshold(AlertThreshold.LOW);
+            rule.init(getHttpMessage("/?param=" + normalValue), parent);
+
+            // When
+            rule.scan();
+
+            // Then
+            assertThat(alertsRaised, hasSize(1));
+            assertThat(alertsRaised.get(0).getEvidence(), equalTo(error));
         }
 
         @Test
