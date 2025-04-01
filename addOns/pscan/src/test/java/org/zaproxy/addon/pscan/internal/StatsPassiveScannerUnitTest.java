@@ -19,9 +19,13 @@
  */
 package org.zaproxy.addon.pscan.internal;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
+import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -32,6 +36,7 @@ import org.mockito.Mockito;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.StatsListener;
@@ -153,5 +158,16 @@ class StatsPassiveScannerUnitTest {
                         "http://example.com",
                         StatsPassiveScanner.CONTENT_TYPE_STATS_PREFIX
                                 + "multipart/byteranges; charset=UTF-8");
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        Map<String, String> tags = scanner.getAlertTags();
+        // Then
+        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
     }
 }

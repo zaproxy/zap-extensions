@@ -19,7 +19,10 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
@@ -31,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -42,6 +46,15 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.charsetmismatch.";
+
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags = new HashMap<>();
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static enum MismatchType {
         NO_MISMATCH_METACONTENTTYPE_MISSING,
@@ -301,6 +314,11 @@ public class CharsetMismatchScanRule extends PluginPassiveScanner
 
     public int getWascId() {
         return 15; // WASC-15: Application Misconfiguration
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     private static String getExtraInfo(

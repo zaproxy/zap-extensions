@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Adjusted further dialog, progress, and log messages with regard to preventing inclusion of commas in scan rule ID numbers. As well as ensuring consistency in use of ID (full caps) for table column headings.
+- Depends on an updated version of the Common Library add-on.
+
+### Added
+- The Stats Passive Scan Rule been tagged of interest to Penetration Testers, as well as adding tags associated with DEV or QA applicability.
 
 ## [0.2.1] - 2025-03-25
 ### Fixed

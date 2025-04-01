@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -32,6 +34,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** Big Redirects passive scan rule https://github.com/zaproxy/zaproxy/issues/1257 */
@@ -42,11 +45,18 @@ public class BigRedirectsScanRule extends PluginPassiveScanner
     private static final int PLUGIN_ID = 10044;
 
     private static final Logger LOGGER = LogManager.getLogger(BigRedirectsScanRule.class);
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
-                    CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
+                                CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static final Pattern HREF_PATTERN = Pattern.compile("href", Pattern.CASE_INSENSITIVE);
 

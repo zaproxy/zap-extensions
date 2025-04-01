@@ -35,6 +35,13 @@ public enum PolicyTag {
     QA_STD("QA Standard.policy", "QA Standard", "scanpolicies"),
     QA_FULL("QA Full.policy", "QA Full", "scanpolicies"),
     API("API.policy", "API", "scanpolicies"),
+    /**
+     * For rules believed to be of interest to Penetration Testers. Essentially everything other
+     * than Example rules.
+     *
+     * @since 1.32.0
+     */
+    PENTEST("Pen Test.policy", "Penetration Tester", "scanpolicies"),
 
     SEQUENCE("Sequence.policy", "Sequence", "sequence");
 

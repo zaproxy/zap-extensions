@@ -20,7 +20,10 @@
 package org.zaproxy.addon.pscan.internal;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URIException;
@@ -28,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -39,6 +43,16 @@ public class StatsPassiveScanner extends PluginPassiveScanner {
     public static final String CODE_STATS_PREFIX = "stats.code.";
     public static final String CONTENT_TYPE_STATS_PREFIX = "stats.contentType.";
     public static final String RESPONSE_TIME_STATS_PREFIX = "stats.responseTime.";
+
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags = new HashMap<>();
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static StatsPassiveScanner instance;
 
@@ -104,5 +118,10 @@ public class StatsPassiveScanner extends PluginPassiveScanner {
     public static void load(ExtensionPassiveScan2 extension) {
         instance = new StatsPassiveScanner();
         extension.getPassiveScannersManager().add(instance);
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }
