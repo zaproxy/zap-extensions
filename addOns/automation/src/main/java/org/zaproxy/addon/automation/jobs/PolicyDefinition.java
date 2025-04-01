@@ -109,7 +109,9 @@ public class PolicyDefinition extends AutomationData {
                         } else {
                             progress.warn(
                                     Constant.messages.getString(
-                                            "automation.error.ascan.rule.unknown", jobName, id));
+                                            "automation.error.ascan.rule.unknown",
+                                            jobName,
+                                            String.valueOf(id)));
                         }
                     }
                 }
