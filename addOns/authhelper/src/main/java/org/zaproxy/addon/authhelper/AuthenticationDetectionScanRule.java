@@ -249,25 +249,23 @@ public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
     }
 
     void extractJsonStrings(JSON json, String parent, TreeSet<HtmlParameter> params) {
-        if (json instanceof JSONObject) {
-            JSONObject jsonObject = (JSONObject) json;
-            for (Object key : jsonObject.keySet()) {
-                Object obj = jsonObject.get(key);
-                if (obj instanceof JSONObject) {
-                    extractJsonStrings(
-                            (JSONObject) obj, normalisedKey(parent, (String) key), params);
-                } else if (obj instanceof String) {
+        if (json instanceof JSONObject jsonObj) {
+            for (Object key : jsonObj.keySet()) {
+                Object obj = jsonObj.get(key);
+                if (obj instanceof JSONObject jsonObj2) {
+                    extractJsonStrings(jsonObj2, normalisedKey(parent, (String) key), params);
+                } else if (obj instanceof String objStr) {
                     params.add(
                             new HtmlParameter(
                                     HtmlParameter.Type.form,
                                     normalisedKey(parent, (String) key),
-                                    (String) obj));
+                                    objStr));
                 }
             }
-        } else if (json instanceof JSONArray) {
-            Object[] oa = ((JSONArray) json).toArray();
+        } else if (json instanceof JSONArray jsonArr) {
+            Object[] oa = jsonArr.toArray();
             for (int i = 0; i < oa.length; i++) {
-                extractJsonStrings((JSONArray) json, parent + "[" + i + "]", params);
+                extractJsonStrings(jsonArr, parent + "[" + i + "]", params);
             }
         }
     }
