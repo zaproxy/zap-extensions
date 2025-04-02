@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -30,6 +32,7 @@ import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner
@@ -61,8 +64,14 @@ public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner
                     new SecFetchDest(this::newAlert),
                     new SecFetchUser(this::newAlert));
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(CommonAlertTag.WSTG_V42_SESS_05_CSRF);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(CommonAlertTag.toMap(CommonAlertTag.WSTG_V42_SESS_05_CSRF));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
