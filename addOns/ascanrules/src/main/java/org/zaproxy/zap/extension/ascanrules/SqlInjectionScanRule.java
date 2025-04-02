@@ -149,7 +149,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
      *
      * @see Tech
      */
-    private enum RDBMS {
+    protected enum RDBMS {
         // TODO: add other specific UNION based error messages for Union here: PostgreSQL, Sybase,
         // DB2, Informix, etc
 
@@ -233,7 +233,9 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                         new String[] {
                             "\\Qorg.postgresql.util.PSQLException\\E",
                             "\\Qorg.postgresql\\E",
-                            "\\Qeach UNION query must have the same number of columns\\E"
+                            "\\Qeach UNION query must have the same number of columns\\E",
+                            "\\Qunterminated quoted string at or near\\E",
+                            "\\Qsyntax error at or near\\E",
                         }),
                 Arrays.asList(
                         new String[] {
@@ -249,8 +251,6 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                 "Sybase",
                 Tech.Sybase,
                 "\\Qcom.sybase.jdbc\\E",
-                "\\Qcom.sybase.jdbc2.jdbc\\E",
-                "\\Qcom.sybase.jdbc3.jdbc\\E",
                 "\\Qnet.sourceforge.jtds.jdbc\\E" // see also Microsoft SQL Server. could be either!
                 ),
 
