@@ -34,6 +34,7 @@ import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.extension.zest.ZestScriptNode;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
@@ -104,7 +105,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
     public void init(ScriptNode parent, ScriptNode node) {
         this.parent = parent;
         if (node == null) {
-            this.node = new ScriptNode();
+            this.node = new ZestScriptNode();
             request = new ZestRequest();
             this.node.setUserObject(request);
             add = true;

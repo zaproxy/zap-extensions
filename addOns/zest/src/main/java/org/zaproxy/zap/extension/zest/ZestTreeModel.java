@@ -65,7 +65,7 @@ public class ZestTreeModel {
     }
 
     private ScriptNode getZestNode(ZestElement ze, int shadowLevel) {
-        ScriptNode zestNode = new ScriptNode(ZestZapUtils.toUiString(ze, true, shadowLevel));
+        ScriptNode zestNode = new ZestScriptNode(ZestZapUtils.toUiString(ze, true, shadowLevel));
         zestNode.setUserObject(new ZestElementWrapper(ze, shadowLevel));
         return zestNode;
     }
