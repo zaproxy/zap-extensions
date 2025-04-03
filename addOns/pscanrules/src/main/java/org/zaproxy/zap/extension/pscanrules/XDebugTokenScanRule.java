@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -31,6 +33,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** X-Debug-Token passive scan rule https://github.com/zaproxy/zaproxy/issues/2452 */
@@ -39,11 +42,19 @@ public class XDebugTokenScanRule extends PluginPassiveScanner implements CommonP
     private static final String MESSAGE_PREFIX = "pscanrules.xdebugtoken.";
     private static final int PLUGIN_ID = 10056;
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
-                    CommonAlertTag.WSTG_V42_ERRH_01_ERR);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
+                                CommonAlertTag.WSTG_V42_ERRH_01_ERR));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static final Logger LOGGER = LogManager.getLogger(XDebugTokenScanRule.class);
 

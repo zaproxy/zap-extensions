@@ -45,6 +45,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDisclosureScanRule> {
 
@@ -58,13 +59,14 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));

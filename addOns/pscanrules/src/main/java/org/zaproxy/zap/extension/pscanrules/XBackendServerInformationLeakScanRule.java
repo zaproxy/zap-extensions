@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.htmlparser.jericho.Source;
@@ -28,6 +30,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -42,11 +45,18 @@ public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner
 
     private static final Logger LOGGER =
             LogManager.getLogger(XBackendServerInformationLeakScanRule.class);
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                    CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                                CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {

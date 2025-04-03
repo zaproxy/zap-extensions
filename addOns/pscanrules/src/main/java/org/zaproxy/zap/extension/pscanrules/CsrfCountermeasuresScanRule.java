@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -39,6 +41,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
@@ -57,11 +60,20 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
     /** contains the base vulnerability that this plugin refers to */
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_9");
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
-                    CommonAlertTag.WSTG_V42_SESS_05_CSRF);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                                CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
+                                CommonAlertTag.WSTG_V42_SESS_05_CSRF));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private ExtensionAntiCSRF extensionAntiCSRF;
     private String csrfIgnoreList;

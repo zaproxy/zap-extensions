@@ -38,6 +38,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpDateUtils;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -64,7 +65,7 @@ class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieSecureFl
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(6)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -74,6 +75,9 @@ class CookieSecureFlagScanRuleUnitTest extends PassiveScannerTest<CookieSecureFl
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));

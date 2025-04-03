@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - NPE when using some scripts after re-installing the scripts add-on.
 - Correct error message of the Automation Framework job.
 
+### Added
+- Standardized Policy Tags to the base Scripts Passive Scanner.
+
+### Changed
+- Depends on an updated version of the Common Library add-on.
+
 ## [45.9.0] - 2025-03-25
 ### Fixed
 - Remove unnecessary custom parameter handling.

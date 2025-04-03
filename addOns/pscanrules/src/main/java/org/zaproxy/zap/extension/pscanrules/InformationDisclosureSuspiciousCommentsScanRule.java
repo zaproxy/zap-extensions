@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -47,11 +49,18 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
             "pscanrules.informationdisclosuresuspiciouscomments.";
     private static final int PLUGIN_ID = 10027;
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
-                    CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
+                                CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static final int MAX_ELEMENT_CHRS_TO_REPORT = 128;
 

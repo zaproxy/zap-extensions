@@ -315,6 +315,16 @@ class ScriptsPassiveScannerUnitTest extends TestUtils {
         return cachedScript;
     }
 
+    @Test
+    void shouldHaveExpectedNumberOfAlertTags() {
+        // Given
+        ScriptsPassiveScanner scriptsPassiveScanner = new ScriptsPassiveScanner();
+        // When
+        int tagCount = scriptsPassiveScanner.getAlertTags().size();
+        // Then
+        assertThat(tagCount, is(equalTo(3)));
+    }
+
     @SuppressWarnings("unchecked")
     private <T> ScriptsCache<T> createScriptsCache(CachedScript<T> cachedScript) {
         ScriptsCache<T> scriptsCache = mock(ScriptsCache.class);

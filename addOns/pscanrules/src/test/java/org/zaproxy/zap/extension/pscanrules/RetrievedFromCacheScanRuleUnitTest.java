@@ -32,6 +32,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class RetrievedFromCacheScanRuleUnitTest extends PassiveScannerTest<RetrievedFromCacheScanRule> {
 
@@ -67,10 +68,11 @@ class RetrievedFromCacheScanRuleUnitTest extends PassiveScannerTest<RetrievedFro
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(1)));
+        assertThat(tags.size(), is(equalTo(2)));
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getValue())));

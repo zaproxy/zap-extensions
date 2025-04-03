@@ -38,6 +38,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
 
@@ -63,13 +64,14 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getValue())));
