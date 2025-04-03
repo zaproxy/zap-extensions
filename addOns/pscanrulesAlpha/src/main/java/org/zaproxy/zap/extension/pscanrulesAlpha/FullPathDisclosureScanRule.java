@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import com.google.re2j.Matcher;
 import com.google.re2j.Pattern;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.htmlparser.jericho.Source;
@@ -30,6 +32,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class FullPathDisclosureScanRule extends PluginPassiveScanner
@@ -48,10 +51,19 @@ public class FullPathDisclosureScanRule extends PluginPassiveScanner
                             + "/Applications/|/Volumes/|/System/|/Users/|/Developer/|/Library/|"
                             + "[a-z]\\:(\\\\Program Files\\\\|\\\\Users\\\\|\\\\Windows\\\\|\\\\ProgramData\\\\|\\\\Progra~1\\\\).*)"),
                     Pattern.CASE_INSENSITIVE);
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.WSTG_V42_ERRH_01_ERR);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.WSTG_V42_ERRH_01_ERR));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public int getPluginId() {
