@@ -22,10 +22,12 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.apache.commons.text.StringEscapeUtils.escapeXml10;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -147,7 +149,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             default:
                 return recommendMax + 14;
             case HIGH:
-                return recommendMax + 24;
+                return recommendMax + 25;
             case INSANE:
                 return recommendMax + 7;
         }
@@ -283,6 +285,11 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
                                                                         getRawString(e)))));
     }
 
+    private static void assertNoParams(Alert alert) {
+        assertThat(alert.getDescription(), not(containsString("{")));
+        assertThat(alert.getOtherInfo(), not(containsString("{")));
+    }
+
     @Test
     void shouldAlertIfSumExpressionsAreSuccessful() throws Exception {
         // Given
@@ -304,6 +311,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
                 is(equalTo(ExpressionBasedHandler.Expression.SUM.baseExpression)));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertNoParams(alertsRaised.get(0));
     }
 
     @Test
@@ -333,6 +341,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
                 is(equalTo(ExpressionBasedHandler.Expression.SUM.baseExpression)));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertNoParams(alertsRaised.get(0));
     }
 
     @Test
@@ -395,6 +404,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
                 is(equalTo(ExpressionBasedHandler.Expression.MULT.baseExpression)));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertNoParams(alertsRaised.get(0));
     }
 
     @Test
@@ -424,6 +434,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
                 is(equalTo(ExpressionBasedHandler.Expression.MULT.baseExpression)));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertNoParams(alertsRaised.get(0));
     }
 
     @Test
@@ -675,6 +686,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             Alert actual = alertsRaised.get(0);
             assertThat(actual.getParam(), is(equalTo(param)));
             assertThat(actual.getAttack(), is(equalTo(andTrueValue)));
+            assertNoParams(alertsRaised.get(0));
         }
 
         @Test
@@ -799,6 +811,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             Alert actual = alertsRaised.get(0);
             assertThat(actual.getParam(), is(equalTo(param)));
             assertThat(actual.getAttack(), is(equalTo(attackPayload)));
+            assertNoParams(alertsRaised.get(0));
         }
     }
 
@@ -840,6 +853,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             // Then
             assertThat(alertsRaised, hasSize(1));
             assertThat(alertsRaised.get(0).getEvidence(), equalTo(error));
+            assertNoParams(alertsRaised.get(0));
         }
 
         @ParameterizedTest
@@ -867,6 +881,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             // Then
             assertThat(alertsRaised, hasSize(1));
             assertThat(alertsRaised.get(0).getEvidence(), equalTo(error));
+            assertNoParams(alertsRaised.get(0));
         }
 
         @ParameterizedTest
@@ -895,6 +910,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             // Then
             assertThat(alertsRaised, hasSize(1));
             assertThat(alertsRaised.get(0).getEvidence(), equalTo(error));
+            assertNoParams(alertsRaised.get(0));
         }
 
         @ParameterizedTest
@@ -923,6 +939,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             // Then
             assertThat(alertsRaised, hasSize(1));
             assertThat(alertsRaised.get(0).getEvidence(), equalTo(error));
+            assertNoParams(alertsRaised.get(0));
         }
 
         @Test
@@ -974,6 +991,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
 
             // Then
             assertThat(alertsRaised, hasSize(1));
+            assertNoParams(alertsRaised.get(0));
         }
     }
 
@@ -1094,6 +1112,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
             assertThat(alertsRaised.get(0).getAttack(), is(equalTo("'")));
             assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
             assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+            assertNoParams(alertsRaised.get(0));
         }
 
         @Test

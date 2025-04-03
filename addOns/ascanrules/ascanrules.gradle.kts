@@ -51,7 +51,6 @@ dependencies {
     zapAddOn("network")
     zapAddOn("oast")
 
-    implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
     implementation("org.bitbucket.mstrobel:procyon-compilertools:0.6.0")
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
