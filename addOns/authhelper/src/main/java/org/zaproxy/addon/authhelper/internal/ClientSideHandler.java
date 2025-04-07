@@ -60,7 +60,7 @@ public final class ClientSideHandler implements HttpMessageHandler {
     private AuthRequestDetails authReq;
     private HttpMessage fallbackMsg;
     private int firstHrefId;
-    private List<HttpMessage> httpMessages = new ArrayList<>();
+    private List<Integer> httpMessageHistoryIds = new ArrayList<>();
 
     @Setter private HistoryProvider historyProvider = new HistoryProvider();
 
@@ -69,15 +69,19 @@ public final class ClientSideHandler implements HttpMessageHandler {
         if (user.getAuthenticationCredentials()
                 instanceof UsernamePasswordAuthenticationCredentials authCreds) {
             this.authCreds = authCreds;
-                }
+        }
     }
 
-    public List<HttpMessage> getHttpMessages() {
-        return new ArrayList<>(httpMessages);
+    public HistoryProvider getHistoryProvider() {
+        return historyProvider;
+    }
+
+    public List<Integer> getHttpMessagesIds() {
+        return new ArrayList<>(httpMessageHistoryIds);
     }
 
     public void resetHttpMessages() {
-        httpMessages.clear(); 
+        httpMessageHistoryIds.clear();
     }
 
     private boolean isPost(HttpMessage msg) {
@@ -91,13 +95,17 @@ public final class ClientSideHandler implements HttpMessageHandler {
 
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
-        httpMessages.add(msg);
         if (ctx.isFromClient()) {
             return;
         }
         if (firstHrefId == 0 && msg.getHistoryRef() != null) {
             // Backstop for looping back through the history
             firstHrefId = msg.getHistoryRef().getHistoryId();
+        }
+
+        if (msg.getHistoryRef() != null) {
+            int historyId = msg.getHistoryRef().getHistoryId();
+            httpMessageHistoryIds.add(historyId); // Save the History ID
         }
 
         historyProvider.addAuthMessageToHistory(msg);

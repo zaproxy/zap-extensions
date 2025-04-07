@@ -153,7 +153,6 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         return proxy;
     }
 
-
     public Object getCookieStore() {
         try {
             HttpSender temp = getHttpSender();
@@ -216,17 +215,29 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
         public List<HttpMessage> getRecordedHttpMessages() {
             if (handler != null) {
-                return handler.getHttpMessages(); 
+                List<Integer> historyIds = handler.getHttpMessagesIds();
+                List<HttpMessage> messages = new ArrayList<>();
+                for (int historyId : historyIds) {
+                    try {
+                        HttpMessage msg = handler.getHistoryProvider().getHttpMessage(historyId);
+                        if (msg != null) {
+                            messages.add(msg);
+                        }
+                    } catch (Exception e) {
+                        LOGGER.error(
+                                "Failed to retrieve HttpMessage for History ID: " + historyId, e);
+                    }
+                }
+                return messages;
             }
             return new ArrayList<>();
         }
 
         public void resetRecordedHttpMessages() {
             if (handler != null) {
-                handler.resetHttpMessages(); 
+                handler.resetHttpMessages();
             }
         }
-
 
         @Override
         public boolean isConfigured() {
