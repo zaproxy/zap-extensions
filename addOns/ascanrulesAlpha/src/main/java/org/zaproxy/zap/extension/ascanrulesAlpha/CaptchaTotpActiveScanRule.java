@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -44,6 +45,7 @@ import org.zaproxy.zap.users.User;
 
 public class CaptchaTotpActiveScanRule extends AbstractHostPlugin
         implements CommonActiveScanRuleInfo {
+            private static final String MESSAGE_PREFIX = "ascanalpha.captchatotp.";
     private static final Logger LOGGER = LogManager.getLogger(BlankTotpActiveScanRule.class);
     private static final Map<String, String> ALERT_TAGS = new HashMap<>();
 
@@ -54,12 +56,12 @@ public class CaptchaTotpActiveScanRule extends AbstractHostPlugin
 
     @Override
     public String getName() {
-        return "Captcha or Lockout TOTP Scan Rule";
+         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     @Override
     public String getDescription() {
-        return "TOTP Page found";
+        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
     @Override
@@ -69,7 +71,7 @@ public class CaptchaTotpActiveScanRule extends AbstractHostPlugin
 
     @Override
     public String getSolution() {
-        return "N/A";
+        return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
     @Override
