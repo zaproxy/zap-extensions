@@ -50,11 +50,12 @@ function submitTOTP() {
 				sessionStorage.setItem("failedAttempts", failedAttempts);
             	if (failedAttempts >= 3) {
             		// Lock the account
+            		sessionStorage.setItem("accountLocked", "true");
             		const h3 = document.createElement("h3");
             		const textNode = document.createTextNode("Account locked due to too many failed attempts.");
             		h3.appendChild(textNode);
             		document.getElementById("result").appendChild(h3);
-            		document.getElementById("submit").disabled = true; a
+            		document.getElementById("submit").disabled = true;
             	} else {
             		const h3 = document.createElement("h3");
             		const textNode = document.createTextNode("TOTP incorrect");
