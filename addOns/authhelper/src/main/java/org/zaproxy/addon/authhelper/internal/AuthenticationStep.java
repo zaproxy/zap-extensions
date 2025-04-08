@@ -140,6 +140,8 @@ public class AuthenticationStep
     @SuppressWarnings("deprecation")
     private String totpAlgorithm = HMACAlgorithm.SHA1.name();
 
+    private String overideTotpValue = null;
+
     private boolean enabled;
     private int order;
 
@@ -222,7 +224,15 @@ public class AuthenticationStep
         return element;
     }
 
+    // Add a method to set own TOTP value
+    public void setUserProvidedTotp(String totp) {
+        this.overideTotpValue = totp;
+    }
+
     private CharSequence getTotpCode(UsernamePasswordAuthenticationCredentials credentials) {
+        if (!isEmpty(overideTotpValue)) {
+            return overideTotpValue;
+        }
         CharSequence code = TotpSupport.getCode(credentials);
         if (code != null) {
             return code;

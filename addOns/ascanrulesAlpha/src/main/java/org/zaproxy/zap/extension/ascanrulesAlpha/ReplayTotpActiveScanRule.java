@@ -28,6 +28,7 @@ import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 import org.zaproxy.zap.session.WebSession;
 
 public class ReplayTotpActiveScanRule extends AbstractHostPlugin
@@ -81,6 +82,8 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin
             // Check if user provided valid code & check if initial authentication works with normal
             // passcode
             if (context.totpStep.getValue() != null || !context.totpStep.getValue().isEmpty()) {
+                if (context.totpStep.getType() == AuthenticationStep.Type.TOTP_FIELD)
+                    context.totpStep.setUserProvidedTotp(context.totpStep.getValue());
                 WebSession webSession =
                         context.browserAuthMethod.authenticate(
                                 context.sessionManagementMethod, context.credentials, context.user);

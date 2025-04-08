@@ -132,7 +132,9 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
             SessionManagementMethod sessionManagementMethod,
             UsernamePasswordAuthenticationCredentials credentials,
             User user) {
-        totpStep.setValue(newTotpValue);
+        if (totpStep.getType() == AuthenticationStep.Type.TOTP_FIELD)
+            totpStep.setUserProvidedTotp(newTotpValue);
+        else totpStep.setValue(newTotpValue);
         browserAuthMethod.setAuthenticationSteps(authSteps);
         return browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
     }
