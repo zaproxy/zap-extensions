@@ -25,19 +25,13 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
-import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
-import org.zaproxy.zap.extension.users.ExtensionUserManagement;
-import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.session.WebSession;
 import org.zaproxy.zap.users.User;
@@ -54,7 +48,7 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
 
     @Override
     public String getName() {
-       return Constant.messages.getString(MESSAGE_PREFIX + "name");
+        return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
     @Override
@@ -80,80 +74,13 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
     @Override
     public void scan() {
         try {
-            ExtensionUserManagement usersExtension =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionUserManagement.class);
 
             // Get target URL from request
             HttpMessage msg = getBaseMsg();
-            String targetUrl = msg.getRequestHeader().getURI().toString();
-
-            // Find session context that matches the target URL
-            Context activeContext = null;
-            Session session = Model.getSingleton().getSession();
-            for (Context context : session.getContexts()) {
-                if (context.isInContext(targetUrl)) {
-                    activeContext = context;
-                    break;
-                }
-            }
-            BrowserBasedAuthenticationMethod browserAuthMethod = null;
-            List<AuthenticationStep> authSteps = null;
-            AuthenticationStep totpStep = null;
-            // Check if the context is found
-            if (activeContext != null) {
-                AuthenticationMethod authMethod = activeContext.getAuthenticationMethod();
-                // Check if the authentication method is browser based
-                if (authMethod instanceof BrowserBasedAuthenticationMethod) {
-                    browserAuthMethod = (BrowserBasedAuthenticationMethod) authMethod;
-                    // Check if the authentication method has TOTP step
-                    authSteps = browserAuthMethod.getAuthenticationSteps();
-                    boolean totpFound = false;
-                    for (AuthenticationStep step : authSteps) {
-                        // Checks for TOTP_field type step or currently also allows for
-                        // custom field b/c of the way TOTP_field step currently implemented
-                        if (step.getType() == AuthenticationStep.Type.TOTP_FIELD
-                                || (step.getType() == AuthenticationStep.Type.CUSTOM_FIELD
-                                        && step.getDescription().toLowerCase().contains("totp"))) {
-                            totpFound = true;
-                            totpStep = step;
-                            break;
-                        }
-                    }
-                    if (!totpFound) {
-                        return;
-                    }
-
-                } else {
-                    // LOGGER.error("Authentication Method is not browser based.");
-                    return;
-                }
-            } else {
-                // LOGGER.error("No context found for target URL: " + targetUrl);
+            TotpScanContext context = TotpScanContextHelper.resolve(msg);
+            if (context == null) {
                 return;
             }
-
-            // Start vulnerability testing if TOTP step is found
-            // LOGGER.error("TOTP authentication is enabled, proceeding with tests.");
-
-            // Get user credentials(username,password) & user from the context to run browser based
-            // web session
-            List<User> users = null;
-            if (usersExtension == null) {
-                // LOGGER.error("Users extension not found.");
-                return;
-            }
-            users = usersExtension.getContextUserAuthManager(activeContext.getId()).getUsers();
-            if (users == null || users.isEmpty()) {
-                // LOGGER.error("No users found in the context.");
-                return;
-            }
-            User user = users.get(0);
-            UsernamePasswordAuthenticationCredentials credentials =
-                    (UsernamePasswordAuthenticationCredentials) user.getAuthenticationCredentials();
-            SessionManagementMethod sessionManagementMethod =
-                    activeContext.getSessionManagementMethod();
 
             // Checks if a valid username/password combination gives access with any passcode
             // meeting the format
@@ -173,13 +100,13 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
             for (String code : backupPasscodes) {
                 WebSession webSessionBlankCode =
                         testAuthenticatSession(
-                                totpStep,
+                                context.totpStep,
                                 code,
-                                authSteps,
-                                browserAuthMethod,
-                                sessionManagementMethod,
-                                credentials,
-                                user);
+                                context.authSteps,
+                                context.browserAuthMethod,
+                                context.sessionManagementMethod,
+                                context.credentials,
+                                context.user);
                 if (webSessionBlankCode != null) {
                     // LOGGER.error("Authentication successful with blank passcode.Vulernaibility
                     // found.");
