@@ -33,6 +33,7 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
@@ -137,20 +138,24 @@ public class AuthenticationDiagnostics implements AutoCloseable {
             if (stmt instanceof ZestClientLaunch launch) {
                 ZestClientScreenshotDiag screenshotDiag = new ZestClientScreenshotDiag();
                 screenshotDiag.setWindowHandle(launch.getWindowHandle());
-                screenshotDiag.setDescription("authhelper.auth.method.diags.zest.open");
+                screenshotDiag.setDescription(
+                        Constant.messages.getString("authhelper.auth.method.diags.zest.open"));
                 i += 1;
                 zestScript.getStatements().add(i, screenshotDiag);
             } else if (stmt instanceof ZestClientElement element) {
                 ZestClientScreenshotDiag screenshotDiag = new ZestClientScreenshotDiag();
                 screenshotDiag.setWindowHandle(element.getWindowHandle());
-                screenshotDiag.setDescription("authhelper.auth.method.diags.zest.interaction");
+                screenshotDiag.setDescription(
+                        Constant.messages.getString(
+                                "authhelper.auth.method.diags.zest.interaction"));
                 i += 1;
                 zestScript.getStatements().add(i, screenshotDiag);
             } else if (stmt instanceof ZestClientWindowClose close) {
                 ZestClientScreenshotDiag screenshotDiag = new ZestClientScreenshotDiag();
                 screenshotDiag.setWindowHandle(close.getWindowHandle());
                 zestScript.getStatements().add(i, screenshotDiag);
-                screenshotDiag.setDescription("authhelper.auth.method.diags.zest.close");
+                screenshotDiag.setDescription(
+                        Constant.messages.getString("authhelper.auth.method.diags.zest.close"));
                 i += 1;
             }
         }
