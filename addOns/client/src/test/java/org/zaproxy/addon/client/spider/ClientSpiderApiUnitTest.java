@@ -79,7 +79,7 @@ class ClientSpiderApiUnitTest extends TestUtils {
         clientSpiderAPI = new ClientSpiderApi();
         // Then
         assertThat(clientSpiderAPI.getApiActions(), hasSize(2));
-        assertThat(clientSpiderAPI.getApiViews(), hasSize(1));
+        assertThat(clientSpiderAPI.getApiViews(), hasSize(2));
         assertThat(clientSpiderAPI.getApiOthers(), hasSize(0));
     }
 
