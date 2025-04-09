@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Some Postgres error messages in the SQL Injection scan rule.
 
+### Changed
+- SQL Injection scan rule to start using ComparableResponse - part of the work to reduce False Positives.
+
 ### Fixed
 - SQL Injection scan rule to treat a 500 response to an SQLi attack as a likely vulnerability.
 
