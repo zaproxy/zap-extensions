@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - NPE when using some scripts after re-installing the scripts add-on.
 - Correct error message of the Automation Framework job.
+- Templates and Zest scripts were not being shown in the editor (Issue 8922).
 
 ### Added
 - Standardized Policy Tags to the base Scripts Passive Scanner.

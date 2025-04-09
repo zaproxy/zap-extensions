@@ -151,6 +151,10 @@ public class CommandPanel extends AbstractPanel implements OptionsChangedListene
         getTxtOutput().unload();
     }
 
+    void setScriptTooltip(String tooltip) {
+        getTxtOutput().setToolTipText(tooltip);
+    }
+
     public void setEditable(boolean editable) {
         getTxtOutput().setEditable(editable);
     }

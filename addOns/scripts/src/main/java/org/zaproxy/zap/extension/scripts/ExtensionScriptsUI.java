@@ -457,12 +457,12 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
                 this.getScriptsPanel().showInTree(node);
             }
 
-            if (!script.getEngine().isTextBased()) {
-                // Output message to explain about non test based scripts
-                this.getConsolePanel()
-                        .getCommandPanel()
-                        .setCommandScript(Constant.messages.getString("scripts.welcome.nontest"));
-            }
+            this.getConsolePanel()
+                    .getCommandPanel()
+                    .setScriptTooltip(
+                            script.getEngine().isTextBased()
+                                    ? null
+                                    : Constant.messages.getString("scripts.welcome.nontest"));
         }
     }
 
@@ -500,8 +500,6 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             if (node != null) {
                 this.getScriptsPanel().showInTree(node);
             }
-
-            this.getConsolePanel().getCommandPanel().clear();
         }
     }
 
