@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
@@ -40,7 +41,9 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.ComparableResponse;
@@ -1852,13 +1855,20 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
         }
     }
 
+    // At this time the sqli tests just look for 0, 1, or anything in between, so the exact value
+    // here doesn't matter. Anything between 0 and 1 works.
+    private static final float HEURISTIC_WEIGHT = .99f;
+
     /**
      * 0 means very different and 1 very similar. Note that this is the opposite from most compareTo
      * implementations but it matches the behavior of the compareWith function and heuristics in
      * {@code ComparableResponse}
      */
     private float compareResponses(ComparableResponse one, ComparableResponse two) {
-        return responseBodyHeuristic(one, two);
+        float total = 1f;
+        total *= locationHeaderHeuristic(one, two) * HEURISTIC_WEIGHT + (1 - HEURISTIC_WEIGHT);
+        total *= responseBodyHeuristic(one, two) * HEURISTIC_WEIGHT + (1 - HEURISTIC_WEIGHT);
+        return total;
     }
 
     /**
@@ -1877,6 +1887,19 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
         }
 
         return 0;
+    }
+
+    private float locationHeaderHeuristic(ComparableResponse one, ComparableResponse two) {
+        if (one.getStatusCode() == two.getStatusCode()
+                && HttpStatusCode.isRedirection(one.getStatusCode())) {
+            if (!Objects.equals(
+                    one.getHeaders().get(HttpHeader.LOCATION),
+                    two.getHeaders().get(HttpHeader.LOCATION))) {
+                return 0;
+            }
+        }
+
+        return 1;
     }
 
     @Override
