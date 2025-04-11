@@ -222,7 +222,7 @@ public class AutoDetectAuthenticationMethodType extends AuthenticationMethodType
         @Override
         public JSON toJSON() {
             JSONObject response = new JSONObject();
-            response.put(getName(), super.toJSON());
+            response.put(super.getName(), super.toJSON());
             return response;
         }
     }

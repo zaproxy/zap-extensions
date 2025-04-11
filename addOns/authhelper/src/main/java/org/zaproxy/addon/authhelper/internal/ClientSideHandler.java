@@ -66,8 +66,8 @@ public final class ClientSideHandler implements HttpMessageHandler {
     public ClientSideHandler(User user) {
         this.user = user;
         if (user.getAuthenticationCredentials()
-                instanceof UsernamePasswordAuthenticationCredentials authCreds) {
-            this.authCreds = authCreds;
+                instanceof UsernamePasswordAuthenticationCredentials authCred) {
+            this.authCreds = authCred;
         }
     }
 
