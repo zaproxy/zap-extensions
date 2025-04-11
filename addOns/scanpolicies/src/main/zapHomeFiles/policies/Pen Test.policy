@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<configuration>
+    <policy>Penetration Tester</policy>
+    <scanner>
+        <level>OFF</level>
+        <strength>MEDIUM</strength>
+    </scanner>
+    <plugins>
+        <p50000>
+            <name>Script Active Scan Rules</name>
+            <enabled>true</enabled>
+            <level>MEDIUM</level>
+        </p50000>
+    </plugins>
+</configuration>
