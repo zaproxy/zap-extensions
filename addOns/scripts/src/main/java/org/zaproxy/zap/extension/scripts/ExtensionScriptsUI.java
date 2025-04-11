@@ -238,14 +238,16 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     @Override
     public void postInstall() {
-        // Register outputs for all scripts in the tree model
-        getExtScript().getScriptTypes().stream()
-                .map(type -> getExtScript().getTreeModel().getNodes(type.getName()))
-                .flatMap(List::stream)
-                .map(ScriptNode::getUserObject)
-                .filter(ScriptWrapper.class::isInstance)
-                .map(ScriptWrapper.class::cast)
-                .forEach(this::registerScriptOutputSource);
+        if (this.hasView()) {
+            // Register outputs for all scripts in the tree model
+            getExtScript().getScriptTypes().stream()
+                    .map(type -> getExtScript().getTreeModel().getNodes(type.getName()))
+                    .flatMap(List::stream)
+                    .map(ScriptNode::getUserObject)
+                    .filter(ScriptWrapper.class::isInstance)
+                    .map(ScriptWrapper.class::cast)
+                    .forEach(this::registerScriptOutputSource);
+        }
 
         // Install and enable the 'built in' scripts
         for (ScriptWrapper template : this.getExtScript().getTemplates(extScriptType)) {
