@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45.11.0] - 2025-04-11
 ### Fixed
 - NPE when using scripts with no UI.
 
@@ -378,6 +378,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.11.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.11.0
 [45.10.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.10.0
 [45.9.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.9.0
 [45.8.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.8.0
