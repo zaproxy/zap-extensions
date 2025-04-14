@@ -464,7 +464,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
                     .setScriptTooltip(
                             script.getEngine().isTextBased()
                                     ? null
-                                    : Constant.messages.getString("scripts.welcome.nontest"));
+                                    : Constant.messages.getString("scripts.welcome.nontext"));
         }
     }
 
