@@ -19,10 +19,6 @@
  */
 package org.zaproxy.zap.extension.openapi.v3;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.emptyString;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -716,19 +712,30 @@ class BodyGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotGenerateContentForApplicationXml() throws IOException {
+    void shouldGenerateXmlObject() throws IOException {
         // Given
-        OpenAPI definition = parseResource("openapi_xml_bodies.yaml");
-        OperationModel operationModel =
-                new OperationModel("/xml", definition.getPaths().get("/xml").getPost(), null);
+        OpenAPI openAPI = parseResource("openapi_xml_bodies.yaml");
+
         // When
-        String content = new RequestModelConverter().convert(operationModel, generators).getBody();
+        String xmlString =
+                generators
+                        .getBodyGenerator()
+                        .generateXml(
+                                openAPI.getPaths()
+                                        .get("/xml")
+                                        .getPost()
+                                        .getRequestBody()
+                                        .getContent()
+                                        .get("application/xml")
+                                        .getSchema());
+
         // Then
-        assertThat(content, is(emptyString()));
-        assertThat(
-                generators.getErrorMessages(),
-                contains(
-                        "Not generating request body for operation xml, the content type application/xml is not supported."));
+        String expectedOutput =
+                "<value-string>John Doe</value-string>\n"
+                        + "<value-boolean>true</value-boolean>\n"
+                        + "<value-integer>10</value-integer>\n";
+
+        assertEquals(expectedOutput, xmlString);
     }
 
     @Test
