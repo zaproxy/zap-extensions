@@ -91,16 +91,10 @@ public class AlertFilterAPI extends ApiImplementor {
         super();
         this.extension = extension;
 
-        ApiView alertFilterList =
-                new ApiView(VIEW_ALERT_FILTER_LIST, new String[] {PARAM_CONTEXT_ID});
-        alertFilterList.setDescriptionTag("alertFilters.api.view.alertFilterList");
-        this.addApiView(alertFilterList);
+        this.addApiView(new ApiView(VIEW_ALERT_FILTER_LIST, new String[] {PARAM_CONTEXT_ID}));
+        this.addApiView(new ApiView(VIEW_GLOBAL_ALERT_FILTER_LIST));
 
-        ApiView globalAlertFilterList = new ApiView(VIEW_GLOBAL_ALERT_FILTER_LIST);
-        globalAlertFilterList.setDescriptionTag("alertFilters.api.view.globalAlertFilterList");
-        this.addApiView(globalAlertFilterList);
-
-        ApiAction addAlertFilter =
+        this.addApiAction(
                 new ApiAction(
                         ACTION_ADD_ALERT_FILTER,
                         new String[] {PARAM_CONTEXT_ID, PARAM_RULE_ID, PARAM_NEW_LEVEL},
@@ -115,11 +109,8 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
                             PARAM_METHODS,
-                        });
-        addAlertFilter.setDescriptionTag("alertFilters.api.action.addAlertFilter");
-        this.addApiAction(addAlertFilter);
-
-        ApiAction removeAlertFilter =
+                        }));
+        this.addApiAction(
                 new ApiAction(
                         ACTION_REMOVE_ALERT_FILTER,
                         new String[] {PARAM_CONTEXT_ID, PARAM_RULE_ID, PARAM_NEW_LEVEL},
@@ -134,11 +125,8 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
                             PARAM_METHODS,
-                        });
-        removeAlertFilter.setDescriptionTag("alertFilters.api.action.removeAlertFilter");
-        this.addApiAction(removeAlertFilter);
-
-        ApiAction addGlobalAlertFilter =
+                        }));
+        this.addApiAction(
                 new ApiAction(
                         ACTION_ADD_GLOBAL_ALERT_FILTER,
                         new String[] {PARAM_RULE_ID, PARAM_NEW_LEVEL},
@@ -153,11 +141,8 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
                             PARAM_METHODS,
-                        });
-        addGlobalAlertFilter.setDescriptionTag("alertFilters.api.action.addGlobalAlertFilter");
-        this.addApiAction(addGlobalAlertFilter);
-
-        ApiAction removeGlobalAlertFilter =
+                        }));
+        this.addApiAction(
                 new ApiAction(
                         ACTION_REMOVE_GLOBAL_ALERT_FILTER,
                         new String[] {PARAM_RULE_ID, PARAM_NEW_LEVEL},
@@ -172,39 +157,23 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
                             PARAM_METHODS,
-                        });
-        removeGlobalAlertFilter.setDescriptionTag(
-                "alertFilters.api.action.removeGlobalAlertFilter");
-        this.addApiAction(removeGlobalAlertFilter);
-
-        ApiAction applyAll = new ApiAction(ACTION_APPLY_ALL);
-        applyAll.setDescriptionTag("alertFilters.api.action.applyAll");
-        this.addApiAction(applyAll);
-
-        ApiAction applyContext = new ApiAction(ACTION_APPLY_CONTEXT);
-        applyContext.setDescriptionTag("alertFilters.api.action.applyContext");
-        this.addApiAction(applyContext);
-
-        ApiAction applyGlobal = new ApiAction(ACTION_APPLY_GLOBAL);
-        applyGlobal.setDescriptionTag("alertFilters.api.action.applyGlobal");
-        this.addApiAction(applyGlobal);
-
-        ApiAction testAll = new ApiAction(ACTION_TEST_ALL);
-        testAll.setDescriptionTag("alertFilters.api.action.testAll");
-        this.addApiAction(testAll);
-
-        ApiAction testContext = new ApiAction(ACTION_TEST_CONTEXT);
-        testContext.setDescriptionTag("alertFilters.api.action.testContext");
-        this.addApiAction(testContext);
-
-        ApiAction testGlobal = new ApiAction(ACTION_TEST_GLOBAL);
-        testGlobal.setDescriptionTag("alertFilters.api.action.testGlobal");
-        this.addApiAction(testGlobal);
+                        }));
+        this.addApiAction(new ApiAction(ACTION_APPLY_ALL));
+        this.addApiAction(new ApiAction(ACTION_APPLY_CONTEXT));
+        this.addApiAction(new ApiAction(ACTION_APPLY_GLOBAL));
+        this.addApiAction(new ApiAction(ACTION_TEST_ALL));
+        this.addApiAction(new ApiAction(ACTION_TEST_CONTEXT));
+        this.addApiAction(new ApiAction(ACTION_TEST_GLOBAL));
     }
 
     @Override
     public String getPrefix() {
         return PREFIX;
+    }
+
+    @Override
+    protected String getI18nPrefix() {
+        return ExtensionAlertFilters.PREFIX;
     }
 
     @Override
