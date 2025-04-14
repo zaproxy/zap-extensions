@@ -77,7 +77,7 @@ public class HeaderBasedSessionManagementPanel extends Panel {
                         STD_INSETS));
     }
 
-    private GridBagConstraints getGBC(int x, int y) {
+    private static GridBagConstraints getGBC(int x, int y) {
         return LayoutHelper.getGBC(
                 x,
                 y,
@@ -158,11 +158,11 @@ public class HeaderBasedSessionManagementPanel extends Panel {
         clearFields();
 
         for (Pair<String, String> header : headers) {
-            Pair<ZapTextField, ZapTextField> fields = getNextFields();
-            fields.first.setText(header.first);
-            fields.first.discardAllEdits();
-            fields.second.setText(header.second);
-            fields.second.discardAllEdits();
+            Pair<ZapTextField, ZapTextField> hdrFields = getNextFields();
+            hdrFields.first.setText(header.first);
+            hdrFields.first.discardAllEdits();
+            hdrFields.second.setText(header.second);
+            hdrFields.second.discardAllEdits();
         }
         // There should always be another blank row
         getNextFields();

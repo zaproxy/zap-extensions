@@ -61,7 +61,7 @@ import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Pair;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class ClientSideHandlerUnitTest extends TestUtils {
+class ClientSideHandlerUnitTest extends TestUtils {
 
     private static final String TEST_USERNAME = "test@example.org.com";
     private static final String TEST_PASSWORD = "mySuperSecretPassword";

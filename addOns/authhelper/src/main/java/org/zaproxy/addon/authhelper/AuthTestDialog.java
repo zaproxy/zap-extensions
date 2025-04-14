@@ -172,11 +172,10 @@ public class AuthTestDialog extends StandardFieldsDialog {
         JButton copyButton =
                 new JButton(Constant.messages.getString("authhelper.auth.test.dialog.button.copy"));
         copyButton.addActionListener(
-                l -> {
-                    Toolkit.getDefaultToolkit()
-                            .getSystemClipboard()
-                            .setContents(new StringSelection(diagnosticField.getText()), null);
-                });
+                l ->
+                        Toolkit.getDefaultToolkit()
+                                .getSystemClipboard()
+                                .setContents(new StringSelection(diagnosticField.getText()), null));
 
         buttonPanel.add(new JLabel(), LayoutHelper.getGBC(0, 0, 1, 0.3D));
         buttonPanel.add(copyButton, LayoutHelper.getGBC(1, 0, 1, 0.3D));
@@ -236,7 +235,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
                             Constant.messages.getString(
                                     "authhelper.auth.test.dialog.results.verif")),
                     LayoutHelper.getGBC(0, y, 1, 1L, insets));
-            resultsPanel.add(verifIdLabel, LayoutHelper.getGBC(1, y++, 1, 1L, insets));
+            resultsPanel.add(verifIdLabel, LayoutHelper.getGBC(1, y, 1, 1L, insets));
             resetResultsPanel();
         }
         return resultsPanel;
@@ -529,7 +528,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
     @Override
     public void save() {
         resetResultsPanel();
-        Thread t = new Thread(() -> authenticate(), "ZAP-auth-tester");
+        Thread t = new Thread(this::authenticate, "ZAP-auth-tester");
         t.start();
         // Save the values for next time
         this.saveDetails();

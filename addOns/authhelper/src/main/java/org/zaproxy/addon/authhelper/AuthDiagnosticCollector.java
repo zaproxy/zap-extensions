@@ -234,8 +234,8 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
         JSONObject sanObj = new JSONObject();
         for (Object key : jsonObject.keySet()) {
             Object val = jsonObject.get(key);
-            if (val instanceof String) {
-                sanObj.put(key, getSanitizedToken((String) val));
+            if (val instanceof String valStr) {
+                sanObj.put(key, getSanitizedToken(valStr));
             } else {
                 sanObj.put(key, val);
             }
@@ -244,17 +244,17 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
     }
 
     protected Object sanitiseJson(Object obj) {
-        if (obj instanceof JSONObject) {
-            return sanitiseJson((JSONObject) obj);
-        } else if (obj instanceof JSONArray) {
+        if (obj instanceof JSONObject jObj) {
+            return sanitiseJson(jObj);
+        } else if (obj instanceof JSONArray jArr) {
             JSONArray sanArr = new JSONArray();
-            Object[] oa = ((JSONArray) obj).toArray();
+            Object[] oa = jArr.toArray();
             for (int i = 0; i < oa.length; i++) {
                 sanArr.add(sanitiseJson(oa[i]));
             }
             return sanArr;
-        } else if (obj instanceof String) {
-            return getSanitizedToken((String) obj);
+        } else if (obj instanceof String objStr) {
+            return getSanitizedToken(objStr);
 
         } else {
             return obj;

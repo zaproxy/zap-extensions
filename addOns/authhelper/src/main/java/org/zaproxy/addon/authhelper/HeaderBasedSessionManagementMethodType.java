@@ -204,8 +204,7 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
         @Override
         public void processMessageToMatchSession(HttpMessage message, WebSession session)
                 throws UnsupportedWebSessionException {
-            if (session instanceof HttpHeaderBasedSession) {
-                HttpHeaderBasedSession hbSession = (HttpHeaderBasedSession) session;
+            if (session instanceof HttpHeaderBasedSession hbSession) {
                 LOGGER.debug(
                         "processMessageToMatchSession {} # headers {} ",
                         message.getRequestHeader().getURI(),
@@ -239,9 +238,7 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
 
                 Context context = Model.getSingleton().getSession().getContext(contextId);
                 AuthenticationMethod am = context.getAuthenticationMethod();
-                if (am instanceof BrowserBasedAuthenticationMethod) {
-                    BrowserBasedAuthenticationMethod bbam = (BrowserBasedAuthenticationMethod) am;
-
+                if (am instanceof BrowserBasedAuthenticationMethod bbam) {
                     try {
                         Method method =
                                 LegacyUtils.class.getMethod(
@@ -286,9 +283,10 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            return true;
+            if (obj == null) {
+                return false;
+            }
+            return getClass() == obj.getClass();
         }
 
         @Override
