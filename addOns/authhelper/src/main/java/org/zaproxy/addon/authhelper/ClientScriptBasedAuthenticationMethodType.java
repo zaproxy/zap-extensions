@@ -19,12 +19,9 @@
  */
 package org.zaproxy.addon.authhelper;
 
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.GridBagLayout;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,20 +29,16 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXComboBox;
-import org.jdesktop.swingx.decorator.FontHighlighter;
-import org.jdesktop.swingx.renderer.DefaultListRenderer;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.RecordContext;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
@@ -55,7 +48,6 @@ import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.zap.authentication.AbstractAuthenticationMethodOptionsPanel;
 import org.zaproxy.zap.authentication.AuthenticationCredentials;
 import org.zaproxy.zap.authentication.AuthenticationHelper;
-import org.zaproxy.zap.authentication.AuthenticationIndicatorsPanel;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethodType;
 import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
@@ -69,9 +61,6 @@ import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.session.WebSession;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.EncodingUtils;
-import org.zaproxy.zap.utils.ZapHtmlLabel;
-import org.zaproxy.zap.view.DynamicFieldsPanel;
-import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zest.core.v1.ZestActionSleep;
 import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestScript;
@@ -114,18 +103,71 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
     }
 
     @Override
+    public void persistMethodToSession(
+            Session session, int contextId, AuthenticationMethod authMethod)
+            throws UnsupportedAuthenticationMethodException, DatabaseException {
+        if (!(authMethod instanceof ClientScriptBasedAuthenticationMethod)) {
+            throw new UnsupportedAuthenticationMethodException(
+                    "Client script based authentication type only supports: "
+                            + ClientScriptBasedAuthenticationMethod.class.getName());
+        }
+
+        ClientScriptBasedAuthenticationMethod method =
+                (ClientScriptBasedAuthenticationMethod) authMethod;
+        session.setContextData(
+                contextId,
+                RecordContext.TYPE_AUTH_METHOD_FIELD_1,
+                method.getScriptTemp().getName());
+        session.setContextData(
+                contextId,
+                RecordContext.TYPE_AUTH_METHOD_FIELD_2,
+                EncodingUtils.mapToString(method.getParamValuesTemp()));
+    }
+
+    @Override
+    public boolean isTypeForMethod(AuthenticationMethod method) {
+        return method != null
+                && ClientScriptBasedAuthenticationMethod.class.equals(method.getClass());
+    }
+
+    @Override
     public AbstractAuthenticationMethodOptionsPanel buildOptionsPanel(Context uiSharedContext) {
         return new ClientScriptBasedAuthenticationMethodOptionsPanel();
     }
 
     public class ClientScriptBasedAuthenticationMethod extends ScriptBasedAuthenticationMethod {
 
+        private static Field scriptField;
+        private static Field credentialsParamNamesField;
+        private static Field paramValuesField;
+        private static Method getScriptInterfaceV2Method;
+        private static Method getScriptInterfaceMethod;
+
+        static {
+            try {
+                Class<?> sbamClass = ScriptBasedAuthenticationMethod.class;
+                scriptField = sbamClass.getDeclaredField("script");
+                scriptField.setAccessible(true);
+
+                credentialsParamNamesField = sbamClass.getDeclaredField("credentialsParamNames");
+                credentialsParamNamesField.setAccessible(true);
+
+                paramValuesField = sbamClass.getDeclaredField("paramValues");
+                paramValuesField.setAccessible(true);
+
+                Class<?> sbamtClass = ScriptBasedAuthenticationMethodType.class;
+                getScriptInterfaceV2Method =
+                        sbamtClass.getDeclaredMethod("getScriptInterfaceV2", ScriptWrapper.class);
+                getScriptInterfaceV2Method.setAccessible(true);
+
+                getScriptInterfaceMethod =
+                        sbamtClass.getDeclaredMethod("getScriptInterface", ScriptWrapper.class);
+                getScriptInterfaceMethod.setAccessible(true);
+            } catch (Exception ignore) {
+            }
+        }
+
         private boolean diagnostics;
-        private ScriptWrapper script;
-
-        private String[] credentialsParamNames;
-
-        private Map<String, String> paramValues;
 
         public void setDiagnostics(boolean diagnostics) {
             this.diagnostics = diagnostics;
@@ -135,87 +177,51 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             return diagnostics;
         }
 
-        /**
-         * Load a script and fills in the method's parameters according to the values specified by
-         * the script.
-         *
-         * <p>If the method already had a loaded script and a set of values for the parameters, it
-         * tries to provide new values for the new parameters if they match any previous parameter
-         * names.
-         *
-         * @param scriptW the script wrapper
-         * @throws IllegalArgumentException if an error occurs while loading the script.
-         */
-        @Override
-        public void loadScript(ScriptWrapper scriptW) {
-            AuthenticationScript authScript = getAuthScriptInterfaceV2(scriptW);
-            if (authScript == null) {
-                authScript = getAuthScriptInterface(scriptW);
-            }
-            if (authScript == null) {
-                LOGGER.warn(
-                        "The script {} does not properly implement the Authentication Script interface.",
-                        scriptW.getName());
-                throw new IllegalArgumentException(
-                        Constant.messages.getString(
-                                "authentication.method.script.dialog.error.text.interface",
-                                scriptW.getName()));
-            }
-
+        protected ScriptWrapper getScriptTemp() {
             try {
-                if (authScript instanceof AuthenticationScriptV2 scriptV2) {
-                    setLoggedInIndicatorPattern(scriptV2.getLoggedInIndicator());
-                    setLoggedOutIndicatorPattern(scriptV2.getLoggedOutIndicator());
-                }
-                String[] requiredParams = authScript.getRequiredParamsNames();
-                String[] optionalParams = authScript.getOptionalParamsNames();
-                this.credentialsParamNames = authScript.getCredentialsParamsNames();
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(
-                            "Loaded authentication script - required parameters: {} - optional parameters: {}",
-                            Arrays.toString(requiredParams),
-                            Arrays.toString(optionalParams));
-                }
-                // If there's an already loaded script, make sure we save its values and _try_
-                // to use them
-                Map<String, String> oldValues =
-                        this.paramValues != null
-                                ? this.paramValues
-                                : Collections.<String, String>emptyMap();
-                this.paramValues = new HashMap<>(requiredParams.length + optionalParams.length);
-                for (String param : requiredParams)
-                    this.paramValues.put(param, oldValues.get(param));
-                for (String param : optionalParams)
-                    this.paramValues.put(param, oldValues.get(param));
+                return (ScriptWrapper) scriptField.get(this);
+            } catch (Exception ignore) {
+            }
+            return null;
+        }
 
-                this.script = scriptW;
-                LOGGER.info(
-                        "Successfully loaded new script for ClientScriptBasedAuthentication: {}",
-                        this);
-            } catch (Exception e) {
-                LOGGER.error("Error while loading authentication script", e);
-                getExtensionScript().handleScriptException(this.script, e);
-                throw new IllegalArgumentException(
-                        Constant.messages.getString(
-                                "authentication.method.script.dialog.error.text.loading",
-                                e.getMessage()));
+        protected void setScriptTemp(ClientScriptBasedAuthenticationMethod method) {
+            try {
+                scriptField.set(method, getScriptTemp());
+            } catch (Exception ignore) {
             }
         }
 
-        @Override
-        public String toString() {
-            return "ClientScriptBasedAuthenticationMethod [script="
-                    + script
-                    + ", paramValues="
-                    + paramValues
-                    + ", credentialsParamNames="
-                    + Arrays.toString(credentialsParamNames)
-                    + "]";
+        protected void setParamValuesTemp(ClientScriptBasedAuthenticationMethod method) {
+            try {
+                Map<String, String> values = getParamValuesTemp();
+                paramValuesField.set(method, values != null ? new HashMap<>(values) : null);
+            } catch (Exception ignore) {
+            }
         }
 
-        @Override
-        public boolean isConfigured() {
-            return true;
+        @SuppressWarnings("unchecked")
+        protected Map<String, String> getParamValuesTemp() {
+            try {
+                return (Map<String, String>) paramValuesField.get(this);
+            } catch (Exception ignore) {
+            }
+            return null;
+        }
+
+        protected void setCredentialsParamNamesTemp(ClientScriptBasedAuthenticationMethod method) {
+            try {
+                credentialsParamNamesField.set(method, getCredentialsParamNamesTemp());
+            } catch (Exception ignore) {
+            }
+        }
+
+        protected String[] getCredentialsParamNamesTemp() {
+            try {
+                return (String[]) credentialsParamNamesField.get(this);
+            } catch (Exception ignore) {
+            }
+            return null;
         }
 
         @Override
@@ -223,15 +229,15 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             ClientScriptBasedAuthenticationMethod method =
                     new ClientScriptBasedAuthenticationMethod();
             method.diagnostics = diagnostics;
-            method.script = script;
-            method.paramValues = this.paramValues != null ? new HashMap<>(this.paramValues) : null;
-            method.credentialsParamNames = this.credentialsParamNames;
+            setScriptTemp(method);
+            setParamValuesTemp(method);
+            setCredentialsParamNamesTemp(method);
             return method;
         }
 
         @Override
         public boolean validateCreationOfAuthenticationCredentials() {
-            if (credentialsParamNames != null) {
+            if (getCredentialsParamNamesTemp() != null) {
                 return true;
             }
 
@@ -247,7 +253,8 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
         @Override
         public AuthenticationCredentials createAuthenticationCredentials() {
-            return TotpSupport.createGenericAuthenticationCredentials(credentialsParamNames);
+            return TotpSupport.createGenericAuthenticationCredentials(
+                    getCredentialsParamNamesTemp());
         }
 
         @Override
@@ -255,15 +262,8 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             return new ClientScriptBasedAuthenticationMethodType();
         }
 
-        public ScriptWrapper getScriptWrapper() {
-            return this.script;
-        }
-
         public ZestScript getZestScript() {
-            AuthenticationScript authScript = getAuthScriptInterfaceV2(this.script);
-            if (authScript == null) {
-                authScript = getAuthScriptInterface(this.script);
-            }
+            AuthenticationScript authScript = getAuthenticationScriptTemp();
 
             if (authScript == null) {
                 LOGGER.debug("Failed to get ZestScript - no suitable interface");
@@ -277,6 +277,29 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                     "Failed to get ZestScript - authScript of right type {}",
                     authScript.getClass().getCanonicalName());
             return null;
+        }
+
+        private AuthenticationScript getAuthenticationScriptTemp() {
+            AuthenticationScript authScript = null;
+            try {
+                authScript =
+                        (AuthenticationScript)
+                                getScriptInterfaceV2Method.invoke(
+                                        ClientScriptBasedAuthenticationMethodType.this,
+                                        getScriptTemp());
+            } catch (Exception ignore) {
+            }
+            if (authScript == null) {
+                try {
+                    authScript =
+                            (AuthenticationScript)
+                                    getScriptInterfaceMethod.invoke(
+                                            ClientScriptBasedAuthenticationMethodType.this,
+                                            getScriptTemp());
+                } catch (Exception ignore) {
+                }
+            }
+            return authScript;
         }
 
         private Set<String> getClientClosedWindowHandles(ZestScript zestScript) {
@@ -317,18 +340,13 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             }
             GenericAuthenticationCredentials cred = (GenericAuthenticationCredentials) credentials;
 
-            // Call the script to get an authenticated message from which we can then extract the
-            // session
-            AuthenticationScript authScript = getAuthScriptInterfaceV2(this.script);
-            if (authScript == null) {
-                authScript = getAuthScriptInterface(this.script);
-            }
-
+            ScriptWrapper script = getScriptTemp();
+            AuthenticationScript authScript = getAuthenticationScriptTemp();
             if (authScript == null) {
                 return null;
             }
             LOGGER.debug("Script class: {}", authScript.getClass().getCanonicalName());
-            ExtensionScript.recordScriptCalledStats(this.script);
+            ExtensionScript.recordScriptCalledStats(script);
 
             try {
                 if (authScript instanceof AuthenticationScriptV2 scriptV2) {
@@ -357,7 +375,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
                     authScript.authenticate(
                             new AuthenticationHelper(sender, sessionManagementMethod, user),
-                            this.paramValues,
+                            getParamValuesTemp(),
                             cred);
                 }
             } catch (Exception e) {
@@ -369,9 +387,9 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                                 "Error running authentication script " + e.getMessage());
                 LOGGER.error(
                         "An error occurred while trying to authenticate using the Authentication Script: {}",
-                        this.script.getName(),
+                        script.getName(),
                         e);
-                getExtensionScript().handleScriptException(this.script, e);
+                getExtensionScript().handleScriptException(script, e);
                 return null;
             }
 
@@ -413,7 +431,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         @Override
         public void replaceUserDataInPollRequest(HttpMessage msg, User user) {
             AuthenticationHelper.replaceUserDataInRequest(
-                    msg, wrapKeys(this.paramValues), NULL_ENCODER);
+                    msg, wrapKeys(getParamValuesTemp()), NULL_ENCODER);
         }
     }
 
@@ -429,228 +447,46 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         return map;
     }
 
-    @SuppressWarnings("serial")
     public class ClientScriptBasedAuthenticationMethodOptionsPanel
-            extends AbstractAuthenticationMethodOptionsPanel {
+            extends ScriptBasedAuthenticationMethodOptionsPanel {
 
-        private static final long serialVersionUID = 7812841049435409987L;
-
-        private static final String SCRIPT_NAME_LABEL =
-                Constant.messages.getString("authentication.method.script.field.label.scriptName");
-        private static final String LABEL_NOT_LOADED =
-                Constant.messages.getString("authentication.method.script.field.label.notLoaded");
-        private JXComboBox scriptsComboBox;
-        private JButton loadScriptButton;
-
-        private ClientScriptBasedAuthenticationMethod method;
-        private AuthenticationIndicatorsPanel indicatorsPanel;
-
-        private ScriptWrapper loadedScript;
-
-        private JPanel dynamicContentPanel;
-
-        private DynamicFieldsPanel dynamicFieldsPanel;
-
-        private String[] loadedCredentialParams;
+        private static final long serialVersionUID = 1L;
 
         public ClientScriptBasedAuthenticationMethodOptionsPanel() {
             super();
-            initialize();
-        }
-
-        private void initialize() {
-            this.setLayout(new GridBagLayout());
-
-            this.add(new JLabel(SCRIPT_NAME_LABEL), LayoutHelper.getGBC(0, 0, 1, 0.0d, 0.0d));
-
-            scriptsComboBox = new JXComboBox();
-            scriptsComboBox.addHighlighter(
-                    new FontHighlighter(
-                            (renderer, adapter) -> loadedScript == adapter.getValue(),
-                            scriptsComboBox.getFont().deriveFont(Font.BOLD)));
-            scriptsComboBox.setRenderer(
-                    new DefaultListRenderer(
-                            sw -> {
-                                if (sw == null) {
-                                    return null;
-                                }
-
-                                String name = ((ScriptWrapper) sw).getName();
-                                if (loadedScript == sw) {
-                                    return Constant.messages.getString(
-                                            "authentication.method.script.loaded", name);
-                                }
-                                return name;
-                            }));
-            this.add(this.scriptsComboBox, LayoutHelper.getGBC(1, 0, 1, 1.0d, 0.0d));
-
-            this.loadScriptButton =
-                    new JButton(
-                            Constant.messages.getString(
-                                    "authentication.method.script.load.button"));
-            this.add(this.loadScriptButton, LayoutHelper.getGBC(2, 0, 1, 0.0d, 0.0d));
-            this.loadScriptButton.addActionListener(
-                    e -> loadScript((ScriptWrapper) scriptsComboBox.getSelectedItem(), true));
-
-            // Make sure the 'Load' button is disabled when nothing is selected
-            this.loadScriptButton.setEnabled(false);
-            this.scriptsComboBox.addActionListener(
-                    e -> loadScriptButton.setEnabled(scriptsComboBox.getSelectedIndex() >= 0));
-
-            this.dynamicContentPanel = new JPanel(new BorderLayout());
-            this.add(this.dynamicContentPanel, LayoutHelper.getGBC(0, 1, 3, 1.0d, 0.0d));
-            this.dynamicContentPanel.add(new ZapHtmlLabel(LABEL_NOT_LOADED));
-        }
-
-        @Override
-        public void validateFields() throws IllegalStateException {
-            if (this.loadedScript == null) {
-                this.scriptsComboBox.requestFocusInWindow();
-                throw new IllegalStateException(
-                        Constant.messages.getString(
-                                "authentication.method.script.dialog.error.text.notLoadedNorConfigured"));
-            }
-            this.dynamicFieldsPanel.validateFields();
-        }
-
-        @Override
-        public void saveMethod() {
-            this.method.script = (ScriptWrapper) this.scriptsComboBox.getSelectedItem();
-            // This method will also be called when switching panels to save a temporary state so
-            // the state of the authentication method might not be valid
-            if (this.dynamicFieldsPanel != null)
-                this.method.paramValues = this.dynamicFieldsPanel.getFieldValues();
-            else this.method.paramValues = Collections.emptyMap();
-            if (this.loadedScript != null)
-                this.method.credentialsParamNames = this.loadedCredentialParams;
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public void bindMethod(AuthenticationMethod method)
                 throws UnsupportedAuthenticationMethodException {
-            this.method = (ClientScriptBasedAuthenticationMethod) method;
-
-            // Make sure the list of scripts is refreshed with just Zest scripts
-            List<ScriptWrapper> scripts =
-                    getExtensionScript().getScripts(SCRIPT_TYPE_AUTH).stream()
-                            .filter(sc -> sc.getEngineName().contains("Zest"))
-                            .toList();
-            DefaultComboBoxModel<ScriptWrapper> model =
-                    new DefaultComboBoxModel<>(scripts.toArray(new ScriptWrapper[scripts.size()]));
-            this.scriptsComboBox.setModel(model);
-            this.scriptsComboBox.setSelectedItem(this.method.script);
-            this.loadScriptButton.setEnabled(this.method.script != null);
-
-            // Load the selected script, if any
-            if (this.method.script != null) {
-                loadScript(this.method.script, false);
-                if (this.dynamicFieldsPanel != null)
-                    this.dynamicFieldsPanel.bindFieldValues(this.method.paramValues);
-            }
-        }
-
-        @Override
-        public void bindMethod(
-                AuthenticationMethod method, AuthenticationIndicatorsPanel indicatorsPanel)
-                throws UnsupportedAuthenticationMethodException {
-            this.indicatorsPanel = indicatorsPanel;
-            bindMethod(method);
-        }
-
-        @Override
-        public AuthenticationMethod getMethod() {
-            return this.method;
-        }
-
-        private void loadScript(ScriptWrapper scriptW, boolean adaptOldValues) {
-            AuthenticationScript script = getAuthScriptInterfaceV2(scriptW);
-            if (script == null) {
-                script = getAuthScriptInterface(scriptW);
-            }
-
-            if (script == null) {
-                LOGGER.warn(
-                        "The script {} does not properly implement the Authentication Script interface.",
-                        scriptW.getName());
-                warnAndResetPanel(
-                        Constant.messages.getString(
-                                "authentication.method.script.dialog.error.text.interface",
-                                scriptW.getName()));
-                return;
-            }
+            super.bindMethod(method);
 
             try {
-                if (script instanceof AuthenticationScriptV2 scriptV2) {
-                    String toolTip =
-                            Constant.messages.getString(
-                                    "authentication.method.script.dialog.loggedInOutIndicatorsInScript.toolTip");
-                    String loggedInIndicator = scriptV2.getLoggedInIndicator();
-                    this.method.setLoggedInIndicatorPattern(loggedInIndicator);
-                    this.indicatorsPanel.setLoggedInIndicatorPattern(loggedInIndicator);
-                    this.indicatorsPanel.setLoggedInIndicatorEnabled(false);
-                    this.indicatorsPanel.setLoggedInIndicatorToolTip(toolTip);
-
-                    String loggedOutIndicator = scriptV2.getLoggedOutIndicator();
-                    this.method.setLoggedOutIndicatorPattern(loggedOutIndicator);
-                    this.indicatorsPanel.setLoggedOutIndicatorPattern(loggedOutIndicator);
-                    this.indicatorsPanel.setLoggedOutIndicatorEnabled(false);
-                    this.indicatorsPanel.setLoggedOutIndicatorToolTip(toolTip);
-                } else {
-                    this.indicatorsPanel.setLoggedInIndicatorEnabled(true);
-                    this.indicatorsPanel.setLoggedInIndicatorToolTip(null);
-                    this.indicatorsPanel.setLoggedOutIndicatorEnabled(true);
-                    this.indicatorsPanel.setLoggedOutIndicatorToolTip(null);
+                Field scriptsComboBoxField =
+                        ScriptBasedAuthenticationMethodOptionsPanel.class.getDeclaredField(
+                                "scriptsComboBox");
+                scriptsComboBoxField.setAccessible(true);
+                JXComboBox scriptsCb = (JXComboBox) scriptsComboBoxField.get(this);
+                DefaultComboBoxModel<ScriptWrapper> model =
+                        (DefaultComboBoxModel<ScriptWrapper>) scriptsCb.getModel();
+                for (int i = 0; i < model.getSize(); i++) {
+                    if (!model.getElementAt(i).getEngineName().contains("Zest")) {
+                        model.removeElementAt(i);
+                        i--;
+                    }
                 }
-                String[] requiredParams = script.getRequiredParamsNames();
-                String[] optionalParams = script.getOptionalParamsNames();
-                this.loadedCredentialParams = script.getCredentialsParamsNames();
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug(
-                            "Loaded authentication script - required parameters: {} - optional parameters: {}",
-                            Arrays.toString(requiredParams),
-                            Arrays.toString(optionalParams));
-                }
-                // If there's an already loaded script, make sure we save its values and _try_
-                // to place them in the new panel
-                Map<String, String> oldValues = null;
-                if (adaptOldValues && dynamicFieldsPanel != null) {
-                    oldValues = dynamicFieldsPanel.getFieldValues();
-                    LOGGER.debug("Trying to adapt old values: {}", oldValues);
-                }
-
-                this.dynamicFieldsPanel = new DynamicFieldsPanel(requiredParams, optionalParams);
-                this.loadedScript = scriptW;
-                if (adaptOldValues && oldValues != null) {
-                    this.dynamicFieldsPanel.bindFieldValues(oldValues);
-                }
-
-                this.dynamicContentPanel.removeAll();
-                this.dynamicContentPanel.add(dynamicFieldsPanel, BorderLayout.CENTER);
-                this.dynamicContentPanel.revalidate();
-
-            } catch (Exception e) {
-                getExtensionScript().handleScriptException(scriptW, e);
-                LOGGER.error("Error while calling authentication script", e);
-                warnAndResetPanel(
-                        Constant.messages.getString(
-                                "authentication.method.script.dialog.error.text.loading",
-                                ExceptionUtils.getRootCauseMessage(e)));
+            } catch (Exception ignore) {
             }
         }
 
-        private void warnAndResetPanel(String errorMessage) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    errorMessage,
-                    Constant.messages.getString("authentication.method.script.dialog.error.title"),
-                    JOptionPane.ERROR_MESSAGE);
-            this.loadedScript = null;
-            this.scriptsComboBox.setSelectedItem(null);
-            this.dynamicFieldsPanel = null;
-            this.dynamicContentPanel.removeAll();
-            this.dynamicContentPanel.add(new JLabel(LABEL_NOT_LOADED), BorderLayout.CENTER);
-            this.dynamicContentPanel.revalidate();
+        // @Override
+        protected List<ScriptWrapper> getAuthenticationScripts() {
+            // TODO Address once core allows it.
+            // return super.getAugenticationScripts().stream()
+            return getExtensionScript().getScripts(SCRIPT_TYPE_AUTH).stream()
+                    .filter(sc -> sc.getEngineName().contains("Zest"))
+                    .toList();
         }
     }
 
@@ -659,49 +495,6 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             extensionScript =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         return extensionScript;
-    }
-
-    private AuthenticationScript getAuthScriptInterface(ScriptWrapper script) {
-        try {
-            return getExtensionScript().getInterface(script, AuthenticationScript.class);
-        } catch (Exception e) {
-            getExtensionScript()
-                    .handleFailedScriptInterface(
-                            script,
-                            Constant.messages.getString(
-                                    "authentication.method.script.dialog.error.text.interface",
-                                    script.getName()));
-        }
-        return null;
-    }
-
-    private AuthenticationScriptV2 getAuthScriptInterfaceV2(ScriptWrapper script) {
-        try {
-            AuthenticationScriptV2 authScript =
-                    getExtensionScript().getInterface(script, AuthenticationScriptV2.class);
-            if (authScript == null) {
-                LOGGER.debug(
-                        "Script '{}' is not a AuthenticationScriptV2 interface.", script::getName);
-                return null;
-            }
-
-            // Some ScriptEngines do not verify if all Interface Methods are contained in the
-            // script.
-            // So we must invoke them to ensure that they are defined in the loaded script!
-            // Otherwise some ScriptEngines loads successfully AuthenticationScriptV2 without the
-            // methods getLoggedInIndicator() / getLoggedOutIndicator().
-            // Though it should fallback to interface AuthenticationScript.
-            authScript.getLoggedInIndicator();
-            authScript.getLoggedOutIndicator();
-            return authScript;
-        } catch (Exception ignore) {
-            // The interface is optional, the AuthenticationScript will be checked after this one.
-            LOGGER.debug(
-                    "Script '{}' is not a AuthenticationScriptV2 interface!",
-                    script.getName(),
-                    ignore);
-        }
-        return null;
     }
 
     @Override
@@ -713,9 +506,10 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         }
         ClientScriptBasedAuthenticationMethod method =
                 (ClientScriptBasedAuthenticationMethod) authMethod;
-        config.setProperty(CONTEXT_CONFIG_AUTH_SCRIPT_NAME, method.script.getName());
+        config.setProperty(CONTEXT_CONFIG_AUTH_SCRIPT_NAME, method.getScriptTemp().getName());
         config.setProperty(
-                CONTEXT_CONFIG_AUTH_SCRIPT_PARAMS, EncodingUtils.mapToString(method.paramValues));
+                CONTEXT_CONFIG_AUTH_SCRIPT_PARAMS,
+                EncodingUtils.mapToString(method.getParamValuesTemp()));
     }
 
     @Override
