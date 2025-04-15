@@ -27,6 +27,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 /** Unit test for {@link MongoDbInjectionScanRule}. */
 class MongoDbInjectionScanRuleUnitTest extends ActiveScannerTest<MongoDbInjectionScanRule> {
@@ -60,7 +61,7 @@ class MongoDbInjectionScanRuleUnitTest extends ActiveScannerTest<MongoDbInjectio
         // Then
         assertThat(cwe, is(equalTo(943)));
         assertThat(wasc, is(equalTo(19)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -69,6 +70,7 @@ class MongoDbInjectionScanRuleUnitTest extends ActiveScannerTest<MongoDbInjectio
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_05_SQLI.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
