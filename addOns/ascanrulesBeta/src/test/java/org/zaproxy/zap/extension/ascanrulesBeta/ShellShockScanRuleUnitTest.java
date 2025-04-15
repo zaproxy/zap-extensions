@@ -35,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class ShellShockScanRuleUnitTest extends ActiveScannerTest<ShellShockScanRule> {
@@ -53,7 +54,7 @@ class ShellShockScanRuleUnitTest extends ActiveScannerTest<ShellShockScanRule> {
         // Then
         assertThat(cwe, is(equalTo(78)));
         assertThat(wasc, is(equalTo(31)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
@@ -63,6 +64,7 @@ class ShellShockScanRuleUnitTest extends ActiveScannerTest<ShellShockScanRule> {
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));

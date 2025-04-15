@@ -109,6 +109,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin
                                 CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS));
         alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
