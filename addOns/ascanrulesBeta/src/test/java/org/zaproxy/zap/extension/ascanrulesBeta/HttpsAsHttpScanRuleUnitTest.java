@@ -46,7 +46,7 @@ class HttpsAsHttpScanRuleUnitTest extends ActiveScannerTest<HttpsAsHttpScanRule>
         // Then
         assertThat(cwe, is(equalTo(311)));
         assertThat(wasc, is(equalTo(4)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -57,6 +57,7 @@ class HttpsAsHttpScanRuleUnitTest extends ActiveScannerTest<HttpsAsHttpScanRule>
                 tags.containsKey(CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL.getTag()),
                 is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));

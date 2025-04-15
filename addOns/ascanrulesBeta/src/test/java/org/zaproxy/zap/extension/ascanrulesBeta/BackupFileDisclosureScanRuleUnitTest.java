@@ -300,7 +300,7 @@ class BackupFileDisclosureScanRuleUnitTest extends ActiveScannerTest<BackupFileD
         // Then
         assertThat(cwe, is(equalTo(530)));
         assertThat(wasc, is(equalTo(34)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -311,6 +311,7 @@ class BackupFileDisclosureScanRuleUnitTest extends ActiveScannerTest<BackupFileD
                 tags.containsKey(CommonAlertTag.WSTG_V42_CONF_04_BACKUP_FILES.getTag()),
                 is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));

@@ -61,6 +61,7 @@ public class Text4ShellScanRule extends AbstractAppParamPlugin implements Common
         alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
         alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         CommonAlertTag.putCve(alertTags, CVE);
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
