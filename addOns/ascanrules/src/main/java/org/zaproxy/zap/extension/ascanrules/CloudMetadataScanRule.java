@@ -55,6 +55,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
                                 CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG));
         alertTags.put(PolicyTag.API.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 

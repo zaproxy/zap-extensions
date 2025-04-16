@@ -234,7 +234,7 @@ class Spring4ShellScanRuleUnitTest extends ActiveScannerTest<Spring4ShellScanRul
         // Then
         assertThat(cwe, is(equalTo(78)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(7)));
+        assertThat(tags.size(), is(equalTo(8)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -252,6 +252,7 @@ class Spring4ShellScanRuleUnitTest extends ActiveScannerTest<Spring4ShellScanRul
                 is(equalTo(true)));
         assertThat(tags.containsKey("CVE-2022-22965"), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));

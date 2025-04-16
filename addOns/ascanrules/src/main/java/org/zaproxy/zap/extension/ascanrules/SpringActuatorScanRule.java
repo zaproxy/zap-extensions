@@ -69,6 +69,7 @@ public class SpringActuatorScanRule extends AbstractHostPlugin implements Common
                                 CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE));
         alertTags.put(PolicyTag.API.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
