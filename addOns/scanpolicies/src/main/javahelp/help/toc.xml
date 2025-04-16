@@ -14,6 +14,7 @@
                 <tocitem text="Developer Full Policy" target="addon.policy-dev-full"/>
                 <tocitem text="QA Standard Policy" target="addon.policy-qa-std"/>
                 <tocitem text="QA Full Policy" target="addon.policy-qa-full"/>
+                <tocitem text="Penetration Tester Policy" target="addon.policy-pentest"/>
             </tocitem>
         </tocitem>
     </tocitem>
