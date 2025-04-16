@@ -62,7 +62,7 @@ class HttpOnlySiteScanRuleUnitTest extends ActiveScannerTest<HttpOnlySiteScanRul
         // Then
         assertThat(cwe, is(equalTo(311)));
         assertThat(wasc, is(equalTo(4)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -73,6 +73,7 @@ class HttpOnlySiteScanRuleUnitTest extends ActiveScannerTest<HttpOnlySiteScanRul
                 tags.containsKey(CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL.getTag()),
                 is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
@@ -162,12 +163,13 @@ class HttpOnlySiteScanRuleUnitTest extends ActiveScannerTest<HttpOnlySiteScanRul
         Alert alert = alerts.get(0);
 
         Map<String, String> tags = alert.getTags();
-        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(tags.size(), is(equalTo(6)));
         assertThat(tags, hasKey("CWE-311"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL.getTag()));
         assertThat(tags, hasKey(PolicyTag.QA_FULL.getTag()));
+        assertThat(tags, hasKey(PolicyTag.PENTEST.getTag()));
         assertThat(alert.getUri(), is(equalTo("http://example.com")));
         assertThat(alert.getOtherInfo(), containsString("https://example.com"));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));

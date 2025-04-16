@@ -57,6 +57,7 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
                                 CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
                                 CommonAlertTag.WSTG_V42_ATHN_04_AUTH_BYPASS));
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
