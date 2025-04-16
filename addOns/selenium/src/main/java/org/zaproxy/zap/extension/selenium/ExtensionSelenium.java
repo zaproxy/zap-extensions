@@ -139,12 +139,12 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * A list containing all of the WebDrivers opened, so that they can be closed when ZAP is
      * closed.
      */
-    private static List<WebDriver> webDrivers = new ArrayList<>();
+    private static List<WebDriver> webDrivers = Collections.synchronizedList(new ArrayList<>());
 
     private List<WeakReference<ProvidedBrowsersComboBoxModel>> providedBrowserComboBoxModels =
-            new ArrayList<>();
+            Collections.synchronizedList(new ArrayList<>());
 
-    private List<BrowserHook> browserHooks = new ArrayList<>();
+    private List<BrowserHook> browserHooks = Collections.synchronizedList(new ArrayList<>());
 
     private ExtensionScript extScript;
 
@@ -223,7 +223,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         addBuiltInProvider(Browser.HTML_UNIT);
         addBuiltInProvider(Browser.SAFARI);
 
-        providedBrowserUIList = new ArrayList<>();
+        providedBrowserUIList = Collections.synchronizedList(new ArrayList<>());
         buildProvidedBrowserUIList();
     }
 
