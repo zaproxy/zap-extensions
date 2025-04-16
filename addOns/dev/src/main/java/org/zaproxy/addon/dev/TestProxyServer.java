@@ -99,8 +99,10 @@ public class TestProxyServer {
         csrfDir.addDirectory(csrfBasicDir);
 
         TestDirectory htmlDir = new TestDirectory(this, "html");
+        TestDirectory elStoreDir = new TestDirectory(this, "elements");
         TestDirectory locStoreDir = new TestDirectory(this, "localStorage");
         TestDirectory sessStoreDir = new TestDirectory(this, "sessionStorage");
+        htmlDir.addDirectory(elStoreDir);
         htmlDir.addDirectory(locStoreDir);
         htmlDir.addDirectory(sessStoreDir);
 
