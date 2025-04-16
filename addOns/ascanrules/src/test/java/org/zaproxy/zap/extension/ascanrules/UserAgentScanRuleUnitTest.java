@@ -25,9 +25,11 @@ import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 /** Unit test for {@link UserAgentScanRule}. */
 class UserAgentScanRuleUnitTest extends ActiveScannerTest<UserAgentScanRule> {
@@ -51,14 +53,22 @@ class UserAgentScanRuleUnitTest extends ActiveScannerTest<UserAgentScanRule> {
     }
 
     @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags, hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
+        assertThat(tags, hasKey(PolicyTag.PENTEST.getTag()));
+    }
+
+    @Test
     void shouldReturnExpectedExampleAlert() {
         // Given / When
         List<Alert> alerts = rule.getExampleAlerts();
         Alert alert = alerts.get(0);
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
-        assertThat(alert.getTags().size(), is(equalTo(1)));
-        assertThat(alert.getTags(), hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alert.getParam(), is(equalTo("Header User-Agent")));

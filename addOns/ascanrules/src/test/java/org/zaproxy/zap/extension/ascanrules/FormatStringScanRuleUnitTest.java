@@ -50,7 +50,7 @@ class FormatStringScanRuleUnitTest extends ActiveScannerTest<FormatStringScanRul
         // Then
         assertThat(cwe, is(equalTo(134)));
         assertThat(wasc, is(equalTo(6)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -59,6 +59,7 @@ class FormatStringScanRuleUnitTest extends ActiveScannerTest<FormatStringScanRul
                 is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
@@ -94,7 +95,7 @@ class FormatStringScanRuleUnitTest extends ActiveScannerTest<FormatStringScanRul
         assertThat(alerts.size(), is(equalTo(1)));
         Alert alert = alerts.get(0);
         Map<String, String> tags = alert.getTags();
-        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(tags.size(), is(equalTo(6)));
         assertThat(tags, hasKey("CWE-134"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()));
