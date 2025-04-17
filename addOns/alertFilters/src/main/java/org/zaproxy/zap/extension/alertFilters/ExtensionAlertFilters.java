@@ -462,7 +462,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                 }
             }
             Stats.incCounter(
-                    "stats.alertFilter." + alert.getPluginId() + ".risk." + filter.getNewRisk());
+                    "stats.alertFilter." + alert.getAlertRef() + ".risk." + filter.getNewRisk());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
