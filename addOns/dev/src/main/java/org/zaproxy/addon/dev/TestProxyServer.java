@@ -30,6 +30,7 @@ import java.time.temporal.ChronoUnit;
 import net.sf.json.JSON;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -46,6 +47,7 @@ import org.zaproxy.addon.dev.auth.simpleJsonBearer.SimpleJsonBearerDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerCookie.SimpleJsonBearerCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerJsCookie.SimpleJsonBearerJsCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonCookie.SimpleJsonCookieDir;
+import org.zaproxy.addon.dev.auth.sso1.SSO1RootDir;
 import org.zaproxy.addon.dev.csrf.basic.BasicCsrfDir;
 import org.zaproxy.addon.dev.seq.performance.PerformanceDir;
 import org.zaproxy.addon.network.ExtensionNetwork;
@@ -87,6 +89,9 @@ public class TestProxyServer {
         authDir.addDirectory(new PasswordNewPageDir(this, "password-new-page"));
         authDir.addDirectory(new PasswordAddedNoSubmitDir(this, "password-added-nosubmit"));
         authDir.addDirectory(new JsonMultipleCookiesDir(this, "json-multiple-cookies"));
+        authDir.addDirectory(new SSO1RootDir(this, "sso1"));
+        // TODO
+        // authDir.addDirectory(new TestDirectory(this, "sso-domain"));
 
         TestDirectory apiDir = new TestDirectory(this, "api");
         TestDirectory openapiDir = new TestDirectory(this, "openapi");
@@ -167,6 +172,7 @@ public class TestProxyServer {
 
         if (!f.exists()) {
             LOGGER.debug("No such file {}", f.getAbsolutePath());
+            System.out.println("No such file " + f.getAbsolutePath()); // TODO
             return null;
         }
         // Quick way to read a small text file
@@ -222,6 +228,10 @@ public class TestProxyServer {
         return sb.toString();
     }
 
+    public void handleFile(String name, HttpMessage msg) {
+        handleFile(root, name, msg);
+    }
+
     public void handleFile(TestDirectory dir, String name, HttpMessage msg) {
         try {
             String body = getTextFile(dir, name);
@@ -274,6 +284,7 @@ public class TestProxyServer {
         }
     }
 
+    // TODO replace with new one in AuthUtils
     public void redirect(String url, HttpMessage msg) {
         try {
             msg.setResponseHeader(getDefaultResponseHeader(STATUS_REDIRECT, "text/html", 0));
@@ -281,6 +292,10 @@ public class TestProxyServer {
         } catch (HttpMalformedHeaderException e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    public void addDomainListener(String domain, ProxyListener listener) {
+        this.extension.addDomainListener(domain, listener);
     }
 
     private class TestListener implements HttpMessageHandler {
