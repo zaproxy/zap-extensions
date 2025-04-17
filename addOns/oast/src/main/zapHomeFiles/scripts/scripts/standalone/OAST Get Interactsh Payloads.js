@@ -4,7 +4,8 @@ var extOast = control.getExtensionLoader().getExtension("ExtensionOast")
 var interactsh = extOast.getInteractshService()
 
 if (!interactsh.isRegistered()) {
-    interactsh.getParam().setServerUrl("https://interact.sh")
+    // Set the server URL you're using between the quotes below
+    interactsh.getParam().setServerUrl("")
     // interactsh.getParam().setAuthToken("auth token value")
     interactsh.register()
 }
