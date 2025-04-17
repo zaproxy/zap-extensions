@@ -21,6 +21,7 @@ package org.zaproxy.addon.dev;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.proxy.ProxyListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.dev.error.LoggedErrorsHandler;
@@ -38,6 +39,7 @@ public class ExtensionDev extends ExtensionAdaptor {
     private final LoggedErrorsHandler loggedErrorsHandler;
 
     private TestProxyServer tutorialServer;
+    private AltDomainProxyListener altDomainListener = new AltDomainProxyListener();
 
     private DevParam devParam;
 
@@ -54,6 +56,7 @@ public class ExtensionDev extends ExtensionAdaptor {
         loggedErrorsHandler.hook(extensionHook);
 
         extensionHook.addOptionsParamSet(this.getDevParam());
+        extensionHook.addProxyListener(altDomainListener);
 
         if (Constant.isDevMode()) {
             tutorialServer =
@@ -77,6 +80,10 @@ public class ExtensionDev extends ExtensionAdaptor {
             devParam = new DevParam();
         }
         return devParam;
+    }
+
+    public void addDomainListener(String domain, ProxyListener listener) {
+        this.altDomainListener.addDomainListener(domain, listener);
     }
 
     @Override
