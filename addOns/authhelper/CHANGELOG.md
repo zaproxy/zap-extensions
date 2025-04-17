@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Add configuration support for the wait time after Client Script Based Authentication.
+
 ### Fixed
 - Correct descriptions of the Zest script steps in the Authentication Report.
 - Fix loading/saving of Client Script Based Authentication through the GUI.

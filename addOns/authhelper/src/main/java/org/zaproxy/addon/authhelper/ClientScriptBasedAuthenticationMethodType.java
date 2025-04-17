@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import java.awt.Component;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -27,10 +28,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JLabel;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXComboBox;
@@ -61,6 +65,8 @@ import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.session.WebSession;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.EncodingUtils;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
+import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zest.core.v1.ZestActionSleep;
 import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestScript;
@@ -73,6 +79,11 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
     private static final Logger LOGGER =
             LogManager.getLogger(ClientScriptBasedAuthenticationMethodType.class);
+
+    private static final String CONTEXT_CONFIG_LOGIN_PAGE_WAIT =
+            CONTEXT_CONFIG_AUTH_SCRIPT + ".loginpagewait";
+
+    private static final int DEFAULT_PAGE_WAIT = 5;
 
     private ExtensionScript extensionScript;
 
@@ -122,6 +133,29 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 contextId,
                 RecordContext.TYPE_AUTH_METHOD_FIELD_2,
                 EncodingUtils.mapToString(method.getParamValuesTemp()));
+
+        session.setContextData(
+                contextId,
+                RecordContext.TYPE_AUTH_METHOD_FIELD_3,
+                Integer.toString(method.getLoginPageWait()));
+    }
+
+    @Override
+    public ScriptBasedAuthenticationMethod loadMethodFromSession(Session session, int contextId)
+            throws DatabaseException {
+        ClientScriptBasedAuthenticationMethod method =
+                (ClientScriptBasedAuthenticationMethod)
+                        super.loadMethodFromSession(session, contextId);
+
+        String waitStr =
+                session.getContextDataString(contextId, RecordContext.TYPE_AUTH_METHOD_FIELD_3, "");
+        if (!StringUtils.isEmpty(waitStr)) {
+            try {
+                method.setLoginPageWait(Integer.parseInt(waitStr));
+            } catch (NumberFormatException ignore) {
+            }
+        }
+        return method;
     }
 
     @Override
@@ -167,6 +201,8 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             }
         }
 
+        private int loginPageWait = DEFAULT_PAGE_WAIT;
+
         private boolean diagnostics;
 
         public void setDiagnostics(boolean diagnostics) {
@@ -175,6 +211,14 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
         public boolean isDiagnostics() {
             return diagnostics;
+        }
+
+        public void setLoginPageWait(int loginPageWait) {
+            this.loginPageWait = loginPageWait;
+        }
+
+        public int getLoginPageWait() {
+            return loginPageWait;
         }
 
         protected ScriptWrapper getScriptTemp() {
@@ -232,6 +276,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             setScriptTemp(method);
             setParamValuesTemp(method);
             setCredentialsParamNamesTemp(method);
+            method.loginPageWait = loginPageWait;
             return method;
         }
 
@@ -317,7 +362,6 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 Set<String> handles = zestScript.getClientWindowHandles();
                 handles.removeAll(this.getClientClosedWindowHandles(zestScript));
                 if (!handles.isEmpty()) {
-                    zestScript.add(new ZestActionSleep(2000));
                     handles.forEach(h -> zestScript.add(new ZestClientWindowClose(h, 1)));
                 }
             }
@@ -356,7 +400,10 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
                 if (authScript instanceof ZestAuthenticationRunner zestRunner) {
                     zestRunner.registerHandler(getHandler(user));
-                    appendCloseStatements(zestRunner.getScript().getZestScript());
+                    ZestScript zestScript = zestRunner.getScript().getZestScript();
+                    zestScript.add(
+                            new ZestActionSleep(TimeUnit.SECONDS.toMillis(getLoginPageWait())));
+                    appendCloseStatements(zestScript);
                 } else {
                     LOGGER.warn("Expected authScript to be a Zest script");
                     return null;
@@ -447,13 +494,47 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         return map;
     }
 
+    @SuppressWarnings("serial")
     public class ClientScriptBasedAuthenticationMethodOptionsPanel
             extends ScriptBasedAuthenticationMethodOptionsPanel {
 
         private static final long serialVersionUID = 1L;
 
+        private static Field dynamicContentPanelField;
+
+        static {
+            try {
+                dynamicContentPanelField =
+                        ScriptBasedAuthenticationMethodOptionsPanel.class.getDeclaredField(
+                                "dynamicContentPanel");
+                dynamicContentPanelField.setAccessible(true);
+            } catch (Exception ignore) {
+            }
+        }
+
+        private ClientScriptBasedAuthenticationMethod shownMethod;
+
+        private ZapNumberSpinner loginPageWait;
+
         public ClientScriptBasedAuthenticationMethodOptionsPanel() {
             super();
+
+            try {
+                Component dynamicContentPanel = (Component) dynamicContentPanelField.get(this);
+                remove(dynamicContentPanel);
+
+                loginPageWait = new ZapNumberSpinner(1, DEFAULT_PAGE_WAIT, Integer.MAX_VALUE);
+                JLabel loginPageWaitLabel =
+                        new JLabel(
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.browser.label.loginWait"));
+                loginPageWaitLabel.setLabelFor(loginPageWait);
+                this.add(loginPageWaitLabel, LayoutHelper.getGBC(0, 1, 1, 1.0d, 0.0d));
+                this.add(loginPageWait, LayoutHelper.getGBC(1, 1, 2, 1.0d, 0.0d));
+
+                add(dynamicContentPanel, LayoutHelper.getGBC(0, 2, 3, 1.0d, 0.0d));
+            } catch (Exception ignore) {
+            }
         }
 
         @Override
@@ -478,6 +559,17 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 }
             } catch (Exception ignore) {
             }
+
+            shownMethod = (ClientScriptBasedAuthenticationMethod) method;
+            loginPageWait.setValue(shownMethod.getLoginPageWait());
+        }
+
+        @Override
+        public void saveMethod() {
+            super.saveMethod();
+
+            shownMethod.setLoginPageWait(loginPageWait.getValue());
+            shownMethod = null;
         }
 
         // @Override
@@ -510,6 +602,8 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         config.setProperty(
                 CONTEXT_CONFIG_AUTH_SCRIPT_PARAMS,
                 EncodingUtils.mapToString(method.getParamValuesTemp()));
+
+        config.setProperty(CONTEXT_CONFIG_LOGIN_PAGE_WAIT, method.getLoginPageWait());
     }
 
     @Override
@@ -526,6 +620,12 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 method,
                 objListToStrList(config.getList(CONTEXT_CONFIG_AUTH_SCRIPT_NAME)),
                 objListToStrList(config.getList(CONTEXT_CONFIG_AUTH_SCRIPT_PARAMS)));
+
+        try {
+            method.setLoginPageWait(config.getInt(CONTEXT_CONFIG_LOGIN_PAGE_WAIT));
+        } catch (Exception e) {
+            throw new ConfigurationException(e);
+        }
     }
 
     private static List<String> objListToStrList(List<Object> oList) {
