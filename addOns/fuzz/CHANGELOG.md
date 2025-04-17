@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Use a scrollbar in the Default Category combo box instead of making the options panel larger (Issue 8923).
 
 ## [13.15.0] - 2025-01-09
 ### Changed
