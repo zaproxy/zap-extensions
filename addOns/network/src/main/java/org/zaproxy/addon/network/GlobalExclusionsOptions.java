@@ -54,112 +54,112 @@ public class GlobalExclusionsOptions extends VersionedAbstractParam {
             List.of(
                     new GlobalExclusion(
                             "Extension - Image (ends with .extension)",
-                            "^.*\\.(?:gif|jpe?g|png|ico|icns|bmp)$",
+                            "(?i)^.*\\.(?:gif|jpe?g|png|ico|icns|bmp)$",
                             false),
                     new GlobalExclusion(
                             "Extension - Audio/Video (ends with .extension)",
-                            "^.*\\.(?:mp[34]|mpe?g|m4[ap]|aac|avi|mov|wmv|og[gav])$",
+                            "(?i)^.*\\.(?:mp[34]|mpe?g|m4[ap]|aac|avi|mov|wmv|og[gav])$",
                             false),
                     new GlobalExclusion(
                             "Extension - PDF & Office (ends with .extension)",
-                            "^.*\\.(?:pdf|docx?|xlsx?|pptx?)$",
+                            "(?i)^.*\\.(?:pdf|docx?|xlsx?|pptx?)$",
                             false),
                     new GlobalExclusion(
                             "Extension - Stylesheet, JavaScript (ends with .extension)",
-                            "^.*\\.(?:css|js)$",
+                            "(?i)^.*\\.(?:css|js)$",
                             false),
                     new GlobalExclusion(
                             "Extension - Flash & related (ends with .extension)",
-                            "^.*\\.(?:sw[fa]|flv)$",
+                            "(?i)^.*\\.(?:sw[fa]|flv)$",
                             false),
                     new GlobalExclusion(
                             "ExtParam - Image (extension plus ?params=values)",
-                            "^[^\\?]*\\.(?:gif|jpe?g|png|ico|icns|bmp)\\?.*$",
+                            "(?i)^[^\\?]*\\.(?:gif|jpe?g|png|ico|icns|bmp)\\?.*$",
                             false),
                     new GlobalExclusion(
                             "ExtParam - Audio/Video (extension plus ?params=values)",
-                            "^[^\\?]*\\.(?:mp[34]|mpe?g|m4[ap]|aac|avi|mov|wmv|og[gav])\\?.*$",
+                            "(?i)^[^\\?]*\\.(?:mp[34]|mpe?g|m4[ap]|aac|avi|mov|wmv|og[gav])\\?.*$",
                             false),
                     new GlobalExclusion(
                             "ExtParam - PDF & Office (extension plus ?params=values)",
-                            "^[^\\?]*\\.(?:pdf|docx?|xlsx?|pptx?)\\?.*$",
+                            "(?i)^[^\\?]*\\.(?:pdf|docx?|xlsx?|pptx?)\\?.*$",
                             false),
                     new GlobalExclusion(
                             "ExtParam - Stylesheet, JavaScript (extension plus ?params=values)",
-                            "^[^\\?]*\\.(?:css|js)\\?.*$",
+                            "(?i)^[^\\?]*\\.(?:css|js)\\?.*$",
                             false),
                     new GlobalExclusion(
                             "ExtParam - Flash & related (extension plus ?params=values)",
-                            "^[^\\?]*\\.(?:sw[fa]|flv)\\?.*$",
+                            "(?i)^[^\\?]*\\.(?:sw[fa]|flv)\\?.*$",
                             false),
                     new GlobalExclusion(
-                            "ExtParam - .NET adx resources (SR/WR.adx?d=)",
-                            "^[^\\?]*/(?:WebResource|ScriptResource)\\.axd\\?d=.*$",
+                            "ExtParam - .NET axd resources (SR/WR.axd?d=)",
+                            "(?i)^[^\\?]*/(?:WebResource|ScriptResource)\\.axd\\?d=.*$",
                             false),
                     new GlobalExclusion(
                             "Site - Bing API queries",
-                            "^https?://api\\.bing\\.com/qsml\\.aspx?query=.*$",
+                            "(?i)^https?://api\\.bing\\.com/qsml\\.aspx?query=.*$",
                             false),
                     new GlobalExclusion(
                             "Site - Google malware detector updates",
-                            "^https?://(?:safebrowsing-cache|sb-ssl|sb|safebrowsing).*\\.(?:google|googleapis)\\.com/.*$",
+                            "(?i)^https?://(?:safebrowsing-cache|sb-ssl|sb|safebrowsing).*\\.(?:google|googleapis)\\.com/.*$",
                             true),
                     new GlobalExclusion(
                             "Site - Lastpass manager",
-                            "^https?://(?:[^/])*\\.?lastpass\\.com",
+                            "(?i)^https?://(?:[^/])*\\.?lastpass\\.com",
                             false),
                     new GlobalExclusion(
                             "Site - Firefox browser updates",
-                            "^https?://(?:.*addons|aus[0-9])\\.mozilla\\.(?:org|net|com)/.*$",
+                            "(?i)^https?://(?:.*addons|aus[0-9])\\.mozilla\\.(?:org|net|com)/.*$",
                             true),
                     new GlobalExclusion(
                             "Site - Firefox extensions phoning home",
-                            "^https?://(?:[^/])*\\.?(?:getfoxyproxy\\.org|getfirebug\\.com|noscript\\.net)",
+                            "(?i)^https?://(?:[^/])*\\.?(?:getfoxyproxy\\.org|getfirebug\\.com|noscript\\.net)",
                             false),
                     new GlobalExclusion(
                             "Site - Microsoft Windows updates",
                             // http://serverfault.com/questions/332003/what-urls-must-be-in-ies-trusted-sites-list-to-allow-windows-update
-                            "^https?://(?:.*update\\.microsoft|.*\\.windowsupdate)\\.com/.*$",
+                            "(?i)^https?://(?:.*update\\.microsoft|.*\\.windowsupdate)\\.com/.*$",
                             true),
                     new GlobalExclusion(
                             "Site - Google Chrome extension updates",
-                            "^https?://clients2\\.google\\.com/service/update2/crx.*$",
+                            "(?i)^https?://clients2\\.google\\.com/service/update2/crx.*$",
                             true),
                     new GlobalExclusion(
                             "Site - Firefox captive portal detection",
-                            "^https?://detectportal\\.firefox\\.com.*$",
+                            "(?i)^https?://detectportal\\.firefox\\.com.*$",
                             true),
                     new GlobalExclusion(
                             "Site - Google Analytics",
-                            "^https?://www\\.google-analytics\\.com.*$",
+                            "(?i)^https?://www\\.google-analytics\\.com.*$",
                             false),
                     new GlobalExclusion(
                             "Site - Firefox h264 codec download",
                             // https://support.mozilla.org/t5/Firefox/Where-is-a-check-that-http-ciscobinary-openh264-org-openh264-is/m-p/1316497#M1005892
-                            "^https?://ciscobinary\\.openh264\\.org.*$",
+                            "(?i)^https?://ciscobinary\\.openh264\\.org.*$",
                             false),
                     new GlobalExclusion(
                             "Site - Fonts CDNs such as fonts.gstatic.com, etc.",
-                            "^https?://fonts.*$",
+                            "(?i)^https?://fonts.*$",
                             false),
                     new GlobalExclusion(
                             "Site - Mozilla CDN (requests such as getpocket)",
-                            "^https?://.*\\.cdn\\.mozilla\\.(?:com|org|net)/.*$",
+                            "(?i)^https?://.*\\.cdn\\.mozilla\\.(?:com|org|net)/.*$",
                             true),
                     new GlobalExclusion(
                             "Site - Firefox browser telemetry",
-                            "^https?://.*\\.telemetry\\.mozilla\\.(?:com|org|net)/.*$",
+                            "(?i)^https?://.*\\.telemetry\\.mozilla\\.(?:com|org|net)/.*$",
                             true),
                     new GlobalExclusion(
                             "Site - Adblockplus updates and notifications",
-                            "^https?://.*\\.adblockplus\\.org.*$",
+                            "(?i)^https?://.*\\.adblockplus\\.org.*$",
                             false),
                     new GlobalExclusion(
                             "Site - Firefox services",
-                            "^https?://.*\\.services\\.mozilla\\.com.*$",
+                            "(?i)^https?://.*\\.services\\.mozilla\\.com.*$",
                             true),
                     new GlobalExclusion(
-                            "Site - Google updates", "^https?://.*\\.gvt1\\.com.*$", true));
+                            "Site - Google updates", "(?i)^https?://.*\\.gvt1\\.com.*$", true));
 
     private List<GlobalExclusion> globalExclusions = List.of();
     private boolean confirmRemoveGlobalExclusions = true;
