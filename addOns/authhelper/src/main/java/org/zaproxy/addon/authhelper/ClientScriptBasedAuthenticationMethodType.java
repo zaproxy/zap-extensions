@@ -62,6 +62,7 @@ import org.zaproxy.zap.session.WebSession;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.EncodingUtils;
 import org.zaproxy.zest.core.v1.ZestActionSleep;
+import org.zaproxy.zest.core.v1.ZestClientLaunch;
 import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.core.v1.ZestStatement;
@@ -302,6 +303,11 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             return authScript;
         }
 
+        private boolean hasBrowserLaunch(ZestScript zestScript) {
+            // Check top level statements only.
+            return zestScript.getStatements().stream().anyMatch(ZestClientLaunch.class::isInstance);
+        }
+
         private Set<String> getClientClosedWindowHandles(ZestScript zestScript) {
             return zestScript.getStatements().stream()
                     .filter(ZestClientWindowClose.class::isInstance)
@@ -355,8 +361,14 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 }
 
                 if (authScript instanceof ZestAuthenticationRunner zestRunner) {
+                    ZestScript zestScript = zestRunner.getScript().getZestScript();
+                    if (!hasBrowserLaunch(zestScript)) {
+                        LOGGER.warn("The script does not have any browser launch.");
+                        return null;
+                    }
+
                     zestRunner.registerHandler(getHandler(user));
-                    appendCloseStatements(zestRunner.getScript().getZestScript());
+                    appendCloseStatements(zestScript);
                 } else {
                     LOGGER.warn("Expected authScript to be a Zest script");
                     return null;
