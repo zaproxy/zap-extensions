@@ -80,7 +80,7 @@ public class AuthenticationData extends AutomationData {
 
     // TODO: Plan to change once the core supports dynamic methods better
     protected static final String CLIENT_SCRIPT_BASED_AUTH_METHOD_CLASSNAME =
-            "org.zaproxy.addon.authhelper.client.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod";
+            "org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod";
     protected static final String BROWSER_BASED_AUTH_METHOD_CLASSNAME =
             "org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod";
 
@@ -157,6 +157,7 @@ public class AuthenticationData extends AutomationData {
                 for (Entry<String, String> entry : paramValues.entrySet()) {
                     parameters.put(entry.getKey(), entry.getValue());
                 }
+                JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_WAIT, authMethod);
             }
         } else if (authMethod instanceof ScriptBasedAuthenticationMethod scriptAuthMethod) {
             ScriptWrapper sw =
@@ -461,6 +462,18 @@ public class AuthenticationData extends AutomationData {
                             }
                             JobUtils.setPrivateField(
                                     clientScriptMethod, "paramValues", getScriptParameters(env));
+
+                            Object loginPageWaitObj =
+                                    getParameters().get(AuthenticationData.PARAM_LOGIN_PAGE_WAIT);
+                            if (loginPageWaitObj instanceof Integer value) {
+                                int loginPageWait = JobUtils.unBox(value);
+                                if (loginPageWait > 0) {
+                                    JobUtils.setPrivateField(
+                                            clientScriptMethod,
+                                            AuthenticationData.PARAM_LOGIN_PAGE_WAIT,
+                                            loginPageWait);
+                                }
+                            }
 
                             reloadAuthenticationMethod(clientScriptMethod, progress);
                             context.setAuthenticationMethod(clientScriptMethod);
