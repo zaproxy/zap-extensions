@@ -28,7 +28,10 @@ import static org.hamcrest.Matchers.not;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -213,6 +216,24 @@ class GlobalExclusionsOptionsUnitTest {
         // Then
         assertThat(options.isConfirmRemoveGlobalExclusions(), is(equalTo(false)));
         assertExclusion(0, "Name", "Value", false);
+    }
+
+    @Test
+    void shouldHaveAllDefaultExclusionsCaseInsensitive() {
+        // Given / When
+        List<GlobalExclusion> exclusions = options.getGlobalExclusions();
+        // Then
+        Map<String, String> patterns = new HashMap<>();
+        exclusions.forEach(ex -> patterns.put(ex.getName(), ex.getValue()));
+        List<String> errors = new ArrayList<>();
+        patterns.entrySet()
+                .forEach(
+                        entry -> {
+                            if (!entry.getValue().startsWith("(?i)")) {
+                                errors.add(entry.getKey());
+                            }
+                        });
+        assertThat(errors, is(empty()));
     }
 
     private static GlobalExclusion exclusion(String name, String value, boolean enabled) {
