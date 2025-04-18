@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -67,19 +69,43 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner
         // source,
         // track, and video elements.
 
-        SCRIPT(HTMLElementName.SCRIPT, "src"),
-        LINK(HTMLElementName.LINK, "href");
+        SCRIPT(HTMLElementName.SCRIPT, "src", Map.of()),
+        LINK(
+                HTMLElementName.LINK,
+                "href",
+                Map.of("rel", Set.of("stylesheet", "preload", "modulepreload")));
 
         private final String tag;
         private final String attribute;
+        private final Map<String, Set<String>> relevantAttributes;
 
-        SupportedElements(String tag, String attribute) {
+        SupportedElements(
+                String tag, String attribute, Map<String, Set<String>> relevantAttributes) {
             this.tag = tag;
             this.attribute = attribute;
+            this.relevantAttributes = relevantAttributes;
         }
 
-        public static boolean contains(String tag) {
-            return Stream.of(values()).anyMatch(e -> tag.equals(e.tag));
+        public static boolean anyMatch(Element element) {
+            return Stream.of(values()).anyMatch(e -> e.isRelevant(element));
+        }
+
+        public boolean isRelevant(Element element) {
+            if (!tag.equalsIgnoreCase(element.getName())) {
+                return false;
+            }
+            if (relevantAttributes.isEmpty()) {
+                return true;
+            }
+            for (var entry : relevantAttributes.entrySet()) {
+                String attributeValue = element.getAttributeValue(entry.getKey());
+                if (attributeValue == null
+                        || Arrays.stream(attributeValue.toLowerCase(Locale.ROOT).split(" "))
+                                .anyMatch(entry.getValue()::contains)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static Optional<String> getHost(Element element, String origin) {
@@ -132,7 +158,7 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner
         List<Element> sourceElements = source.getAllElements();
         List<Element> impactedElements =
                 sourceElements.stream()
-                        .filter(element -> SupportedElements.contains(element.getName()))
+                        .filter(SupportedElements::anyMatch)
                         .filter(isNotTrusted(trustedDomains, msg.getRequestHeader().getHostName()))
                         .collect(Collectors.toList());
         if (!impactedElements.isEmpty()) {
@@ -179,7 +205,6 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner
         return element -> {
             Optional<String> maybeResourceUri = SupportedElements.getHost(element, origin);
             return element.getAttributeValue("integrity") == null
-                    && !"canonical".equalsIgnoreCase(element.getAttributeValue("rel"))
                     && !maybeResourceUri.map(trustedDomains::isIncluded).orElse(false);
         };
     }
