@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,6 +57,10 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner
 
     private static final Logger LOGGER =
             LogManager.getLogger(SubResourceIntegrityAttributeScanRule.class);
+
+    // https://html.spec.whatwg.org/multipage/semantics.html#attr-link-integrity
+    private static final List<String> LINK_REL_KEYWORDS_FOR_SRI =
+            List.of("stylesheet", "preload", "modulepreload");
 
     private enum SupportedElements {
         // From
@@ -134,10 +139,19 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner
                 sourceElements.stream()
                         .filter(element -> SupportedElements.contains(element.getName()))
                         .filter(isNotTrusted(trustedDomains, msg.getRequestHeader().getHostName()))
+                        .filter(ele -> relNullOrRelevant(ele.getAttributeValue("rel")))
                         .collect(Collectors.toList());
         if (!impactedElements.isEmpty()) {
             impactedElements.forEach(element -> createAlert(msg, element, tree).raise());
         }
+    }
+
+    private static boolean relNullOrRelevant(String relValue) {
+        if (relValue == null) {
+            return true;
+        }
+        return Arrays.asList(relValue.toLowerCase(Locale.ROOT).split(" ")).stream()
+                .anyMatch(LINK_REL_KEYWORDS_FOR_SRI::contains);
     }
 
     private static String calculateIntegrityHash(HttpMessage msg, Element element, SiteMap tree) {
@@ -179,7 +193,6 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner
         return element -> {
             Optional<String> maybeResourceUri = SupportedElements.getHost(element, origin);
             return element.getAttributeValue("integrity") == null
-                    && !"canonical".equalsIgnoreCase(element.getAttributeValue("rel"))
                     && !maybeResourceUri.map(trustedDomains::isIncluded).orElse(false);
         };
     }
