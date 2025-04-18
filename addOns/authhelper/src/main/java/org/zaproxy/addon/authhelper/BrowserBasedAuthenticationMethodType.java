@@ -153,6 +153,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         return proxy;
     }
 
+
     public Object getCookieStore() {
         try {
             HttpSender temp = getHttpSender();
@@ -212,6 +213,20 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             authenticationSteps =
                     method.getAuthenticationSteps().stream().map(AuthenticationStep::new).toList();
         }
+
+        public List<HttpMessage> getRecordedHttpMessages() {
+            if (handler != null) {
+                return handler.getHttpMessages(); 
+            }
+            return new ArrayList<>();
+        }
+
+        public void resetRecordedHttpMessages() {
+            if (handler != null) {
+                handler.resetHttpMessages(); 
+            }
+        }
+
 
         @Override
         public boolean isConfigured() {
@@ -301,6 +316,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                 User user) {
             if (handler != null) {
                 handler.resetAuthMsg();
+                handler.resetHttpMessages();
             }
             if (this.loginPageWait > 0) {
                 AuthUtils.setTimeToWaitMs(TimeUnit.SECONDS.toMillis(loginPageWait));
