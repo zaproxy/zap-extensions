@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -33,6 +34,8 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
@@ -115,6 +118,51 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
 
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldRaiseAlertGivenMissingIntegrityAttributeInLinkElement()
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head><link href=\"https://site53.example.net/style.css\"></head><body></body></html>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"stylesheet", "STYLESHEET", "STYLEsheet", "alternate stylesheet"})
+    void shouldRaiseAlertGivenMissingIntegrityAttributeInLinkElementWithRelevantRel(String relVal)
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head><link rel=\""
+                                + relVal
+                                + "\" href=\"https://site53.example.net/style.css\"></head><body></body></html>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"dns-prefetch", "DNS-PREFETCH", "DNS-prefetch"})
+    void shouldNotRaiseAlertGivenMissingIntegrityAttributeInLinkElementWithIrrelevantRel(
+            String relVal) throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head><link rel=\""
+                                + relVal
+                                + "\" href=\"https://example.net\"></head><body></body></html>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, is(empty()));
     }
 
     @Test

@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Dropped period from extension name used in the GUI.
 - Depends on an updated version of the Common Library add-on.
 
+### Fixed
+- A false positive with the Sub Resource Integrity Attribute Missing scan rule with regard to which link tags it raises alerts on (Issue 8938).
+
 ### Added
 - All rules have been tagged of interest to Penetration Testers, as well as adding tags associated with DEV or QA applicability.
 
