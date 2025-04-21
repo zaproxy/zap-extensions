@@ -25,7 +25,6 @@ import com.crawljax.core.CrawljaxRunner;
 import com.crawljax.core.configuration.BrowserConfiguration;
 import com.crawljax.core.configuration.CrawljaxConfiguration;
 import com.crawljax.core.configuration.CrawljaxConfiguration.CrawljaxConfigurationBuilder;
-import com.crawljax.core.configuration.ProxyConfiguration;
 import com.crawljax.core.plugin.OnBrowserCreatedPlugin;
 import com.crawljax.core.plugin.Plugins;
 import com.google.common.collect.ImmutableSortedSet;
@@ -34,17 +33,20 @@ import java.awt.EventQueue;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Provider;
+import lombok.Getter;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
@@ -67,10 +69,9 @@ import org.zaproxy.zap.users.User;
 
 public class SpiderThread implements Runnable {
 
-    private static final String LOCAL_PROXY_IP = "127.0.0.1";
-
     private final String displayName;
     private final AjaxSpiderTarget target;
+    private final List<AllowedResource> allowedResourcesEnabled;
     private final HttpPrefixUriValidator httpPrefixUriValidator;
     private CrawljaxRunner crawljax;
     private boolean running;
@@ -82,10 +83,11 @@ public class SpiderThread implements Runnable {
     private List<SpiderListener> spiderListeners;
     private final List<String> exclusionList;
     private final String targetHost;
-    private Server proxy;
-    private int proxyPort;
     private final ExtensionAjax extension;
     private AuthenticationHandler authHandler;
+
+    private ExtensionNetwork extensionNetwork;
+    private List<WebDriverProcess> webDriverProcesses;
 
     /**
      * Constructs a {@code SpiderThread} for the given target.
@@ -103,6 +105,10 @@ public class SpiderThread implements Runnable {
             ExtensionNetwork extensionNetwork) {
         this.displayName = displayName;
         this.target = target;
+        allowedResourcesEnabled =
+                target.getOptions().getAllowedResources().stream()
+                        .filter(AllowedResource::isEnabled)
+                        .toList();
         HttpPrefixUriValidator validator = null;
         try {
             validator =
@@ -124,16 +130,11 @@ public class SpiderThread implements Runnable {
         this.targetHost = target.getStartUri().getHost();
         this.extension = extension;
 
+        this.extensionNetwork = extensionNetwork;
+        webDriverProcesses = Collections.synchronizedList(new ArrayList<>());
+
         createOutOfScopeResponse(
                 extension.getMessages().getString("spiderajax.outofscope.response"));
-
-        proxy =
-                extensionNetwork.createHttpServer(
-                        HttpServerConfig.builder()
-                                .setHttpMessageHandler(new SpiderProxyListener())
-                                .setHttpSender(new HttpSender(HttpSender.AJAX_SPIDER_INITIATOR))
-                                .setServeZapApi(true)
-                                .build());
     }
 
     private void createOutOfScopeResponse(String response) {
@@ -188,14 +189,14 @@ public class SpiderThread implements Runnable {
         // checks.
         configurationBuilder.setCrawlScope(url -> true);
 
-        configurationBuilder.setProxyConfig(
-                ProxyConfiguration.manualProxyOn(LOCAL_PROXY_IP, proxyPort));
-
         configurationBuilder.setBrowserConfig(
                 new BrowserConfiguration(
                         com.crawljax.browser.EmbeddedBrowser.BrowserType.FIREFOX,
                         target.getOptions().getNumberOfBrowsers(),
                         new AjaxSpiderBrowserBuilder(
+                                extensionNetwork,
+                                webDriverProcesses,
+                                SpiderProxyListener::new,
                                 target.getOptions().getBrowserId(),
                                 target.getOptions().isEnableExtensions())));
 
@@ -274,11 +275,7 @@ public class SpiderThread implements Runnable {
             }
         }
 
-        LOGGER.info("Starting proxy...");
         try {
-            this.proxyPort = proxy.start(LOCAL_PROXY_IP);
-            LOGGER.info("Proxy started, listening at port [{}].", proxyPort);
-
             crawljax = new CrawljaxRunner(createCrawljaxConfiguration());
             crawljax.call();
         } catch (ProvisionException e) {
@@ -293,8 +290,6 @@ public class SpiderThread implements Runnable {
                         .showWarningDialog(
                                 extSelenium.getWarnMessageFailedToStart(providedBrowserId, e));
             }
-        } catch (IOException e) {
-            LOGGER.warn("An error occurred while starting the proxy.", e);
         } catch (Exception e) {
             LOGGER.error(e, e);
         } finally {
@@ -313,14 +308,8 @@ public class SpiderThread implements Runnable {
     }
 
     private void stopProxy() {
-        if (proxy != null) {
-            try {
-                proxy.close();
-            } catch (IOException e) {
-                LOGGER.debug("An error occurred while stopping the proxy.", e);
-            }
-            proxy = null;
-        }
+        webDriverProcesses.forEach(WebDriverProcess::shutdown);
+        webDriverProcesses.clear();
     }
 
     /** called by the buttons of the panel to stop the spider */
@@ -356,15 +345,6 @@ public class SpiderThread implements Runnable {
     }
 
     private class SpiderProxyListener implements HttpMessageHandler {
-
-        private final List<AllowedResource> allowedResourcesEnabled;
-
-        SpiderProxyListener() {
-            allowedResourcesEnabled =
-                    target.getOptions().getAllowedResources().stream()
-                            .filter(AllowedResource::isEnabled)
-                            .collect(Collectors.toList());
-        }
 
         @Override
         public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage httpMessage) {
@@ -471,11 +451,22 @@ public class SpiderThread implements Runnable {
         @Inject private CrawljaxConfiguration configuration;
         @Inject private Plugins plugins;
 
+        private final ExtensionNetwork extensionNetwork;
+        private final List<WebDriverProcess> webDriverProcesses;
+        private final Supplier<SpiderProxyListener> listenerFactory;
         private final String providedBrowserId;
         private final boolean enableExtensions;
 
-        public AjaxSpiderBrowserBuilder(String providedBrowserId, boolean enableExtensions) {
+        public AjaxSpiderBrowserBuilder(
+                ExtensionNetwork extensionNetwork,
+                List<WebDriverProcess> webDriverProcesses,
+                Supplier<SpiderProxyListener> listenerFactory,
+                String providedBrowserId,
+                boolean enableExtensions) {
             super();
+            this.extensionNetwork = extensionNetwork;
+            this.webDriverProcesses = webDriverProcesses;
+            this.listenerFactory = listenerFactory;
             this.providedBrowserId =
                     StringUtils.isEmpty(providedBrowserId)
                             ? AjaxSpiderParam.DEFAULT_BROWSER_ID
@@ -497,18 +488,20 @@ public class SpiderThread implements Runnable {
             long crawlWaitReload = configuration.getCrawlRules().getWaitAfterReloadUrl();
             long crawlWaitEvent = configuration.getCrawlRules().getWaitAfterEvent();
 
-            ExtensionSelenium extSelenium =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionSelenium.class);
+            SpiderProxyListener listener = listenerFactory.get();
+            WebDriverProcess webDriverProcess;
+            try {
+                webDriverProcess =
+                        new WebDriverProcess(
+                                extensionNetwork, listener, providedBrowserId, enableExtensions);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+            webDriverProcesses.add(webDriverProcess);
+
             EmbeddedBrowser embeddedBrowser =
                     WebDriverBackedEmbeddedBrowser.withDriver(
-                            extSelenium.getWebDriver(
-                                    HttpSender.AJAX_SPIDER_INITIATOR,
-                                    providedBrowserId,
-                                    configuration.getProxyConfiguration().getHostname(),
-                                    configuration.getProxyConfiguration().getPort(),
-                                    enableExtensions),
+                            webDriverProcess.getWebDriver(),
                             filterAttributes,
                             crawlWaitEvent,
                             crawlWaitReload);
@@ -531,6 +524,60 @@ public class SpiderThread implements Runnable {
         @Override
         public void onBrowserCreated(EmbeddedBrowser arg0) {
             // Nothing to do.
+        }
+    }
+
+    @Getter
+    static class WebDriverProcess {
+
+        private static final String LOCAL_PROXY_IP = "127.0.0.1";
+        private static final int INITIATOR = HttpSender.AJAX_SPIDER_INITIATOR;
+
+        private final int port;
+
+        private Server proxy;
+        private WebDriver webDriver;
+
+        private WebDriverProcess(
+                ExtensionNetwork extensionNetwork,
+                SpiderProxyListener listener,
+                String browser,
+                boolean enableExtensions)
+                throws IOException {
+            proxy =
+                    extensionNetwork.createHttpServer(
+                            HttpServerConfig.builder()
+                                    .setHttpMessageHandler(listener)
+                                    .setHttpSender(new HttpSender(INITIATOR))
+                                    .setServeZapApi(true)
+                                    .build());
+            port = proxy.start(Server.ANY_PORT);
+            LOGGER.debug("Started proxy for browser, listening at port [{}].", port);
+
+            webDriver =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionSelenium.class)
+                            .getWebDriver(
+                                    INITIATOR, browser, LOCAL_PROXY_IP, port, enableExtensions);
+        }
+
+        private void shutdown() {
+            if (webDriver != null) {
+                try {
+                    webDriver.quit();
+                } catch (Exception e) {
+                    LOGGER.debug("An error occurred while quitting the browser.", e);
+                }
+            }
+
+            if (proxy != null) {
+                try {
+                    proxy.close();
+                } catch (IOException e) {
+                    LOGGER.debug("An error occurred while stopping the proxy.", e);
+                }
+            }
         }
     }
 }
