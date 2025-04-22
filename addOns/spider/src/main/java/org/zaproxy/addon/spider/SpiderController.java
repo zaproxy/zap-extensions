@@ -23,14 +23,19 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import net.htmlparser.jericho.Config;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.spider.filters.FetchFilter;
 import org.zaproxy.addon.spider.filters.FetchFilter.FetchStatus;
 import org.zaproxy.addon.spider.filters.ParseFilter;
@@ -48,6 +53,9 @@ import org.zaproxy.addon.spider.parser.SpiderRobotstxtParser;
 import org.zaproxy.addon.spider.parser.SpiderSitemapXmlParser;
 import org.zaproxy.addon.spider.parser.SpiderSvnEntriesParser;
 import org.zaproxy.addon.spider.parser.SpiderTextParser;
+import org.zaproxy.zap.model.NameValuePair;
+import org.zaproxy.zap.model.ParameterParser;
+import org.zaproxy.zap.model.StandardParameterParser;
 
 /**
  * The SpiderController is used to manage the crawling process and interacts directly with the
@@ -80,6 +88,10 @@ public class SpiderController implements SpiderParserListener {
     /** The Constant log. */
     private static final Logger LOGGER = LogManager.getLogger(SpiderController.class);
 
+    private static final ParameterParser DEFAULT_PARAMETER_PARSER = new StandardParameterParser();
+
+    private final Function<SpiderResourceFound, String> bodyNormalizer;
+
     /**
      * Instantiates a new spider controller.
      *
@@ -97,6 +109,54 @@ public class SpiderController implements SpiderParserListener {
         for (SpiderParser parser : customParsers) {
             this.addSpiderParser(parser);
         }
+
+        SpiderParam spiderParam = spider.getSpiderParam();
+        ParameterParser parser = DEFAULT_PARAMETER_PARSER;
+        bodyNormalizer =
+                rsrc -> {
+                    String body = rsrc.getBody();
+                    if (body.isEmpty()) {
+                        return body;
+                    }
+
+                    if (!rsrc.getHeaders().isEmpty()) {
+                        String contentType =
+                                rsrc.getHeaders().stream()
+                                        .filter(
+                                                e ->
+                                                        HttpHeader.CONTENT_TYPE.equalsIgnoreCase(
+                                                                e.getName()))
+                                        .findFirst()
+                                        .map(HttpHeaderField::getValue)
+                                        .map(e -> e.toLowerCase(Locale.ROOT))
+                                        .orElse(null);
+                        if (contentType != null
+                                && !contentType.contains(HttpHeader.FORM_URLENCODED_CONTENT_TYPE)) {
+                            return body;
+                        }
+                    } else if (!(HttpRequestHeader.POST.equalsIgnoreCase(rsrc.getMethod())
+                            || HttpRequestHeader.PUT.equalsIgnoreCase(rsrc.getMethod()))) {
+                        return body;
+                    }
+
+                    List<NameValuePair> parameters = parser.parseRawParameters(body);
+                    if (parameters.isEmpty()) {
+                        return body;
+                    }
+
+                    return parameters.stream()
+                            .filter(e -> !spiderParam.isIrrelevantUrlParameter(e.getName()))
+                            .map(
+                                    e -> {
+                                        if (StringUtils.isEmpty(e.getValue())) {
+                                            return e.getName();
+                                        }
+                                        return e.getName()
+                                                + parser.getDefaultKeyValueSeparator()
+                                                + e.getValue();
+                                    })
+                            .collect(Collectors.joining(parser.getDefaultKeyValuePairSeparator()));
+                };
     }
 
     private void prepareDefaultParsers() {
@@ -286,7 +346,7 @@ public class SpiderController implements SpiderParserListener {
         identifierBuilder.append("\n");
         identifierBuilder.append(getCanonicalHeadersString(resourceFound.getHeaders()));
         identifierBuilder.append("\n");
-        identifierBuilder.append(resourceFound.getBody());
+        identifierBuilder.append(bodyNormalizer.apply(resourceFound));
         return identifierBuilder.toString();
     }
 
