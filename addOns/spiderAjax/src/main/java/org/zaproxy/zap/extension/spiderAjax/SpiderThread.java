@@ -346,8 +346,14 @@ public class SpiderThread implements Runnable {
 
     private class SpiderProxyListener implements HttpMessageHandler {
 
+        private boolean allowAll = true;
+
         @Override
         public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage httpMessage) {
+            if (allowAll) {
+                return;
+            }
+
             if (!ctx.isFromClient()) {
                 notifyMessage(
                         httpMessage,
@@ -418,6 +424,10 @@ public class SpiderThread implements Runnable {
                 return ResourceState.IO_ERROR;
             }
             return ResourceState.PROCESSED;
+        }
+
+        public void setAllowAll(boolean allow) {
+            this.allowAll = allow;
         }
     }
 
@@ -560,6 +570,7 @@ public class SpiderThread implements Runnable {
                             .getExtension(ExtensionSelenium.class)
                             .getWebDriver(
                                     INITIATOR, browser, LOCAL_PROXY_IP, port, enableExtensions);
+            listener.setAllowAll(false);
         }
 
         private void shutdown() {

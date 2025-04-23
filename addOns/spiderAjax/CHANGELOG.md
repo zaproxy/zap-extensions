@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Allow access to domains out of context (e.g. SSO) when using Client Script and Browser Based Authentication.
+
 ## [23.23.0] - 2025-03-25
 ### Changed
 - Maintenance changes.
