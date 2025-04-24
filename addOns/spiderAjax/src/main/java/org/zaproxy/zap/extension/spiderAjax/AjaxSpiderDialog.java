@@ -36,6 +36,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
+import org.zaproxy.zap.extension.spiderAjax.internal.ScopeCheckComponent;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Target;
@@ -76,7 +77,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
 
     private Target target;
     private AjaxSpiderParam params = null;
-    // private OptionsAjaxSpiderTableModel ajaxSpiderClickModel = null;
+    private ScopeCheckComponent scopeCheckComponent;
     private AllowedResourcesTableModel allowedResourcesTableModel;
 
     /**
@@ -183,6 +184,9 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         this.addNumberField(1, FIELD_EVENT_WAIT, 1, Integer.MAX_VALUE, params.getEventWait());
         this.addNumberField(1, FIELD_RELOAD_WAIT, 1, Integer.MAX_VALUE, params.getReloadWait());
 
+        scopeCheckComponent = new ScopeCheckComponent();
+        scopeCheckComponent.setScopeCheck(params.getScopeCheck());
+        addCustomComponent(1, scopeCheckComponent.getComponent());
         allowedResourcesTableModel.setAllowedResources(params.getAllowedResources());
         AllowedResourcesPanel allowedResourcesPanel =
                 new AllowedResourcesPanel(this, allowedResourcesTableModel);
@@ -366,8 +370,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
             params.setReloadWait(this.getIntValue(FIELD_RELOAD_WAIT));
             params.setAllowedResources(allowedResourcesTableModel.getElements());
 
-            // params.setElems(getAjaxSpiderClickModel().getElements());
-
+            params.setScopeCheck(scopeCheckComponent.getScopeCheck());
         }
 
         URI startUri = null;
