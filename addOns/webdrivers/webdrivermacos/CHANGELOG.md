@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [136] - 2025-04-23
 ### Changed
 - Update ChromeDriver to 135.0.7049.114.
