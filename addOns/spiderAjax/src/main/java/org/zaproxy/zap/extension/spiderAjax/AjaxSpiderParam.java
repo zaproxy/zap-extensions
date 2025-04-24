@@ -23,18 +23,54 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 import org.zaproxy.zap.extension.selenium.Browser;
 
 public class AjaxSpiderParam extends VersionedAbstractParam {
+
+    public enum ScopeCheck {
+        FLEXIBLE,
+        STRICT;
+
+        private final String label;
+
+        ScopeCheck() {
+            label =
+                    Constant.messages.getString(
+                            "spiderajax.options.label.scope." + name().toLowerCase(Locale.ROOT));
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+
+        public static ScopeCheck getDefault() {
+            return STRICT;
+        }
+
+        public static ScopeCheck parse(String value) {
+            if (value == null || value.isBlank()) {
+                return getDefault();
+            }
+
+            try {
+                return valueOf(value.toUpperCase(Locale.ROOT));
+            } catch (Exception e) {
+                return getDefault();
+            }
+        }
+    }
 
     private static final Logger LOGGER = LogManager.getLogger(AjaxSpiderParam.class);
 
@@ -93,6 +129,8 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             AJAX_SPIDER_BASE_KEY + ".confirmRemoveElem";
 
     private static final String ENABLE_EXTENSIONS_KEY = AJAX_SPIDER_BASE_KEY + ".enableExtensions";
+
+    private static final String SCOPE_CHECK_KEY = AJAX_SPIDER_BASE_KEY + ".scopeCheck";
 
     public static final String[] DEFAULT_ELEMS_NAMES = {
         "a",
@@ -189,6 +227,8 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     private boolean confirmRemoveAllowedResource;
     private List<AllowedResource> allowedResources = Collections.emptyList();
+
+    private ScopeCheck scopeCheck = ScopeCheck.getDefault();
 
     @Override
     public AjaxSpiderParam clone() {
@@ -293,6 +333,8 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             this.allowedResources = new ArrayList<>(DEFAULT_ALLOWED_RESOURCES);
         }
         confirmRemoveAllowedResource = getBoolean(CONFIRM_REMOVE_ALLOWED_RESOURCE, true);
+
+        scopeCheck = getEnum(SCOPE_CHECK_KEY, ScopeCheck.getDefault());
     }
 
     @SuppressWarnings({"fallthrough"})
@@ -558,5 +600,18 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     @ZapApiIgnore
     public List<AllowedResource> getAllowedResources() {
         return Collections.unmodifiableList(allowedResources);
+    }
+
+    public ScopeCheck getScopeCheck() {
+        return scopeCheck;
+    }
+
+    public void setScopeCheck(String scopeCheck) {
+        setScopeCheck(ScopeCheck.parse(scopeCheck));
+    }
+
+    public void setScopeCheck(ScopeCheck scopeCheck) {
+        this.scopeCheck = scopeCheck == null ? ScopeCheck.getDefault() : scopeCheck;
+        getConfig().setProperty(SCOPE_CHECK_KEY, this.scopeCheck);
     }
 }

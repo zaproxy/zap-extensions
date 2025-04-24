@@ -62,6 +62,7 @@ import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.ScopeCheck;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
 import org.zaproxy.zap.model.ScanEventPublisher;
 import org.zaproxy.zap.network.HttpResponseBody;
@@ -185,9 +186,13 @@ public class SpiderThread implements Runnable {
         CrawljaxConfigurationBuilder configurationBuilder =
                 CrawljaxConfiguration.builderFor(target.getStartUri().toString());
 
-        // For Crawljax assume everything in scope, SpiderProxyListener does the actual scope
-        // checks.
-        configurationBuilder.setCrawlScope(url -> true);
+        configurationBuilder.setCrawlScope(
+                url -> {
+                    if (target.getOptions().getScopeCheck() == ScopeCheck.STRICT) {
+                        return true;
+                    }
+                    return inScope(url);
+                });
 
         configurationBuilder.setBrowserConfig(
                 new BrowserConfiguration(
@@ -249,6 +254,53 @@ public class SpiderThread implements Runnable {
         configurationBuilder.addPlugin(DummyPlugin.DUMMY_PLUGIN);
 
         return configurationBuilder.build();
+    }
+
+    private boolean inScope(String uri) {
+        return checkState(uri) == ResourceState.PROCESSED;
+    }
+
+    private ResourceState checkState(String url) {
+        ResourceState state = ResourceState.PROCESSED;
+        URI uri = createUri(url);
+        if (allowedResourcesEnabled.stream().anyMatch(e -> e.getPattern().matcher(url).matches())) {
+            // Nothing to do, state already set to processed.
+        } else if (httpPrefixUriValidator != null && !httpPrefixUriValidator.isValid(uri)) {
+            LOGGER.debug("Excluding request [{}] not under subtree.", url);
+            state = ResourceState.OUT_OF_SCOPE;
+        } else if (target.getContext() != null) {
+            if (!target.getContext().isInContext(url)) {
+                LOGGER.debug("Excluding request [{}] not in specified context.", url);
+                state = ResourceState.OUT_OF_CONTEXT;
+            }
+        } else if (target.isInScopeOnly()) {
+            if (!session.isInScope(url)) {
+                LOGGER.debug("Excluding request [{}] not in scope.", url);
+                state = ResourceState.OUT_OF_SCOPE;
+            }
+        } else if (uri != null && !targetHost.equalsIgnoreCase(new String(uri.getRawHost()))) {
+            LOGGER.debug("Excluding request [{}] not on target site [{}].", url, targetHost);
+            state = ResourceState.OUT_OF_SCOPE;
+        }
+        if (state == ResourceState.PROCESSED) {
+            for (String regex : exclusionList) {
+                if (Pattern.matches(regex, url)) {
+                    LOGGER.debug("Excluding request [{}] matched regex [{}].", url, regex);
+                    state = ResourceState.EXCLUDED;
+                }
+            }
+        }
+
+        return state;
+    }
+
+    private static URI createUri(String uri) {
+        try {
+            return new URI(uri, true);
+        } catch (Exception e) {
+            LOGGER.warn("Failed to create URI from: {} Cause: {}", uri, e.getMessage());
+        }
+        return null;
     }
 
     /** Instantiates the crawljax classes. */
@@ -354,50 +406,34 @@ public class SpiderThread implements Runnable {
                 return;
             }
 
+            ResourceState state =
+                    checkState(httpMessage.getRequestHeader().getURI().getEscapedURI());
+            boolean processed = state == ResourceState.PROCESSED;
+
             if (!ctx.isFromClient()) {
+                if (target.getOptions().getScopeCheck() == ScopeCheck.STRICT) {
+                    notifyMessage(
+                            httpMessage,
+                            HistoryReference.TYPE_SPIDER_AJAX,
+                            getResourceState(httpMessage));
+                    return;
+                }
+
                 notifyMessage(
                         httpMessage,
-                        HistoryReference.TYPE_SPIDER_AJAX,
-                        getResourceState(httpMessage));
+                        processed
+                                ? HistoryReference.TYPE_SPIDER_AJAX
+                                : HistoryReference.TYPE_SPIDER_AJAX_TEMPORARY,
+                        httpMessage.isResponseFromTargetHost() ? state : ResourceState.IO_ERROR);
                 return;
             }
 
-            ResourceState state = ResourceState.PROCESSED;
-            final String uri = httpMessage.getRequestHeader().getURI().toString();
-            if (allowedResourcesEnabled.stream()
-                    .anyMatch(e -> e.getPattern().matcher(uri).matches())) {
-                // Nothing to do, state already set to processed.
-            } else if (httpPrefixUriValidator != null
-                    && !httpPrefixUriValidator.isValid(httpMessage.getRequestHeader().getURI())) {
-                LOGGER.debug("Excluding request [{}] not under subtree.", uri);
-                state = ResourceState.OUT_OF_SCOPE;
-            } else if (target.getContext() != null) {
-                if (!target.getContext().isInContext(uri)) {
-                    LOGGER.debug("Excluding request [{}] not in specified context.", uri);
-                    state = ResourceState.OUT_OF_CONTEXT;
+            if (!processed) {
+                if (target.getOptions().getScopeCheck() == ScopeCheck.STRICT) {
+                    setOutOfScopeResponse(httpMessage);
+                    notifyMessage(httpMessage, HistoryReference.TYPE_SPIDER_AJAX_TEMPORARY, state);
+                    ctx.overridden();
                 }
-            } else if (target.isInScopeOnly()) {
-                if (!session.isInScope(uri)) {
-                    LOGGER.debug("Excluding request [{}] not in scope.", uri);
-                    state = ResourceState.OUT_OF_SCOPE;
-                }
-            } else if (!targetHost.equalsIgnoreCase(httpMessage.getRequestHeader().getHostName())) {
-                LOGGER.debug("Excluding request [{}] not on target site [{}].", uri, targetHost);
-                state = ResourceState.OUT_OF_SCOPE;
-            }
-            if (state == ResourceState.PROCESSED) {
-                for (String regex : exclusionList) {
-                    if (Pattern.matches(regex, uri)) {
-                        LOGGER.debug("Excluding request [{}] matched regex [{}].", uri, regex);
-                        state = ResourceState.EXCLUDED;
-                    }
-                }
-            }
-
-            if (state != ResourceState.PROCESSED) {
-                setOutOfScopeResponse(httpMessage);
-                notifyMessage(httpMessage, HistoryReference.TYPE_SPIDER_AJAX_TEMPORARY, state);
-                ctx.overridden();
                 return;
             }
 
