@@ -41,6 +41,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
@@ -63,7 +64,7 @@ class LdapInjectionScanRuleUnitTest extends ActiveScannerTest<LdapInjectionScanR
         // Then
         assertThat(cwe, is(equalTo(90)));
         assertThat(wasc, is(equalTo(29)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -73,6 +74,7 @@ class LdapInjectionScanRuleUnitTest extends ActiveScannerTest<LdapInjectionScanR
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INPV_06_LDAPI.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
