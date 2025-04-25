@@ -71,6 +71,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin
                                 CommonAlertTag.WSTG_V42_CRYP_01_TLS));
         CommonAlertTag.putCve(alertTags, CVE);
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 

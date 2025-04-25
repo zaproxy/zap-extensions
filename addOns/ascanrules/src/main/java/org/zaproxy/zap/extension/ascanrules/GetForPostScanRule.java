@@ -61,6 +61,7 @@ public class GetForPostScanRule extends AbstractAppPlugin implements CommonActiv
                                 CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS));
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 

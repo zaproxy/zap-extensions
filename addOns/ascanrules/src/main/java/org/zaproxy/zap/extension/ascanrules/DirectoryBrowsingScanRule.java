@@ -62,6 +62,7 @@ public class DirectoryBrowsingScanRule extends AbstractAppPlugin
         alertTags.put(PolicyTag.API.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 
