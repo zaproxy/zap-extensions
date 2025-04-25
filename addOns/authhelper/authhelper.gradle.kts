@@ -71,7 +71,7 @@ zapAddOn {
                     version.set("15.*")
                 }
                 register("zest") {
-                    version.set(">=48.2.0")
+                    version.set(">=48.6.0")
                 }
             }
         }

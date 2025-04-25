@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.zest;
 
 import net.sf.json.JSONObject;
+import org.zaproxy.zest.core.v1.ZestClientElement;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
 import org.zaproxy.zest.core.v1.ZestClientElementClick;
 import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
@@ -45,6 +46,7 @@ public class ZestStatementFromJson {
     private static final String FRAME_INDEX = "frameIndex";
     private static final String FRAME_NAME = "frameName";
     private static final String FRAME_ISPARENT = "parent";
+    private static final String WAIT_FOR_MSEC = "waitForMsec";
     private static final String X_VALUE = "x";
     private static final String Y_VALUE = "y";
 
@@ -132,6 +134,11 @@ public class ZestStatementFromJson {
                     break;
                 default:
                     throw new Exception("Element type not found " + elementType);
+            }
+
+            if (stmt instanceof ZestClientElement clientEl && json.containsKey(WAIT_FOR_MSEC)) {
+                // The key was not used in older versions of the ZAP browser extension
+                clientEl.setWaitForMsec(json.getInt(WAIT_FOR_MSEC));
             }
         } else {
             throw new Exception("Element not recognised " + json.toString());

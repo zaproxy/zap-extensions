@@ -347,28 +347,9 @@ public class AuthenticationDiagnostics implements AutoCloseable {
             if (wd == null) {
                 return null;
             }
-            String elem = runtime.replaceVariablesInString(element.getElement(), false);
 
             try {
-                String type = element.getType();
-                if ("className".equalsIgnoreCase(type)) {
-                    return wd.findElement(By.className(elem));
-                } else if ("cssSelector".equalsIgnoreCase(type)) {
-                    return wd.findElement(By.cssSelector(elem));
-                } else if ("id".equalsIgnoreCase(type)) {
-                    return wd.findElement(By.id(elem));
-                } else if ("linkText".equalsIgnoreCase(type)) {
-                    return wd.findElement(By.linkText(elem));
-                } else if ("name".equalsIgnoreCase(type)) {
-                    return wd.findElement(By.name(elem));
-                } else if ("partialLinkText".equalsIgnoreCase(type)) {
-                    return wd.findElement(By.partialLinkText(elem));
-                } else if ("tagName".equalsIgnoreCase(type)) {
-                    return wd.findElement(By.tagName(elem));
-                } else if ("xpath".equalsIgnoreCase(type)) {
-                    return wd.findElement(By.xpath(elem));
-                }
-                return null;
+                return element.getWebElement(runtime);
             } catch (Exception e) {
                 return null;
             }
