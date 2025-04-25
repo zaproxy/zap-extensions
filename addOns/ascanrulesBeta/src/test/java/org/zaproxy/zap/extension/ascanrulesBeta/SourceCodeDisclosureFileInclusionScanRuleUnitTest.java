@@ -69,7 +69,7 @@ class SourceCodeDisclosureFileInclusionScanRuleUnitTest
         // Then
         assertThat(cwe, is(equalTo(541)));
         assertThat(wasc, is(equalTo(33)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -77,6 +77,7 @@ class SourceCodeDisclosureFileInclusionScanRuleUnitTest
                 tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
@@ -96,11 +97,12 @@ class SourceCodeDisclosureFileInclusionScanRuleUnitTest
         Alert alert = alerts.get(0);
 
         Map<String, String> tags = alert.getTags();
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(tags, hasKey("CWE-541"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(PolicyTag.QA_FULL.getTag()));
+        assertThat(tags, hasKey(PolicyTag.PENTEST.getTag()));
 
         assertThat(alert.getDescription(), is(equalTo(vuln.getDescription())));
         assertThat(alert.getSolution(), is(equalTo(vuln.getSolution())));

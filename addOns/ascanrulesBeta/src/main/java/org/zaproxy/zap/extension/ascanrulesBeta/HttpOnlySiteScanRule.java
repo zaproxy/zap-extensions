@@ -65,6 +65,7 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin implements CommonAc
                                 CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                                 CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL));
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 

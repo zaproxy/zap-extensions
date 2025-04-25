@@ -146,7 +146,7 @@ class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOverflowS
         // Then
         assertThat(cwe, is(equalTo(190)));
         assertThat(wasc, is(equalTo(3)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -154,6 +154,7 @@ class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOverflowS
                 tags.containsKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
                 is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A03_INJECTION.getValue())));
