@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.16.0.
 - Maintenance changes.
+- The included active scan rule has been tagged of interest to Penetration Testers.
 
 ## [15] - 2021-10-20
 ### Fixed
