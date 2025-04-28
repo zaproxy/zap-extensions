@@ -76,6 +76,11 @@ public class WebSocketPassiveScriptDecorator implements WebSocketPassiveScript {
     }
 
     @Override
+    public String getHelpLink() {
+        return "https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-" + getId();
+    }
+
+    @Override
     public String getName() {
         try {
             return (webSocketPassiveScript

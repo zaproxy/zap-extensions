@@ -58,6 +58,10 @@ public interface WebSocketPassiveScript extends ExampleAlertProvider {
         return ScriptsWebSocketPassiveScanner.PLUGIN_NAME;
     }
 
+    default String getHelpLink() {
+        return "https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/#id-" + getId();
+    }
+
     @Override
     default List<Alert> getExampleAlerts() {
         return Collections.emptyList();
