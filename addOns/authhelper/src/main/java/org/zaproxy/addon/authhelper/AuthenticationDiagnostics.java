@@ -216,7 +216,7 @@ public class AuthenticationDiagnostics implements AutoCloseable {
         createStep();
     }
 
-    private <T> void processStorage(JavascriptExecutor je, DiagnosticBrowserStorageItem.Type type) {
+    private void processStorage(JavascriptExecutor je, DiagnosticBrowserStorageItem.Type type) {
         @SuppressWarnings("unchecked")
         List<Map<String, String>> storage =
                 (List<Map<String, String>>) je.executeScript(type.getScript());
@@ -238,7 +238,7 @@ public class AuthenticationDiagnostics implements AutoCloseable {
                 .forEach(currentStep.getBrowserStorageItems()::add);
     }
 
-    private DiagnosticWebElement createDiagnosticWebElement(
+    private static DiagnosticWebElement createDiagnosticWebElement(
             WebDriver wd, List<WebElement> forms, WebElement element) {
         if (element == null) {
             return null;

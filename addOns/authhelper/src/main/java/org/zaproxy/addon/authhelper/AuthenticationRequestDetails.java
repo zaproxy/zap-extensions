@@ -29,7 +29,7 @@ public class AuthenticationRequestDetails {
     public enum AuthDataType {
         FORM,
         JSON
-    };
+    }
 
     private final URI uri;
     private final HtmlParameter userParam;

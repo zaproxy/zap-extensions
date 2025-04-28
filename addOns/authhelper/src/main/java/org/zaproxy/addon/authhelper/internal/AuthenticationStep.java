@@ -278,7 +278,7 @@ public class AuthenticationStep
             }
 
             try {
-                int value = Integer.valueOf(newStep.getTimeout());
+                int value = newStep.getTimeout();
                 if (value <= 0) {
                     return ValidationResult.INVALID_TIMEOUT;
                 }

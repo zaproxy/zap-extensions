@@ -466,10 +466,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 user.setAuthenticatedSession(session);
 
                 AuthUtils.checkLoginLinkVerification(
-                        getHttpSender(),
-                        user,
-                        session,
-                        authMsg.getRequestHeader().getURI().toString());
+                        getHttpSender(), user, authMsg.getRequestHeader().getURI().toString());
 
                 if (this.isAuthenticated(authMsg, user, true)) {
                     // Let the user know it worked

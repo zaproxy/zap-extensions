@@ -117,7 +117,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnUserTextField() throws Exception {
+    void shouldReturnUserTextField() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         inputElements.add(new TestWebElement("input", "password"));
@@ -175,7 +175,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnSingleFieldAsUserField() throws Exception {
+    void shouldReturnSingleFieldAsUserField() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         // Starting form with just username with custom input type.
@@ -211,7 +211,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnUserEmailField() throws Exception {
+    void shouldReturnUserEmailField() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         inputElements.add(new TestWebElement("input", "password"));
@@ -227,7 +227,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnUserEmailFieldById() throws Exception {
+    void shouldReturnUserEmailFieldById() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         inputElements.add(new TestWebElement("input", "password"));
@@ -244,7 +244,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnUserEmailFieldByName() throws Exception {
+    void shouldReturnUserEmailFieldByName() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         inputElements.add(new TestWebElement("input", "password"));
@@ -261,7 +261,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnNoUserField() throws Exception {
+    void shouldReturnNoUserField() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         inputElements.add(new TestWebElement("input", "password"));
@@ -276,7 +276,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnPasswordField() throws Exception {
+    void shouldReturnPasswordField() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         inputElements.add(new TestWebElement("input", "email"));
@@ -334,7 +334,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnNoPasswordField() throws Exception {
+    void shouldReturnNoPasswordField() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         inputElements.add(new TestWebElement("input", "email"));
@@ -428,10 +428,11 @@ class AuthUtilsUnitTest extends TestUtils {
         HttpMessage msg =
                 new HttpMessage(
                         new HttpRequestHeader(
-                                "GET / HTTP/1.1\r\n"
-                                        + "Header1: Value1\r\n"
-                                        + "Header2: Value2\r\n"
-                                        + "Host: example.com\r\n\r\n"),
+                                """
+                                GET / HTTP/1.1\r
+                                Header1: Value1\r
+                                Header2: Value2\r
+                                Host: example.com\r\n\r\n"""),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("Response Body"));
@@ -450,9 +451,10 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpRequestHeader("GET / HTTP/1.1\r\nHost: example.com\r\n\r\n"),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader(
-                                "HTTP/1.1 200 OK\r\n"
-                                        + "Header1: Value1\r\n"
-                                        + "Header2: Value2\r\n"),
+                                """
+                                HTTP/1.1 200 OK\r
+                                Header1: Value1\r
+                                Header2: Value2\r\n"""),
                         new HttpResponseBody("Response Body"));
         // When
         Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, false);
@@ -492,17 +494,18 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpResponseHeader(
                                 "HTTP/1.1 200 OK\r\n" + "Content-Type: application/json"),
                         new HttpResponseBody(
-                                "{'wrapper1': {\n"
-                                        + "  'att1': 'val1',\n"
-                                        + "  'att2': 'val2',\n"
-                                        + "  'wrapper2': {\n"
-                                        + "    'att1': 'val3',\n"
-                                        + "    'array': [\n"
-                                        + "      {'att1': 'val4', 'att2': 'val5'},\n"
-                                        + "      {'att3': 'val6', 'att4': 'val7'}\n"
-                                        + "    ]\n"
-                                        + "  }\n"
-                                        + "}}"));
+                                """
+                                {"wrapper1": {
+                                  "att1": "val1",
+                                  "att2": "val2",
+                                  "wrapper2": {
+                                    "att1": "val3",
+                                    "array": [
+                                      {"att1": "val4", "att2": "val5"},
+                                      {"att3": "val6", "att4": "val7"}
+                                    ]
+                                  }
+                                }}"""));
         // When
         Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, false);
 
@@ -528,9 +531,10 @@ class AuthUtilsUnitTest extends TestUtils {
         HttpMessage msg =
                 new HttpMessage(
                         new HttpRequestHeader(
-                                "GET https://example.com/ HTTP/1.1\r\n"
-                                        + "Host: example.com\r\n"
-                                        + "Cookie: aaa=bbb\r\n\r\n"),
+                                """
+                                GET https://example.com/ HTTP/1.1\r
+                                Host: example.com\r
+                                Cookie: aaa=bbb\r\n\r\n"""),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader(
                                 "HTTP/1.1 200 OK\r\n" + "Set-Cookie: ccc=ddd; HttpOnly; Secure"),
@@ -553,9 +557,10 @@ class AuthUtilsUnitTest extends TestUtils {
         HttpMessage msg =
                 new HttpMessage(
                         new HttpRequestHeader(
-                                "GET https://example.com/ HTTP/1.1\r\n"
-                                        + "Host: example.com\r\n"
-                                        + "Cookie: aaa=bbb\r\n\r\n"),
+                                """
+                                GET https://example.com/ HTTP/1.1\r
+                                Host: example.com\r
+                                Cookie: aaa=bbb\r\n\r\n"""),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader(
                                 "HTTP/1.1 200 OK\r\n" + "Set-Cookie: ccc=ddd; HttpOnly; Secure"),
@@ -759,7 +764,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnNoSessionToken() throws Exception {
+    void shouldReturnNoSessionToken() {
         // Given
         AuthUtils.recordSessionToken(
                 new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, "456"));
@@ -770,7 +775,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnSessionToken() throws Exception {
+    void shouldReturnSessionToken() {
         // Given
         AuthUtils.recordSessionToken(
                 new SessionToken(SessionToken.HEADER_SOURCE, "Header1", "123"));
@@ -788,7 +793,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldRemoveSessionToken() throws Exception {
+    void shouldRemoveSessionToken() {
         // Given
         AuthUtils.recordSessionToken(
                 new SessionToken(SessionToken.HEADER_SOURCE, "Header1", "123"));
