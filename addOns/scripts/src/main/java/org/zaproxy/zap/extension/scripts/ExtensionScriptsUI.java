@@ -954,14 +954,12 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     }
 
     static String extractScriptExceptionMessage(Exception e) {
-        if (e instanceof ScriptException) {
-            return e.getMessage();
-        }
-        Throwable cause;
-        while ((cause = e.getCause()) != null) {
+        Throwable cause = e;
+        while (cause != null) {
             if (cause instanceof ScriptException) {
                 return cause.getMessage();
             }
+            cause = cause.getCause();
         }
         return e.toString();
     }
