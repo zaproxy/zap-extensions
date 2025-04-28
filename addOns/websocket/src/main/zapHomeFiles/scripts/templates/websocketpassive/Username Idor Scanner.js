@@ -9,7 +9,31 @@
 var ExtensionUserManagement = Java.type("org.zaproxy.zap.extension.users.ExtensionUserManagement");
 var DigestUtils = Java.type("org.apache.commons.codec.digest.DigestUtils");
 var WebSocketPassiveScript = Java.type('org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript');
+var ScanRuleMetadata = Java.type(
+    "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata"
+);
 
+function getMetadata() {
+    return ScanRuleMetadata.fromYaml(`
+  id: 110007
+  name: Username Hash Found in WebSocket message
+  description: >
+    A hash of a user identifier and context was found in the incoming WebSocket message.
+    This may indicate that the application is subject to an Insecure Direct Object Reference (IDOR) vulnerability.
+    Manual testing will be required to see if this discovery can be abused. 
+  solution: >
+    Use per-user or session indirect object references by creating a temporary mapping at the time of use, 
+    or ensure that each use of a direct object reference is tied to an authorization check 
+    to verify that the user is authorized for the requested object.
+  risk: informational
+  confidence: high
+  cweId: 284
+  wascId: 2
+  status: release
+  codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Username%20Idor%20Scanner.js
+  helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/
+  `);
+}
 OPCODE_TEXT = 0x1;
 RISK_INFO 	= 0;
 CONFIDENCE_HIGH = 3;

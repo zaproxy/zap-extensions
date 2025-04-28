@@ -11,7 +11,27 @@ RISK_LOW = 1;
 CONFIDENCE_MEDIUM = 2;
 
 var WebSocketPassiveScript = Java.type('org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript');
-
+var ScanRuleMetadata = Java.type(
+    "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata"
+);
+function getMetadata() {
+    return ScanRuleMetadata.fromYaml(`
+  id: 110003
+  name: Information Disclosure - Debug Error Messages via WebSocket
+  description: >
+    The response appeared to contain common error messages returned by platforms such as ASP.NET, and Web-servers such as IIS and Apache.
+    You can configure the list of common debug messages.
+  solution: >
+    Disable debugging messages before pushing to production.
+  risk: low
+  confidence: medium
+  cweId: 200
+  wascId: 13 
+  status: release
+  codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Debug%20Error%20Disclosure.js
+  helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/
+  `);
+  }
 var debug_messages = [
     /Error Occurred While Processing Request/igm,
     /Internal Server Error/igm,

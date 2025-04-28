@@ -8,6 +8,27 @@ RISK_INFO = 0;
 CONFIDENCE_HIGH = 3;
 
 var WebSocketPassiveScript = Java.type('org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript');
+var ScanRuleMetadata = Java.type(
+    "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata"
+);
+
+function getMetadata() {
+    return ScanRuleMetadata.fromYaml(`
+  id: 110004
+  name: Email address found in WebSocket message
+  description: >
+    An email address was found in a WebSocket Message.
+  solution: >
+    Remove emails that are not public.
+  risk: informational
+  confidence: high
+  cweId: 200
+  wascId: 13 
+  status: release
+  codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Email%20Disclosure.js
+  helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/
+  `);
+}
 
 var emailRegex = new RegExp("([a-z0-9_.+-]+@[a-z0-9]+[a-z0-9-]*\.[a-z0-9-.]*[a-z0-9]{2,})", 'gmi');
 
