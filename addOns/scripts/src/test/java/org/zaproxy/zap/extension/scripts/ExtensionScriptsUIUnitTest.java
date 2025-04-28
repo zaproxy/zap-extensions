@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.is;
 import javax.script.ScriptException;
 import org.junit.jupiter.api.Test;
 
-public class ExtensionScriptsUIUnitTest {
+class ExtensionScriptsUIUnitTest {
 
     @Test
     void shouldExtractMsgFrom1ScriptException() {
