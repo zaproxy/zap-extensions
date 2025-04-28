@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Warn when the recorded script used with Client Script Based Authentication does not launch a browser.
+- Updated to depend on Zest add-on 48.6.0.
 
 ### Fixed
 - Correct descriptions of the Zest script steps in the Authentication Report.
