@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Loop when trying to extract an underlying script exception.
+
 ## [45.11.0] - 2025-04-11
 ### Fixed
 - NPE when using scripts with no UI.
