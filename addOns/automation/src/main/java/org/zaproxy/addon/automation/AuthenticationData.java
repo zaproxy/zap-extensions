@@ -463,17 +463,7 @@ public class AuthenticationData extends AutomationData {
                             JobUtils.setPrivateField(
                                     clientScriptMethod, "paramValues", getScriptParameters(env));
 
-                            Object loginPageWaitObj =
-                                    getParameters().get(AuthenticationData.PARAM_LOGIN_PAGE_WAIT);
-                            if (loginPageWaitObj instanceof Integer value) {
-                                int loginPageWait = JobUtils.unBox(value);
-                                if (loginPageWait > 0) {
-                                    JobUtils.setPrivateField(
-                                            clientScriptMethod,
-                                            AuthenticationData.PARAM_LOGIN_PAGE_WAIT,
-                                            loginPageWait);
-                                }
-                            }
+                            setLoginPageWait(clientScriptMethod, getParameters());
 
                             reloadAuthenticationMethod(clientScriptMethod, progress);
                             context.setAuthenticationMethod(clientScriptMethod);
@@ -553,17 +543,8 @@ public class AuthenticationData extends AutomationData {
                             JobUtils.setPrivateField(
                                     am, AuthenticationData.PARAM_BROWSER_ID, (String) browserIdObj);
                         }
-                        Object loginPageWaitObj =
-                                getParameters().get(AuthenticationData.PARAM_LOGIN_PAGE_WAIT);
-                        if (loginPageWaitObj instanceof Integer) {
-                            int loginPageWait = JobUtils.unBox((Integer) loginPageWaitObj);
-                            if (loginPageWait > 0) {
-                                JobUtils.setPrivateField(
-                                        am,
-                                        AuthenticationData.PARAM_LOGIN_PAGE_WAIT,
-                                        loginPageWait);
-                            }
-                        }
+
+                        setLoginPageWait(am, parameters);
 
                         try {
                             Method method = am.getClass().getMethod("fromMap", Map.class);
@@ -609,6 +590,17 @@ public class AuthenticationData extends AutomationData {
         }
         if (this.verification != null) {
             this.verification.initAuthenticationVerification(context, progress);
+        }
+    }
+
+    private static void setLoginPageWait(Object method, Map<String, Object> parameters) {
+        Object loginPageWaitObj = parameters.get(AuthenticationData.PARAM_LOGIN_PAGE_WAIT);
+        if (loginPageWaitObj instanceof Integer value) {
+            int loginPageWait = JobUtils.unBox(value);
+            if (loginPageWait >= 0) {
+                JobUtils.setPrivateField(
+                        method, AuthenticationData.PARAM_LOGIN_PAGE_WAIT, loginPageWait);
+            }
         }
     }
 

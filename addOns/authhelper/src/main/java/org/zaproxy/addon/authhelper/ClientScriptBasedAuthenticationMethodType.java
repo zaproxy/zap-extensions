@@ -531,7 +531,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 Component dynamicContentPanel = (Component) dynamicContentPanelField.get(this);
                 remove(dynamicContentPanel);
 
-                loginPageWait = new ZapNumberSpinner(1, DEFAULT_PAGE_WAIT, Integer.MAX_VALUE);
+                loginPageWait = new ZapNumberSpinner(0, DEFAULT_PAGE_WAIT, Integer.MAX_VALUE);
                 JLabel loginPageWaitLabel =
                         new JLabel(
                                 Constant.messages.getString(
