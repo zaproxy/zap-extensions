@@ -775,7 +775,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             this.add(browserSelectLabel, LayoutHelper.getGBC(0, 2, 1, 1.0d, 0.0d));
             this.add(browserCombo, LayoutHelper.getGBC(1, 2, 1, 1.0d, 0.0d));
 
-            loginUrlWait = new ZapNumberSpinner(1, DEFAULT_PAGE_WAIT, Integer.MAX_VALUE);
+            loginUrlWait = new ZapNumberSpinner(0, DEFAULT_PAGE_WAIT, Integer.MAX_VALUE);
             JLabel loginWaitLabel =
                     new JLabel(
                             Constant.messages.getString(
