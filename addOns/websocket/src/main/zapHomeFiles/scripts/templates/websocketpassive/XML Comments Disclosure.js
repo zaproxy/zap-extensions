@@ -34,7 +34,6 @@ function getMetadata() {
   wascId: 13
   status: release
   codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/XML%20Comments%20Disclosure.js
-  helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/
   `);
 }
 var commentPatterns = [/\bTODO\b/gmi,
@@ -69,29 +68,26 @@ function scan(helper,msg) {
     var commentsList = [];
     getComments(xmlDoc.getDocumentElement(), commentsList);
 
+    var found = [];
     commentsList.forEach(function(comment){
         commentPatterns.forEach(function(pattern){
             if(pattern.test(comment)){
-                raiseAlert(helper, comment);
+                found.push(comment);
             }
         });
     });
+
+    if (found.length > 0) {
+        const otherInfo = found.length > 1 ? `Other instances: ${found.slice(1).toString()}` : "";
+        createAlertBuilder(helper, found[0], otherInfo, msg).raise();
+    }
 }
 
-function raiseAlert(helper, evidence){
-    createAlertBuilder(helper, evidence).raise();
-}
-
-function createAlertBuilder(helper, evidence){
+function createAlertBuilder(helper, evidence, otherInfo, msg){
     return helper.newAlert()
-        .setPluginId(getId())
-        .setRiskConfidence(RISK_INFO, CONFIDENCE_MEDIUM)
-        .setName("Information Disclosure - Suspicious Comments in XML via WebSocket")
-        .setDescription("The response appears to contain suspicious comments which may help an attacker.")
-        .setSolution("Remove all comments that return information that may help an attacker and fix any underlying problems they refer to.")
         .setEvidence(evidence)
-        .setCweId(200) //CWE Id 200 - Information Exposure
-        .setWascId(13); //WASC Id 13 - Info Leakage
+        .setOtherInfo(otherInfo)
+        .setMessage(msg)
 }
 
 function getExampleAlerts(){

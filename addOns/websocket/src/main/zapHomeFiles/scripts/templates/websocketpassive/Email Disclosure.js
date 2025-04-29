@@ -26,7 +26,6 @@ function getMetadata() {
   wascId: 13 
   status: release
   codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Email%20Disclosure.js
-  helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/
   `);
 }
 
@@ -39,28 +38,25 @@ function scan(helper,msg) {
     }
     var message = String(msg.getReadablePayload());
     var matches;
+    var found = [];
 
     if((matches = message.match(emailRegex)) != null) {
         matches.forEach(function(evidence){
-            raiseAlert(helper, evidence);
+            found.push(evidence);
         });
+    }
+
+    if (found.length > 0) {
+        const otherInfo = found.length > 1 ? `Other instances: ${found.slice(1).toString()}` : "";
+        createAlertBuilder(helper, found[0], otherInfo, msg).raise();
     }
 }
 
-function raiseAlert(helper, evidence){
-    createAlertBuilder(helper, evidence).raise();
-}
-
-function createAlertBuilder(helper, evidence){
+function createAlertBuilder(helper, evidence, otherInfo, msg){
     return helper.newAlert()
-        .setPluginId(getId())
-        .setRiskConfidence(RISK_INFO, CONFIDENCE_HIGH)
-        .setName("Email address found in WebSocket message")
-        .setDescription("An email address was found in a WebSocket Message.")
-        .setSolution("Remove emails that are not public.")
         .setEvidence(evidence)
-        .setCweId(200) //Information Exposure
-        .setWascId(13); // Information Leakage
+        .setOtherInfo(otherInfo)
+        .setMessage(msg)
 }
 
 function getExampleAlerts(){

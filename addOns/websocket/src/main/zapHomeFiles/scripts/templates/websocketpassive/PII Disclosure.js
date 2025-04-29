@@ -30,7 +30,6 @@ function getMetadata() {
   wascId: 13 
   status: release
   codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/PII%20Disclosure.js
-  helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/
   `);
 }
 
@@ -52,6 +51,7 @@ function scan(helper,msg) {
     var message = String(msg.getReadablePayload());
     var numberSequences = getNumberOfSequence(message,SEQUENCE_NUM);
     var matches;
+    var foundMatches = [];  
 
     numberSequences.forEach(function(sequence){
         Object.keys(creditCards).forEach(function(creditCardType){
@@ -59,29 +59,24 @@ function scan(helper,msg) {
             if((matches = sequence.match(creditCards[creditCardType])) != null){
                 matches.forEach(function(match){
                     if(validateLuhnCheckSum(match)){
-                        raiseAlert(helper, match, creditCardType);
+                        foundMatches.push(match);  
                     }
                 });
             }
         });
     });
+
+    if (foundMatches.length > 0) {
+        const otherInfo = foundMatches.length > 1 ? `Other instances: ${foundMatches.slice(1).toString()}` : "";
+        createAlertBuilder(helper, foundMatches[0], otherInfo, msg).raise();
+    }
 }
 
-function raiseAlert(helper, evidence, creditCardType){
-    createAlertBuilder(helper, evidence).raise();
-}
-
-function createAlertBuilder(helper, evidence, creditCardType){
+function createAlertBuilder(helper, evidence, otherInfo, msg){
     return helper.newAlert()
-        .setPluginId(getId())
-        .setRiskConfidence(RISK_HIGH, CONFIDENCE_HIGH)
-        .setName("Personally Identifiable Information via WebSocket")
-        .setDescription("The response contains Personally Identifiable Information,"
-                        + " such as CC number. Credit Card type detected: "
-                        + creditCardType + ".")
         .setEvidence(evidence)
-        .setCweId(359)  // CWE-359: Exposure of Private Information ('Privacy Violation')
-        .setWascId(13);  // WASC-13: Information Leakage
+        .setOtherInfo(otherInfo)
+        .setMessage(msg)  
 }
 
 function getExampleAlerts(){

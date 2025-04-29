@@ -30,7 +30,6 @@ function getMetadata() {
   wascId: 13  
   status: release
   codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Application%20Error%20Scanner.js
-  helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/
   `);
 }
 
@@ -160,11 +159,13 @@ function scan(helper,msg) {
     }
     var message = String(msg.getReadablePayload());
 
+    var found = [];
+
     var matches;
     dbErrors.forEach(function(pattern){
         if((matches = message.match(pattern)) != null){
             matches.forEach(function(evidence){
-                raiseAlert(helper, evidence);
+                found.push(evidence);
             });
         }
     });
@@ -172,32 +173,21 @@ function scan(helper,msg) {
     javaRegexErrors.forEach(function(pattern){
         var matcher = pattern.matcher(message);
         while(matcher.find()){
-            raiseAlert(helper, String(matcher.group()));
+            found.push(String(matcher.group()));
         }
     });
+
+    if (found.length > 0) {
+        const otherInfo = found.length > 1 ? `Other instances: ${found.slice(1).toString()}` : "";
+        createAlertBuilder(helper, found[0], otherInfo, msg).raise();
+    }
 }
 
-function raiseAlert(helper, evidence){
-    createAlertBuilder(helper, evidence).raise();
-}
-
-function createAlertBuilder(helper, evidence){
+function createAlertBuilder(helper, evidence, otherInfo, msg){
     return helper.newAlert()
-        .setPluginId(getId())
-        .setRiskConfidence(RISK_MEDIUM, CONFIDENCE_MEDIUM)
-        .setName("Application Error Disclosure via WebSockets")
-        .setDescription("This payload contains an error/warning message that\
- may disclose sensitive information like the location of the file\
- that produced the unhandled exception. This information can be used\
- to launch further attacks against the web application.")
-        .setSolution("Review the error payloads which are piped directly to WebSockets.\
- Handle the related exceptions.\
- Consider implementing a mechanism to provide a unique\
- error reference/identifier to the client (browser) while logging the\
- details on the server side and not exposing them to the user.")
         .setEvidence(evidence)
-        .setCweId(209) // Information Exposure Through an Error Message
-        .setWascId(13); // Information Leakage
+        .setOtherInfo(otherInfo)
+        .setMessage(msg);
 }
 
 function getExampleAlerts(){

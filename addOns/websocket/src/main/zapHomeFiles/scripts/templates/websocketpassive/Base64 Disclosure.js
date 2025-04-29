@@ -30,7 +30,6 @@ function getMetadata() {
   confidence: medium
   status: release
   codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Base64%20Disclosure.js
-  helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/
   `);
   }
   
@@ -46,36 +45,25 @@ function scan(helper,msg) {
     }
     var message = String(msg.getReadablePayload());
     var matches;
+    var found = [];
 
     if( (matches = message.match(base64Regex)) != null ){
         matches.forEach(function(evidence){
-
-            var decodedEvidence = new JavaString(base64Decoder.decode(evidence));
-            if(PRINT_RESULTS){
-                print("Message: " + message);
-                print("Evidence: " + evidence);
-                print("Decoded Evidence: " + decodedEvidence);
-            }
-
-            raiseAlert(helper, evidence, decodedEvidence);
+            found.push(evidence);
         });
+    }
+
+    if (found.length > 0) {
+        const otherInfo = found.length > 1 ? `Other instances: ${found.slice(1).toString()}` : "";
+        createAlertBuilder(helper, found[0], otherInfo, msg).raise();
     }
 }
 
-function raiseAlert(helper, evidence, decodedEvidence){
-    createAlertBuilder(helper, evidence, decodedEvidence).raise();
-}
-
-function createAlertBuilder(helper, evidence, decodedEvidence){
+function createAlertBuilder(helper, evidence, otherInfo, msg){
     return helper.newAlert()
-        .setPluginId(getId())
-        .setRiskConfidence(RISK_INFO, CONFIDENCE_MEDIUM)
-        .setName("Base64 Disclosure in WebSocket message")
-        .setDescription("A Base64-encoded string has been found in the websocket incoming message. Base64-encoded data may contain sensitive " +
-                        "information such as usernames, passwords or cookies which should be further inspected. Decoded evidence: "
-                        + decodedEvidence + ".")
-        .setSolution("Base64-encoding should not be used to store or send sensitive information.")
-        .setEvidence(evidence);
+        .setEvidence(evidence)
+        .setOtherInfo(otherInfo)
+        .setMessage(msg);
 }
 
 function getExampleAlerts(){

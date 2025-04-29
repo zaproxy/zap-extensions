@@ -29,7 +29,6 @@ function getMetadata() {
   wascId: 13 
   status: release
   codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Debug%20Error%20Disclosure.js
-  helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/
   `);
   }
 var debug_messages = [
@@ -71,32 +70,27 @@ function scan(helper,msg) {
     }
     var message = String(msg.getReadablePayload());
     var matches;
+    var found = [];
 
     debug_messages.forEach(function(pattern){
         if((matches = message.match(pattern)) != null){
             matches.forEach(function(evidence){
-                raiseAlert(helper, evidence);
+                found.push(evidence);
             });
         }
     });
+
+    if (found.length > 0) {
+        const otherInfo = found.length > 1 ? `Other instances: ${found.slice(1).toString()}` : "";
+        createAlertBuilder(helper, found[0], otherInfo, msg).raise();
+    }
 }
 
-function raiseAlert(helper, evidence){
-    createAlertBuilder(helper, evidence).raise();
-}
-
-function createAlertBuilder(helper, evidence){
+function createAlertBuilder(helper, evidence, otherInfo, msg){
     return helper.newAlert()
-        .setPluginId(getId())
-        .setName("Information Disclosure - Debug Error Messages via WebSocket")
-        .setRiskConfidence(RISK_LOW, CONFIDENCE_MEDIUM)
-        .setDescription("The response appeared to contain common error messages returned"
-                        + " by platforms such as ASP.NET, and Web-servers such as IIS and Apache. You can configure"
-                        + " the list of common debug messages.")
-        .setSolution("Disable debugging messages before pushing to production.")
         .setEvidence(evidence)
-        .setCweId(200) // CWE-200: Information Exposure
-        .setWascId(13); // WASC Id 13 - Info leakage
+        .setOtherInfo(otherInfo)
+        .setMessage(msg)
 }
 
 function getExampleAlerts(){

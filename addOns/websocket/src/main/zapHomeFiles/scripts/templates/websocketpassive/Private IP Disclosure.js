@@ -37,7 +37,6 @@ function getMetadata() {
   references:
   - https://tools.ietf.org/html/rfc1918
   codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Private%20IP%20Disclosure.js
-  helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/
   `);
 }
 var patternPre = [];
@@ -89,31 +88,26 @@ function scan(helper,msg) {
     var ipRegex = new RegExp(patternPre.join(""),"gim");
     var message = String(msg.getReadablePayload());
     var matches;
+    var found = [];
 
     if((matches = message.match(ipRegex)) != null){
 
         matches.forEach(function(evidence){
-            raiseAlert(helper, evidence);
+            found.push(evidence);
         });
+    }
+
+    if (found.length > 0) {
+        const otherInfo = found.length > 1 ? `Other instances: ${found.slice(1).toString()}` : "";
+        createAlertBuilder(helper, found[0], otherInfo, msg).raise();
     }
 }
 
-function raiseAlert(helper, evidence){
-    createAlertBuilder(helper, evidence).raise();
-}
-
-function createAlertBuilder(helper, evidence){
+function createAlertBuilder(helper, evidence, otherInfo, msg){
     return helper.newAlert()
-        .setPluginId(getId())
-        .setRiskConfidence(RISK_LOW, CONFIDENCE_MEDIUM)
-        .setName("Private IP Disclosure via WebSocket")
-        .setDescription("A private IP (such as 10.x.x.x, 172.x.x.x, 192.168.x.x)\
- or an Amazon EC2 private hostname (for example, ip-10-0-56-78) has been found in the incoming\
- WebSocket message. This information might be helpful for further attacks targeting\
- internal systems.")
-        .setSolution("Remove the private IP address from the WebSocket messages.")
-        .setReference("https://tools.ietf.org/html/rfc1918")
-        .setEvidence(evidence);
+        .setEvidence(evidence)
+        .setOtherInfo(otherInfo)
+        .setMessage(msg);
 }
 
 function getExampleAlerts(){

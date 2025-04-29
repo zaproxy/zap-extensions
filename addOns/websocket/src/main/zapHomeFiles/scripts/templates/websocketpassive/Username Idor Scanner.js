@@ -34,7 +34,6 @@ function getMetadata() {
   - https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html
   - https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References
   codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Username%20Idor%20Scanner.js
-  helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/
   `);
 }
 OPCODE_TEXT = 0x1;
@@ -50,42 +49,33 @@ function scan(helper,msg) {
         return;
     }
     var message = String(msg.getReadablePayload());
+    var found = [];
 
     usersList.forEach(function(user){
 
-        var username = user.getName();
-        var usernameHashes = getHashes(username);
+        var usernameHashes = getHashes(user.getName());
         var matches;
 
         Object.keys(usernameHashes).forEach(function(hashType){
-            if((matches = message.match(usernameHashes[hashType]))!= null) {
-                var contextname = model.getSession().getContext(parseInt(user.getContextId())).getName();
+            if((matches = message.match(usernameHashes[hashType])) != null) {
                 matches.forEach(function(evidence){
-                	raiseAlert(helper, evidence, username, contextname, hashType);
+                    found.push({evidence});
                 });
             }
         });
     });
+
+    if (found.length > 0) {
+        const otherInfo = found.length > 1 ? `Other instances: ${found.slice(1).map(f => f.evidence).toString()}` : "";
+        createAlertBuilder(helper, found[0].evidence, otherInfo, msg).raise();
+    }
 }
 
-function raiseAlert(helper, evidence, username, contextname, hashType){
-    createAlertBuilder(helper, evidence, username, contextname, hashType).raise();
-}
-
-function createAlertBuilder(helper, evidence, username, contextname, hashType){
+function createAlertBuilder(helper, evidence, otherInfo, msg){
     return helper.newAlert()
-        .setPluginId(getId())
-        .setRiskConfidence(RISK_INFO, CONFIDENCE_HIGH)
-        .setName("Username Hash Found in WebSocket message")
-        .setDescription(getDescription(username, contextname, hashType))
-        .setSolution("Use per user or session indirect object references (create a temporary mapping at time of use)."
-                     + " Or, ensure that each use of a direct object reference is tied to an authorization check to ensure the"
-                     + " user is authorized for the requested object.")
-        .setReference("https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html\n"
-                      + "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References")
         .setEvidence(evidence)
-        .setCweId(284) // CWE-284: Improper Access Control
-        .setWascId(2); // WASC-2: Insufficient Authorization
+        .setOtherInfo(otherInfo)
+        .setMessage(msg)
 }
 
 function getExampleAlerts(){
