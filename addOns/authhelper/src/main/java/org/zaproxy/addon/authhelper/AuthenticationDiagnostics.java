@@ -19,9 +19,11 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Transaction;
 import org.apache.logging.log4j.LogManager;
@@ -197,8 +199,9 @@ public class AuthenticationDiagnostics implements AutoCloseable {
             currentStep.setScreenshot(screenshot);
         }
 
-        List<WebElement> inputs = wd.findElements(By.xpath("//input"));
-        List<WebElement> forms = wd.findElements(By.xpath("//form"));
+        List<WebElement> inputs = resetWait(wd, () -> wd.findElements(By.xpath("//input")));
+        List<WebElement> forms = resetWait(wd, () -> wd.findElements(By.xpath("//form")));
+
         currentStep.setWebElement(createDiagnosticWebElement(wd, forms, element));
         for (WebElement input : inputs) {
             DiagnosticWebElement field = createDiagnosticWebElement(wd, forms, input);
@@ -214,6 +217,22 @@ public class AuthenticationDiagnostics implements AutoCloseable {
         }
 
         createStep();
+    }
+
+    /**
+     * Reset the webdriver implicit wait - use when you want the current state and don't want any
+     * delays.
+     */
+    private static <T> T resetWait(WebDriver wd, Supplier<? extends T> function) {
+        Duration duration = wd.manage().timeouts().getImplicitWaitTimeout();
+        wd.manage().timeouts().implicitlyWait(Duration.ofMillis(0));
+        try {
+            return function.get();
+        } catch (Exception e) {
+            return null;
+        } finally {
+            wd.manage().timeouts().implicitlyWait(duration);
+        }
     }
 
     private void processStorage(JavascriptExecutor je, DiagnosticBrowserStorageItem.Type type) {
@@ -348,11 +367,15 @@ public class AuthenticationDiagnostics implements AutoCloseable {
                 return null;
             }
 
-            try {
-                return element.getWebElement(runtime);
-            } catch (Exception e) {
-                return null;
-            }
+            return resetWait(
+                    wd,
+                    () -> {
+                        try {
+                            return element.getWebElement(runtime);
+                        } catch (ZestClientFailException e) {
+                            return null;
+                        }
+                    });
         }
     }
 }

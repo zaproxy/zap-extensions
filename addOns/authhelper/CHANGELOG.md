@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Correct descriptions of the Zest script steps in the Authentication Report.
 - Fix loading/saving of Client Script Based Authentication through the GUI.
 - Inject user credentials into the script when running the Client Script Based Authentication browser integration.
+- Delay when recording diagnostics.
 
 ## [0.25.0] - 2025-03-25
 ### Changed
