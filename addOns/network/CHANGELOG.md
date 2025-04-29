@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - A typo in the help with regard to Transparent Proxying.
 
+### Changed
+- Default Global Exclusions patterns:
+    - All case insensitive (Issue 8930).
+    - Fix a naming mistake in "ExtParam - .NET adx resources (SR/WR.adx?d=)" adx should have been axd.
+    - Extend Image related patterns to include svg and webp.
+    - Extend Audio/Video patterns to include webm.
+
 ## [0.21.0] - 2025-03-04
 ### Fixed
 - Ensure message properties are kept mutable even in case of connection close.
