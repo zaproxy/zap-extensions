@@ -30,6 +30,9 @@ function getMetadata() {
   cweId: 284
   wascId: 2
   status: release
+  references:
+  - https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html
+  - https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References
   codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Username%20Idor%20Scanner.js
   helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/
   `);

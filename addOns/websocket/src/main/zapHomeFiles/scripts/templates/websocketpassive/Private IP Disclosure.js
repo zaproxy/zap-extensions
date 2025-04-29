@@ -34,6 +34,8 @@ function getMetadata() {
   risk: low
   confidence: medium
   status: release
+  references:
+  - https://tools.ietf.org/html/rfc1918
   codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Private%20IP%20Disclosure.js
   helpLink: https://www.zaproxy.org/docs/desktop/addons/websockets/pscanrules/
   `);

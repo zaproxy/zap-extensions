@@ -20,7 +20,7 @@ var ScanRuleMetadata = Java.type(
 );
 function getMetadata() {
     return ScanRuleMetadata.fromYaml(`
-  id: 100002
+  id: 110002
   name: Base64 Disclosure in WebSocket message
   description: >
     A Base64-encoded string has been found in the WebSocket incoming message. Base64-encoded data may contain sensitive information such as usernames, passwords, or cookies which should be further inspected. 
