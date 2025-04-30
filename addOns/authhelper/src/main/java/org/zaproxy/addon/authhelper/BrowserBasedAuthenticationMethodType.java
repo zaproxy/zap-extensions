@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -699,6 +700,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         private ZapTextField loginUrlField;
         private JComboBox<BrowserUI> browserCombo;
         private ZapNumberSpinner loginUrlWait;
+        private JCheckBox diagnostics;
         private StepsPanel stepsPanel;
 
         public BrowserBasedAuthenticationMethodOptionsPanel(Context context) {
@@ -775,17 +777,29 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             this.add(browserSelectLabel, LayoutHelper.getGBC(0, 2, 1, 1.0d, 0.0d));
             this.add(browserCombo, LayoutHelper.getGBC(1, 2, 1, 1.0d, 0.0d));
 
+            int y = 3;
             loginUrlWait = new ZapNumberSpinner(0, DEFAULT_PAGE_WAIT, Integer.MAX_VALUE);
             JLabel loginWaitLabel =
                     new JLabel(
                             Constant.messages.getString(
                                     "authhelper.auth.method.browser.label.loginWait"));
             loginWaitLabel.setLabelFor(loginUrlWait);
-            this.add(loginWaitLabel, LayoutHelper.getGBC(0, 3, 1, 1.0d, 0.0d));
-            this.add(loginUrlWait, LayoutHelper.getGBC(1, 3, 1, 1.0d, 0.0d));
+            this.add(loginWaitLabel, LayoutHelper.getGBC(0, y, 1, 1.0d, 0.0d));
+            this.add(loginUrlWait, LayoutHelper.getGBC(1, y, 1, 1.0d, 0.0d));
+            y++;
+
+            diagnostics = new JCheckBox();
+            JLabel diagnosticsLabel =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.browser.label.diagnostics"));
+            diagnosticsLabel.setLabelFor(diagnostics);
+            add(diagnosticsLabel, LayoutHelper.getGBC(0, y, 1, 1.0d, 0.0d));
+            add(diagnostics, LayoutHelper.getGBC(1, y, 1, 1.0d, 0.0d));
+            y++;
 
             stepsPanel = new StepsPanel(View.getSingleton().getSessionDialog(), false);
-            add(stepsPanel.getPanel(), LayoutHelper.getGBC(0, 4, 2, 1.0d, 1.0d));
+            add(stepsPanel.getPanel(), LayoutHelper.getGBC(0, y, 2, 1.0d, 1.0d));
         }
 
         @Override
@@ -805,6 +819,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     .setBrowserId(
                             ((BrowserUI) browserCombo.getSelectedItem()).getBrowser().getId());
             getMethod().setLoginPageWait(loginUrlWait.getValue());
+            getMethod().setDiagnostics(diagnostics.isSelected());
             authenticationMethod.setAuthenticationSteps(stepsPanel.getSteps());
         }
 
@@ -816,6 +831,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             ((BrowsersComboBoxModel) this.browserCombo.getModel())
                     .setSelectedBrowser(this.authenticationMethod.getBrowserId());
             this.loginUrlWait.setValue(authenticationMethod.getLoginPageWait());
+            diagnostics.setSelected(authenticationMethod.isDiagnostics());
             stepsPanel.setSteps(authenticationMethod.getAuthenticationSteps());
         }
 
