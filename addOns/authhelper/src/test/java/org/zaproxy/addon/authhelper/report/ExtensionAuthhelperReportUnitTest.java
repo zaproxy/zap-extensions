@@ -52,12 +52,19 @@ import org.zaproxy.addon.authhelper.AuthUtils;
 import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
+import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType;
+import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.ExtensionAuthhelper;
+import org.zaproxy.addon.authhelper.HeaderBasedSessionManagementMethodType;
 import org.zaproxy.addon.authhelper.report.AuthReportData.FailureDetail;
+import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReportData;
 import org.zaproxy.addon.reports.Template;
+import org.zaproxy.zap.authentication.AuthenticationHelper;
 import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
+import org.zaproxy.zap.authentication.ManualAuthenticationMethodType;
+import org.zaproxy.zap.authentication.ManualAuthenticationMethodType.ManualAuthenticationMethod;
 import org.zaproxy.zap.extension.alert.AlertNode;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
@@ -279,6 +286,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
                 \t
                 	,"afEnv": "  env:\\n  contexts:\\n      name: 'some \\\"quote\\\" name'\\n"
                 \t
+                	,"afPlanErrors": [\n\t]
                 \t
                 	,"statistics": [
                 		{
@@ -369,6 +377,7 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
         given(extStats.getInMemoryStats()).willReturn(stats);
 
         stats.counterInc(site, AuthUtils.AUTH_BROWSER_PASSED_STATS);
+        stats.counterInc(site, AuthenticationHelper.AUTH_SUCCESS_STATS);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
 
@@ -395,10 +404,14 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
 
         assertThat(ard.getSummaryItems().get(4).key(), is(equalTo("auth.summary.verif")));
         assertThat(ard.getSummaryItems().get(4).passed(), is(equalTo(true)));
+
+        assertThat(ard.getFailureDetails(), is(is(nullValue())));
+
+        assertThat(ard.getAfPlanErrors().size(), is(equalTo(0)));
     }
 
     @Test
-    void shouldReportFailingCase() {
+    void shouldReportFailingBbaCase() {
         // Given
         String site = "https://www.example.com";
         ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
@@ -452,5 +465,329 @@ class ExtensionAuthhelperReportUnitTest extends TestUtils {
 
         assertThat(ard.getSummaryItems().get(4).key(), is(equalTo("auth.summary.verif")));
         assertThat(ard.getSummaryItems().get(4).passed(), is(equalTo(false)));
+
+        assertThat(ard.getAfPlanErrors().size(), is(equalTo(0)));
+    }
+
+    @Test
+    void shouldReportFailingClientCase() {
+        // Given
+        String site = "https://www.example.com";
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("auth-report-test");
+        Context context = mock(Context.class);
+
+        ClientScriptBasedAuthenticationMethod authMethod =
+                new ClientScriptBasedAuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.AUTO_DETECT);
+        given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(context.getSessionManagementMethod())
+                .willReturn(
+                        new AutoDetectSessionManagementMethodType()
+                                .createSessionManagementMethod(0));
+
+        given(context.getIncludeInContextRegexs()).willReturn(List.of(site + ".*"));
+        reportData.setContexts(List.of(context));
+
+        AutomationProgress afProg = new AutomationProgress();
+        afProg.error("It's all gone horribly wrong");
+        reportData.addReportObjects("automation.progress", afProg);
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+
+        InMemoryStats stats = new InMemoryStats();
+        given(extStats.getInMemoryStats()).willReturn(stats);
+
+        stats.counterInc(site, AuthenticationHelper.AUTH_SUCCESS_STATS, 1);
+        stats.counterInc(site, AuthenticationHelper.AUTH_FAILURE_STATS, 2);
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        dataHandler.handle(reportData);
+
+        // Then
+        assertThat(reportData.getReportObject("authdata"), is(notNullValue()));
+        AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
+        assertThat(ard.isValidReport(), is(equalTo(true)));
+        assertThat(ard.getSummaryItems().size(), is(equalTo(3)));
+
+        assertThat(ard.getSummaryItems().get(0).key(), is(equalTo("auth.summary.auth")));
+        assertThat(ard.getSummaryItems().get(0).passed(), is(equalTo(false)));
+
+        assertThat(ard.getSummaryItems().get(1).key(), is(equalTo("auth.summary.session")));
+        assertThat(ard.getSummaryItems().get(1).passed(), is(equalTo(false)));
+
+        assertThat(ard.getSummaryItems().get(2).key(), is(equalTo("auth.summary.verif")));
+        assertThat(ard.getSummaryItems().get(2).passed(), is(equalTo(false)));
+
+        assertThat(ard.getFailureDetails().size(), is(equalTo(5)));
+        assertThat(ard.getFailureDetails().get(0).name(), is(equalTo("SESSION_MGMT")));
+        assertThat(ard.getFailureDetails().get(1).name(), is(equalTo("VERIF_IDENT")));
+        assertThat(ard.getFailureDetails().get(2).name(), is(equalTo("PASS_COUNT")));
+        assertThat(ard.getFailureDetails().get(3).name(), is(equalTo("LOGIN_FAILURES")));
+        assertThat(ard.getFailureDetails().get(4).name(), is(equalTo("AF_PLAN_ERRORS")));
+
+        assertThat(ard.getAfPlanErrors().size(), is(equalTo(1)));
+        assertThat(ard.getAfPlanErrors().get(0), is(equalTo("It's all gone horribly wrong")));
+    }
+
+    @Test
+    void shouldReportPassingClientCase() {
+        // Given
+        String site = "https://www.example.com";
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("auth-report-test");
+        Context context = mock(Context.class);
+
+        ClientScriptBasedAuthenticationMethod authMethod =
+                new ClientScriptBasedAuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
+        given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(context.getSessionManagementMethod())
+                .willReturn(
+                        new HeaderBasedSessionManagementMethodType()
+                                .createSessionManagementMethod(0));
+
+        given(context.getIncludeInContextRegexs()).willReturn(List.of(site + ".*"));
+        reportData.setContexts(List.of(context));
+
+        AutomationProgress afProg = new AutomationProgress();
+        reportData.addReportObjects("automation.progress", afProg);
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+
+        InMemoryStats stats = new InMemoryStats();
+        given(extStats.getInMemoryStats()).willReturn(stats);
+
+        stats.counterInc(site, AuthenticationHelper.AUTH_SUCCESS_STATS, 2);
+        stats.counterInc(site, AuthenticationHelper.AUTH_FAILURE_STATS, 1);
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        dataHandler.handle(reportData);
+
+        // Then
+        assertThat(reportData.getReportObject("authdata"), is(notNullValue()));
+        AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
+        assertThat(ard.isValidReport(), is(equalTo(true)));
+        assertThat(ard.getSummaryItems().size(), is(equalTo(3)));
+
+        assertThat(ard.getSummaryItems().get(0).key(), is(equalTo("auth.summary.auth")));
+        assertThat(ard.getSummaryItems().get(0).passed(), is(equalTo(true)));
+
+        assertThat(ard.getSummaryItems().get(1).key(), is(equalTo("auth.summary.session")));
+        assertThat(ard.getSummaryItems().get(1).passed(), is(equalTo(true)));
+
+        assertThat(ard.getSummaryItems().get(2).key(), is(equalTo("auth.summary.verif")));
+        assertThat(ard.getSummaryItems().get(2).passed(), is(equalTo(true)));
+
+        assertThat(ard.getFailureDetails(), is(is(nullValue())));
+
+        assertThat(ard.getAfPlanErrors().size(), is(equalTo(0)));
+    }
+
+    @Test
+    void shouldReportWithManualAuth() {
+        // Given
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("auth-report-test");
+        Context context = mock(Context.class);
+
+        ManualAuthenticationMethod authMethod =
+                new ManualAuthenticationMethodType().createAuthenticationMethod(0);
+        given(context.getAuthenticationMethod()).willReturn(authMethod);
+
+        reportData.setContexts(List.of(context));
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+
+        InMemoryStats stats = new InMemoryStats();
+        given(extStats.getInMemoryStats()).willReturn(stats);
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        dataHandler.handle(reportData);
+
+        // Then
+        assertThat(reportData.getReportObject("authdata"), is(notNullValue()));
+        AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
+        assertThat(ard.isValidReport(), is(equalTo(false)));
+        assertThat(ard.getSummaryItems().size(), is(equalTo(0)));
+    }
+
+    @Test
+    void shouldReportWithNoRegexes() {
+        // Given
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("auth-report-test");
+        Context context = mock(Context.class);
+
+        BrowserBasedAuthenticationMethod authMethod =
+                new BrowserBasedAuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.AUTO_DETECT);
+        given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(context.getSessionManagementMethod())
+                .willReturn(
+                        new AutoDetectSessionManagementMethodType()
+                                .createSessionManagementMethod(0));
+
+        reportData.setContexts(List.of(context));
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+
+        InMemoryStats stats = new InMemoryStats();
+        given(extStats.getInMemoryStats()).willReturn(stats);
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        dataHandler.handle(reportData);
+
+        // Then
+        assertThat(reportData.getReportObject("authdata"), is(notNullValue()));
+        AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
+        assertThat(ard.isValidReport(), is(equalTo(true)));
+        assertThat(ard.getSummaryItems().size(), is(equalTo(3)));
+
+        assertThat(ard.getSummaryItems().get(0).key(), is(equalTo("auth.summary.stats")));
+        assertThat(ard.getSummaryItems().get(0).passed(), is(equalTo(false)));
+
+        assertThat(ard.getSummaryItems().get(1).key(), is(equalTo("auth.summary.session")));
+        assertThat(ard.getSummaryItems().get(1).passed(), is(equalTo(false)));
+
+        assertThat(ard.getSummaryItems().get(2).key(), is(equalTo("auth.summary.verif")));
+        assertThat(ard.getSummaryItems().get(2).passed(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldReportWithNoStats() {
+        // Given
+        String site = "https://www.example.com";
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("auth-report-test");
+        Context context = mock(Context.class);
+
+        BrowserBasedAuthenticationMethod authMethod =
+                new BrowserBasedAuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.AUTO_DETECT);
+        given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(context.getSessionManagementMethod())
+                .willReturn(
+                        new AutoDetectSessionManagementMethodType()
+                                .createSessionManagementMethod(0));
+
+        given(context.getIncludeInContextRegexs()).willReturn(List.of(site + ".*"));
+        reportData.setContexts(List.of(context));
+
+        reportData.setContexts(List.of(context));
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        dataHandler.handle(reportData);
+
+        // Then
+        assertThat(reportData.getReportObject("authdata"), is(notNullValue()));
+        AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
+        assertThat(ard.isValidReport(), is(equalTo(true)));
+        assertThat(ard.getSummaryItems().size(), is(equalTo(3)));
+
+        assertThat(ard.getSummaryItems().get(0).key(), is(equalTo("auth.summary.stats")));
+        assertThat(ard.getSummaryItems().get(0).passed(), is(equalTo(false)));
+
+        assertThat(ard.getSummaryItems().get(1).key(), is(equalTo("auth.summary.session")));
+        assertThat(ard.getSummaryItems().get(1).passed(), is(equalTo(false)));
+
+        assertThat(ard.getSummaryItems().get(2).key(), is(equalTo("auth.summary.verif")));
+        assertThat(ard.getSummaryItems().get(2).passed(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldReportWithNoPassingStats() {
+        // Given
+        String site = "https://www.example.com";
+        ExtensionAuthhelperReport.AuthReportDataHandler dataHandler =
+                new ExtensionAuthhelperReport.AuthReportDataHandler();
+        ReportData reportData = new ReportData("auth-report-test");
+        Context context = mock(Context.class);
+
+        ClientScriptBasedAuthenticationMethod authMethod =
+                new ClientScriptBasedAuthenticationMethodType().createAuthenticationMethod(0);
+        authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.AUTO_DETECT);
+        given(context.getAuthenticationMethod()).willReturn(authMethod);
+        given(context.getSessionManagementMethod())
+                .willReturn(
+                        new AutoDetectSessionManagementMethodType()
+                                .createSessionManagementMethod(0));
+
+        given(context.getIncludeInContextRegexs()).willReturn(List.of(site + ".*"));
+        reportData.setContexts(List.of(context));
+
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
+
+        InMemoryStats stats = new InMemoryStats();
+        given(extStats.getInMemoryStats()).willReturn(stats);
+
+        stats.counterInc(site, AuthenticationHelper.AUTH_FAILURE_STATS, 2);
+
+        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        // When
+        dataHandler.handle(reportData);
+
+        // Then
+        assertThat(reportData.getReportObject("authdata"), is(notNullValue()));
+        AuthReportData ard = (AuthReportData) reportData.getReportObject("authdata");
+        assertThat(ard.isValidReport(), is(equalTo(true)));
+        assertThat(ard.getSummaryItems().size(), is(equalTo(3)));
+
+        assertThat(ard.getSummaryItems().get(0).key(), is(equalTo("auth.summary.auth")));
+        assertThat(ard.getSummaryItems().get(0).passed(), is(equalTo(false)));
+
+        assertThat(ard.getSummaryItems().get(1).key(), is(equalTo("auth.summary.session")));
+        assertThat(ard.getSummaryItems().get(1).passed(), is(equalTo(false)));
+
+        assertThat(ard.getSummaryItems().get(2).key(), is(equalTo("auth.summary.verif")));
+        assertThat(ard.getSummaryItems().get(2).passed(), is(equalTo(false)));
+
+        assertThat(ard.getFailureDetails().size(), is(equalTo(5)));
+        assertThat(ard.getFailureDetails().get(0).name(), is(equalTo("SESSION_MGMT")));
+        assertThat(ard.getFailureDetails().get(1).name(), is(equalTo("VERIF_IDENT")));
+        assertThat(ard.getFailureDetails().get(2).name(), is(equalTo("PASS_COUNT")));
+        assertThat(ard.getFailureDetails().get(3).name(), is(equalTo("NO_SUCCESSFUL_LOGINS")));
     }
 }
