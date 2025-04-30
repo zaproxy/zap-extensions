@@ -9,33 +9,7 @@
 var ExtensionUserManagement = Java.type("org.zaproxy.zap.extension.users.ExtensionUserManagement");
 var DigestUtils = Java.type("org.apache.commons.codec.digest.DigestUtils");
 var WebSocketPassiveScript = Java.type('org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript');
-var ScanRuleMetadata = Java.type(
-    "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata"
-);
 
-function getMetadata() {
-    return ScanRuleMetadata.fromYaml(`
-  id: 110007
-  name: Username Hash Found in WebSocket message
-  description: >
-    A hash of a user identifier and context was found in the incoming WebSocket message.
-    This may indicate that the application is subject to an Insecure Direct Object Reference (IDOR) vulnerability.
-    Manual testing will be required to see if this discovery can be abused. 
-  solution: >
-    Use per-user or session indirect object references by creating a temporary mapping at the time of use, 
-    or ensure that each use of a direct object reference is tied to an authorization check 
-    to verify that the user is authorized for the requested object.
-  risk: informational
-  confidence: high
-  cweId: 284
-  wascId: 2
-  status: release
-  references:
-  - https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html
-  - https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References
-  codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Username%20Idor%20Scanner.js
-  `);
-}
 OPCODE_TEXT = 0x1;
 RISK_INFO 	= 0;
 CONFIDENCE_HIGH = 3;
@@ -49,33 +23,42 @@ function scan(helper,msg) {
         return;
     }
     var message = String(msg.getReadablePayload());
-    var found = [];
 
     usersList.forEach(function(user){
 
-        var usernameHashes = getHashes(user.getName());
+        var username = user.getName();
+        var usernameHashes = getHashes(username);
         var matches;
 
         Object.keys(usernameHashes).forEach(function(hashType){
-            if((matches = message.match(usernameHashes[hashType])) != null) {
+            if((matches = message.match(usernameHashes[hashType]))!= null) {
+                var contextname = model.getSession().getContext(parseInt(user.getContextId())).getName();
                 matches.forEach(function(evidence){
-                    found.push({evidence});
+                	raiseAlert(helper, evidence, username, contextname, hashType);
                 });
             }
         });
     });
-
-    if (found.length > 0) {
-        const otherInfo = found.length > 1 ? `Other instances: ${found.slice(1).map(f => f.evidence).toString()}` : "";
-        createAlertBuilder(helper, found[0].evidence, otherInfo, msg).raise();
-    }
 }
 
-function createAlertBuilder(helper, evidence, otherInfo, msg){
+function raiseAlert(helper, evidence, username, contextname, hashType){
+    createAlertBuilder(helper, evidence, username, contextname, hashType).raise();
+}
+
+function createAlertBuilder(helper, evidence, username, contextname, hashType){
     return helper.newAlert()
+        .setPluginId(getId())
+        .setRiskConfidence(RISK_INFO, CONFIDENCE_HIGH)
+        .setName("Username Hash Found in WebSocket message")
+        .setDescription(getDescription(username, contextname, hashType))
+        .setSolution("Use per user or session indirect object references (create a temporary mapping at time of use)."
+                     + " Or, ensure that each use of a direct object reference is tied to an authorization check to ensure the"
+                     + " user is authorized for the requested object.")
+        .setReference("https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html\n"
+                      + "https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/05-Authorization_Testing/04-Testing_for_Insecure_Direct_Object_References")
         .setEvidence(evidence)
-        .setOtherInfo(otherInfo)
-        .setMessage(msg)
+        .setCweId(284) // CWE-284: Improper Access Control
+        .setWascId(2); // WASC-2: Insufficient Authorization
 }
 
 function getExampleAlerts(){

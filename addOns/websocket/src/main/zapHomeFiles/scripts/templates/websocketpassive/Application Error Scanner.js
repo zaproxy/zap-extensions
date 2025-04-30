@@ -11,27 +11,6 @@ RISK_MEDIUM = 2;
 CONFIDENCE_MEDIUM = 2;
 
 var WebSocketPassiveScript = Java.type('org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript');
-var ScanRuleMetadata = Java.type(
-    "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata"
-);
-function getMetadata() {
-    return ScanRuleMetadata.fromYaml(`
-  id: 110001
-  name: Application Error Disclosure via WebSockets
-  description: >
-    This payload contains an error/warning message that may disclose sensitive information like the location of the file that produced the unhandled exception.
-    This information can be used to launch further attacks against the web application.
-  solution: >
-    Review the error payloads which are piped directly to WebSockets. Handle the related exceptions.
-    Consider implementing a mechanism to provide a unique error reference/identifier to the client (browser) while logging the details on the server side and not exposing them to the user.
-  risk: medium
-  confidence: medium
-  cweId: 209
-  wascId: 13  
-  status: release
-  codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Application%20Error%20Scanner.js
-  `);
-}
 
 var microsoftDbErrors = [/Microsoft OLE DB Provider for ODBC Drivers/igm,
                                            /Microsoft OLE DB Provider for SQL Server/igm,
@@ -159,13 +138,11 @@ function scan(helper,msg) {
     }
     var message = String(msg.getReadablePayload());
 
-    var found = [];
-
     var matches;
     dbErrors.forEach(function(pattern){
         if((matches = message.match(pattern)) != null){
             matches.forEach(function(evidence){
-                found.push(evidence);
+                raiseAlert(helper, evidence);
             });
         }
     });
@@ -173,21 +150,32 @@ function scan(helper,msg) {
     javaRegexErrors.forEach(function(pattern){
         var matcher = pattern.matcher(message);
         while(matcher.find()){
-            found.push(String(matcher.group()));
+            raiseAlert(helper, String(matcher.group()));
         }
     });
-
-    if (found.length > 0) {
-        const otherInfo = found.length > 1 ? `Other instances: ${found.slice(1).toString()}` : "";
-        createAlertBuilder(helper, found[0], otherInfo, msg).raise();
-    }
 }
 
-function createAlertBuilder(helper, evidence, otherInfo, msg){
+function raiseAlert(helper, evidence){
+    createAlertBuilder(helper, evidence).raise();
+}
+
+function createAlertBuilder(helper, evidence){
     return helper.newAlert()
+        .setPluginId(getId())
+        .setRiskConfidence(RISK_MEDIUM, CONFIDENCE_MEDIUM)
+        .setName("Application Error Disclosure via WebSockets")
+        .setDescription("This payload contains an error/warning message that\
+ may disclose sensitive information like the location of the file\
+ that produced the unhandled exception. This information can be used\
+ to launch further attacks against the web application.")
+        .setSolution("Review the error payloads which are piped directly to WebSockets.\
+ Handle the related exceptions.\
+ Consider implementing a mechanism to provide a unique\
+ error reference/identifier to the client (browser) while logging the\
+ details on the server side and not exposing them to the user.")
         .setEvidence(evidence)
-        .setOtherInfo(otherInfo)
-        .setMessage(msg);
+        .setCweId(209) // Information Exposure Through an Error Message
+        .setWascId(13); // Information Leakage
 }
 
 function getExampleAlerts(){

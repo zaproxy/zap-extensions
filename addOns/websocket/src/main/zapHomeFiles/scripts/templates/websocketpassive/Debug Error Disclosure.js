@@ -11,26 +11,7 @@ RISK_LOW = 1;
 CONFIDENCE_MEDIUM = 2;
 
 var WebSocketPassiveScript = Java.type('org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript');
-var ScanRuleMetadata = Java.type(
-    "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata"
-);
-function getMetadata() {
-    return ScanRuleMetadata.fromYaml(`
-  id: 110003
-  name: Information Disclosure - Debug Error Messages via WebSocket
-  description: >
-    The response appeared to contain common error messages returned by platforms such as ASP.NET, and Web-servers such as IIS and Apache.
-    You can configure the list of common debug messages.
-  solution: >
-    Disable debugging messages before pushing to production.
-  risk: low
-  confidence: medium
-  cweId: 200
-  wascId: 13 
-  status: release
-  codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Debug%20Error%20Disclosure.js
-  `);
-  }
+
 var debug_messages = [
     /Error Occurred While Processing Request/igm,
     /Internal Server Error/igm,
@@ -70,27 +51,32 @@ function scan(helper,msg) {
     }
     var message = String(msg.getReadablePayload());
     var matches;
-    var found = [];
 
     debug_messages.forEach(function(pattern){
         if((matches = message.match(pattern)) != null){
             matches.forEach(function(evidence){
-                found.push(evidence);
+                raiseAlert(helper, evidence);
             });
         }
     });
-
-    if (found.length > 0) {
-        const otherInfo = found.length > 1 ? `Other instances: ${found.slice(1).toString()}` : "";
-        createAlertBuilder(helper, found[0], otherInfo, msg).raise();
-    }
 }
 
-function createAlertBuilder(helper, evidence, otherInfo, msg){
+function raiseAlert(helper, evidence){
+    createAlertBuilder(helper, evidence).raise();
+}
+
+function createAlertBuilder(helper, evidence){
     return helper.newAlert()
+        .setPluginId(getId())
+        .setName("Information Disclosure - Debug Error Messages via WebSocket")
+        .setRiskConfidence(RISK_LOW, CONFIDENCE_MEDIUM)
+        .setDescription("The response appeared to contain common error messages returned"
+                        + " by platforms such as ASP.NET, and Web-servers such as IIS and Apache. You can configure"
+                        + " the list of common debug messages.")
+        .setSolution("Disable debugging messages before pushing to production.")
         .setEvidence(evidence)
-        .setOtherInfo(otherInfo)
-        .setMessage(msg)
+        .setCweId(200) // CWE-200: Information Exposure
+        .setWascId(13); // WASC Id 13 - Info leakage
 }
 
 function getExampleAlerts(){

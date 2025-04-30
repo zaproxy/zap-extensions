@@ -14,24 +14,6 @@ CONFIDENCE_HIGH = 3;
 SEQUENCE_NUM = 3;
 
 var WebSocketPassiveScript = Java.type('org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript');
-var ScanRuleMetadata = Java.type(
-    "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata"
-);
-
-function getMetadata() {
-    return ScanRuleMetadata.fromYaml(`
-  id: 110005
-  name: Personally Identifiable Information via WebSocket
-  description: >
-    The response contains Personally Identifiable Information, such as CC number.
-  risk: high
-  confidence: high
-  cweId: 359
-  wascId: 13 
-  status: release
-  codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/PII%20Disclosure.js
-  `);
-}
 
 creditCards = {
     'American Express' : /\b(?:3[47][0-9]{13})\b/gm,
@@ -51,7 +33,6 @@ function scan(helper,msg) {
     var message = String(msg.getReadablePayload());
     var numberSequences = getNumberOfSequence(message,SEQUENCE_NUM);
     var matches;
-    var foundMatches = [];  
 
     numberSequences.forEach(function(sequence){
         Object.keys(creditCards).forEach(function(creditCardType){
@@ -59,24 +40,29 @@ function scan(helper,msg) {
             if((matches = sequence.match(creditCards[creditCardType])) != null){
                 matches.forEach(function(match){
                     if(validateLuhnCheckSum(match)){
-                        foundMatches.push(match);  
+                        raiseAlert(helper, match, creditCardType);
                     }
                 });
             }
         });
     });
-
-    if (foundMatches.length > 0) {
-        const otherInfo = foundMatches.length > 1 ? `Other instances: ${foundMatches.slice(1).toString()}` : "";
-        createAlertBuilder(helper, foundMatches[0], otherInfo, msg).raise();
-    }
 }
 
-function createAlertBuilder(helper, evidence, otherInfo, msg){
+function raiseAlert(helper, evidence, creditCardType){
+    createAlertBuilder(helper, evidence).raise();
+}
+
+function createAlertBuilder(helper, evidence, creditCardType){
     return helper.newAlert()
+        .setPluginId(getId())
+        .setRiskConfidence(RISK_HIGH, CONFIDENCE_HIGH)
+        .setName("Personally Identifiable Information via WebSocket")
+        .setDescription("The response contains Personally Identifiable Information,"
+                        + " such as CC number. Credit Card type detected: "
+                        + creditCardType + ".")
         .setEvidence(evidence)
-        .setOtherInfo(otherInfo)
-        .setMessage(msg)  
+        .setCweId(359)  // CWE-359: Exposure of Private Information ('Privacy Violation')
+        .setWascId(13);  // WASC-13: Information Leakage
 }
 
 function getExampleAlerts(){

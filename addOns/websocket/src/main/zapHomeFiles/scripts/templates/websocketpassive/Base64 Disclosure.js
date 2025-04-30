@@ -15,24 +15,7 @@ CONFIDENCE_MEDIUM = 2;
 PRINT_RESULTS = false;
 
 var WebSocketPassiveScript = Java.type('org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript');
-var ScanRuleMetadata = Java.type(
-    "org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata"
-);
-function getMetadata() {
-    return ScanRuleMetadata.fromYaml(`
-  id: 110002
-  name: Base64 Disclosure in WebSocket message
-  description: >
-    A Base64-encoded string has been found in the WebSocket incoming message. Base64-encoded data may contain sensitive information such as usernames, passwords, or cookies which should be further inspected. 
-  solution: >
-    Base64-encoding should not be used to store or send sensitive information. Always use proper encryption or hashing mechanisms to protect sensitive data.
-  risk: informational
-  confidence: medium
-  status: release
-  codeLink: https://github.com/zaproxy/zap-extensions/blob/main/addOns/websocket/src/main/zapHomeFiles/scripts/templates/websocketpassive/Base64%20Disclosure.js
-  `);
-  }
-  
+
 var base64Regex = /((?:[A-Za-z0-9+\/]{4}\n?)*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=))/gmi;
 
 base64Decoder = java.util.Base64.getDecoder();
@@ -45,25 +28,36 @@ function scan(helper,msg) {
     }
     var message = String(msg.getReadablePayload());
     var matches;
-    var found = [];
 
     if( (matches = message.match(base64Regex)) != null ){
         matches.forEach(function(evidence){
-            found.push(evidence);
-        });
-    }
 
-    if (found.length > 0) {
-        const otherInfo = found.length > 1 ? `Other instances: ${found.slice(1).toString()}` : "";
-        createAlertBuilder(helper, found[0], otherInfo, msg).raise();
+            var decodedEvidence = new JavaString(base64Decoder.decode(evidence));
+            if(PRINT_RESULTS){
+                print("Message: " + message);
+                print("Evidence: " + evidence);
+                print("Decoded Evidence: " + decodedEvidence);
+            }
+
+            raiseAlert(helper, evidence, decodedEvidence);
+        });
     }
 }
 
-function createAlertBuilder(helper, evidence, otherInfo, msg){
+function raiseAlert(helper, evidence, decodedEvidence){
+    createAlertBuilder(helper, evidence, decodedEvidence).raise();
+}
+
+function createAlertBuilder(helper, evidence, decodedEvidence){
     return helper.newAlert()
-        .setEvidence(evidence)
-        .setOtherInfo(otherInfo)
-        .setMessage(msg);
+        .setPluginId(getId())
+        .setRiskConfidence(RISK_INFO, CONFIDENCE_MEDIUM)
+        .setName("Base64 Disclosure in WebSocket message")
+        .setDescription("A Base64-encoded string has been found in the websocket incoming message. Base64-encoded data may contain sensitive " +
+                        "information such as usernames, passwords or cookies which should be further inspected. Decoded evidence: "
+                        + decodedEvidence + ".")
+        .setSolution("Base64-encoding should not be used to store or send sensitive information.")
+        .setEvidence(evidence);
 }
 
 function getExampleAlerts(){
