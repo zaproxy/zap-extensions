@@ -191,6 +191,7 @@ public class ReportJob extends AutomationJob {
         reportData.setTitle(this.getParameters().getReportTitle());
         reportData.setDescription(this.getParameters().getReportDescription());
         reportData.setContexts(env.getContexts());
+        reportData.addReportObjects("automation.progress", progress);
 
         if (this.getData().getRisks() == null) {
             reportData.setIncludeAllRisks(true);

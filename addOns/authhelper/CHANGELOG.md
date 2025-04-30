@@ -8,11 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add configuration support for the wait time after Client Script Based Authentication.
 - Include the Web Element being interacted with in the Client Script Based Authentication diagnostics.
 - Allow to enable authentication diagnostics for Client Script and Browser Based Authentication through the GUI.
+- Automation Framework errors to the Authentication Report.
 
 ### Changed
 - Warn when the recorded script used with Client Script Based Authentication does not launch a browser.
 - Updated to depend on Zest add-on 48.6.0.
 - Maintenance changes.
+- Depend on reports 0.39.0 to include AF errors.
 
 ### Fixed
 - Correct descriptions of the Zest script steps in the Authentication Report.

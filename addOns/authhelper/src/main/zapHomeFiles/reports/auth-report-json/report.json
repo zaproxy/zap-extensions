@@ -23,6 +23,9 @@
 	[#th:block th:if="${reportData.isIncludeSection('afenv')}"]
 	,"afEnv": [[${rptData.getAfEnv()}]]
 	[/th:block]
+	,"afPlanErrors": [[#th:block th:each="afError, afErrorState: ${rptData.getAfPlanErrors()}"][#th:block th:if="${! afErrorState.first}"],[/th:block]
+		[[${afError}]][/th:block]
+	]
 	[#th:block th:if="${reportData.isIncludeSection('statistics')}"]
 	,"statistics": [[#th:block th:each="statItem, statState: ${rptData.getStatistics()}"][#th:block th:if="${! statState.first}"],[/th:block]
 		{

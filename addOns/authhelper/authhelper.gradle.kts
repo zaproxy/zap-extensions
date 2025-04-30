@@ -47,7 +47,7 @@ zapAddOn {
                             version.set(">=0.45.0")
                         }
                         register("reports") {
-                            version.set(">=0.36.0")
+                            version.set(">=0.39.0")
                         }
                     }
                 }

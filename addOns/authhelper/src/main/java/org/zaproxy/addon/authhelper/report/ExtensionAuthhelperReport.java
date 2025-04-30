@@ -33,6 +33,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.zaproxy.addon.authhelper.AuthUtils;
 import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType;
+import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType;
 import org.zaproxy.addon.authhelper.report.AuthReportData.FailureDetail;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationPlan;
@@ -40,6 +41,7 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReportData;
 import org.zaproxy.zap.authentication.AuthenticationHelper;
+import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
 import org.zaproxy.zap.authentication.ManualAuthenticationMethodType.ManualAuthenticationMethod;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
@@ -163,9 +165,24 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                     hostname = getHostName(incRegexes.get(0));
                     ard.setSite(hostname);
 
-                    if (authContext.getAuthenticationMethod()
-                            instanceof
-                            BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod) {
+                    AuthenticationMethod authMethod = authContext.getAuthenticationMethod();
+
+                    boolean authBBA =
+                            authMethod
+                                    instanceof
+                                    BrowserBasedAuthenticationMethodType
+                                            .BrowserBasedAuthenticationMethod;
+                    boolean authClient =
+                            authMethod
+                                    instanceof
+                                    ClientScriptBasedAuthenticationMethodType
+                                            .ClientScriptBasedAuthenticationMethod;
+
+                    if (authBBA || authClient) {
+
+                        AutomationProgress afProg =
+                                (AutomationProgress)
+                                        reportData.getReportObject("automation.progress");
 
                         Long passedCount =
                                 inMemoryStats.getStat(
@@ -173,21 +190,32 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
 
                         /*
                          * The AUTH_SUCCESS_STATS / AUTH_FAILURE_STATS stats can get raised on another domain.
-                         * Any successes are good, but just failures are bad.
+                         * Any successes are good, as long as there are not more failures.
                          */
-                        boolean hasSuccessStats =
+                        Long successStat =
                                 inMemoryStats.getStat(
-                                                hostname, AuthenticationHelper.AUTH_SUCCESS_STATS)
-                                        != null;
-                        boolean hasFailureStats =
+                                        hostname, AuthenticationHelper.AUTH_SUCCESS_STATS);
+                        Long failureStat =
                                 inMemoryStats.getStat(
-                                                hostname, AuthenticationHelper.AUTH_FAILURE_STATS)
-                                        != null;
+                                        hostname, AuthenticationHelper.AUTH_FAILURE_STATS);
+
+                        boolean hasMoreFailures =
+                                failureStat != null
+                                        && (successStat == null
+                                                || failureStat.compareTo(successStat) > 0);
+
+                        boolean hasAfErrors = afProg != null && afProg.hasErrors();
+
+                        if (hasAfErrors) {
+                            ard.setAfPlanErrors(afProg.getErrors());
+                        }
+
                         boolean overallStatus =
                                 sessionPassed
                                         && verificationPassed
-                                        && passedCount != null
-                                        && (hasSuccessStats || !hasFailureStats);
+                                        && (!authBBA || passedCount != null)
+                                        && !hasAfErrors
+                                        && !hasMoreFailures;
                         addSummaryItem(ard, "auth", overallStatus);
                         if (!overallStatus) {
                             if (!sessionPassed) {
@@ -196,14 +224,17 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                             if (!verificationPassed) {
                                 ard.addFailureDetail(FailureDetail.VERIF_IDENT);
                             }
-                            if (passedCount == null) {
+                            if (!authBBA && passedCount == null) {
                                 ard.addFailureDetail(FailureDetail.PASS_COUNT);
                             }
-                            if (!hasSuccessStats) {
+                            if (successStat == null) {
                                 ard.addFailureDetail(FailureDetail.NO_SUCCESSFUL_LOGINS);
                             }
-                            if (hasFailureStats) {
+                            if (hasMoreFailures) {
                                 ard.addFailureDetail(FailureDetail.LOGIN_FAILURES);
+                            }
+                            if (hasAfErrors) {
+                                ard.addFailureDetail(FailureDetail.AF_PLAN_ERRORS);
                             }
                             // We got this far so did fail overall
                             if (!ard.hasFailureDetails()) {
@@ -214,7 +245,7 @@ public class ExtensionAuthhelperReport extends ExtensionAdaptor {
                         if (passedCount != null) {
                             addSummaryItem(ard, "username", true);
                             addSummaryItem(ard, "password", true);
-                        } else {
+                        } else if (authBBA) {
                             Long noUserCount =
                                     inMemoryStats.getStat(
                                             hostname, AuthUtils.AUTH_NO_USER_FIELD_STATS);
