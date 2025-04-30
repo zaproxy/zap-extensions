@@ -157,7 +157,7 @@ class SiteTreeHandlerUnitTest {
                         + "    method: POST\n"
                         + "    responseLength: 61\n"
                         + "    statusCode: 200\n"
-                        + "    data: eee=&ggg=\n";
+                        + "    data: eee%3Dfff%26ggg%3Dhhh\n";
         HttpMessage msg =
                 new HttpMessage(
                         "POST https://www.example.com?aa=bb&cc=dd HTTP/1.1\r\n"
@@ -188,7 +188,7 @@ class SiteTreeHandlerUnitTest {
                         + "    method: POST\n"
                         + "    responseLength: 61\n"
                         + "    statusCode: 200\n"
-                        + "    data: eee=&ggg=\n";
+                        + "    data: eee%3Dfff%26ggg%3Dhhh\n";
         HttpMessage msg =
                 new HttpMessage(
                         "POST https://www.example.com?aa=bb&cc=dd HTTP/1.1\r\n",
@@ -222,7 +222,7 @@ class SiteTreeHandlerUnitTest {
                         + "      method: POST\n"
                         + "      responseLength: 61\n"
                         + "      statusCode: 200\n"
-                        + "      data: aaa=\n"
+                        + "      data: aaa%3Dbbb\n"
                         + "    - node: PUT:aaa\n"
                         + "      url: https://www.example.com/aaa\n"
                         + "      method: PUT\n";
@@ -278,6 +278,83 @@ class SiteTreeHandlerUnitTest {
 
         // Then
         assertThat(sw.toString(), is(expectedYaml));
+        assertThat(result.getCount(), is(3));
+    }
+
+    @Test
+    void shouldOutputNodeWithXmlBody() throws Exception {
+        // Given
+        String xmlBody =
+                """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <root>
+                    <item>value</item>
+                </root>
+                """;
+        HttpMessage msg =
+                new HttpMessage(
+                        "POST https://www.example.com/ HTTP/1.1\r\n"
+                                + "Content-Type: application/xml\r\n",
+                        xmlBody.getBytes(),
+                        "HTTP/1.1 200 OK\r\n" + "content-length: 20",
+                        "12345678901234567890".getBytes());
+        siteMap.addPath(getHref(msg));
+        StringWriter sw = new StringWriter();
+        ExporterResult result = new ExporterResult();
+
+        // When
+        SitesTreeHandler.exportSitesTree(sw, siteMap, result);
+
+        // Then
+        assertThat(
+                sw.toString(), containsString(URLEncoder.encode(xmlBody, StandardCharsets.UTF_8)));
+        assertThat(result.getCount(), is(3));
+    }
+
+    @Test
+    void shouldOutputNodeWithJsonBody() throws Exception {
+        // Given
+        String jsonBody = "{\"key\":\"value\",\"array\":[1,2,3]}";
+        HttpMessage msg =
+                new HttpMessage(
+                        "POST https://www.example.com/ HTTP/1.1\r\n"
+                                + "Content-Type: application/json\r\n",
+                        jsonBody.getBytes(),
+                        "HTTP/1.1 200 OK\r\n" + "content-length: 20",
+                        "12345678901234567890".getBytes());
+        siteMap.addPath(getHref(msg));
+        StringWriter sw = new StringWriter();
+        ExporterResult result = new ExporterResult();
+
+        // When
+        SitesTreeHandler.exportSitesTree(sw, siteMap, result);
+
+        // Then
+        assertThat(
+                sw.toString(), containsString(URLEncoder.encode(jsonBody, StandardCharsets.UTF_8)));
+        assertThat(result.getCount(), is(3));
+    }
+
+    @Test
+    void shouldOutputNodeWithPutBody() throws Exception {
+        // Given
+        String body = "This is a PUT request body";
+        HttpMessage msg =
+                new HttpMessage(
+                        "PUT https://www.example.com/ HTTP/1.1\r\n"
+                                + "Content-Type: text/plain\r\n",
+                        body.getBytes(),
+                        "HTTP/1.1 200 OK\r\n" + "content-length: 20",
+                        "12345678901234567890".getBytes());
+        siteMap.addPath(getHref(msg));
+        StringWriter sw = new StringWriter();
+        ExporterResult result = new ExporterResult();
+
+        // When
+        SitesTreeHandler.exportSitesTree(sw, siteMap, result);
+
+        // Then
+        assertThat(sw.toString(), containsString(URLEncoder.encode(body, StandardCharsets.UTF_8)));
         assertThat(result.getCount(), is(3));
     }
 
@@ -556,7 +633,7 @@ class SiteTreeHandlerUnitTest {
                 sw.toString(),
                 containsString(
                         """
-                        data: '%s='
+                        data: '%s%%3Dfff'
                         """
                                 .formatted(persistedParameterName)));
     }
