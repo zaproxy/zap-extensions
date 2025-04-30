@@ -74,7 +74,7 @@ public class WebSocketPassiveScriptDecorator implements WebSocketPassiveScript {
         }
         return ScriptsWebSocketPassiveScanner.PLUGIN_ID;
     }
-    
+
     @Override
     public String getName() {
         try {
