@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -523,6 +524,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
         private ClientScriptBasedAuthenticationMethod shownMethod;
 
         private ZapNumberSpinner loginPageWait;
+        private JCheckBox diagnostics;
 
         public ClientScriptBasedAuthenticationMethodOptionsPanel() {
             super();
@@ -531,16 +533,28 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                 Component dynamicContentPanel = (Component) dynamicContentPanelField.get(this);
                 remove(dynamicContentPanel);
 
+                int y = 1;
                 loginPageWait = new ZapNumberSpinner(0, DEFAULT_PAGE_WAIT, Integer.MAX_VALUE);
                 JLabel loginPageWaitLabel =
                         new JLabel(
                                 Constant.messages.getString(
                                         "authhelper.auth.method.browser.label.loginWait"));
                 loginPageWaitLabel.setLabelFor(loginPageWait);
-                this.add(loginPageWaitLabel, LayoutHelper.getGBC(0, 1, 1, 1.0d, 0.0d));
-                this.add(loginPageWait, LayoutHelper.getGBC(1, 1, 2, 1.0d, 0.0d));
+                this.add(loginPageWaitLabel, LayoutHelper.getGBC(0, y, 1, 1.0d, 0.0d));
+                this.add(loginPageWait, LayoutHelper.getGBC(1, y, 2, 1.0d, 0.0d));
+                y++;
 
-                add(dynamicContentPanel, LayoutHelper.getGBC(0, 2, 3, 1.0d, 0.0d));
+                diagnostics = new JCheckBox();
+                JLabel diagnosticsLabel =
+                        new JLabel(
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.browser.label.diagnostics"));
+                diagnosticsLabel.setLabelFor(diagnostics);
+                add(diagnosticsLabel, LayoutHelper.getGBC(0, y, 1, 1.0d, 0.0d));
+                add(diagnostics, LayoutHelper.getGBC(1, y, 1, 1.0d, 0.0d));
+                y++;
+
+                add(dynamicContentPanel, LayoutHelper.getGBC(0, y, 3, 1.0d, 0.0d));
             } catch (Exception ignore) {
             }
         }
@@ -570,6 +584,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
             shownMethod = (ClientScriptBasedAuthenticationMethod) method;
             loginPageWait.setValue(shownMethod.getLoginPageWait());
+            diagnostics.setSelected(shownMethod.isDiagnostics());
         }
 
         @Override
@@ -577,6 +592,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             super.saveMethod();
 
             shownMethod.setLoginPageWait(loginPageWait.getValue());
+            shownMethod.setDiagnostics(diagnostics.isSelected());
             shownMethod = null;
         }
 
