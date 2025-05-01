@@ -42,6 +42,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
+import org.zaproxy.addon.client.internal.ScopeCheckComponent;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
@@ -86,6 +87,7 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
     private ClientOptions params = null;
     private ZapTextField urlStartField;
     private boolean subtreeOnlyPreviousCheckedState;
+    private ScopeCheckComponent scopeCheckComponent;
 
     private ExtensionUserManagement extUserMgmt;
 
@@ -144,6 +146,9 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         this.addCheckBoxField(0, FIELD_SUBTREE_ONLY, subtreeOnlyPreviousCheckedState);
         this.addComboField(0, FIELD_BROWSER, new ArrayList<>(), null);
 
+        getScopeCheckComponent().setScopeCheck(params.getScopeCheck());
+        addCustomComponent(0, getScopeCheckComponent().getComponent());
+
         // This option is always read from the 'global' options
         this.addCheckBoxField(0, FIELD_ADVANCED, params.isShowAdvancedDialog());
 
@@ -178,6 +183,13 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         this.pack();
 
         this.updateBrowsers();
+    }
+
+    private ScopeCheckComponent getScopeCheckComponent() {
+        if (scopeCheckComponent == null) {
+            scopeCheckComponent = new ScopeCheckComponent();
+        }
+        return scopeCheckComponent;
     }
 
     private Context getSelectedContext() {
@@ -353,6 +365,8 @@ public class ClientSpiderDialog extends StandardFieldsDialog {
         if (selectedBrowser != null) {
             clientParams.setBrowserId(selectedBrowser);
         }
+
+        clientParams.setScopeCheck(scopeCheckComponent.getScopeCheck());
 
         if (Boolean.TRUE.equals(this.getBoolValue(FIELD_ADVANCED))) {
             clientParams.setThreadCount(this.getIntValue(FIELD_NUM_BROWSERS));
