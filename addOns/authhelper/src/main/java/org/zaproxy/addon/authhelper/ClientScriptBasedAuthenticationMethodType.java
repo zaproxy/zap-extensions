@@ -431,6 +431,9 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                                 user.getContext().getName(),
                                 user.getName())) {
                     diags.insertDiagnostics(zestRunner.getScript().getZestScript());
+                    if (handler != null) {
+                        handler.resetAuthMsg();
+                    }
 
                     authScript.authenticate(
                             new AuthenticationHelper(sender, sessionManagementMethod, user),
