@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated with upstream retire.js pattern changes.
 - Depends on an updated version of the Common Library add-on.
+- Maintenance changes.
 
 ### Added
 - The scan rule as been tagged of interest to Penetration Testers, as well as adding tags associated with DEV or QA applicability.

@@ -118,9 +118,7 @@ public class RetireScanRule extends PluginPassiveScanner {
                 .setRisk(result.getInformation().getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setName(getAlertName())
-                .setDescription(
-                        Constant.messages.getString(
-                                "retire.rule.desc", result.getFilename(), result.getVersion()))
+                .setDescription(Constant.messages.getString("retire.rule.desc"))
                 .setOtherInfo(otherInfo)
                 .setTags(getAllAlertTags(result))
                 .setReference(Constant.messages.getString("retire.rule.references"))
