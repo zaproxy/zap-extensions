@@ -139,7 +139,7 @@ public final class ClientSideHandler implements HttpMessageHandler {
             authReq = candidate;
         }
 
-        Set<SessionToken> reqSessionTokens = AuthUtils.getRequestSessionTokens(msg);
+        Set<SessionToken> reqSessionTokens = AuthUtils.getRequestSessionTokens(msg, headerConfigs);
         Set<SessionToken> unkSessionTokens = new HashSet<>();
         for (SessionToken token : reqSessionTokens) {
             if (!SessionToken.COOKIE_SOURCE.equals(token.getSource())) {
