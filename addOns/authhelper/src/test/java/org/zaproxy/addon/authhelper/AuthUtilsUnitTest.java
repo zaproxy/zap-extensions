@@ -23,6 +23,7 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
@@ -44,6 +45,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import lombok.Setter;
 import org.apache.commons.httpclient.URI;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -764,6 +768,39 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldGetRequestSessionTokensUsingHeaderConfigs() throws Exception {
+        // Given
+        String token1 = "96438673498764398";
+        String token2 = "bndkdfsojhgkdshgk";
+        String token3 = "89jdhf9834herg03s";
+
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(
+                """
+                GET / HTTP/1.1
+                authorization: Bearer %s
+                cookie: id=%s; SameSite=Strict
+                x-api: %s"""
+                        .formatted(token1, token2, token3));
+        List<Pair<String, String>> headerConfigs = List.of(new Pair<>("x-api", "{%header:x-api%}"));
+
+        // When
+        Set<SessionToken> tokens = AuthUtils.getRequestSessionTokens(msg, headerConfigs);
+
+        // Then
+        assertThat(
+                tokens,
+                containsInAnyOrder(
+                        sessionTokenEqualTo(
+                                SessionToken.HEADER_SOURCE,
+                                "authorization",
+                                token1,
+                                "Bearer " + token1),
+                        sessionTokenEqualTo(SessionToken.COOKIE_SOURCE, "id", token2, token2),
+                        sessionTokenEqualTo(SessionToken.HEADER_SOURCE, "x-api", token3, token3)));
+    }
+
+    @Test
     void shouldReturnNoSessionToken() {
         // Given
         AuthUtils.recordSessionToken(
@@ -1157,5 +1194,50 @@ class AuthUtilsUnitTest extends TestUtils {
         public String getCssValue(String propertyName) {
             return null;
         }
+    }
+
+    protected static Matcher<SessionToken> sessionTokenEqualTo(
+            String source, String key, String value, String fullValue) {
+        return new BaseMatcher<>() {
+
+            @Override
+            public boolean matches(Object actualValue) {
+                SessionToken token = (SessionToken) actualValue;
+                return source.equals(token.getSource())
+                        && key.equals(token.getKey())
+                        && value.equals(token.getValue())
+                        && fullValue.equals(token.getFullValue());
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description
+                        .appendText("SessionToken[source: ")
+                        .appendValue(source)
+                        .appendText(" key: ")
+                        .appendValue(key)
+                        .appendText(" value: ")
+                        .appendValue(value)
+                        .appendText(" full value: ")
+                        .appendValue(fullValue)
+                        .appendText("]");
+            }
+
+            @Override
+            public void describeMismatch(Object item, Description description) {
+                SessionToken token = (SessionToken) item;
+                appendDifference(description, "source", source, token.getSource());
+                appendDifference(description, "key", key, token.getKey());
+                appendDifference(description, "value", value, token.getValue());
+                appendDifference(description, "full value", fullValue, token.getFullValue());
+            }
+
+            private void appendDifference(
+                    Description description, String field, String expected, String actual) {
+                if (!expected.equals(actual)) {
+                    description.appendText(field).appendText(" was ").appendValue(actual);
+                }
+            }
+        };
     }
 }

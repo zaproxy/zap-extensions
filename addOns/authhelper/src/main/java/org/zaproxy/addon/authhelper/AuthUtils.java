@@ -887,10 +887,28 @@ public class AuthUtils {
      * @return all of the identified session tokens in the request.
      */
     public static Set<SessionToken> getRequestSessionTokens(HttpMessage msg) {
+        return getRequestSessionTokens(msg, List.of());
+    }
+
+    public static Set<SessionToken> getRequestSessionTokens(
+            HttpMessage msg, List<Pair<String, String>> headerConfigs) {
         Set<SessionToken> map = new HashSet<>();
         List<String> authHeaders = msg.getRequestHeader().getHeaderValues(HttpHeader.AUTHORIZATION);
         for (String header : authHeaders) {
             map.add(new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, header));
+        }
+        if (headerConfigs != null) {
+            for (Pair<String, String> entry : headerConfigs) {
+                String name = entry.first;
+                if (HttpHeader.AUTHORIZATION.equalsIgnoreCase(name)
+                        || HttpHeader.COOKIE.equalsIgnoreCase(name)) {
+                    continue;
+                }
+
+                for (String value : msg.getRequestHeader().getHeaderValues(name)) {
+                    map.add(new SessionToken(SessionToken.HEADER_SOURCE, name, value));
+                }
+            }
         }
         List<HttpCookie> cookies = msg.getRequestHeader().getHttpCookies();
         for (HttpCookie cookie : cookies) {

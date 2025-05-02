@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated to depend on Zest add-on 48.6.0.
 - Maintenance changes.
 - Depend on reports 0.39.0 to include AF errors.
+- Use Header Based Session Management configuration to find a better candidate authentication message with Client Script and Browser Based Authentication methods.
 
 ### Fixed
 - Correct descriptions of the Zest script steps in the Authentication Report.
