@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Depends on an updated version of the Common Library add-on.
+- Clarified details of the Viewstate scan rule alerts, in some instances they were misleading (containing colons suggesting further data).
 
 ## [64] - 2025-03-25
 ### Changed
