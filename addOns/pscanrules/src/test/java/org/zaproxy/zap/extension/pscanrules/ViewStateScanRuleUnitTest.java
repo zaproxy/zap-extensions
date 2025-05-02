@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -81,6 +82,93 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
     }
 
     @Test
+    void shouldReturnExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(6)));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getName(), is(equalTo("Potential IP Addresses Found in the Viewstate")));
+        assertThat(
+                alert.getDescription(),
+                is(
+                        equalTo(
+                                "Potential IP addresses were found being serialized in the viewstate field.")));
+        assertThat(alert.getOtherInfo(), is(equalTo("[192.168.1.1]")));
+        assertThat(
+                alert.getSolution(),
+                is(equalTo("Verify the provided information isn't confidential.")));
+        assertThat(alert.getAlertRef(), is(equalTo("10032-1")));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        alert = alerts.get(1);
+        assertThat(alert.getName(), is(equalTo("Emails Found in the Viewstate")));
+        assertThat(
+                alert.getDescription(),
+                is(equalTo("Email addresses were found being serialized in the viewstate field.")));
+        assertThat(alert.getOtherInfo(), is(equalTo("[test@example.com]")));
+        assertThat(
+                alert.getSolution(),
+                is(equalTo("Verify the provided information isn't confidential.")));
+        assertThat(alert.getAlertRef(), is(equalTo("10032-2")));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        alert = alerts.get(2);
+        assertThat(alert.getName(), is(equalTo("Old Asp.Net Version in Use")));
+        assertThat(
+                alert.getDescription(),
+                is(equalTo("This website uses ASP.NET version 1.0 or 1.1.")));
+        assertThat(
+                alert.getSolution(),
+                is(equalTo("Ensure the engaged framework is still supported by Microsoft.")));
+        assertThat(alert.getAlertRef(), is(equalTo("10032-3")));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_LOW)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        alert = alerts.get(3);
+        assertThat(alert.getName(), is(equalTo("Viewstate without MAC Signature (Unsure)")));
+        assertThat(
+                alert.getDescription(),
+                is(equalTo("This website uses ASP.NET's Viewstate but maybe without any MAC.")));
+        assertThat(
+                alert.getSolution(),
+                is(equalTo("Ensure the MAC is set for all pages on this website.")));
+        assertThat(alert.getAlertRef(), is(equalTo("10032-4")));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+        alert = alerts.get(4);
+        assertThat(alert.getName(), is(equalTo("Viewstate without MAC Signature (Sure)")));
+        assertThat(
+                alert.getDescription(),
+                is(equalTo("This website uses ASP.NET's Viewstate but without any MAC.")));
+        assertThat(
+                alert.getSolution(),
+                is(equalTo("Ensure the MAC is set for all pages on this website.")));
+        assertThat(alert.getAlertRef(), is(equalTo("10032-5")));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        alert = alerts.get(5);
+        assertThat(alert.getName(), is(equalTo("Split Viewstate in Use")));
+        assertThat(
+                alert.getDescription(),
+                is(
+                        equalTo(
+                                "This website uses ASP.NET's Viewstate and its value is split into several chunks.")));
+        assertThat(
+                alert.getSolution(),
+                is(
+                        equalTo(
+                                "None - this may be a deliberate tuning of the configuration as this isn't the default setting.")));
+        assertThat(alert.getAlertRef(), is(equalTo("10032-6")));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
     void shouldNotRaiseAlertAsThereIsNoContent() {
         scanHttpResponseReceive(msg);
 
@@ -195,6 +283,9 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
         assertThat(alertsRaised.get(0).getName(), equalTo("Emails Found in the Viewstate"));
+        assertThat(
+                alertsRaised.get(0).getDescription(),
+                equalTo("Email addresses were found being serialized in the viewstate field."));
         assertThat(alertsRaised.get(0).getOtherInfo(), equalTo("[Itest@test.com]"));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
         assertThat(alertsRaised.get(0).getCweId(), equalTo(642));
@@ -218,7 +309,7 @@ class ViewStateScanRuleUnitTest extends PassiveScannerTest<ViewstateScanRule> {
         assertThat(
                 alertsRaised.get(0).getDescription(),
                 equalTo(
-                        "The following potential IP addresses were found being serialized in the viewstate field:"));
+                        "Potential IP addresses were found being serialized in the viewstate field."));
         assertThat(alertsRaised.get(0).getOtherInfo(), equalTo("[127.0.0.1]"));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(14));
         assertThat(alertsRaised.get(0).getCweId(), equalTo(642));

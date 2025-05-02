@@ -160,7 +160,7 @@ public class ViewstateScanRule extends PluginPassiveScanner implements CommonPas
                                 new ViewstateAnalyzerResult(ViewstateAnalyzerPattern.IPADDRESS) {
                                     @Override
                                     public Set<String> getResultExtract() {
-                                        return Collections.emptySet();
+                                        return Set.of("192.168.1.1");
                                     }
                                 })
                         .build());
@@ -169,7 +169,7 @@ public class ViewstateScanRule extends PluginPassiveScanner implements CommonPas
                                 new ViewstateAnalyzerResult(ViewstateAnalyzerPattern.EMAIL) {
                                     @Override
                                     public Set<String> getResultExtract() {
-                                        return Collections.emptySet();
+                                        return Set.of("test@example.com");
                                     }
                                 })
                         .build());
