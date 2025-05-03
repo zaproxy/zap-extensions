@@ -34,7 +34,7 @@
       18,
       53
     ],
-    "cpe": "cpe:2.3:a:glpi-project:glpi:*:*:*:*:*:*:*:* ",
+    "cpe": "cpe:2.3:a:glpi-project:glpi:*:*:*:*:*:*:*:*",
     "description": "GLPI is an open-source IT Asset Management, issue tracking and service desk system.",
     "dom": {
       "div[id*='footer-login'] > a": {
