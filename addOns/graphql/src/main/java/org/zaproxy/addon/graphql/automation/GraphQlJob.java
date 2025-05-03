@@ -223,11 +223,13 @@ public class GraphQlJob extends AutomationJob {
         private Integer maxAdditionalQueryDepth = GraphQlParam.DEFAULT_MAX_ADDITIONAL_QUERY_DEPTH;
         private Integer maxArgsDepth = GraphQlParam.DEFAULT_MAX_ARGS_DEPTH;
         private Boolean optionalArgsEnabled = GraphQlParam.DEFAULT_OPTIONAL_ARGS;
-        private String argsType =
-                GraphQlParam.DEFAULT_ARGS_TYPE.toString().toLowerCase(Locale.ROOT);
+        private String argsType = GraphQlParam.DEFAULT_ARGS_TYPE.name().toLowerCase(Locale.ROOT);
         private String querySplitType =
-                GraphQlParam.DEFAULT_QUERY_SPLIT_TYPE.toString().toLowerCase(Locale.ROOT);
+                GraphQlParam.DEFAULT_QUERY_SPLIT_TYPE.name().toLowerCase(Locale.ROOT);
         private String requestMethod =
-                GraphQlParam.DEFAULT_REQUEST_METHOD.toString().toLowerCase(Locale.ROOT);
+                GraphQlParam.DEFAULT_REQUEST_METHOD.name().toLowerCase(Locale.ROOT);
+        private String cycleDetectionMode =
+                GraphQlParam.DEFAULT_CYCLE_DETECTION_MODE.name().toLowerCase(Locale.ROOT);
+        private Integer maxCycleDetectionAlerts = GraphQlParam.DEFAULT_MAX_CYCLE_DETECTION_ALERTS;
     }
 }

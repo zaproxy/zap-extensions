@@ -29,6 +29,7 @@ import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
+import org.zaproxy.zap.extension.api.ApiView;
 
 public class GraphQlApi extends ApiImplementor {
 
@@ -39,14 +40,16 @@ public class GraphQlApi extends ApiImplementor {
     private static final String PARAM_URL = "url";
     private static final String PARAM_ENDPOINT = "endurl";
 
+    private static final String OPTION_ARGS_TYPE = "optionArgsType";
+    private static final String OPTION_CYCLE_DETECTION_MODE = "optionCycleDetectionMode";
+    private static final String OPTION_QUERY_SPLIT_TYPE = "optionQuerySplitType";
+    private static final String OPTION_REQUEST_METHOD = "optionRequestMethod";
+
+    private final GraphQlParam options;
+
+    /** Provided only for API client generator usage. */
     public GraphQlApi() {
-        this.addApiAction(
-                new ApiAction(ACTION_IMPORT_FILE, new String[] {PARAM_ENDPOINT, PARAM_FILE}));
-        this.addApiAction(
-                new ApiAction(
-                        ACTION_IMPORT_URL,
-                        new String[] {PARAM_ENDPOINT},
-                        new String[] {PARAM_URL}));
+        this(new GraphQlParam());
     }
 
     /**
@@ -55,8 +58,19 @@ public class GraphQlApi extends ApiImplementor {
      * @param options the options that will be exposed through the API.
      */
     public GraphQlApi(GraphQlParam options) {
-        this();
+        this.addApiAction(
+                new ApiAction(ACTION_IMPORT_FILE, new String[] {PARAM_ENDPOINT, PARAM_FILE}));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_IMPORT_URL,
+                        new String[] {PARAM_ENDPOINT},
+                        new String[] {PARAM_URL}));
+        this.addApiView(new ApiView(OPTION_ARGS_TYPE));
+        this.addApiView(new ApiView(OPTION_CYCLE_DETECTION_MODE));
+        this.addApiView(new ApiView(OPTION_QUERY_SPLIT_TYPE));
+        this.addApiView(new ApiView(OPTION_REQUEST_METHOD));
         addApiOptions(options);
+        this.options = options;
     }
 
     @Override
@@ -78,6 +92,27 @@ public class GraphQlApi extends ApiImplementor {
         }
 
         return ApiResponseElement.OK;
+    }
+
+    @Override
+    public ApiResponse handleApiOptionView(String name, JSONObject params) throws ApiException {
+        if (this.options == null) {
+            return null;
+        }
+        return switch (name) {
+            case OPTION_ARGS_TYPE ->
+                    new ApiResponseElement(OPTION_ARGS_TYPE, options.getArgsType().name());
+            case OPTION_CYCLE_DETECTION_MODE ->
+                    new ApiResponseElement(
+                            OPTION_CYCLE_DETECTION_MODE, options.getCycleDetectionMode().name());
+            case OPTION_QUERY_SPLIT_TYPE ->
+                    new ApiResponseElement(
+                            OPTION_QUERY_SPLIT_TYPE, options.getQuerySplitType().name());
+            case OPTION_REQUEST_METHOD ->
+                    new ApiResponseElement(
+                            OPTION_REQUEST_METHOD, options.getRequestMethod().name());
+            default -> super.handleApiOptionView(name, params);
+        };
     }
 
     private void importFile(JSONObject params) throws ApiException {

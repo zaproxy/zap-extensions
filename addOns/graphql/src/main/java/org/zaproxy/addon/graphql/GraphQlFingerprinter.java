@@ -35,7 +35,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
@@ -49,15 +48,17 @@ public class GraphQlFingerprinter {
 
     private static List<DiscoveredGraphQlEngineHandler> handlers;
 
+    private final URI endpointUrl;
     private final Requestor requestor;
     private final Map<String, HttpMessage> queryCache;
 
     private HttpMessage lastQueryMsg;
     private String matchedString;
 
-    public GraphQlFingerprinter(URI endpointUrl) {
+    public GraphQlFingerprinter(URI endpointUrl, Requestor requestor) {
         resetHandlers();
-        requestor = new Requestor(endpointUrl, HttpSender.MANUAL_REQUEST_INITIATOR);
+        this.endpointUrl = endpointUrl;
+        this.requestor = requestor;
         queryCache = new HashMap<>();
     }
 
@@ -201,7 +202,7 @@ public class GraphQlFingerprinter {
                 createFingerprintingAlert(discoveredGraphQlEngine)
                         .setEvidence(matchedString)
                         .setMessage(lastQueryMsg)
-                        .setUri(requestor.getEndpointUrl().toString())
+                        .setUri(endpointUrl.toString())
                         .build();
         extAlert.alertFound(alert, null);
     }

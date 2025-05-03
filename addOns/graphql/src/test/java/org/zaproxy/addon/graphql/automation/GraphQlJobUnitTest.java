@@ -247,7 +247,7 @@ class GraphQlJobUnitTest extends TestUtils {
                 job.getConfigParameters(new GraphQlParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(9)));
+        assertThat(params.size(), is(equalTo(11)));
         assertThat(params.containsKey("queryGenEnabled"), is(equalTo(true)));
         assertThat(params.containsKey("argsType"), is(equalTo(true)));
         assertThat(params.containsKey("lenientMaxQueryDepthEnabled"), is(equalTo(true)));
@@ -257,6 +257,8 @@ class GraphQlJobUnitTest extends TestUtils {
         assertThat(params.containsKey("optionalArgsEnabled"), is(equalTo(true)));
         assertThat(params.containsKey("querySplitType"), is(equalTo(true)));
         assertThat(params.containsKey("requestMethod"), is(equalTo(true)));
+        assertThat(params.containsKey("cycleDetectionMode"), is(equalTo(true)));
+        assertThat(params.containsKey("maxCycleDetectionAlerts"), is(equalTo(true)));
     }
 
     @Test
