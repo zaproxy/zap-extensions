@@ -1210,7 +1210,7 @@
     "scriptSrc": [
       "jquery",
       "/jquery(?:-(\\d+\\.\\d+\\.\\d+))[/.-]\\;version:\\1",
-      "/(\\d+\\.\\d+\\.\\d+)/jquery[/.-][^u]\\;version:\\1"
+      "/(\\d+\\.\\d+\\.\\d+)/jquery(?!\\.popupoverlay\\.js)[/.-][^u]\\;version:\\1"
     ],
     "website": "https://jquery.com"
   },
@@ -1302,6 +1302,16 @@
       "jquery-modal/([\\d\\.]+)/jquery\\.modal\\.min\\.js\\;version:\\1"
     ],
     "website": "https://jquerymodal.com"
+  },
+  "jQuery Popup Overlay": {
+    "cats": [
+      59
+    ],
+    "description": "jQuery Popup Overlay is a responsive overlay which lets you create modal windows, tooltips, and more.",
+    "scriptSrc": [
+      "(\\d+\\.\\d+\\.\\d+)/jquery\\.popupoverlay\\.js\\;version:\\1"
+    ],
+    "website": "https://www.npmjs.com/package/jquery-popup-overlay"
   },
   "jQuery Sparklines": {
     "cats": [
