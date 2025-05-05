@@ -53,16 +53,13 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.network.HtmlParameter.Type;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpRequestHeader;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.exim.ExporterResult;
 import org.zaproxy.addon.exim.ExtensionExim;
-import org.zaproxy.zap.model.NameValuePair;
 import org.zaproxy.zap.utils.Stats;
 
 public class SitesTreeHandler {
@@ -219,32 +216,19 @@ public class SitesTreeHandler {
                     gen.writeNumberField(EximSiteNode.STATUS_CODE_KEY, href.getStatusCode());
                 }
 
-                if (HttpRequestHeader.POST.equals(href.getMethod())) {
-                    try {
-                        HttpMessage msg = href.getHttpMessage();
-                        String contentType =
-                                msg.getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE);
-                        if (contentType == null
-                                || !contentType.startsWith(
-                                        HttpHeader.FORM_MULTIPART_CONTENT_TYPE)) {
-                            List<NameValuePair> params =
-                                    Model.getSingleton().getSession().getParameters(msg, Type.form);
-                            StringBuilder sb = new StringBuilder();
-                            params.forEach(
-                                    nvp -> {
-                                        if (sb.length() > 0) {
-                                            sb.append('&');
-                                        }
-                                        sb.append(
-                                                URLEncoder.encode(
-                                                        nvp.getName(), StandardCharsets.UTF_8));
-                                        sb.append("=");
-                                    });
-                            gen.writeStringField(EximSiteNode.DATA_KEY, sb.toString());
+                try {
+                    HttpMessage msg = href.getHttpMessage();
+                    String contentType = msg.getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE);
+                    if (contentType == null
+                            || !contentType.startsWith(HttpHeader.FORM_MULTIPART_CONTENT_TYPE)) {
+                        String body = msg.getRequestBody().toString();
+                        if (!body.isEmpty()) {
+                            String encodedBody = URLEncoder.encode(body, StandardCharsets.UTF_8);
+                            gen.writeStringField(EximSiteNode.DATA_KEY, encodedBody);
                         }
-                    } catch (IOException | DatabaseException e) {
-                        LOGGER.error(e.getMessage(), e);
                     }
+                } catch (IOException | DatabaseException e) {
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
 
