@@ -612,6 +612,6 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     public void setScopeCheck(ScopeCheck scopeCheck) {
         this.scopeCheck = scopeCheck == null ? ScopeCheck.getDefault() : scopeCheck;
-        getConfig().setProperty(SCOPE_CHECK_KEY, this.scopeCheck);
+        getConfig().setProperty(SCOPE_CHECK_KEY, this.scopeCheck.name());
     }
 }

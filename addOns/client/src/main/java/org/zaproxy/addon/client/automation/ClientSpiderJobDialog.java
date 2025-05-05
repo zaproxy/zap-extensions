@@ -27,6 +27,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.automation.ClientSpiderJob.Parameters;
+import org.zaproxy.addon.client.internal.ScopeCheckComponent;
 import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
@@ -62,6 +63,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
             "client.automation.dialog.spider.shutdowntime";
 
     private ClientSpiderJob job;
+    private ScopeCheckComponent scopeCheckComponent;
     private ExtensionSelenium extSel = null;
 
     public ClientSpiderJobDialog(ClientSpiderJob job) {
@@ -101,11 +103,15 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
         }
         this.addComboField(0, BROWSER_ID_PARAM, browserNames, defaultBrowser);
 
+        getScopeCheckComponent().setScopeCheck(job.getParameters().getScopeCheck());
+        addCustomComponent(0, getScopeCheckComponent().getComponent());
+
         this.addCheckBoxField(0, FIELD_ADVANCED, advOptionsSet());
         this.addFieldListener(FIELD_ADVANCED, e -> setAdvancedTabs(getBoolValue(FIELD_ADVANCED)));
 
         this.addPadding(0);
 
+        // Options tab
         this.addNumberField(
                 1,
                 NUM_BROWSERS_PARAM,
@@ -189,6 +195,13 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
         this.setTabsVisible(new String[] {"client.automation.dialog.spider.tab.adv"}, visible);
     }
 
+    private ScopeCheckComponent getScopeCheckComponent() {
+        if (scopeCheckComponent == null) {
+            scopeCheckComponent = new ScopeCheckComponent();
+        }
+        return scopeCheckComponent;
+    }
+
     private ExtensionSelenium getExtSelenium() {
         if (extSel == null) {
             extSel =
@@ -217,6 +230,7 @@ public class ClientSpiderJobDialog extends StandardFieldsDialog {
                 }
             }
         }
+        this.job.getParameters().setScopeCheck(getScopeCheckComponent().getScopeCheck().toString());
 
         if (this.getBoolValue(FIELD_ADVANCED)) {
             this.job.getParameters().setNumberOfBrowsers(this.getIntValue(NUM_BROWSERS_PARAM));
