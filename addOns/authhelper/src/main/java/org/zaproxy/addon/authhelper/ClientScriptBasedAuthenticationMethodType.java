@@ -596,7 +596,6 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
             shownMethod.setLoginPageWait(loginPageWait.getValue());
             shownMethod.setDiagnostics(diagnostics.isSelected());
-            shownMethod = null;
         }
 
         // @Override
