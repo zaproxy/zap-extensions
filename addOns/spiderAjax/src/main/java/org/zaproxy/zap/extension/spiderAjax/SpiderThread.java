@@ -408,27 +408,18 @@ public class SpiderThread implements Runnable {
 
             ResourceState state =
                     checkState(httpMessage.getRequestHeader().getURI().getEscapedURI());
-            boolean processed = state == ResourceState.PROCESSED;
 
             if (!ctx.isFromClient()) {
-                if (target.getOptions().getScopeCheck() == ScopeCheck.STRICT) {
-                    notifyMessage(
-                            httpMessage,
-                            HistoryReference.TYPE_SPIDER_AJAX,
-                            getResourceState(httpMessage));
-                    return;
-                }
-
                 notifyMessage(
                         httpMessage,
-                        processed
-                                ? HistoryReference.TYPE_SPIDER_AJAX
-                                : HistoryReference.TYPE_SPIDER_AJAX_TEMPORARY,
-                        httpMessage.isResponseFromTargetHost() ? state : ResourceState.IO_ERROR);
+                        HistoryReference.TYPE_SPIDER_AJAX,
+                        target.getOptions().getScopeCheck() == ScopeCheck.STRICT
+                                ? getResourceState(httpMessage)
+                                : getResourceStateFlexible(httpMessage, state));
                 return;
             }
 
-            if (!processed) {
+            if (state != ResourceState.PROCESSED) {
                 if (target.getOptions().getScopeCheck() == ScopeCheck.STRICT) {
                     setOutOfScopeResponse(httpMessage);
                     notifyMessage(httpMessage, HistoryReference.TYPE_SPIDER_AJAX_TEMPORARY, state);
@@ -462,6 +453,17 @@ public class SpiderThread implements Runnable {
             return ResourceState.PROCESSED;
         }
 
+        private ResourceState getResourceStateFlexible(
+                HttpMessage httpMessage, ResourceState state) {
+            if (!httpMessage.isResponseFromTargetHost()) {
+                return ResourceState.IO_ERROR;
+            }
+            if (state != ResourceState.PROCESSED) {
+                return ResourceState.THIRD_PARTY;
+            }
+            return state;
+        }
+
         public void setAllowAll(boolean allow) {
             this.allowAll = allow;
         }
@@ -476,7 +478,7 @@ public class SpiderThread implements Runnable {
             }
 
             HistoryReference historyRef = new HistoryReference(session, historyType, httpMessage);
-            if (state == ResourceState.PROCESSED) {
+            if (state == ResourceState.PROCESSED || state == ResourceState.THIRD_PARTY) {
                 historyRef.setCustomIcon("/resource/icon/10/spiderAjax.png", true);
                 session.getSiteTree().addPath(historyRef, httpMessage);
             }
