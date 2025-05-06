@@ -201,6 +201,11 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         private String browserId = DEFAULT_BROWSER_ID;
         private int loginPageWait = DEFAULT_PAGE_WAIT;
         private List<AuthenticationStep> authenticationSteps = List.of();
+        private boolean authTestSucessful = false;
+
+        public boolean wasAuthTestSucessful (){
+            return authTestSucessful;
+        }
 
         public BrowserBasedAuthenticationMethod() {}
 
@@ -259,6 +264,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             return new BrowserBasedAuthenticationMethodType(httpSender);
         }
 
+        
         public boolean isDiagnostics() {
             return diagnostics;
         }
@@ -328,6 +334,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             if (handler != null) {
                 handler.resetAuthMsg();
                 handler.resetHttpMessages();
+                authTestSucessful = false;
             }
             if (this.loginPageWait > 0) {
                 AuthUtils.setTimeToWaitMs(TimeUnit.SECONDS.toMillis(loginPageWait));
@@ -407,6 +414,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                         // Let the user know it worked
                         AuthenticationHelper.notifyOutputAuthSuccessful(authMsg);
                         user.getAuthenticationState().setLastAuthFailure("");
+                        authTestSucessful = true;
                     } else {
                         diags.recordStep(
                                 authMsg,

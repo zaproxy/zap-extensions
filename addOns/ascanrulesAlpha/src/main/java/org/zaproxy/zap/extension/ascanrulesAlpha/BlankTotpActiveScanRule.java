@@ -95,7 +95,7 @@ public class BlankTotpActiveScanRule extends AbstractHostPlugin
             }
 
             // Check for blank passcode vulnerability
-            WebSession webSessionBlankCode =
+            boolean webSessionBlankCode =
                     testAuthenticatSession(
                             context.totpStep,
                             "",
@@ -104,7 +104,7 @@ public class BlankTotpActiveScanRule extends AbstractHostPlugin
                             context.sessionManagementMethod,
                             context.credentials,
                             context.user);
-            if (webSessionBlankCode != null) {
+            if (webSessionBlankCode ) {
                 buildAlert(
                                 "Blank Passcode Vulnerability",
                                 "The application allows authentication with a blank or empty passcode, which poses a significant security risk. Attackers can exploit this vulnerability to gain unauthorized access without providing valid credentials.",
@@ -117,7 +117,7 @@ public class BlankTotpActiveScanRule extends AbstractHostPlugin
         }
     }
 
-    private WebSession testAuthenticatSession(
+    private boolean testAuthenticatSession(
             AuthenticationStep totpStep,
             String newTotpValue,
             List<AuthenticationStep> authSteps,
@@ -129,7 +129,8 @@ public class BlankTotpActiveScanRule extends AbstractHostPlugin
             totpStep.setUserProvidedTotp(newTotpValue);
         else totpStep.setValue(newTotpValue);
         browserAuthMethod.setAuthenticationSteps(authSteps);
-        return browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
+        browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
+        return browserAuthMethod.wasAuthTestSucessful();
     }
 
     private AlertBuilder buildAlert(
