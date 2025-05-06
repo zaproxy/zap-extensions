@@ -10,12 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Update Zest library to 0.26.0.
+- Allow to copy the script's file system path from the Edit Zest Script dialogue.
 
 ### Fixed
 - Print statements should print to the relevant script Output tab.
-
-### Changed
-- Allow to copy the script's file system path from the Edit Zest Script dialogue.
 
 ## [48.5.0] - 2025-03-25
 ### Changed
