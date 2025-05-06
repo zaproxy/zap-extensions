@@ -31,7 +31,8 @@ import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
 public class OpenApiWithBlankOtpVerificationPage extends TestPage {
 
-    private static final Logger LOGGER = LogManager.getLogger(OpenApiWithBlankOtpVerificationPage.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(OpenApiWithBlankOtpVerificationPage.class);
 
     public OpenApiWithBlankOtpVerificationPage(TestProxyServer server) {
         super(server, "user");
@@ -39,8 +40,24 @@ public class OpenApiWithBlankOtpVerificationPage extends TestPage {
 
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
+        String method = msg.getRequestHeader().getMethod();
+        String token = msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
+        String user = getParent().getUser(token);
+        JSONObject response = new JSONObject();
+
+        if ("GET".equalsIgnoreCase(method)) {
+            // Check token validity for GET
+            if (user != null && getParent().isTokenVerified(token)) {
+                response.put("result", "OK");
+                response.put("user", user);
+            } else {
+                response.put("result", "FAIL");
+            }
+            this.getServer().setJsonResponse(response, msg);
+            return;
+        }
+
         String totp = null;
-        
         if (msg.getRequestHeader().hasContentType("json")) {
             String postData = msg.getRequestBody().toString();
             JSONObject jsonObject;
@@ -52,15 +69,13 @@ public class OpenApiWithBlankOtpVerificationPage extends TestPage {
             }
         }
 
-        String token = msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
-        String user = getParent().getUser(token);
         LOGGER.debug("Token: {} user: {} TOTP: {}", token, user, totp);
 
-        JSONObject response = new JSONObject();
         if (user != null && (totp != null && (totp.equals("123456") || totp.isEmpty()))) {
             // Vulnerability: bypass TOTP check if passcode is blank
             response.put("result", "OK");
             response.put("user", user);
+            getParent().markTokenVerified(token);
         } else {
             response.put("result", "FAIL");
         }

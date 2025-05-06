@@ -30,7 +30,8 @@ import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
 public class OpenApiWithLockoutOtpTestApiPage extends TestPage {
 
-    private static final Logger LOGGER = LogManager.getLogger(OpenApiWithLockoutOtpTestApiPage.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(OpenApiWithLockoutOtpTestApiPage.class);
 
     public OpenApiWithLockoutOtpTestApiPage(TestProxyServer server) {
         super(server, "test-api");

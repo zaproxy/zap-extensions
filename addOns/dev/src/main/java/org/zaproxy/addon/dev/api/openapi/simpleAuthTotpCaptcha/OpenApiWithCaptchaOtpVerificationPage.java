@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.dev.api.openapi.simpleAuthTotpCaptcha;
 
+import java.util.concurrent.ConcurrentHashMap;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
@@ -29,11 +30,10 @@ import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 public class OpenApiWithCaptchaOtpVerificationPage extends TestPage {
 
-    private static final Logger LOGGER = LogManager.getLogger(OpenApiWithCaptchaOtpVerificationPage.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(OpenApiWithCaptchaOtpVerificationPage.class);
     private static final ConcurrentHashMap<String, String> captchaStore = new ConcurrentHashMap<>();
 
     public OpenApiWithCaptchaOtpVerificationPage(TestProxyServer server) {
@@ -42,6 +42,22 @@ public class OpenApiWithCaptchaOtpVerificationPage extends TestPage {
 
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
+        String method = msg.getRequestHeader().getMethod();
+        String token = msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
+        String user = getParent().getUser(token);
+        JSONObject response = new JSONObject();
+
+        if ("GET".equalsIgnoreCase(method)) {
+            if (user != null && getParent().isTokenVerified(token)) {
+                response.put("result", "OK");
+                response.put("user", user);
+            } else {
+                response.put("result", "FAIL");
+            }
+            this.getServer().setJsonResponse(response, msg);
+            return;
+        }
+
         String totp = null;
         String captcha = null;
 
@@ -57,19 +73,22 @@ public class OpenApiWithCaptchaOtpVerificationPage extends TestPage {
             }
         }
 
-        String token = msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
-        String user = getParent().getUser(token);
-
         // Validate CAPTCHA
         String expectedCaptcha = captchaStore.remove(token);
         boolean isCaptchaValid = expectedCaptcha != null && expectedCaptcha.equals(captcha);
 
-        LOGGER.debug("Token: {} user: {} TOTP: {} CAPTCHA: {} Expected CAPTCHA: {}", token, user, totp, captcha, expectedCaptcha);
+        LOGGER.debug(
+                "Token: {} user: {} TOTP: {} CAPTCHA: {} Expected CAPTCHA: {}",
+                token,
+                user,
+                totp,
+                captcha,
+                expectedCaptcha);
 
-        JSONObject response = new JSONObject();
         if (user != null && totp != null && totp.equals("123456") && isCaptchaValid) {
             response.put("result", "OK");
             response.put("user", user);
+            getParent().markTokenVerified(token);
         } else {
             response.put("result", "FAIL");
         }

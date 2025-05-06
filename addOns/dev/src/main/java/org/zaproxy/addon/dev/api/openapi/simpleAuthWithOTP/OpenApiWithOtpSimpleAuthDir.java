@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.dev.api.openapi.simpleAuthWithOTP;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.zaproxy.addon.dev.TestAuthDirectory;
 import org.zaproxy.addon.dev.TestProxyServer;
 
@@ -28,11 +30,20 @@ import org.zaproxy.addon.dev.TestProxyServer;
  * login page uses one JSON request to login endpoint. The token is returned in a standard field.
  */
 public class OpenApiWithOtpSimpleAuthDir extends TestAuthDirectory {
+    private Map<String, Boolean> verifiedTokens = new HashMap<>();
 
     public OpenApiWithOtpSimpleAuthDir(TestProxyServer server, String name) {
         super(server, name);
         this.addPage(new OpenApiWithOtpLoginPage(server));
         this.addPage(new OpenApiWithOtpVerificationPage(server));
         this.addPage(new OpenApiWithOtpTestApiPage(server));
+    }
+
+    public void markTokenVerified(String token) {
+        verifiedTokens.put(token, true);
+    }
+
+    public boolean isTokenVerified(String token) {
+        return verifiedTokens.getOrDefault(token, false);
     }
 }

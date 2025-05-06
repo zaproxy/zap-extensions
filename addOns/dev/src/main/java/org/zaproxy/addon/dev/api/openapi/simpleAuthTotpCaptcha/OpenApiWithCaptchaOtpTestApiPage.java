@@ -30,7 +30,8 @@ import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
 public class OpenApiWithCaptchaOtpTestApiPage extends TestPage {
 
-    private static final Logger LOGGER = LogManager.getLogger(OpenApiWithCaptchaOtpTestApiPage.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(OpenApiWithCaptchaOtpTestApiPage.class);
 
     public OpenApiWithCaptchaOtpTestApiPage(TestProxyServer server) {
         super(server, "test-api");

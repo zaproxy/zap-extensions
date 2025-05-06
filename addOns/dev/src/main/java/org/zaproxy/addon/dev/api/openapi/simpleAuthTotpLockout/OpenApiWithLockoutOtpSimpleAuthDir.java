@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.dev.api.openapi.simpleAuthTotpLockout;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.zaproxy.addon.dev.TestAuthDirectory;
 import org.zaproxy.addon.dev.TestProxyServer;
 
@@ -29,10 +31,34 @@ import org.zaproxy.addon.dev.TestProxyServer;
  */
 public class OpenApiWithLockoutOtpSimpleAuthDir extends TestAuthDirectory {
 
+    private Map<String, Boolean> verifiedTokens = new HashMap<>();
+    private Map<String, Integer> failedAttempts = new HashMap<>();
+    private static final int MAX_ATTEMPTS = 3;
+
     public OpenApiWithLockoutOtpSimpleAuthDir(TestProxyServer server, String name) {
         super(server, name);
         this.addPage(new OpenApiWithLockoutOtpLoginPage(server));
         this.addPage(new OpenApiWithLockoutOtpVerificationPage(server));
         this.addPage(new OpenApiWithLockoutOtpTestApiPage(server));
+    }
+
+    public void markTokenVerified(String token) {
+        if (token != null) {
+            verifiedTokens.put(token, true);
+            failedAttempts.remove(token); // reset on success
+        }
+    }
+
+    public boolean isTokenVerified(String token) {
+        return verifiedTokens.getOrDefault(token, false);
+    }
+
+    public void recordFailedAttempt(String token) {
+        if (token == null) return;
+        failedAttempts.put(token, failedAttempts.getOrDefault(token, 0) + 1);
+    }
+
+    public boolean isLockedOut(String token) {
+        return failedAttempts.getOrDefault(token, 0) >= MAX_ATTEMPTS;
     }
 }

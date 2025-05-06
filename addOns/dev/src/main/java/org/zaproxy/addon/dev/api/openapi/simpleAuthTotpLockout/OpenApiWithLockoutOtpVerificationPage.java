@@ -31,7 +31,8 @@ import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
 public class OpenApiWithLockoutOtpVerificationPage extends TestPage {
 
-    private static final Logger LOGGER = LogManager.getLogger(OpenApiWithLockoutOtpVerificationPage.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(OpenApiWithLockoutOtpVerificationPage.class);
 
     public OpenApiWithLockoutOtpVerificationPage(TestProxyServer server) {
         super(server, "user");
@@ -39,8 +40,24 @@ public class OpenApiWithLockoutOtpVerificationPage extends TestPage {
 
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
+        String method = msg.getRequestHeader().getMethod();
+        String token = msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
+        String user = getParent().getUser(token);
+        JSONObject response = new JSONObject();
+
+        if ("GET".equalsIgnoreCase(method)) {
+            if (user != null && getParent().isTokenVerified(token)) {
+                response.put("result", "OK");
+                response.put("user", user);
+            } else {
+                response.put("result", "FAIL");
+            }
+            this.getServer().setJsonResponse(response, msg);
+            return;
+        }
+
         String totp = null;
-        
+
         if (msg.getRequestHeader().hasContentType("json")) {
             String postData = msg.getRequestBody().toString();
             JSONObject jsonObject;
@@ -52,17 +69,19 @@ public class OpenApiWithLockoutOtpVerificationPage extends TestPage {
             }
         }
 
-        String token = msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
-        String user = getParent().getUser(token);
         LOGGER.debug("Token: {} user: {} TOTP: {}", token, user, totp);
 
-        JSONObject response = new JSONObject();
-        if (user != null && totp != null && totp.equals("123456")) {
+        if (getParent().isLockedOut(token)) {
+            response.put("result", "LOCKED");
+        } else if (user != null && "123456".equals(totp)) {
             response.put("result", "OK");
             response.put("user", user);
+            getParent().markTokenVerified(token);
         } else {
+            getParent().recordFailedAttempt(token);
             response.put("result", "FAIL");
         }
+
         this.getServer().setJsonResponse(response, msg);
     }
 

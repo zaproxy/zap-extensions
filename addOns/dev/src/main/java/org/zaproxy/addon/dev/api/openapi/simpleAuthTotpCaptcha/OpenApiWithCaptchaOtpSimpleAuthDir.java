@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.dev.api.openapi.simpleAuthTotpCaptcha;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.zaproxy.addon.dev.TestAuthDirectory;
 import org.zaproxy.addon.dev.TestProxyServer;
 
@@ -29,10 +31,22 @@ import org.zaproxy.addon.dev.TestProxyServer;
  */
 public class OpenApiWithCaptchaOtpSimpleAuthDir extends TestAuthDirectory {
 
+    private Map<String, Boolean> verifiedTokens = new HashMap<>();
+
     public OpenApiWithCaptchaOtpSimpleAuthDir(TestProxyServer server, String name) {
         super(server, name);
         this.addPage(new OpenApiWithCaptchaOtpLoginPage(server));
         this.addPage(new OpenApiWithCaptchaOtpVerificationPage(server));
         this.addPage(new OpenApiWithCaptchaOtpTestApiPage(server));
+    }
+
+    public void markTokenVerified(String token) {
+        if (token != null) {
+            verifiedTokens.put(token, true);
+        }
+    }
+
+    public boolean isTokenVerified(String token) {
+        return verifiedTokens.getOrDefault(token, false);
     }
 }
