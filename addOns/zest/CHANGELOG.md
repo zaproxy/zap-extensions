@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Print statements should print to the relevant script Output tab.
+- Recording client Zest scripts.
 
 ### Changed
 - Allow to copy the script's file system path from the Edit Zest Script dialogue.

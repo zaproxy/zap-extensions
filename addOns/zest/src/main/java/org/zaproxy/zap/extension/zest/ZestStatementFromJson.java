@@ -23,21 +23,26 @@ import net.sf.json.JSONObject;
 import org.zaproxy.zest.core.v1.ZestClientElement;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
 import org.zaproxy.zest.core.v1.ZestClientElementClick;
+import org.zaproxy.zest.core.v1.ZestClientElementScrollTo;
 import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
 import org.zaproxy.zest.core.v1.ZestClientElementSubmit;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
 import org.zaproxy.zest.core.v1.ZestClientSwitchToFrame;
 import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestClientWindowResize;
+import org.zaproxy.zest.core.v1.ZestComment;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestStatementFromJson {
+
+    public static final String WINDOW_HANDLE_BROWSER_EXTENSION = "windowHandle1";
 
     private static final String ELEMENT_TYPE = "elementType";
     private static final String WINDOW_HANDLE = "windowHandle";
     private static final String BROWSER_TYPE = "browserType";
     private static final String HEADLESS = "headless";
     private static final String CAPABILITIES = "capabilities";
+    private static final String COMMENT = "comment";
     private static final String URL = "url";
     private static final String TYPE = "type";
     private static final String ELEMENT = "element";
@@ -52,12 +57,14 @@ public class ZestStatementFromJson {
 
     private static final String ZEST_CLIENT_LAUNCH = "ZestClientLaunch";
     private static final String ZEST_CLIENT_ELEMENT_CLICK = "ZestClientElementClick";
+    private static final String ZEST_CLIENT_ELEMENT_SCROLL_TO = "ZestClientElementScrollTo";
     private static final String ZEST_CLIENT_ELEMENT_SEND_KEYS = "ZestClientElementSendKeys";
     private static final String ZEST_CLIENT_ELEMENT_SUBMIT = "ZestClientElementSubmit";
     private static final String ZEST_CLIENT_ELEMENT_CLEAR = "ZestClientElementClear";
     private static final String ZEST_CLIENT_WINDOW_CLOSE = "ZestClientWindowClose";
     private static final String ZEST_CLIENT_SWITCH_TO_FRAME = "ZestClientSwitchToFrame";
     private static final String ZEST_CLIENT_WINDOW_RESIZE = "ZestClientWindowResize";
+    private static final String ZEST_COMMENT = "ZestComment";
 
     public static ZestStatement createZestStatementFromJson(JSONObject json) throws Exception {
         ZestStatement stmt = null;
@@ -66,71 +73,72 @@ public class ZestStatementFromJson {
             switch (elementType) {
                 case ZEST_CLIENT_LAUNCH:
                     stmt =
-                            (ZestStatement)
-                                    new ZestClientLaunch(
-                                            json.getString(WINDOW_HANDLE),
-                                            json.getString(BROWSER_TYPE),
-                                            json.getString(URL),
-                                            json.getString(CAPABILITIES),
-                                            json.getBoolean(HEADLESS));
+                            new ZestClientLaunch(
+                                    json.getString(WINDOW_HANDLE),
+                                    json.getString(BROWSER_TYPE),
+                                    json.getString(URL),
+                                    json.getString(CAPABILITIES),
+                                    json.getBoolean(HEADLESS));
                     break;
 
                 case ZEST_CLIENT_ELEMENT_CLICK:
                     stmt =
-                            (ZestStatement)
-                                    new ZestClientElementClick(
-                                            json.getString(WINDOW_HANDLE),
-                                            json.getString(TYPE),
-                                            json.getString(ELEMENT));
+                            new ZestClientElementClick(
+                                    json.getString(WINDOW_HANDLE),
+                                    json.getString(TYPE),
+                                    json.getString(ELEMENT));
+                    break;
+                case ZEST_CLIENT_ELEMENT_SCROLL_TO:
+                    stmt =
+                            new ZestClientElementScrollTo(
+                                    json.getString(WINDOW_HANDLE),
+                                    json.getString(TYPE),
+                                    json.getString(ELEMENT));
                     break;
                 case ZEST_CLIENT_ELEMENT_SEND_KEYS:
                     stmt =
-                            (ZestStatement)
-                                    new ZestClientElementSendKeys(
-                                            json.getString(WINDOW_HANDLE),
-                                            json.getString(TYPE),
-                                            json.getString(ELEMENT),
-                                            json.getString(VALUE));
+                            new ZestClientElementSendKeys(
+                                    json.getString(WINDOW_HANDLE),
+                                    json.getString(TYPE),
+                                    json.getString(ELEMENT),
+                                    json.getString(VALUE));
                     break;
                 case ZEST_CLIENT_ELEMENT_SUBMIT:
                     stmt =
-                            (ZestStatement)
-                                    new ZestClientElementSubmit(
-                                            json.getString(WINDOW_HANDLE),
-                                            json.getString(TYPE),
-                                            json.getString(ELEMENT));
+                            new ZestClientElementSubmit(
+                                    json.getString(WINDOW_HANDLE),
+                                    json.getString(TYPE),
+                                    json.getString(ELEMENT));
                     break;
                 case ZEST_CLIENT_ELEMENT_CLEAR:
                     stmt =
-                            (ZestStatement)
-                                    new ZestClientElementClear(
-                                            json.getString(WINDOW_HANDLE),
-                                            json.getString(TYPE),
-                                            json.getString(ELEMENT));
+                            new ZestClientElementClear(
+                                    json.getString(WINDOW_HANDLE),
+                                    json.getString(TYPE),
+                                    json.getString(ELEMENT));
                     break;
                 case ZEST_CLIENT_WINDOW_CLOSE:
                     stmt =
-                            (ZestStatement)
-                                    new ZestClientWindowClose(
-                                            json.getString(WINDOW_HANDLE),
-                                            json.getInt(SLEEP_IN_SECONDS));
+                            new ZestClientWindowClose(
+                                    json.getString(WINDOW_HANDLE), json.getInt(SLEEP_IN_SECONDS));
                     break;
                 case ZEST_CLIENT_SWITCH_TO_FRAME:
                     stmt =
-                            (ZestStatement)
-                                    new ZestClientSwitchToFrame(
-                                            json.getString(WINDOW_HANDLE),
-                                            json.getInt(FRAME_INDEX),
-                                            json.getString(FRAME_NAME),
-                                            json.getBoolean(FRAME_ISPARENT));
+                            new ZestClientSwitchToFrame(
+                                    json.getString(WINDOW_HANDLE),
+                                    json.getInt(FRAME_INDEX),
+                                    json.getString(FRAME_NAME),
+                                    json.getBoolean(FRAME_ISPARENT));
                     break;
                 case ZEST_CLIENT_WINDOW_RESIZE:
                     stmt =
-                            (ZestStatement)
-                                    new ZestClientWindowResize(
-                                            json.getString(WINDOW_HANDLE),
-                                            json.getInt(X_VALUE),
-                                            json.getInt(Y_VALUE));
+                            new ZestClientWindowResize(
+                                    json.getString(WINDOW_HANDLE),
+                                    json.getInt(X_VALUE),
+                                    json.getInt(Y_VALUE));
+                    break;
+                case ZEST_COMMENT:
+                    stmt = new ZestComment(json.getString(COMMENT));
                     break;
                 default:
                     throw new Exception("Element type not found " + elementType);

@@ -25,6 +25,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -113,7 +114,8 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
                 0,
                 FIELD_BROWSER_TYPE,
                 getBrowserTypes(),
-                Constant.messages.getString(BROWSER_TYPE_PREFIX + browserType));
+                Constant.messages.getString(
+                        BROWSER_TYPE_PREFIX + browserType.toLowerCase(Locale.ROOT)));
         this.addCheckBoxField(0, FIELD_HEADLESS, client.isHeadless());
         this.addTextField(0, FIELD_URL, client.getUrl());
         this.addPadding(0);
