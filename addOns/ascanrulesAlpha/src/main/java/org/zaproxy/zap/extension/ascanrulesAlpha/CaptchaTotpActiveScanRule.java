@@ -91,19 +91,30 @@ public class CaptchaTotpActiveScanRule extends AbstractHostPlugin
             // Run 10 incorrect authentications and store the responses
             // Check responses for any changes or any common captcha technology
             List<List<HttpMessage>> allHttpResponses = new ArrayList<>();
-            for (int i = 0; i < 10; i++) {
-                LOGGER.error("Session number: " + i);
-                WebSession testSession =
-                        testAuthenticatSession(
-                                context.totpStep,
-                                "111111",
-                                context.authSteps,
-                                context.browserAuthMethod,
-                                context.sessionManagementMethod,
-                                context.credentials,
-                                context.user);
-                // Add the response to the httpResponses list
-                List<HttpMessage> messages = context.browserAuthMethod.getRecordedHttpMessages();
+
+            List<AuthenticationStep> authSteps = new ArrayList<>(context.authSteps);
+            AuthenticationStep totpStep = context.totpStep;
+            int totpIndex = authSteps.indexOf(totpStep);
+            List<AuthenticationStep> subset = new ArrayList<>(authSteps.subList(totpIndex + 1, authSteps.size()));
+            // Run one web session where incorrect TOTP value is used 10 times
+            for (int i = 0; i < 9; i++) {
+                for (AuthenticationStep step : subset) {
+                    authSteps.add(step);
+                }
+            }
+            WebSession test =
+                    testAuthenticatSession(
+                            context.totpStep,
+                            "111111",
+                            authSteps,
+                            context.browserAuthMethod,
+                            context.sessionManagementMethod,
+                            context.credentials,
+                            context.user);
+
+            List<HttpMessage> messages = context.browserAuthMethod.getRecordedHttpMessages();
+            LOGGER.error("responseLength: " + messages.size());
+
 
                 // Check for key captcha words in the responses
                 String[] captchaKeywords = {
@@ -144,7 +155,7 @@ public class CaptchaTotpActiveScanRule extends AbstractHostPlugin
                     for (HttpMessage response : messages) {
                         if (response.getResponseBody().toString().toLowerCase().contains(keyword)) {
                             LOGGER.error(
-                                    "lockout detected" + response.getResponseBody().toString());
+                                    "lockout detected" );
                             LOGGER.error("keyword" + keyword);
                             lockoutDetected = true;
                             return;
@@ -155,28 +166,8 @@ public class CaptchaTotpActiveScanRule extends AbstractHostPlugin
                         }
                     }
                 }
-                LOGGER.error("responseLength: " + messages.size());
-                allHttpResponses.add(messages);
-            }
-            LOGGER.error("No lockout or captcha detected yet");
-            // Iterate over the messages from each web session and check for any changes in the
-            // response (could indicate lockout/captcha)
-            // for (List<HttpMessage> httpResponsesFromSession : allHttpResponses) {
-            //     for (HttpMessage response : httpResponsesFromSession) {
-            //         // Check for changes to the response's indicating a potential lockout/captcha
-            // mechanism
-            //         if (response.getResponseBody().toString().toLowerCase().contains("captcha"))
-            // {
-            //             captchaDetected = true;
-            //         }
-            //         if (response.getResponseBody().toString().contains("lockout")) {
-            //             lockoutDetected = true;
-            //         }
-            //     }
-            // }
-
+            
             if (!captchaDetected && !lockoutDetected) {
-                // LOGGER.error("");
                 buildAlert(
                                 "No Lockout or Captcha Mechanism Detected",
                                 "\"The application does not enforce CAPTCHA or account lockout mechanisms, making it vulnerable to brute-force attacks.",

@@ -33,7 +33,6 @@ import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.Browser
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.session.SessionManagementMethod;
-import org.zaproxy.zap.session.WebSession;
 import org.zaproxy.zap.users.User;
 
 public class BlankTotpActiveScanRule extends AbstractHostPlugin

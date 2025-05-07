@@ -32,6 +32,8 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -104,10 +106,21 @@ public final class ClientSideHandler implements HttpMessageHandler {
             firstHrefId = msg.getHistoryRef().getHistoryId();
         }
 
-        if (msg.getHistoryRef() != null) {
-            int historyId = msg.getHistoryRef().getHistoryId();
-            httpMessageHistoryIds.add(historyId); // Save the History ID
-        }
+       try {
+        // Explicitly write the message to ZAP's history database
+        HistoryReference hr = new HistoryReference(
+            Model.getSingleton().getSession(),
+            HistoryReference.TYPE_AUTHENTICATION, // or TYPE_PROXIED
+            msg
+        );
+
+        // Store the history ID for later retrieval
+        httpMessageHistoryIds.add(hr.getHistoryId());
+        LOGGER.debug("Recorded HTTP message ID: {}", hr.getHistoryId());
+
+    } catch (Exception e) {
+        LOGGER.warn("Failed to add message to history", e);
+    }
 
         historyProvider.addAuthMessageToHistory(msg);
 
