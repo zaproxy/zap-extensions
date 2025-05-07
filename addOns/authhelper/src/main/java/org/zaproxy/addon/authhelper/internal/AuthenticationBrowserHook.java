@@ -34,7 +34,7 @@ import org.zaproxy.zap.extension.selenium.BrowserHook;
 import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
-import org.zaproxy.zest.impl.ZestBasicRunner;
+import org.zaproxy.zest.core.v1.ZestScript;
 
 public class AuthenticationBrowserHook implements BrowserHook {
 
@@ -58,7 +58,7 @@ public class AuthenticationBrowserHook implements BrowserHook {
         this.user = user;
     }
 
-    private ZestBasicRunner getZestRunner(WebDriver webDriver) {
+    private ZestAuthRunner getZestRunner(WebDriver webDriver) {
         if (zestRunner == null) {
             zestRunner = new ZestAuthRunner();
             // Always proxy via ZAP
@@ -72,14 +72,16 @@ public class AuthenticationBrowserHook implements BrowserHook {
 
     @Override
     public void browserLaunched(SeleniumScriptUtils ssUtils) {
-        ZestBasicRunner runner = getZestRunner(ssUtils.getWebDriver());
+        ZestAuthRunner runner = getZestRunner(ssUtils.getWebDriver());
         try {
             Map<String, String> paramsValues = new HashMap<>();
             GenericAuthenticationCredentials credentials =
                     (GenericAuthenticationCredentials) user.getAuthenticationCredentials();
             paramsValues.put(USERNAME, credentials.getParam(USERNAME));
             paramsValues.put(PASSWORD, credentials.getParam(PASSWORD));
-            runner.run(csaMethod.getZestScript(), paramsValues);
+            ZestScript zs = csaMethod.getZestScript();
+            runner.setup(user, zs);
+            runner.run(zs, paramsValues);
         } catch (Exception e) {
             LOGGER.warn(
                     "An error occurred while trying to execute the Client Script Authentication script: {}",
