@@ -84,23 +84,24 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin
                 return;
             }
 
-            // Check if user provided previously( or is static currently valid ) valid code & check
-            // if initial authentication works with normal
-            // passcode
-            if (context.totpStep.getValue() != null || !context.totpStep.getValue().isEmpty()) {
-                if (context.totpStep.getType() == AuthenticationStep.Type.TOTP_FIELD)
-                    context.totpStep.setUserProvidedTotp(context.totpStep.getValue());
+            // If user provided TOTP secret, generate valid TOTP code and then check if it works
+            // multiple times
+            if (context.totpStep.getType() == AuthenticationStep.Type.TOTP_FIELD
+                    && context.totpStep.getTotpSecret() != null
+                    && !context.totpStep.getTotpSecret().isEmpty()) {
+                String validTotpCode = context.totpStep.getTotpCode(context.credentials).toString();
+
                 WebSession webSession =
                         context.browserAuthMethod.authenticate(
                                 context.sessionManagementMethod, context.credentials, context.user);
-                if (webSession == null || !context.browserAuthMethod.wasAuthTestSucessful()) {
+                if (!context.browserAuthMethod.wasAuthTestSucessful()) {
                     return;
                 }
                 // Check for passcode reuse vulnerability
                 boolean webSessionRedo =
                         testAuthenticatSession(
                                 context.totpStep,
-                                context.totpStep.getValue(),
+                                validTotpCode,
                                 context.authSteps,
                                 context.browserAuthMethod,
                                 context.sessionManagementMethod,
@@ -114,7 +115,44 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin
                                     msg)
                             .raise();
                 }
+
+            } else {
+                // Check if user provided previously( or is static currently valid ) valid code &
+                // check
+                // if initial authentication works with normal
+                // passcode
+                if (context.totpStep.getValue() != null || !context.totpStep.getValue().isEmpty()) {
+                    if (context.totpStep.getType() == AuthenticationStep.Type.TOTP_FIELD)
+                        context.totpStep.setUserProvidedTotp(context.totpStep.getValue());
+                    WebSession webSession =
+                            context.browserAuthMethod.authenticate(
+                                    context.sessionManagementMethod,
+                                    context.credentials,
+                                    context.user);
+                    if (webSession == null || !context.browserAuthMethod.wasAuthTestSucessful()) {
+                        return;
+                    }
+                    // Check for passcode reuse vulnerability
+                    boolean webSessionRedo =
+                            testAuthenticatSession(
+                                    context.totpStep,
+                                    context.totpStep.getValue(),
+                                    context.authSteps,
+                                    context.browserAuthMethod,
+                                    context.sessionManagementMethod,
+                                    context.credentials,
+                                    context.user);
+                    if (webSessionRedo) {
+                        buildAlert(
+                                        "TOTP Replay Attack Vulnerability",
+                                        "The application is vulnerable to replay attacks, allowing attackers to reuse previously intercepted TOTP codes to authenticate.",
+                                        "Ensure that TOTP codes are validated only once per session and are invalidated after use.",
+                                        msg)
+                                .raise();
+                    }
+                }
             }
+
         } catch (Exception e) {
             LOGGER.error("Error in TOTP Page Scan Rule: {}", e.getMessage(), e);
         }

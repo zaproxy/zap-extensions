@@ -229,10 +229,14 @@ public class AuthenticationStep
         this.overideTotpValue = totp;
     }
 
-    private CharSequence getTotpCode(UsernamePasswordAuthenticationCredentials credentials) {
+    public CharSequence getTotpCode(UsernamePasswordAuthenticationCredentials credentials) {
         if (!isEmpty(overideTotpValue)) {
             return overideTotpValue;
         }
+        if (!isEmpty(value)) {
+            return value;
+        }
+
         CharSequence code = TotpSupport.getCode(credentials);
         if (code != null) {
             return code;

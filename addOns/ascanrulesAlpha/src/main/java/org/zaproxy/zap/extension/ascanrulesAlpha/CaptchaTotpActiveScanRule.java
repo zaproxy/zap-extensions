@@ -90,13 +90,12 @@ public class CaptchaTotpActiveScanRule extends AbstractHostPlugin
 
             // Run 10 incorrect authentications and store the responses
             // Check responses for any changes or any common captcha technology
-            List<List<HttpMessage>> allHttpResponses = new ArrayList<>();
 
             List<AuthenticationStep> authSteps = new ArrayList<>(context.authSteps);
             AuthenticationStep totpStep = context.totpStep;
             int totpIndex = authSteps.indexOf(totpStep);
-            List<AuthenticationStep> subset = new ArrayList<>(authSteps.subList(totpIndex + 1, authSteps.size()));
-            // Run one web session where incorrect TOTP value is used 10 times
+            List<AuthenticationStep> subset =
+                    new ArrayList<>(authSteps.subList(totpIndex + 1, authSteps.size()));
             for (int i = 0; i < 9; i++) {
                 for (AuthenticationStep step : subset) {
                     authSteps.add(step);
@@ -113,60 +112,57 @@ public class CaptchaTotpActiveScanRule extends AbstractHostPlugin
                             context.user);
 
             List<HttpMessage> messages = context.browserAuthMethod.getRecordedHttpMessages();
-            LOGGER.error("responseLength: " + messages.size());
 
-
-                // Check for key captcha words in the responses
-                String[] captchaKeywords = {
-                    "captcha",
-                    "g-recaptcha",
-                    "hcaptcha",
-                    "data-sitekey",
-                    "verify you are human",
-                    "challenge-response",
-                    "bot detection",
-                    "recaptcha/api.js",
-                    "hcaptcha.com/1/api.js",
-                    "please solve the captcha",
-                    "captcha verification",
-                    "input type=\"hidden\" name=\"g-recaptcha-response\""
-                };
-                for (String keyword : captchaKeywords) {
-                    for (HttpMessage response : messages) {
-                        if (response.getResponseBody().toString().toLowerCase().contains(keyword)) {
-                            LOGGER.error("Captcha detected");
-                            captchaDetected = true;
-                            return;
-                        }
+            // Check for key captcha words in the responses
+            String[] captchaKeywords = {
+                "captcha",
+                "g-recaptcha",
+                "hcaptcha",
+                "data-sitekey",
+                "verify you are human",
+                "challenge-response",
+                "bot detection",
+                "recaptcha/api.js",
+                "hcaptcha.com/1/api.js",
+                "please solve the captcha",
+                "captcha verification",
+                "input type=\"hidden\" name=\"g-recaptcha-response\""
+            };
+            for (String keyword : captchaKeywords) {
+                for (HttpMessage response : messages) {
+                    if (response.getResponseBody().toString().toLowerCase().contains(keyword)) {
+                        LOGGER.error("Captcha detected");
+                        captchaDetected = true;
+                        return;
                     }
                 }
+            }
 
-                // Check for lockout words in the responses
-                String[] lockoutKeywords = {
-                    "lockout",
-                    "locked",
-                    "too many failed attempts",
-                    "too many login attempts",
-                    "reset your password",
-                    "account disabled",
-                    "unlock"
-                };
-                for (String keyword : lockoutKeywords) {
-                    for (HttpMessage response : messages) {
-                        if (response.getResponseBody().toString().toLowerCase().contains(keyword)) {
-                            LOGGER.error(
-                                    "lockout detected" );
-                            LOGGER.error("keyword" + keyword);
-                            lockoutDetected = true;
-                            return;
-                        } else if (response.getResponseHeader().getStatusCode() == 403) {
-                            lockoutDetected = true;
-                            LOGGER.error("lockout detected");
-                            return;
-                        }
+            // Check for lockout words in the responses
+            String[] lockoutKeywords = {
+                "lockout",
+                "locked",
+                "too many failed attempts",
+                "too many login attempts",
+                "reset your password",
+                "account disabled",
+                "unlock"
+            };
+            for (String keyword : lockoutKeywords) {
+                for (HttpMessage response : messages) {
+                    if (response.getResponseBody().toString().toLowerCase().contains(keyword)) {
+                        LOGGER.error("lockout detected");
+                        LOGGER.error("keyword" + keyword);
+                        lockoutDetected = true;
+                        return;
+                    } else if (response.getResponseHeader().getStatusCode() == 403) {
+                        lockoutDetected = true;
+                        LOGGER.error("lockout detected");
+                        return;
                     }
                 }
-            
+            }
+
             if (!captchaDetected && !lockoutDetected) {
                 buildAlert(
                                 "No Lockout or Captcha Mechanism Detected",

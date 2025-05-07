@@ -106,21 +106,21 @@ public final class ClientSideHandler implements HttpMessageHandler {
             firstHrefId = msg.getHistoryRef().getHistoryId();
         }
 
-       try {
-        // Explicitly write the message to ZAP's history database
-        HistoryReference hr = new HistoryReference(
-            Model.getSingleton().getSession(),
-            HistoryReference.TYPE_AUTHENTICATION, // or TYPE_PROXIED
-            msg
-        );
+        try {
+            // Explicitly write the message to ZAP's history database
+            HistoryReference hr =
+                    new HistoryReference(
+                            Model.getSingleton().getSession(),
+                            HistoryReference.TYPE_AUTHENTICATION, // or TYPE_PROXIED
+                            msg);
 
-        // Store the history ID for later retrieval
-        httpMessageHistoryIds.add(hr.getHistoryId());
-        LOGGER.debug("Recorded HTTP message ID: {}", hr.getHistoryId());
+            // Store the history ID for later retrieval
+            httpMessageHistoryIds.add(hr.getHistoryId());
+            LOGGER.debug("Recorded HTTP message ID: {}", hr.getHistoryId());
 
-    } catch (Exception e) {
-        LOGGER.warn("Failed to add message to history", e);
-    }
+        } catch (Exception e) {
+            LOGGER.warn("Failed to add message to history", e);
+        }
 
         historyProvider.addAuthMessageToHistory(msg);
 

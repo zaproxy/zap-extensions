@@ -203,7 +203,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
         private List<AuthenticationStep> authenticationSteps = List.of();
         private boolean authTestSucessful = false;
 
-        public boolean wasAuthTestSucessful (){
+        public boolean wasAuthTestSucessful() {
             return authTestSucessful;
         }
 
@@ -264,7 +264,6 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
             return new BrowserBasedAuthenticationMethodType(httpSender);
         }
 
-        
         public boolean isDiagnostics() {
             return diagnostics;
         }
