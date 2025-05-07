@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,8 +29,12 @@ import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
+import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
+import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.session.WebSession;
+import org.zaproxy.zap.users.User;
 
 public class ReplayTotpActiveScanRule extends AbstractHostPlugin
         implements CommonActiveScanRuleInfo {
@@ -79,7 +84,8 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin
                 return;
             }
 
-            // Check if user provided valid code & check if initial authentication works with normal
+            // Check if user provided previously( or is static currently valid ) valid code & check
+            // if initial authentication works with normal
             // passcode
             if (context.totpStep.getValue() != null || !context.totpStep.getValue().isEmpty()) {
                 if (context.totpStep.getType() == AuthenticationStep.Type.TOTP_FIELD)
@@ -87,17 +93,20 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin
                 WebSession webSession =
                         context.browserAuthMethod.authenticate(
                                 context.sessionManagementMethod, context.credentials, context.user);
-                if (webSession == null) {
-                    // LOGGER.error("Normal Authentication unsuccessful. TOTP not configured
-                    // correctly.");
+                if (webSession == null || !context.browserAuthMethod.wasAuthTestSucessful()) {
                     return;
                 }
                 // Check for passcode reuse vulnerability
-                WebSession webSession_redo =
-                        context.browserAuthMethod.authenticate(
-                                context.sessionManagementMethod, context.credentials, context.user);
-                if (webSession_redo != null) {
-                    LOGGER.error("Authentication with reused passcode. Vulnerability found.");
+                boolean webSessionRedo =
+                        testAuthenticatSession(
+                                context.totpStep,
+                                context.totpStep.getValue(),
+                                context.authSteps,
+                                context.browserAuthMethod,
+                                context.sessionManagementMethod,
+                                context.credentials,
+                                context.user);
+                if (webSessionRedo) {
                     buildAlert(
                                     "TOTP Replay Attack Vulnerability",
                                     "The application is vulnerable to replay attacks, allowing attackers to reuse previously intercepted TOTP codes to authenticate.",
@@ -109,6 +118,22 @@ public class ReplayTotpActiveScanRule extends AbstractHostPlugin
         } catch (Exception e) {
             LOGGER.error("Error in TOTP Page Scan Rule: {}", e.getMessage(), e);
         }
+    }
+
+    private boolean testAuthenticatSession(
+            AuthenticationStep totpStep,
+            String newTotpValue,
+            List<AuthenticationStep> authSteps,
+            BrowserBasedAuthenticationMethod browserAuthMethod,
+            SessionManagementMethod sessionManagementMethod,
+            UsernamePasswordAuthenticationCredentials credentials,
+            User user) {
+        if (totpStep.getType() == AuthenticationStep.Type.TOTP_FIELD)
+            totpStep.setUserProvidedTotp(newTotpValue);
+        else totpStep.setValue(newTotpValue);
+        browserAuthMethod.setAuthenticationSteps(authSteps);
+        browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
+        return browserAuthMethod.wasAuthTestSucessful();
     }
 
     private AlertBuilder buildAlert(

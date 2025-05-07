@@ -33,7 +33,6 @@ import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.Browser
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.session.SessionManagementMethod;
-import org.zaproxy.zap.session.WebSession;
 import org.zaproxy.zap.users.User;
 
 public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActiveScanRuleInfo {
@@ -96,9 +95,9 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
                             "888888",
                             "8888888",
                             "88888888");
-            // Test passcode 000-000 (check format- RFC-6238 (6,7,8)
+            // Test passcodes (check format- RFC-6238 (6,7,8)
             for (String code : backupPasscodes) {
-                WebSession webSessionBlankCode =
+                boolean webSessionNew =
                         testAuthenticatSession(
                                 context.totpStep,
                                 code,
@@ -107,15 +106,15 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
                                 context.sessionManagementMethod,
                                 context.credentials,
                                 context.user);
-                if (webSessionBlankCode != null) {
-                    // LOGGER.error("Authentication successful with blank passcode.Vulernaibility
-                    // found.");
+
+                if (webSessionNew) {
                     buildAlert(
                                     "Passcode Authentication Bypass",
                                     "The application allows authentication using passcodes that meet the expected format but are weak or known values. This poses a security risk as attackers could exploit predictable static backup passcodes to gain unauthorized access.",
                                     "",
                                     msg)
                             .raise();
+                    return;
                 }
             }
 
@@ -124,7 +123,7 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
         }
     }
 
-    private WebSession testAuthenticatSession(
+    private boolean testAuthenticatSession(
             AuthenticationStep totpStep,
             String newTotpValue,
             List<AuthenticationStep> authSteps,
@@ -136,7 +135,8 @@ public class TotpActiveScanRule extends AbstractHostPlugin implements CommonActi
             totpStep.setUserProvidedTotp(newTotpValue);
         else totpStep.setValue(newTotpValue);
         browserAuthMethod.setAuthenticationSteps(authSteps);
-        return browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
+        browserAuthMethod.authenticate(sessionManagementMethod, credentials, user);
+        return browserAuthMethod.wasAuthTestSucessful();
     }
 
     private AlertBuilder buildAlert(

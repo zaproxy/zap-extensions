@@ -57,6 +57,7 @@ function submitform() {
 	        
 	        if (json.result === "OK") {
 	        	sessionStorage.setItem("accesstoken", json.accesstoken);
+				sessionStorage.setItem("totpcode", json.totp);
 	        	window.location.replace("totp.html");
 	        } else {
 	        	const h3 = document.createElement("h3");

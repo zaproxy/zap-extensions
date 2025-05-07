@@ -70,7 +70,7 @@ public class OpenApiWithOtpVerificationPage extends TestPage {
 
         LOGGER.debug("Token: {} user: {} TOTP: {}", token, user, totp);
 
-        if (user != null && totp != null && totp.equals("123456")) {
+        if (user != null && totp != null && getParent().validateTotp(token, totp)) {
             response.put("result", "OK");
             response.put("user", user);
             getParent().markTokenVerified(token);

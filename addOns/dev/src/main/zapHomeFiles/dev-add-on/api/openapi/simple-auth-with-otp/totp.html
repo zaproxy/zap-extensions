@@ -22,12 +22,7 @@
 	</tr>
 	</table>
 	</form>
-	<p>
-	Test credentials:
-	<ul>
-		<li>totp = 123456
-	</ul>
-	</p>
+	<p><strong>Your TOTP Code:</strong> <span id="totpCodeDisplay"></span></p>
 </div>
 <script>
 function submitTOTP() {
@@ -64,6 +59,12 @@ document.getElementById('totp').onkeydown = function(e){
     }
 };
 
+window.addEventListener("load", function () {
+    const code = sessionStorage.getItem("totpcode");
+    if (code) {
+        document.getElementById("totpCodeDisplay").textContent = code;
+    }
+});
 </script>
 </body>
 </html>

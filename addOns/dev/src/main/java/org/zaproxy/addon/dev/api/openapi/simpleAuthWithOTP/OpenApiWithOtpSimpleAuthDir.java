@@ -31,6 +31,8 @@ import org.zaproxy.addon.dev.TestProxyServer;
  */
 public class OpenApiWithOtpSimpleAuthDir extends TestAuthDirectory {
     private Map<String, Boolean> verifiedTokens = new HashMap<>();
+    private Map<String, String> currentTotpCodes = new HashMap<>();
+    private Map<String, String> tokenToUserMap = new HashMap<>();
 
     public OpenApiWithOtpSimpleAuthDir(TestProxyServer server, String name) {
         super(server, name);
@@ -45,5 +47,28 @@ public class OpenApiWithOtpSimpleAuthDir extends TestAuthDirectory {
 
     public boolean isTokenVerified(String token) {
         return verifiedTokens.getOrDefault(token, false);
+    }
+
+    private int totpIndex = 0;
+    private static final String[] CYCLE_TOTP_CODES = {"135135", "351351", "513513"};
+
+    public String generateAndStoreTotp(String token) {
+        String code = CYCLE_TOTP_CODES[totpIndex];
+        totpIndex = (totpIndex + 1) % CYCLE_TOTP_CODES.length;
+        currentTotpCodes.put(token, code);
+        return code;
+    }
+
+    public boolean validateTotp(String token, String code) {
+        return code != null && code.equals(currentTotpCodes.get(token));
+    }
+
+    public void setUser(String token, String user) {
+        tokenToUserMap.put(token, user);
+    }
+
+    @Override
+    public String getUser(String token) {
+        return tokenToUserMap.get(token);
     }
 }
