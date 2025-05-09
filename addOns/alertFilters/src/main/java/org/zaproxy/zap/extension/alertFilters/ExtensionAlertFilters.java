@@ -472,7 +472,10 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         int historyId = recordAlert.getHistoryId();
         if (historyId > 0) {
             HistoryReference href = this.getExtHistory().getHistoryReference(historyId);
-            return new Alert(recordAlert, href);
+            Alert alert = new Alert(recordAlert, href);
+            // TODO remove once targeting 2.17+
+            alert.setHistoryId(recordAlert.getHistoryId());
+            return alert;
         } else {
             // Not ideal :/
             return new Alert(recordAlert);
