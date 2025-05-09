@@ -22,6 +22,7 @@ package org.zaproxy.addon.oast.services.interactsh;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.ConnectException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -147,7 +148,7 @@ public class InteractshService extends OastService implements OptionsChangedList
             try {
                 deregister();
                 register();
-                LOGGER.debug(
+                LOGGER.info(
                         "Updated Interactsh params - server URL: {} and polling frequency: {} seconds.",
                         param.getServerUrl(),
                         param.getPollingFrequency());
@@ -184,7 +185,7 @@ public class InteractshService extends OastService implements OptionsChangedList
 
     synchronized void register(boolean startPolling) throws InteractshException {
         try {
-            if (isRegistered) {
+            if (isRegistered || StringUtils.isBlank(param.getServerUrl())) {
                 return;
             }
             serverUrl = new URI(param.getServerUrl(), true);
@@ -211,7 +212,7 @@ public class InteractshService extends OastService implements OptionsChangedList
             HttpRequestHeader reqHeader =
                     createRequestHeader(registrationUri, reqBody.getBytes().length);
             HttpMessage reqMsg = new HttpMessage(reqHeader, reqBody);
-            httpSender.sendAndReceive(reqMsg);
+            sendRegistrationRequest(reqMsg);
             if (reqMsg.getResponseHeader().getStatusCode() != 200) {
                 LOGGER.warn(
                         "Error during interactsh register, due to bad HTTP code {}. Content: {}",
@@ -240,6 +241,20 @@ public class InteractshService extends OastService implements OptionsChangedList
             throw new InteractshException(
                     Constant.messages.getString(
                             "oast.interactsh.error.register", e.getLocalizedMessage()));
+        }
+    }
+
+    private void sendRegistrationRequest(HttpMessage reqMsg) throws IOException {
+        try {
+            httpSender.sendAndReceive(reqMsg);
+        } catch (ConnectException hhce) {
+            if (hhce.getMessage().contains("failed: Connection refused: getsockopt")) {
+                LOGGER.warn(
+                        "Host connection failed while applying Interactsh config changes - server URL: {} and polling frequency: {} seconds. The settings were still applied. {}",
+                        param.getServerUrl(),
+                        param.getPollingFrequency(),
+                        hhce.getMessage());
+            }
         }
     }
 
