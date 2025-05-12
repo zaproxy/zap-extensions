@@ -517,7 +517,7 @@ public class AuthUtils {
             }
             sleep(TIME_TO_SLEEP_IN_MSECS);
         }
-        if (userField != null && pwdField != null) {
+        if ((userField != null || userAdded) && pwdField != null) {
             if (!userAdded) {
                 LOGGER.debug("Entering user field on {}", wd.getCurrentUrl());
                 fillUserName(diags, wd, username, userField);
@@ -529,12 +529,14 @@ public class AuthUtils {
                 }
                 sendReturn(diags, wd, pwdField);
             } catch (Exception e) {
-                // Handle the case where the password field was present but hidden / disabled
-                LOGGER.debug("Handling hidden password field on {}", wd.getCurrentUrl());
-                sendReturnAndSleep(diags, wd, userField);
-                sleep(TIME_TO_SLEEP_IN_MSECS);
-                fillPassword(diags, wd, password, pwdField);
-                sendReturn(diags, wd, pwdField);
+                if (userField != null) {
+                    // Handle the case where the password field was present but hidden / disabled
+                    LOGGER.debug("Handling hidden password field on {}", wd.getCurrentUrl());
+                    sendReturnAndSleep(diags, wd, userField);
+                    sleep(TIME_TO_SLEEP_IN_MSECS);
+                    fillPassword(diags, wd, password, pwdField);
+                    sendReturn(diags, wd, pwdField);
+                }
             }
 
             while (it.hasNext()) {
