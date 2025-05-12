@@ -172,7 +172,7 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
         return true;
     }
 
-    private void revealFields(HttpMessage msg) {
+    void revealFields(HttpMessage msg) {
         boolean changed = false;
         String response = msg.getResponseBody().toString();
         Source src = new Source(response);
@@ -216,6 +216,7 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
         }
         if (changed) {
             msg.setResponseBody(outputDocument.toString());
+            msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
         }
     }
 
