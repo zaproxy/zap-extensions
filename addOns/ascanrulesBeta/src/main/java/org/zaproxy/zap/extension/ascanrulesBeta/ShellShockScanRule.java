@@ -53,7 +53,8 @@ public class ShellShockScanRule extends AbstractAppParamPlugin implements Common
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A06_VULN_COMP,
                                 CommonAlertTag.OWASP_2017_A09_VULN_COMP,
-                                CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ));
+                                CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ,
+                                CommonAlertTag.TEST_TIMING));
         alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
@@ -205,10 +206,14 @@ public class ShellShockScanRule extends AbstractAppParamPlugin implements Common
     }
 
     private AlertBuilder buildAlert(String paramName, String attack) {
+        Map<String, String> alertTags = new HashMap<>();
+        alertTags.putAll(getAlertTags());
+        alertTags.remove(CommonAlertTag.TEST_TIMING.getTag());
         return createAlert()
                 .setParam(paramName)
                 .setAttack(attack)
                 .setEvidence(EVIDENCE)
+                .setTags(alertTags)
                 .setAlertRef(getId() + "-1");
     }
 

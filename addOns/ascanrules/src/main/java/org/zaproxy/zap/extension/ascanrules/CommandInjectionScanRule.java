@@ -98,7 +98,8 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                         CommonAlertTag.toMap(
                                 CommonAlertTag.OWASP_2021_A03_INJECTION,
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
-                                CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ));
+                                CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ,
+                                CommonAlertTag.TEST_TIMING));
         alertTags.put(PolicyTag.API.getTag(), "");
         alertTags.put(PolicyTag.DEV_CICD.getTag(), "");
         alertTags.put(PolicyTag.DEV_STD.getTag(), "");
@@ -368,6 +369,16 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         return ALERT_TAGS;
     }
 
+    private Map<String, String> getNeededAlertTags(TestType type) {
+        if (TestType.FEEDBACK.equals(type)) {
+            Map<String, String> alertTags = new HashMap<>();
+            alertTags.putAll(getAlertTags());
+            alertTags.remove(CommonAlertTag.TEST_TIMING.getTag());
+            return alertTags;
+        }
+        return ALERT_TAGS;
+    }
+
     @Override
     public int getCweId() {
         return 78;
@@ -583,9 +594,9 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                             "[OS Command Injection Found] on parameter [{}] with value [{}]",
                             paramName,
                             paramValue);
-                    String otherInfo = getOtherInfo(TestType.FEEDBACK, paramValue);
 
-                    buildAlert(paramName, paramValue, matcher.group(), otherInfo, msg).raise();
+                    buildAlert(paramName, paramValue, matcher.group(), TestType.FEEDBACK, msg)
+                            .raise();
 
                     // All done. No need to look for vulnerabilities on subsequent
                     // payloads on the same request (to reduce performance impact)
@@ -668,10 +679,9 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                             "[Blind OS Command Injection Found] on parameter [{}] with value [{}]",
                             paramName,
                             paramValue);
-                    String otherInfo = getOtherInfo(TestType.TIME, paramValue);
 
                     // just attach this alert to the last sent message
-                    buildAlert(paramName, paramValue, "", otherInfo, message.get()).raise();
+                    buildAlert(paramName, paramValue, "", TestType.TIME, message.get()).raise();
 
                     // All done. No need to look for vulnerabilities on subsequent
                     // payloads on the same request (to reduce performance impact)
@@ -720,25 +730,22 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
     }
 
     private AlertBuilder buildAlert(
-            String param, String attack, String evidence, String otherInfo, HttpMessage msg) {
+            String param, String attack, String evidence, TestType type, HttpMessage msg) {
+        String otherInfo = getOtherInfo(type, attack);
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setParam(param)
                 .setAttack(attack)
                 .setEvidence(evidence)
                 .setMessage(msg)
-                .setOtherInfo(otherInfo);
+                .setOtherInfo(otherInfo)
+                .setTags(getNeededAlertTags(type));
     }
 
     @Override
     public List<Alert> getExampleAlerts() {
         return List.of(
-                buildAlert(
-                                "qry",
-                                "a;cat /etc/passwd ",
-                                "root:x:0:0",
-                                getOtherInfo(TestType.FEEDBACK, "a;cat /etc/passwd "),
-                                null)
+                buildAlert("qry", "a;cat /etc/passwd ", "root:x:0:0", TestType.FEEDBACK, null)
                         .build());
     }
 }
