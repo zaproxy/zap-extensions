@@ -81,7 +81,8 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
      * Windows local file targets and detection pattern
      */
     private static final ContentsMatcher WIN_PATTERN =
-            new PatternContentsMatcher(Pattern.compile("\\[drivers\\]"));
+            new PatternContentsMatcher(Pattern.compile("\\[drivers\\]"), Tech.Windows);
+    private static final String WIN_DIR_EVIDENCE = "Windows";
     private static final String[] WIN_LOCAL_FILE_TARGETS = {
         // Absolute Windows file retrieval (we suppose C:\\)
         "c:/Windows/system.ini",
@@ -130,7 +131,8 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
      */
     // Dot used to match 'x' or '!' (used in AIX)
     private static final ContentsMatcher NIX_PATTERN =
-            new PatternContentsMatcher(Pattern.compile("root:.:0:0"));
+            new PatternContentsMatcher(Pattern.compile("root:.:0:0"), Tech.Linux);
+    private static final String NIX_DIR_EVIDENCE = "etc";
     private static final String[] NIX_LOCAL_FILE_TARGETS = {
         // Absolute file retrieval
         "/etc/passwd",
@@ -156,10 +158,9 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
         // ..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252F..%252Fetc%252Fpasswd%2500.jpg
     };
 
-    /*
-     * Windows/Unix/Linux/etc. local directory targets and detection pattern
-     */
-    private static final ContentsMatcher DIR_PATTERN = new DirNamesContentsMatcher();
+    private static final ContentsMatcher NIX_DIR_MATCHER = new DirNamesContentsMatcher(Tech.Linux);
+    private static final ContentsMatcher WIN_DIR_MATCHER =
+            new DirNamesContentsMatcher(Tech.Windows);
     private static final String[] WIN_LOCAL_DIR_TARGETS = {
         "c:/",
         "c:\\",
@@ -181,17 +182,19 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
         "/",
         "../../../../../../../../../../../../../../../../",
         "/../../../../../../../../../../../../../../../../",
-        "file:///",
+        "file:///"
     };
 
     private static final ContentsMatcher WAR_PATTERN =
-            new PatternContentsMatcher(Pattern.compile("</web-app>"));
+            new PatternContentsMatcher(Pattern.compile("</web-app>"), Tech.Tomcat);
 
     /*
      * Standard local file prefixes
      */
     private static final String[] LOCAL_FILE_RELATIVE_PREFIXES = {"", "/", "\\"};
 
+    private static final List<String> DIR_EVIDENCE_LIST =
+            List.of(NIX_DIR_EVIDENCE, WIN_DIR_EVIDENCE);
     /*
      * details of the vulnerability which we are attempting to find
      */
@@ -342,7 +345,6 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
 
             // Check 2: Start detection for *NIX patterns
             if (inScope(Tech.Linux) || inScope(Tech.MacOS)) {
-
                 for (int h = 0; h < nixCount; h++) {
 
                     // Check if a there was a finding or the scan has been stopped
@@ -384,10 +386,9 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
             // Check 3: Detect if this page is a directory browsing component
             if (inScope(Tech.Linux) || inScope(Tech.MacOS)) {
                 for (int h = 0; h < nixDirCount; h++) {
-
                     // Check if a there was a finding or the scan has been stopped
                     // if yes dispose resources and exit
-                    if (sendAndCheckPayload(param, NIX_LOCAL_DIR_TARGETS[h], DIR_PATTERN, 3)
+                    if (sendAndCheckPayload(param, NIX_LOCAL_DIR_TARGETS[h], NIX_DIR_MATCHER, 3)
                             || isStop()) {
                         // Dispose all resources
                         // Exit the scan rule
@@ -397,7 +398,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
             }
             if (inScope(Tech.Windows)) {
                 for (int h = 0; h < winDirCount; h++) {
-                    if (sendAndCheckPayload(param, WIN_LOCAL_DIR_TARGETS[h], DIR_PATTERN, 3)
+                    if (sendAndCheckPayload(param, WIN_LOCAL_DIR_TARGETS[h], WIN_DIR_MATCHER, 3)
                             || isStop()) {
                         // Dispose all resources
                         // Exit the scan rule
@@ -659,12 +660,23 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
 
     private AlertBuilder createMatchedAlert(
             String param, String attack, String evidence, int check) {
-        return newAlert()
-                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setParam(param)
-                .setAttack(attack)
-                .setEvidence(evidence)
-                .setAlertRef(getId() + "-" + check);
+        AlertBuilder builder =
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setParam(param)
+                        .setAttack(attack)
+                        .setEvidence(evidence)
+                        .setAlertRef(getId() + "-" + check);
+        if (DIR_EVIDENCE_LIST.contains(evidence)) {
+            builder.setOtherInfo(
+                    Constant.messages.getString(
+                            MESSAGE_PREFIX + "info",
+                            evidence,
+                            evidence.equals(WIN_DIR_EVIDENCE)
+                                    ? DirNamesContentsMatcher.WIN_MATCHES
+                                    : DirNamesContentsMatcher.NIX_MATCHES));
+        }
+        return builder;
     }
 
     @Override
@@ -690,7 +702,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
 
         private final Pattern pattern;
 
-        public PatternContentsMatcher(Pattern pattern) {
+        public PatternContentsMatcher(Pattern pattern, Tech tech) {
             this.pattern = pattern;
         }
 
@@ -706,46 +718,61 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
 
     private static class DirNamesContentsMatcher implements ContentsMatcher {
 
+        private static final String NIX_MATCHES =
+                String.join(", ", List.of("proc", NIX_DIR_EVIDENCE, "boot", "tmp", "home"));
+        private static final String WIN_MATCHES =
+                String.join(", ", List.of(WIN_DIR_EVIDENCE, "Program Files"));
+        private static final Pattern PROC_PATT =
+                Pattern.compile(
+                        "(?:^|\\W)proc(?:\\W|$)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        private static final Pattern ETC_PATT =
+                Pattern.compile(
+                        "(?:^|\\W)etc(?:\\W|$)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        private static final Pattern BOOT_PATT =
+                Pattern.compile(
+                        "(?:^|\\W)boot(?:\\W|$)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        private static final Pattern TMP_PATT =
+                Pattern.compile(
+                        "(?:^|\\W)tmp(?:\\W|$)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        private static final Pattern HOME_PATT =
+                Pattern.compile(
+                        "(?:^|\\W)home(?:\\W|$)", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+
+        private Tech tech;
+
+        public DirNamesContentsMatcher(Tech tech) {
+            this.tech = tech;
+        }
+
         @Override
         public String match(String contents) {
-            String result = matchNixDirectories(contents);
-            if (result != null) {
-                return result;
+            if (this.tech == Tech.Linux) {
+                return matchNixDirectories(contents);
             }
-            return matchWinDirectories(contents);
+            if (this.tech == Tech.Windows) {
+                return matchWinDirectories(contents);
+            }
+            return null;
         }
 
         private static String matchNixDirectories(String contents) {
-            Pattern procPattern =
-                    Pattern.compile("(?:^|\\W)proc(?:\\W|$)", Pattern.CASE_INSENSITIVE);
-            Pattern etcPattern = Pattern.compile("(?:^|\\W)etc(?:\\W|$)", Pattern.CASE_INSENSITIVE);
-            Pattern bootPattern =
-                    Pattern.compile("(?:^|\\W)boot(?:\\W|$)", Pattern.CASE_INSENSITIVE);
-            Pattern tmpPattern = Pattern.compile("(?:^|\\W)tmp(?:\\W|$)", Pattern.CASE_INSENSITIVE);
-            Pattern homePattern =
-                    Pattern.compile("(?:^|\\W)home(?:\\W|$)", Pattern.CASE_INSENSITIVE);
-
-            Matcher procMatcher = procPattern.matcher(contents);
-            Matcher etcMatcher = etcPattern.matcher(contents);
-            Matcher bootMatcher = bootPattern.matcher(contents);
-            Matcher tmpMatcher = tmpPattern.matcher(contents);
-            Matcher homeMatcher = homePattern.matcher(contents);
-
-            if (procMatcher.find()
-                    && etcMatcher.find()
-                    && bootMatcher.find()
-                    && tmpMatcher.find()
-                    && homeMatcher.find()) {
-                return "etc";
+            if (PROC_PATT.matcher(contents).find()
+                    && ETC_PATT.matcher(contents).find()
+                    && BOOT_PATT.matcher(contents).find()
+                    && TMP_PATT.matcher(contents).find()
+                    && HOME_PATT.matcher(contents).find()) {
+                return NIX_DIR_EVIDENCE;
             }
 
             return null;
         }
 
         private static String matchWinDirectories(String contents) {
-            if (contents.contains("Windows")
-                    && Pattern.compile("Program\\sFiles").matcher(contents).find()) {
-                return "Windows";
+            if (contents.contains(WIN_DIR_EVIDENCE)
+                    && Pattern.compile("Program\\sFiles", Pattern.CASE_INSENSITIVE)
+                            .matcher(contents)
+                            .find()) {
+                return WIN_DIR_EVIDENCE;
             }
 
             return null;
