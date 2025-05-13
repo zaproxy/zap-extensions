@@ -22,6 +22,7 @@ package org.zaproxy.addon.authhelper;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
@@ -34,6 +35,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.httpclient.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -226,6 +228,45 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
         assertThat(reqHeader.getHeader("Header1"), is(equalTo("Replace1")));
         assertThat(reqHeader.getHeader("Header2"), is(equalTo("Value2")));
         assertThat(reqHeader.getHeader("Header3"), is(equalTo("Value3")));
+        assertThat(reqHeader.getHeader("Host"), is(equalTo("example.com")));
+    }
+
+    @Test
+    void shouldProcessMessageToMatchSessionWithCookiesWithSameName() throws Exception {
+        // Given
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        Model.setSingletonForTesting(model);
+
+        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
+        given(model.getSession()).willReturn(session);
+
+        Context context = mock(Context.class);
+        given(session.getContext(0)).willReturn(context);
+
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                """
+                                GET / HTTP/1.1
+                                Host: example.com
+                                """),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader("HTTP/1.1 200 OK"),
+                        new HttpResponseBody("Response Body"));
+        HeaderBasedSessionManagementMethod method = new HeaderBasedSessionManagementMethod(0);
+
+        HttpHeaderBasedSession ws = new HttpHeaderBasedSession(List.of());
+        ws.getHttpState()
+                .addCookie(new Cookie("example.com", "cookie", "value A", "/path/a", null, false));
+        ws.getHttpState()
+                .addCookie(new Cookie("example.com", "cookie", "value B", "/path/b", null, false));
+
+        // When
+        method.processMessageToMatchSession(msg, ws);
+        HttpRequestHeader reqHeader = msg.getRequestHeader();
+
+        // Then
+        assertThat(reqHeader.getHeaders(), hasSize(1));
         assertThat(reqHeader.getHeader("Host"), is(equalTo("example.com")));
     }
 
