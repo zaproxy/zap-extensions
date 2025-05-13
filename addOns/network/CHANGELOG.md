@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Fix a naming mistake in "ExtParam - .NET adx resources (SR/WR.adx?d=)" adx should have been axd.
     - Extend Image related patterns to include svg and webp.
     - Extend Audio/Video patterns to include webm.
+- Change default log level of cookies processing to error to avoid flooding the logs with warnings when the cookies are rejected/invalid.
 
 ## [0.21.0] - 2025-03-04
 ### Fixed
