@@ -62,6 +62,7 @@ dependencies {
     implementation("io.kaitai:kaitai-struct-runtime:0.10")
 
     testImplementation(project(":testutils"))
+    testImplementation(libs.log4j.core)
 }
 
 val japicmp by tasks.existing(JapicmpTask::class) {

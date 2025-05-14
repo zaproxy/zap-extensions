@@ -21,16 +21,32 @@ package org.zaproxy.addon.spider;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.StringLayout;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Property;
+import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,6 +65,7 @@ class UrlCanonicalizerUnitTest {
 
     private static final String BASE_URL = null;
 
+    private List<String> logEvents;
     private SpiderParam options;
     private ParseContext ctx;
 
@@ -58,6 +75,13 @@ class UrlCanonicalizerUnitTest {
         options = mock(SpiderParam.class);
         given(ctx.getSpiderParam()).willReturn(options);
         given(options.isIrrelevantUrlParameter(any())).willReturn(false);
+
+        logEvents = registerLogEvents();
+    }
+
+    @AfterEach
+    void cleanUp() throws Exception {
+        Configurator.reconfigure(getClass().getResource("/log4j2-test.properties").toURI());
     }
 
     @Test
@@ -170,6 +194,7 @@ class UrlCanonicalizerUnitTest {
     @ValueSource(
             strings = {
                 "javascript:",
+                "javascript://Something",
                 "javascript:ignore()",
                 "mailto:ignore@example.com",
                 "tel:+1-900-555-0191"
@@ -179,6 +204,7 @@ class UrlCanonicalizerUnitTest {
         String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
         assertThat(canonicalizedUri, canonicalizedUri, is(equalTo(null)));
+        assertThat(logEvents, not(hasItem(startsWith("WARN "))));
     }
 
     @Test
@@ -587,5 +613,49 @@ class UrlCanonicalizerUnitTest {
                         irrelevantParameters);
         // Then
         assertThat(cleanedUri, is(equalTo("http://example.com/?name2")));
+    }
+
+    private static List<String> registerLogEvents() {
+        List<String> logEvents = new ArrayList<>();
+        TestLogAppender logAppender = new TestLogAppender("%p %m%n", logEvents::add);
+        LoggerContext context = LoggerContext.getContext();
+        LoggerConfig rootLoggerconfig = context.getConfiguration().getRootLogger();
+        rootLoggerconfig.getAppenders().values().forEach(context.getRootLogger()::removeAppender);
+        rootLoggerconfig.addAppender(logAppender, null, null);
+        rootLoggerconfig.setLevel(Level.ALL);
+        context.updateLoggers();
+        return logEvents;
+    }
+
+    /** An appender that allows to consume all log messages. */
+    private static class TestLogAppender extends AbstractAppender {
+
+        private static final Property[] NO_PROPERTIES = {};
+
+        private final Consumer<String> logConsumer;
+
+        TestLogAppender(Consumer<String> logConsumer) {
+            this("%m%n", logConsumer);
+        }
+
+        public TestLogAppender(String pattern, Consumer<String> logConsumer) {
+            super(
+                    "TestLogAppender",
+                    null,
+                    PatternLayout.newBuilder()
+                            .withDisableAnsi(true)
+                            .withCharset(StandardCharsets.UTF_8)
+                            .withPattern(pattern)
+                            .build(),
+                    true,
+                    NO_PROPERTIES);
+            this.logConsumer = logConsumer;
+            start();
+        }
+
+        @Override
+        public void append(LogEvent event) {
+            logConsumer.accept(((StringLayout) getLayout()).toSerializable(event));
+        }
     }
 }
