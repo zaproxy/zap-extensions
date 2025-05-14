@@ -562,7 +562,7 @@ public class AuthUtils {
                 // This can happen for more traditional apps - refresh the current one in case
                 // its a good option.
                 wd.get(wd.getCurrentUrl());
-                AuthUtils.sleep(TimeUnit.SECONDS.toMillis(1));
+                AuthUtils.sleep(TimeUnit.SECONDS.toMillis(waitInSecs));
                 diags.recordStep(
                         wd,
                         Constant.messages.getString("authhelper.auth.method.diags.steps.refresh"));

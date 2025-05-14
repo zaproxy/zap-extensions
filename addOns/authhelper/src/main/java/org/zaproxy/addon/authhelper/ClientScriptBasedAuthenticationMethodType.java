@@ -27,9 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -39,6 +37,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXComboBox;
+import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.DatabaseException;
@@ -70,9 +69,7 @@ import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zest.core.v1.ZestActionSleep;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
-import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestScript;
-import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthenticationMethodType {
 
@@ -354,26 +351,6 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             return zestScript.getStatements().stream().anyMatch(ZestClientLaunch.class::isInstance);
         }
 
-        private Set<String> getClientClosedWindowHandles(ZestScript zestScript) {
-            return zestScript.getStatements().stream()
-                    .filter(ZestClientWindowClose.class::isInstance)
-                    .map(ZestClientWindowClose.class::cast)
-                    .map(ZestClientWindowClose::getWindowHandle)
-                    .collect(Collectors.toSet());
-        }
-
-        protected void appendCloseStatements(ZestScript zestScript) {
-            ZestStatement last = zestScript.getLast();
-            if (!(last instanceof ZestClientWindowClose)) {
-                // Potentially need to add at least one close statement
-                Set<String> handles = zestScript.getClientWindowHandles();
-                handles.removeAll(this.getClientClosedWindowHandles(zestScript));
-                if (!handles.isEmpty()) {
-                    handles.forEach(h -> zestScript.add(new ZestClientWindowClose(h, 1)));
-                }
-            }
-        }
-
         @Override
         public WebSession authenticate(
                 SessionManagementMethod sessionManagementMethod,
@@ -398,38 +375,36 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             }
             LOGGER.debug("Script class: {}", authScript.getClass().getCanonicalName());
             ExtensionScript.recordScriptCalledStats(script);
+            ZestAuthenticationRunner zestRunner = null;
 
-            try {
-                if (authScript instanceof AuthenticationScriptV2 scriptV2) {
-                    setLoggedInIndicatorPattern(scriptV2.getLoggedInIndicator());
-                    setLoggedOutIndicatorPattern(scriptV2.getLoggedOutIndicator());
-                }
+            try (AuthenticationDiagnostics diags =
+                    new AuthenticationDiagnostics(
+                            diagnostics, getName(), user.getContext().getName(), user.getName())) {
+                try {
+                    if (authScript instanceof AuthenticationScriptV2 scriptV2) {
+                        setLoggedInIndicatorPattern(scriptV2.getLoggedInIndicator());
+                        setLoggedOutIndicatorPattern(scriptV2.getLoggedOutIndicator());
+                    }
 
-                if (authScript instanceof ZestAuthenticationRunner zestRunner) {
-                    ZestScript zestScript = zestRunner.getScript().getZestScript();
-                    if (!hasBrowserLaunch(zestScript)) {
-                        LOGGER.warn("The script does not have any browser launch.");
+                    if (authScript instanceof ZestAuthenticationRunner) {
+                        zestRunner = (ZestAuthenticationRunner) authScript;
+                        ZestScript zestScript = zestRunner.getScript().getZestScript();
+                        if (!hasBrowserLaunch(zestScript)) {
+                            LOGGER.warn("The script does not have any browser launch.");
+                            return null;
+                        }
+
+                        zestRunner.registerHandler(getHandler(user));
+                        zestScript.add(
+                                new ZestActionSleep(TimeUnit.SECONDS.toMillis(getLoginPageWait())));
+                    } else {
+                        LOGGER.warn("Expected authScript to be a Zest script");
                         return null;
                     }
 
-                    zestRunner.registerHandler(getHandler(user));
-                    zestScript.add(
-                            new ZestActionSleep(TimeUnit.SECONDS.toMillis(getLoginPageWait())));
-                    appendCloseStatements(zestScript);
-                } else {
-                    LOGGER.warn("Expected authScript to be a Zest script");
-                    return null;
-                }
+                    HttpSender sender = getHttpSender();
+                    sender.setUser(user);
 
-                HttpSender sender = getHttpSender();
-                sender.setUser(user);
-
-                try (AuthenticationDiagnostics diags =
-                        new AuthenticationDiagnostics(
-                                diagnostics,
-                                getName(),
-                                user.getContext().getName(),
-                                user.getName())) {
                     diags.insertDiagnostics(zestRunner.getScript().getZestScript());
                     if (handler != null) {
                         handler.resetAuthMsg();
@@ -439,28 +414,60 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                             new AuthenticationHelper(sender, sessionManagementMethod, user),
                             getParamValuesTemp(),
                             cred);
-                }
-            } catch (Exception e) {
-                // Catch Exception instead of ScriptException and IOException because script engine
-                // implementations might throw other exceptions on script errors (e.g.
-                // jdk.nashorn.internal.runtime.ECMAException)
-                user.getAuthenticationState()
-                        .setLastAuthFailure(
-                                "Error running authentication script " + e.getMessage());
-                LOGGER.error(
-                        "An error occurred while trying to authenticate using the Authentication Script: {}",
-                        script.getName(),
-                        e);
-                getExtensionScript().handleScriptException(script, e);
-                return null;
-            }
 
-            // Wait until the authentication request is identified
-            for (int i = 0; i < AuthUtils.getWaitLoopCount(); i++) {
-                if (handler.getAuthMsg() != null) {
-                    break;
+                } catch (Exception e) {
+                    // Catch Exception instead of ScriptException and IOException because script
+                    // engine
+                    // implementations might throw other exceptions on script errors (e.g.
+                    // jdk.nashorn.internal.runtime.ECMAException)
+                    user.getAuthenticationState()
+                            .setLastAuthFailure(
+                                    "Error running authentication script " + e.getMessage());
+                    LOGGER.error(
+                            "An error occurred while trying to authenticate using the Authentication Script: {}",
+                            script.getName(),
+                            e);
+                    getExtensionScript().handleScriptException(script, e);
+                    return null;
                 }
-                AuthUtils.sleep(AuthUtils.TIME_TO_SLEEP_IN_MSECS);
+
+                // Wait until the authentication request is identified
+                for (int i = 0; i < AuthUtils.getWaitLoopCount(); i++) {
+                    if (handler.getAuthMsg() != null) {
+                        break;
+                    }
+                    AuthUtils.sleep(AuthUtils.TIME_TO_SLEEP_IN_MSECS);
+                }
+
+                if (user.getContext().getAuthenticationMethod().getPollUrl() == null
+                        && zestRunner != null
+                        && !zestRunner.getWebDrivers().isEmpty()) {
+                    // We failed to identify a suitable URL for polling.
+                    // This can happen for more traditional apps - refresh the current one in case
+                    // its a good option.
+                    WebDriver wd = zestRunner.getWebDrivers().get(0);
+                    wd.get(wd.getCurrentUrl());
+                    AuthUtils.sleep(TimeUnit.SECONDS.toMillis(getLoginPageWait()));
+
+                    diags.recordStep(
+                            wd,
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.diags.steps.refresh"));
+                }
+            } finally {
+                if (zestRunner != null) {
+                    // Close any webdrivers left open
+                    zestRunner
+                            .getWebDrivers()
+                            .forEach(
+                                    wd -> {
+                                        try {
+                                            wd.close();
+                                        } catch (Exception e) {
+                                            // Ignore
+                                        }
+                                    });
+                }
             }
 
             HttpMessage authMsg = handler.getAuthMsg();
