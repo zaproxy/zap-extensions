@@ -184,7 +184,7 @@ public class InteractshService extends OastService implements OptionsChangedList
 
     synchronized void register(boolean startPolling) throws InteractshException {
         try {
-            if (isRegistered) {
+            if (isRegistered || StringUtils.isBlank(param.getServerUrl())) {
                 return;
             }
             serverUrl = new URI(param.getServerUrl(), true);
@@ -236,7 +236,15 @@ public class InteractshService extends OastService implements OptionsChangedList
                 schedulePoller(0);
             }
         } catch (IOException | CloneNotSupportedException | NoSuchAlgorithmException e) {
-            LOGGER.error("Error during interactsh register: {}", e.getMessage(), e);
+            if (e.getMessage() != null && e.getMessage().contains("Connection refused")) {
+                LOGGER.warn(
+                        "Host connection failed while applying Interactsh config changes - server URL: {}, The settings were still applied. {}",
+                        param.getServerUrl(),
+                        e.getMessage());
+            } else {
+                LOGGER.error("Error during interactsh register: {}", e.getMessage(), e);
+            }
+
             throw new InteractshException(
                     Constant.messages.getString(
                             "oast.interactsh.error.register", e.getLocalizedMessage()));
