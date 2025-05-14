@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Basic CSRF test app.
 - Page with input elements that appear after a delay and off the displayed screen.
 - Auth app which uses multiple (faked) domains.
+- An auth example where there's a div that may obscure the login fields.
 
 ## [0.9.0] - 2025-01-31
 ### Added
