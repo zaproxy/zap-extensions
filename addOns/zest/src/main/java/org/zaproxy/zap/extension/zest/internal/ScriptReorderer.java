@@ -26,6 +26,8 @@ import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.sf.json.JSONObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.zest.ZestStatementFromJson;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
@@ -41,11 +43,13 @@ public class ScriptReorderer {
 
     private List<OrderedZestStatement> orderedStatements = new ArrayList<>();
 
+    private static final Logger LOGGER = LogManager.getLogger(ScriptReorderer.class);
+
     public ScriptReorderer(Consumer<ZestStatement> consumer) {
         this.consumer = consumer;
     }
 
-    public void recordStatement(JSONObject json) throws Exception {
+    public synchronized void recordStatement(JSONObject json) throws Exception {
         orderedStatements.add(
                 new OrderedZestStatement(
                         json.getInt("index"),
@@ -53,8 +57,14 @@ public class ScriptReorderer {
         process();
     }
 
-    private synchronized void process() {
+    private void process() {
         Collections.sort(orderedStatements);
+        if (orderedStatements.size() == 5) {
+            // This is unexpected and is likely to indicate a problem
+            LOGGER.error(
+                    "List of cached statements is 5 which typically indicates a problem, indexes are {}",
+                    orderedStatements.stream().map(OrderedZestStatement::getIndex).toList());
+        }
 
         while (!orderedStatements.isEmpty()
                 && orderedStatements.get(0).getIndex() == lastIndex + 1) {
