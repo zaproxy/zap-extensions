@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.10.0] - 2025-05-15
 ### Added
 - Basic CSRF test app.
 - Page with input elements that appear after a delay and off the displayed screen.
@@ -77,6 +77,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.10.0]: https://github.com/zaproxy/zap-extensions/releases/dev-v0.10.0
 [0.9.0]: https://github.com/zaproxy/zap-extensions/releases/dev-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/dev-v0.8.0
 [0.7.0]: https://github.com/zaproxy/zap-extensions/releases/dev-v0.7.0
