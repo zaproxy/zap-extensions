@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Allow to enable authentication diagnostics for Client Script and Browser Based Authentication through the GUI.
 - Automation Framework errors to the Authentication Report.
 - Replace TOTP token during Client Script Based Authentication.
+- Include more diagnostics in Client Script and Browser Based Authentication methods.
 
 ### Changed
 - Warn when the recorded script used with Client Script Based Authentication does not launch a browser.
@@ -18,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Depend on reports 0.39.0 to include AF errors.
 - Use Header Based Session Management configuration to find a better candidate authentication message with Client Script and Browser Based Authentication methods.
 - Client Script authentication to refresh the page of no suitable verification URL found.
+- Wait for the detection of the session method in Client Script Based Authentication method.
 
 ### Fixed
 - Correct descriptions of the Zest script steps in the Authentication Report.
