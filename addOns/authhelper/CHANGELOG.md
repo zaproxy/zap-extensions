@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Use Header Based Session Management configuration to find a better candidate authentication message with Client Script and Browser Based Authentication methods.
 - Client Script authentication to refresh the page of no suitable verification URL found.
 - Wait for the detection of the session method in Client Script Based Authentication method.
+- Include the name of the interaction in the Client Script Based Authentication diagnostics.
 
 ### Fixed
 - Correct descriptions of the Zest script steps in the Authentication Report.
