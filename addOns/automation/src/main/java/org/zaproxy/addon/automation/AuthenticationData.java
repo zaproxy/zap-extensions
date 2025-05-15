@@ -426,7 +426,7 @@ public class AuthenticationData extends AutomationData {
                     if (!clientScript.exists() || !clientScript.canRead()) {
                         progress.error(
                                 Constant.messages.getString(
-                                        "automation.error.env.sessionmgmt.script.bad",
+                                        "automation.error.env.auth.script.bad",
                                         clientScript.getAbsolutePath()));
                     } else {
                         ScriptWrapper sw =
@@ -478,7 +478,7 @@ public class AuthenticationData extends AutomationData {
                     if (!f.exists() || !f.canRead()) {
                         progress.error(
                                 Constant.messages.getString(
-                                        "automation.error.env.sessionmgmt.script.bad",
+                                        "automation.error.env.auth.script.bad",
                                         f.getAbsolutePath()));
                     } else {
                         ScriptWrapper sw =
