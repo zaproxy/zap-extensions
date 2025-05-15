@@ -454,6 +454,71 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                             Constant.messages.getString(
                                     "authhelper.auth.method.diags.steps.refresh"));
                 }
+
+                HttpMessage authMsg = handler.getAuthMsg();
+                if (authMsg != null) {
+                    diags.recordStep(
+                            authMsg,
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.diags.steps.authmessage"));
+                    // Update the session as it may have changed
+                    for (int i = 0; i < AuthUtils.getWaitLoopCount(); i++) {
+                        // The session management method is set via a pscan rule, so make sure it is
+                        // set
+                        LOGGER.debug(
+                                "Update session? {}",
+                                sessionManagementMethod.getClass().getCanonicalName());
+                        if (!(sessionManagementMethod
+                                instanceof
+                                AutoDetectSessionManagementMethodType
+                                        .AutoDetectSessionManagementMethod)) {
+                            break;
+                        }
+                        sessionManagementMethod = user.getContext().getSessionManagementMethod();
+                        AuthUtils.sleep(AuthUtils.TIME_TO_SLEEP_IN_MSECS);
+                    }
+                    WebSession session = sessionManagementMethod.extractWebSession(authMsg);
+                    if (session != null) {
+                        diags.recordStep(
+                                authMsg,
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.diags.steps.sessionupdate"));
+                        LOGGER.info(
+                                "Updating session management method {} with session {}",
+                                sessionManagementMethod.getClass().getCanonicalName(),
+                                session.getClass().getCanonicalName());
+                        user.setAuthenticatedSession(session);
+                    }
+
+                    AuthUtils.checkLoginLinkVerification(
+                            getHttpSender(), user, authMsg.getRequestHeader().getURI().toString());
+
+                    if (this.isAuthenticated(authMsg, user, true)) {
+                        diags.recordStep(
+                                authMsg,
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.diags.steps.authenticated"));
+                        // Let the user know it worked
+                        AuthenticationHelper.notifyOutputAuthSuccessful(authMsg);
+                        user.getAuthenticationState().setLastAuthFailure("");
+                    } else {
+                        diags.recordStep(
+                                authMsg,
+                                Constant.messages.getString(
+                                        "authhelper.auth.method.diags.steps.unauthenticated"));
+                        // Let the user know it failed
+                        AuthenticationHelper.notifyOutputAuthFailure(authMsg);
+                    }
+                    return session;
+                }
+
+                HttpMessage fallbackMsg = handler.getFallbackMsg();
+                diags.recordStep(
+                        fallbackMsg,
+                        Constant.messages.getString("authhelper.auth.method.diags.steps.fallback"));
+                // We don't expect this to work, but it will prevent some NPEs
+                return sessionManagementMethod.extractWebSession(fallbackMsg);
+
             } finally {
                 if (zestRunner != null) {
                     // Close any webdrivers left open
@@ -469,29 +534,6 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                                     });
                 }
             }
-
-            HttpMessage authMsg = handler.getAuthMsg();
-            if (authMsg != null) {
-                // Update the session as it may have changed
-                WebSession session = sessionManagementMethod.extractWebSession(authMsg);
-                user.setAuthenticatedSession(session);
-
-                AuthUtils.checkLoginLinkVerification(
-                        getHttpSender(), user, authMsg.getRequestHeader().getURI().toString());
-
-                if (this.isAuthenticated(authMsg, user, true)) {
-                    // Let the user know it worked
-                    AuthenticationHelper.notifyOutputAuthSuccessful(authMsg);
-                    user.getAuthenticationState().setLastAuthFailure("");
-                } else {
-                    // Let the user know it failed
-                    AuthenticationHelper.notifyOutputAuthFailure(authMsg);
-                }
-                return session;
-            }
-
-            // We don't expect this to work, but it will prevent some NPEs
-            return sessionManagementMethod.extractWebSession(handler.getFallbackMsg());
         }
 
         @Override

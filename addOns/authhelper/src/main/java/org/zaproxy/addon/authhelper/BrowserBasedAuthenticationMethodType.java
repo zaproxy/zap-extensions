@@ -342,6 +342,10 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
                 HttpMessage authMsg = handler.getAuthMsg();
                 if (authMsg != null) {
+                    diags.recordStep(
+                            authMsg,
+                            Constant.messages.getString(
+                                    "authhelper.auth.method.diags.steps.authmessage"));
                     // Update the session as it may have changed
                     for (int i = 0; i < AuthUtils.getWaitLoopCount(); i++) {
                         // The session management method is set via a pscan rule, so make sure it is
