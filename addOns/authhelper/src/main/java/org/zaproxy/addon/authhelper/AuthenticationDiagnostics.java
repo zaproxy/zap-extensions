@@ -49,6 +49,7 @@ import org.zaproxy.addon.authhelper.internal.db.DiagnosticScreenshot;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticStep;
 import org.zaproxy.addon.authhelper.internal.db.DiagnosticWebElement;
 import org.zaproxy.addon.authhelper.internal.db.TableJdo;
+import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zest.core.v1.ZestClientElement;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
@@ -150,7 +151,8 @@ public class AuthenticationDiagnostics implements AutoCloseable {
                 screenshotDiag.setWindowHandle(element.getWindowHandle());
                 screenshotDiag.setDescription(
                         Constant.messages.getString(
-                                "authhelper.auth.method.diags.zest.interaction"));
+                                "authhelper.auth.method.diags.zest.interaction",
+                                ZestZapUtils.toUiString(element, false)));
                 i += 1;
                 zestScript.getStatements().add(i, screenshotDiag);
             } else if (stmt instanceof ZestClientWindowClose close) {
