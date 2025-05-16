@@ -43,6 +43,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.authhelper.AuthUtils;
 import org.zaproxy.addon.commonlib.internal.TotpSupport;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
 import org.zaproxy.zap.utils.EnableableInterface;
@@ -192,7 +193,7 @@ public class AuthenticationStep
                 break;
 
             case CUSTOM_FIELD:
-                element.sendKeys(value);
+                AuthUtils.fillField(element, value);
                 break;
 
             case ESCAPE:
@@ -200,7 +201,7 @@ public class AuthenticationStep
                 break;
 
             case PASSWORD:
-                element.sendKeys(credentials.getPassword());
+                AuthUtils.fillField(element, credentials.getPassword());
                 break;
 
             case RETURN:
@@ -212,7 +213,7 @@ public class AuthenticationStep
                 break;
 
             case USERNAME:
-                element.sendKeys(credentials.getUsername());
+                AuthUtils.fillField(element, credentials.getUsername());
                 break;
 
             default:
