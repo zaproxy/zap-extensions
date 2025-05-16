@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Ensure Client Script Based Authentication method has a clean state when reauthenticating.
 - Handle missing username field in Browser Based Authentication.
 - Correct the processing of cookies with the same name in Header Based Session Management method.
+- Correct redirection handling when checking verification URLs.
 
 ## [0.25.0] - 2025-03-25
 ### Changed

@@ -66,7 +66,6 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
@@ -82,6 +81,8 @@ import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.SessionStructure;
+import org.zaproxy.zap.network.HttpRedirectionValidator;
+import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Pair;
 import org.zaproxy.zap.utils.Stats;
@@ -135,6 +136,24 @@ public class AuthUtils {
     private static final int AUTH_PAGE_SLEEP_IN_MSECS = 2000;
 
     private static final Logger LOGGER = LogManager.getLogger(AuthUtils.class);
+
+    private static final HttpRequestConfig REDIRECT_NOTIFIER_CONFIG =
+            HttpRequestConfig.builder()
+                    .setRedirectionValidator(
+                            new HttpRedirectionValidator() {
+
+                                @Override
+                                public boolean isValid(URI redirection) {
+                                    return true;
+                                }
+
+                                @Override
+                                public void notifyMessageReceived(HttpMessage message) {
+                                    historyProvider.addAuthMessageToHistory(message);
+                                }
+                            })
+                    .build();
+    static final int MAX_UNAUTH_REDIRECTIONS = 50;
 
     private static AuthenticationBrowserHook browserHook;
 
@@ -1203,18 +1222,8 @@ public class AuthUtils {
             // Send an unauthenticated req to the test site, manually following redirects as needed
             HttpMessage msg = new HttpMessage(testUri);
             HttpSender unauthSender = new HttpSender(HttpSender.AUTHENTICATION_HELPER_INITIATOR);
-            unauthSender.sendAndReceive(msg);
-            historyProvider.addAuthMessageToHistory(msg);
-            int count = 0;
-            while (HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode())) {
-                testUri = new URI(msg.getResponseHeader().getHeader(HttpHeader.LOCATION), true);
-                msg = new HttpMessage(testUri);
-                unauthSender.sendAndReceive(msg);
-                historyProvider.addAuthMessageToHistory(msg);
-                if (count++ > 50) {
-                    return false;
-                }
-            }
+            unauthSender.setMaxRedirects(MAX_UNAUTH_REDIRECTIONS);
+            unauthSender.sendAndReceive(msg, REDIRECT_NOTIFIER_CONFIG);
 
             if (!msg.getResponseHeader().isHtml()) {
                 LOGGER.debug(
