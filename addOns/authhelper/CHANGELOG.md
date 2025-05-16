@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Client Script authentication to refresh the page of no suitable verification URL found.
 - Wait for the detection of the session method in Client Script Based Authentication method.
 - Include the name of the interaction in the Client Script Based Authentication diagnostics.
+- Clear fields before sending keys for Browser Based Authentication, including when using steps.
 
 ### Fixed
 - Correct descriptions of the Zest script steps in the Authentication Report.

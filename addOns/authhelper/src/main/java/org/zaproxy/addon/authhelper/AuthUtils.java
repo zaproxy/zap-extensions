@@ -598,9 +598,17 @@ public class AuthUtils {
         return false;
     }
 
+    public static void fillField(WebElement field, String value) {
+        if (StringUtils.isNotEmpty(getAttribute(field, "value"))) {
+            // Clear, otherwise sendKeys will append to any existing value
+            field.clear();
+        }
+        field.sendKeys(value);
+    }
+
     private static void fillUserName(
             AuthenticationDiagnostics diags, WebDriver wd, String username, WebElement field) {
-        field.sendKeys(username);
+        fillField(field, username);
         diags.recordStep(
                 wd,
                 Constant.messages.getString("authhelper.auth.method.diags.steps.username"),
@@ -612,7 +620,7 @@ public class AuthUtils {
 
     private static void fillPassword(
             AuthenticationDiagnostics diags, WebDriver wd, String password, WebElement field) {
-        field.sendKeys(password);
+        fillField(field, password);
         diags.recordStep(
                 wd,
                 Constant.messages.getString("authhelper.auth.method.diags.steps.password"),

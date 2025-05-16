@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
+- An auth example with existing (invalid) values for the credentials.
 
 ## [0.10.0] - 2025-05-15
 ### Added
