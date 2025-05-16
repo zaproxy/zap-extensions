@@ -45,4 +45,6 @@ public class DiagnosticMessage {
     private DiagnosticStep step;
 
     private int messageId;
+
+    private int initiator;
 }
