@@ -203,7 +203,7 @@ public class PolicyDefinition extends AutomationData {
                         Constant.messages.getString(
                                 "automation.info.ascan.rule.setstrength",
                                 jobName,
-                                rule.getId(),
+                                String.valueOf(rule.getId()),
                                 pluginSt.name()));
             }
             AlertThreshold pluginTh =
