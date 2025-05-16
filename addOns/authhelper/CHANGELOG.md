@@ -11,6 +11,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Automation Framework errors to the Authentication Report.
 - Replace TOTP token during Client Script Based Authentication.
 - Include more diagnostics in Client Script and Browser Based Authentication methods.
+- Improve Authentication Report:
+  - Add the ID of the step to make it easier to match with extracted screenshots.
+  - Include the script used by the Client Script Based Authentication.
+  - Add the initiator to the HTTP Messages to know what those messages correspond to.
+  - Include the tag name of the Web Element, now collecting `button`s along with `input`s.
 
 ### Changed
 - Warn when the recorded script used with Client Script Based Authentication does not launch a browser.

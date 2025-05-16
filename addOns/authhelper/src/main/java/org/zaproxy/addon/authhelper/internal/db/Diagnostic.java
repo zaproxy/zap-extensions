@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import javax.jdo.annotations.Cacheable;
+import javax.jdo.annotations.Column;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
@@ -47,6 +48,9 @@ public class Diagnostic {
 
     private String context;
     private String user;
+
+    @Column(length = 4194304)
+    private String script;
 
     @Order(column = "NUMBER")
     @Persistent(mappedBy = "diagnostic")
