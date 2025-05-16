@@ -26,9 +26,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
+import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import fi.iki.elonen.NanoHTTPD.Response.Status;
 import io.github.bonigarcia.seljup.BrowsersTemplate.Browser;
 import io.github.bonigarcia.seljup.SeleniumJupiter;
 import java.io.IOException;
@@ -42,6 +50,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.Setter;
 import org.apache.commons.httpclient.URI;
@@ -57,6 +67,8 @@ import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
@@ -69,11 +81,16 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
+import org.zaproxy.zap.authentication.AuthenticationMethod;
+import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Pair;
 
 class AuthUtilsUnitTest extends TestUtils {
@@ -1064,6 +1081,124 @@ class AuthUtilsUnitTest extends TestUtils {
             // Then
             assertThat(field, is(notNullValue()));
             assertThat(field.getDomAttribute("name"), is(equalTo("randomB")));
+        }
+    }
+
+    static class LoginLinkVerification extends TestUtils {
+
+        private String url;
+        private Function<IHTTPSession, Response> handler;
+
+        private HistoryProvider historyProvider;
+
+        private HttpSender authSender;
+        private User user;
+        private Context context;
+        private AuthenticationMethod authenticationMethod;
+
+        @BeforeEach
+        void setupEach() throws IOException {
+            startServer();
+
+            handler = session -> newFixedLengthResponse("");
+
+            url = "http://localhost:" + nano.getListeningPort();
+            nano.addHandler(
+                    new NanoServerHandler("") {
+                        @Override
+                        protected Response serve(IHTTPSession session) {
+                            return handler.apply(session);
+                        }
+                    });
+
+            historyProvider = mock(HistoryProvider.class);
+            AuthUtils.setHistoryProvider(historyProvider);
+
+            authSender = mock(HttpSender.class);
+            user = mock(User.class);
+            context = mock(Context.class);
+            given(user.getContext()).willReturn(context);
+            authenticationMethod = mock(AuthenticationMethod.class);
+            given(context.getAuthenticationMethod()).willReturn(authenticationMethod);
+        }
+
+        @AfterEach
+        void cleanupEach() {
+            stopServer();
+
+            AuthUtils.setHistoryProvider(null);
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = AuthCheckingStrategy.class, mode = Mode.EXCLUDE, names = "AUTO_DETECT")
+        void shouldNotCheckLoginLinkIfNotAutoDetectStrategy(
+                AuthCheckingStrategy authCheckingStrategy) {
+            // Given
+            given(authenticationMethod.getAuthCheckingStrategy()).willReturn(authCheckingStrategy);
+            // When
+            AuthUtils.checkLoginLinkVerification(authSender, user, url);
+            // Then
+            verifyNoInteractions(authSender);
+            verifyNoInteractions(historyProvider);
+        }
+
+        @Test
+        void shouldNotFurtherCheckLoginLinkIfUnauthDoesNotHaveLoginLabels() {
+            // Given
+            given(authenticationMethod.getAuthCheckingStrategy())
+                    .willReturn(AuthCheckingStrategy.AUTO_DETECT);
+            // When
+            AuthUtils.checkLoginLinkVerification(authSender, user, url);
+            // Then
+            verifyNoInteractions(authSender);
+            verify(historyProvider).addAuthMessageToHistory(any(HttpMessage.class));
+        }
+
+        @Test
+        void shouldFollowUpToMaxOfUnauthRedirections() {
+            // Given
+            handler =
+                    session -> {
+                        Response response =
+                                newFixedLengthResponse(
+                                        Status.TEMPORARY_REDIRECT, NanoHTTPD.MIME_HTML, "");
+                        response.addHeader(HttpHeader.LOCATION, url);
+                        return response;
+                    };
+            given(authenticationMethod.getAuthCheckingStrategy())
+                    .willReturn(AuthCheckingStrategy.AUTO_DETECT);
+            // When
+            AuthUtils.checkLoginLinkVerification(authSender, user, url);
+            // Then
+            verifyNoInteractions(authSender);
+            // First message sent is notified as well.
+            verify(historyProvider, times(AuthUtils.MAX_UNAUTH_REDIRECTIONS + 1))
+                    .addAuthMessageToHistory(any(HttpMessage.class));
+        }
+
+        @Test
+        void shouldFollowRelativeUnauthRedirections() {
+            // Given
+            AtomicInteger redirCount = new AtomicInteger();
+            handler =
+                    session -> {
+                        if (redirCount.compareAndSet(0, 1)) {
+                            Response response =
+                                    newFixedLengthResponse(
+                                            Status.TEMPORARY_REDIRECT, NanoHTTPD.MIME_HTML, "");
+                            response.addHeader(HttpHeader.LOCATION, "/path/");
+                            return response;
+                        }
+                        return newFixedLengthResponse("");
+                    };
+            given(authenticationMethod.getAuthCheckingStrategy())
+                    .willReturn(AuthCheckingStrategy.AUTO_DETECT);
+            // When
+            AuthUtils.checkLoginLinkVerification(authSender, user, url);
+            // Then
+            verifyNoInteractions(authSender);
+            // First message sent is notified as well.
+            verify(historyProvider, times(2)).addAuthMessageToHistory(any(HttpMessage.class));
         }
     }
 
