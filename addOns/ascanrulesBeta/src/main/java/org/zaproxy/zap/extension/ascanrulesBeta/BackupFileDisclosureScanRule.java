@@ -60,6 +60,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin
                                 CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
                                 CommonAlertTag.WSTG_V42_CONF_04_BACKUP_FILES));
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 

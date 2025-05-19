@@ -65,9 +65,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
 import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
@@ -83,7 +81,8 @@ import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.SessionStructure;
-import org.zaproxy.zap.session.WebSession;
+import org.zaproxy.zap.network.HttpRedirectionValidator;
+import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Pair;
 import org.zaproxy.zap.utils.Stats;
@@ -137,6 +136,24 @@ public class AuthUtils {
     private static final int AUTH_PAGE_SLEEP_IN_MSECS = 2000;
 
     private static final Logger LOGGER = LogManager.getLogger(AuthUtils.class);
+
+    private static final HttpRequestConfig REDIRECT_NOTIFIER_CONFIG =
+            HttpRequestConfig.builder()
+                    .setRedirectionValidator(
+                            new HttpRedirectionValidator() {
+
+                                @Override
+                                public boolean isValid(URI redirection) {
+                                    return true;
+                                }
+
+                                @Override
+                                public void notifyMessageReceived(HttpMessage message) {
+                                    historyProvider.addAuthMessageToHistory(message);
+                                }
+                            })
+                    .build();
+    static final int MAX_UNAUTH_REDIRECTIONS = 50;
 
     private static AuthenticationBrowserHook browserHook;
 
@@ -471,7 +488,7 @@ public class AuthUtils {
         boolean pwdAdded = false;
 
         Iterator<AuthenticationStep> it = steps.stream().sorted().iterator();
-        for (; it.hasNext(); ) {
+        while (it.hasNext()) {
             AuthenticationStep step = it.next();
             if (!step.isEnabled()) {
                 continue;
@@ -519,7 +536,7 @@ public class AuthUtils {
             }
             sleep(TIME_TO_SLEEP_IN_MSECS);
         }
-        if (userField != null && pwdField != null) {
+        if ((userField != null || userAdded) && pwdField != null) {
             if (!userAdded) {
                 LOGGER.debug("Entering user field on {}", wd.getCurrentUrl());
                 fillUserName(diags, wd, username, userField);
@@ -531,15 +548,17 @@ public class AuthUtils {
                 }
                 sendReturn(diags, wd, pwdField);
             } catch (Exception e) {
-                // Handle the case where the password field was present but hidden / disabled
-                LOGGER.debug("Handling hidden password field on {}", wd.getCurrentUrl());
-                sendReturnAndSleep(diags, wd, userField);
-                sleep(TIME_TO_SLEEP_IN_MSECS);
-                fillPassword(diags, wd, password, pwdField);
-                sendReturn(diags, wd, pwdField);
+                if (userField != null) {
+                    // Handle the case where the password field was present but hidden / disabled
+                    LOGGER.debug("Handling hidden password field on {}", wd.getCurrentUrl());
+                    sendReturnAndSleep(diags, wd, userField);
+                    sleep(TIME_TO_SLEEP_IN_MSECS);
+                    fillPassword(diags, wd, password, pwdField);
+                    sendReturn(diags, wd, pwdField);
+                }
             }
 
-            for (; it.hasNext(); ) {
+            while (it.hasNext()) {
                 AuthenticationStep step = it.next();
                 if (!step.isEnabled()) {
                     continue;
@@ -557,18 +576,15 @@ public class AuthUtils {
             incStatsCounter(loginPageUrl, AUTH_BROWSER_PASSED_STATS);
             AuthUtils.sleep(TimeUnit.SECONDS.toMillis(waitInSecs));
 
-            if (context != null) {
-                if (context.getAuthenticationMethod().getPollUrl() == null) {
-                    // We failed to identify a suitable URL for polling.
-                    // This can happen for more traditional apps - refresh the current one in case
-                    // its a good option.
-                    wd.get(wd.getCurrentUrl());
-                    AuthUtils.sleep(TimeUnit.SECONDS.toMillis(1));
-                    diags.recordStep(
-                            wd,
-                            Constant.messages.getString(
-                                    "authhelper.auth.method.diags.steps.refresh"));
-                }
+            if (context != null && context.getAuthenticationMethod().getPollUrl() == null) {
+                // We failed to identify a suitable URL for polling.
+                // This can happen for more traditional apps - refresh the current one in case
+                // its a good option.
+                wd.get(wd.getCurrentUrl());
+                AuthUtils.sleep(TimeUnit.SECONDS.toMillis(waitInSecs));
+                diags.recordStep(
+                        wd,
+                        Constant.messages.getString("authhelper.auth.method.diags.steps.refresh"));
             }
             return true;
         }
@@ -582,9 +598,17 @@ public class AuthUtils {
         return false;
     }
 
+    public static void fillField(WebElement field, String value) {
+        if (StringUtils.isNotEmpty(getAttribute(field, "value"))) {
+            // Clear, otherwise sendKeys will append to any existing value
+            field.clear();
+        }
+        field.sendKeys(value);
+    }
+
     private static void fillUserName(
             AuthenticationDiagnostics diags, WebDriver wd, String username, WebElement field) {
-        field.sendKeys(username);
+        fillField(field, username);
         diags.recordStep(
                 wd,
                 Constant.messages.getString("authhelper.auth.method.diags.steps.username"),
@@ -596,7 +620,7 @@ public class AuthUtils {
 
     private static void fillPassword(
             AuthenticationDiagnostics diags, WebDriver wd, String password, WebElement field) {
-        field.sendKeys(password);
+        fillField(field, password);
         diags.recordStep(
                 wd,
                 Constant.messages.getString("authhelper.auth.method.diags.steps.password"),
@@ -757,7 +781,7 @@ public class AuthUtils {
             } catch (JSONException e) {
                 LOGGER.debug(
                         "Unable to parse authentication response body from {} as JSON: {} ",
-                        msg.getRequestHeader().getURI().toString(),
+                        msg.getRequestHeader().getURI(),
                         responseData,
                         e);
             }
@@ -787,7 +811,7 @@ public class AuthUtils {
                     String hv =
                             header.getValue()
                                     .replace(token.getValue(), "{%" + token.getToken() + "%}");
-                    list.add(new Pair<String, String>(header.getName(), hv));
+                    list.add(new Pair<>(header.getName(), hv));
                 }
             }
             if (incCookies) {
@@ -831,7 +855,7 @@ public class AuthUtils {
             } catch (JSONException e) {
                 LOGGER.debug(
                         "Unable to parse authentication response body from {} as JSON: {}",
-                        msg.getRequestHeader().getURI().toString(),
+                        msg.getRequestHeader().getURI(),
                         responseData);
             }
         }
@@ -892,10 +916,28 @@ public class AuthUtils {
      * @return all of the identified session tokens in the request.
      */
     public static Set<SessionToken> getRequestSessionTokens(HttpMessage msg) {
+        return getRequestSessionTokens(msg, List.of());
+    }
+
+    public static Set<SessionToken> getRequestSessionTokens(
+            HttpMessage msg, List<Pair<String, String>> headerConfigs) {
         Set<SessionToken> map = new HashSet<>();
         List<String> authHeaders = msg.getRequestHeader().getHeaderValues(HttpHeader.AUTHORIZATION);
         for (String header : authHeaders) {
             map.add(new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, header));
+        }
+        if (headerConfigs != null) {
+            for (Pair<String, String> entry : headerConfigs) {
+                String name = entry.first;
+                if (HttpHeader.AUTHORIZATION.equalsIgnoreCase(name)
+                        || HttpHeader.COOKIE.equalsIgnoreCase(name)) {
+                    continue;
+                }
+
+                for (String value : msg.getRequestHeader().getHeaderValues(name)) {
+                    map.add(new SessionToken(SessionToken.HEADER_SOURCE, name, value));
+                }
+            }
         }
         List<HttpCookie> cookies = msg.getRequestHeader().getHttpCookies();
         for (HttpCookie cookie : cookies) {
@@ -928,15 +970,15 @@ public class AuthUtils {
 
     private static void extractJsonTokens(
             Object obj, String parent, Map<String, SessionToken> tokens) {
-        if (obj instanceof JSONObject) {
-            extractJsonTokens((JSONObject) obj, parent, tokens);
-        } else if (obj instanceof JSONArray) {
-            Object[] oa = ((JSONArray) obj).toArray();
+        if (obj instanceof JSONObject jObj) {
+            extractJsonTokens(jObj, parent, tokens);
+        } else if (obj instanceof JSONArray jArr) {
+            Object[] oa = jArr.toArray();
             for (int i = 0; i < oa.length; i++) {
                 extractJsonTokens(oa[i], parent + "[" + i + "]", tokens);
             }
-        } else if (obj instanceof String) {
-            addToMap(tokens, new SessionToken(SessionToken.JSON_SOURCE, parent, (String) obj));
+        } else if (obj instanceof String str) {
+            addToMap(tokens, new SessionToken(SessionToken.JSON_SOURCE, parent, str));
         }
     }
 
@@ -1153,7 +1195,7 @@ public class AuthUtils {
      * given URL.
      */
     public static void checkLoginLinkVerification(
-            HttpSender authSender, User user, WebSession session, String loginUrl) {
+            HttpSender authSender, User user, String loginUrl) {
         AuthCheckingStrategy verif =
                 user.getContext().getAuthenticationMethod().getAuthCheckingStrategy();
         if (!AuthCheckingStrategy.AUTO_DETECT.equals(verif)) {
@@ -1165,13 +1207,13 @@ public class AuthUtils {
                 // Try to top level link first, if the page has the login form then its less likely
                 // to have a link to one
                 testUri.setPath("");
-                if (checkLoginLinkVerification(authSender, user, session, testUri)) {
+                if (checkLoginLinkVerification(authSender, user, testUri)) {
                     // The top level URL worked :)
                     return;
                 }
                 testUri = new URI(loginUrl, true);
             }
-            checkLoginLinkVerification(authSender, user, session, testUri);
+            checkLoginLinkVerification(authSender, user, testUri);
 
         } catch (Exception e) {
             LOGGER.warn(
@@ -1183,26 +1225,13 @@ public class AuthUtils {
     }
 
     private static boolean checkLoginLinkVerification(
-            HttpSender authSender, User user, WebSession session, URI testUri) {
+            HttpSender authSender, User user, URI testUri) {
         try {
             // Send an unauthenticated req to the test site, manually following redirects as needed
             HttpMessage msg = new HttpMessage(testUri);
             HttpSender unauthSender = new HttpSender(HttpSender.AUTHENTICATION_HELPER_INITIATOR);
-            unauthSender.sendAndReceive(msg);
-            historyProvider.addAuthMessageToHistory(msg);
-            int count = 0;
-            while (HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode())) {
-                testUri =
-                        new URI(
-                                msg.getResponseHeader().getHeader(HttpResponseHeader.LOCATION),
-                                true);
-                msg = new HttpMessage(testUri);
-                unauthSender.sendAndReceive(msg);
-                historyProvider.addAuthMessageToHistory(msg);
-                if (count++ > 50) {
-                    return false;
-                }
-            }
+            unauthSender.setMaxRedirects(MAX_UNAUTH_REDIRECTIONS);
+            unauthSender.sendAndReceive(msg, REDIRECT_NOTIFIER_CONFIG);
 
             if (!msg.getResponseHeader().isHtml()) {
                 LOGGER.debug(
@@ -1237,13 +1266,13 @@ public class AuthUtils {
                 LOGGER.debug(
                         "Response to {} is no good as a login link verification req, an authenticated request also includes the link {}",
                         testUri,
-                        link.toString());
+                        link);
                 return false;
             }
             LOGGER.debug(
                     "Found good login link verification req {}, contains login link {}",
                     testUri,
-                    link.toString());
+                    link);
 
             AuthenticationMethod authMethod = user.getContext().getAuthenticationMethod();
             authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);

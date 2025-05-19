@@ -192,12 +192,10 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         extensionHook.addOptionsChangedListener(passiveScanner);
     }
 
-    private ExtensionPassiveScan2 getPscanExtension() {
-        ExtensionPassiveScan2 extPScan =
-                Control.getSingleton()
-                        .getExtensionLoader()
-                        .getExtension(ExtensionPassiveScan2.class);
-        return extPScan;
+    private static ExtensionPassiveScan2 getPscanExtension() {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionPassiveScan2.class);
     }
 
     @Override

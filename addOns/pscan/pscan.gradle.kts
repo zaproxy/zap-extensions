@@ -15,6 +15,14 @@ zapAddOn {
             localeToken.set("%LC%")
         }
 
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.32.0 & < 2.0.0")
+                }
+            }
+        }
+
         extensions {
             register("org.zaproxy.addon.pscan.automation.ExtensionPscanAutomation") {
                 classnames {

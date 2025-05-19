@@ -22,6 +22,7 @@ package org.zaproxy.addon.authhelper;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
@@ -34,6 +35,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.httpclient.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -73,7 +75,7 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
     private static final String VALUE_5 = "v{%script:sc_var%}-{%url:test%}";
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         mockMessages(new ExtensionAuthhelper());
         envVars = new HashMap<>();
         HeaderBasedSessionManagementMethod.replaceEnvVarsForTesting(envVars);
@@ -81,7 +83,7 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReplaceSimpleTokens() throws Exception {
+    void shouldReplaceSimpleTokens() {
         // Given
         String baseString = "Prefix{%token1%}middle{%token2%}Postfix";
         Map<String, SessionToken> map = new HashMap<>();
@@ -95,7 +97,7 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldLeaveMissingTokens() throws Exception {
+    void shouldLeaveMissingTokens() {
         // Given
         String baseString = "Prefix{%token1%}middle{%token2%}Postfix";
         Map<String, SessionToken> map = new HashMap<>();
@@ -108,7 +110,7 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReplaceRecordedToken() throws Exception {
+    void shouldReplaceRecordedToken() {
         // Given
         String baseString = "Prefix{%token1%}Postfix";
         Map<String, SessionToken> map = new HashMap<>();
@@ -126,28 +128,31 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
         HttpMessage msg =
                 new HttpMessage(
                         new HttpRequestHeader(
-                                "GET https://example.com/?att1=val1&att2=val2 HTTP/1.1\r\n"
-                                        + "Header1: Value1\r\n"
-                                        + "Header2: Value2\r\n"
-                                        + "Host: example.com\r\n\r\n"),
+                                """
+                                GET https://example.com/?att1=val1&att2=val2 HTTP/1.1\r
+                                Header1: Value1\r
+                                Header2: Value2\r
+                                Host: example.com\r\n\r\n"""),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader(
-                                "HTTP/1.1 200 OK\r\n"
-                                        + "Header3: Value3\r\n"
-                                        + "Header4: Value4\r\n"
-                                        + "Content-Type: application/json"),
+                                """
+                                HTTP/1.1 200 OK\r
+                                Header3: Value3\r
+                                Header4: Value4\r
+                                Content-Type: application/json"""),
                         new HttpResponseBody(
-                                "{'wrapper1': {\n"
-                                        + "  'att1': 'val1',\n"
-                                        + "  'att2': 'val2',\n"
-                                        + "  'wrapper2': {\n"
-                                        + "    'att1': 'val3',\n"
-                                        + "    'array': [\n"
-                                        + "      {'att1': 'val4'},\n"
-                                        + "      {'att3': 'val6', 'att4': 'val7'}\n"
-                                        + "    ]\n"
-                                        + "  }\n"
-                                        + "}}"));
+                                """
+                                {"wrapper1": {
+                                  "att1": "val1",
+                                  "att2": "val2",
+                                  "wrapper2": {
+                                    "att1": "val3",
+                                    "array": [
+                                      {"att1": "val4"},
+                                      {"att3": "val6", "att4": "val7"}
+                                    ]
+                                  }
+                                }}"""));
         envVars.put("envvar1", "envvalue1");
         envVars.put("envvar2", "envvalue2");
         ScriptVars.setGlobalVar("scriptvar1", "scriptvalue1");
@@ -199,10 +204,11 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
         HttpMessage msg =
                 new HttpMessage(
                         new HttpRequestHeader(
-                                "GET / HTTP/1.1\r\n"
-                                        + "Header1: Value1\r\n"
-                                        + "Header2: Value2\r\n"
-                                        + "Host: example.com\r\n\r\n"),
+                                """
+                                GET / HTTP/1.1\r
+                                Header1: Value1\r
+                                Header2: Value2\r
+                                Host: example.com\r\n\r\n"""),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("Response Body"));
@@ -222,6 +228,45 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
         assertThat(reqHeader.getHeader("Header1"), is(equalTo("Replace1")));
         assertThat(reqHeader.getHeader("Header2"), is(equalTo("Value2")));
         assertThat(reqHeader.getHeader("Header3"), is(equalTo("Value3")));
+        assertThat(reqHeader.getHeader("Host"), is(equalTo("example.com")));
+    }
+
+    @Test
+    void shouldProcessMessageToMatchSessionWithCookiesWithSameName() throws Exception {
+        // Given
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        Model.setSingletonForTesting(model);
+
+        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
+        given(model.getSession()).willReturn(session);
+
+        Context context = mock(Context.class);
+        given(session.getContext(0)).willReturn(context);
+
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                """
+                                GET / HTTP/1.1
+                                Host: example.com
+                                """),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader("HTTP/1.1 200 OK"),
+                        new HttpResponseBody("Response Body"));
+        HeaderBasedSessionManagementMethod method = new HeaderBasedSessionManagementMethod(0);
+
+        HttpHeaderBasedSession ws = new HttpHeaderBasedSession(List.of());
+        ws.getHttpState()
+                .addCookie(new Cookie("example.com", "cookie", "value A", "/path/a", null, false));
+        ws.getHttpState()
+                .addCookie(new Cookie("example.com", "cookie", "value B", "/path/b", null, false));
+
+        // When
+        method.processMessageToMatchSession(msg, ws);
+        HttpRequestHeader reqHeader = msg.getRequestHeader();
+
+        // Then
+        assertThat(reqHeader.getHeaders(), hasSize(1));
         assertThat(reqHeader.getHeader("Host"), is(equalTo("example.com")));
     }
 

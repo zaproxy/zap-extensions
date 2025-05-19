@@ -87,6 +87,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
         this.setFile(script.getFile());
         this.setLoadOnStart(script.isLoadOnStart());
         this.setChanged(script.isChanged());
+        this.setWriter(script.getWriter());
     }
 
     public boolean isIncStatusCodeAssertion() {

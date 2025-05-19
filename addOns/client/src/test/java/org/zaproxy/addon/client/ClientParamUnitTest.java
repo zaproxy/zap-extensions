@@ -27,16 +27,18 @@ import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.commonlib.Constants;
+import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link ClientOptions}. */
-class ClientParamUnitTest {
+class ClientParamUnitTest extends TestUtils {
 
     private ClientOptions clientParam;
     private ZapXmlConfiguration config;
 
     @BeforeEach
     void setUp() {
+        mockMessages(new ExtensionClientIntegration());
         clientParam = new ClientOptions();
         config = new ZapXmlConfiguration();
     }

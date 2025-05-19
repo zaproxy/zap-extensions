@@ -83,7 +83,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         // Then
         assertThat(cwe, is(equalTo(22)));
         assertThat(wasc, is(equalTo(33)));
-        assertThat(tags.size(), is(equalTo(8)));
+        assertThat(tags.size(), is(equalTo(9)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
@@ -98,6 +98,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.SEQUENCE.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));

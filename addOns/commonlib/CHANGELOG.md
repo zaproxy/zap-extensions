@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [1.32.0] - 2025-04-09
+### Added
+- Add an alert tag for scan rules that are believed to be of interest to Penetration Testers (essentially everything except the Example rules).
+
 ## [1.31.0] - 2025-03-25
 ### Added
 - Replace the default Output panel with a tabbed version to allow multiple sources of output to be displayed in separate tabs.
@@ -207,6 +211,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.32.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.32.0
 [1.31.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.31.0
 [1.30.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.30.0
 [1.29.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.29.0

@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.wappalyzer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 
@@ -31,7 +30,7 @@ public class TechTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;
 
-    private final Vector<String> columnNames;
+    private final List<String> columnNames;
     private List<ApplicationMatch> apps;
 
     private int lastAddedRow;
@@ -39,7 +38,7 @@ public class TechTableModel extends AbstractTableModel {
 
     public TechTableModel() {
         super();
-        columnNames = new Vector<>();
+        columnNames = new ArrayList<>();
         columnNames.add(Constant.messages.getString("wappalyzer.table.header.name"));
         columnNames.add(Constant.messages.getString("wappalyzer.table.header.version"));
         columnNames.add(Constant.messages.getString("wappalyzer.table.header.category"));

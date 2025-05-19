@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JButton;
-import javax.swing.JLabel;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import org.apache.logging.log4j.LogManager;
@@ -161,7 +161,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                                     .getI18nKey()),
                     false);
         }
-        this.addReadOnlyField(0, FIELD_FILE, "", false);
+        this.addTextFieldReadOnly(0, FIELD_FILE, "");
         this.addComboField(0, FIELD_PREFIX, this.getSites(), script.getPrefix(), true);
         this.addCheckBoxField(0, FIELD_LOAD, scriptWrapper.isLoadOnStart());
         this.addMultilineField(0, FIELD_DESC, script.getDescription());
@@ -170,7 +170,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         if (scriptWrapper.getFile() != null) {
             this.setFieldValue(FIELD_FILE, scriptWrapper.getFile().getAbsolutePath());
             // Add tooltip in case file name is longer than the dialog
-            ((JLabel) this.getField(FIELD_FILE))
+            ((JComponent) this.getField(FIELD_FILE))
                     .setToolTipText(scriptWrapper.getFile().getAbsolutePath());
         }
         this.getParamsModel().setValues(script.getParameters().getVariables());

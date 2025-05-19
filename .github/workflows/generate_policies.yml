@@ -21,7 +21,7 @@ jobs:
     - name: Create Policies
       run: |
         # Run the ZAP script
-        docker run -v $(pwd):/zap/wrk/:rw --user root -t ghcr.io/zaproxy/zaproxy:nightly ./zap.sh -addoninstall ascanrulesAlpha -silent -script /zap/wrk/zap-extensions/.github/scripts/generateScanPolicies.js -cmd
+        docker run -v $(pwd):/zap/wrk/:rw --user root -t ghcr.io/zaproxy/zaproxy:nightly ./zap.sh -addoninstallall -silent -script /zap/wrk/zap-extensions/.github/scripts/generateScanPolicies.js -cmd
     - name: Attach Policies
       uses: actions/upload-artifact@v4
       with:

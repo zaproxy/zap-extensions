@@ -108,6 +108,10 @@ public class MessagesTable extends HistoryReferencesTable {
                 DisplayUtils.getScaledIcon(
                         MessagesTable.class.getResource("/resource/icon/16/152.png"));
 
+        private static final ImageIcon THIRD_PARTY_ICON =
+                DisplayUtils.getScaledIcon(
+                        MessagesTable.class.getResource("/resource/icon/16/154.png"));
+
         private static final ImageIcon NOT_ALLOWED_ICON =
                 DisplayUtils.getScaledIcon(
                         MessagesTable.class.getResource("/resource/icon/16/149.png"));
@@ -123,7 +127,7 @@ public class MessagesTable extends HistoryReferencesTable {
             ProcessedCellItem cell = (ProcessedCellItem) adapter.getValue(columnIndex);
 
             boolean allowed = cell.getState() == ResourceState.ALLOWED;
-            Icon icon = getIcon(allowed);
+            Icon icon = getIcon(cell.getState());
             if (component instanceof IconAware) {
                 ((IconAware) component).setIcon(icon);
             } else if (component instanceof JLabel) {
@@ -137,8 +141,12 @@ public class MessagesTable extends HistoryReferencesTable {
             return component;
         }
 
-        private static Icon getIcon(boolean allowed) {
-            return allowed ? ALLOWED_ICON : NOT_ALLOWED_ICON;
+        private static Icon getIcon(ResourceState state) {
+            return switch (state) {
+                case ALLOWED -> ALLOWED_ICON;
+                case THIRD_PARTY -> THIRD_PARTY_ICON;
+                default -> NOT_ALLOWED_ICON;
+            };
         }
 
         // Method/JavaDoc copied from

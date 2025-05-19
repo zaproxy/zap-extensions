@@ -20,12 +20,16 @@
 package org.zaproxy.zap.extension.scripts.scanrules;
 
 import java.lang.reflect.UndeclaredThrowableException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -35,6 +39,15 @@ import org.zaproxy.zap.extension.script.ScriptsCache.Configuration;
 public class ScriptsPassiveScanner extends PassiveScriptHelper {
 
     private static final Logger LOGGER = LogManager.getLogger(ScriptsPassiveScanner.class);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags = new HashMap<>();
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private final ScriptsCache<PassiveScript> scripts;
 
@@ -138,5 +151,10 @@ public class ScriptsPassiveScanner extends PassiveScriptHelper {
     public boolean appliesToHistoryType(int historyType) {
         this.currentHistoryType = historyType;
         return true;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

@@ -71,6 +71,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
         alertTags.put(PolicyTag.SEQUENCE.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 

@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +37,7 @@ import org.parosproxy.paros.network.HtmlParameter.Type;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -47,10 +50,17 @@ public class UserControlledCharsetScanRule extends PluginPassiveScanner
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.usercontrolledcharset.";
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public String getName() {

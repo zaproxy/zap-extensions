@@ -57,6 +57,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.client.ClientOptions;
+import org.zaproxy.addon.client.ClientOptions.ScopeCheck;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.internal.ClientMap;
 import org.zaproxy.addon.client.internal.ClientNode;
@@ -97,8 +98,17 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
      */
     private static final Logger LOGGER = LogManager.getLogger(ClientSpider.class);
 
+    private final List<Pattern> allowedResources =
+            List.of(
+                    Pattern.compile("^http.*\\.js(?:\\?.*)?$"),
+                    Pattern.compile("^http.*\\.css(?:\\?.*)?$"));
+
+    private static HttpResponseHeader outOfScopeResponseHeader;
+    private static HttpResponseBody outOfScopeResponseBody;
+
     public enum ResourceState {
         ALLOWED,
+        THIRD_PARTY,
         EXCLUDED,
         IO_ERROR,
         OUT_OF_CONTEXT,
@@ -124,7 +134,6 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
     private final ExtensionSelenium extSelenium;
     private final ExtensionNetwork extensionNetwork;
 
-    private final ProxyHandler proxyHandler;
     private final Session session;
     private final List<String> exclusionList;
 
@@ -184,15 +193,44 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
         exclusionList.addAll(session.getExcludeFromSpiderRegexs());
         exclusionList.addAll(session.getGlobalExcludeURLRegexs());
 
-        proxyHandler = new ProxyHandler();
-
         HttpPrefixUriValidator validator =
                 subtreeOnly ? new HttpPrefixUriValidator(targetUri) : null;
         this.httpPrefixUriValidator = validator;
+        createOutOfScopeResponse(Constant.messages.getString("client.spider.outofscope.response"));
     }
 
     private static <T extends Extension> T getExtension(Class<T> clazz) {
         return Control.getSingleton().getExtensionLoader().getExtension(clazz);
+    }
+
+    private void createOutOfScopeResponse(String response) {
+        outOfScopeResponseBody = new HttpResponseBody();
+        outOfScopeResponseBody.setBody(response.getBytes(StandardCharsets.UTF_8));
+
+        final StringBuilder strBuilder = new StringBuilder(150);
+        final String crlf = HttpHeader.CRLF;
+        strBuilder.append("HTTP/1.1 403 Forbidden").append(crlf);
+        strBuilder.append(HttpHeader.PRAGMA).append(": ").append("no-cache").append(crlf);
+        strBuilder.append(HttpHeader.CACHE_CONTROL).append(": ").append("no-cache").append(crlf);
+        strBuilder
+                .append(HttpHeader.CONTENT_TYPE)
+                .append(": ")
+                .append("text/plain; charset=UTF-8")
+                .append(crlf);
+        strBuilder
+                .append(HttpHeader.CONTENT_LENGTH)
+                .append(": ")
+                .append(outOfScopeResponseBody.length())
+                .append(crlf);
+
+        HttpResponseHeader responseHeader;
+        try {
+            responseHeader = new HttpResponseHeader(strBuilder.toString());
+        } catch (HttpMalformedHeaderException e) {
+            LOGGER.error("Failed to create a valid response header: ", e);
+            responseHeader = new HttpResponseHeader();
+        }
+        outOfScopeResponseHeader = responseHeader;
     }
 
     public ClientSpider(
@@ -297,10 +335,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                 try {
                     wdp =
                             new WebDriverProcess(
-                                    extensionNetwork,
-                                    extSelenium,
-                                    proxyHandler,
-                                    options.getBrowserId());
+                                    extensionNetwork, extSelenium, new ProxyHandler(), options);
                 } catch (IOException e) {
                     throw new RuntimeException("Failed to create WebDriver process:", e);
                 }
@@ -442,10 +477,16 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             return true;
         }
 
-        return checkResourceState(uri, new String(uri.getRawHost())) == ResourceState.ALLOWED;
+        return checkResourceState(uri, new String(uri.getRawHost()), false)
+                == ResourceState.ALLOWED;
     }
 
-    protected ResourceState checkResourceState(URI uri, String hostName) {
+    protected ResourceState checkResourceState(HttpMessage msg, boolean allowAll) {
+        return checkResourceState(
+                msg.getRequestHeader().getURI(), msg.getRequestHeader().getHostName(), allowAll);
+    }
+
+    protected ResourceState checkResourceState(URI uri, String hostName, boolean allowAll) {
         ResourceState state = ResourceState.ALLOWED;
         String uriString = uri.toString();
         if (httpPrefixUriValidator != null && !httpPrefixUriValidator.isValid(uri)) {
@@ -468,6 +509,10 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                 }
             }
         }
+        if (state != ResourceState.ALLOWED && allowAll) {
+            state = ResourceState.THIRD_PARTY;
+        }
+
         return state;
     }
 
@@ -748,7 +793,7 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                 ExtensionNetwork extensionNetwork,
                 ExtensionSelenium extensionSelenium,
                 ProxyHandler proxyHandler,
-                String browser)
+                ClientOptions options)
                 throws IOException {
             proxy =
                     extensionNetwork.createHttpServer(
@@ -759,7 +804,12 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
                                     .build());
             int port = proxy.start(Server.ANY_PORT);
 
-            webDriver = extensionSelenium.getWebDriver(INITIATOR, browser, LOCAL_PROXY_IP, port);
+            webDriver =
+                    extensionSelenium.getWebDriver(
+                            INITIATOR, options.getBrowserId(), LOCAL_PROXY_IP, port);
+            if (ScopeCheck.STRICT.equals(options.getScopeCheck())) {
+                proxyHandler.setAllowAll(false);
+            }
         }
 
         private void shutdown() {
@@ -783,52 +833,10 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
 
     private class ProxyHandler implements HttpMessageHandler {
 
-        private final List<Pattern> allowedResources =
-                List.of(
-                        Pattern.compile("^http.*\\.js(?:\\?.*)?$"),
-                        Pattern.compile("^http.*\\.css(?:\\?.*)?$"));
+        private boolean allowAll = true;
 
-        private HttpResponseHeader outOfScopeResponseHeader;
-        private HttpResponseBody outOfScopeResponseBody;
-
-        ProxyHandler() {
-
-            createOutOfScopeResponse(
-                    Constant.messages.getString("client.spider.outofscope.response"));
-        }
-
-        private void createOutOfScopeResponse(String response) {
-            outOfScopeResponseBody = new HttpResponseBody();
-            outOfScopeResponseBody.setBody(response.getBytes(StandardCharsets.UTF_8));
-
-            final StringBuilder strBuilder = new StringBuilder(150);
-            final String crlf = HttpHeader.CRLF;
-            strBuilder.append("HTTP/1.1 403 Forbidden").append(crlf);
-            strBuilder.append(HttpHeader.PRAGMA).append(": ").append("no-cache").append(crlf);
-            strBuilder
-                    .append(HttpHeader.CACHE_CONTROL)
-                    .append(": ")
-                    .append("no-cache")
-                    .append(crlf);
-            strBuilder
-                    .append(HttpHeader.CONTENT_TYPE)
-                    .append(": ")
-                    .append("text/plain; charset=UTF-8")
-                    .append(crlf);
-            strBuilder
-                    .append(HttpHeader.CONTENT_LENGTH)
-                    .append(": ")
-                    .append(outOfScopeResponseBody.length())
-                    .append(crlf);
-
-            HttpResponseHeader responseHeader;
-            try {
-                responseHeader = new HttpResponseHeader(strBuilder.toString());
-            } catch (HttpMalformedHeaderException e) {
-                LOGGER.error("Failed to create a valid response header: ", e);
-                responseHeader = new HttpResponseHeader();
-            }
-            outOfScopeResponseHeader = responseHeader;
+        public void setAllowAll(boolean allowAll) {
+            this.allowAll = allowAll;
         }
 
         @Override
@@ -842,14 +850,13 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             }
 
             ResourceState state = ResourceState.ALLOWED;
-            URI uri = httpMessage.getRequestHeader().getURI();
-            if (isAllowedResource(uri)) {
+            if (isAllowedResource(httpMessage.getRequestHeader().getURI())) {
                 // Nothing to do, state already set to allowed.
             } else {
-                state = checkResourceState(uri, httpMessage.getRequestHeader().getHostName());
+                state = checkResourceState(httpMessage, allowAll);
             }
 
-            if (state != ResourceState.ALLOWED) {
+            if (state != ResourceState.ALLOWED && state != ResourceState.THIRD_PARTY) {
                 setOutOfScopeResponse(httpMessage);
                 notifyMessage(httpMessage, HistoryReference.TYPE_CLIENT_SPIDER_TEMPORARY, state);
                 ctx.overridden();
@@ -866,6 +873,13 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             return allowedResources.stream().anyMatch(e -> e.matcher(uriString).matches());
         }
 
+        private ResourceState getResourceState(HttpMessage httpMessage) {
+            if (!httpMessage.isResponseFromTargetHost()) {
+                return ResourceState.IO_ERROR;
+            }
+            return checkResourceState(httpMessage, allowAll);
+        }
+
         private void setOutOfScopeResponse(HttpMessage httpMessage) {
             try {
                 httpMessage.setTimeSentMillis(System.currentTimeMillis());
@@ -877,20 +891,14 @@ public class ClientSpider implements EventConsumer, GenericScanner2 {
             httpMessage.setResponseBody(outOfScopeResponseBody.getBytes());
         }
 
-        private ResourceState getResourceState(HttpMessage httpMessage) {
-            if (!httpMessage.isResponseFromTargetHost()) {
-                return ResourceState.IO_ERROR;
-            }
-            return ResourceState.ALLOWED;
-        }
-
         private void notifyMessage(HttpMessage httpMessage, int historyType, ResourceState state) {
             try {
                 HistoryReference historyRef =
                         new HistoryReference(session, historyType, httpMessage);
                 ThreadUtils.invokeLater(
                         () -> {
-                            if (state == ResourceState.ALLOWED) {
+                            if (state == ResourceState.ALLOWED
+                                    || state == ResourceState.THIRD_PARTY) {
                                 crawledUrl(httpMessage.getRequestHeader().getURI().toString());
                                 session.getSiteTree().addPath(historyRef, httpMessage);
                             }

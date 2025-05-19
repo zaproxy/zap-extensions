@@ -68,6 +68,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin implements CommonActive
                                 CommonAlertTag.WSTG_V42_SESS_05_CSRF));
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 

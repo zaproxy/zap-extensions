@@ -31,6 +31,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class XAspNetVersionScanRuleUnitTest extends PassiveScannerTest<XAspNetVersionScanRule> {
 
@@ -44,7 +45,7 @@ class XAspNetVersionScanRuleUnitTest extends PassiveScannerTest<XAspNetVersionSc
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -55,6 +56,7 @@ class XAspNetVersionScanRuleUnitTest extends PassiveScannerTest<XAspNetVersionSc
                 tags.containsKey(
                         CommonAlertTag.WSTG_V42_INFO_08_FINGERPRINT_APP_FRAMEWORK.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));

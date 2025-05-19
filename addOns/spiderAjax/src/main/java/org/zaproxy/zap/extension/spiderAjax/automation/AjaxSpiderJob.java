@@ -46,6 +46,7 @@ import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
+import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.ScopeCheck;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParamElem;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
@@ -545,6 +546,8 @@ public class AjaxSpiderJob extends AutomationJob {
         private List<String> elements = List.of();
 
         private List<ExcludedElementAuto> excludedElements = List.of();
+
+        private String scopeCheck = ScopeCheck.getDefault().toString();
 
         // These 2 fields are deprecated
         private Boolean failIfFoundUrlsLessThan;

@@ -44,6 +44,9 @@ public class DiagnosticWebElement {
     private Integer formIndex;
 
     @Column(length = 1024)
+    private String tagName;
+
+    @Column(length = 1024)
     private String attributeType;
 
     @Column(length = 1024)

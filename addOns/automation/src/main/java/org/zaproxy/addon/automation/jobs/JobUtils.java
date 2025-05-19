@@ -636,7 +636,9 @@ public class JobUtils {
                 if (engineWrapper == null) {
                     progress.error(
                             Constant.messages.getString(
-                                    "automation.error.env.sessionmgmt.engine.bad", engineName));
+                                    "automation.error.script.engine.bad",
+                                    engineName,
+                                    file.getAbsolutePath()));
                 } else {
                     ScriptType scriptType = extScript.getScriptType(type);
                     LOGGER.debug("Loading script {}", file.getAbsolutePath());
@@ -655,8 +657,7 @@ public class JobUtils {
                     } catch (IOException e) {
                         progress.error(
                                 Constant.messages.getString(
-                                        "automation.error.env.sessionmgmt.script.bad",
-                                        file.getAbsolutePath()));
+                                        "automation.error.script.bad", file.getAbsolutePath()));
                     }
                 }
             }

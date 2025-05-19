@@ -66,6 +66,7 @@ public class ServerSideIncludeScanRule extends AbstractAppParamPlugin
         alertTags.put(PolicyTag.DEV_FULL.getTag(), "");
         alertTags.put(PolicyTag.QA_STD.getTag(), "");
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 

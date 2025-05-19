@@ -72,6 +72,7 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin
                                 CommonAlertTag.OWASP_2017_A09_VULN_COMP));
         CommonAlertTag.putCve(alertTags, CVE);
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 

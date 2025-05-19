@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,17 +39,25 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 /**
  * TODO note that this should extend AbstractAppParamPlugin rather than find parameters internally
  */
 public class HttpParameterPollutionScanRule extends AbstractAppPlugin
         implements CommonActiveScanRuleInfo {
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION,
-                    CommonAlertTag.WSTG_V42_INPV_04_PARAM_POLLUTION);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION,
+                                CommonAlertTag.WSTG_V42_INPV_04_PARAM_POLLUTION));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static final Logger LOGGER = LogManager.getLogger(HttpParameterPollutionScanRule.class);
     private final String payload = "%26zap%3Dzaproxy";

@@ -223,6 +223,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
                                 CommonAlertTag.OWASP_2017_A01_INJECTION,
                                 CommonAlertTag.WSTG_V42_INPV_05_SQLI));
         alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
         ALERT_TAGS = Collections.unmodifiableMap(alertTags);
     }
 

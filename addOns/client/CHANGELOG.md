@@ -4,9 +4,15 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Client Spider scope check.
 
 ### Changed
+- Updated Chrome and Firefox extensions to v0.0.13.
 - Added optional parameters for Page Load Time and Max Crawl Depth to the Client Spider API.
+
+### Fixed
+- Client Spider to allow all requests while authenticating.
 
 ## [0.15.0] - 2025-03-25
 ### Added

@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -84,10 +87,18 @@ public class Base64Disclosure extends PluginPassiveScanner implements CommonPass
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.base64disclosure.";
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
+
     private static final List<String> IGNORED_HEADERS =
             Arrays.asList("ETag", "Authorization", "X-ChromeLogger-Data", "X-ChromePhp-Data");
 

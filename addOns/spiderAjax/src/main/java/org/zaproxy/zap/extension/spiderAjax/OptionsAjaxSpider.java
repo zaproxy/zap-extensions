@@ -36,6 +36,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
+import org.zaproxy.zap.extension.spiderAjax.internal.ScopeCheckComponent;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 
 @SuppressWarnings("serial")
@@ -68,6 +69,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
     private JLabel eventWait = null;
     private JLabel reloadWait = null;
 
+    private ScopeCheckComponent scopeCheckComponent;
     private AllowedResourcesPanel allowedResourcesPanel;
     private AllowedResourcesTableModel allowedResourcesTableModel;
 
@@ -202,6 +204,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         allowedResourcesPanel.setRemoveWithoutConfirmation(
                 !ajaxSpiderParam.isConfirmRemoveAllowedResource());
         allowedResourcesTableModel.setAllowedResources(ajaxSpiderParam.getAllowedResources());
+
+        scopeCheckComponent.setScopeCheck(ajaxSpiderParam.getScopeCheck());
     }
 
     /** This method validates the parameters before saving them. */
@@ -230,6 +234,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         ajaxSpiderParam.setConfirmRemoveAllowedResource(
                 !allowedResourcesPanel.isRemoveWithoutConfirmation());
         ajaxSpiderParam.setAllowedResources(allowedResourcesTableModel.getElements());
+
+        ajaxSpiderParam.setScopeCheck(scopeCheckComponent.getScopeCheck());
     }
 
     /**
@@ -370,6 +376,12 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
             gbc.insets = new java.awt.Insets(2, 2, 2, 2);
             innerPanel.add(elemsOptionsPanel, gbc);
 
+            gbc.gridy++;
+            gbc.weighty = 0.0D;
+            scopeCheckComponent = new ScopeCheckComponent();
+            innerPanel.add(scopeCheckComponent.getComponent(), gbc);
+
+            gbc.weighty = 1.0D;
             gbc.gridy++;
             allowedResourcesTableModel = new AllowedResourcesTableModel();
             allowedResourcesPanel =

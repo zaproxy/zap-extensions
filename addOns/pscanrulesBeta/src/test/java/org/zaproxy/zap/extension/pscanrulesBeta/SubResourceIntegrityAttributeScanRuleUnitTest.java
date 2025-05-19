@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
@@ -43,6 +45,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -150,19 +153,56 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
     }
 
     @Test
-    void shouldNotRaiseAlertGivenCanonicalAttributeIsPresentInLinkElement()
+    void shouldRaiseAlertGivenMissingIntegrityAttributeInLinkElement()
             throws HttpMalformedHeaderException {
         // Given
-        // From https://www.w3.org/TR/SRI/#use-casesexamples
         HttpMessage msg =
                 buildMessage(
-                        "<html><head><link href=\"https://dev.example.net/style.css\"\n"
-                                + "rel=\"canonical\"\n"
-                                + "      ></head><body></body></html>");
+                        "<html><head><link href=\"https://site53.example.net/style.css\"></head><body></body></html>");
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(0));
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "stylesheet",
+                "STYLESHEET",
+                "STYLEsheet",
+                "alternate stylesheet",
+                "preload",
+                "modulepreload"
+            })
+    void shouldRaiseAlertGivenMissingIntegrityAttributeInLinkElementWithRelevantRel(String relVal)
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head><link rel=\""
+                                + relVal
+                                + "\" href=\"https://site53.example.net/style.css\"></head><body></body></html>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"dns-prefetch", "DNS-PREFETCH", "DNS-prefetch", "canonical"})
+    void shouldNotRaiseAlertGivenMissingIntegrityAttributeInLinkElementWithIrrelevantRel(
+            String relVal) throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg =
+                buildMessage(
+                        "<html><head><link rel=\""
+                                + relVal
+                                + "\" href=\"https://example.net\"></head><body></body></html>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test
@@ -381,13 +421,16 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));

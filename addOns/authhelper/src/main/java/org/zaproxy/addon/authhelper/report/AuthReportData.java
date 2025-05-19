@@ -50,6 +50,7 @@ public class AuthReportData implements Closeable {
         PASS_COUNT("pass.count.failed"),
         SESSION_MGMT("sessmgmt.failed"),
         LOGIN_FAILURES("login.failures"),
+        AF_PLAN_ERRORS("afplan.errors"),
         NO_SUCCESSFUL_LOGINS("no.successful.logins"),
         VERIF_IDENT("verif.failed");
 
@@ -73,6 +74,7 @@ public class AuthReportData implements Closeable {
     private PersistenceManager pm;
     private List<Diagnostic> diagnostics;
     private List<FailureDetail> failureDetails;
+    private List<String> afPlanErrors = new ArrayList<>();
 
     public void addSummaryItem(boolean passed, String key, String description) {
         summaryItems.add(new SummaryItem(passed, key, description));

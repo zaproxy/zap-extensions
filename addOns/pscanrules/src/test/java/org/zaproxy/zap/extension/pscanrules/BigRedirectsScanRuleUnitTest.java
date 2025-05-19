@@ -36,6 +36,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class BigRedirectsScanRuleUnitTest extends PassiveScannerTest<BigRedirectsScanRule> {
     private static final String URI = "http://example.com";
@@ -153,7 +154,7 @@ class BigRedirectsScanRuleUnitTest extends PassiveScannerTest<BigRedirectsScanRu
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
@@ -163,6 +164,7 @@ class BigRedirectsScanRuleUnitTest extends PassiveScannerTest<BigRedirectsScanRu
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getValue())));

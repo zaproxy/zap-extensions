@@ -76,6 +76,7 @@ import org.zaproxy.zap.extension.zest.dialogs.ZestDialogManager;
 import org.zaproxy.zap.extension.zest.internal.DefaultRequestValueReplacer;
 import org.zaproxy.zap.extension.zest.internal.NoopRequestValueReplacer;
 import org.zaproxy.zap.extension.zest.internal.RequestValueReplacer;
+import org.zaproxy.zap.extension.zest.internal.ScriptReorderer;
 import org.zaproxy.zap.extension.zest.menu.ZestMenuManager;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.ZapToggleButton;
@@ -149,6 +150,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private ScriptNode recordingNode = null;
     private boolean clientRecordingActive;
     private ZestClientRecorderHelper zestClientHelper;
+    private ScriptReorderer scriptReorderer;
 
     private ExtensionNetwork extensionNetwork;
     private Method displayScriptMethod;
@@ -1601,6 +1603,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         clientUrlToWindowHandle.clear();
         startRecordingUrl = uri;
         recordingWinId = 0;
+        scriptReorderer = new ScriptReorderer(this::addClientZestStatement);
         // And turn off the recording button, at least for now
         this.getRecordButton().setSelected(false);
         clientRecordingActive = true;
@@ -1696,27 +1699,18 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         if (!isClientRecordingActive()) {
             return;
         }
-        addClientZestStatement(JSONObject.fromObject(stmt));
-    }
-
-    private void addClientZestStatement(JSONObject jsonMessage) throws Exception {
-        ZestStatement stmt = ZestStatementFromJson.createZestStatementFromJson(jsonMessage);
-        addClientZestStatement(stmt);
+        scriptReorderer.recordStatement(JSONObject.fromObject(stmt));
     }
 
     private void addClientZestStatement(ZestStatement stmt) {
-        if (stmt != null) {
-            final ZestStatement stmtFinal = stmt;
-
-            EventQueue.invokeLater(
-                    () -> {
-                        try {
-                            addToParent(getRecordingNode(), stmtFinal, false, false);
-                        } catch (Exception e) {
-                            LOGGER.error(e.getMessage(), e);
-                        }
-                    });
-        }
+        EventQueue.invokeLater(
+                () -> {
+                    try {
+                        addToParent(getRecordingNode(), stmt, false, false);
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                });
     }
 
     public boolean isClientRecordingActive() {

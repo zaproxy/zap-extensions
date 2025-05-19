@@ -408,7 +408,7 @@ class SourceCodeDisclosureCve20121823ScanRuleUnitTest
         // Then
         assertThat(cwe, is(equalTo(20)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
@@ -417,6 +417,7 @@ class SourceCodeDisclosureCve20121823ScanRuleUnitTest
                 is(equalTo(true)));
         assertThat(tags.containsKey("CVE-2012-1823"), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));

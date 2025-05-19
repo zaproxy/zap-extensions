@@ -40,6 +40,7 @@ import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParamElem;
 import org.zaproxy.zap.extension.spiderAjax.OptionsAjaxSpiderTableModel;
 import org.zaproxy.zap.extension.spiderAjax.automation.AjaxSpiderJob.Parameters;
 import org.zaproxy.zap.extension.spiderAjax.internal.ExcludedElementsPanel;
+import org.zaproxy.zap.extension.spiderAjax.internal.ScopeCheckComponent;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -93,6 +94,8 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
     private AjaxSpiderMultipleOptionsPanel elemsOptionsPanel;
 
     private OptionsAjaxSpiderTableModel ajaxSpiderClickModel;
+
+    private ScopeCheckComponent scopeCheckComponent;
 
     private ExcludedElementsPanel excludedElementsPanel;
 
@@ -214,6 +217,9 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
         this.addPadding(1);
 
         // Advanced tab
+        getScopeCheckComponent().setScopeCheck(job.getParameters().getScopeCheck());
+        addCustomComponent(2, getScopeCheckComponent().getComponent());
+
         this.addNumberField(
                 2,
                 MAX_CRAWL_STATES_PARAM,
@@ -308,6 +314,13 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
         return elemsOptionsPanel;
     }
 
+    private ScopeCheckComponent getScopeCheckComponent() {
+        if (scopeCheckComponent == null) {
+            scopeCheckComponent = new ScopeCheckComponent();
+        }
+        return scopeCheckComponent;
+    }
+
     private ExcludedElementsPanel getExcludedElementsPanel() {
         if (excludedElementsPanel == null) {
             excludedElementsPanel = new ExcludedElementsPanel(this, false);
@@ -375,6 +388,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
         }
 
         if (this.getBoolValue(FIELD_ADVANCED)) {
+            job.getParameters().setScopeCheck(getScopeCheckComponent().getScopeCheck().toString());
             this.job.getParameters().setMaxCrawlStates(this.getIntValue(MAX_CRAWL_STATES_PARAM));
             this.job.getParameters().setEventWait(this.getIntValue(EVENT_WAIT_PARAM));
             this.job.getParameters().setReloadWait(this.getIntValue(RELOAD_WAIT_PARAM));

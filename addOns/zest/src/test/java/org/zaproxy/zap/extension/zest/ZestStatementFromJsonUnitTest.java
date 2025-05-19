@@ -62,7 +62,9 @@ class ZestStatementFromJsonUnitTest {
         assertThat(stmt, instanceOf(ZestClientLaunch.class));
         ZestClientLaunch clientStmt = (ZestClientLaunch) stmt;
         assertThat(clientStmt.getElementType(), is(equalTo("ZestClientLaunch")));
-        assertThat(clientStmt.getWindowHandle(), is(equalTo("windowHandle1")));
+        assertThat(
+                clientStmt.getWindowHandle(),
+                is(equalTo(ZestStatementFromJson.WINDOW_HANDLE_BROWSER_EXTENSION)));
         assertThat(clientStmt.getBrowserType(), is(equalTo("firefox")));
         assertThat(clientStmt.isEnabled(), is(equalTo(true)));
         assertThat(clientStmt.isHeadless(), is(equalTo(true)));
@@ -89,7 +91,9 @@ class ZestStatementFromJsonUnitTest {
         assertThat(stmt, instanceOf(ZestClientElementClick.class));
         ZestClientElementClick clientStmt = (ZestClientElementClick) stmt;
         assertThat(clientStmt.getElementType(), is(equalTo("ZestClientElementClick")));
-        assertThat(clientStmt.getWindowHandle(), is(equalTo("windowHandle1")));
+        assertThat(
+                clientStmt.getWindowHandle(),
+                is(equalTo(ZestStatementFromJson.WINDOW_HANDLE_BROWSER_EXTENSION)));
         assertThat(clientStmt.getType(), is(equalTo("test-type")));
         assertThat(clientStmt.getElement(), is(equalTo("test-element")));
         assertThat(clientStmt.isEnabled(), is(equalTo(true)));
@@ -115,7 +119,9 @@ class ZestStatementFromJsonUnitTest {
         assertThat(stmt, instanceOf(ZestClientElementSendKeys.class));
         ZestClientElementSendKeys clientStmt = (ZestClientElementSendKeys) stmt;
         assertThat(clientStmt.getElementType(), is(equalTo("ZestClientElementSendKeys")));
-        assertThat(clientStmt.getWindowHandle(), is(equalTo("windowHandle1")));
+        assertThat(
+                clientStmt.getWindowHandle(),
+                is(equalTo(ZestStatementFromJson.WINDOW_HANDLE_BROWSER_EXTENSION)));
         assertThat(clientStmt.getType(), is(equalTo("test-type")));
         assertThat(clientStmt.getElement(), is(equalTo("test-element")));
         assertThat(clientStmt.getValue(), is(equalTo("test-value")));
@@ -141,7 +147,9 @@ class ZestStatementFromJsonUnitTest {
         assertThat(stmt, instanceOf(ZestClientElementSubmit.class));
         ZestClientElementSubmit clientStmt = (ZestClientElementSubmit) stmt;
         assertThat(clientStmt.getElementType(), is(equalTo("ZestClientElementSubmit")));
-        assertThat(clientStmt.getWindowHandle(), is(equalTo("windowHandle1")));
+        assertThat(
+                clientStmt.getWindowHandle(),
+                is(equalTo(ZestStatementFromJson.WINDOW_HANDLE_BROWSER_EXTENSION)));
         assertThat(clientStmt.getType(), is(equalTo("test-type")));
         assertThat(clientStmt.getElement(), is(equalTo("test-element")));
         assertThat(clientStmt.isEnabled(), is(equalTo(true)));
@@ -166,7 +174,9 @@ class ZestStatementFromJsonUnitTest {
         assertThat(stmt, instanceOf(ZestClientElementClear.class));
         ZestClientElementClear clientStmt = (ZestClientElementClear) stmt;
         assertThat(clientStmt.getElementType(), is(equalTo("ZestClientElementClear")));
-        assertThat(clientStmt.getWindowHandle(), is(equalTo("windowHandle1")));
+        assertThat(
+                clientStmt.getWindowHandle(),
+                is(equalTo(ZestStatementFromJson.WINDOW_HANDLE_BROWSER_EXTENSION)));
         assertThat(clientStmt.getType(), is(equalTo("test-type")));
         assertThat(clientStmt.getElement(), is(equalTo("test-element")));
         assertThat(clientStmt.isEnabled(), is(equalTo(true)));
@@ -190,7 +200,9 @@ class ZestStatementFromJsonUnitTest {
         assertThat(stmt, instanceOf(ZestClientWindowClose.class));
         ZestClientWindowClose clientStmt = (ZestClientWindowClose) stmt;
         assertThat(clientStmt.getElementType(), is(equalTo("ZestClientWindowClose")));
-        assertThat(clientStmt.getWindowHandle(), is(equalTo("windowHandle1")));
+        assertThat(
+                clientStmt.getWindowHandle(),
+                is(equalTo(ZestStatementFromJson.WINDOW_HANDLE_BROWSER_EXTENSION)));
         assertThat(clientStmt.getSleepInSeconds(), is(equalTo(2)));
         assertThat(clientStmt.isEnabled(), is(equalTo(true)));
     }
@@ -215,7 +227,9 @@ class ZestStatementFromJsonUnitTest {
         assertThat(stmt, instanceOf(ZestClientSwitchToFrame.class));
         ZestClientSwitchToFrame clientStmt = (ZestClientSwitchToFrame) stmt;
         assertThat(clientStmt.getElementType(), is(equalTo("ZestClientSwitchToFrame")));
-        assertThat(clientStmt.getWindowHandle(), is(equalTo("windowHandle1")));
+        assertThat(
+                clientStmt.getWindowHandle(),
+                is(equalTo(ZestStatementFromJson.WINDOW_HANDLE_BROWSER_EXTENSION)));
         assertThat(clientStmt.getFrameIndex(), is(equalTo(2)));
         assertThat(clientStmt.getFrameName(), is(equalTo("my-frame")));
         assertThat(clientStmt.isParent(), is(equalTo(false)));
@@ -241,7 +255,9 @@ class ZestStatementFromJsonUnitTest {
         assertThat(stmt, instanceOf(ZestClientWindowResize.class));
         ZestClientWindowResize clientStmt = (ZestClientWindowResize) stmt;
         assertThat(clientStmt.getElementType(), is(equalTo("ZestClientWindowResize")));
-        assertThat(clientStmt.getWindowHandle(), is(equalTo("windowHandle1")));
+        assertThat(
+                clientStmt.getWindowHandle(),
+                is(equalTo(ZestStatementFromJson.WINDOW_HANDLE_BROWSER_EXTENSION)));
         assertThat(clientStmt.getX(), is(equalTo(1000)));
         assertThat(clientStmt.getY(), is(equalTo(2000)));
         assertThat(clientStmt.isEnabled(), is(equalTo(true)));

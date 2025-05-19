@@ -23,11 +23,20 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
+import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import fi.iki.elonen.NanoHTTPD.Response.Status;
 import io.github.bonigarcia.seljup.BrowsersTemplate.Browser;
 import io.github.bonigarcia.seljup.SeleniumJupiter;
 import java.io.IOException;
@@ -41,9 +50,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.Setter;
 import org.apache.commons.httpclient.URI;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -53,6 +67,8 @@ import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
@@ -65,11 +81,16 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
+import org.zaproxy.zap.authentication.AuthenticationMethod;
+import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Pair;
 
 class AuthUtilsUnitTest extends TestUtils {
@@ -117,7 +138,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnUserTextField() throws Exception {
+    void shouldReturnUserTextField() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         inputElements.add(new TestWebElement("input", "password"));
@@ -175,7 +196,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnSingleFieldAsUserField() throws Exception {
+    void shouldReturnSingleFieldAsUserField() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         // Starting form with just username with custom input type.
@@ -211,7 +232,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnUserEmailField() throws Exception {
+    void shouldReturnUserEmailField() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         inputElements.add(new TestWebElement("input", "password"));
@@ -227,7 +248,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnUserEmailFieldById() throws Exception {
+    void shouldReturnUserEmailFieldById() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         inputElements.add(new TestWebElement("input", "password"));
@@ -244,7 +265,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnUserEmailFieldByName() throws Exception {
+    void shouldReturnUserEmailFieldByName() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         inputElements.add(new TestWebElement("input", "password"));
@@ -261,7 +282,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnNoUserField() throws Exception {
+    void shouldReturnNoUserField() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         inputElements.add(new TestWebElement("input", "password"));
@@ -276,7 +297,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnPasswordField() throws Exception {
+    void shouldReturnPasswordField() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         inputElements.add(new TestWebElement("input", "email"));
@@ -334,7 +355,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnNoPasswordField() throws Exception {
+    void shouldReturnNoPasswordField() {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
         inputElements.add(new TestWebElement("input", "email"));
@@ -428,10 +449,11 @@ class AuthUtilsUnitTest extends TestUtils {
         HttpMessage msg =
                 new HttpMessage(
                         new HttpRequestHeader(
-                                "GET / HTTP/1.1\r\n"
-                                        + "Header1: Value1\r\n"
-                                        + "Header2: Value2\r\n"
-                                        + "Host: example.com\r\n\r\n"),
+                                """
+                                GET / HTTP/1.1\r
+                                Header1: Value1\r
+                                Header2: Value2\r
+                                Host: example.com\r\n\r\n"""),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("Response Body"));
@@ -450,9 +472,10 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpRequestHeader("GET / HTTP/1.1\r\nHost: example.com\r\n\r\n"),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader(
-                                "HTTP/1.1 200 OK\r\n"
-                                        + "Header1: Value1\r\n"
-                                        + "Header2: Value2\r\n"),
+                                """
+                                HTTP/1.1 200 OK\r
+                                Header1: Value1\r
+                                Header2: Value2\r\n"""),
                         new HttpResponseBody("Response Body"));
         // When
         Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, false);
@@ -492,17 +515,18 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpResponseHeader(
                                 "HTTP/1.1 200 OK\r\n" + "Content-Type: application/json"),
                         new HttpResponseBody(
-                                "{'wrapper1': {\n"
-                                        + "  'att1': 'val1',\n"
-                                        + "  'att2': 'val2',\n"
-                                        + "  'wrapper2': {\n"
-                                        + "    'att1': 'val3',\n"
-                                        + "    'array': [\n"
-                                        + "      {'att1': 'val4', 'att2': 'val5'},\n"
-                                        + "      {'att3': 'val6', 'att4': 'val7'}\n"
-                                        + "    ]\n"
-                                        + "  }\n"
-                                        + "}}"));
+                                """
+                                {"wrapper1": {
+                                  "att1": "val1",
+                                  "att2": "val2",
+                                  "wrapper2": {
+                                    "att1": "val3",
+                                    "array": [
+                                      {"att1": "val4", "att2": "val5"},
+                                      {"att3": "val6", "att4": "val7"}
+                                    ]
+                                  }
+                                }}"""));
         // When
         Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg, false);
 
@@ -528,9 +552,10 @@ class AuthUtilsUnitTest extends TestUtils {
         HttpMessage msg =
                 new HttpMessage(
                         new HttpRequestHeader(
-                                "GET https://example.com/ HTTP/1.1\r\n"
-                                        + "Host: example.com\r\n"
-                                        + "Cookie: aaa=bbb\r\n\r\n"),
+                                """
+                                GET https://example.com/ HTTP/1.1\r
+                                Host: example.com\r
+                                Cookie: aaa=bbb\r\n\r\n"""),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader(
                                 "HTTP/1.1 200 OK\r\n" + "Set-Cookie: ccc=ddd; HttpOnly; Secure"),
@@ -553,9 +578,10 @@ class AuthUtilsUnitTest extends TestUtils {
         HttpMessage msg =
                 new HttpMessage(
                         new HttpRequestHeader(
-                                "GET https://example.com/ HTTP/1.1\r\n"
-                                        + "Host: example.com\r\n"
-                                        + "Cookie: aaa=bbb\r\n\r\n"),
+                                """
+                                GET https://example.com/ HTTP/1.1\r
+                                Host: example.com\r
+                                Cookie: aaa=bbb\r\n\r\n"""),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader(
                                 "HTTP/1.1 200 OK\r\n" + "Set-Cookie: ccc=ddd; HttpOnly; Secure"),
@@ -759,7 +785,40 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnNoSessionToken() throws Exception {
+    void shouldGetRequestSessionTokensUsingHeaderConfigs() throws Exception {
+        // Given
+        String token1 = "96438673498764398";
+        String token2 = "bndkdfsojhgkdshgk";
+        String token3 = "89jdhf9834herg03s";
+
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(
+                """
+                GET / HTTP/1.1
+                authorization: Bearer %s
+                cookie: id=%s; SameSite=Strict
+                x-api: %s"""
+                        .formatted(token1, token2, token3));
+        List<Pair<String, String>> headerConfigs = List.of(new Pair<>("x-api", "{%header:x-api%}"));
+
+        // When
+        Set<SessionToken> tokens = AuthUtils.getRequestSessionTokens(msg, headerConfigs);
+
+        // Then
+        assertThat(
+                tokens,
+                containsInAnyOrder(
+                        sessionTokenEqualTo(
+                                SessionToken.HEADER_SOURCE,
+                                "authorization",
+                                token1,
+                                "Bearer " + token1),
+                        sessionTokenEqualTo(SessionToken.COOKIE_SOURCE, "id", token2, token2),
+                        sessionTokenEqualTo(SessionToken.HEADER_SOURCE, "x-api", token3, token3)));
+    }
+
+    @Test
+    void shouldReturnNoSessionToken() {
         // Given
         AuthUtils.recordSessionToken(
                 new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, "456"));
@@ -770,7 +829,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnSessionToken() throws Exception {
+    void shouldReturnSessionToken() {
         // Given
         AuthUtils.recordSessionToken(
                 new SessionToken(SessionToken.HEADER_SOURCE, "Header1", "123"));
@@ -788,7 +847,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldRemoveSessionToken() throws Exception {
+    void shouldRemoveSessionToken() {
         // Given
         AuthUtils.recordSessionToken(
                 new SessionToken(SessionToken.HEADER_SOURCE, "Header1", "123"));
@@ -1025,6 +1084,124 @@ class AuthUtilsUnitTest extends TestUtils {
         }
     }
 
+    static class LoginLinkVerification extends TestUtils {
+
+        private String url;
+        private Function<IHTTPSession, Response> handler;
+
+        private HistoryProvider historyProvider;
+
+        private HttpSender authSender;
+        private User user;
+        private Context context;
+        private AuthenticationMethod authenticationMethod;
+
+        @BeforeEach
+        void setupEach() throws IOException {
+            startServer();
+
+            handler = session -> newFixedLengthResponse("");
+
+            url = "http://localhost:" + nano.getListeningPort();
+            nano.addHandler(
+                    new NanoServerHandler("") {
+                        @Override
+                        protected Response serve(IHTTPSession session) {
+                            return handler.apply(session);
+                        }
+                    });
+
+            historyProvider = mock(HistoryProvider.class);
+            AuthUtils.setHistoryProvider(historyProvider);
+
+            authSender = mock(HttpSender.class);
+            user = mock(User.class);
+            context = mock(Context.class);
+            given(user.getContext()).willReturn(context);
+            authenticationMethod = mock(AuthenticationMethod.class);
+            given(context.getAuthenticationMethod()).willReturn(authenticationMethod);
+        }
+
+        @AfterEach
+        void cleanupEach() {
+            stopServer();
+
+            AuthUtils.setHistoryProvider(null);
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = AuthCheckingStrategy.class, mode = Mode.EXCLUDE, names = "AUTO_DETECT")
+        void shouldNotCheckLoginLinkIfNotAutoDetectStrategy(
+                AuthCheckingStrategy authCheckingStrategy) {
+            // Given
+            given(authenticationMethod.getAuthCheckingStrategy()).willReturn(authCheckingStrategy);
+            // When
+            AuthUtils.checkLoginLinkVerification(authSender, user, url);
+            // Then
+            verifyNoInteractions(authSender);
+            verifyNoInteractions(historyProvider);
+        }
+
+        @Test
+        void shouldNotFurtherCheckLoginLinkIfUnauthDoesNotHaveLoginLabels() {
+            // Given
+            given(authenticationMethod.getAuthCheckingStrategy())
+                    .willReturn(AuthCheckingStrategy.AUTO_DETECT);
+            // When
+            AuthUtils.checkLoginLinkVerification(authSender, user, url);
+            // Then
+            verifyNoInteractions(authSender);
+            verify(historyProvider).addAuthMessageToHistory(any(HttpMessage.class));
+        }
+
+        @Test
+        void shouldFollowUpToMaxOfUnauthRedirections() {
+            // Given
+            handler =
+                    session -> {
+                        Response response =
+                                newFixedLengthResponse(
+                                        Status.TEMPORARY_REDIRECT, NanoHTTPD.MIME_HTML, "");
+                        response.addHeader(HttpHeader.LOCATION, url);
+                        return response;
+                    };
+            given(authenticationMethod.getAuthCheckingStrategy())
+                    .willReturn(AuthCheckingStrategy.AUTO_DETECT);
+            // When
+            AuthUtils.checkLoginLinkVerification(authSender, user, url);
+            // Then
+            verifyNoInteractions(authSender);
+            // First message sent is notified as well.
+            verify(historyProvider, times(AuthUtils.MAX_UNAUTH_REDIRECTIONS + 1))
+                    .addAuthMessageToHistory(any(HttpMessage.class));
+        }
+
+        @Test
+        void shouldFollowRelativeUnauthRedirections() {
+            // Given
+            AtomicInteger redirCount = new AtomicInteger();
+            handler =
+                    session -> {
+                        if (redirCount.compareAndSet(0, 1)) {
+                            Response response =
+                                    newFixedLengthResponse(
+                                            Status.TEMPORARY_REDIRECT, NanoHTTPD.MIME_HTML, "");
+                            response.addHeader(HttpHeader.LOCATION, "/path/");
+                            return response;
+                        }
+                        return newFixedLengthResponse("");
+                    };
+            given(authenticationMethod.getAuthCheckingStrategy())
+                    .willReturn(AuthCheckingStrategy.AUTO_DETECT);
+            // When
+            AuthUtils.checkLoginLinkVerification(authSender, user, url);
+            // Then
+            verifyNoInteractions(authSender);
+            // First message sent is notified as well.
+            verify(historyProvider, times(2)).addAuthMessageToHistory(any(HttpMessage.class));
+        }
+    }
+
     class TestWebElement implements WebElement {
 
         private String tag;
@@ -1152,5 +1329,50 @@ class AuthUtilsUnitTest extends TestUtils {
         public String getCssValue(String propertyName) {
             return null;
         }
+    }
+
+    protected static Matcher<SessionToken> sessionTokenEqualTo(
+            String source, String key, String value, String fullValue) {
+        return new BaseMatcher<>() {
+
+            @Override
+            public boolean matches(Object actualValue) {
+                SessionToken token = (SessionToken) actualValue;
+                return source.equals(token.getSource())
+                        && key.equals(token.getKey())
+                        && value.equals(token.getValue())
+                        && fullValue.equals(token.getFullValue());
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description
+                        .appendText("SessionToken[source: ")
+                        .appendValue(source)
+                        .appendText(" key: ")
+                        .appendValue(key)
+                        .appendText(" value: ")
+                        .appendValue(value)
+                        .appendText(" full value: ")
+                        .appendValue(fullValue)
+                        .appendText("]");
+            }
+
+            @Override
+            public void describeMismatch(Object item, Description description) {
+                SessionToken token = (SessionToken) item;
+                appendDifference(description, "source", source, token.getSource());
+                appendDifference(description, "key", key, token.getKey());
+                appendDifference(description, "value", value, token.getValue());
+                appendDifference(description, "full value", fullValue, token.getFullValue());
+            }
+
+            private void appendDifference(
+                    Description description, String field, String expected, String actual) {
+                if (!expected.equals(actual)) {
+                    description.appendText(field).appendText(" was ").appendValue(actual);
+                }
+            }
+        };
     }
 }

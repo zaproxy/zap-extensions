@@ -46,6 +46,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> {
 
@@ -238,13 +239,14 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_CLNT_02_JS_EXEC.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CLNT_02_JS_EXEC.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CLNT_02_JS_EXEC.getValue())));
@@ -258,7 +260,7 @@ class JsFunctionScanRuleUnitTest extends PassiveScannerTest<JsFunctionScanRule> 
         Map<String, String> tags = alert.getTags();
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(tags, hasKey("CWE-749"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_CLNT_02_JS_EXEC.getTag()));

@@ -386,7 +386,7 @@ class JobUtilsUnitTest extends TestUtils {
         ScriptWrapper obtainedScriptWrapper =
                 JobUtils.getScriptWrapper(file, type, engineName, progress);
         // Then
-        verify(progress).error("!automation.error.env.sessionmgmt.engine.bad!");
+        verify(progress).error("!automation.error.script.engine.bad!");
         assertThat(obtainedScriptWrapper, is(nullValue()));
     }
 

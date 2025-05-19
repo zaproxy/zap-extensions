@@ -46,7 +46,7 @@ class CrossDomainScanRuleUnitTest extends ActiveScannerTest<CrossDomainScanRule>
         // Then
         assertThat(cwe, is(equalTo(264)));
         assertThat(wasc, is(equalTo(14)));
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -57,6 +57,7 @@ class CrossDomainScanRuleUnitTest extends ActiveScannerTest<CrossDomainScanRule>
                 tags.containsKey(CommonAlertTag.WSTG_V42_CONF_08_RIA_CROSS_DOMAIN.getTag()),
                 is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.QA_FULL.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));

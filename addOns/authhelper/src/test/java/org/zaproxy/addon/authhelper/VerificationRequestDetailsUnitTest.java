@@ -55,7 +55,7 @@ class VerificationRequestDetailsUnitTest extends TestUtils {
     private ContextUserAuthManager cuam;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() {
         extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         context = mock(Context.class);
@@ -76,10 +76,11 @@ class VerificationRequestDetailsUnitTest extends TestUtils {
         HttpMessage msg =
                 new HttpMessage(
                         new HttpRequestHeader(
-                                "GET / HTTP/1.1\r\n"
-                                        + "Header1: Value1\r\n"
-                                        + "Header2: Value2\r\n"
-                                        + "Host: example.com\r\n\r\n"),
+                                """
+                                GET / HTTP/1.1\r
+                                Header1: Value1\r
+                                Header2: Value2\r
+                                Host: example.com\r\n\r\n"""),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader("HTTP/1.1 404 OK\r\n"),
                         new HttpResponseBody(body));
@@ -108,12 +109,13 @@ class VerificationRequestDetailsUnitTest extends TestUtils {
         HttpMessage msg =
                 new HttpMessage(
                         new HttpRequestHeader(
-                                "GET / HTTP/1.1\r\n"
-                                        + "Header1: Value1\r\n"
-                                        + "Host: example.com\r\n\r\n"),
+                                """
+                                GET / HTTP/1.1\r
+                                Header1: Value1\r
+                                Host: example.com\r\n\r\n"""),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader(
-                                "HTTP/1.1 200 OK\r\n" + "Content-Type: application/json\r\n"),
+                                "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n"),
                         new HttpResponseBody(body));
         List<User> users = new ArrayList<>();
         users.add(new User(1, username));
@@ -143,12 +145,13 @@ class VerificationRequestDetailsUnitTest extends TestUtils {
         HttpMessage msg =
                 new HttpMessage(
                         new HttpRequestHeader(
-                                "GET / HTTP/1.1\r\n"
-                                        + "Header1: Value1\r\n"
-                                        + "Host: example.com\r\n\r\n"),
+                                """
+                                GET / HTTP/1.1\r
+                                Header1: Value1\r
+                                Host: example.com\r\n\r\n"""),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader(
-                                "HTTP/1.1 200 OK\r\n" + "Content-Type: application/json\r\n"),
+                                "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n"),
                         new HttpResponseBody(body));
         List<User> users = new ArrayList<>();
         User user = new User(1, "test");
@@ -261,14 +264,14 @@ class VerificationRequestDetailsUnitTest extends TestUtils {
                         new HttpRequestHeader("GET / HTTP/1.1\r\n"),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader(
-                                "HTTP/1.1 200 OK\r\n" + "Content-Type: application/text\r\n"),
+                                "HTTP/1.1 200 OK\r\nContent-Type: application/text\r\n"),
                         new HttpResponseBody(stdBody));
         HttpMessage msg2 =
                 new HttpMessage(
                         new HttpRequestHeader("GET / HTTP/1.1\r\n"),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader(
-                                "HTTP/1.1 200 OK\r\n" + "Content-Type: application/json\r\n"),
+                                "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n"),
                         new HttpResponseBody(jsnBody));
 
         // When
@@ -294,12 +297,13 @@ class VerificationRequestDetailsUnitTest extends TestUtils {
         HttpMessage msg1 =
                 new HttpMessage(
                         new HttpRequestHeader(
-                                "GET / HTTP/1.1\r\n"
-                                        + "Header1: Value1\r\n"
-                                        + "Host: example.com\r\n\r\n"),
+                                """
+                                GET / HTTP/1.1\r
+                                Header1: Value1\r
+                                Host: example.com\r\n\r\n"""),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader(
-                                "HTTP/1.1 200 OK\r\n" + "Content-Type: application/json\r\n"),
+                                "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n"),
                         new HttpResponseBody(body1));
 
         HttpMessage msg2 =
@@ -307,7 +311,7 @@ class VerificationRequestDetailsUnitTest extends TestUtils {
                         new HttpRequestHeader("GET / HTTP/1.1\r\n"),
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader(
-                                "HTTP/1.1 200 OK\r\n" + "Content-Type: application/json\r\n"),
+                                "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n"),
                         new HttpResponseBody(body2));
 
         // When

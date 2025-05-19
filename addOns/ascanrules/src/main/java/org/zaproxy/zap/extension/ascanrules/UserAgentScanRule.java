@@ -24,6 +24,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +36,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 /**
@@ -48,6 +50,9 @@ public class UserAgentScanRule extends AbstractAppPlugin implements CommonActive
     private static final String MESSAGE_PREFIX = "ascanrules.useragent.";
     private static final String USER_AGENT_PARAM_NAME =
             Constant.messages.getString(MESSAGE_PREFIX + "useragentparmname");
+
+    private static final Map<String, String> ALERT_TAGS =
+            Map.of(PolicyTag.PENTEST.getTag(), "", CommonAlertTag.CUSTOM_PAYLOADS.getTag(), "");
 
     private static final String INTERNET_EXPLORER_8 =
             "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)";
@@ -215,9 +220,12 @@ public class UserAgentScanRule extends AbstractAppPlugin implements CommonActive
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
         Alert example = buildAlert(null, "ExampleBot 1.1").build();
-        example.setTags(
-                CommonAlertTag.mergeTags(example.getTags(), CommonAlertTag.CUSTOM_PAYLOADS));
         alerts.add(example);
         return alerts;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 }

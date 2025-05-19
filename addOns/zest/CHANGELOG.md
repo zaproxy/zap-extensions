@@ -5,7 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Client element waitForMsec parameter.
 
+### Changed
+- Update Zest library to 0.29.0:
+  - Allow to access the `WebElement` referenced by a `ZestClientElement`.
+  - Add new `waitForMsec` parameter to all client elements.
+  - Change `ZestClientElementClick`, `ZestClientElementSendKeys`, and `ZestClientElementSubmit` to wait for the element to also be enabled when using `waitForMsec`.
+  - Update Selenium to version 4.32.0.
+  - Change `ZestClientElementClick` to click on the position of the element instead of the element itself when obscured, to better reproduce a manual click.
+  - Change `ZestClientElementScrollTo` to only scroll to the element when not already in view and to scroll with `nearest` vertical alignment, to ensure the element is kept visible.
+- Allow to copy the script's file system path from the Edit Zest Script dialogue.
+
+### Fixed
+- Print statements should print to the relevant script Output tab.
+- Recording client Zest scripts.
 
 ## [48.5.0] - 2025-03-25
 ### Changed

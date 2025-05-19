@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -204,22 +205,22 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
         @Override
         public void processMessageToMatchSession(HttpMessage message, WebSession session)
                 throws UnsupportedWebSessionException {
-            if (session instanceof HttpHeaderBasedSession) {
-                HttpHeaderBasedSession hbSession = (HttpHeaderBasedSession) session;
+            if (session instanceof HttpHeaderBasedSession hbSession) {
                 LOGGER.debug(
                         "processMessageToMatchSession {} # headers {} ",
                         message.getRequestHeader().getURI(),
                         hbSession.getHeaders().size());
 
-                Map<String, String> trackedCookies =
+                Set<String> trackedCookies =
                         Stream.of(hbSession.getHttpState().getCookies())
-                                .collect(Collectors.toMap(Cookie::getName, Cookie::getValue));
+                                .map(Cookie::getName)
+                                .collect(Collectors.toSet());
 
                 List<HttpCookie> cookies = message.getRequestHeader().getHttpCookies();
                 for (Pair<String, String> header : hbSession.getHeaders()) {
                     if (HttpHeader.COOKIE.equalsIgnoreCase(header.first)) {
                         String[] kv = header.second.split("=");
-                        if (!trackedCookies.containsKey(kv[0])) {
+                        if (!trackedCookies.contains(kv[0])) {
                             cookies.add(new HttpCookie(kv[0], kv[1]));
                         } else {
                             LOGGER.debug(
@@ -239,9 +240,7 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
 
                 Context context = Model.getSingleton().getSession().getContext(contextId);
                 AuthenticationMethod am = context.getAuthenticationMethod();
-                if (am instanceof BrowserBasedAuthenticationMethod) {
-                    BrowserBasedAuthenticationMethod bbam = (BrowserBasedAuthenticationMethod) am;
-
+                if (am instanceof BrowserBasedAuthenticationMethod bbam) {
                     try {
                         Method method =
                                 LegacyUtils.class.getMethod(
@@ -286,9 +285,10 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            return true;
+            if (obj == null) {
+                return false;
+            }
+            return getClass() == obj.getClass();
         }
 
         @Override

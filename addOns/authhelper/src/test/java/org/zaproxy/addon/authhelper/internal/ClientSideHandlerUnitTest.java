@@ -61,7 +61,7 @@ import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Pair;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class ClientSideHandlerUnitTest extends TestUtils {
+class ClientSideHandlerUnitTest extends TestUtils {
 
     private static final String TEST_USERNAME = "test@example.org.com";
     private static final String TEST_PASSWORD = "mySuperSecretPassword";
@@ -82,7 +82,7 @@ public class ClientSideHandlerUnitTest extends TestUtils {
     private static final String SESSION_TOKEN1 = "1234567890123456789012345678901234567890";
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         mockMessages(new ExtensionAuthhelper());
         given(model.getSession()).willReturn(session);
         context = new Context(session, 0);
@@ -118,7 +118,7 @@ public class ClientSideHandlerUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldExtractKeyValuePairs() throws Exception {
+    void shouldExtractKeyValuePairs() {
         // Given / When
         List<Pair<String, String>> tokens =
                 ClientSideHandler.extractKeyValuePairs(

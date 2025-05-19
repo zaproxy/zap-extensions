@@ -38,6 +38,7 @@ import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderResultsTableModel.ProcessedCellItem;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
 @SuppressWarnings("serial")
@@ -119,6 +120,11 @@ public class AjaxSpiderResultsTable extends HistoryReferencesTable {
                 new ImageIcon(
                         AjaxSpiderResultsTable.class.getResource("/resource/icon/16/149.png"));
 
+        /** The icon that indicates the entry is a 3rd party one. */
+        private static final ImageIcon THIRD_PARTY_ICON =
+                DisplayUtils.getScaledIcon(
+                        AjaxSpiderResultsTable.class.getResource("/resource/icon/16/154.png"));
+
         private final int columnIndex;
 
         public ProcessedCellItemIconHighlighter(final int columnIndex) {
@@ -129,23 +135,26 @@ public class AjaxSpiderResultsTable extends HistoryReferencesTable {
         protected Component doHighlight(Component component, ComponentAdapter adapter) {
             ProcessedCellItem cell = (ProcessedCellItem) adapter.getValue(columnIndex);
 
-            boolean processed = cell.getState() == ResourceState.PROCESSED;
-            Icon icon = getProcessedIcon(processed);
-            if (component instanceof IconAware) {
-                ((IconAware) component).setIcon(icon);
-            } else if (component instanceof JLabel) {
-                ((JLabel) component).setIcon(icon);
+            Icon icon = getProcessedIcon(cell.getState());
+            if (component instanceof IconAware iconAware) {
+                iconAware.setIcon(icon);
+            } else if (component instanceof JLabel label) {
+                label.setIcon(icon);
             }
 
-            if (component instanceof JLabel) {
-                ((JLabel) component).setText(processed ? "" : cell.getLabel());
+            if (component instanceof JLabel label) {
+                label.setText(cell.getState() == ResourceState.PROCESSED ? "" : cell.getLabel());
             }
 
             return component;
         }
 
-        private static Icon getProcessedIcon(final boolean processed) {
-            return processed ? PROCESSED_ICON : NOT_PROCESSED_ICON;
+        private static Icon getProcessedIcon(ResourceState state) {
+            return switch (state) {
+                case PROCESSED -> PROCESSED_ICON;
+                case THIRD_PARTY -> THIRD_PARTY_ICON;
+                default -> NOT_PROCESSED_ICON;
+            };
         }
 
         /**

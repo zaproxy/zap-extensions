@@ -80,7 +80,7 @@ public class AuthenticationData extends AutomationData {
 
     // TODO: Plan to change once the core supports dynamic methods better
     protected static final String CLIENT_SCRIPT_BASED_AUTH_METHOD_CLASSNAME =
-            "org.zaproxy.addon.authhelper.client.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod";
+            "org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod";
     protected static final String BROWSER_BASED_AUTH_METHOD_CLASSNAME =
             "org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod";
 
@@ -157,6 +157,7 @@ public class AuthenticationData extends AutomationData {
                 for (Entry<String, String> entry : paramValues.entrySet()) {
                     parameters.put(entry.getKey(), entry.getValue());
                 }
+                JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_WAIT, authMethod);
             }
         } else if (authMethod instanceof ScriptBasedAuthenticationMethod scriptAuthMethod) {
             ScriptWrapper sw =
@@ -425,7 +426,7 @@ public class AuthenticationData extends AutomationData {
                     if (!clientScript.exists() || !clientScript.canRead()) {
                         progress.error(
                                 Constant.messages.getString(
-                                        "automation.error.env.sessionmgmt.script.bad",
+                                        "automation.error.env.auth.script.bad",
                                         clientScript.getAbsolutePath()));
                     } else {
                         ScriptWrapper sw =
@@ -462,6 +463,8 @@ public class AuthenticationData extends AutomationData {
                             JobUtils.setPrivateField(
                                     clientScriptMethod, "paramValues", getScriptParameters(env));
 
+                            setLoginPageWait(clientScriptMethod, getParameters());
+
                             reloadAuthenticationMethod(clientScriptMethod, progress);
                             context.setAuthenticationMethod(clientScriptMethod);
                         }
@@ -475,7 +478,7 @@ public class AuthenticationData extends AutomationData {
                     if (!f.exists() || !f.canRead()) {
                         progress.error(
                                 Constant.messages.getString(
-                                        "automation.error.env.sessionmgmt.script.bad",
+                                        "automation.error.env.auth.script.bad",
                                         f.getAbsolutePath()));
                     } else {
                         ScriptWrapper sw =
@@ -540,17 +543,8 @@ public class AuthenticationData extends AutomationData {
                             JobUtils.setPrivateField(
                                     am, AuthenticationData.PARAM_BROWSER_ID, (String) browserIdObj);
                         }
-                        Object loginPageWaitObj =
-                                getParameters().get(AuthenticationData.PARAM_LOGIN_PAGE_WAIT);
-                        if (loginPageWaitObj instanceof Integer) {
-                            int loginPageWait = JobUtils.unBox((Integer) loginPageWaitObj);
-                            if (loginPageWait > 0) {
-                                JobUtils.setPrivateField(
-                                        am,
-                                        AuthenticationData.PARAM_LOGIN_PAGE_WAIT,
-                                        loginPageWait);
-                            }
-                        }
+
+                        setLoginPageWait(am, parameters);
 
                         try {
                             Method method = am.getClass().getMethod("fromMap", Map.class);
@@ -596,6 +590,17 @@ public class AuthenticationData extends AutomationData {
         }
         if (this.verification != null) {
             this.verification.initAuthenticationVerification(context, progress);
+        }
+    }
+
+    private static void setLoginPageWait(Object method, Map<String, Object> parameters) {
+        Object loginPageWaitObj = parameters.get(AuthenticationData.PARAM_LOGIN_PAGE_WAIT);
+        if (loginPageWaitObj instanceof Integer value) {
+            int loginPageWait = JobUtils.unBox(value);
+            if (loginPageWait >= 0) {
+                JobUtils.setPrivateField(
+                        method, AuthenticationData.PARAM_LOGIN_PAGE_WAIT, loginPageWait);
+            }
         }
     }
 
