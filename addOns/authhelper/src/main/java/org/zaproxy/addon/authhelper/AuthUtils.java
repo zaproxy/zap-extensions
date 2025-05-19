@@ -909,8 +909,8 @@ public class AuthUtils {
     }
 
     /**
-     * Returns all of the identified session tokens in a request. This method looks for
-     * Authorization headers and cookies with a value over a minimum length.
+     * Returns all of the identified session tokens in a request. This method looks for any headers
+     * with "auth" in their names and cookies with a value over a minimum length.
      *
      * @param msg the message containing the request to check
      * @return all of the identified session tokens in the request.
@@ -919,18 +919,27 @@ public class AuthUtils {
         return getRequestSessionTokens(msg, List.of());
     }
 
+    private static boolean isAuthHeader(String name) {
+        return name.toLowerCase(Locale.ROOT).contains("auth");
+    }
+
     public static Set<SessionToken> getRequestSessionTokens(
             HttpMessage msg, List<Pair<String, String>> headerConfigs) {
         Set<SessionToken> map = new HashSet<>();
-        List<String> authHeaders = msg.getRequestHeader().getHeaderValues(HttpHeader.AUTHORIZATION);
-        for (String header : authHeaders) {
-            map.add(new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, header));
-        }
+        msg.getRequestHeader().getHeaders().stream()
+                .filter(h -> isAuthHeader(h.getName()))
+                .forEach(
+                        h ->
+                                map.add(
+                                        new SessionToken(
+                                                SessionToken.HEADER_SOURCE,
+                                                h.getName(),
+                                                h.getValue())));
+
         if (headerConfigs != null) {
             for (Pair<String, String> entry : headerConfigs) {
                 String name = entry.first;
-                if (HttpHeader.AUTHORIZATION.equalsIgnoreCase(name)
-                        || HttpHeader.COOKIE.equalsIgnoreCase(name)) {
+                if (isAuthHeader(name) || HttpHeader.COOKIE.equalsIgnoreCase(name)) {
                     continue;
                 }
 

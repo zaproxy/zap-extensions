@@ -185,7 +185,7 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(smDetails.getConfidence())
                 .setParam(token.getKey())
-                .setEvidence(token.getValue())
+                .setEvidence(token.getKey())
                 .setDescription(Constant.messages.getString("authhelper.session-detect.desc"))
                 .setSolution(Constant.messages.getString("authhelper.session-detect.soln"))
                 .setReference(
