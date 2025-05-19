@@ -73,12 +73,22 @@ public class AuthenticationDiagnostics implements AutoCloseable {
 
     public AuthenticationDiagnostics(
             boolean enabled, String authenticationMethod, String context, String user) {
+        this(enabled, authenticationMethod, context, user, null);
+    }
+
+    public AuthenticationDiagnostics(
+            boolean enabled,
+            String authenticationMethod,
+            String context,
+            String user,
+            String script) {
         this.enabled = enabled;
         if (!enabled) {
             return;
         }
 
         diagnostic = new Diagnostic(authenticationMethod, context, user);
+        diagnostic.setScript(script);
         diagnostic.setCreateTimestamp(Instant.now());
 
         createStep();
@@ -98,7 +108,7 @@ public class AuthenticationDiagnostics implements AutoCloseable {
                         if (!AuthUtils.isRelevantToAuthDiags(msg)) {
                             return;
                         }
-                        addMessageToStep(msg);
+                        addMessageToStep(msg, initiator);
                     }
 
                     @Override
@@ -110,6 +120,10 @@ public class AuthenticationDiagnostics implements AutoCloseable {
     }
 
     private void addMessageToStep(HttpMessage msg) {
+        addMessageToStep(msg, 0);
+    }
+
+    private void addMessageToStep(HttpMessage msg, int initiator) {
         try {
             HistoryReference ref =
                     new HistoryReference(
@@ -121,6 +135,7 @@ public class AuthenticationDiagnostics implements AutoCloseable {
             message.setCreateTimestamp(Instant.now());
             message.setStep(currentStep);
             message.setMessageId(ref.getHistoryId());
+            message.setInitiator(initiator);
             currentStep.getMessages().add(message);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
             LOGGER.warn("Failed to persist message:", e);
@@ -201,12 +216,13 @@ public class AuthenticationDiagnostics implements AutoCloseable {
             currentStep.setScreenshot(screenshot);
         }
 
-        List<WebElement> inputs = resetWait(wd, () -> wd.findElements(By.xpath("//input")));
+        List<WebElement> foundElements =
+                resetWait(wd, () -> wd.findElements(By.xpath("//input|//button")));
         List<WebElement> forms = resetWait(wd, () -> wd.findElements(By.xpath("//form")));
 
         currentStep.setWebElement(createDiagnosticWebElement(wd, forms, element));
-        for (WebElement input : inputs) {
-            DiagnosticWebElement field = createDiagnosticWebElement(wd, forms, input);
+        for (WebElement foundElement : foundElements) {
+            DiagnosticWebElement field = createDiagnosticWebElement(wd, forms, foundElement);
             if (field != null) {
                 currentStep.getWebElements().add(field);
             }
@@ -277,6 +293,7 @@ public class AuthenticationDiagnostics implements AutoCloseable {
                 }
             }
 
+            diagElement.setTagName(element.getTagName());
             diagElement.setAttributeType(getAttribute(element, "type"));
             diagElement.setAttributeId(getAttribute(element, "id"));
             diagElement.setAttributeName(getAttribute(element, "name"));

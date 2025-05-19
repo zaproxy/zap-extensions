@@ -379,7 +379,11 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
             try (AuthenticationDiagnostics diags =
                     new AuthenticationDiagnostics(
-                            diagnostics, getName(), user.getContext().getName(), user.getName())) {
+                            diagnostics,
+                            getName(),
+                            user.getContext().getName(),
+                            user.getName(),
+                            script.getContents())) {
                 try {
                     if (authScript instanceof AuthenticationScriptV2 scriptV2) {
                         setLoggedInIndicatorPattern(scriptV2.getLoggedInIndicator());
@@ -509,6 +513,8 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                         // Let the user know it failed
                         AuthenticationHelper.notifyOutputAuthFailure(authMsg);
                     }
+
+                    recordCloseStep(zestRunner, diags);
                     return session;
                 }
 
@@ -517,7 +523,10 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                         fallbackMsg,
                         Constant.messages.getString("authhelper.auth.method.diags.steps.fallback"));
                 // We don't expect this to work, but it will prevent some NPEs
-                return sessionManagementMethod.extractWebSession(fallbackMsg);
+                WebSession session = sessionManagementMethod.extractWebSession(fallbackMsg);
+
+                recordCloseStep(zestRunner, diags);
+                return session;
 
             } finally {
                 if (zestRunner != null) {
@@ -534,6 +543,26 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                                     });
                 }
             }
+        }
+
+        private void recordCloseStep(
+                ZestAuthenticationRunner zestRunner, AuthenticationDiagnostics diags) {
+            if (zestRunner == null || !diagnostics) {
+                return;
+            }
+            zestRunner
+                    .getWebDrivers()
+                    .forEach(
+                            wd -> {
+                                try {
+                                    diags.recordStep(
+                                            wd,
+                                            Constant.messages.getString(
+                                                    "authhelper.auth.method.diags.zest.close"));
+                                } catch (Exception e) {
+                                    // Ignore
+                                }
+                            });
         }
 
         @Override
