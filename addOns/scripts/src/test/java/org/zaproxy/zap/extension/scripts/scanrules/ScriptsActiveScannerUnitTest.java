@@ -49,6 +49,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadataProvider;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.VariantFactory;
@@ -429,6 +430,16 @@ class ScriptsActiveScannerUnitTest extends TestUtils {
         verify(extensionScript, times(1)).handleScriptException(scriptWrapper1, exception);
         verify(script2, times(1)).scan(scriptsActiveScanner, message, name1, value1);
         verify(script2, times(1)).scan(scriptsActiveScanner, message, name2, value2);
+    }
+
+    @Test
+    void shouldHaveExpectedNumberOfAlertTags() {
+        // Given
+        ScriptsActiveScanner scriptsActiveScanner = new ScriptsActiveScanner();
+        // When
+        int tagCount = scriptsActiveScanner.getAlertTags().size();
+        // Then
+        assertThat(tagCount, is(equalTo(PolicyTag.values().length)));
     }
 
     private <T> ScriptWrapper createScriptWrapper(T script, Class<T> scriptClass) throws Exception {

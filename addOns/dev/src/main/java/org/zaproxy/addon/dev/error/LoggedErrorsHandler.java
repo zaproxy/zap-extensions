@@ -46,11 +46,7 @@ public class LoggedErrorsHandler {
     private ScanStatus scanStatus;
 
     public LoggedErrorsHandler() {
-        loaded =
-                org.zaproxy.zap.extension.log4j.ExtensionLog4j.class.getAnnotation(Deprecated.class)
-                                != null
-                        && Constant.isDevMode()
-                        && View.isInitialised();
+        loaded = Constant.isDevMode() && View.isInitialised();
 
         if (loaded) {
             scanStatus =

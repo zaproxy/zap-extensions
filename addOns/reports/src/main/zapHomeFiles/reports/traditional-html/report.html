@@ -88,6 +88,19 @@ td {
 	color: #FFF;
 }
 
+.summary100 {
+	width: 100%;
+}
+
+.summary80 {
+	width: 80%;
+}
+
+.tdconstrainer {
+	width: 9.1%;
+	padding: 0
+}
+
 .alerts {
 	width: 75%;
 }
@@ -106,6 +119,78 @@ td {
 
 .left-header {
 	display: inline-block;
+}
+
+.pass {
+	background: green;
+	color: white
+}
+
+.pass::before {
+	content: '\2714';
+	color: white
+}
+
+.fail {
+	background: red;
+	color: white
+}
+
+.fail::before {
+	content: '\2716';
+	color: white
+}
+
+.alert-3b::before {
+	content: '\2691';
+	color: red
+}
+
+.alert-2b::before {
+	content: '\2691 ';
+	color: orange
+}
+
+.alert-1b::before {
+	content: '\2691';
+	color: yellow
+}
+
+.alert-0b::before {
+	content: '\2691';
+	color: blue
+}
+
+.alert-3a::after {
+	content: '\2691';
+	color: red
+}
+
+.alert-2a::after {
+	content: '\2691 ';
+	color: orange
+}
+
+.alert-1a::after {
+	content: '\2691';
+	color: yellow
+}
+
+.alert-0a::after {
+	content: '\2691';
+	color: blue
+}
+
+.lm2 {
+	margin-left: 2em;
+}
+
+.smallnote {
+	font-size: 0.75em
+}
+
+.alwayswhite {
+	color: white
 }
 </style>
 </head>
@@ -166,6 +251,62 @@ td {
 			</tr>
 		</table>
 		<div class="spacer-lg"></div>
+	</th:block>
+
+	<th:block th:if="${reportData.isIncludeSection('sequencedetails')}">
+		<th:block
+			th:if="${reportData.reportObjects.get('seqAScanData') != null}">
+			<h3 th:text="#{report.sequences.summary.name}">Summary of
+				Sequences</h3>
+			<p class="smallnote" th:text="#{report.sequences.summary.note}">Summary
+				Note</p>
+
+			<th:block
+				th:each="seq, seqState: ${reportData.reportObjects.get('seqAScanData').seqData}">
+				<table class="summary100">
+					<tr>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+						<td class="tdconstrainer"></td>
+					</tr>
+					<th:block th:each="step, stepState: ${seq.getSteps()}"
+						th:with="stepId=('step-' + ${seqState.index} + ${stepState.index})">
+						<th:block
+							th:if="${stepState.index} % 10 == 0 or ${stepState.index} == 0">
+							<tr>
+						</th:block>
+						<td th:if="${stepState.index} == 0">
+							<a 
+								th:href="'#' + ${seq.sequenceName}"
+								th:text="${seq.sequenceName}">sequenceName</a>
+						</td>
+						<td th:if="${stepState.index} != 0 and ${stepState.index} % 10 == 0">&nbsp</td>
+						<td th:class="(${step.isPass()} ? 'pass' : 'fail')"
+							th:with="riskLvl=(${step.getHighestAlert()})">
+						<a class="alwayswhite"
+							th:href="'#' + ${stepId}"
+							th:text="' ' + (${stepState.index} + 1)">step</a>
+						<span th:if="${riskLvl &gt; 0}"
+							th:class="'alert-' + ${step.getHighestAlert() + 'a'}"
+							th:text="' - '">flag</span><span
+							th:text="(${riskLvl &gt; 0} ? ${helper.getRiskString(riskLvl)} : '')">risk</span>
+						</td>
+						<th:block
+							th:if="(${stepState.index} + 1) % 10 == 0 or ${stepState.last}">
+							</tr>
+						</th:block>
+					</th:block>
+				</table>
+			</th:block>
+		</th:block>
 	</th:block>
 
 	<th:block th:if="${reportData.isIncludeSection('instancecount')}">
@@ -292,6 +433,87 @@ td {
 			<div class="spacer"></div>
 		</th:block>
 	</th:block>
+
+	<th:block th:if="${reportData.isIncludeSection('sequencedetails')}">
+		<th:block
+			th:if="${reportData.reportObjects.get('seqAScanData') != null}">
+			<h3 th:text="#{report.sequences.details.name}">Sequences Details</h3>
+			<sup>With the associated active scan results.</sup>
+
+			<th:block
+				th:each="seq, seqState: ${reportData.reportObjects.get('seqAScanData').seqData}">
+				<h4 th:id="${seq.sequenceName}" th:text="${seq.sequenceName}">sequenceName</h4>
+				<div class="lm2">
+					<th:block th:each="step, stepState: ${seq.getSteps()}" th:with="stepId=('step-' + ${seqState.index} + ${stepState.index})">
+
+						<h4 th:id="${stepId}">
+							<th:block
+								th:text="#{report.sequences.step.label} + ' ' + ${stepState.index + 1} + ': ' + ${step.getOriginalMsg().getRequestHeader().getMethod()} + ' - '">sequence heading</th:block>
+							<a
+								th:href="${step.getOriginalMsg().getRequestHeader().getURI().toString()}"
+								th:text="${step.getOriginalMsg().getRequestHeader().getURI().toString()}">URL</a>
+						</h4>
+
+						<div class="lm2">
+
+							<span th:text="#{report.sequences.step.result}">Result</span> <span
+								th:text="${step.getResult()}">result</span><br> <span
+								th:if="${step.getAlerts().size() &gt; 0}"
+								th:text="#{report.sequences.step.alerts}">Alerts</span>
+							<div class="lm2" th:if="${step.getAlerts().size() &gt; 0}">
+								<th:block th:each="alert: ${step.getAlerts()}">
+									<span th:class="'alert-' + ${alert.getRisk() + 'b'}">&nbsp;<span>
+											<a th:href="'#' + ${alert.getPluginId()}"
+											th:text="${alert.getName()}" href="#pluginId">Alert Name</a>
+									</span></span>
+								</th:block>
+							</div>
+
+							<table class="summary80">
+								<th colspan="2" th:text="#{report.sequences.step.original}" style="width: 50%">Original</th>
+								<th colspan="2" th:text="#{report.sequences.step.replay}" style="width: 50%">Replay</th>
+								<tr>
+									<td th:text="#{report.sequences.step.req.header}">reqHdr</td>
+									<td
+										th:text="${step.getOriginalMsg().getRequestHeader().toString().length()}">origReqHdrSize</td>
+									<td th:text="#{report.sequences.step.req.header}">reqHdr</td>
+									<td
+										th:text="${step.getReplayMsg().getRequestHeader().toString().length()}">replayReqHdrSize</td>
+								</tr>
+								<tr>
+									<td th:text="#{report.sequences.step.req.body}">reqBody</td>
+									<td
+										th:text="${step.getOriginalMsg().getRequestBody().length()}">origReqBodySize</td>
+									<td th:text="#{report.sequences.step.req.body}">reqBody</td>
+									<td th:text="${step.getReplayMsg().getRequestBody().length()}">replayReqBodySize</td>
+								</tr>
+								<tr>
+									<td th:text="#{report.sequences.step.resp.header}">respHdr</td>
+									<td
+										th:text="${step.getOriginalMsg().getResponseHeader().toString().length()}">origRespHdrSize</td>
+									<td th:text="#{report.sequences.step.resp.header}">respHdr</td>
+									<td
+										th:text="${step.getReplayMsg().getResponseHeader().toString().length()}">replayRespHdrSize</td>
+								</tr>
+								<tr>
+									<td th:text="#{report.sequences.step.resp.body}">respBody</td>
+									<td
+										th:text="${step.getOriginalMsg().getResponseBody().length()}">origRespBodySize</td>
+									<td th:text="#{report.sequences.step.resp.body}">respBody</td>
+									<td th:text="${step.getReplayMsg().getResponseBody().length()}">replayRespBodySize</td>
+								</tr>
+							</table>
+						</div>
+						<div class="spacer"></div>
+					</th:block>
+				</div>
+			</th:block>
+
+			<div class="spacer-lg"></div>
+
+		</th:block>
+	</th:block>
+
 </body>
 </html>
 

@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -38,6 +40,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Tech;
@@ -70,11 +73,18 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
     private static final String URI_EX_LOG = "trying to get the message's Uri";
     private static final String STOP_LOG = "Stopping the scan due to a user request";
     private static final Logger LOGGER = LogManager.getLogger(MongoDbInjectionScanRule.class);
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION,
-                    CommonAlertTag.WSTG_V42_INPV_05_SQLI);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION,
+                                CommonAlertTag.WSTG_V42_INPV_05_SQLI));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     // Error messages that addressing to a well-known vulnerability
     private final Pattern[] errorPatterns = {

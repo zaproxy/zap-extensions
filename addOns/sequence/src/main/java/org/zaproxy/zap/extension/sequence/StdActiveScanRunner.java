@@ -28,8 +28,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.RecordAlert;
+import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.ExtensionNetwork;
@@ -218,6 +223,7 @@ public class StdActiveScanRunner extends ZestZapRunner {
         private boolean pass;
         private String result;
         private List<Integer> alertIds;
+        private List<Alert> alerts;
         private HttpMessage originalMsg;
         private HttpMessage replayMsg;
 
@@ -234,6 +240,31 @@ public class StdActiveScanRunner extends ZestZapRunner {
             this.alertIds = alertIds;
             this.originalMsg = originalMsg;
             this.replayMsg = replayMsg;
+        }
+
+        public List<Alert> getAlerts() {
+            if (alerts == null) {
+                alerts = new ArrayList<>();
+                TableAlert tableAlert = Model.getSingleton().getDb().getTableAlert();
+                alertIds.forEach(
+                        id -> {
+                            try {
+                                RecordAlert recoardAlert = tableAlert.read(id);
+                                if (recoardAlert != null) {
+                                    alerts.add(new Alert(recoardAlert));
+                                }
+                            } catch (DatabaseException e) {
+                                LOGGER.warn(
+                                        "Couldn't get alert for ID {} : {}", id, e.getMessage());
+                            }
+                        });
+            }
+
+            return alerts;
+        }
+
+        public int getHighestAlert() {
+            return getAlerts().stream().map(Alert::getRisk).max(Integer::compare).orElse(-1);
         }
     }
 }

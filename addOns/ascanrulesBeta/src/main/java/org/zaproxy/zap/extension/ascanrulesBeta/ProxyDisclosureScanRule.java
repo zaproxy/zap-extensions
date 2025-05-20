@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -43,6 +45,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
 
@@ -130,10 +133,17 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
     /** the number of Max-Forwards to apply. Set depending on the Attack strength. */
     private int MAX_FORWARDS_MAXIMUM = 0;
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     /** for logging. */
     private static final Logger LOGGER = LogManager.getLogger(ProxyDisclosureScanRule.class);
@@ -256,8 +266,8 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
             tracemsg.setRequestHeader(traceRequestHeader);
             // create a random cookie, and set it up, so we can detect if the TRACE is enabled (in
             // which case, it should echo it back in the response)
-            String randomcookiename = RandomStringUtils.randomAlphanumeric(15);
-            String randomcookievalue = RandomStringUtils.randomAlphanumeric(40);
+            String randomcookiename = randomAlphanumeric(15);
+            String randomcookievalue = randomAlphanumeric(40);
             TreeSet<HtmlParameter> cookies = tracemsg.getCookieParams();
             cookies.add(
                     new HtmlParameter(
@@ -391,7 +401,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
                 int step2numberOfNodesForMethod = 0;
                 String[] nodeServersForMethod = new String[MAX_FORWARDS_MAXIMUM + 2];
                 String previousServerDetails =
-                        RandomStringUtils.random(15, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+                        RandomStringUtils.secure().next(15, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
                 int previousResponseStatusCode = 0;
                 int responseStatusCode = 0;
                 boolean httpHandled =
@@ -454,8 +464,8 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
 
                     // create a random cookie, and set it up, so we can detect if the TRACE is
                     // enabled (in which case, it should echo it back in the response)
-                    String randomcookiename2 = RandomStringUtils.randomAlphanumeric(15);
-                    String randomcookievalue2 = RandomStringUtils.randomAlphanumeric(40);
+                    String randomcookiename2 = randomAlphanumeric(15);
+                    String randomcookievalue2 = randomAlphanumeric(40);
                     TreeSet<HtmlParameter> cookies2 = mfMethodMsg.getCookieParams();
                     cookies2.add(
                             new HtmlParameter(
@@ -579,7 +589,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
             //	  yes, I know TRACK requests should *not* be cached, but not all servers are
             // compliant.
             String randompiece =
-                    RandomStringUtils.random(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+                    RandomStringUtils.secure().next(5, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
             trackRequestHeader.setURI(
                     new URI(
                             trackURI.getScheme()
@@ -765,6 +775,10 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
         }
     }
 
+    private static String randomAlphanumeric(int count) {
+        return RandomStringUtils.secure().nextAlphanumeric(count);
+    }
+
     private static String getPath(URI uri) {
         String path = uri.getEscapedPath();
         if (path != null) {
@@ -784,7 +798,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin implements Common
 
     @Override
     public int getCweId() {
-        return 200; // Information Exposure (primarily via TRACE / OPTIONS / TRACK)
+        return 204; // Observable Response Discrepancy
     }
 
     @Override

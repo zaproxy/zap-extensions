@@ -6,11 +6,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Client element waitForMsec parameter.
+
+### Changed
+- Update Zest library to 0.29.0:
+  - Allow to access the `WebElement` referenced by a `ZestClientElement`.
+  - Add new `waitForMsec` parameter to all client elements.
+  - Change `ZestClientElementClick`, `ZestClientElementSendKeys`, and `ZestClientElementSubmit` to wait for the element to also be enabled when using `waitForMsec`.
+  - Update Selenium to version 4.32.0.
+  - Change `ZestClientElementClick` to click on the position of the element instead of the element itself when obscured, to better reproduce a manual click.
+  - Change `ZestClientElementScrollTo` to only scroll to the element when not already in view and to scroll with `nearest` vertical alignment, to ensure the element is kept visible.
+- Allow to copy the script's file system path from the Edit Zest Script dialogue.
+
+### Fixed
+- Print statements should print to the relevant script Output tab.
+- Recording client Zest scripts.
+
+## [48.5.0] - 2025-03-25
+### Changed
+- Use TOTP data defined under user credentials during authentication when available.
+- Update Zest library to 0.25.0:
+  - Update Selenium to version 4.30.0.
+- Depend on newer version of Common Library add-on.
+
+## [48.4.0] - 2025-02-27
+### Changed
+- Update Zest library to 0.24.0:
+  - Update Selenium to version 4.29.0.
+  - Remove workaround that was now causing exceptions.
+
+## [48.3.0] - 2025-02-07
+### Changed
+- Enable ZAP API in the authentication runner so ZAP browser extension callbacks work.
+
+## [48.2.0] - 2025-02-04
+### Added
+- Firefox to recorder.
+- Added support for custom script authentication.
+
+### Changed
+- Record script order to be alphabetical.
+
+### Fixed
+- Record Client Submit statement.
+
+## [48.1.0] - 2025-01-23
+### Changed
+- Use ZAP for launching Firefox and Chrome.
+- Update Zest library to 0.23.0:
+  - Update Selenium to version 4.28.0.
+  - Update minimum Java version to 17.
+
+## [48.0.0] - 2025-01-10
+### Added
 - Allow other add-ons to create a Zest script from a list of messages.
 
 ### Changed
+- Update minimum ZAP version to 2.16.0.
 - Use Semantic Version.
 - Maintenance changes.
+- Depend on Passive Scanner add-on (Issue 7959).
 
 ## [47] - 2024-09-24
 ### Fixed
@@ -348,6 +403,12 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[48.5.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.5.0
+[48.4.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.4.0
+[48.3.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.3.0
+[48.2.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.2.0
+[48.1.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.1.0
+[48.0.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.0.0
 [47]: https://github.com/zaproxy/zap-extensions/releases/zest-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/zest-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/zest-v45

@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -84,10 +87,18 @@ public class Base64Disclosure extends PluginPassiveScanner implements CommonPass
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.base64disclosure.";
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
+
     private static final List<String> IGNORED_HEADERS =
             Arrays.asList("ETag", "Authorization", "X-ChromeLogger-Data", "X-ChromePhp-Data");
 
@@ -181,21 +192,21 @@ public class Base64Disclosure extends PluginPassiveScanner implements CommonPass
                     // set the threshold percentage based on what threshold was set by the user
                     float probabilityThreshold = 0.0F; // 0% probability threshold
                     switch (this.getAlertThreshold()) {
-                            // 50% probability threshold (ie, "on balance of probability")
+                        // 50% probability threshold (ie, "on balance of probability")
                         case HIGH:
                             probabilityThreshold = 0.50F;
                             break;
-                            // 25% probability threshold
+                        // 25% probability threshold
                         case MEDIUM:
                             probabilityThreshold = 0.25F;
                             break;
-                            // 10% probability threshold
+                        // 10% probability threshold
                         case LOW:
                             probabilityThreshold = 0.10F;
                             break;
-                            // 0% probability threshold (all structurally valid Base64 data is
-                            // considered, regardless of how improbable  it is given character
-                            // frequencies, etc.)
+                        // 0% probability threshold (all structurally valid Base64 data is
+                        // considered, regardless of how improbable  it is given character
+                        // frequencies, etc.)
                         default:
                     }
 
@@ -325,7 +336,7 @@ public class Base64Disclosure extends PluginPassiveScanner implements CommonPass
         return newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setCweId(200) // Information Exposure,
+                .setCweId(319) // CWE-319: Cleartext Transmission of Sensitive Information
                 .setWascId(13) // Information Leakage
                 .setAlertRef(getPluginId() + alertRef);
     }

@@ -46,7 +46,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
@@ -56,6 +55,8 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.view.OutputPanel;
+import org.zaproxy.addon.commonlib.ui.TabbedOutputPanel;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -86,7 +87,6 @@ public class ConsolePanel extends AbstractPanel {
     private JButton optionsButton;
     private JLabel scriptTitle = null;
     private CommandPanel commandPanel = null;
-    private OutputPanel outputPanel = null;
     private KeyListener listener = null;
 
     private ScriptWrapper script = null;
@@ -135,15 +135,8 @@ public class ConsolePanel extends AbstractPanel {
         panelContent = new JPanel(new GridBagLayout());
         this.add(panelContent, BorderLayout.CENTER);
 
-        JSplitPane splitPane = new JSplitPane();
-        splitPane.setDividerSize(3);
-        splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-        splitPane.setResizeWeight(0.5D);
-        splitPane.setTopComponent(getCommandPanel());
-        splitPane.setBottomComponent(getOutputPanel());
-
         panelContent.add(this.getPanelToolbar(), LayoutHelper.getGBC(0, 0, 1, 1.0D, 0.0D));
-        panelContent.add(splitPane, LayoutHelper.getGBC(0, 1, 1, 1.0D, 1.0D));
+        panelContent.add(getCommandPanel(), LayoutHelper.getGBC(0, 1, 1, 1.0D, 1.0D));
     }
 
     private boolean isScriptUpdatedOnDisk() {
@@ -455,8 +448,11 @@ public class ConsolePanel extends AbstractPanel {
         }
 
         getRunButton().setEnabled(false);
-
-        getOutputPanel().preScriptInvoke();
+        OutputPanel outputPanel = extension.getView().getOutputPanel();
+        outputPanel.setTabFocus();
+        if (outputPanel instanceof TabbedOutputPanel tabbedOutputPanel) {
+            tabbedOutputPanel.setSelectedOutputTab(script.getName());
+        }
 
         // Update it, in case its been changed
         script.setContents(getCommandScript());
@@ -522,7 +518,7 @@ public class ConsolePanel extends AbstractPanel {
         if (commandPanel == null) {
             commandPanel = new CommandPanel(getKeyListener());
             commandPanel.setEditable(false);
-            commandPanel.setCommandScript(Constant.messages.getString("scripts.welcome.cmd"));
+            commandPanel.setCommandScript(Constant.messages.getString("scripts.welcome.results"));
             String saveScriptActionKey = "scripts.action.saveScript";
             commandPanel
                     .getInputMap(WHEN_IN_FOCUSED_WINDOW)
@@ -544,19 +540,6 @@ public class ConsolePanel extends AbstractPanel {
                             });
         }
         return commandPanel;
-    }
-
-    protected OutputPanel getOutputPanel() {
-        if (outputPanel == null) {
-            outputPanel = new OutputPanel(extension);
-            resetOutputPanel();
-        }
-        return outputPanel;
-    }
-
-    protected void resetOutputPanel() {
-        outputPanel.clear();
-        outputPanel.append(Constant.messages.getString("scripts.welcome.results"));
     }
 
     public String getCommandScript() {
@@ -796,7 +779,14 @@ public class ConsolePanel extends AbstractPanel {
             try {
                 extension.getExtScript().invokeScript(script);
             } catch (Exception e) {
-                getOutputPanel().append(e);
+                if (extension.getView() != null) {
+                    extension
+                            .getView()
+                            .getOutputPanel()
+                            .append(
+                                    ExtensionScriptsUI.extractScriptExceptionMessage(e),
+                                    script.getName());
+                }
             } finally {
                 WeakReference<ScriptExecutorThread> refScriptExecutorThread =
                         runnableScriptsToThreadMap.remove(script);

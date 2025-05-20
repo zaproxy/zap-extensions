@@ -26,8 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.script.ScriptEngine;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.HostProcess;
@@ -38,6 +40,7 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.ServerInfo;
@@ -49,6 +52,8 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptVars;
+import org.zaproxy.zap.extension.selenium.Browser;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zest.core.v1.ZestAction;
 import org.zaproxy.zest.core.v1.ZestActionFail;
 import org.zaproxy.zest.core.v1.ZestActionFailException;
@@ -60,6 +65,7 @@ import org.zaproxy.zest.core.v1.ZestAssignFailException;
 import org.zaproxy.zest.core.v1.ZestAssignment;
 import org.zaproxy.zest.core.v1.ZestClient;
 import org.zaproxy.zest.core.v1.ZestClientFailException;
+import org.zaproxy.zest.core.v1.ZestClientLaunch;
 import org.zaproxy.zest.core.v1.ZestInvalidCommonTestException;
 import org.zaproxy.zest.core.v1.ZestRequest;
 import org.zaproxy.zest.core.v1.ZestResponse;
@@ -388,11 +394,75 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     public String handleClient(ZestScript script, ZestClient client)
             throws ZestClientFailException {
         try {
+            if (client instanceof ZestClientLaunch clientLaunch) {
+                String res = this.launchClient(clientLaunch);
+                if (res != null) {
+                    return res;
+                }
+            }
             return super.handleClient(script, client);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return null;
         }
+    }
+
+    private String launchClient(ZestClientLaunch clientLaunch) {
+        ExtensionSelenium extSel =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+        Browser browser = null;
+
+        if ("Firefox".equalsIgnoreCase(clientLaunch.getBrowserType())) {
+            if (clientLaunch.isHeadless()) {
+                browser = Browser.FIREFOX_HEADLESS;
+            } else {
+                browser = Browser.FIREFOX;
+            }
+        } else if ("Chrome".equalsIgnoreCase(clientLaunch.getBrowserType())) {
+            if (clientLaunch.isHeadless()) {
+                browser = Browser.CHROME_HEADLESS;
+            } else {
+                browser = Browser.CHROME;
+            }
+        } else {
+            LOGGER.debug(
+                    "Browser not launched by ZAP, passing to Zest {}",
+                    clientLaunch.getBrowserType());
+            return null;
+        }
+
+        LOGGER.debug("Browser being launched by ZAP {}", clientLaunch.getBrowserType());
+        String url = clientLaunch.getUrl();
+        if (StringUtils.isNotEmpty(url)) {
+            url = replaceVariablesInString(url, true);
+        }
+        WebDriver wd;
+        String proxy = this.getProxy();
+        if (StringUtils.isNotEmpty(proxy) && proxy.indexOf(':') > 0) {
+            // Proxy should be host:port
+            String[] proxyArray = proxy.split(":");
+            wd =
+                    extSel.getWebDriver(
+                            HttpSender.PROXY_INITIATOR,
+                            browser.getId(),
+                            proxyArray[0],
+                            Integer.parseInt(proxyArray[1]));
+            if (wd != null && StringUtils.isNotEmpty(url)) {
+                wd.get(url);
+            }
+        } else {
+            wd = extSel.getProxiedBrowser(browser.getId(), url);
+        }
+
+        if (wd != null) {
+            this.addWebDriver(clientLaunch.getWindowHandle(), wd);
+            LOGGER.debug(
+                    "Browser launched by ZAP {} {}",
+                    clientLaunch.getBrowserType(),
+                    clientLaunch.getWindowHandle());
+            return clientLaunch.getWindowHandle();
+        }
+        return null;
     }
 
     private ScanPolicy getDefaultScanPolicy() {

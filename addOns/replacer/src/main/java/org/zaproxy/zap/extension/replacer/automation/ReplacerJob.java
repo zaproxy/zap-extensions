@@ -74,6 +74,16 @@ public class ReplacerJob extends AutomationJob {
     }
 
     @Override
+    public boolean applyCustomParameter(String name, String value) {
+        if ("deleteAllRules".equals(name)) {
+            // Applied when the job is executed.
+            return true;
+        }
+
+        return super.applyCustomParameter(name, value);
+    }
+
+    @Override
     public void verifyParameters(AutomationProgress progress) {
         Map<?, ?> jobData = this.getJobData();
         if (jobData == null) {

@@ -39,6 +39,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRule> {
 
@@ -52,10 +53,11 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(1)));
+        assertThat(tags.size(), is(equalTo(2)));
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getValue())));

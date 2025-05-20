@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.exim.ExporterOptions;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -89,7 +90,16 @@ public class ExportJobDialog extends StandardFieldsDialog {
 
     @Override
     public String validateFields() {
-        // Nothing to do
+        if (ExporterOptions.Source.SITESTREE.equals(sourceOptionModel.getSelectedItem())
+                && !ExporterOptions.Type.YAML.equals(typeOptionModel.getSelectedItem())) {
+            return Constant.messages.getString(
+                    "exim.automation.export.dialog.error.sitestree.type");
+        } else if (!ExporterOptions.Source.SITESTREE.equals(sourceOptionModel.getSelectedItem())
+                && ExporterOptions.Type.YAML.equals(typeOptionModel.getSelectedItem())) {
+            return Constant.messages.getString(
+                    "exim.automation.export.dialog.error.messages.type",
+                    sourceOptionModel.getSelectedItem());
+        }
         return null;
     }
 }

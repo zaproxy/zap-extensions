@@ -82,10 +82,7 @@ dependencies {
         exclude(group = "com.github.java-json-tools", module = "json-schema-validator")
         exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
-    implementation(libs.log4j.slf4j2) {
-        // Provided by ZAP.
-        exclude(group = "org.apache.logging.log4j")
-    }
+    implementation(libs.log4j.slf4j2)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(libs.log4j.core)

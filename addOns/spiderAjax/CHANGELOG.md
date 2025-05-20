@@ -4,9 +4,32 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Allow to configure how the scope is checked, either Flexible or Strict, to allow or not access to out of scope domains.
+
 ### Changed
+- Maintenance changes.
+
+### Fixed
+- Allow access to domains out of context (e.g. SSO) when using Client Script and Browser Based Authentication.
+
+## [23.23.0] - 2025-03-25
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Only count processed URLs. Browsers can make lots of background requests which distort the numbers.
+
+## [23.22.0] - 2025-01-10
+### Added
+- Option to enable browser extensions added by other add-ons, previously they were always enabled but now the default is false.
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
 - Updated automation framework documentation and templates for `spiderAjax` job to reflect changes to the default value of numberOfBrowsers parameter
 - Fields with default or missing values are omitted for the `spiderAjax` job in saved Automation Framework plans.
+- Default the number of browsers to the number of available cores.
+- Updated the job GUI to add an aditional "Elements" tab.
 
 ## [23.21.0] - 2024-09-02
 ### Changed
@@ -326,6 +349,8 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.23.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.23.0
+[23.22.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.22.0
 [23.21.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.21.0
 [23.20.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.20.0
 [23.19.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.19.0

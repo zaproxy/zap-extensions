@@ -27,6 +27,7 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.script.ScriptException;
 import javax.swing.ImageIcon;
 import javax.swing.TransferHandler;
 import javax.swing.event.TreeSelectionListener;
@@ -35,22 +36,19 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.parosproxy.paros.extension.SessionChangedListener;
-import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.OptionsDialog;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
@@ -98,8 +96,6 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     private ScriptsListPanel scriptsPanel = null;
     private ConsolePanel consolePanel = null;
-    private OutputPanelWriter stdOutputPanelWriter = null;
-    private OutputPanelWriter displayedScriptOutputPanelWriter = null;
 
     private InvokeScriptWithHttpMessagePopupMenu popupInvokeScriptWithHttpMessageMenu = null;
     private PopupEnableDisableScript popupEnableDisableScript = null;
@@ -116,11 +112,10 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     private ScriptConsoleOptions scriptConsoleOptions;
     private ScriptConsoleOptionsPanel scriptConsoleOptionsPanel;
 
-    private ScriptWrapper currentLockedScript = null;
-    private boolean lockOutputToDisplayedScript = false;
-
     private final ActiveScriptSynchronizer activeScriptSynchronizer;
     private final PassiveScriptSynchronizer passiveScriptSynchronizer;
+
+    private final Map<ScriptWrapper, ScriptOutputSource> outputSources = new HashMap<>();
 
     // private ZapMenuItem menuEnableScripts = null;
 
@@ -176,7 +171,6 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             optionsDialog.addParamPanel(scriptNode, scriptConsoleOptionsPanel, true);
 
             extensionHook.getHookView().addSelectPanel(getScriptsPanel());
-            extensionHook.addSessionListener(new ViewSessionChangedListener());
             extensionHook.getHookView().addWorkPanel(getConsolePanel());
             extensionHook.addOptionsChangedListener(getConsolePanel().getCommandPanel());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupInvokeScriptWithHttpMessageMenu());
@@ -196,10 +190,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             ExtensionHelp.enableHelpKey(getScriptsPanel(), "addon.scripts.tree");
         }
 
-        if (org.zaproxy.zap.extension.script.ScriptAPI.class.getAnnotation(Deprecated.class)
-                != null) {
-            extensionHook.addApiImplementor(new ScriptApi(getExtScript()));
-        }
+        extensionHook.addApiImplementor(new ScriptApi(getExtScript()));
     }
 
     @Override
@@ -247,6 +238,17 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     @Override
     public void postInstall() {
+        if (this.hasView()) {
+            // Register outputs for all scripts in the tree model
+            getExtScript().getScriptTypes().stream()
+                    .map(type -> getExtScript().getTreeModel().getNodes(type.getName()))
+                    .flatMap(List::stream)
+                    .map(ScriptNode::getUserObject)
+                    .filter(ScriptWrapper.class::isInstance)
+                    .map(ScriptWrapper.class::cast)
+                    .forEach(this::registerScriptOutputSource);
+        }
+
         // Install and enable the 'built in' scripts
         for (ScriptWrapper template : this.getExtScript().getTemplates(extScriptType)) {
             for (BuiltInScript builtInScript : BUILT_IN_SCRIPTS) {
@@ -288,6 +290,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             }
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
             optionsDialog.removeParamPanel(scriptConsoleOptionsPanel);
+            outputSources.values().forEach(getView().getOutputPanel()::unregisterOutputSource);
         }
 
         activeScriptSynchronizer.unload();
@@ -295,7 +298,6 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
         if (extScript != null) {
             if (hasView()) {
-                extScript.removeWriter(getStdOutputPanelWriter());
                 extScript.removeScriptUI();
             }
             extScript.removeListener(this);
@@ -324,7 +326,6 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
                                     .getExtensionLoader()
                                     .getExtension(ExtensionScript.NAME);
             if (View.isInitialised()) {
-                extScript.addWriter(getStdOutputPanelWriter());
                 extScript.setScriptUI(this);
             }
         }
@@ -437,16 +438,6 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             return;
         }
 
-        if (this.lockOutputToDisplayedScript) {
-            // switch writers..
-            if (this.currentLockedScript != null) {
-                // Unset the script specific writer
-                this.currentLockedScript.setWriter(null);
-            }
-            this.currentLockedScript = script;
-            script.setWriter(this.getDisplayedScriptOutputPanelWriter());
-        }
-
         if (script.getEngine() == null) {
             try {
                 // Scripts loaded from the configs my have loaded before all of the engines
@@ -468,27 +459,12 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
                 this.getScriptsPanel().showInTree(node);
             }
 
-            if (this.getConsolePanel().getOutputPanel().isClearOnRun()) {
-                this.getConsolePanel().getOutputPanel().clear();
-
-                if (script.getLastOutput() != null && script.getLastOutput().length() > 0) {
-                    this.getConsolePanel().getOutputPanel().append(script.getLastOutput());
-                }
-                if (script.getLastException() != null) {
-                    this.showError(script.getLastException());
-                } else if (script.getLastErrorDetails() != null
-                        && script.getLastErrorDetails().length() > 0) {
-                    this.showError(script.getLastErrorDetails());
-                }
-            }
-
-            if (!script.getEngine().isTextBased()
-                    && this.getConsolePanel().getOutputPanel().isEmpty()) {
-                // Output message to explain about non test based scripts
-                this.getConsolePanel()
-                        .getOutputPanel()
-                        .append(Constant.messages.getString("scripts.welcome.nontest"));
-            }
+            this.getConsolePanel()
+                    .getCommandPanel()
+                    .setScriptTooltip(
+                            script.getEngine().isTextBased()
+                                    ? null
+                                    : Constant.messages.getString("scripts.welcome.nontext"));
         }
     }
 
@@ -526,8 +502,6 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             if (node != null) {
                 this.getScriptsPanel().showInTree(node);
             }
-
-            this.getConsolePanel().getOutputPanel().clear();
         }
     }
 
@@ -552,18 +526,19 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         // Save any changes to previous script
         this.saveChanges();
 
+        String displayText = "";
         this.getConsolePanel().clearScript();
-        OutputPanel outputPanel = getConsolePanel().getOutputPanel();
-        outputPanel.clear();
 
         if (template) {
-            outputPanel.append(Constant.messages.getString("scripts.template.desc"));
+            displayText += Constant.messages.getString("scripts.template.desc");
+        } else {
+            displayText += Constant.messages.getString("scripts.welcome.cmd");
         }
 
         if (Constant.messages.containsKey(type.getI18nKey() + ".desc")) {
-            outputPanel.append(Constant.messages.getString(type.getI18nKey() + ".desc"));
-            this.getConsolePanel().setTabFocus();
+            displayText += Constant.messages.getString(type.getI18nKey() + ".desc");
         }
+        getConsolePanel().getCommandPanel().setCommandScript(displayText);
     }
 
     void displayTemplateType(ScriptType type) {
@@ -589,33 +564,12 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         return Constant.messages.getString("scripts.desc");
     }
 
-    /*
-     * The writer that will get output from all scripts run
-     */
-    private OutputPanelWriter getStdOutputPanelWriter() {
-        if (View.isInitialised() && stdOutputPanelWriter == null) {
-            stdOutputPanelWriter = new OutputPanelWriter(this.getConsolePanel().getOutputPanel());
-        }
-        return stdOutputPanelWriter;
-    }
-
-    /*
-     * The writer which will get output only for the script currently being displayed
-     */
-    private OutputPanelWriter getDisplayedScriptOutputPanelWriter() {
-        if (View.isInitialised() && displayedScriptOutputPanelWriter == null) {
-            displayedScriptOutputPanelWriter =
-                    new OutputPanelWriter(this.getConsolePanel().getOutputPanel());
-        }
-        return this.displayedScriptOutputPanelWriter;
-    }
-
     public void invokeTargetedScript(ScriptWrapper script, HttpMessage msg) {
         if (View.isInitialised()) {
             executeInEdt(
                     () -> {
                         this.displayScript(script);
-                        this.getConsolePanel().getOutputPanel().preScriptInvoke();
+                        this.preInvoke(script);
                         this.getConsolePanel().setTabFocus();
                     });
         }
@@ -624,8 +578,11 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     @Override
     public void preInvoke(ScriptWrapper script) {
-        if (this.isScriptDisplayed(script)) {
-            this.getConsolePanel().getOutputPanel().preScriptInvoke();
+        if (script != null
+                && hasView()
+                && outputSources.get(script) != null
+                && outputSources.get(script).isClearOnRun()) {
+            getView().getOutputPanel().clear(script.getName());
         }
     }
 
@@ -642,8 +599,11 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     @Override
     public void scriptAdded(ScriptWrapper script, boolean display) {
-        if (View.isInitialised() && display) {
-            executeInEdt(() -> this.displayScript(script));
+        if (hasView()) {
+            if (display) {
+                executeInEdt(() -> this.displayScript(script));
+            }
+            registerScriptOutputSource(script);
         }
         switch (script.getType().getName()) {
             case SCRIPT_EXT_TYPE:
@@ -656,7 +616,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             case ExtensionActiveScan.SCRIPT_TYPE_ACTIVE:
                 activeScriptSynchronizer.scriptAdded(script);
                 break;
-            case ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE:
+            case ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE:
                 passiveScriptSynchronizer.scriptAdded(script);
                 break;
         }
@@ -689,12 +649,13 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             case ExtensionActiveScan.SCRIPT_TYPE_ACTIVE:
                 activeScriptSynchronizer.scriptRemoved(script);
                 break;
-            case ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE:
+            case ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE:
                 passiveScriptSynchronizer.scriptRemoved(script);
                 break;
         }
-        if (View.isInitialised()) {
+        if (hasView()) {
             this.getConsolePanel().removeScript(script);
+            unregisterScriptOutputSource(script);
         }
     }
 
@@ -710,8 +671,16 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     @Override
     public void scriptChanged(ScriptWrapper script) {
-        if (View.isInitialised()) {
+        if (hasView()) {
             getConsolePanel().updateButtonStates();
+            if (outputSources.get(script) == null) {
+                // We don't know about this script, register it
+                registerScriptOutputSource(script);
+            } else if (!script.getName().equals(outputSources.get(script).getName())) {
+                // The script was renamed, re-register it with the new name
+                unregisterScriptOutputSource(script);
+                registerScriptOutputSource(script);
+            }
         }
         if (script.getType().getName().equals(SCRIPT_EXT_TYPE)) {
             // Extender scripts are installed and uninstalled when they are enabled/disabled
@@ -729,11 +698,15 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     @Override
     public void scriptError(ScriptWrapper script) {
-        if (this.isScriptDisplayed(script)) {
+        if (hasView()) {
             if (script.getLastException() != null) {
-                this.showError(script.getLastException());
+                getView()
+                        .getOutputPanel()
+                        .append(
+                                extractScriptExceptionMessage(script.getLastException()),
+                                script.getName());
             } else {
-                this.showError(script.getLastErrorDetails());
+                getView().getOutputPanel().append(script.getLastErrorDetails(), script.getName());
             }
         }
     }
@@ -744,32 +717,30 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             case ExtensionActiveScan.SCRIPT_TYPE_ACTIVE:
                 activeScriptSynchronizer.scriptAdded(script);
                 break;
-            case ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE:
+            case ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE:
                 passiveScriptSynchronizer.scriptAdded(script);
                 break;
         }
     }
 
+    @Deprecated(since = "45.9.0", forRemoval = true)
     public void showError(Exception e) {
-        if (View.isInitialised()) {
-            this.getConsolePanel().getOutputPanel().append(e);
-        } else {
-            System.out.println("ERROR: " + e);
-        }
+        showError(extractScriptExceptionMessage(e));
     }
 
+    @Deprecated(since = "45.9.0", forRemoval = true)
     public void showError(String string) {
-        if (View.isInitialised()) {
-            this.getConsolePanel().getOutputPanel().appendError(string);
+        if (hasView()) {
+            getView().getOutputPanel().append(string, NAME);
         } else {
             System.out.println("ERROR: " + string);
         }
     }
 
+    @Deprecated(since = "45.9.0", forRemoval = true)
     public void setOutput(String string) {
         if (View.isInitialised()) {
-            this.getConsolePanel().getOutputPanel().clear();
-            this.getConsolePanel().getOutputPanel().append(string);
+            getView().getOutputPanel().append(string, NAME);
         }
     }
 
@@ -873,35 +844,21 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         return EXTENSION_DEPENDENCIES;
     }
 
+    @Deprecated(since = "45.9.0", forRemoval = true)
     public boolean isLockOutputToDisplayedScript() {
-        return lockOutputToDisplayedScript;
+        return true;
     }
 
-    public void setLockOutputToDisplayedScript(boolean lockOutputToDisplayedScript) {
-        this.lockOutputToDisplayedScript = lockOutputToDisplayedScript;
-
-        this.getStdOutputPanelWriter().setEnabled(!lockOutputToDisplayedScript);
-        this.getDisplayedScriptOutputPanelWriter().setEnabled(lockOutputToDisplayedScript);
-
-        if (this.currentLockedScript != null) {
-            this.currentLockedScript.setWriter(null);
-        }
-
-        ScriptWrapper script = this.getScriptsPanel().getSelectedScript();
-        if (script != null) {
-            if (this.lockOutputToDisplayedScript) {
-                script.setWriter(this.getDisplayedScriptOutputPanelWriter());
-                this.currentLockedScript = script;
-            } else {
-                script.setWriter(null);
-                this.currentLockedScript = null;
-            }
-        }
-    }
+    @Deprecated(since = "45.9.0", forRemoval = true)
+    public void setLockOutputToDisplayedScript(boolean lockOutputToDisplayedScript) {}
 
     @Override
+    @Deprecated(since = "45.9.0", forRemoval = true)
     public Writer getOutputWriter() {
-        return this.getStdOutputPanelWriter();
+        if (hasView()) {
+            return new OutputPanelWriter(getView().getOutputPanel(), NAME);
+        }
+        return null;
     }
 
     @Override
@@ -982,28 +939,29 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         }
     }
 
-    /** A {@code SessionChangedListener} for view/UI related functionalities. */
-    private class ViewSessionChangedListener implements SessionChangedListener {
+    private void registerScriptOutputSource(ScriptWrapper script) {
+        var outputSource = new ScriptOutputSource(script);
+        outputSources.put(script, outputSource);
+        getView().getOutputPanel().registerOutputSource(outputSource);
+        script.setWriter(new OutputPanelWriter(getView().getOutputPanel(), script.getName()));
+    }
 
-        @Override
-        public void sessionAboutToChange(Session session) {
-            getConsolePanel().resetOutputPanel();
+    private void unregisterScriptOutputSource(ScriptWrapper script) {
+        ScriptOutputSource outputSource = outputSources.remove(script);
+        if (outputSource != null) {
+            getView().getOutputPanel().unregisterOutputSource(outputSource);
         }
+    }
 
-        @Override
-        public void sessionChanged(Session session) {
-            // Nothing to do.
+    static String extractScriptExceptionMessage(Exception e) {
+        Throwable cause = e;
+        while (cause != null) {
+            if (cause instanceof ScriptException) {
+                return cause.getMessage();
+            }
+            cause = cause.getCause();
         }
-
-        @Override
-        public void sessionModeChanged(Mode mode) {
-            // Nothing to do.
-        }
-
-        @Override
-        public void sessionScopeChanged(Session session) {
-            // Nothing to do.
-        }
+        return e.toString();
     }
 
     static class BuiltInScript {

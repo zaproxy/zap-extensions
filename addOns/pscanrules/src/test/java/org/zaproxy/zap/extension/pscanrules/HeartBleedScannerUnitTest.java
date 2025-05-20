@@ -32,6 +32,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScanRule> {
 
@@ -144,7 +145,7 @@ class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScanRule> {
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
@@ -153,6 +154,7 @@ class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScanRule> {
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_CRYP_01_TLS.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey("CVE-2014-0160"), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),

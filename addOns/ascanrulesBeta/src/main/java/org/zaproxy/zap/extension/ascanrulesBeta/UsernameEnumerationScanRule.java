@@ -23,6 +23,8 @@ import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,6 +46,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType.FormBasedAuthenticationMethod;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
@@ -64,11 +67,18 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
 
     private static final Logger LOGGER = LogManager.getLogger(UsernameEnumerationScanRule.class);
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                    CommonAlertTag.WSTG_V42_IDNT_04_ACCOUNT_ENUMERATION);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                                CommonAlertTag.WSTG_V42_IDNT_04_ACCOUNT_ENUMERATION));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private ExtensionAuthentication extAuth;
 
@@ -395,7 +405,8 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
 
                 // get a random user name the same length as the original!
                 String invalidUsername =
-                        RandomStringUtils.randomAlphabetic(currentHtmlParameter.getValue().length())
+                        RandomStringUtils.secure()
+                                .nextAlphabetic(currentHtmlParameter.getValue().length())
                                 .toLowerCase(Locale.ROOT);
 
                 LOGGER.debug("The invalid username chosen was [{}]", invalidUsername);
@@ -745,7 +756,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin
 
     @Override
     public int getCweId() {
-        return 200; // CWE-200: Information Exposure
+        return 204; // CWE-204: Observable Response Discrepancy
     }
 
     @Override

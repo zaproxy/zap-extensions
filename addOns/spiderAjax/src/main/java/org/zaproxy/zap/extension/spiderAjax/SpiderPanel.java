@@ -444,7 +444,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
     public void foundMessage(
             HistoryReference historyReference, HttpMessage httpMessage, ResourceState state) {
         boolean added = addHistoryUrl(historyReference, httpMessage, targetSite, state);
-        if (View.isInitialised() && added) {
+        if (View.isInitialised() && state == ResourceState.PROCESSED && added) {
             foundCount++;
             this.foundLabel.setText(Integer.toString(this.foundCount));
         }

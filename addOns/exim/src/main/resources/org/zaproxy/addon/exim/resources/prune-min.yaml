@@ -1,0 +1,3 @@
+  - type: prune           # Prunes nodes from the Sites Tree using Sites Tree data (YAML) from a file
+    parameters:
+      fileName:           # String: Name/path to the file

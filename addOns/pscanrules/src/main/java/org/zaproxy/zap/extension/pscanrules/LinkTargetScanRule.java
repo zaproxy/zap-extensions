@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.htmlparser.jericho.Element;
@@ -36,6 +38,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.domains.TrustedDomains;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
@@ -51,10 +54,19 @@ public class LinkTargetScanRule extends PluginPassiveScanner implements CommonPa
     private static final String BLANK = "_blank";
     private static final String OPENER = "opener";
     private static final String NOOPENER = "noopener";
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private final TrustedDomains trustedDomains = new TrustedDomains();
 

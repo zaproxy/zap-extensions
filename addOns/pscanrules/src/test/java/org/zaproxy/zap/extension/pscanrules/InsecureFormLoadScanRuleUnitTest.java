@@ -37,6 +37,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class InsecureFormLoadScanRuleUnitTest extends PassiveScannerTest<InsecureFormLoadScanRule> {
 
@@ -135,7 +136,7 @@ class InsecureFormLoadScanRuleUnitTest extends PassiveScannerTest<InsecureFormLo
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(6)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL.getTag()),
                 is(equalTo(true)));
@@ -145,6 +146,9 @@ class InsecureFormLoadScanRuleUnitTest extends PassiveScannerTest<InsecureFormLo
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL.getValue())));

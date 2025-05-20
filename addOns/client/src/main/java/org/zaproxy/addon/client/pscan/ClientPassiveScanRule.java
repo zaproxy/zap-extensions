@@ -19,7 +19,7 @@
  */
 package org.zaproxy.addon.client.pscan;
 
-import org.zaproxy.addon.client.ReportedObject;
+import org.zaproxy.addon.client.internal.ReportedObject;
 import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 
 public interface ClientPassiveScanRule extends ExampleAlertProvider {

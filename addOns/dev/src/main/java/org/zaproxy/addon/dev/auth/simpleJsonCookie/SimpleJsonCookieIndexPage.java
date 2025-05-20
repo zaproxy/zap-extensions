@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.dev.DevUtils;
 import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
@@ -51,7 +52,7 @@ public class SimpleJsonCookieIndexPage extends TestPage {
 
         if (cookie != null && user != null) {
             // Already logged in, dont display the login page again
-            getServer().redirect("home.html", msg);
+            DevUtils.setRedirect(msg, "home.html");
         } else {
             this.getServer().handleFile(getParent(), this.getName(), msg);
         }

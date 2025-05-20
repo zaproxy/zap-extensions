@@ -322,7 +322,11 @@ public class ExtensionOast extends ExtensionAdaptor {
 
             AlertEntity alertEntity = getPermanentDatabase().getAlertForPayload(uri);
             if (alertEntity == null) {
-                LOGGER.warn("Not raising alert, the interaction {} was not found.", uri);
+                LOGGER.warn(
+                        "Not raising alert, the interaction {} through '{}' from {} was not found.",
+                        uri,
+                        request.getHandler(),
+                        request.getSource());
                 return;
             }
 

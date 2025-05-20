@@ -173,7 +173,8 @@
     "js": {
       "PIXI": "",
       "PIXI.VERSION": "^(.+)$\\;version:\\1",
-      "PIXI_WEBWORKER_URL": ""
+      "PIXI_WEBWORKER_URL": "",
+      "webpackChunkpixi_docusaurus": ""
     },
     "oss": true,
     "scriptSrc": [
@@ -991,6 +992,43 @@
     ],
     "website": "https://passage.1password.com"
   },
+  "Passle": {
+    "cats": [
+      32
+    ],
+    "description": "Passle is a digital marketing platform designed to help professionals create and share expert-led content.",
+    "icon": "Passle.svg",
+    "js": {
+      "Passel.API": "",
+      "PassleEnvironmentConfig": "",
+      "PassleEvents": "",
+      "PassleFunctions": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://home.passle.net"
+  },
+  "Passport.js": {
+    "cats": [
+      69
+    ],
+    "description": "Passport.js is an authentication middleware for Node.js, supporting various strategies to enable user authentication in web applications.",
+    "icon": "Passport.svg",
+    "implies": [
+      "Node.js"
+    ],
+    "js": {
+      "Passport.Core": "",
+      "Passport.Core.VERSION": "([\\d.]+)\\;version:\\1",
+      "PassportHandler": "",
+      "_passport_html": ""
+    },
+    "oss": true,
+    "saas": true,
+    "website": "https://www.passportjs.org"
+  },
   "PathFactory": {
     "cats": [
       32
@@ -1178,7 +1216,7 @@
       "button": {
         "text": "PayPal"
       },
-      "iframe[src*='paypal.com'], img[src*='paypal.com'], img[src*='paypalobjects.com'], [aria-labelledby='pi-paypal'], [data-paypal-v4='true'], img[alt*='PayPal' i]": {
+      "iframe[src*='paypal.com'], img[src*='paypal.com'], img[src*='paypalobjects.com'], [aria-labelledby='pi-paypal'], [data-paypal-v4], [data-paypal-commerce-button], [data-paypal-smart-button-version], img[alt*='PayPal']": {
         "exists": ""
       }
     },
@@ -1435,6 +1473,19 @@
     ],
     "website": "https://www.pebblepost.com"
   },
+  "Peddle": {
+    "cats": [
+      6
+    ],
+    "description": "Peddle is a platform offering instant cash offers for cars, streamlining the selling process.",
+    "icon": "Peddle.svg",
+    "js": {
+      "PeddlePublisherEmbed": "",
+      "PeddlePublisherEmbedConfig": ""
+    },
+    "saas": true,
+    "website": "https://www.peddle.com"
+  },
   "Peek": {
     "cats": [
       5,
@@ -1497,6 +1548,20 @@
     },
     "website": "https://joinpeertube.org/"
   },
+  "Peerius": {
+    "cats": [
+      76
+    ],
+    "description": "Peerius is a platform that analyzes individual visitor behavior on websites to optimize the checkout process.",
+    "js": {
+      "PeeriusCallbacks": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "\\.peerius\\.com/"
+    ],
+    "website": "https://www.peerius.com"
+  },
   "Pegboard7": {
     "cats": [
       1
@@ -1522,15 +1587,18 @@
     "cats": [
       59
     ],
-    "description": "Peity is a simple jQuery plugin that converts an element's content into a simple mini svg pie, line or bar chart.",
+    "description": "Peity is a jQuery plugin that converts an element's content into a simple mini svg pie, line or bar chart.",
     "js": {
       "peity": ""
     },
     "oss": true,
-    "scriptSrc": [
-      "peity(?:-demo)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    "requires": [
+      "jQuery"
     ],
-    "website": "https://github.com/benpickles/peity"
+    "scriptSrc": [
+      "(?:jquery\\.)?peity(?:-demo)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
+    ],
+    "website": "https://benpickles.github.io/peity/"
   },
   "Pelican": {
     "cats": [
@@ -1946,6 +2014,18 @@
     },
     "website": "https://phaser.io"
   },
+  "Phenom": {
+    "cats": [
+      101
+    ],
+    "description": "Phenom is a talent relationship marketing platform.",
+    "icon": "Phenom.svg",
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.phenompeople\\.com/"
+    ],
+    "website": "https://www.phenom.com"
+  },
   "Phenomic": {
     "cats": [
       57
@@ -2015,6 +2095,21 @@
       "generator": "^phoenix"
     },
     "website": "https://github.com/Sazito/phoenix/"
+  },
+  "Phoenix Cart": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "ceid": ""
+    },
+    "description": "Phoenix Cart is an open source software that allows users to set up an online store and sell their products.",
+    "icon": "PhoenixCart.svg",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://phoenixcart.org"
   },
   "Phoenix Framework": {
     "cats": [
@@ -2300,6 +2395,20 @@
       "cdn\\.pickystory\\.com/"
     ],
     "website": "https://pickystory.com"
+  },
+  "Pickzen": {
+    "cats": [
+      29
+    ],
+    "description": "Pickzen is an AI-powered tool designed for conversational search.",
+    "icon": "Pickzen.svg",
+    "js": {
+      "pickzen.server": "",
+      "pickzenLoaded": "",
+      "pickzenonActivation": ""
+    },
+    "saas": true,
+    "website": "https://www.pickzen.com"
   },
   "Pico": {
     "cats": [
@@ -2999,6 +3108,21 @@
     ],
     "website": "https://www.platinmarket.com"
   },
+  "Plattar": {
+    "cats": [
+      105
+    ],
+    "description": "Plattar is a 3D and augmented reality platform for businesses that facilitates product customization to help retailers increase sales and reduce returns.",
+    "icon": "Plattar.svg",
+    "js": {
+      "PlattarARAdapter": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.plattar.com"
+  },
   "Platter": {
     "cats": [
       108
@@ -3119,6 +3243,20 @@
       "api\\.plezi\\.co"
     ],
     "website": "https://www.plezi.co"
+  },
+  "Pliek": {
+    "cats": [
+      32
+    ],
+    "description": "Pliek is a system that provides live sales notifications, enabling real-time updates on purchase activities.",
+    "js": {
+      "pliekConfig.key": ""
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "saas": true,
+    "website": "https://pliek.io"
   },
   "Pligg": {
     "cats": [
@@ -3319,6 +3457,26 @@
     ],
     "saas": true,
     "website": "https://www.podigee.com"
+  },
+  "Podio": {
+    "cats": [
+      53
+    ],
+    "description": "Podio is a customizable social work platform for collaboration with co-workers and clients, enabling task management and communication.",
+    "icon": "Podio.svg",
+    "js": {
+      "_podioWebForm": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "//podio\\.com/"
+    ],
+    "website": "https://www.podio.com"
   },
   "Podium": {
     "cats": [
@@ -3554,6 +3712,25 @@
     ],
     "website": "https://poppins.so"
   },
+  "Poptin": {
+    "cats": [
+      32
+    ],
+    "description": "Poptin is a platform designed to engage visitors and coverts them into leads, subscribers and sales.",
+    "icon": "Poptin.svg",
+    "js": {
+      "poptinAfterPageLoad": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.popt\\.in/"
+    ],
+    "website": "https://www.poptin.com"
+  },
   "PopularFX": {
     "cats": [
       80
@@ -3666,6 +3843,7 @@
     "description": "PostHog is the open-source, all-in-one product analytics platform.",
     "icon": "PostHog.svg",
     "js": {
+      "__PosthogExtensions__": "",
       "posthog": ""
     },
     "oss": true,
@@ -3677,7 +3855,10 @@
     "scriptSrc": [
       "app\\.posthog\\.com/"
     ],
-    "website": "https://posthog.com"
+    "website": "https://posthog.com",
+    "xhr": [
+      "\\.posthog\\.com"
+    ]
   },
   "PostNL": {
     "cats": [
@@ -3855,6 +4036,25 @@
     },
     "saas": true,
     "website": "https://powa.com"
+  },
+  "Power CRM": {
+    "cats": [
+      53
+    ],
+    "description": "Power CRM is a platform tailored for vehicle protection associations, offering support to meet operational needs.",
+    "icon": "PowerCRM.svg",
+    "js": {
+      "PowerCRM.init": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.powercrm\\.com\\.br"
+    ],
+    "website": "https://site.powercrm.com.br"
   },
   "PowerReviews": {
     "cats": [
@@ -4269,6 +4469,9 @@
       "generator": "PrestaShop"
     },
     "oss": true,
+    "scripts": [
+      "PrestaShop-"
+    ],
     "website": "https://www.prestashop.com"
   },
   "Presto Player": {
@@ -4331,6 +4534,34 @@
       "cdn\\.pricespider\\.com/"
     ],
     "website": "https://www.pricespider.com"
+  },
+  "Prima Software": {
+    "cats": [
+      6
+    ],
+    "description": "Prime Software is an ecommerce platform designed for the office supplies market.",
+    "icon": "PrimaSoftware.svg",
+    "js": {
+      "prima.address": "",
+      "prima_module_load": ""
+    },
+    "meta": {
+      "DCTERMS.publisher": "^Prima Software Ltd$"
+    },
+    "saas": true,
+    "website": "https://www.primasoftware.co.uk"
+  },
+  "Prime AI": {
+    "cats": [
+      105
+    ],
+    "description": "Prime AI is a platform that uses AI-powered technology to match customers' body shapes with garment SKU specifications, helping them choose the best-fitting clothing size.",
+    "icon": "PrimeAI.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.primeai\\.co\\.uk"
+    ],
+    "website": "https://www.primeai.co.uk"
   },
   "PrimeGate": {
     "cats": [
@@ -4467,6 +4698,9 @@
     ],
     "scriptSrc": [
       "static\\.cdn\\.printful\\.com"
+    ],
+    "scripts": [
+      "api\\.printful\\.com"
     ],
     "website": "https://www.printful.com/"
   },
@@ -4632,6 +4866,22 @@
     ],
     "saas": true,
     "website": "https://www.procurios.com"
+  },
+  "ProdPad": {
+    "cats": [
+      53
+    ],
+    "description": "ProdPad is a product management software platform enabling teams to gather ideas, set priorities, and create adaptable product roadmaps.",
+    "icon": "ProdPad.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.prodpad\\.com/"
+    ],
+    "website": "https://www.prodpad.com"
   },
   "Product Hunt": {
     "cats": [
@@ -4870,6 +5120,23 @@
     ],
     "website": "https://www.prommt.com"
   },
+  "Promo AI": {
+    "cats": [
+      32
+    ],
+    "description": "Promo AI is a tool that generates, schedules, and publishes professional videos across platforms, designed to support business marketing efforts.",
+    "icon": "Promo.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "ak04-promo-cdn\\.slidely\\.com"
+    ],
+    "website": "https://promo.com"
+  },
   "PromoBuilding": {
     "cats": [
       51
@@ -4894,6 +5161,25 @@
     ],
     "saas": true,
     "website": "https://promobuilding.ru"
+  },
+  "Property Shell": {
+    "cats": [
+      53
+    ],
+    "description": "Property Shell is a real estate CRM solution to manage, develop, and drive the selling of residential and commercial property, and more.",
+    "icon": "PropertyShell.svg",
+    "pricing": [
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.propertyshell\\.com"
+    ],
+    "scripts": [
+      "api\\.propertyshell\\.com"
+    ],
+    "website": "https://propertyshell.com"
   },
   "Proton Mail": {
     "cats": [

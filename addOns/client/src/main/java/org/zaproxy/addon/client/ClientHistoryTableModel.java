@@ -24,6 +24,9 @@ import java.util.Date;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.client.internal.ReportedElement;
+import org.zaproxy.addon.client.internal.ReportedEvent;
+import org.zaproxy.addon.client.internal.ReportedObject;
 
 public class ClientHistoryTableModel extends AbstractTableModel {
 

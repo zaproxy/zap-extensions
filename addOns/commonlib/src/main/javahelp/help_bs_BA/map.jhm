@@ -5,4 +5,5 @@
 
 <map version="1.0">
     <mapID target="commonlib" url="contents/commonlib.html" />
+    <mapID target="commonlib.output.panel" url="contents/output-panel.html" />
 </map>

@@ -21,26 +21,21 @@ package org.zaproxy.addon.pscan.automation.jobs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.withSettings;
+import static org.mockito.Mockito.verify;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.mockito.quality.Strictness;
-import org.parosproxy.paros.CommandLine;
+import org.mockito.InOrder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -52,49 +47,40 @@ import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
-import org.zaproxy.zap.extension.pscan.PassiveScanParam;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
+import org.zaproxy.addon.pscan.PassiveScannersManager;
+import org.zaproxy.addon.pscan.internal.PassiveScannerOptions;
+import org.zaproxy.addon.pscan.internal.RegexAutoTagScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.extension.pscan.scanner.RegexAutoTagScanner;
 import org.zaproxy.zap.utils.I18N;
-import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class PassiveScanConfigJobUnitTest {
 
-    private static MockedStatic<CommandLine> mockedCmdLine;
-
-    private ExtensionLoader extensionLoader;
-    private ExtensionPassiveScan extPscan;
-    private PassiveScanParam pscanParam;
-
-    @BeforeAll
-    static void init() {
-        mockedCmdLine = Mockito.mockStatic(CommandLine.class);
-    }
-
-    @AfterAll
-    static void close() {
-        mockedCmdLine.close();
-    }
+    private PassiveScannersManager scannersManager;
+    private ExtensionPassiveScan2 pscan;
+    private PassiveScannerOptions options;
 
     @BeforeEach
     void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
 
-        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+        Model model = mock(Model.class);
         Model.setSingletonForTesting(model);
         OptionsParam optionsParam = mock(OptionsParam.class);
         given(model.getOptionsParam()).willReturn(optionsParam);
-        pscanParam = mock(PassiveScanParam.class);
-        given(optionsParam.getParamSet(PassiveScanParam.class)).willReturn(pscanParam);
+        options = mock(PassiveScannerOptions.class);
+        given(optionsParam.getParamSet(PassiveScannerOptions.class)).willReturn(options);
 
-        extensionLoader =
-                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
-        extPscan = new ExtensionPassiveScan();
-        given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
+        pscan = mock(ExtensionPassiveScan2.class);
+        scannersManager = mock(PassiveScannersManager.class);
+        given(pscan.getPassiveScannersManager()).willReturn(scannersManager);
 
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
-        Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
+        given(pscan.getModel()).willReturn(model);
+
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        given(extensionLoader.getExtension(ExtensionPassiveScan2.class)).willReturn(pscan);
+
+        Control.initSingletonForTesting(model, extensionLoader);
     }
 
     @Test
@@ -106,8 +92,8 @@ class PassiveScanConfigJobUnitTest {
         assertThat(job.getType(), is(equalTo("passiveScan-config")));
         assertThat(job.getName(), is(equalTo("passiveScan-config")));
         assertThat(job.getOrder(), is(equalTo(Order.CONFIGS)));
-        assertThat(job.getParamMethodObject(), is(extPscan));
-        assertThat(job.getParamMethodName(), is("getPassiveScanParam"));
+        assertThat(job.getParamMethodObject(), is(job));
+        assertThat(job.getParamMethodName(), is("getPassiveScannerOptions"));
         assertThat(job.getParameters().getEnableTags(), is(equalTo(false)));
     }
 
@@ -135,11 +121,7 @@ class PassiveScanConfigJobUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(o, is(notNullValue()));
-        assertThat(o.getClass(), is(equalTo(PassiveScanParam.class)));
-        assertThat(((PassiveScanParam) o).getMaxAlertsPerRule(), is(equalTo(0)));
-        assertThat(((PassiveScanParam) o).isScanOnlyInScope(), is(equalTo(false)));
-        assertThat(((PassiveScanParam) o).getMaxBodySizeInBytesToScan(), is(equalTo(0)));
+        assertThat(o, is(instanceOf(PassiveScannerOptions.class)));
     }
 
     @Test
@@ -156,8 +138,6 @@ class PassiveScanConfigJobUnitTest {
         Object data = yaml.load(yamlStr);
 
         PassiveScanConfigJob job = new PassiveScanConfigJob();
-        PassiveScanParam psp = (PassiveScanParam) JobUtils.getJobOptions(job, progress);
-        psp.load(new ZapXmlConfiguration());
 
         // When
         job.setJobData(((LinkedHashMap<?, ?>) data));
@@ -167,9 +147,9 @@ class PassiveScanConfigJobUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(psp.getMaxAlertsPerRule(), is(equalTo(2)));
-        assertThat(psp.isScanOnlyInScope(), is(equalTo(true)));
-        assertThat(psp.getMaxBodySizeInBytesToScan(), is(equalTo(1000)));
+        verify(options).setMaxAlertsPerRule(2);
+        verify(options).setScanOnlyInScope(true);
+        verify(options).setMaxBodySizeInBytesToScan(1000);
         assertThat(job.getParameters().getEnableTags(), is(equalTo(true)));
     }
 
@@ -187,11 +167,11 @@ class PassiveScanConfigJobUnitTest {
 
         PassiveScanConfigJob job = new PassiveScanConfigJob();
         job.setPlan(mock(AutomationPlan.class));
-        PassiveScanParam psp = (PassiveScanParam) JobUtils.getJobOptions(job, progress);
-        psp.load(new ZapXmlConfiguration());
-        psp.setMaxBodySizeInBytesToScan(200);
-        psp.setScanOnlyInScope(false);
-        psp.setMaxAlertsPerRule(8);
+        given(options.getMaxBodySizeInBytesToScan()).willReturn(200);
+        given(options.isScanOnlyInScope()).willReturn(false);
+        given(options.getMaxAlertsPerRule()).willReturn(8);
+
+        InOrder inOrder = inOrder(options);
 
         // When
         job.planStarted();
@@ -203,9 +183,12 @@ class PassiveScanConfigJobUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(psp.getMaxAlertsPerRule(), is(equalTo(8)));
-        assertThat(psp.isScanOnlyInScope(), is(equalTo(false)));
-        assertThat(psp.getMaxBodySizeInBytesToScan(), is(equalTo(200)));
+        inOrder.verify(options).setMaxAlertsPerRule(2);
+        inOrder.verify(options).setMaxBodySizeInBytesToScan(1000);
+        inOrder.verify(options).setScanOnlyInScope(true);
+        inOrder.verify(options).setMaxAlertsPerRule(8);
+        inOrder.verify(options).setMaxBodySizeInBytesToScan(200);
+        inOrder.verify(options).setScanOnlyInScope(false);
     }
 
     @Test
@@ -221,8 +204,6 @@ class PassiveScanConfigJobUnitTest {
         Object data = yaml.load(yamlStr);
 
         PassiveScanConfigJob job = new PassiveScanConfigJob();
-        PassiveScanParam psp = (PassiveScanParam) JobUtils.getJobOptions(job, progress);
-        psp.load(new ZapXmlConfiguration());
 
         // When
         job.setJobData(((LinkedHashMap<?, ?>) data));
@@ -235,9 +216,9 @@ class PassiveScanConfigJobUnitTest {
         assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(
                 progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
-        assertThat(psp.getMaxAlertsPerRule(), is(equalTo(2)));
-        assertThat(psp.isScanOnlyInScope(), is(equalTo(true)));
-        assertThat(psp.getMaxBodySizeInBytesToScan(), is(equalTo(1000)));
+        verify(options).setMaxAlertsPerRule(2);
+        verify(options).setScanOnlyInScope(true);
+        verify(options).setMaxBodySizeInBytesToScan(1000);
     }
 
     @Test
@@ -246,15 +227,12 @@ class PassiveScanConfigJobUnitTest {
         String yamlStr =
                 "rules:\n" + "- id: 1\n" + "  threshold: Low\n" + "- id: 3\n" + "  threshold: High";
 
-        // Need to mock the extension for this test
-        extPscan = mock(ExtensionPassiveScan.class);
-        given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
         TestPluginScanner rule1 = new TestPluginScanner(1);
         TestPluginScanner rule2 = new TestPluginScanner(2);
         TestPluginScanner rule3 = new TestPluginScanner(3);
-        given(extPscan.getPluginPassiveScanner(1)).willReturn(rule1);
-        given(extPscan.getPluginPassiveScanner(2)).willReturn(rule2);
-        given(extPscan.getPluginPassiveScanner(3)).willReturn(rule3);
+        given(scannersManager.getScanRule(1)).willReturn(rule1);
+        given(scannersManager.getScanRule(2)).willReturn(rule2);
+        given(scannersManager.getScanRule(3)).willReturn(rule3);
 
         AutomationProgress progress = new AutomationProgress();
         Yaml yaml = new Yaml();
@@ -282,15 +260,12 @@ class PassiveScanConfigJobUnitTest {
         String yamlStr =
                 "rules:\n" + "- id: 4\n" + "  threshold: Low\n" + "- id: 3\n" + "  threshold: High";
 
-        // Need to mock the extension for this test
-        extPscan = mock(ExtensionPassiveScan.class);
-        given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
         TestPluginScanner rule1 = new TestPluginScanner(1);
         TestPluginScanner rule2 = new TestPluginScanner(2);
         TestPluginScanner rule3 = new TestPluginScanner(3);
-        given(extPscan.getPluginPassiveScanner(1)).willReturn(rule1);
-        given(extPscan.getPluginPassiveScanner(2)).willReturn(rule2);
-        given(extPscan.getPluginPassiveScanner(3)).willReturn(rule3);
+        given(scannersManager.getScanRule(1)).willReturn(rule1);
+        given(scannersManager.getScanRule(2)).willReturn(rule2);
+        given(scannersManager.getScanRule(3)).willReturn(rule3);
 
         AutomationProgress progress = new AutomationProgress();
         Yaml yaml = new Yaml();
@@ -318,11 +293,8 @@ class PassiveScanConfigJobUnitTest {
         String yamlStr =
                 "rules:\n" + "- id:\n" + "  threshold: Low\n" + "- id: 3\n" + "  threshold: High";
 
-        // Need to mock the extension for this test
-        extPscan = mock(ExtensionPassiveScan.class);
-        given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
         TestPluginScanner rule3 = new TestPluginScanner(3);
-        given(extPscan.getPluginPassiveScanner(3)).willReturn(rule3);
+        given(scannersManager.getScanRule(3)).willReturn(rule3);
 
         AutomationProgress progress = new AutomationProgress();
         Yaml yaml = new Yaml();
@@ -348,17 +320,14 @@ class PassiveScanConfigJobUnitTest {
         // Given
         String yamlStr = "parameters:\n" + "  disableAllRules: true";
 
-        // Need to mock the extension for this test
-        extPscan = mock(ExtensionPassiveScan.class);
-        given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
         TestPluginScanner rule1 = new TestPluginScanner(1);
         TestPluginScanner rule2 = new TestPluginScanner(2);
         TestPluginScanner rule3 = new TestPluginScanner(3);
         List<PluginPassiveScanner> allRules = Arrays.asList(rule1, rule2, rule3);
-        given(extPscan.getPluginPassiveScanner(1)).willReturn(rule1);
-        given(extPscan.getPluginPassiveScanner(2)).willReturn(rule2);
-        given(extPscan.getPluginPassiveScanner(3)).willReturn(rule3);
-        given(extPscan.getPluginPassiveScanners()).willReturn(allRules);
+        given(scannersManager.getScanRule(1)).willReturn(rule1);
+        given(scannersManager.getScanRule(2)).willReturn(rule2);
+        given(scannersManager.getScanRule(3)).willReturn(rule3);
+        given(scannersManager.getScanRules()).willReturn(allRules);
 
         AutomationProgress progress = new AutomationProgress();
         Yaml yaml = new Yaml();
@@ -392,17 +361,14 @@ class PassiveScanConfigJobUnitTest {
                         + "- id: 3\n"
                         + "  threshold: High";
 
-        // Need to mock the extension for this test
-        extPscan = mock(ExtensionPassiveScan.class);
-        given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
         TestPluginScanner rule1 = new TestPluginScanner(1);
         TestPluginScanner rule2 = new TestPluginScanner(2);
         TestPluginScanner rule3 = new TestPluginScanner(3);
         List<PluginPassiveScanner> allRules = Arrays.asList(rule1, rule2, rule3);
-        given(extPscan.getPluginPassiveScanner(1)).willReturn(rule1);
-        given(extPscan.getPluginPassiveScanner(2)).willReturn(rule2);
-        given(extPscan.getPluginPassiveScanner(3)).willReturn(rule3);
-        given(extPscan.getPluginPassiveScanners()).willReturn(allRules);
+        given(scannersManager.getScanRule(1)).willReturn(rule1);
+        given(scannersManager.getScanRule(2)).willReturn(rule2);
+        given(scannersManager.getScanRule(3)).willReturn(rule3);
+        given(scannersManager.getScanRules()).willReturn(allRules);
 
         AutomationProgress progress = new AutomationProgress();
         Yaml yaml = new Yaml();
@@ -436,8 +402,6 @@ class PassiveScanConfigJobUnitTest {
         Object data = yaml.load(yamlStr);
 
         PassiveScanConfigJob job = new PassiveScanConfigJob();
-        PassiveScanParam psp = (PassiveScanParam) JobUtils.getJobOptions(job, progress);
-        psp.load(new ZapXmlConfiguration());
 
         // When
         job.setJobData(((LinkedHashMap<?, ?>) data));
@@ -459,14 +423,12 @@ class PassiveScanConfigJobUnitTest {
         Object data = yaml.load(yamlStr);
 
         PassiveScanConfigJob job = new PassiveScanConfigJob();
-        PassiveScanParam psp = (PassiveScanParam) JobUtils.getJobOptions(job, progress);
-        psp.load(new ZapXmlConfiguration());
 
-        RegexAutoTagScanner tag1 = new RegexAutoTagScanner();
+        RegexAutoTagScanner tag1 = new TestRegexAutoTagScanner();
         tag1.setEnabled(false);
-        RegexAutoTagScanner tag2 = new RegexAutoTagScanner();
+        RegexAutoTagScanner tag2 = new TestRegexAutoTagScanner();
         tag2.setEnabled(false);
-        given(pscanParam.getAutoTagScanners()).willReturn(Arrays.asList(tag1, tag2));
+        given(options.getAutoTagScanners()).willReturn(Arrays.asList(tag1, tag2));
 
         // When
         job.setJobData(((LinkedHashMap<?, ?>) data));
@@ -490,14 +452,12 @@ class PassiveScanConfigJobUnitTest {
         Object data = yaml.load(yamlStr);
 
         PassiveScanConfigJob job = new PassiveScanConfigJob();
-        PassiveScanParam psp = (PassiveScanParam) JobUtils.getJobOptions(job, progress);
-        psp.load(new ZapXmlConfiguration());
 
-        RegexAutoTagScanner tag1 = new RegexAutoTagScanner();
+        RegexAutoTagScanner tag1 = new TestRegexAutoTagScanner();
         tag1.setEnabled(true);
-        RegexAutoTagScanner tag2 = new RegexAutoTagScanner();
+        RegexAutoTagScanner tag2 = new TestRegexAutoTagScanner();
         tag2.setEnabled(true);
-        given(pscanParam.getAutoTagScanners()).willReturn(Arrays.asList(tag1, tag2));
+        given(options.getAutoTagScanners()).willReturn(Arrays.asList(tag1, tag2));
 
         // When
         job.setJobData(((LinkedHashMap<?, ?>) data));
@@ -521,14 +481,12 @@ class PassiveScanConfigJobUnitTest {
         Object data = yaml.load(yamlStr);
 
         PassiveScanConfigJob job = new PassiveScanConfigJob();
-        PassiveScanParam psp = (PassiveScanParam) JobUtils.getJobOptions(job, progress);
-        psp.load(new ZapXmlConfiguration());
 
-        RegexAutoTagScanner tag1 = new RegexAutoTagScanner();
+        RegexAutoTagScanner tag1 = new RegexAutoTagScanner() {};
         tag1.setEnabled(true);
-        RegexAutoTagScanner tag2 = new RegexAutoTagScanner();
+        RegexAutoTagScanner tag2 = new RegexAutoTagScanner() {};
         tag2.setEnabled(true);
-        given(pscanParam.getAutoTagScanners()).willReturn(Arrays.asList(tag1, tag2));
+        given(options.getAutoTagScanners()).willReturn(Arrays.asList(tag1, tag2));
 
         // When
         job.setJobData(((LinkedHashMap<?, ?>) data));
@@ -560,5 +518,9 @@ class PassiveScanConfigJobUnitTest {
         public String getName() {
             return null;
         }
+    }
+
+    private class TestRegexAutoTagScanner extends RegexAutoTagScanner {
+        // Nothing to do.
     }
 }

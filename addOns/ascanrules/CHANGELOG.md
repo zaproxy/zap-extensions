@@ -4,10 +4,41 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Some Postgres error messages in the SQL Injection scan rule.
+- All rules have been tagged of interest to Penetration Testers.
+
 ### Changed
+- SQL Injection scan rule to start using ComparableResponse - part of the work to reduce False Positives.
+- Depends on an updated version of the Common Library add-on.
+
+### Fixed
+- SQL Injection scan rule to treat a 500 response to an SQLi attack as a likely vulnerability.
+- Use location header in SQL injection response comparisons (Issue 8651).
+
+## [71] - 2025-03-04
+### Fixed
+- External Redirect scan rule to regenerate anti CSRF tokens.
+
+## [70] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
 - Updated help with specific Category identifiers for use with the Custom Payloads add-on for rules:
     - Hidden File Finder
     - User Agent Fuzzer
+- Now depends on minimum Common Library version 1.29.0.
+- Add the `OUT_OF_BAND` alert tag to the following scan rules:
+  - Server Side Template Injection (Blind)
+  - XML External Entity Attack
+- Cloud Metadata Attack scan rule is improved to support GCP, Azure, and OCI.
+- Remove double dot in skipped message of a scan rule that uses the Active Scan OAST service.
+
+### Fixed
+- A situation where the Server-Side Template Injection (SSTI) scan rule might result in false positives related to the Go payloads (Issue 8622).
+- False Positives in Cloud Metadata Attack scan rule (Issue 8514).
+
+### Added
+- Standardized Scan Policy related alert tags on the rule.
 
 ## [69] - 2024-10-23
 ### Changed
@@ -558,6 +589,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[71]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v71
+[70]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v70
 [69]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v69
 [68]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v68
 [67]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v67

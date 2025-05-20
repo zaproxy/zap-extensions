@@ -54,8 +54,10 @@ public class PopupIncludeWebSocketContextMenu extends PopupMenuItemContextInclud
     }
 
     @Override
-    protected ExtensionPopupMenuItem createPopupIncludeInContextMenu() {
-        return new PopupIncludeWebSocketInContextMenu();
+    protected ExtensionPopupMenuItem createPopupIncludeInContextMenu(int weight) {
+        PopupIncludeWebSocketInContextMenu menu = new PopupIncludeWebSocketInContextMenu();
+        menu.setWeight(weight);
+        return menu;
     }
 
     @Override

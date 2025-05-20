@@ -554,7 +554,7 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
                             "Scans are not allowed on targets not in scope when in Protected mode: "
                                     + uri);
                 }
-                // $FALL-THROUGH$
+            // $FALL-THROUGH$
             case standard:
             case attack:
                 // No problem

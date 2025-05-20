@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
@@ -39,6 +41,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
@@ -57,11 +60,20 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
     /** contains the base vulnerability that this plugin refers to */
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_9");
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                    CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
-                    CommonAlertTag.WSTG_V42_SESS_05_CSRF);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                                CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
+                                CommonAlertTag.WSTG_V42_SESS_05_CSRF));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private ExtensionAntiCSRF extensionAntiCSRF;
     private String csrfIgnoreList;
@@ -92,11 +104,6 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
             return;
         }
 
-        if (!AlertThreshold.LOW.equals(getAlertThreshold())
-                && HttpRequestHeader.GET.equals(msg.getRequestHeader().getMethod())) {
-            return;
-        }
-
         // need to do this if we are to be able to get an element's parent. Do it as early as
         // possible in the logic
         source.fullSequentialParse();
@@ -117,8 +124,6 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
             // Loop through all of the FORM tags
             LOGGER.debug("Found {} forms", formElements.size());
 
-            int numberOfFormsPassed = 0;
-
             List<String> ignoreList = new ArrayList<>();
             String ignoreConf = getCSRFIgnoreList();
             if (ignoreConf != null && !ignoreConf.isEmpty()) {
@@ -133,12 +138,21 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
             String ignoreAttName = getCSRFIgnoreAttName();
             String ignoreAttValue = getCSRFIgnoreAttValue();
 
+            int formIdx = 0;
             for (Element formElement : formElements) {
                 LOGGER.debug(
                         "FORM [{}] has parent [{}]", formElement, formElement.getParentElement());
+                ++formIdx;
+
+                String formMethod = formElement.getAttributeValue("method");
+                formMethod = formMethod == null ? HttpRequestHeader.GET : formMethod;
+                if (!AlertThreshold.LOW.equals(getAlertThreshold())
+                        && HttpRequestHeader.GET.equalsIgnoreCase(formMethod)) {
+                    continue;
+                }
                 StringBuilder sbForm = new StringBuilder();
                 SortedSet<String> elementNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-                ++numberOfFormsPassed;
+
                 // if the form has no parent, it is pretty likely invalid HTML,
                 // so we will not report
                 // any alerts on it.
@@ -162,7 +176,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
                 }
 
                 List<Element> inputElements = formElement.getAllElements(HTMLElementName.INPUT);
-                sbForm.append("[Form " + numberOfFormsPassed + ": \"");
+                sbForm.append("[Form " + formIdx + ": \"");
                 boolean foundCsrfToken = false;
 
                 if (inputElements != null && !inputElements.isEmpty()) {

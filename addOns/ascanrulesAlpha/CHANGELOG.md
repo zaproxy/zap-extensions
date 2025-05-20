@@ -5,7 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.16.0.
 - Maintenance changes.
+- Depends on an updated version of the Common Library add-on.
+
+### Added
+- All rules (except examples) have been tagged of interest to Penetration Testers.
 
 ## [48] - 2024-09-02
 ### Changed

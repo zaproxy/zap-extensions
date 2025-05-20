@@ -34,22 +34,21 @@ import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
-import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.addon.pscan.automation.internal.PassiveScanConfigJobDialog;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
-import org.zaproxy.zap.extension.pscan.PassiveScanParam;
+import org.zaproxy.addon.pscan.internal.PassiveScannerOptions;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class PassiveScanConfigJob extends AutomationJob {
 
     public static final String JOB_NAME = "passiveScan-config";
-    private static final String OPTIONS_METHOD_NAME = "getPassiveScanParam";
+    private static final String OPTIONS_METHOD_NAME = "getPassiveScannerOptions";
     private static final String PARAM_ID = "id";
 
     private static final String PARAM_ENABLE_TAGS = "enableTags";
@@ -58,24 +57,18 @@ public class PassiveScanConfigJob extends AutomationJob {
     private static final String[] IGNORE_PARAMS =
             new String[] {PARAM_ENABLE_TAGS, PARAM_DISABLE_ALL_RULES};
 
-    private ExtensionPassiveScan extPScan;
+    private final ExtensionPassiveScan2 pscan;
 
     private Parameters parameters = new Parameters();
     private Parameters originalParameters = new Parameters();
     private Data data;
 
     public PassiveScanConfigJob() {
+        this.pscan =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionPassiveScan2.class);
         data = new Data(this, this.parameters);
-    }
-
-    private ExtensionPassiveScan getExtPScan() {
-        if (extPScan == null) {
-            extPScan =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionPassiveScan.class);
-        }
-        return extPScan;
     }
 
     @Override
@@ -134,13 +127,14 @@ public class PassiveScanConfigJob extends AutomationJob {
                             continue;
                         }
                         int id = Integer.parseInt(idObj.toString());
-                        PluginPassiveScanner plugin = getExtPScan().getPluginPassiveScanner(id);
+                        PluginPassiveScanner plugin =
+                                pscan.getPassiveScannersManager().getScanRule(id);
                         if (plugin == null) {
                             progress.warn(
                                     Constant.messages.getString(
                                             "pscan.automation.error.pscan.rule.unknown",
                                             this.getName(),
-                                            id));
+                                            String.valueOf(id)));
                             continue;
                         }
                         AlertThreshold pluginTh =
@@ -191,12 +185,14 @@ public class PassiveScanConfigJob extends AutomationJob {
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         // Configure any rules
         if (Boolean.TRUE.equals(this.getData().getParameters().getDisableAllRules())) {
-            getExtPScan().getPluginPassiveScanners().stream()
+            pscan.getPassiveScannersManager()
+                    .getScanRules()
                     .forEach(pscan -> pscan.setEnabled(false));
         }
 
         for (Rule rule : this.getData().getRules()) {
-            PluginPassiveScanner plugin = getExtPScan().getPluginPassiveScanner(rule.getId());
+            PluginPassiveScanner plugin =
+                    pscan.getPassiveScannersManager().getScanRule(rule.getId());
             AlertThreshold pluginTh =
                     JobUtils.parseAlertThreshold(rule.getThreshold(), this.getName(), progress);
             if (pluginTh != null && plugin != null) {
@@ -206,20 +202,14 @@ public class PassiveScanConfigJob extends AutomationJob {
                         Constant.messages.getString(
                                 "pscan.automation.info.pscan.rule.setthreshold",
                                 this.getName(),
-                                rule.getId(),
+                                String.valueOf(rule.getId()),
                                 pluginTh.name()));
             }
         }
         // enable / disable pscan tags
-        PassiveScanParam pscanParam =
-                Model.getSingleton().getOptionsParam().getParamSet(PassiveScanParam.class);
-        if (pscanParam != null) {
-            pscanParam
-                    .getAutoTagScanners()
-                    .forEach(
-                            tagScanner ->
-                                    tagScanner.setEnabled(this.getParameters().getEnableTags()));
-        }
+        getPassiveScannerOptions()
+                .getAutoTagScanners()
+                .forEach(tagScanner -> tagScanner.setEnabled(this.getParameters().getEnableTags()));
     }
 
     @Override
@@ -254,12 +244,16 @@ public class PassiveScanConfigJob extends AutomationJob {
 
     @Override
     public Object getParamMethodObject() {
-        return getExtPScan();
+        return this;
     }
 
     @Override
     public String getParamMethodName() {
         return OPTIONS_METHOD_NAME;
+    }
+
+    public PassiveScannerOptions getPassiveScannerOptions() {
+        return pscan.getModel().getOptionsParam().getParamSet(PassiveScannerOptions.class);
     }
 
     @Override

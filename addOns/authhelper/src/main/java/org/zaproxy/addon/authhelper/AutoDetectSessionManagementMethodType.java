@@ -92,9 +92,10 @@ public class AutoDetectSessionManagementMethodType extends SessionManagementMeth
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            return true;
+            if (obj == null) {
+                return false;
+            }
+            return getClass() == obj.getClass();
         }
 
         @Override
@@ -167,7 +168,7 @@ public class AutoDetectSessionManagementMethodType extends SessionManagementMeth
 
     @Override
     public ApiDynamicActionImplementor getSetMethodForContextApiAction() {
-        return new ApiDynamicActionImplementor(API_METHOD_NAME, null, null) {
+        return new ApiDynamicActionImplementor(API_METHOD_NAME, (String[]) null, (String[]) null) {
 
             @Override
             public void handleAction(JSONObject params) throws ApiException {

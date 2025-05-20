@@ -1,4 +1,16 @@
 {
+  "LEADIN": {
+    "cats": [
+      10
+    ],
+    "description": "LEADIN is a tool that provides insights into individuals who fill out forms on a site, utilizing Hubspot's market-leading CRM for implementation.",
+    "icon": "LEADIN.svg",
+    "saas": true,
+    "scriptSrc": [
+      "js\\.leadin\\.com"
+    ],
+    "website": "https://leadin.com"
+  },
   "LEPTON": {
     "cats": [
       1
@@ -76,6 +88,23 @@
       "cdn\\.louassist\\.com*"
     ],
     "website": "https://www.louassist.com"
+  },
+  "LPQV": {
+    "cats": [
+      6
+    ],
+    "description": "LPQV is an online store that offers integrated landing pages, streamlining the entire operation in one place.",
+    "icon": "LPQV.svg",
+    "js": {
+      "LPQV.page": "",
+      "LPQV_VARS_RPL": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.lpqv.com.br/"
   },
   "LTheme": {
     "cats": [
@@ -307,6 +336,23 @@
       "app\\.launchdarkly\\.com",
       "events\\.launchdarkly\\.com"
     ]
+  },
+  "LaunchNotes": {
+    "cats": [
+      85
+    ],
+    "description": "LaunchNotes is a platform that aligns teams with product development and release pipelines while keeping users informed and engaged with product updates.",
+    "icon": "LaunchNotes.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.launchnotes\\.com/"
+    ],
+    "website": "https://launchnotes.com"
   },
   "Launchrock": {
     "cats": [
@@ -605,6 +651,21 @@
     ],
     "website": "https://v1.leadslide.com"
   },
+  "Leadbit": {
+    "cats": [
+      36
+    ],
+    "description": "Leadbit is an offer-based ad system designed to target users with specific ads based on their engagement and preferences.",
+    "dom": [
+      "form[action*='wapi.leadbit.com/']"
+    ],
+    "icon": "Leadbit.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.leadbit\\.com/"
+    ],
+    "website": "https://leadbit.com"
+  },
   "Leadfeeder": {
     "cats": [
       10
@@ -734,6 +795,22 @@
     ],
     "saas": true,
     "website": "https://leadster.com.br"
+  },
+  "Leadtex": {
+    "cats": [
+      52
+    ],
+    "description": "Leadtex is a software solution focused on the development of chatbots.",
+    "icon": "Leadteh.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.leadteh\\.ru/"
+    ],
+    "website": "https://leadteh.ru"
   },
   "Leaflet": {
     "cats": [
@@ -894,7 +971,9 @@
     ],
     "description": "Leaseweb is an Infrastructure-as-a-Service (IaaS) provider offering dedicated servers, CDN, cloud hosting and hybrid cloud on a global network.",
     "dns": {
-      "SOA": "\\.leaseweb\\.nl"
+      "SOA": [
+        "\\.leaseweb\\.nl"
+      ]
     },
     "icon": "Leaseweb.svg",
     "pricing": [
@@ -996,6 +1075,9 @@
       18
     ],
     "description": "Leptos is a full-stack, isomorphic Rust web framework leveraging fine-grained reactivity to build declarative user interfaces.",
+    "dom": [
+      "link[id^='leptos']"
+    ],
     "html": [
       "<!--hk=_.*"
     ],
@@ -1358,6 +1440,22 @@
     ],
     "website": "https://www.lightspeedhq.com/products/ecommerce/"
   },
+  "Ligna": {
+    "cats": [
+      53
+    ],
+    "description": "Ligna is a sales, marketing, and enablement platform offering features to close clients, manage content, oversee projects, and track details, providing an all-in-one solution for business operations.",
+    "icon": "Ligna.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.ligna\\.io/"
+    ],
+    "website": "https://www.ligna.io"
+  },
   "Liine": {
     "cats": [
       53
@@ -1634,7 +1732,7 @@
       "onLinkedInLoad": ""
     },
     "scriptSrc": [
-      "platform\\.linkedin\\.com/(?:.*)?in\\.js(?:\\?version)?([\\d.]+)?\\;version:\\1"
+      "platform\\.linkedin\\.com/(?:.*)?(?:in\\.js(?:\\?version)?([\\d.]+)?|litms/utag/[^?]+\\.js(?:\\?cb=[\\d]+)?)"
     ],
     "website": "https://www.linkedin.com/developers"
   },
@@ -1702,7 +1800,9 @@
     ],
     "description": "Liquid Web is a US-based host offering premium managed web hosting solutions.",
     "dns": {
-      "SOA": "\\.liquidweb\\.com"
+      "SOA": [
+        "\\.liquidweb\\.com"
+      ]
     },
     "headers": {
       "x-lw-cache": ""
@@ -2463,7 +2563,7 @@
     ],
     "saas": true,
     "scriptSrc": [
-      "websites-static\\.lodgify\\.com/"
+      "\\.lodgify\\.com/"
     ],
     "website": "https://www.lodgify.com"
   },
@@ -2678,7 +2778,9 @@
       103
     ],
     "dns": {
-      "TXT": "loom-verification"
+      "TXT": [
+        "loom-verification"
+      ]
     },
     "icon": "Loom.svg",
     "pricing": [
@@ -3008,7 +3110,8 @@
     ],
     "icon": "Luigisbox.svg",
     "js": {
-      "Luigis": ""
+      "Luigis": "",
+      "LuigisBox": ""
     },
     "website": "https://www.luigisbox.com"
   },
@@ -3026,6 +3129,21 @@
     },
     "oss": true,
     "website": "https://lume.land"
+  },
+  "Lumino": {
+    "cats": [
+      10
+    ],
+    "description": "Lumino is a data platform that helps Shopify brands optimize marketing, conversions, and user experience by leveraging data.",
+    "icon": "Lumino.svg",
+    "requires": [
+      "Shopify"
+    ],
+    "saas": true,
+    "scripts": [
+      "api\\.getlumino\\.ai"
+    ],
+    "website": "https://getlumino.ai"
   },
   "Lumio": {
     "cats": [
@@ -3133,6 +3251,22 @@
       "(?:((?:\\d+\\.)+\\d+)\\/)?lunr(?:-store)?(?:-en)?(?:\\.min)?\\.js"
     ],
     "website": "https://lunrjs.com/"
+  },
+  "Luveedu Cloud": {
+    "cats": [
+      88
+    ],
+    "description": "Luveedu Cloud is a domain and web hosting platform.",
+    "icon": "LuveeduCloud.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.luveedu\\.com/"
+    ],
+    "website": "https://cloud.luveedu.com"
   },
   "Lychee": {
     "cats": [

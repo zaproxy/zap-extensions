@@ -766,7 +766,7 @@ public class ZestDialogManager extends AbstractPanel {
         if (clientElementSendKeysDialog == null) {
             clientElementSendKeysDialog =
                     new ZestClientElementSendKeysDialog(
-                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 250));
         } else if (clientElementSendKeysDialog.isVisible()) {
             // Already being displayed, bring to the front but dont overwrite anything
             bringToFront(clientElementSendKeysDialog);

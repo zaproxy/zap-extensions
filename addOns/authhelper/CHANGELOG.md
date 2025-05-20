@@ -4,7 +4,129 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Add configuration support for the wait time after Client Script Based Authentication.
+- Include the Web Element being interacted with in the Client Script Based Authentication diagnostics.
+- Allow to enable authentication diagnostics for Client Script and Browser Based Authentication through the GUI.
+- Automation Framework errors to the Authentication Report.
+- Replace TOTP token during Client Script Based Authentication.
+- Include more diagnostics in Client Script and Browser Based Authentication methods.
+- Improve Authentication Report:
+  - Add the ID of the step to make it easier to match with extracted screenshots.
+  - Include the script used by the Client Script Based Authentication.
+  - Add the initiator to the HTTP Messages to know what those messages correspond to.
+  - Include the tag name of the Web Element, now collecting `button`s along with `input`s.
 
+### Changed
+- Warn when the recorded script used with Client Script Based Authentication does not launch a browser.
+- Updated to depend on Zest add-on 48.6.0.
+- Maintenance changes.
+- Depend on reports 0.39.0 to include AF errors.
+- Use Header Based Session Management configuration to find a better candidate authentication message with Client Script and Browser Based Authentication methods.
+- Client Script authentication to refresh the page of no suitable verification URL found.
+- Wait for the detection of the session method in Client Script Based Authentication method.
+- Include the name of the interaction in the Client Script Based Authentication diagnostics.
+- Clear fields before sending keys for Browser Based Authentication, including when using steps.
+
+### Fixed
+- Correct descriptions of the Zest script steps in the Authentication Report.
+- Fix loading/saving of Client Script Based Authentication through the GUI.
+- Inject user credentials into the script when running the Client Script Based Authentication browser integration.
+- Delay when recording diagnostics.
+- Allow to use zero login page wait for Client Script and Browser Based Authentication methods through the GUI.
+- Ensure Client Script Based Authentication method has a clean state when reauthenticating.
+- Handle missing username field in Browser Based Authentication.
+- Correct the processing of cookies with the same name in Header Based Session Management method.
+- Correct redirection handling when checking verification URLs.
+
+## [0.25.0] - 2025-03-25
+### Changed
+- Use TOTP data defined under user credentials for Client Script and Browser Based Authentication, when available.
+- Maintenance changes.
+- Depend on newer version of Common Library add-on.
+
+### Added
+- The Authentication Report now includes information around authentication failures (if applicable).
+
+## [0.24.0] - 2025-03-21
+### Added
+- Document custom steps for Browser Based Authentication.
+- Document Authentication Report diagnostics data.
+- Sanitized post data to auth diagnostics.
+- Help content for configuration and use of Header Based Session Management via ZAP API (these additions will only work properly when used with ZAP 2.16.1 or later).
+
+### Changed
+- Add any session related cookies which are not being tracked.
+- Ignore non proxied requests in auth tester diagnostics.
+- Replace credentials with special tokens.
+- Rewrite of the auth request detection code to handle more cases.
+- Add domain to context if creds posted to it and using using auto-detect for session management.
+- Skip disabled authentication steps when creating the context from the Authentication Tester dialog.
+
+### Fixed
+- Allow the Client Script Authentication, and Browser Based Authentication method types as well as Header Based Session Management to be configured via the API (these fixes will only work properly when used with ZAP 2.16.1 or later).
+- Bug where some of the data structures were not being reset when the session changed.
+- Address concurrent modification exceptions.
+
+## [0.23.0] - 2025-03-04
+### Added
+- If authentication fails then try to find a likely looking login link.
+- Persist diagnostics to the session and include it in the Authentication Report (JSON) for Client Script and Browser Based Authentication methods.
+- A reset button.
+- Checks to try to find a verification URL with a login link, if nothing better has been found.
+
+### Changed
+- Prefer form related fields in Browser Based Authentication for the selection of username field.
+- Tweaked the auth report summary keys.
+- Only check URLs and methods once for being good verification requests.
+- Added API support to the browser based auth method proxy.
+
+### Fixed
+- Correctly read the API parameters when setting up Browser Based Authentication.
+- Tweaked auth report output to ensure that values are properly escaped.
+- Report to use better stats with browser based auth.
+- Session handling to cope with X-CSRF-Token headers.
+
+## [0.22.0] - 2025-02-12
+### Added
+- Initial authentication report (JSON).
+
+## [0.21.0] - 2025-02-10
+### Fixed
+- Delays identifying verification due to tests being performed on too many unlikely URLs (such as images).
+
+## [0.20.0] - 2025-02-07
+### Changed
+- Reduce add-on size.
+- Improved session management detection.
+
+### Fixed
+- Maintain the correct cookie state when using client script authentication.
+- Do not close windows when running client auth in the spiders.
+- Always close all of the windows when running client auth not in the spiders.
+
+## [0.19.0] - 2025-02-04
+### Added
+- Added support for Client Script Authentication when used in conjunction with the Ajax Spider add-on or the Client Spider via the Client Side Integration add-on.
+- Add support for custom authentication steps in Browser Based Authentication.
+
+### Fixed
+- Reset always the state of the demo mode in the Authentication Tester dialogue.
+
+## [0.18.0] - 2025-01-27
+### Changed
+- Ignore non-displayed fields when selecting the user name and password.
+- Use single displayed field for user name, e.g. multi step login.
+
+### Fixed
+- Input fields that do not explicitly declare their type were no longer being chosen by the Browser Based Authentication.
+
+## [0.17.0] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Depend on Passive Scanner add-on (Issue 7959).
+- Address deprecation warnings with newer Selenium version (4.27).
+- Optionally depend on the Client Integration add-on to provide Browser Based Authentication to the Client Spider.
 
 ## [0.16.0] - 2024-11-06
 ### Fixed
@@ -113,6 +235,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.25.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.25.0
+[0.24.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.24.0
+[0.23.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.23.0
+[0.22.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.22.0
+[0.21.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.21.0
+[0.20.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.20.0
+[0.19.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.19.0
+[0.18.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.18.0
+[0.17.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.17.0
 [0.16.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.16.0
 [0.15.1]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.15.1
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.15.0

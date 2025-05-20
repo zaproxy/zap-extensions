@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -34,6 +36,7 @@ import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.DiceMatcher;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.model.Tech;
@@ -48,7 +51,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
 
     // use a random file name which is very unlikely to exist
     private static final String NON_EXISTANT_FILENAME =
-            RandomStringUtils.random(38, "abcdefghijklmnopqrstuvwxyz");
+            RandomStringUtils.secure().next(38, "abcdefghijklmnopqrstuvwxyz");
 
     // the prefixes to try for source file inclusion
     private String[] LOCAL_SOURCE_FILE_TARGET_PREFIXES = {
@@ -135,10 +138,18 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                     "<html"); // helps eliminate some common false positives in the case of 403s,
     // 302s, etc.
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG));
+        alertTags.put(PolicyTag.QA_FULL.getTag(), "");
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     /** returns the plugin id */
     @Override

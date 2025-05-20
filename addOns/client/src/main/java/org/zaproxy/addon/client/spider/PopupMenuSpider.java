@@ -34,7 +34,7 @@ public class PopupMenuSpider extends PopupMenuItemSiteNodeContainer {
 
     public PopupMenuSpider(String label, ExtensionClientIntegration extension) {
         super(label);
-        this.setIcon(extension.getIcon());
+        this.setIcon(ExtensionClientIntegration.getIcon());
         this.extension = extension;
     }
 
@@ -67,23 +67,15 @@ public class PopupMenuSpider extends PopupMenuItemSiteNodeContainer {
 
     @Override
     public boolean isButtonEnabledForSiteNode(SiteNode node) {
-        if (!node.isRoot()) {
-            return true;
-        }
-        return false;
+        return !node.isRoot();
     }
 
     @Override
     public boolean isEnableForInvoker(Invoker invoker, HttpMessageContainer httpMessageContainer) {
         switch (invoker) {
-            case ALERTS_PANEL:
-            case ACTIVE_SCANNER_PANEL:
-            case FORCED_BROWSE_PANEL:
-            case FUZZER_PANEL:
+            case ALERTS_PANEL, ACTIVE_SCANNER_PANEL, FORCED_BROWSE_PANEL, FUZZER_PANEL:
                 return false;
-            case HISTORY_PANEL:
-            case SITES_PANEL:
-            case SEARCH_PANEL:
+            case HISTORY_PANEL, SITES_PANEL, SEARCH_PANEL:
             default:
                 return true;
         }

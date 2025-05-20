@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.wappalyzer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +29,7 @@ import org.junit.jupiter.api.Test;
 class AppsJsonParseUnitTest {
 
     @Test
-    void test() throws IOException {
+    void test() {
         // Given
         List<String> errs = Collections.synchronizedList(new ArrayList<>());
         List<Exception> parsingExceptions = Collections.synchronizedList(new ArrayList<>());

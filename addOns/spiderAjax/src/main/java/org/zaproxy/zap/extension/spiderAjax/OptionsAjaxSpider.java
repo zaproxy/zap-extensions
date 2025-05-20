@@ -36,6 +36,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
+import org.zaproxy.zap.extension.spiderAjax.internal.ScopeCheckComponent;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 
 @SuppressWarnings("serial")
@@ -59,6 +60,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
     private JCheckBox clickDefaultElems = null;
     private JCheckBox clickElemsOnce = null;
     private JCheckBox randomInputs = null;
+    private JCheckBox enableExtensions;
 
     private JLabel browsers = null;
     private JLabel depth = null;
@@ -67,6 +69,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
     private JLabel eventWait = null;
     private JLabel reloadWait = null;
 
+    private ScopeCheckComponent scopeCheckComponent;
     private AllowedResourcesPanel allowedResourcesPanel;
     private AllowedResourcesTableModel allowedResourcesTableModel;
 
@@ -165,6 +168,15 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         return randomInputs;
     }
 
+    private JCheckBox getEnableExtensions() {
+        if (enableExtensions == null) {
+            enableExtensions = new JCheckBox();
+            enableExtensions.setText(
+                    resourceBundle.getString("spiderajax.options.label.enableexts"));
+        }
+        return enableExtensions;
+    }
+
     /** */
     @Override
     public void initParam(Object obj) {
@@ -184,6 +196,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         getClickDefaultElems().setSelected(ajaxSpiderParam.isClickDefaultElems());
         getClickElemsOnce().setSelected(ajaxSpiderParam.isClickElemsOnce());
         getRandomInputs().setSelected(ajaxSpiderParam.isRandomInputs());
+        getEnableExtensions().setSelected(ajaxSpiderParam.isEnableExtensions());
 
         setClickElemsEnabled(!ajaxSpiderParam.isClickDefaultElems());
 
@@ -191,6 +204,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         allowedResourcesPanel.setRemoveWithoutConfirmation(
                 !ajaxSpiderParam.isConfirmRemoveAllowedResource());
         allowedResourcesTableModel.setAllowedResources(ajaxSpiderParam.getAllowedResources());
+
+        scopeCheckComponent.setScopeCheck(ajaxSpiderParam.getScopeCheck());
     }
 
     /** This method validates the parameters before saving them. */
@@ -202,6 +217,7 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         OptionsParam optionsParam = (OptionsParam) obj;
         AjaxSpiderParam ajaxSpiderParam = optionsParam.getParamSet(AjaxSpiderParam.class);
 
+        ajaxSpiderParam.setEnableExtensions(enableExtensions.isSelected());
         ajaxSpiderParam.setClickElemsOnce(getClickElemsOnce().isSelected());
         ajaxSpiderParam.setClickDefaultElems(getClickDefaultElems().isSelected());
         ajaxSpiderParam.setRandomInputs(getRandomInputs().isSelected());
@@ -218,6 +234,8 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         ajaxSpiderParam.setConfirmRemoveAllowedResource(
                 !allowedResourcesPanel.isRemoveWithoutConfirmation());
         ajaxSpiderParam.setAllowedResources(allowedResourcesTableModel.getElements());
+
+        ajaxSpiderParam.setScopeCheck(scopeCheckComponent.getScopeCheck());
     }
 
     /**
@@ -323,6 +341,12 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
             gbc.anchor = GridBagConstraints.LINE_END;
             innerPanel.add(getReloadWaitNumberSpinner(), gbc);
 
+            // Enable extensions
+            gbc.gridx = 0;
+            gbc.gridy++;
+            gbc.anchor = GridBagConstraints.LINE_START;
+            innerPanel.add(getEnableExtensions(), gbc);
+
             // Click Once Option
             gbc.gridx = 0;
             gbc.gridy++;
@@ -352,6 +376,12 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
             gbc.insets = new java.awt.Insets(2, 2, 2, 2);
             innerPanel.add(elemsOptionsPanel, gbc);
 
+            gbc.gridy++;
+            gbc.weighty = 0.0D;
+            scopeCheckComponent = new ScopeCheckComponent();
+            innerPanel.add(scopeCheckComponent.getComponent(), gbc);
+
+            gbc.weighty = 1.0D;
             gbc.gridy++;
             allowedResourcesTableModel = new AllowedResourcesTableModel();
             allowedResourcesPanel =

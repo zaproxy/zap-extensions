@@ -145,7 +145,7 @@ public class FuzzOptions extends VersionedAbstractParam {
                         .setProperty(
                                 CUSTOM_FUZZER_LAST_SELECTED_DIRECTORY_KEY, lastSelectedDirectory);
                 getConfig().clearProperty(lastSelectedDirectoryKey);
-                // Fallthrough
+            // Fallthrough
             case 1:
                 if (getInt(DEFAULT_THREADS_PER_FUZZER_KEY, 5) == 5) {
                     // the old default

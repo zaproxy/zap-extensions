@@ -168,7 +168,9 @@ public class ExporterOptions {
         /** The messages are exported as an HAR. */
         HAR,
         /** The messages are exported as URLs. */
-        URL;
+        URL,
+        /** The SiteTree will be exported as YAML. */
+        YAML;
 
         private String id;
         private String name;
@@ -200,6 +202,9 @@ public class ExporterOptions {
             if (URL.id.equalsIgnoreCase(value)) {
                 return URL;
             }
+            if (YAML.id.equalsIgnoreCase(value)) {
+                return YAML;
+            }
             return HAR;
         }
     }
@@ -209,7 +214,9 @@ public class ExporterOptions {
         /** Exports the messages proxied and manually accessed by the user. */
         HISTORY,
         /** Exports all messages accessed, includes temporary messages. */
-        ALL;
+        ALL,
+        /** Exports the Sites tree, only in yaml format */
+        SITESTREE;
 
         private String id;
         private String name;
@@ -240,6 +247,9 @@ public class ExporterOptions {
             }
             if (ALL.id.equalsIgnoreCase(value)) {
                 return ALL;
+            }
+            if (SITESTREE.id.equalsIgnoreCase(value)) {
+                return SITESTREE;
             }
             return HISTORY;
         }

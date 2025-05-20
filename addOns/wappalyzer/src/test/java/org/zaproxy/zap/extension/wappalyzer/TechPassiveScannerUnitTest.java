@@ -51,6 +51,12 @@ import org.zaproxy.zap.utils.Stats;
 
 class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScanner> {
 
+    private static final String APACHE_PHP_RESP_HEADER =
+            """
+            HTTP/1.1 200 OK\r
+            Server: Apache\r
+            X-Powered-By: PHP/5.6.34""";
+
     ApplicationTestHolder defaultHolder;
 
     public ApplicationTestHolder getDefaultHolder() {
@@ -85,8 +91,7 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test.php HTTP/1.1");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" + "Server: Apache\n" + "X-Powered-By: PHP/5.6.34");
+        msg.setResponseHeader(APACHE_PHP_RESP_HEADER);
         // When
         scan(msg);
         // Then
@@ -103,8 +108,7 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test.php HTTP/1.1");
-        msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n" + "Server: Apache\n" + "X-Powered-By: PHP/5.6.34");
+        msg.setResponseHeader(APACHE_PHP_RESP_HEADER);
         // When
         rule.setMode(Mode.valueOf(mode));
         scan(msg);
@@ -119,10 +123,11 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
         // Given
         HttpMessage msg = makeHttpMessage();
         msg.setResponseBody(
-                "<html>"
-                        + "<script type='text/javascript' src='libs/modernizr.min.js?ver=4.1.1'>"
-                        + "</script>"
-                        + "</html>");
+                """
+                <html>
+                  <script type='text/javascript' src='libs/modernizr.min.js?ver=4.1.1'>
+                  </script>
+                </html>""");
         // When
         scan(msg);
         // Then
@@ -142,14 +147,22 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
         assertNothingFound("https://www.example.com");
     }
 
+    private static String buildBody(String domain, String name, String titleVersionString) {
+        String titleAttribute =
+                titleVersionString.isEmpty() ? "" : "title=\"" + titleVersionString + "\"";
+
+        return """
+            <html><body>
+            <a href=\"https://%s\" %s style=\"border: 5px groove rgb(244, 250, 88);\">%s</a>
+            </body></html>"""
+                .formatted(domain, titleAttribute, name);
+    }
+
     @Test
     void shouldMatchDomElementWithTextAndAttribute() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
-        msg.setResponseBody(
-                "<html><body>"
-                        + "<a href=\"https://www.example.com\" title=\"version 1\" style=\"border: 5px groove rgb(244, 250, 88);\">Example</a>"
-                        + "</body></html>");
+        msg.setResponseBody(buildBody("www.example.com", "Example", "version 1"));
         // When
         scan(msg);
         // Then
@@ -161,10 +174,7 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
     void shouldMatchDomElementWithOnlyText() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
-        msg.setResponseBody(
-                "<html><body>"
-                        + "<a href=\"https://www.modern.com\"  style=\"border: 5px groove rgb(244, 250, 88);\">Modern</a>"
-                        + "</body></html>");
+        msg.setResponseBody(buildBody("www.modern.com", "Modern", ""));
         // When
         scan(msg);
         // Then
@@ -177,10 +187,7 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
             throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
-        msg.setResponseBody(
-                "<html><body>"
-                        + "<a href=\"https://www.modern.com\"  style=\"border: 5px groove rgb(244, 250, 88);\">Modern</a>"
-                        + "</body></html>");
+        msg.setResponseBody(buildBody("www.modern.com", "Modern", ""));
         msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "application/something");
         // When
         scan(msg);
@@ -192,10 +199,7 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
     void shouldMatchDomElementWithOnlyAttribute() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
-        msg.setResponseBody(
-                "<html><body>"
-                        + "<a href=\"https://www.apache.com\" title=\"version 1\" style=\"border: 5px groove rgb(244, 250, 88);\">Example</a>"
-                        + "</body></html>");
+        msg.setResponseBody(buildBody("www.apache.com", "Example", "Version 1"));
         // When
         scan(msg);
         // Then
@@ -220,10 +224,7 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
     void shouldNotMatchDomElementIfNoContentMatches() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = makeHttpMessage();
-        msg.setResponseBody(
-                "<html><body>"
-                        + "<a href=\"https://www.pinter.com\" title=\"version\" style=\"border: 5px groove rgb(244, 250, 88);\">Pinterest</a>"
-                        + "</body></html>");
+        msg.setResponseBody(buildBody("www.pinter.com", "Pinterest", "Version"));
         // When
         scan(msg);
         // Then
@@ -635,7 +636,6 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
                                     "The following CPE is associated with the identified tech: cpe:2.3:a:apache:http_server:*:*:*:*:*:*:*:*\n"
                                             + "The following version(s) is/are associated with the identified tech: 2.4.7")));
             assertThat(alert.getWascId(), is(equalTo(13)));
-            assertThat(alert.getCweId(), is(equalTo(200)));
         }
 
         @Test
@@ -654,7 +654,6 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
             assertThat(alert.getOtherInfo(), is(equalTo("")));
             assertThat(alert.getReference(), is(equalTo("")));
             assertThat(alert.getWascId(), is(equalTo(13)));
-            assertThat(alert.getCweId(), is(equalTo(200)));
         }
 
         @Test
@@ -673,7 +672,6 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
             assertThat(alert.getOtherInfo(), is(equalTo("")));
             assertThat(alert.getReference(), is(equalTo("https://httpd.apache.org")));
             assertThat(alert.getWascId(), is(equalTo(13)));
-            assertThat(alert.getCweId(), is(equalTo(200)));
         }
 
         @Test
@@ -699,7 +697,6 @@ class TechPassiveScannerUnitTest extends PassiveScannerTestUtils<TechPassiveScan
                                     "The following CPE is associated with the identified tech: cpe:2.3:a:example_vendor:example_software:55.4.3:*:*:*:*:*:*:*\n"
                                             + "The following version(s) is/are associated with the identified tech: 55.4.3")));
             assertThat(alert.getWascId(), is(equalTo(13)));
-            assertThat(alert.getCweId(), is(equalTo(200)));
         }
     }
 }

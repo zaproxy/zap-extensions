@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
+
+## [21.45.0] - 2025-03-04
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+
+## [21.44.0] - 2025-01-15
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+- Update minimum ZAP version to 2.16.0.
+- Depend on Passive Scanner add-on (Issue 7959).
+- The scan rule no longer sets a CWE for alerts (Issue 8733).
+
+## [21.43.0] - 2024-11-25
+### Changed
+- Updated with enthec upstream icon and pattern changes.
 - Maintenance changes.
 
 ## [21.42.0] - 2024-09-24
@@ -398,6 +413,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.45.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.45.0
+[21.44.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.44.0
+[21.43.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.43.0
 [21.42.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.42.0
 [21.41.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.41.0
 [21.40.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.40.0

@@ -1192,7 +1192,7 @@ class AutomationEnvironmentUnitTest {
         given(extensionLoader.getExtension(ExtensionNetwork.class)).willReturn(extNetwork);
         ArgumentCaptor<HttpProxy> proxyCaptor = ArgumentCaptor.forClass(HttpProxy.class);
 
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
 
         // When
         AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
@@ -1240,7 +1240,7 @@ class AutomationEnvironmentUnitTest {
         given(extensionLoader.getExtension(ExtensionNetwork.class)).willReturn(extNetwork);
         ArgumentCaptor<HttpProxy> proxyCaptor = ArgumentCaptor.forClass(HttpProxy.class);
 
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
 
         // When
         AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
@@ -1289,7 +1289,7 @@ class AutomationEnvironmentUnitTest {
         given(extensionLoader.getExtension(ExtensionNetwork.class)).willReturn(extNetwork);
         ArgumentCaptor<HttpProxy> proxyCaptor = ArgumentCaptor.forClass(HttpProxy.class);
 
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
 
         // When
         AutomationEnvironment env = new AutomationEnvironment(contextData, progress);

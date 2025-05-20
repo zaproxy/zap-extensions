@@ -316,6 +316,19 @@ class DefaultParseFilterUnitTest {
         assertThat(filterResult.isFiltered(), is(equalTo(false)));
     }
 
+    @Test
+    void shouldNotFilterHttpMessageWithZeroMaxParseSize() throws Exception {
+        // Given
+        int maxParseSizeBytes = 0;
+        DefaultParseFilter filter =
+                new DefaultParseFilter(createSpiderParam(maxParseSizeBytes), resourceBundle);
+        HttpMessage httpMessage = createHttpMessageWithResponseBody("ABC");
+        // When
+        FilterResult filterResult = filter.filtered(httpMessage);
+        // Then
+        assertThat(filterResult.isFiltered(), is(equalTo(false)));
+    }
+
     private DefaultParseFilter createDefaultParseFilter() {
         return new DefaultParseFilter(createSpiderParam(Integer.MAX_VALUE), resourceBundle);
     }

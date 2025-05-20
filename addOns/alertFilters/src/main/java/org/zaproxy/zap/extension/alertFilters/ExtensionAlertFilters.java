@@ -44,6 +44,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.Session.OnContextsChangedListener;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
@@ -52,7 +53,6 @@ import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.alert.PopupMenuItemAlert;
 import org.zaproxy.zap.extension.alertFilters.internal.ScanRulesInfo;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ContextDataFactory;
 import org.zaproxy.zap.model.SessionStructure;
@@ -140,7 +140,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                             getExtAscan(),
                             Control.getSingleton()
                                     .getExtensionLoader()
-                                    .getExtension(ExtensionPassiveScan.class));
+                                    .getExtension(ExtensionPassiveScan2.class));
         }
         return scanRulesInfo;
     }
@@ -462,7 +462,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                 }
             }
             Stats.incCounter(
-                    "stats.alertFilter." + alert.getPluginId() + ".risk." + filter.getNewRisk());
+                    "stats.alertFilter." + alert.getAlertRef() + ".risk." + filter.getNewRisk());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -472,7 +472,10 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         int historyId = recordAlert.getHistoryId();
         if (historyId > 0) {
             HistoryReference href = this.getExtHistory().getHistoryReference(historyId);
-            return new Alert(recordAlert, href);
+            Alert alert = new Alert(recordAlert, href);
+            // TODO remove once targeting 2.17+
+            alert.setHistoryId(recordAlert.getHistoryId());
+            return alert;
         } else {
             // Not ideal :/
             return new Alert(recordAlert);

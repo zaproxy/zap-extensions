@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.net.UnknownHostException;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -38,6 +39,7 @@ import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.DiceMatcher;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -64,11 +66,19 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
     // Use an inverse map to avoid multimap use
     // ----------------------------------------
     private static final Map<Pattern, String> LDAP_ERRORS = new HashMap<>();
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION,
-                    CommonAlertTag.WSTG_V42_INPV_06_LDAPI);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A03_INJECTION,
+                                CommonAlertTag.OWASP_2017_A01_INJECTION,
+                                CommonAlertTag.WSTG_V42_INPV_06_LDAPI));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
+
     private int matchThreshold = 0;
     private int andRequests = 0;
 
@@ -242,7 +252,8 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
             // to see if a placebo attack has the same effect
             // the parameter will be the same length as the actual attack, but will contain purely
             // alphanumeric characters
-            String placeboAttack = RandomStringUtils.randomAlphanumeric(errorAttack.length());
+            String placeboAttack =
+                    RandomStringUtils.secure().nextAlphanumeric(errorAttack.length());
             HttpMessage placeboAttackMsg = getNewMsg();
             this.setParameter(placeboAttackMsg, paramname, placeboAttack);
             sendAndReceive(placeboAttackMsg);
@@ -286,7 +297,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin
             // in output substantially DIFFERENT to the original
             // get a random parameter value the same length as the original!
             String randomparameterAttack =
-                    RandomStringUtils.random(paramvalue.length(), RANDOM_PARAMETER_CHARS);
+                    RandomStringUtils.secure().next(paramvalue.length(), RANDOM_PARAMETER_CHARS);
             LOGGER.debug("The random parameter chosen was [{}]", randomparameterAttack);
 
             HttpMessage randomParamMsg1 = getNewMsg();

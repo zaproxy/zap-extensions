@@ -431,6 +431,22 @@
     ],
     "website": "https://www.happyfox.com/live-chat"
   },
+  "HappySync": {
+    "cats": [
+      32
+    ],
+    "description": "HappySync is a Korean-developed tool designed for marketing automation and conversion optimization.",
+    "icon": "HappySync.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "api\\.happysync\\.io/"
+    ],
+    "website": "https://www.happysync.io"
+  },
   "Haptik": {
     "cats": [
       52
@@ -723,8 +739,12 @@
     ],
     "description": "Helhost is a web hosting provider and internet domain registrar from Democratic Republic of Congo.",
     "dns": {
-      "NS": "\\.helhost\\.com",
-      "SOA": "\\.helhost\\.com"
+      "NS": [
+        "\\.helhost\\.com"
+      ],
+      "SOA": [
+        "\\.helhost\\.com"
+      ]
     },
     "headers": {
       "x-powered-by": "Helhost"
@@ -780,6 +800,21 @@
     ],
     "oss": true,
     "website": "https://www.joomshaper.com/joomla-templates/helixultimate"
+  },
+  "HelixPay": {
+    "cats": [
+      104
+    ],
+    "description": "HelixPay is an event ticketing platform providing online payment integration, digital tickets, and customizable event websites for large-scale events.",
+    "icon": "HelixPay.svg",
+    "js": {
+      "HELIXPAY.PAGE": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://helixpay.ph"
   },
   "Helixo UFE": {
     "cats": [
@@ -1078,8 +1113,12 @@
     ],
     "description": "Hetzner provides dedicated hosting, shared web hosting, virtual private servers, managed servers, domain names, SSL certificates, storage boxes, and cloud.",
     "dns": {
-      "NS": "\\.ns\\.hetzner\\.com",
-      "SOA": "\\.hetzner\\.com"
+      "NS": [
+        "\\.ns\\.hetzner\\.com"
+      ],
+      "SOA": [
+        "\\.hetzner\\.com"
+      ]
     },
     "headers": {
       "Server": "HeRay",
@@ -1419,6 +1458,25 @@
     ],
     "website": "https://highcharts.com/products/highstock"
   },
+  "HikaShop": {
+    "cats": [
+      6
+    ],
+    "description": "HikaShop is a Joomla extension for managing shop content, handling price management, and customizing store views with an intuitive interface.",
+    "icon": "HikaShop.svg",
+    "js": {
+      "hikashop": "",
+      "hikashopCheckField": ""
+    },
+    "requires": [
+      "Joomla"
+    ],
+    "saas": true,
+    "scripts": [
+      "com_hikashop"
+    ],
+    "website": "https://www.hikashop.com"
+  },
   "HikeOrders": {
     "cats": [
       68
@@ -1618,6 +1676,9 @@
     "js": {
       "HolduixConfig.baseURL": ""
     },
+    "meta": {
+      "author": "^Holduix$"
+    },
     "pricing": [
       "onetime",
       "freemium"
@@ -1718,13 +1779,32 @@
     "oss": true,
     "website": "https://hono.dev"
   },
+  "Horoshop": {
+    "cats": [
+      6
+    ],
+    "description": "Horoshop is an all-in-one platform designed to support launching and managing online stores tailored for businesses in  Ukraine.",
+    "js": {
+      "Horoshop.Widgets": "",
+      "horoshopReCaptcha": "",
+      "webpackChunkHoroshop": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://horoshop.ua"
+  },
   "HostEurope": {
     "cats": [
       88
     ],
     "description": "HostEurope is a European website hosting, email and domain name registrar company headquartered Hayes, West London.",
     "dns": {
-      "SOA": "\\.hosteurope\\.com"
+      "SOA": [
+        "\\.hosteurope\\.com"
+      ]
     },
     "icon": "HostEurope.svg",
     "pricing": [
@@ -1739,7 +1819,9 @@
     ],
     "description": "Hostens is a web hosting company specialising in hosting services, virtual private server hosting, and the domain name or transition.",
     "dns": {
-      "SOA": "\\.hostens\\.com"
+      "SOA": [
+        "\\.hostens\\.com"
+      ]
     },
     "icon": "Hostens.svg",
     "pricing": [
@@ -1754,7 +1836,9 @@
     ],
     "description": "HostGator is a Houston-based provider of shared, reseller, virtual private server, and dedicated web hosting with an additional presence in Austin, Texas.",
     "dns": {
-      "SOA": "\\.hostgator\\.com"
+      "SOA": [
+        "\\.hostgator\\.com"
+      ]
     },
     "icon": "Hostgator.svg",
     "pricing": [
@@ -1769,7 +1853,9 @@
     ],
     "description": "Hosting Ukraine is a web hosting provider and internet domain registrar.",
     "dns": {
-      "SOA": "ns\\d+\\.ukraine\\.com\\.ua"
+      "SOA": [
+        "ns\\d+\\.ukraine\\.com\\.ua"
+      ]
     },
     "icon": "Hosting Ukraine.png",
     "pricing": [
@@ -1785,7 +1871,9 @@
     "cpe": "cpe:2.3:a:hostinger:hostinger:*:*:*:*:*:*:*:*",
     "description": "Hostinger is an employee-owned Web hosting provider and internet domain registrar.",
     "dns": {
-      "SOA": "\\.(?:dns-parking|hostinger)\\.com"
+      "SOA": [
+        "\\.(?:dns-parking|hostinger)\\.com"
+      ]
     },
     "headers": {
       "platform": "hostinger"
@@ -1840,7 +1928,9 @@
     ],
     "description": "Hostiq is a web hosting provider and internet domain registrar.",
     "dns": {
-      "SOA": "\\.hostiq\\.ua"
+      "SOA": [
+        "\\.hostiq\\.ua"
+      ]
     },
     "icon": "Hostiq.png",
     "pricing": [
@@ -1872,7 +1962,9 @@
     ],
     "description": "Hostpoint is a Switzerland-based web hosting company.",
     "dns": {
-      "SOA": "\\.hostpoint\\.ch"
+      "SOA": [
+        "\\.hostpoint\\.ch"
+      ]
     },
     "icon": "Hostpoint.svg",
     "pricing": [
@@ -2205,6 +2297,23 @@
     ],
     "website": "https://www.huberway.com/analytics-software"
   },
+  "Hubtiger": {
+    "cats": [
+      53,
+      101
+    ],
+    "description": "Hubtiger offers rental and workshop management software solutions to help businesses elevate their operations and efficiency.",
+    "icon": "Hubtiger.svg",
+    "meta": {
+      "author": "^Hubtiger$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://hubtiger.com"
+  },
   "Huckabuy": {
     "cats": [
       54
@@ -2367,6 +2476,25 @@
     ],
     "saas": true,
     "website": "https://www.hulkapps.com/products/product-reviews-shopify"
+  },
+  "Hull": {
+    "cats": [
+      97
+    ],
+    "description": "Hull is a platform that collects, unifies, enriches product, marketing, and sales data, then synchronizes it across various tools.",
+    "icon": "Hull.svg",
+    "js": {
+      "Hull._initialized": "",
+      "Hull.js._initialized": "",
+      "HullShopify": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.hull.io"
   },
   "Human Presence": {
     "cats": [

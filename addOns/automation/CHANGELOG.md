@@ -5,11 +5,69 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
+- Add support for the wait time of the Client Script Based Authentication.
+
+### Changed
+- Maintenance changes.
+- Adjusted further dialog, progress, and log messages with regard to preventing inclusion of commas in scan rule ID numbers. As well as ensuring consistency in use of ID (full caps) for table column headings, and the Add Add-ons dialog.
+
+### Fixed
+- Correctly handle missing script engines.
+- Correct error messages of the statistics test.
+- Allow to use zero login page wait for Client Script and Browser Based Authentication methods.
+- Ensure log and progress messages related to scripts and script engines are not all referred to as session management related.
+
+## [0.49.0] - 2025-03-25
+### Added
+- Document how the TOTP data is defined for a user.
+- Use TOTP data defined under user credentials when creating or setting up a context.
+
+### Changed
+- Progress and log messages with regard to setting scan rule threshold or strength no longer include commas in scan rule ID numbers.
+- Depend on newer version of Common Library add-on.
+
+### Fixed
+- Address exception when loading Client Script authentication method.
+- Address exception that would happen when running a plan while having unsaved scripts.
+
+## [0.48.0] - 2025-03-04
+### Changed
+- Allow to use variables for the TOTP data.
+- Allow to enable diagnostics for Client Script and Browser Based Authentication methods.
+
+### Fixed
+- Ensure that the Exit Status job accounts for False Positive alerts (Issue 8875).
+
+## [0.47.0] - 2025-02-12
+### Added
+- Method to get the YAML representation of a plan.
+
+## [0.46.0] - 2025-02-10
+### Changed
+- Read (and write) the TOTP data from user's credentials in the automation plan.
+
+## [0.45.0] - 2025-02-04
+### Fixed
+- Correctly load numeric user passwords.
+- Address malformed HTML in the help.
+- Correct default value of `threadPerHost` property of the `activeScan-config` job's help.
+- Ensure the value zero is saved to the automation plan in the statistics test.
+
+### Added
+- Added support for Client Script Authentication when the Ajax Spider is used in conjunction with the Auth Helper add-on.
+- Add support for custom authentication steps in Browser Based Authentication.
+
+## [0.44.0] - 2025-01-09
+### Added
 - Active scan policy job.
 - Add job to configure the active scanner, `activeScan-config`.
 - Allow to enable/disable jobs (Issue 5845).
+- Method to allow the user to set the exit code via a script.
+- Add exitStatus job (Issue #6928)
 
 ### Changed
+- Update minimum ZAP version to 2.16.0.
+- Maintenance changes.
 - Updated automation framework documentation and templates for `activeScan` job to reflect changes to the default value of threadPerHost parameter
 - Update help for the "requestor" job.
 - Update help to indicate that job order is important (Issue 8675).
@@ -18,11 +76,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - `delay`
   - `requestor`
 
+### Removed
+- Remove job implementations that were previously migrated to the Passive Scanner add-on (Issue 7959).
+
 ### Fixed
 - Templates generated with `-autogenmin` or `-autogenmax` were invalid in some cases.
 - Allow to choose one thread for the `activeScan` job through the GUI.
 - Active Scan jobs will once again use the default policy if neither a policy nor a policyDefinition has been set.
 - Bug in job alert tests related to alert matching.
+- Active scan rule ID 0 (Directory Browsing) will be included in the plan (yaml) when saved (Issue 8746).
+- Sizing/display of the Active Scan Policy job rule add/modify dialogs.
 
 ## [0.43.0] - 2024-10-07
 ### Fixed
@@ -442,6 +505,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.49.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.49.0
+[0.48.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.48.0
+[0.47.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.47.0
+[0.46.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.46.0
+[0.45.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.45.0
+[0.44.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.44.0
 [0.43.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.43.0
 [0.42.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.42.0
 [0.41.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.41.0

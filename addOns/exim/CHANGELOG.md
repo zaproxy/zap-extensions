@@ -4,15 +4,30 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.14.0] - 2025-03-25
+### Changed
+- Caps fix in Import menu (Issue 2000).
+
+### Fixed
+- Sites Tree export now correctly handles node names with newlines and special characters (Issue 8858).
+
+## [0.13.0] - 2025-01-09
 ### Added
 - Add Automation Framework job to export data (e.g. HAR, URLs).
+- Support for Sites Tree export and prune.
 
 ### Changed
+- Update minimum ZAP version to 2.16.0.
 - Update dependency.
 - Maintenance changes.
 
 ### Fixed
 - Import HAR entry sent and elapsed time.
+- Duplicate or missing "Save URLs..." entries in the Export menu.
+- The "Save All URLs..." export option was saving only the selected URLs.
+- Correct bundled dependencies to avoid conflicts with core logging libraries.
 
 ## [0.12.0] - 2024-10-07
 ### Changed
@@ -111,6 +126,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release.
 
+[0.14.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.14.0
+[0.13.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.12.0
 [0.11.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.11.0
 [0.10.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.10.0

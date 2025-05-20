@@ -30,15 +30,17 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.commonlib.internal.vulns.LegacyVulnerabilities;
 import org.zaproxy.addon.commonlib.ui.ProgressPanel;
-import org.zaproxy.zap.model.ValueGenerator;
+import org.zaproxy.addon.commonlib.ui.TabbedOutputPanel;
 
 public class ExtensionCommonlib extends ExtensionAdaptor {
 
     private static final ValueProvider DEFAULT_VALUE_PROVIDER = new DefaultValueProvider();
 
-    private ValueGenerator valueGeneratorImpl;
+    @SuppressWarnings("removal")
+    private org.zaproxy.zap.model.ValueGenerator valueGeneratorImpl;
 
-    private final ValueGenerator valueGeneratorWrapper =
+    @SuppressWarnings({"removal", "deprecation"})
+    private final org.zaproxy.zap.model.ValueGenerator valueGeneratorWrapper =
             (URI uri,
                     String url,
                     String fieldId,
@@ -108,6 +110,7 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         if (hasView()) {
             extensionHook.getHookView().addStatusPanel(getProgressPanel());
+            getView().setOutputPanel(new TabbedOutputPanel());
         }
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
     }
@@ -126,6 +129,9 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
 
     @Override
     public void unload() {
+        if (hasView()) {
+            getView().setOutputPanel(null);
+        }
         LegacyVulnerabilities.unload();
     }
 
@@ -151,8 +157,9 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
      * @since 1.17.0
      * @deprecated (1.29.0) Use {@link #getValueProvider()} instead, to stop using core interface.
      */
+    @SuppressWarnings("removal")
     @Deprecated(since = "1.29.0", forRemoval = true)
-    public ValueGenerator getValueGenerator() {
+    public org.zaproxy.zap.model.ValueGenerator getValueGenerator() {
         return valueGeneratorWrapper;
     }
 
@@ -168,7 +175,8 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
 
     /** <strong>Note:</strong> Not part of the public API. */
     @Deprecated(forRemoval = true)
-    public void setCustomValueGenerator(ValueGenerator generator) {
+    @SuppressWarnings("removal")
+    public void setCustomValueGenerator(org.zaproxy.zap.model.ValueGenerator generator) {
         this.valueGeneratorImpl = generator;
     }
 

@@ -100,12 +100,7 @@ public class ReportJob extends AutomationJob {
         }
         Template template = getExtReport().getTemplateByConfigName(templateName);
         if (template == null) {
-            progress.error(
-                    Constant.messages.getString(
-                            "reports.automation.error.badtemplate",
-                            this.getName(),
-                            getParameters().getTemplate(),
-                            getExtReport().getTemplateConfigNames()));
+            errorUnknownTemplate(progress);
         }
 
         list = getJobDataList(jobData, "sections", progress);
@@ -134,6 +129,15 @@ public class ReportJob extends AutomationJob {
         }
     }
 
+    private void errorUnknownTemplate(AutomationProgress progress) {
+        progress.error(
+                Constant.messages.getString(
+                        "reports.automation.error.badtemplate",
+                        getName(),
+                        getParameters().getTemplate(),
+                        getExtReport().getTemplateConfigNames()));
+    }
+
     @Override
     public void applyParameters(AutomationProgress progress) {
         // Nothing to do
@@ -141,20 +145,16 @@ public class ReportJob extends AutomationJob {
 
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
-        ReportData reportData = new ReportData();
 
         String templateName = this.getParameters().getTemplate();
         if (StringUtils.isEmpty(templateName)) {
             templateName = ReportParam.DEFAULT_TEMPLATE;
         }
         Template template = getExtReport().getTemplateByConfigName(templateName);
+        ReportData reportData = new ReportData(templateName);
 
         if (template == null) {
-            progress.error(
-                    Constant.messages.getString(
-                            "reports.automation.error.badtemplate",
-                            this.getName(),
-                            this.getParameters().getTemplate()));
+            errorUnknownTemplate(progress);
             return;
         }
         String theme = this.getParameters().getTheme();
@@ -191,6 +191,7 @@ public class ReportJob extends AutomationJob {
         reportData.setTitle(this.getParameters().getReportTitle());
         reportData.setDescription(this.getParameters().getReportDescription());
         reportData.setContexts(env.getContexts());
+        reportData.addReportObjects("automation.progress", progress);
 
         if (this.getData().getRisks() == null) {
             reportData.setIncludeAllRisks(true);

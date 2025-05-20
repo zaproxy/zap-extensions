@@ -20,13 +20,20 @@
 package org.zaproxy.addon.pscan;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link ExtensionPassiveScan2}. */
@@ -53,5 +60,18 @@ class ExtensionPassiveScan2UnitTest extends TestUtils {
     @Test
     void shouldHaveDescription() {
         assertThat(extension.getDescription(), is(not(emptyString())));
+    }
+
+    @Test
+    void shouldGetEmptyTagsAfterInit() {
+        // Given
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        when(extensionLoader.getExtension(ExtensionPassiveScan.class))
+                .thenReturn(mock(ExtensionPassiveScan.class));
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
+        // When
+        extension.init();
+        // Then
+        assertThat(extension.getAutoTaggingTags(), is(empty()));
     }
 }

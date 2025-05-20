@@ -38,7 +38,7 @@ function createAlertBuilder(helper, evidence){
         .setDescription("An email address was found in a WebSocket Message.")
         .setSolution("Remove emails that are not public.")
         .setEvidence(evidence)
-        .setCweId(200) //Information Exposure
+        .setCweId(359)  // CWE-359: Exposure of Private Information ('Privacy Violation')
         .setWascId(13); // Information Leakage
 }
 

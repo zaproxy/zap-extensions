@@ -45,6 +45,8 @@ import org.zaproxy.addon.encoder.processors.predefined.IllegalUTF8With4ByteEncod
 import org.zaproxy.addon.encoder.processors.predefined.JavaScriptStringDecoder;
 import org.zaproxy.addon.encoder.processors.predefined.JavaScriptStringEncoder;
 import org.zaproxy.addon.encoder.processors.predefined.Md5Hasher;
+import org.zaproxy.addon.encoder.processors.predefined.MorseDecoder;
+import org.zaproxy.addon.encoder.processors.predefined.MorseEncoder;
 import org.zaproxy.addon.encoder.processors.predefined.PowerShellEncoder;
 import org.zaproxy.addon.encoder.processors.predefined.Sha1Hasher;
 import org.zaproxy.addon.encoder.processors.predefined.Sha256Hasher;
@@ -103,8 +105,11 @@ public class EncodeDecodeProcessors {
         addPredefined("reverse", Reverse.getSingleton());
         addPredefined("lowercase", LowerCase.getSingleton());
         addPredefined("uppercase", UpperCase.getSingleton());
+
         addPredefined("powershellencode", PowerShellEncoder.getSingleton());
         addPredefined("ascify", Ascify.getSingleton());
+        addPredefined("morsecodeencode", MorseEncoder.getSingleton());
+        addPredefined("morsecodedecode", MorseDecoder.getSingleton());
     }
 
     private Map<String, EncodeDecodeProcessorItem> scriptProcessors = new HashMap<>();
@@ -149,7 +154,7 @@ public class EncodeDecodeProcessors {
         return scriptProcessors.values().stream().collect(Collectors.toList());
     }
 
-    private EncodeDecodeProcessorItem createItemFromScriptWrapper(ScriptWrapper ws) {
+    private static EncodeDecodeProcessorItem createItemFromScriptWrapper(ScriptWrapper ws) {
         String scriptName = ws.getName();
         ScriptBasedEncodeDecodeProcessor processor =
                 new ScriptBasedEncodeDecodeProcessor(ws.getName());

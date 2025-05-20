@@ -39,6 +39,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionToken;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -80,7 +81,7 @@ class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdU
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(6)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
@@ -90,6 +91,9 @@ class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdU
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_SESS_04_SESS_EXPOSED.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));
@@ -113,6 +117,7 @@ class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdU
         assertThat(alert1.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
         assertThat(alert1.getParam(), is(equalTo("jsessionid")));
         assertThat(alert1.getEvidence(), is(equalTo("1A530637289A03B07199A44E8D531427")));
+        assertThat(alert1.getCweId(), is(equalTo(598)));
         assertThat(alert1.getAlertRef(), is(equalTo(rule.getPluginId() + "-1")));
 
         Alert alert2 = alerts.get(1);
@@ -120,12 +125,14 @@ class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdU
         assertThat(alert2.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
         assertThat(
                 alert2.getEvidence(), is(equalTo("jsessionid=1A530637289A03B07199A44E8D531427")));
+        assertThat(alert1.getCweId(), is(equalTo(598)));
         assertThat(alert2.getAlertRef(), is(equalTo(rule.getPluginId() + "-2")));
 
         Alert alert3 = alerts.get(2);
         assertThat(alert3.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertThat(alert3.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alert3.getEvidence(), is(equalTo("www.example.org")));
+        assertThat(alert1.getCweId(), is(equalTo(598)));
         assertThat(alert3.getAlertRef(), is(equalTo(rule.getPluginId() + "-3")));
     }
 

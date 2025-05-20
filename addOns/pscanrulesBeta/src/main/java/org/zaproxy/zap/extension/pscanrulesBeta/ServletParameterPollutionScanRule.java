@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.htmlparser.jericho.Element;
@@ -32,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Tech;
 
@@ -46,10 +49,20 @@ public class ServletParameterPollutionScanRule extends PluginPassiveScanner
 
     private static final String MESSAGE_PREFIX = "pscanbeta.servletparameterpollution.";
     private static final int PLUGIN_ID = 10026;
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
+
     private static final Logger LOGGER =
             LogManager.getLogger(ServletParameterPollutionScanRule.class);
 

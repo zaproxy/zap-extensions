@@ -2,76 +2,73 @@
 <HTML>
 <HEAD>
 <TITLE>
-Alert Filter Dialog
+警报过滤器对话框
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Alert Filter Dialog</H1>
+<H1>警报过滤器对话框</H1>
 <p>
-This dialog is shown when you add or modify a 
-<a href="contextAlertFilter.html">Context Alert Filter</a> 
-or a <a href="globalAlertFilter.html">Global Alert Filter</a>
+添加或修改 <a href="contextAlertFilter.html">上下文警报过滤器</a>或 <a href="globalAlertFilter.html">全局警报过滤器</a>时，将显示对话框。
 <p>
-It has the following fields: 
+它有下列字段： 
 
-<H3>Scope</H3>
-This can either be 'Global' for a Global Alert Filter or the name of an existing context.
-It is only editable when you create an Alert Filter from an existing Alert.
+<H3>范围 (Scope)</H3>
+可以是全局警报过滤器的 “全局 (Global)”，也可以是现有上下文的名称。
+只有在根据现有警报创建警报过滤器时才可对其进行编辑。
 
-<H3>Alert Type</H3>
-The first pull down lists all of the active and passive alert rules currently installed along with their (known) alert references.
-The second pull down lists all known IDs (scan rules and alert references). It also allows to manually specify one, if not listed (e.g. custom rule or not yet installed).
+<H3>警报类型 (Alert Type)</H3>
+第一个下拉菜单列出了当前安装的所有主动和被动警报规则及其（已知）警报引用。
+第二个下拉菜单列出了所有已知 ID（扫描规则和警报引用）。 如果未列出（如自定义规则或尚未安装），也可手动指定。
 
-<H3>New Risk Level</H3>
-The new risk level to be assigned to any alerts raised that match the criteria defined by the rule.
+<H3>新的风险级别 (New Risk Level)</H3>
+新风险级别将被分配给任何被触发的警报，且与规则定义的标准相匹配。
  
 <H3>URL</H3>
-An optional URL.<br>
-If specified then this rule will be applied if the URL matches the URL of a raised alert.<br>
+一个可选的 URL。<br> 如果已指定URL，则此规则将被应用的情况为 URL 与已发出警报的 URL 匹配。<br>
 
-<H3>URL is Regex?</H3>
-If set and a URL is specified then the URL will be treated as a regex expression when compared with the URL of the alert.<br>
-If it is not set then any specified URL must exactly match the URL of the alert.
+<H3>URL是正则表达式吗？</H3>
+如果设置且指定了 URL，则在与警报的 URL 比较时，将把 URL 作为正则表达式处理。<br>
+如果未设置，则任何指定的 URL 必须与警报的 URL 完全匹配。
 
-<H3>Parameter</H3>
-An optional parameter.<br>
-If specified then this rule will be applied if the parameter exactly matches the parameter of a raised alert.<br>
+<H3>参数 (Parameter)</H3>
+一个可选参数。<br>
+如果指定了该参数，则会应用该规则的情况为该参数与已发出警报的参数完全匹配。<br>
 
-<H3>Parameter is Regex?</H3>
-If set and a parameter is specified then the parameter will be treated as a regex expression when compared with the parameter of the alert.<br>
-If it is not set then any specified parameter must exactly match the parameter of the alert.
+<H3>参数是正则表达式吗？</H3>
+如果设置了且已指定一个参数，那么这个参数会被当作正则表达式与警报参数进行比较。<br>
+如果未设置，那么任何指定参数必须与警报参数完全匹配。
 
-<H3>Attack</H3>
-An optional attack.<br>
-If specified then this rule will be applied if the attack exactly matches the attack of a raised alert.<br>
+<H3>攻击 (Attack)</H3>
+一个可选的攻击。<br>
+如果指定，那么此规则将生效的情况为这个攻击与引发警报的攻击完全匹配。<br>
 
-<H3>Attack is Regex?</H3>
-If set and a attack is specified then the attack will be treated as a regex expression when compared with the attack of the alert.<br>
-If it is not set then any specified attack must exactly match the attack of the alert.
+<H3>攻击是正则表达式吗？</H3>
+如果设置且攻击被指定，那么这个攻击会被当作正则表达式与警报攻击进行比较。<br>
+如果没有设置，那么任何指定的攻击必须与警报的攻击完全匹配。
 
-<H3>Evidence</H3>
-An optional evidence.<br>
-If specified then this rule will be applied if the evidence exactly matches the evidence of a raised alert.<br>
+<H3>证据 (Evidence)</H3>
+一个可选的证据。<br>
+如果指定，那么此规则将生效的情况为这个证据与引发警报的证据完全匹配。<br>
 
-<H3>Evidence is Regex?</H3>
-If set and a evidence is specified then the evidence will be treated as a regex expression when compared with the evidence of the alert.<br>
-If it is not set then any specified evidence must exactly match the evidence of the alert.
+<H3>证据是正则表达式吗？</H3>
+如果设置且证据已指定，那么这个证据会被当作正则表达式与警报的证据进行比较。<br>
+如果没有设置，那么任何指定的证据必须与警报的证据完全匹配。
 
-<H3>Method</H3>
-An optional method.<br>
-If specified then this rule will be applied if the method matches (case insensitive) the method of a raised alert.<br>
+<H3>方法 (Method)</H3>
+一个可选的方法。<br>
+如果指定，那么此规则将生效的情况为该方法与已触发警报的方法相匹配（不区分大小写）。<br>
 
-<H3>Enabled</H3>
-If set then this rule will be applied to all alerts raise against the given context.
+<H3>启用 (Enabled)</H3>
+如果设置，那么该规则将应用于针对给定上下文发出的所有警报。
 
-<H3>Test Filter</H3>
-The 'Test' button will show a count of how many existing alerts the filter will apply to. 
-It is disabled if the filter is disabled.
+<H3>测试过滤器 (Test Filter)</H3>
+“测试”按钮将显示过滤器适用的现有警报数量。 
+如果过滤器被禁用，它也将被禁用。
 
-<H3>Apply Filter</H3>
-The 'Apply' button will actually apply the filter to all of the existing alerts that it applies to. 
-It will then show a count of the number of alerts iit changed. 
-It is disabled if the filter is disabled.
+<H3>应用过滤器 (Apply Filter)</H3>
+“应用”按钮实际上会将过滤器应用到其适用的所有现有警报。 
+然后它会显示已更改的警报数量。 
+如果过滤器被禁用，它也会被禁用。
 
 </BODY>
 </HTML>

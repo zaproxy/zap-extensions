@@ -102,8 +102,12 @@ public class InteractshService extends OastService implements OptionsChangedList
     InteractshService(InteractshParam param) {
         httpSender = new HttpSender(HttpSender.OAST_INITIATOR);
         secretKey = UUID.randomUUID();
-        correlationId = RandomStringUtils.randomAlphanumeric(20).toLowerCase(Locale.ROOT);
+        correlationId = randomAlphanumericLc(20);
         this.param = param;
+    }
+
+    private static String randomAlphanumericLc(int count) {
+        return RandomStringUtils.secure().nextAlphanumeric(count).toLowerCase(Locale.ROOT);
     }
 
     @Override
@@ -180,7 +184,7 @@ public class InteractshService extends OastService implements OptionsChangedList
 
     synchronized void register(boolean startPolling) throws InteractshException {
         try {
-            if (isRegistered) {
+            if (isRegistered || StringUtils.isBlank(param.getServerUrl())) {
                 return;
             }
             serverUrl = new URI(param.getServerUrl(), true);
@@ -232,7 +236,15 @@ public class InteractshService extends OastService implements OptionsChangedList
                 schedulePoller(0);
             }
         } catch (IOException | CloneNotSupportedException | NoSuchAlgorithmException e) {
-            LOGGER.error("Error during interactsh register: {}", e.getMessage(), e);
+            if (e.getMessage() != null && e.getMessage().contains("Connection refused")) {
+                LOGGER.warn(
+                        "Host connection failed while applying Interactsh config changes - server URL: {}, The settings were still applied. {}",
+                        param.getServerUrl(),
+                        e.getMessage());
+            } else {
+                LOGGER.error("Error during interactsh register: {}", e.getMessage(), e);
+            }
+
             throw new InteractshException(
                     Constant.messages.getString(
                             "oast.interactsh.error.register", e.getLocalizedMessage()));
@@ -303,10 +315,10 @@ public class InteractshService extends OastService implements OptionsChangedList
             register();
         }
         Stats.incCounter("stats.oast.interactsh.payloadsGenerated");
-        return RandomStringUtils.randomAlphanumeric(1).toLowerCase(Locale.ROOT)
+        return randomAlphanumericLc(1)
                 + '.'
                 + correlationId
-                + RandomStringUtils.randomAlphanumeric(13).toLowerCase(Locale.ROOT)
+                + randomAlphanumericLc(13)
                 + '.'
                 + serverUrl.getHost();
     }
@@ -317,15 +329,9 @@ public class InteractshService extends OastService implements OptionsChangedList
             register();
         }
         Stats.incCounter("stats.oast.interactsh.payloadsGenerated");
-        String payloadId =
-                correlationId + RandomStringUtils.randomAlphanumeric(13).toLowerCase(Locale.ROOT);
+        String payloadId = correlationId + randomAlphanumericLc(13);
         String canary = StringUtils.reverse(payloadId);
-        String payload =
-                RandomStringUtils.randomAlphanumeric(1).toLowerCase(Locale.ROOT)
-                        + '.'
-                        + payloadId
-                        + '.'
-                        + serverUrl.getHost();
+        String payload = randomAlphanumericLc(1) + '.' + payloadId + '.' + serverUrl.getHost();
         return new OastPayload(payload, canary);
     }
 

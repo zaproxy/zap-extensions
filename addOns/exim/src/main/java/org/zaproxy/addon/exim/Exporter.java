@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.exim;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -30,7 +31,10 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.exim.ExporterOptions.Source;
+import org.zaproxy.addon.exim.ExporterOptions.Type;
 import org.zaproxy.addon.exim.har.HarExporter;
+import org.zaproxy.addon.exim.sites.SitesTreeHandler;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Stats;
 
@@ -82,25 +86,24 @@ public class Exporter {
                         StandardOpenOption.CREATE,
                         StandardOpenOption.TRUNCATE_EXISTING)) {
 
-            List<Integer> historyIds =
-                    model.getDb()
-                            .getTableHistory()
-                            .getHistoryIdsOfHistType(
-                                    model.getSession().getSessionId(), getHistoryTypes(options));
-
-            ExporterType type = createExporterType(options);
-            type.begin(writer);
-            Context context = options.getContext();
-            for (Integer id : historyIds) {
-                HistoryReference ref = new HistoryReference(id, true);
-                if (context != null && !context.isInContext(ref)) {
-                    continue;
+            if (Source.SITESTREE.equals(options.getSource())) {
+                if (!Type.YAML.equals(options.getType())) {
+                    result.addError(
+                            Constant.messages.getString(
+                                    "exim.exporter.error.type.sitestree", options.getType()));
+                } else {
+                    SitesTreeHandler.exportSitesTree(writer, result);
                 }
-
-                result.incrementCount();
-                type.write(writer, ref);
+            } else {
+                if (Type.YAML.equals(options.getType())) {
+                    result.addError(
+                            Constant.messages.getString(
+                                    "exim.exporter.error.type.messages", options.getSource()));
+                } else {
+                    exportMessagesImpl(writer, result, options);
+                }
             }
-            type.end(writer);
+
         } catch (IOException e) {
             result.addError(
                     Constant.messages.getString("exim.exporter.error.io", e.getLocalizedMessage()),
@@ -112,6 +115,30 @@ public class Exporter {
         }
 
         return result;
+    }
+
+    private void exportMessagesImpl(
+            BufferedWriter writer, ExporterResult result, ExporterOptions options)
+            throws DatabaseException, IOException {
+        List<Integer> historyIds =
+                model.getDb()
+                        .getTableHistory()
+                        .getHistoryIdsOfHistType(
+                                model.getSession().getSessionId(), getHistoryTypes(options));
+
+        ExporterType type = createExporterType(options);
+        type.begin(writer);
+        Context context = options.getContext();
+        for (Integer id : historyIds) {
+            HistoryReference ref = new HistoryReference(id, true);
+            if (context != null && !context.isInContext(ref)) {
+                continue;
+            }
+
+            result.incrementCount();
+            type.write(writer, ref);
+        }
+        type.end(writer);
     }
 
     private static boolean isValid(Path file, ExporterResult result) {

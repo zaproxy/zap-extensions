@@ -21,16 +21,21 @@ package org.zaproxy.addon.authhelper;
 
 import java.awt.GridBagLayout;
 import java.lang.reflect.Method;
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,8 +45,10 @@ import org.parosproxy.paros.db.RecordContext;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
+import org.zaproxy.addon.authhelper.ClientScriptBasedAuthenticationMethodType.ClientScriptBasedAuthenticationMethod;
 import org.zaproxy.addon.network.internal.client.LegacyUtils;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.extension.api.ApiDynamicActionImplementor;
@@ -56,6 +63,7 @@ import org.zaproxy.zap.session.AbstractSessionManagementMethodOptionsPanel;
 import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.session.SessionManagementMethodType;
 import org.zaproxy.zap.session.WebSession;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ApiUtils;
 import org.zaproxy.zap.utils.EncodingUtils;
 import org.zaproxy.zap.utils.Pair;
@@ -98,7 +106,8 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
             return new HeaderBasedSessionManagementMethodType();
         }
 
-        protected static String replaceTokens(String text, Map<String, SessionToken> tokens) {
+        protected static String replaceTokens(
+                int contextId, String key, String text, Map<String, SessionToken> tokens) {
             Pattern pattern = Pattern.compile("\\{%(.+?)\\%}");
             Matcher matcher = pattern.matcher(text);
             StringBuilder builder = new StringBuilder();
@@ -108,8 +117,17 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                 if (token != null) {
                     replacement = token.getValue();
                 } else {
-                    // Put the token back so its more obvious what failed
-                    replacement = matcher.group(0);
+                    SessionToken token2 = AuthUtils.getSessionToken(matcher.group(0));
+                    if (token2 == null) {
+                        // Use the most recent value seen in an auth request
+                        replacement = AuthUtils.getRequestSessionToken(contextId, key);
+                        if (replacement == null) {
+                            // Put the token back so its more obvious what failed
+                            replacement = matcher.group(0);
+                        }
+                    } else {
+                        replacement = token2.getValue();
+                    }
                 }
                 matcher.appendReplacement(builder, replacement);
             }
@@ -149,9 +167,15 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
 
             List<Pair<String, String>> headers = new ArrayList<>();
             for (Pair<String, String> hc : this.headerConfigs) {
-                headers.add(new Pair<>(hc.first, replaceTokens(hc.second, tokens)));
+                headers.add(
+                        new Pair<>(
+                                hc.first, replaceTokens(contextId, hc.first, hc.second, tokens)));
             }
 
+            User user = msg.getRequestingUser();
+            if (user != null) {
+                return new HttpHeaderBasedSession(headers, user.getCorrespondingHttpState());
+            }
             return new HttpHeaderBasedSession(headers);
         }
 
@@ -181,21 +205,42 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
         @Override
         public void processMessageToMatchSession(HttpMessage message, WebSession session)
                 throws UnsupportedWebSessionException {
-            if (session instanceof HttpHeaderBasedSession) {
-                HttpHeaderBasedSession hbSession = (HttpHeaderBasedSession) session;
+            if (session instanceof HttpHeaderBasedSession hbSession) {
                 LOGGER.debug(
                         "processMessageToMatchSession {} # headers {} ",
                         message.getRequestHeader().getURI(),
                         hbSession.getHeaders().size());
+
+                Set<String> trackedCookies =
+                        Stream.of(hbSession.getHttpState().getCookies())
+                                .map(Cookie::getName)
+                                .collect(Collectors.toSet());
+
+                List<HttpCookie> cookies = message.getRequestHeader().getHttpCookies();
                 for (Pair<String, String> header : hbSession.getHeaders()) {
+                    if (HttpHeader.COOKIE.equalsIgnoreCase(header.first)) {
+                        String[] kv = header.second.split("=");
+                        if (!trackedCookies.contains(kv[0])) {
+                            cookies.add(new HttpCookie(kv[0], kv[1]));
+                        } else {
+                            LOGGER.debug(
+                                    "processMessageToMatchSession {} ignoring tracked cookie {} ",
+                                    message.getRequestHeader().getURI(),
+                                    kv[0]);
+                        }
+                        continue;
+                    }
+
                     Stats.incCounter("stats.auth.session.set.header");
                     message.getRequestHeader().setHeader(header.first, header.second);
                 }
+                if (!cookies.isEmpty()) {
+                    message.getRequestHeader().setCookies(cookies);
+                }
+
                 Context context = Model.getSingleton().getSession().getContext(contextId);
                 AuthenticationMethod am = context.getAuthenticationMethod();
-                if (am instanceof BrowserBasedAuthenticationMethod) {
-                    BrowserBasedAuthenticationMethod bbam = (BrowserBasedAuthenticationMethod) am;
-
+                if (am instanceof BrowserBasedAuthenticationMethod bbam) {
                     try {
                         Method method =
                                 LegacyUtils.class.getMethod(
@@ -212,6 +257,8 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                     } catch (Exception e) {
                         LOGGER.error(e.getMessage(), e);
                     }
+                } else if (am instanceof ClientScriptBasedAuthenticationMethod) {
+                    // Nothing to do
                 } else if (context.getAuthenticationMethod() == null) {
                     LOGGER.debug("processMessageToMatchSession no auth type set");
                 } else {
@@ -238,9 +285,10 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
 
         @Override
         public boolean equals(Object obj) {
-            if (obj == null) return false;
-            if (getClass() != obj.getClass()) return false;
-            return true;
+            if (obj == null) {
+                return false;
+            }
+            return getClass() == obj.getClass();
         }
 
         @Override
@@ -260,7 +308,11 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
         }
 
         public HttpHeaderBasedSession(List<Pair<String, String>> headers) {
-            super("HTTP Header Based Session " + generatedNameIndex++, new HttpState());
+            this(headers, new HttpState());
+        }
+
+        public HttpHeaderBasedSession(List<Pair<String, String>> headers, HttpState httpState) {
+            super("HTTP Header Based Session " + generatedNameIndex++, httpState);
             this.headers = headers;
         }
 
@@ -412,24 +464,28 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                         ApiUtils.getContextByParamId(params, SessionManagementAPI.PARAM_CONTEXT_ID);
                 HeaderBasedSessionManagementMethod smm =
                         createSessionManagementMethod(context.getId());
-                List<Pair<String, String>> headers = new ArrayList<>();
                 // Headers are newline separated key: value pairs
                 String[] headerArray = params.getString(PARAM_HEADERS).split("\n");
-                for (String kv : headerArray) {
-                    int colonIndex = kv.indexOf(":");
-                    if (colonIndex < 0) {
-                        throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_HEADERS);
-                    }
-                    headers.add(
-                            new Pair<>(
-                                    kv.substring(0, colonIndex - 1).strip(),
-                                    kv.substring(colonIndex).strip()));
-                }
-
-                smm.setHeaderConfigs(headers);
+                smm.setHeaderConfigs(getHeaderPairs(headerArray));
                 context.setSessionManagementMethod(smm);
             }
         };
+    }
+
+    protected List<Pair<String, String>> getHeaderPairs(String[] headerArray) throws ApiException {
+        List<Pair<String, String>> headers = new ArrayList<>();
+
+        for (String kv : headerArray) {
+            int colonIndex = kv.indexOf(":");
+            if (colonIndex < 0) {
+                throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_HEADERS);
+            }
+            headers.add(
+                    new Pair<>(
+                            kv.substring(0, colonIndex).strip(),
+                            kv.substring(colonIndex + 1).strip()));
+        }
+        return headers;
     }
 
     @SuppressWarnings("serial")

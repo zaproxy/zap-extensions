@@ -20,7 +20,8 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -47,6 +48,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -60,29 +62,38 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
     private static final String MESSAGE_PREFIX = "pscanrules.csp.";
     private static final int PLUGIN_ID = 10055;
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static final Logger LOGGER = LogManager.getLogger(ContentSecurityPolicyScanRule.class);
 
     private static final String HTTP_HEADER_XCSP = "X-Content-Security-Policy";
     private static final String HTTP_HEADER_WEBKIT_CSP = "X-WebKit-CSP";
-
+    private static final String FRAME_ANCESTORS = "frame-ancestors";
     // Per:
     // https://developers.google.com/web/fundamentals/security/csp#policy_applies_to_a_wide_variety_of_resources as of 20200618
+    // 20250131 "base-uri" is not included. Per MDN if it isn't specified then the <base> value is
+    // used, if no base value then location.href "plugin-types" is not included, the directive has
+    // been deprecated. "report-uri" is not included as it has no literal impact. "sandbox" does not
+    // fallback, but excluding it does not necessarily make anything 'more' vulnerable, it's use
+    // simply allows more detailed control of what embedded content can do.
     private static final List<String> DIRECTIVES_WITHOUT_FALLBACK =
-            Arrays.asList(
-                    "base-uri",
-                    "form-action",
-                    "frame-ancestors",
-                    "plugin-types",
-                    "report-uri",
-                    "sandbox");
+            List.of("form-action", FRAME_ANCESTORS);
+
     private static final List<String> ALLOWED_DIRECTIVES =
-            Arrays.asList(
-                    // TODO: Remove once https://github.com/shapesecurity/salvation/issues/232 is
+            List.of(
+                    // TODO: Remove once https://github.com/HtmlUnit/htmlunit-csp/issues/4 is
                     // addressed
                     "require-trusted-types-for", "trusted-types");
 
@@ -220,7 +231,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
                 checkObservedErrors(metaObservedErrors, msg, metaPolicy, true);
                 List<String> metaWildcardSources = getAllowedWildcardSources(metaPolicy);
                 // frame-ancestors isn't applicable in META
-                metaWildcardSources.remove("frame-ancestors");
+                metaWildcardSources.remove(FRAME_ANCESTORS);
                 checkWildcardSources(metaWildcardSources, msg, metaPolicy, true);
                 PolicyInOrigin pol =
                         new PolicyInOrigin(parsedMetaPolicy, URI.parseURI(RAND_FQDN).orElse(null));
@@ -337,25 +348,32 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
                 allowedWildcardSources.stream()
                         .distinct()
                         .filter(DIRECTIVES_WITHOUT_FALLBACK::contains)
-                        .collect(Collectors.toList());
-        String allowedWildcardSrcs = String.join(", ", allowedWildcardSources);
-        String wildcardSrcOtherInfo =
-                Constant.messages.getString(
-                        MESSAGE_PREFIX + "wildcard.otherinfo", allowedWildcardSrcs);
+                        .toList();
+        allowedWildcardSources.removeAll(DIRECTIVES_WITHOUT_FALLBACK);
         if (!allowedDirectivesWithoutFallback.isEmpty()) {
-            wildcardSrcOtherInfo +=
-                    Constant.messages.getString(
-                            "pscanrules.csp.otherinfo.extended",
-                            String.join(", ", allowedDirectivesWithoutFallback));
+            buildNofallbackAlert(
+                            isMeta
+                                    ? HttpFieldsNames.CONTENT_SECURITY_POLICY
+                                    : getHeaderField(msg, HttpFieldsNames.CONTENT_SECURITY_POLICY)
+                                            .get(0),
+                            csp,
+                            allowedDirectivesWithoutFallback)
+                    .raise();
         }
-        buildWildcardAlert(
-                        isMeta
-                                ? HttpFieldsNames.CONTENT_SECURITY_POLICY
-                                : getHeaderField(msg, HttpFieldsNames.CONTENT_SECURITY_POLICY)
-                                        .get(0),
-                        csp,
-                        wildcardSrcOtherInfo)
-                .raise();
+        if (!allowedWildcardSources.isEmpty()) {
+            String allowedWildcardSrcs = String.join(", ", allowedWildcardSources);
+            String wildcardSrcOtherInfo =
+                    Constant.messages.getString(
+                            MESSAGE_PREFIX + "wildcard.otherinfo", allowedWildcardSrcs);
+            buildWildcardAlert(
+                            isMeta
+                                    ? HttpFieldsNames.CONTENT_SECURITY_POLICY
+                                    : getHeaderField(msg, HttpFieldsNames.CONTENT_SECURITY_POLICY)
+                                            .get(0),
+                            csp,
+                            wildcardSrcOtherInfo)
+                    .raise();
+        }
     }
 
     private static boolean allowsUnsafeHashes(Policy policy, FetchDirectiveKind source) {
@@ -467,7 +485,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
             allowedSources.add("frame-src");
         }
         if (checkPolicy(pol::allowsFrameAncestor)) {
-            allowedSources.add("frame-ancestors");
+            allowedSources.add(FRAME_ANCESTORS);
         }
         if (checkPolicy(pol::allowsFont)) {
             allowedSources.add("font-src");
@@ -690,6 +708,19 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "both.desc"));
     }
 
+    private AlertBuilder buildNofallbackAlert(
+            String param, String evidence, List<String> directives) {
+        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "nofallback.name"), "13")
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "nofallback.desc"))
+                .setRisk(Alert.RISK_MEDIUM)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "nofallback.otherinfo",
+                                String.join(", ", directives)));
+    }
+
     @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
@@ -751,6 +782,12 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner
                                         + "fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self'; form-action 'none'")
                         .build());
         alerts.add(buildBothAlert().build());
+        alerts.add(
+                buildNofallbackAlert(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY,
+                                "connect-src *; default-src 'self'; form-action 'none'",
+                                List.of(FRAME_ANCESTORS))
+                        .build());
         return alerts;
     }
 

@@ -434,8 +434,19 @@ HTML/Komut açıklamalarını üretim ortamına itmeden önce temizleme hatası,
 Yazılım sürüm numaraları ve ayrıntılı hata mesajları (ASP.NET sürüm numaraları gibi) uygun olmayan sunucu yapılandırmalarına örnektir. Bu bilgi bir saldırgan için yararlıdır, bir web uygulaması tarafından kullanılan çerçeve, dil veya önceden oluşturulmuş işlevler hakkında ayrıntılı bilgi sağlar. Çoğu varsayılan sunucu yapılandırmaları, hata ayıklama ve sorun giderme amacıyla yazılım versiyon numaraları ve ayrıntılı hata mesajları sağlayacaktır. Bu bilgilerin görüntülenmesini engellemek ve bu özellikleri devre dışı bırakmak için yapılandırma da güncellemeler yapılabilir.
 
 Verilerin geçerliliğine dayalı olarak farklı yanıtlar sunan sayfalar da bilgi sızıntılarına neden olabilir; özellikle de web uygulaması tasarımının bir sonucu olarak gizli olduğunu düşünülen bilgiler ortaya çıktığında. Hassas veri örnekleri, (ancak bunlarla sınırlı değildir.) hesap numaraları, kullanıcı tanımlayıcıları (Sürücü lisans numarası, Pasaport numarası, Sosyal Güvenlik Numaraları, vb.) ve kullanıcıya özgü bilgiler (şifreler, oturumlar, adresler) i içerir. Bilgi Sızıntısı, bu bağlamda, kullanıcıya bile açıkça gösterilmemesi gereken, gizli veya gizli sayılan temel kullanıcı bilgilerini ortaya koymaktadır. Kredi kartı numaraları ve diğer katı şekilde düzenlenen bilgiler, uygun şifreleme ve erişim kontrolleri yapılmış olsa dahi, kullanıcı verilerinin asıl örneklerinin maruz kalmaması veya sızıntıdan daha fazla korunması gerekir.</desc>
-	<solution>Sisteminde, güven sınırlarının belirgin şekilde görünebilceği "güvenli" alanlar oluşturun. Hassas bilginin güven sınırları dışına gitmesine izin vermeyin ve güvenli alan dışındaki bir bölümle karşılaştığınızda her zaman dikkatli olun.</solution>
-	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
+	<solution>
+    * Have a clear definition of which information is considered sensitive and which isn't. Take privacy laws, regulatory requirements, and business needs into account.
+    * Store sensitive data only if you have to.
+    * Implement checks for sensitive information in your devops pipeline. Steps that could be taken include stripping developer comments, removing debugging information and sensitive logs, as well as making error messages less verbose.
+    * In situations where the sensitive information must be used, for instance, backend microservices, ensure trust boundaries are appropriately drawn. Example: set up an isolated, well secured kubernetes cluster with well configured access controls, then only grant access to authorized clients.
+    * In situations where error messages need to be returned to the user, use messages that are as generic as possible eg "invalid credentials" instead of "invalid username" or "invalid password".
+    * When using third party technologies, understand how the software works, its configuration, as well as security risks of using it. After understanding the technology, use only the features that you need and disable everything else.
+    * Detailed debug messages are sometimes necessary, for instance, when adding a new feature to an application. In this case, separate the development environment from the production one. Ensure appropriate access controls are implemented for the development environments.
+    * All sensitive data should be encrypted before storage. Ensure up-to-date and strong standard algorithms, protocols, and keys are in place; use proper key management.
+</solution>
+<reference>https://portswigger.net/web-security/information-disclosure</reference>
+<reference>https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure</reference>
+<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
 <vuln_items>wasc_14</vuln_items>
@@ -981,7 +992,17 @@ Doğrulama gerektiren iki tür ana süreç vardır: akış kontrolü ve işletme
 "Akış kontrolü", tüm adımların kullanıcı tarafından belirli bir sırada gerçekleşmesini gerektiren çoklu adım süreçlerini ifade eder. Bir saldırgan bir adımı yanlış veya düzensiz gerçekleştirirse, erişim kontrolleri es geçilebilir ve bir uygulama bütünlüğü hatası oluşabilir. Çoklu adım süreçlerine havale, şifre kurtarma, satın alma çıkışları ve hesaba girme örnek olarak verilebilir.
 
 "İşletme mantığı", işletme gereksinimleri tarafından yönetilen süreç uygulamaları kapsamını ifade eder. İşletme mantığı zayıflığının kötüye kullanılması işletme bilgisi gerektirir. Eğer kötüye kullanım için bilgi gerekmiyorsa, o zaman büyük ihtimalle işletme mantık akışı değildir. Bundan dolayı, tarama ve kod değerlendirmeleri gibi güvenlik önlemleri bu zayıflık sınıfını bulamaz. Bir test yaklaşımı, Test Kılavuzunda OWASP tarafından sunulmuştur.</desc>
-	<solution/>
+	<solution>Make sure that all operations within a multi-step process are either performed entirely or not at all. If one step fails, the changes made must be canceled. Fuzzing inputs is a good way to test for anomalies and to verify the results after the flow completes.
+
+Make sure the correct order of steps in the flow is enforced and that the order cannot be changed or bypassed by the user.
+
+Developers and testers must have a solid understanding of the domain that the application serves.
+
+Do not rely on implicit assumptions about how users or different application parts will behave.
+
+Identify all references to other code that interacts with each component and evaluate the possible side-effects if a malicious actor manipulates these dependencies in unexpected ways.
+
+Maintain clear code, design documents, and data flow diagrams for all transactions and workflows, noting any assumptions made at each stage and what the expected behavior is.</solution>
 	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
 	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>

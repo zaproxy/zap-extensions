@@ -441,8 +441,19 @@ Regularly monitor and review your security measures and adapt to evolving threat
 Номера версий программного обеспечения и подробные сообщения об ошибках (например, номера версий ASP.NET) являются примерами неправильной конфигурации сервера.  Эта информация полезна для злоумышленника, поскольку предоставляет подробные сведения о структуре, языках или встроенных функциях, используемых веб-приложением.  Большинство конфигураций серверов по умолчанию предоставляют номера версий программного обеспечения и подробные сообщения об ошибках для целей отладки и устранения неполадок.  Можно внести изменения в конфигурацию, чтобы отключить эти функции, предотвращая отображение этой информации. 
 
 Страницы, которые предоставляют разные ответы в зависимости от достоверности данных, также могут привести к утечке информации; особенно когда данные, которые считаются конфиденциальными, раскрываются в результате разработки веб-приложения.  Примеры конфиденциальных данных включают (но не ограничиваются ими): номера учетных записей, идентификаторы пользователей (номер водительской лицензии, номер паспорта, номера социального страхования и т. Д.) И информацию о пользователях (пароли, сеансы, адреса).  Утечка информации в этом контексте связана с раскрытием ключевых пользовательских данных, считающихся конфиденциальными или секретными, которые не должны быть открыты для всеобщего обозрения даже пользователю.  Номера кредитных карт и другая строго регулируемая информация являются яркими примерами пользовательских данных, которые необходимо дополнительно защитить от раскрытия или утечки даже при наличии надлежащего шифрования и контроля доступа. </desc>
-	<solution>Разделите свою систему, чтобы иметь «безопасные» области, где можно однозначно провести границы доверия.  Не допускайте выхода конфиденциальных данных за пределы границ доверия и всегда будьте осторожны при взаимодействии с отсеком за пределами безопасной зоны.</solution>
-	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
+	<solution>
+    * Have a clear definition of which information is considered sensitive and which isn't. Take privacy laws, regulatory requirements, and business needs into account.
+    * Store sensitive data only if you have to.
+    * Implement checks for sensitive information in your devops pipeline. Steps that could be taken include stripping developer comments, removing debugging information and sensitive logs, as well as making error messages less verbose.
+    * In situations where the sensitive information must be used, for instance, backend microservices, ensure trust boundaries are appropriately drawn. Example: set up an isolated, well secured kubernetes cluster with well configured access controls, then only grant access to authorized clients.
+    * In situations where error messages need to be returned to the user, use messages that are as generic as possible eg "invalid credentials" instead of "invalid username" or "invalid password".
+    * When using third party technologies, understand how the software works, its configuration, as well as security risks of using it. After understanding the technology, use only the features that you need and disable everything else.
+    * Detailed debug messages are sometimes necessary, for instance, when adding a new feature to an application. In this case, separate the development environment from the production one. Ensure appropriate access controls are implemented for the development environments.
+    * All sensitive data should be encrypted before storage. Ensure up-to-date and strong standard algorithms, protocols, and keys are in place; use proper key management.
+</solution>
+<reference>https://portswigger.net/web-security/information-disclosure</reference>
+<reference>https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure</reference>
+<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
 <vuln_items>wasc_14</vuln_items>
@@ -989,7 +1000,17 @@ For example, ID 1 could map to "/login.asp" and ID 2 could map to "https://www.e
 «Управление потоком» относится к многоэтапным процессам, которые требуют, чтобы каждый шаг выполнялся пользователем в определенном порядке.  Когда злоумышленник выполняет шаг неправильно или не по порядку, элементы управления доступом могут быть обойдены, и может возникнуть ошибка целостности приложения.  Примеры многоэтапных процессов включают банковский перевод, восстановление пароля, оформление покупки и регистрацию учетной записи. 
 
 «Бизнес-логика» относится к контексту, в котором процесс будет выполняться в соответствии с бизнес-требованиями.  Использование слабых мест бизнес-логики требует знания бизнеса; если для его использования не нужны знания, то, скорее всего, это не ошибка бизнес-логики.  По этой причине типичные меры безопасности, такие как сканирование и проверка кода, не обнаруживают этот класс слабых мест.  Один из подходов к тестированию предлагается OWASP в их Руководстве по тестированию. </desc>
-	<solution/>
+	<solution>Make sure that all operations within a multi-step process are either performed entirely or not at all. If one step fails, the changes made must be canceled. Fuzzing inputs is a good way to test for anomalies and to verify the results after the flow completes.
+
+Make sure the correct order of steps in the flow is enforced and that the order cannot be changed or bypassed by the user.
+
+Developers and testers must have a solid understanding of the domain that the application serves.
+
+Do not rely on implicit assumptions about how users or different application parts will behave.
+
+Identify all references to other code that interacts with each component and evaluate the possible side-effects if a malicious actor manipulates these dependencies in unexpected ways.
+
+Maintain clear code, design documents, and data flow diagrams for all transactions and workflows, noting any assumptions made at each stage and what the expected behavior is.</solution>
 	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
 	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>

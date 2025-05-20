@@ -32,12 +32,15 @@ import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 
 class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
@@ -75,7 +78,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
@@ -85,6 +88,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));
@@ -97,12 +101,37 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    void shouldAlertOnSuspiciousCommentInJavaScriptResponse()
+    void shouldNotAlertOnSuspiciousValuesInJavaScriptResponse()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String line1 = "Some text <script>Some Script Element FIXME: DO something </script>";
+        String line1 = "myArray = [\"success\",\"FIXME\"]";
         String body = line1 + "\nLine 2\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertTrue(ResourceIdentificationUtils.isJavaScript(msg));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "/* FIXME: admin:admin01$ */",
+                "/*FIXME: admin:admin01$*/",
+                "// FIXME: admin:admin01$",
+                "//FIXME: admin:admin01$"
+            })
+    void shouldAlertOnSuspiciousCommentInJavaScriptResponseWithComment(String comment)
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        String line1 = "myArray = [\"success\",\"FIXME\"]";
+        String line2 = "\n" + comment;
+        String body = line1 + line2 + "\nLine 3\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
         assertTrue(msg.getResponseHeader().isText());
@@ -116,7 +145,8 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
         assertEquals("FIXME", alertsRaised.get(0).getEvidence());
         assertEquals(
-                wrapEvidenceOtherInfo("\\bFIXME\\b", line1, 1), alertsRaised.get(0).getOtherInfo());
+                wrapEvidenceOtherInfo("\\bFIXME\\b", comment, 1),
+                alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -143,8 +173,9 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
             throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String line1 = "Some text <script>Some Script Element FIXME: DO something";
-        String line2 = "FIXME: DO something else </script>";
+        String comment = "// FIXME: DO something";
+        String line1 = "Some text <script>Some Script Element " + comment;
+        String line2 = "// FIXME: DO something else </script>";
         String body = line1 + "\n" + line2 + "\nLine 2\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/javascript;charset=ISO-8859-1");
 
@@ -160,7 +191,8 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         assertEquals("FIXME", alertsRaised.get(0).getEvidence());
         // detected 2 times, the first in the element
         assertEquals(
-                wrapEvidenceOtherInfo("\\bFIXME\\b", line1, 2), alertsRaised.get(0).getOtherInfo());
+                wrapEvidenceOtherInfo("\\bFIXME\\b", comment, 1),
+                alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -182,11 +214,12 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
-    void shouldAlertOnSuspiciousCommentInHtmlScriptElements()
+    void shouldAlertOnSuspiciousCommentInHtmlScriptElementWithComment()
             throws HttpMalformedHeaderException, URIException {
 
         // Given
-        String script = "<script>Some Html Element todo DO something </script>";
+        String comment = "// todo DO something";
+        String script = "<script>Some Script Element " + comment + "\n</script>";
         String body = "<h1>Some text " + script + "</h1>\n<b>No script here</b>\n";
         HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
 
@@ -200,7 +233,24 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         assertEquals(1, alertsRaised.size());
         assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
         assertEquals(
-                wrapEvidenceOtherInfo("\\bTODO\\b", script, 1), alertsRaised.get(0).getOtherInfo());
+                wrapEvidenceOtherInfo("\\bTODO\\b", comment, 1),
+                alertsRaised.get(0).getOtherInfo());
+    }
+
+    @Test
+    void shouldNotAlertOnSuspiciousContentInHtmlScriptElement()
+            throws HttpMalformedHeaderException, URIException {
+        // Given
+        String script = "<script>myArray = [\"admin\", \"password\"]\n</script>";
+        String body = "<h1>Some text " + script + "</h1>\n<b>No script here</b>\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertFalse(ResourceIdentificationUtils.isJavaScript(msg));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
     }
 
     @Test
@@ -283,6 +333,40 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
+    void shouldAlertOnSuspiciousValuesInJavascriptSingleLineComment()
+            throws HttpMalformedHeaderException, URIException {
+        shouldAlertOnSuspiciousCommentInJavascriptContent(
+                """
+                function fooFunction() {
+                  var bar = 'Some text // ADMINISTRATOR fake comment';
+                }
+                """);
+    }
+
+    @Test
+    void shouldAlertOnSuspiciousValuesInJavascriptBlockComment()
+            throws HttpMalformedHeaderException, URIException {
+        shouldAlertOnSuspiciousCommentInJavascriptContent(
+                """
+                function fooFunction() {
+                  var bar = 'Some text /* ADMINISTRATOR fake comment */';
+                }
+                """);
+    }
+
+    private void shouldAlertOnSuspiciousCommentInJavascriptContent(String body)
+            throws URIException, HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createHttpMessageWithRespBody(body, "application/javascript");
+        InformationDisclosureSuspiciousCommentsScanRule.setPayloadProvider(
+                () -> InformationDisclosureSuspiciousCommentsScanRule.DEFAULT_PAYLOADS);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then - Alert since we aren't yet actually parsing the JS
+        assertThat(alertsRaised.size(), is(equalTo(1)));
+    }
+
+    @Test
     void shouldNotAlertIfNeitherCustomNorStandardPayloadsFound()
             throws HttpMalformedHeaderException, URIException {
 
@@ -334,6 +418,21 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
+    void shouldNotAlertIfResponseIsTextButReallyFontUrl()
+            throws HttpMalformedHeaderException, URIException {
+        // Given
+        HttpMessage msg =
+                createHttpMessageWithRespBody(
+                        "Some text <script>Some Script Element FixMe: DO something </script>\nLine 2\n",
+                        "text/html");
+        msg.getRequestHeader().setURI(new URI("http://example.com/shop-icons.woof", false));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
     void shouldHaveExpectedExample() {
         // Given / When
         List<Alert> alerts = rule.getExampleAlerts();
@@ -350,13 +449,15 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
                                         "\\bFIXME\\b",
                                         "<!-- FixMe: cookie: root=true; Secure -->"))));
         assertThat(alert.getEvidence(), is(equalTo("FixMe")));
+        assertThat(alert.getCweId(), is(equalTo(615)));
         Map<String, String> tags = alert.getTags();
-        assertThat(tags.size(), is(equalTo(5)));
-        assertThat(tags, hasKey("CWE-200"));
+        assertThat(tags.size(), is(equalTo(6)));
+        assertThat(tags, hasKey("CWE-615"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
+        assertThat(tags, hasKey(PolicyTag.PENTEST.getTag()));
     }
 
     @Test
@@ -369,7 +470,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         if (count == 1) {
             return "The following pattern was used: "
                     + evidence
-                    + " and was detected in the element starting with: \""
+                    + " and was detected in likely comment: \""
                     + info
                     + "\", see evidence field for the suspicious comment/snippet.";
         }
@@ -377,7 +478,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
                 + evidence
                 + " and was detected "
                 + count
-                + " times, the first in the element starting with: \""
+                + " times, the first in likely comment: \""
                 + info
                 + "\", see evidence field for the suspicious comment/snippet.";
     }

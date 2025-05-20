@@ -39,6 +39,19 @@ zapAddOn {
                     }
                 }
             }
+
+            register("org.zaproxy.addon.graphql.techdetection.ExtensionTechDetectionGraphQl") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.graphql.techdetection"))
+                }
+                dependencies {
+                    addOns {
+                        register("wappalyzer") {
+                            version.set(">= 21.44.0")
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -61,6 +74,7 @@ dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
     zapAddOn("spider")
+    zapAddOn("wappalyzer")
 
     implementation("com.graphql-java:graphql-java:22.3")
 

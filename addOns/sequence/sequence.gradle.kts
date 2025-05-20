@@ -1,13 +1,18 @@
+import org.zaproxy.gradle.addon.AddOnStatus
 description = "Gives the possibility of defining a sequence of requests to be scanned."
 
 zapAddOn {
     addOnName.set("Sequence")
+    addOnStatus.set(AddOnStatus.BETA)
 
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/sequence-scanner/")
         dependencies {
             addOns {
+                register("exim") {
+                    version.set(">= 0.13")
+                }
                 register("network")
                 register("zest") {
                     version.set("48.*")
@@ -23,9 +28,6 @@ zapAddOn {
                     addOns {
                         register("automation") {
                             version.set(">= 0.44")
-                        }
-                        register("exim") {
-                            version.set(">= 0.13")
                         }
                     }
                 }

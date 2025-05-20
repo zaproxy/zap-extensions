@@ -39,7 +39,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
-import org.zaproxy.addon.client.ReportedEvent;
+import org.zaproxy.addon.client.internal.ReportedEvent;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link SensitiveInfoInStorageScanRule}. */
@@ -89,7 +89,7 @@ class SensitiveInfoInStorageScanRuleUnitTest extends TestUtils {
         assertThat(exList.get(0).getAlertRef(), is("120001-1"));
         assertThat(exList.get(0).getConfidence(), is(2));
         assertThat(exList.get(0).getRisk(), is(1));
-        assertThat(exList.get(0).getCweId(), is(200));
+        assertThat(exList.get(0).getCweId(), is(359));
         assertThat(exList.get(0).getWascId(), is(13));
         assertThat(
                 exList.get(1).getName(),
@@ -99,7 +99,7 @@ class SensitiveInfoInStorageScanRuleUnitTest extends TestUtils {
         assertThat(exList.get(1).getAlertRef(), is("120001-2"));
         assertThat(exList.get(1).getConfidence(), is(2));
         assertThat(exList.get(1).getRisk(), is(1));
-        assertThat(exList.get(1).getCweId(), is(200));
+        assertThat(exList.get(1).getCweId(), is(359));
         assertThat(exList.get(1).getWascId(), is(13));
     }
 

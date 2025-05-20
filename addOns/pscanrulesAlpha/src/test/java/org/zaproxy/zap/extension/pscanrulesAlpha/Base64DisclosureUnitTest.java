@@ -32,6 +32,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class Base64DisclosureUnitTest extends PassiveScannerTest<Base64Disclosure> {
 
@@ -47,13 +48,14 @@ class Base64DisclosureUnitTest extends PassiveScannerTest<Base64Disclosure> {
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getValue())));
@@ -105,12 +107,15 @@ class Base64DisclosureUnitTest extends PassiveScannerTest<Base64Disclosure> {
         assertThat(vsAlert.getName(), is(equalTo("ASP.NET ViewState Disclosure")));
         assertThat(vsAlert.getRisk(), is(equalTo(Alert.RISK_INFO)));
         assertThat(vsAlert.getAlertRef(), is(equalTo("10094-1")));
+        assertThat(vsAlert.getCweId(), is(equalTo(319)));
         assertThat(maclessAlert.getName(), is(equalTo("ASP.NET ViewState Integrity")));
         assertThat(maclessAlert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(maclessAlert.getAlertRef(), is(equalTo("10094-2")));
+        assertThat(maclessAlert.getCweId(), is(equalTo(642)));
         assertThat(base64Alert.getName(), is(equalTo("Base64 Disclosure")));
         assertThat(base64Alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
         assertThat(base64Alert.getAlertRef(), is(equalTo("10094-3")));
+        assertThat(base64Alert.getCweId(), is(equalTo(319)));
     }
 
     private static HttpMessage createMessage() throws Exception {

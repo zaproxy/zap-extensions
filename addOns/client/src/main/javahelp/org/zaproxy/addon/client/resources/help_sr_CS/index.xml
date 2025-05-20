@@ -3,6 +3,8 @@
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="client" target="addon.client"/>
+	<indexitem text="client automation" target="addon.client.auto"/>
+	<indexitem text="client spider" target="addon.client.spider"/>
 	<indexitem text="client passive scanning" target="addon.client.pscan"/>
 	<indexitem text="client ajax spider enhancement" target="addon.client.ajaxscan"/>
 	<indexitem text="client firefox profile" target="addon.client.fxprofile"/>

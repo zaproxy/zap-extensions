@@ -38,6 +38,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.users.User;
 
 class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdorScanRule> {
@@ -77,13 +78,14 @@ class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdorScanRu
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_ATHZ_04_IDOR.getTag()), is(equalTo(true)));
         assertThat(
@@ -104,12 +106,13 @@ class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdorScanRu
         Alert alert = alerts.get(0);
         Map<String, String> tags = alert.getTags();
         // Then
-        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(tags.size(), is(equalTo(6)));
         assertThat(tags, hasKey("CWE-284"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_ATHZ_04_IDOR.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
+        assertThat(tags, hasKey(PolicyTag.PENTEST.getTag()));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
     }

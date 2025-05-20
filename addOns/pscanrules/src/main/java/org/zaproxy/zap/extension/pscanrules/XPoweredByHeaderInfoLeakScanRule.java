@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -31,6 +33,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -43,11 +46,19 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner
     private static final String HEADER_NAME = "X-Powered-By";
     private static final int PLUGIN_ID = 10037;
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
-                    CommonAlertTag.WSTG_V42_INFO_08_FINGERPRINT_APP_FRAMEWORK);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
+                                CommonAlertTag.WSTG_V42_INFO_08_FINGERPRINT_APP_FRAMEWORK));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private static final Logger LOGGER =
             LogManager.getLogger(XPoweredByHeaderInfoLeakScanRule.class);
@@ -114,7 +125,9 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(alertEvidence)
-                .setCweId(200) // CWE Id 200 - Information Exposure
+                // CWE-497: Exposure of Sensitive System Information to an Unauthorized Control
+                // Sphere
+                .setCweId(497)
                 .setWascId(13); // WASC Id - Info leakage
     }
 

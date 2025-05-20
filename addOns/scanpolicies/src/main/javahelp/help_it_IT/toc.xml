@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+<toc version="2.0">
+    <tocitem text="ZAP User Guide" tocid="toplevelitem">
+        <tocitem text="Add Ons" tocid="addons">
+            <tocitem text="Scan Policies" image="addon.scanpolicies-icon" target="addon.scanpolicies">
+                <tocitem text="Default Policy" target="addon.policy-default"/>
+                <tocitem text="Developer CI/CD Policy" target="addon.policy-dev-cicd"/>
+                <tocitem text="Developer Standard Policy" target="addon.policy-dev-std"/>
+                <tocitem text="Developer Full Policy" target="addon.policy-dev-full"/>
+            </tocitem>
+        </tocitem>
+    </tocitem>
+</toc>

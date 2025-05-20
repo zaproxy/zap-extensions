@@ -33,6 +33,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class XBackendServerInformationLeakScanRuleUnitTest
         extends PassiveScannerTest<XBackendServerInformationLeakScanRule> {
@@ -81,7 +82,7 @@ class XBackendServerInformationLeakScanRuleUnitTest
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -91,6 +92,7 @@ class XBackendServerInformationLeakScanRuleUnitTest
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
@@ -111,6 +113,7 @@ class XBackendServerInformationLeakScanRuleUnitTest
         Alert alert = alerts.get(0);
         assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
         assertThat(alert.getEvidence(), equalTo(HEADER_VALUE));
+        assertThat(alert.getCweId(), is(equalTo(497)));
         assertThat(
                 alert.getSolution(), equalTo(Constant.messages.getString(MESSAGE_PREFIX + "soln")));
         assertThat(

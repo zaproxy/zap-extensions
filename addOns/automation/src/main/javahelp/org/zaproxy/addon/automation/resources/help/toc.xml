@@ -16,6 +16,7 @@
 				<tocitem text="Job: activeScan-policy" target="automation.ascanpolicy"/>
 				<tocitem text="Job: activeScan" target="automation.ascan"/>
 				<tocitem text="Job: delay" target="automation.delay"/>
+				<tocitem text="Job: exitstatus" target="automation.exitstatus"/>
 				<tocitem text="Job: requestor" target="automation.requestor"/>
 				<tocitem text="Tests" target="automation.tests"/>
 				<tocitem text="Test: alert" target="automation.tests.alert"/>

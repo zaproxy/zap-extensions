@@ -21,9 +21,10 @@ package org.zaproxy.addon.client;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Locale;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
@@ -37,6 +38,12 @@ public class ClientOptions extends VersionedAbstractParam {
 
     static final String CLIENT_BASE_KEY = "client";
 
+    public static final String DEFAULT_BROWSER_ID = Browser.FIREFOX_HEADLESS.getId();
+    public static final int DEFAULT_MAX_DEPTH = 5;
+    public static final int DEFAULT_INITIAL_LOAD_TIME = 5;
+    public static final int DEFAULT_PAGE_LOAD_TIME = 1;
+    public static final int DEFAULT_SHUTDOWN_TIME = 5;
+
     private static final String CONFIG_VERSION_KEY = CLIENT_BASE_KEY + VERSION_ATTRIBUTE;
     private static final String PSCAN_ENABLED_KEY = CLIENT_BASE_KEY + ".pscanEnabled";
     private static final String PSCAN_DISABLED_RULES_KEY = CLIENT_BASE_KEY + ".pscanRulesDisabled";
@@ -49,20 +56,56 @@ public class ClientOptions extends VersionedAbstractParam {
     private static final String MAX_DEPTH_KEY = CLIENT_BASE_KEY + ".maxDepth";
     private static final String MAX_DURATION_KEY = CLIENT_BASE_KEY + ".maxDuration";
     private static final String MAX_CHILDREN_KEY = CLIENT_BASE_KEY + ".maxChildren";
+    private static final String MAX_SCANS_IN_UI_KEY = CLIENT_BASE_KEY + ".maxScansInUI";
+    private static final String SCOPE_CHECK_KEY = CLIENT_BASE_KEY + ".scopeCheck";
 
-    private static final String DEFAULT_BROWSER_ID = Browser.FIREFOX_HEADLESS.getId();
+    public enum ScopeCheck {
+        FLEXIBLE,
+        STRICT;
+
+        private final String label;
+
+        ScopeCheck() {
+            label =
+                    Constant.messages.getString(
+                            "client.options.label.scope." + name().toLowerCase(Locale.ROOT));
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+
+        public static ScopeCheck getDefault() {
+            return FLEXIBLE;
+        }
+
+        public static ScopeCheck parse(String value) {
+            if (value == null || value.isBlank()) {
+                return getDefault();
+            }
+
+            try {
+                return valueOf(value.toUpperCase(Locale.ROOT));
+            } catch (Exception e) {
+                return getDefault();
+            }
+        }
+    }
 
     private String browserId;
     private int threadCount;
-    private int initialLoadTimeInSecs;
-    private int pageLoadTimeInSecs;
-    private int shutdownTimeInSecs;
+    private int initialLoadTimeInSecs = DEFAULT_INITIAL_LOAD_TIME;
+    private int pageLoadTimeInSecs = DEFAULT_PAGE_LOAD_TIME;
+    private int shutdownTimeInSecs = DEFAULT_SHUTDOWN_TIME;
     private boolean pscanEnabled;
     private List<Integer> pscanRulesDisabled;
     private boolean showAdvancedDialog;
     private int maxChildren;
-    private int maxDepth = 5;
+    private int maxDepth = DEFAULT_MAX_DEPTH;
     private int maxDuration;
+    private int maxScansInUi = 5;
+    private ScopeCheck scopeCheck = ScopeCheck.getDefault();
 
     @Override
     public ClientOptions clone() {
@@ -74,19 +117,21 @@ public class ClientOptions extends VersionedAbstractParam {
         this.pscanEnabled = getBoolean(PSCAN_ENABLED_KEY, true);
         this.browserId = getString(BROWSER_ID_KEY, DEFAULT_BROWSER_ID);
         this.threadCount = Math.max(1, getInt(THREAD_COUNT_KEY, Constants.getDefaultThreadCount()));
-        this.initialLoadTimeInSecs = getInt(INITIAL_LOAD_TIME_KEY, 5);
-        this.pageLoadTimeInSecs = getInt(PAGE_LOAD_TIME_KEY, 1);
-        this.shutdownTimeInSecs = getInt(SHUTDOWN_TIME_KEY, 5);
+        this.initialLoadTimeInSecs = getInt(INITIAL_LOAD_TIME_KEY, DEFAULT_INITIAL_LOAD_TIME);
+        this.pageLoadTimeInSecs = getInt(PAGE_LOAD_TIME_KEY, DEFAULT_PAGE_LOAD_TIME);
+        this.shutdownTimeInSecs = getInt(SHUTDOWN_TIME_KEY, DEFAULT_SHUTDOWN_TIME);
         this.maxChildren = getInt(MAX_CHILDREN_KEY, 0);
-        this.maxDepth = getInt(MAX_DEPTH_KEY, 5);
+        this.maxDepth = getInt(MAX_DEPTH_KEY, DEFAULT_MAX_DEPTH);
         this.maxDuration = getInt(MAX_DURATION_KEY, 0);
+        this.maxScansInUi = getInt(MAX_SCANS_IN_UI_KEY, 5);
+        this.scopeCheck = getEnum(SCOPE_CHECK_KEY, ScopeCheck.getDefault());
 
         try {
             pscanRulesDisabled =
                     getConfig().getList(PSCAN_DISABLED_RULES_KEY).stream()
                             .map(Object::toString)
                             .map(Integer::parseInt)
-                            .collect(Collectors.toList());
+                            .toList();
         } catch (Exception e) {
             LOGGER.warn(e.getMessage(), e);
             pscanRulesDisabled = new ArrayList<>();
@@ -160,6 +205,9 @@ public class ClientOptions extends VersionedAbstractParam {
     }
 
     public void setThreadCount(int threadCount) {
+        if (threadCount <= 0) {
+            threadCount = Constant.getDefaultThreadCount();
+        }
         this.threadCount = threadCount;
         getConfig().setProperty(THREAD_COUNT_KEY, threadCount);
     }
@@ -216,5 +264,27 @@ public class ClientOptions extends VersionedAbstractParam {
     public void setMaxDuration(int maxDuration) {
         this.maxDuration = maxDuration;
         getConfig().setProperty(MAX_DURATION_KEY, maxDuration);
+    }
+
+    public int getMaxScansInUi() {
+        return this.maxScansInUi;
+    }
+
+    public void setMaxScansInUi(int maxScansInUi) {
+        this.maxScansInUi = maxScansInUi;
+        getConfig().setProperty(MAX_SCANS_IN_UI_KEY, maxScansInUi);
+    }
+
+    public ScopeCheck getScopeCheck() {
+        return scopeCheck;
+    }
+
+    public void setScopeCheck(String scopeCheck) {
+        setScopeCheck(ScopeCheck.parse(scopeCheck));
+    }
+
+    public void setScopeCheck(ScopeCheck scopeCheck) {
+        this.scopeCheck = scopeCheck == null ? ScopeCheck.getDefault() : scopeCheck;
+        getConfig().setProperty(SCOPE_CHECK_KEY, this.scopeCheck.name());
     }
 }

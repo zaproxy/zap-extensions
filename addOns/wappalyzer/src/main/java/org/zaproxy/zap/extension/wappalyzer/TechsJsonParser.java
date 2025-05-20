@@ -42,7 +42,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -100,7 +99,7 @@ public class TechsJsonParser {
                                                                 getStringResource(path),
                                                                 createIcons),
                                                 executor))
-                        .collect(Collectors.toList());
+                        .toList();
         // Note: Based on testing having the forEach separate performs faster than chaining it
         futures.forEach(CompletableFuture::join);
         executor.shutdown();
@@ -255,8 +254,8 @@ public class TechsJsonParser {
             return Collections.emptyList();
         }
         List<String> list = new ArrayList<>();
-        if (json instanceof JSONArray) {
-            for (Object obj : (JSONArray) json) {
+        if (json instanceof JSONArray jarray) {
+            for (Object obj : jarray) {
                 String selector = strToDomSelector(obj.toString());
                 if (isValidQuery(selector)) {
                     list.add(selector);
@@ -278,8 +277,8 @@ public class TechsJsonParser {
 
     private static List<String> jsonToStringList(Object json) {
         List<String> list = new ArrayList<>();
-        if (json instanceof JSONArray) {
-            for (Object obj : (JSONArray) json) {
+        if (json instanceof JSONArray jarray) {
+            for (Object obj : jarray) {
                 list.add(obj.toString());
             }
         } else if (json != null) {
@@ -290,8 +289,8 @@ public class TechsJsonParser {
 
     private static List<String> jsonToCategoryList(Map<String, String> categories, Object json) {
         List<String> list = new ArrayList<>();
-        if (json instanceof JSONArray) {
-            for (Object obj : (JSONArray) json) {
+        if (json instanceof JSONArray jarray) {
+            for (Object obj : jarray) {
                 String category = categories.get(obj.toString());
                 if (category != null) {
                     list.add(category);
@@ -306,15 +305,14 @@ public class TechsJsonParser {
     @SuppressWarnings("unchecked")
     private List<Map<String, AppPattern>> jsonToAppPatternMapList(String type, Object json) {
         List<Map<String, AppPattern>> list = new ArrayList<>();
-        if (json instanceof JSONObject) {
-            for (Object obj : ((JSONObject) json).entrySet()) {
+        if (json instanceof JSONObject jobj) {
+            for (Object obj : jobj.entrySet()) {
                 Map.Entry<String, Object> entry = (Map.Entry<String, Object>) obj;
                 try {
                     Object value = entry.getValue();
-                    if (value instanceof String) {
-                        list.add(createMapAppPattern(type, entry.getKey(), (String) value));
-                    } else if (value instanceof JSONArray) {
-                        JSONArray values = (JSONArray) value;
+                    if (value instanceof String val1) {
+                        list.add(createMapAppPattern(type, entry.getKey(), val1));
+                    } else if (value instanceof JSONArray values) {
                         for (Object val : values) {
                             list.add(createMapAppPattern(type, entry.getKey(), (String) val));
                         }
@@ -350,8 +348,8 @@ public class TechsJsonParser {
         if (json == null) {
             return Collections.emptyList();
         }
-        if (json instanceof JSONObject) {
-            for (Object domSelectorObject : ((JSONObject) json).entrySet()) {
+        if (json instanceof JSONObject jobj) {
+            for (Object domSelectorObject : jobj.entrySet()) {
                 Map.Entry<?, ?> domEntryMap = (Map.Entry<?, ?>) domSelectorObject;
                 if (domEntryMap.getValue() instanceof String) {
                     continue;
@@ -429,12 +427,12 @@ public class TechsJsonParser {
 
     private List<AppPattern> jsonToPatternList(String type, Object json) {
         List<AppPattern> list = new ArrayList<>();
-        if (json instanceof JSONArray) {
-            for (Object obj : ((JSONArray) json).toArray()) {
+        if (json instanceof JSONArray jarray) {
+            for (Object obj : jarray.toArray()) {
                 String objStr = obj.toString();
-                if (obj instanceof JSONArray) {
+                if (obj instanceof JSONArray jarr) {
                     // Dereference it again
-                    objStr = ((JSONArray) obj).getString(0);
+                    objStr = jarr.getString(0);
                 }
                 try {
                     if (!objStr.isEmpty()) {

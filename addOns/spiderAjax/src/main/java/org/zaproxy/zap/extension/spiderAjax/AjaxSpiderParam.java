@@ -23,18 +23,54 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 import org.zaproxy.zap.extension.selenium.Browser;
 
 public class AjaxSpiderParam extends VersionedAbstractParam {
+
+    public enum ScopeCheck {
+        FLEXIBLE,
+        STRICT;
+
+        private final String label;
+
+        ScopeCheck() {
+            label =
+                    Constant.messages.getString(
+                            "spiderajax.options.label.scope." + name().toLowerCase(Locale.ROOT));
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+
+        public static ScopeCheck getDefault() {
+            return STRICT;
+        }
+
+        public static ScopeCheck parse(String value) {
+            if (value == null || value.isBlank()) {
+                return getDefault();
+            }
+
+            try {
+                return valueOf(value.toUpperCase(Locale.ROOT));
+            } catch (Exception e) {
+                return getDefault();
+            }
+        }
+    }
 
     private static final Logger LOGGER = LogManager.getLogger(AjaxSpiderParam.class);
 
@@ -92,6 +128,10 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     private static final String CONFIRM_REMOVE_ELEM_KEY =
             AJAX_SPIDER_BASE_KEY + ".confirmRemoveElem";
 
+    private static final String ENABLE_EXTENSIONS_KEY = AJAX_SPIDER_BASE_KEY + ".enableExtensions";
+
+    private static final String SCOPE_CHECK_KEY = AJAX_SPIDER_BASE_KEY + ".scopeCheck";
+
     public static final String[] DEFAULT_ELEMS_NAMES = {
         "a",
         "button",
@@ -147,6 +187,8 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     public static final boolean DEFAULT_RANDOM_INPUTS = true;
 
+    public static final boolean DEFAULT_ENABLE_EXTENSIONS = false;
+
     private static final String ALL_ALLOWED_RESOURCES_KEY =
             AJAX_SPIDER_BASE_KEY + ".allowedResources.allowedResource";
 
@@ -181,9 +223,12 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     private boolean randomInputs;
     private boolean confirmRemoveElem = true;
     private boolean showAdvancedDialog;
+    private boolean enableExtensions;
 
     private boolean confirmRemoveAllowedResource;
     private List<AllowedResource> allowedResources = Collections.emptyList();
+
+    private ScopeCheck scopeCheck = ScopeCheck.getDefault();
 
     @Override
     public AjaxSpiderParam clone() {
@@ -211,7 +256,8 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        this.numberOfBrowsers = getInt(NUMBER_OF_BROWSERS_KEY, Constants.getDefaultThreadCount());
+        this.numberOfBrowsers =
+                getInt(NUMBER_OF_BROWSERS_KEY, Constants.getDefaultThreadCount() / 2);
         this.maxCrawlDepth = getInt(MAX_CRAWL_DEPTH_KEY, DEFAULT_MAX_CRAWL_DEPTH);
         this.maxCrawlStates = getInt(MAX_CRAWL_STATES_KEY, DEFAULT_CRAWL_STATES);
         this.maxDuration = getInt(MAX_DURATION_KEY, DEFAULT_MAX_DURATION);
@@ -232,6 +278,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         this.clickElemsOnce = getBoolean(CLICK_ELEMS_ONCE_KEY, DEFAULT_CLICK_ELEMS_ONCE);
         this.randomInputs = getBoolean(RANDOM_INPUTS_KEY, DEFAULT_RANDOM_INPUTS);
         this.showAdvancedDialog = getBoolean(SHOW_ADV_OPTIONS_KEY, false);
+        this.enableExtensions = getBoolean(ENABLE_EXTENSIONS_KEY, DEFAULT_ENABLE_EXTENSIONS);
 
         try {
             List<HierarchicalConfiguration> fields =
@@ -286,6 +333,8 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             this.allowedResources = new ArrayList<>(DEFAULT_ALLOWED_RESOURCES);
         }
         confirmRemoveAllowedResource = getBoolean(CONFIRM_REMOVE_ALLOWED_RESOURCE, true);
+
+        scopeCheck = getEnum(SCOPE_CHECK_KEY, ScopeCheck.getDefault());
     }
 
     @SuppressWarnings({"fallthrough"})
@@ -316,7 +365,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                 boolean crawlInDepth = getBoolean(crawlInDepthKey, false);
                 getConfig().setProperty(CLICK_DEFAULT_ELEMS_KEY, Boolean.valueOf(!crawlInDepth));
                 getConfig().clearProperty(crawlInDepthKey);
-                // $FALL-THROUGH$
+            // $FALL-THROUGH$
             case 2:
                 // Remove old version element, from now on the version is saved as an attribute of
                 // root element
@@ -326,7 +375,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
             case 4:
                 if (getInt(NUMBER_OF_BROWSERS_KEY, 1) == 1) {
                     // the old default
-                    this.setNumberOfBrowsers(Constants.getDefaultThreadCount());
+                    this.setNumberOfBrowsers(Constants.getDefaultThreadCount() / 2);
                 }
             case 5:
                 if (!getConfig().getKeys(ALL_ALLOWED_RESOURCES_KEY).hasNext()) {
@@ -474,6 +523,15 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         return enabledElemsNames;
     }
 
+    public boolean isEnableExtensions() {
+        return enableExtensions;
+    }
+
+    public void setEnableExtensions(boolean enableExtensions) {
+        this.enableExtensions = enableExtensions;
+        getConfig().setProperty(ENABLE_EXTENSIONS_KEY, Boolean.valueOf(enableExtensions));
+    }
+
     @ZapApiIgnore
     public boolean isConfirmRemoveElem() {
         return this.confirmRemoveElem;
@@ -542,5 +600,18 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     @ZapApiIgnore
     public List<AllowedResource> getAllowedResources() {
         return Collections.unmodifiableList(allowedResources);
+    }
+
+    public ScopeCheck getScopeCheck() {
+        return scopeCheck;
+    }
+
+    public void setScopeCheck(String scopeCheck) {
+        setScopeCheck(ScopeCheck.parse(scopeCheck));
+    }
+
+    public void setScopeCheck(ScopeCheck scopeCheck) {
+        this.scopeCheck = scopeCheck == null ? ScopeCheck.getDefault() : scopeCheck;
+        getConfig().setProperty(SCOPE_CHECK_KEY, this.scopeCheck.name());
     }
 }

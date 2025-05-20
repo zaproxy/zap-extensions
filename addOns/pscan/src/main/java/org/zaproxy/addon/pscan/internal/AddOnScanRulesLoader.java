@@ -31,12 +31,11 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.control.AddOn.InstallationStatus;
 import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.AddOnInstallationStatusListener;
-import org.zaproxy.zap.extension.AddOnInstallationStatusListener.StatusUpdate;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class AddOnScanRulesLoader implements AddOnInstallationStatusListener {
@@ -44,9 +43,9 @@ public class AddOnScanRulesLoader implements AddOnInstallationStatusListener {
     private static final Logger LOGGER = LogManager.getLogger(AddOnScanRulesLoader.class);
 
     private final Map<AddOn, List<PluginPassiveScanner>> addOnScanRules;
-    private final ExtensionPassiveScan extension;
+    private final ExtensionPassiveScan2 extension;
 
-    public AddOnScanRulesLoader(ExtensionPassiveScan extension) {
+    public AddOnScanRulesLoader(ExtensionPassiveScan2 extension) {
         addOnScanRules = new HashMap<>();
         this.extension = extension;
     }
@@ -88,7 +87,7 @@ public class AddOnScanRulesLoader implements AddOnInstallationStatusListener {
             for (PluginPassiveScanner pscanrule : loadedPscanrules) {
                 String name = pscanrule.getClass().getCanonicalName();
                 LOGGER.debug("Uninstall pscanrule: {}", name);
-                if (!extension.removePassiveScanner(pscanrule)) {
+                if (!extension.getPassiveScannersManager().remove(pscanrule)) {
                     LOGGER.error("Failed to uninstall pscanrule: {}", name);
                 }
             }
@@ -118,7 +117,7 @@ public class AddOnScanRulesLoader implements AddOnInstallationStatusListener {
                 pscanrule.setStatus(addOn.getStatus());
                 String name = pscanrule.getClass().getCanonicalName();
                 LOGGER.debug("Install pscanrule: {}", name);
-                if (!extension.addPassiveScanner(pscanrule)) {
+                if (!extension.getPassiveScannersManager().add(pscanrule)) {
                     LOGGER.error("Failed to install pscanrule: {}", name);
                 }
             }

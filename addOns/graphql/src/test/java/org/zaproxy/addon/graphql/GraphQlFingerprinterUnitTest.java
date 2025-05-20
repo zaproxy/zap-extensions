@@ -25,11 +25,14 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.withSettings;
@@ -37,27 +40,41 @@ import static org.mockito.Mockito.withSettings;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.WriterAppender;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.ArgumentCaptor;
 import org.mockito.quality.Strictness;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.graphql.GraphQlFingerprinter.DiscoveredGraphQlEngine;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.StaticContentServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
 
+@TestMethodOrder(OrderAnnotation.class)
 class GraphQlFingerprinterUnitTest extends TestUtils {
 
+    private Logger logger;
+    private StringWriter writer;
+    private WriterAppender appender;
     String endpointUrl;
 
     @BeforeEach
@@ -65,6 +82,20 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
         setUpZap();
         startServer();
         endpointUrl = "http://localhost:" + nano.getListeningPort() + "/graphql";
+        logger = (Logger) LogManager.getLogger(GraphQlFingerprinter.class);
+        writer = new StringWriter();
+        appender =
+                WriterAppender.newBuilder()
+                        .setName("TestAppender")
+                        .setLayout(
+                                PatternLayout.newBuilder()
+                                        .withPattern(PatternLayout.TTCC_CONVERSION_PATTERN)
+                                        .build())
+                        .setTarget(writer)
+                        .build();
+        appender.start();
+        logger.addAppender(appender);
+        logger.setLevel(Level.ALL);
     }
 
     @Override
@@ -75,8 +106,8 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
     @AfterEach
     void teardown() {
         stopServer();
-
-        Constant.messages = null;
+        GraphQlFingerprinter.resetHandlers();
+        logger.removeAppender(appender);
     }
 
     @Test
@@ -151,7 +182,7 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
         // When
         fp.fingerprint();
         // Then
-        assertThat(nano.getRequestedUris(), hasSize(26));
+        assertThat(nano.getRequestedUris(), hasSize(27));
         verifyNoInteractions(extensionAlert);
     }
 
@@ -185,7 +216,7 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
                 arguments(
                         "Apollo",
                         errorResponse("Directive \\\"@deprecated\\\" may not be used on QUERY.")),
-                arguments("AWS", errorResponse("MisplacedDirective")),
+                arguments("AWS AppSync", errorResponse("MisplacedDirective")),
                 arguments("Hasura", "{ \"data\": { \"__typename\":\"query_root\" } }"),
                 arguments(
                         "Hasura",
@@ -232,33 +263,34 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
                         errorResponse(
                                 "Validation error of type UnknownDirective: Unknown directive deprecated @ '__typename'")),
                 arguments(
-                        "ruby",
+                        "graphql-ruby",
                         errorResponse(
                                 "'@skip' can't be applied to queries (allowed: fields, fragment spreads, inline fragments)")),
                 arguments(
-                        "ruby",
-                        errorResponse("Directive 'skip' is missing required arguments: if")),
-                arguments("ruby", errorResponse("'@deprecated' can't be applied to queries")),
-                arguments("ruby", errorResponse("Parse error on \\\"}\\\" (RCURLY)")),
-                arguments(
-                        "ruby",
+                        "graphql-ruby",
                         errorResponse("Directive 'skip' is missing required arguments: if")),
                 arguments(
-                        "PHP",
+                        "graphql-ruby", errorResponse("'@deprecated' can't be applied to queries")),
+                arguments("graphql-ruby", errorResponse("Parse error on \\\"}\\\" (RCURLY)")),
+                arguments(
+                        "graphql-ruby",
+                        errorResponse("Directive 'skip' is missing required arguments: if")),
+                arguments(
+                        "graphql-php",
                         errorResponse(
                                 "Directive \\\"deprecated\\\" may not be used on \\\"QUERY\\\".")),
                 arguments("gqlgen", errorResponse("expected at least one definition")),
                 arguments("gqlgen", errorResponse("Expected Name, found <Invalid>")),
-                arguments("Go", errorResponse("Unexpected empty IN")),
-                arguments("Go", errorResponse("Must provide an operation.")),
-                arguments("Go", "{ \"data\": { \"__typename\":\"RootQuery\" } }"),
+                arguments("graphql-go", errorResponse("Unexpected empty IN")),
+                arguments("graphql-go", errorResponse("Must provide an operation.")),
+                arguments("graphql-go", "{ \"data\": { \"__typename\":\"RootQuery\" } }"),
                 arguments("Juniper", errorResponse("Unexpected \\\"queryy\\\"")),
                 arguments("Juniper", errorResponse("Unexpected end of input")),
                 arguments(
                         "Sangria",
                         "{ \"syntaxError\" : \"Syntax error while parsing GraphQL query. Invalid input \\\"queryy\\\", expected ExecutableDefinition or TypeSystemDefinition\" }"),
                 arguments(
-                        "Flutter",
+                        "graphql-flutter",
                         errorResponse("Directive \\\"deprecated\\\" may not be used on FIELD.")),
                 arguments(
                         "Diana.jl",
@@ -288,7 +320,8 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
                         "GraphQL.NET", errorResponse("Directive 'skip' may not be used on Query.")),
                 arguments("pg_graphql", errorResponse("Unknown argument to @skip: aaQuery.")),
                 arguments("tailcall", errorResponse("expected executable_definition")),
-                arguments("Hot Chocolate", errorResponse("Unexpected token: Name.")));
+                arguments("Hot Chocolate", errorResponse("Unexpected token: Name.")),
+                arguments("Inigo", "{\"extensions\": {\"inigo\": []}}"));
     }
 
     private static String errorResponse(String error) {
@@ -309,21 +342,67 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
                 + " }";
     }
 
+    @SuppressWarnings("null")
     @ParameterizedTest
     @MethodSource("fingerprintData")
     void shouldFingerprintValidData(String graphqlImpl, String response) throws Exception {
         // Given
-        ExtensionAlert extensionAlert = mockExtensionAlert();
         nano.addHandler(new GraphQlResponseHandler(response));
         var fp = new GraphQlFingerprinter(UrlBuilder.build(endpointUrl));
+        List<DiscoveredGraphQlEngine> discoveredEngine = new ArrayList<>(1);
+        GraphQlFingerprinter.addEngineHandler(discoveredEngine::add);
         // When
         fp.fingerprint();
         // Then
-        ArgumentCaptor<Alert> alertArgCaptor = ArgumentCaptor.forClass(Alert.class);
-        verify(extensionAlert).alertFound(alertArgCaptor.capture(), any());
-        Alert alert = alertArgCaptor.getValue();
+        Alert alert =
+                GraphQlFingerprinter.createFingerprintingAlert(discoveredEngine.get(0)).build();
         assertThat(alert, is(notNullValue()));
         assertThat(alert.getDescription(), containsString(graphqlImpl));
+        // Check "handled" values
+        assertThat(discoveredEngine.get(0).getUri().toString(), is(equalTo(endpointUrl)));
+        assertThat(discoveredEngine.get(0).getName(), is(equalTo(graphqlImpl)));
+    }
+
+    @Test
+    void shouldFingerprintWithoutAddedHandler() throws Exception {
+        // Given
+        ExtensionAlert extensionAlert = mockExtensionAlert();
+        var url = UrlBuilder.build(endpointUrl);
+        nano.addHandler(new GraphQlResponseHandler(errorResponse("The query must be a string.")));
+        var fp = new GraphQlFingerprinter(url);
+        // When
+        fp.fingerprint();
+        // Then
+        assertNoErrors(extensionAlert, writer.toString());
+    }
+
+    @Test
+    void shouldFingerprintAfterHandlerReset() throws Exception {
+        // Given
+        ExtensionAlert extensionAlert = mockExtensionAlert();
+        var url = UrlBuilder.build(endpointUrl);
+        nano.addHandler(new GraphQlResponseHandler(errorResponse("The query must be a string.")));
+        var fp = new GraphQlFingerprinter(url);
+        // When
+        GraphQlFingerprinter.resetHandlers();
+        fp.fingerprint();
+        // Then
+        assertNoErrors(extensionAlert, writer.toString());
+    }
+
+    @Test
+    @Order(1)
+    void shouldStaticallyAddHandlerWithoutException() throws Exception {
+        // Given
+        List<DiscoveredGraphQlEngine> handler = new ArrayList<>();
+        // When / Then
+        assertDoesNotThrow(() -> GraphQlFingerprinter.addEngineHandler(handler::add));
+    }
+
+    private static void assertNoErrors(ExtensionAlert extMock, String loggerOutput) {
+        assertThat(loggerOutput, not(containsString("WARN")));
+        assertThat(loggerOutput, not(containsString("Null")));
+        verify(extMock, times(1)).alertFound(any(), any());
     }
 
     private static ExtensionAlert mockExtensionAlert() {

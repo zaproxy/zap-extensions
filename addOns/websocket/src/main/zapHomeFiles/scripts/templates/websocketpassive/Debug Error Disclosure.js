@@ -75,7 +75,7 @@ function createAlertBuilder(helper, evidence){
                         + " the list of common debug messages.")
         .setSolution("Disable debugging messages before pushing to production.")
         .setEvidence(evidence)
-        .setCweId(200) // CWE-200: Information Exposure
+        .setCweId(209) // Information Exposure Through an Error Message
         .setWascId(13); // WASC Id 13 - Info leakage
 }
 

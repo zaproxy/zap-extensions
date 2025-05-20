@@ -489,8 +489,19 @@ A falha ao limpar os comentários de HTML/Script antes de enviar para o ambiente
 Números de versão de software e mensagens de erro detalhadas (como números de versão ASP.NET) são exemplos de configurações de servidor inadequadas. Essas informações são úteis para um invasor, fornecendo uma visão detalhada da estrutura, linguagens ou funções pré-construídas utilizadas por uma aplicação web. A maioria das configurações de servidor padrão fornece números de versão de software e mensagens de erro detalhadas para fins de depuração e solução de problemas. Alterações de configuração podem ser feitas para desabilitar esses recursos, impedindo a exibição dessas informações.
 
 Páginas que fornecem respostas diferentes com base na validade dos dados também podem levar ao vazamento de informações; especificamente quando dados considerados confidenciais estão sendo revelados como resultado do design do aplicativo da web. Exemplos de dados confidenciais incluem (mas não se limitam a): números de contas, identificadores de usuários (número da carteira de habilitação, número do passaporte, números de CPF etc.) e informações específicas do usuário (senhas, sessões, endereços). O Vazamento de Informações, neste contexto, trata da exposição dos principais dados do usuário considerados confidenciais ou secretos, que não devem ser expostos à vista, mesmo para o usuário. Números de cartão de crédito e outras informações altamente regulamentadas são exemplos importantes de dados do usuário que precisam ser protegidos contra exposição ou vazamento, mesmo com criptografia adequada e controles de acesso já implementados.</desc>
-	<solution>Compartimentalize seu sistema para ter áreas "seguras" onde os limites de confiança possam ser definidos de forma inequívoca. Não permita que dados confidenciais saiam do limite de confiança e sempre tenha cuidado ao fazer a interface com um compartimento fora da área segura.</solution>
-	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
+	<solution>
+    * Have a clear definition of which information is considered sensitive and which isn't. Take privacy laws, regulatory requirements, and business needs into account.
+    * Store sensitive data only if you have to.
+    * Implement checks for sensitive information in your devops pipeline. Steps that could be taken include stripping developer comments, removing debugging information and sensitive logs, as well as making error messages less verbose.
+    * In situations where the sensitive information must be used, for instance, backend microservices, ensure trust boundaries are appropriately drawn. Example: set up an isolated, well secured kubernetes cluster with well configured access controls, then only grant access to authorized clients.
+    * In situations where error messages need to be returned to the user, use messages that are as generic as possible eg "invalid credentials" instead of "invalid username" or "invalid password".
+    * When using third party technologies, understand how the software works, its configuration, as well as security risks of using it. After understanding the technology, use only the features that you need and disable everything else.
+    * Detailed debug messages are sometimes necessary, for instance, when adding a new feature to an application. In this case, separate the development environment from the production one. Ensure appropriate access controls are implemented for the development environments.
+    * All sensitive data should be encrypted before storage. Ensure up-to-date and strong standard algorithms, protocols, and keys are in place; use proper key management.
+</solution>
+<reference>https://portswigger.net/web-security/information-disclosure</reference>
+<reference>https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure</reference>
+<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
 <vuln_items>wasc_14</vuln_items>
@@ -1044,7 +1055,17 @@ Existem dois tipos principais de processos que requerem validação: controle de
 "Controle de fluxo" refere-se a processos de várias etapas que exigem que cada etapa seja realizada em uma ordem específica pelo usuário. Quando um invasor executa a etapa incorretamente ou fora de ordem, os controles de acesso podem ser ignorados e pode ocorrer um erro de integridade do aplicativo. Exemplos de processos de várias etapas incluem transferência eletrônica, recuperação de senha, finalização da compra e inscrição na conta.
 
 "Lógica de negócios" se refere ao contexto no qual um processo será executado conforme regido pelos requisitos de negócios. Explorar uma fraqueza da lógica de negócios requer conhecimento do negócio; se nenhum conhecimento é necessário para explorá-lo, provavelmente não é uma falha de lógica de negócios. Devido a isso, medidas de segurança típicas, como varreduras e revisão de código, não encontrarão essa classe de fraqueza. Uma abordagem de teste é oferecida pelo OWASP em seu Guia de Teste.</desc>
-	<solution/>
+	<solution>Make sure that all operations within a multi-step process are either performed entirely or not at all. If one step fails, the changes made must be canceled. Fuzzing inputs is a good way to test for anomalies and to verify the results after the flow completes.
+
+Make sure the correct order of steps in the flow is enforced and that the order cannot be changed or bypassed by the user.
+
+Developers and testers must have a solid understanding of the domain that the application serves.
+
+Do not rely on implicit assumptions about how users or different application parts will behave.
+
+Identify all references to other code that interacts with each component and evaluate the possible side-effects if a malicious actor manipulates these dependencies in unexpected ways.
+
+Maintain clear code, design documents, and data flow diagrams for all transactions and workflows, noting any assumptions made at each stage and what the expected behavior is.</solution>
 	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
 	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>

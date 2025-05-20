@@ -39,6 +39,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -74,7 +75,7 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(6)));
         assertAlertTags(tags);
     }
 
@@ -88,6 +89,9 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A08_INTEGRITY_FAIL.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A08_INTEGRITY_FAIL.getValue())));
@@ -155,7 +159,7 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
     }
 
     @Test
-    void shouldRaiseAlertIfHostDomainIsDifferentFromCookieDomain() throws Exception {
+    void shouldNotRaiseAlertIfHostDomainIsDifferentFromCookieDomain() throws Exception {
         // Given
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://dev.test.org HTTP/1.1");
@@ -166,7 +170,7 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
         scanHttpResponseReceive(msg);
 
         // Then
-        assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.size(), is(0));
     }
 
     @Test
@@ -234,6 +238,34 @@ class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLoose
         HttpMessage msg = createBasicMessage();
         msg.setRequestHeader("GET http://test.example.com/admin/roles HTTP/1.1");
         msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=.example.com");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+    }
+
+    @Test
+    void shouldNotRaiseAlertForExactMatchIgnoringLeadingDot() throws Exception {
+        // Given
+        HttpMessage msg = createBasicMessage();
+        msg.setRequestHeader("GET http://test.com HTTP/1.1");
+        msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=.test.com;");
+
+        // When
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
+    void shouldRaiseAlertForNestedSubdomainIfCookieDomainIsHigherOrder() throws Exception {
+        // Given
+        HttpMessage msg = createBasicMessage();
+        msg.setRequestHeader("GET http://deep.sub.example.com HTTP/1.1");
+        msg.getResponseHeader().setHeader(HttpResponseHeader.SET_COOKIE, "a=b;domain=example.com;");
 
         // When
         scanHttpResponseReceive(msg);

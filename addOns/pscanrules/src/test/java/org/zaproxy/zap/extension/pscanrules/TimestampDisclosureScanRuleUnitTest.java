@@ -36,6 +36,7 @@ import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -44,6 +45,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDisclosureScanRule> {
 
@@ -57,13 +59,14 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));
@@ -81,6 +84,7 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
         Alert alert = alerts.get(0);
         assertThat(alert.getName(), is(equalTo("Timestamp Disclosure - Unix")));
         assertThat(alert.getParam(), is(equalTo("registeredAt")));
+        assertThat(alert.getCweId(), is(equalTo(497)));
     }
 
     @Test
@@ -498,6 +502,40 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
+    }
+
+    private static HttpMessage createJavaScriptReponseWithTimeStamp() throws URIException {
+        Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        HttpMessage msg = createMessage(strTestDate);
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "javascript");
+        return msg;
+    }
+
+    @Test
+    void shouldNotRaiseAlertOnTimeStampInJavaScriptFilesAtHighThreshold() throws Exception {
+        // Given
+        HttpMessage msg = createJavaScriptReponseWithTimeStamp();
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = AlertThreshold.class,
+            names = {"MEDIUM", "LOW"})
+    void shouldRaiseAlertBelowHighThresholdOnTimeStampInJavaScriptFiles(AlertThreshold threshold)
+            throws URIException {
+        // Given
+        HttpMessage msg = createJavaScriptReponseWithTimeStamp();
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(1, alertsRaised.size());
     }
 
     private static HttpMessage createMessage(String timestamp) throws URIException {

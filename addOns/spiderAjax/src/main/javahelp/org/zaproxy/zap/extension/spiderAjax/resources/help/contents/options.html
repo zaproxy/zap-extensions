@@ -34,7 +34,7 @@
 			<td>Number of Browser Windows to Open</td>
 			<td>You can configure the number of windows to be used by AJAX Spider.
 				 The more windows, the faster the process will be.</td>
-			<td align = "center">1</td>
+			<td align = "center">Num cores</td>
 		</tr>
 		<tr>
 			<td>Maximum Crawl Depth</td>
@@ -62,6 +62,11 @@
 			<td align = "center">1000 ms</td>
 		</tr>
 		<tr>
+			<td>Enable Browser Extensions</td>
+			<td>When enabled, any browser extensions added by other add-ons will be enabled in the browsers used for crawling.</td>
+			<td align = "center">False</td>
+		</tr>
+		<tr>
 			<td>Click Elements Once</td>
 			<td>When enabled, the crawler attempts to interact with each element (e.g., by clicking) only once.  If this is not set, the crawler will attempt to click multiple times. Unsetting this option is more rigorous but may take considerably more time.</td>
 			<td align = "center">True</td>
@@ -80,6 +85,16 @@
 			<td>Select elements to click during crawl (table)</td>
 			<td>The list of elements to crawl.  This table only applies when "click default elements only" is not enabled.  Use "enable all" for a more in depth analysis, though it may take somewhat longer.</td>
 			<td align = "center">All enabled</td>
+		</tr>
+		<tr>
+			<td>Scope Check</td>
+			<td>How the scope is checked:
+				<ul>
+					<li><code>Strict</code> - enforces that all requests need to be in scope to be accessed, with the exception of the Allowed Resources.
+					<li><code>Flexible</code> - allows all requests to be accessed. This scope check does not use nor require configuring the Allowed Resources for targets that need domains out of scope to work. This scope check has the side effect of allowing out of scope domains to be accessed, but not crawled.
+				</ul>
+			</td>
+			<td align = "center">Strict</td>
 		</tr>
 		<tr>
 			<td>Allowed Resources (table)</td>

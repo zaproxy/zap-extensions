@@ -25,8 +25,8 @@ import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.addon.pscan.automation.jobs.PassiveScanConfigJob;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 @SuppressWarnings("serial")
@@ -42,7 +42,7 @@ public class PscanRulesTableModel extends AbstractTableModel {
 
     private List<PassiveScanConfigJob.Rule> rules = new ArrayList<>();
 
-    private ExtensionPassiveScan extPscan;
+    private ExtensionPassiveScan2 extPscan;
 
     public PscanRulesTableModel() {
         super();
@@ -124,21 +124,21 @@ public class PscanRulesTableModel extends AbstractTableModel {
         }
     }
 
-    private ExtensionPassiveScan getExtPscan() {
+    private ExtensionPassiveScan2 getExtPscan() {
         if (this.extPscan == null) {
             this.extPscan =
                     Control.getSingleton()
                             .getExtensionLoader()
-                            .getExtension(ExtensionPassiveScan.class);
+                            .getExtension(ExtensionPassiveScan2.class);
         }
         return this.extPscan;
     }
 
     public List<PluginPassiveScanner> getAllScanRules() {
-        return this.getExtPscan().getPluginPassiveScanners();
+        return getExtPscan().getPassiveScannersManager().getScanRules();
     }
 
     public PluginPassiveScanner getScanRule(int id) {
-        return this.getExtPscan().getPluginPassiveScanner(id);
+        return getExtPscan().getPassiveScannersManager().getScanRule(id);
     }
 }

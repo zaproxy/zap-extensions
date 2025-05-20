@@ -25,6 +25,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.dev.error.LoggedErrorsHandler;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionDev extends ExtensionAdaptor {
@@ -38,6 +39,7 @@ public class ExtensionDev extends ExtensionAdaptor {
     private final LoggedErrorsHandler loggedErrorsHandler;
 
     private TestProxyServer tutorialServer;
+    private AltDomainListener altDomainListener = new AltDomainListener();
 
     private DevParam devParam;
 
@@ -54,6 +56,7 @@ public class ExtensionDev extends ExtensionAdaptor {
         loggedErrorsHandler.hook(extensionHook);
 
         extensionHook.addOptionsParamSet(this.getDevParam());
+        extensionHook.addHttpSenderListener(altDomainListener);
 
         if (Constant.isDevMode()) {
             tutorialServer =
@@ -65,10 +68,7 @@ public class ExtensionDev extends ExtensionAdaptor {
             extensionHook.addApiImplementor(new DevApi());
         }
 
-        if (hasView()
-                && org.zaproxy.zap.extension.log4j.ExtensionLog4j.class.getAnnotation(
-                                Deprecated.class)
-                        != null) {
+        if (hasView()) {
             ZapMenuItem menuGarbageCollect = new ZapMenuItem("dev.tools.menu.gc");
             menuGarbageCollect.addActionListener(e -> Runtime.getRuntime().gc());
             extensionHook.getHookMenu().addToolsMenuItem(menuGarbageCollect);
@@ -80,6 +80,10 @@ public class ExtensionDev extends ExtensionAdaptor {
             devParam = new DevParam();
         }
         return devParam;
+    }
+
+    public void addDomainListener(String domain, HttpSenderListener listener) {
+        this.altDomainListener.addDomainListener(domain, listener);
     }
 
     @Override

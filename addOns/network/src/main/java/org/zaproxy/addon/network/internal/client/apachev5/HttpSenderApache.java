@@ -26,7 +26,6 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -542,7 +541,9 @@ public class HttpSenderApache
         }
 
         if (!connection.isOpen()) {
-            message.setUserObject(Collections.singletonMap("connection.closed", Boolean.TRUE));
+            Map<String, Object> newProperties = new HashMap<>();
+            newProperties.put("connection.closed", Boolean.TRUE);
+            message.setUserObject(newProperties);
             return;
         }
 

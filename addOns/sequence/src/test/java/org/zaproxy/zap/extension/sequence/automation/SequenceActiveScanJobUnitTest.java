@@ -40,7 +40,6 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
-import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.sequence.ExtensionSequence;
 import org.zaproxy.zap.testutils.TestUtils;
 
@@ -48,7 +47,7 @@ import org.zaproxy.zap.testutils.TestUtils;
 class SequenceActiveScanJobUnitTest extends TestUtils {
 
     private ExtensionActiveScan ascan;
-    private ExtensionScript script;
+    private ExtensionSequence seq;
 
     private SequenceActiveScanJob job;
 
@@ -57,9 +56,8 @@ class SequenceActiveScanJobUnitTest extends TestUtils {
         mockMessages(new ExtensionSequence());
 
         ascan = mock(ExtensionActiveScan.class, withSettings().strictness(Strictness.LENIENT));
-        script = mock(ExtensionScript.class, withSettings().strictness(Strictness.LENIENT));
-
-        job = new SequenceActiveScanJob(ascan, script);
+        seq = mock(ExtensionSequence.class, withSettings().strictness(Strictness.LENIENT));
+        job = new SequenceActiveScanJob(seq, ascan);
     }
 
     @Test

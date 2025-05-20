@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class ClientPassiveScanController {
 
@@ -54,15 +53,11 @@ public class ClientPassiveScanController {
         if (!enabled) {
             return Collections.emptyList();
         }
-        return scanRules.stream()
-                .filter(ClientPassiveScanRule::isEnabled)
-                .collect(Collectors.toList());
+        return scanRules.stream().filter(ClientPassiveScanRule::isEnabled).toList();
     }
 
     public List<ClientPassiveScanRule> getDisabledScanRules() {
-        return scanRules.stream()
-                .filter(Predicate.not(ClientPassiveScanRule::isEnabled))
-                .collect(Collectors.toList());
+        return scanRules.stream().filter(Predicate.not(ClientPassiveScanRule::isEnabled)).toList();
     }
 
     /**

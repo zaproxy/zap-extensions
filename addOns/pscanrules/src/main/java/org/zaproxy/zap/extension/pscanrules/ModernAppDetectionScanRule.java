@@ -19,13 +19,17 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** A class to passively scan responses for indications that this is a modern web application. */
@@ -34,6 +38,16 @@ public class ModernAppDetectionScanRule extends PluginPassiveScanner
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.modernapp.";
+
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags = new HashMap<>();
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public String getName() {
@@ -102,6 +116,11 @@ public class ModernAppDetectionScanRule extends PluginPassiveScanner
     @Override
     public int getPluginId() {
         return 10109;
+    }
+
+    @Override
+    public Map<String, String> getAlertTags() {
+        return ALERT_TAGS;
     }
 
     @Override

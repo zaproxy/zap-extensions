@@ -31,7 +31,9 @@ import com.fasterxml.jackson.databind.cfg.CoercionAction;
 import com.fasterxml.jackson.databind.cfg.CoercionInputShape;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
 import com.fasterxml.jackson.databind.type.LogicalType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import java.io.IOException;
+import org.zaproxy.addon.postman.PostmanParser;
 
 /**
  * A custom JSON deserializer to ignore properties of an object when its signature doesn't match,
@@ -48,7 +50,11 @@ public class ObjectDeserializer extends JsonDeserializer<Object> implements Cont
 
     public ObjectDeserializer(Class<? extends Object> targetClass) {
         this.targetClass = targetClass;
-        this.mapper = new ObjectMapper();
+        this.mapper =
+                new ObjectMapper()
+                        .setTypeFactory(
+                                TypeFactory.defaultInstance()
+                                        .withClassLoader(PostmanParser.class.getClassLoader()));
         configureMapper();
     }
 

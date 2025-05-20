@@ -46,10 +46,12 @@ import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
+import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam.ScopeCheck;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParamElem;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener;
+import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
 import org.zaproxy.zap.extension.spiderAjax.SpiderThread;
 import org.zaproxy.zap.extension.spiderAjax.internal.ExcludedElement;
 import org.zaproxy.zap.users.User;
@@ -444,7 +446,9 @@ public class AjaxSpiderJob extends AutomationJob {
         @Override
         public void foundMessage(
                 HistoryReference historyReference, HttpMessage httpMessage, ResourceState state) {
-            messagesFound++;
+            if (state == ResourceState.PROCESSED) {
+                messagesFound++;
+            }
         }
 
         @Override
@@ -525,7 +529,7 @@ public class AjaxSpiderJob extends AutomationJob {
         private String url = "";
         private Integer maxDuration = AjaxSpiderParam.DEFAULT_MAX_DURATION;
         private Integer maxCrawlDepth = AjaxSpiderParam.DEFAULT_MAX_CRAWL_DEPTH;
-        private Integer numberOfBrowsers = Constants.getDefaultThreadCount();
+        private Integer numberOfBrowsers = Constants.getDefaultThreadCount() / 2;
 
         private String browserId = "";
         private Integer maxCrawlStates = AjaxSpiderParam.DEFAULT_CRAWL_STATES;
@@ -535,12 +539,15 @@ public class AjaxSpiderJob extends AutomationJob {
         private Boolean clickElemsOnce = AjaxSpiderParam.DEFAULT_CLICK_ELEMS_ONCE;
         private Boolean randomInputs = AjaxSpiderParam.DEFAULT_RANDOM_INPUTS;
         private Boolean inScopeOnly = Boolean.TRUE;
+        private Boolean enableExtensions = Boolean.FALSE;
 
         private Boolean runOnlyIfModern = Boolean.FALSE;
 
         private List<String> elements = List.of();
 
         private List<ExcludedElementAuto> excludedElements = List.of();
+
+        private String scopeCheck = ScopeCheck.getDefault().toString();
 
         // These 2 fields are deprecated
         private Boolean failIfFoundUrlsLessThan;

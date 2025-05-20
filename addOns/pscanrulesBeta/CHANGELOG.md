@@ -5,10 +5,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Dropped period from extension name used in the GUI.
+- Depends on an updated version of the Common Library add-on.
+
+### Fixed
+- A false positive with the Sub Resource Integrity Attribute Missing scan rule with regard to which link tags it raises alerts on (Issue 8938).
+
+### Added
+- All rules have been tagged of interest to Penetration Testers, as well as adding tags associated with DEV or QA applicability.
+
+## [43] - 2025-03-04
+### Changed
+- Replace usage of CWE-200 for the In Page Banner Information Leak scan rule (Issue 8731).
+- Add support for 'credentialless' COEP value in the Insufficient Site Isolation Against Spectre Vulnerability scan rule (Issue 8840).
+
+## [42] - 2025-01-15
+### Changed
+- Update minimum ZAP version to 2.16.0.
 - Updated help with specific Category identifier for use with the Custom Payloads add-on for the "Dangerous JS Functions" rule.
 
 ### Fixed
 - Fix typo in log message.
+- Fix Insufficient Site Isolation scan rule check that filters responses based on whether a response is a success or not.
 
 ### Changed
 - Maintenance changes.
@@ -346,6 +364,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[43]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v43
+[42]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v39

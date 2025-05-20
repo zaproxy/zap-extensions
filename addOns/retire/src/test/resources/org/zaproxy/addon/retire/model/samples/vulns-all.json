@@ -3,7 +3,7 @@
     "vulnerabilities" : [ {
       "atOrAbove" : "atorabove",
       "below" : "below",
-      "severity" : "severity",
+      "severity" : "high",
       "cwe" : [ "cwe 1", "cwe 2" ],
       "identifiers" : {
         "CVE" : [ "cve 1", "cve 2" ],

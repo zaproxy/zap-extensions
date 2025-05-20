@@ -49,6 +49,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErrorScanRule> {
     private static final String URI = "https://www.example.com/test/";
@@ -82,7 +83,7 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(6)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
@@ -94,6 +95,8 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_ERRH_02_STACK.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
@@ -116,8 +119,8 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
         Map<String, String> tags = alert.getTags();
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
-        assertThat(tags.size(), is(equalTo(6)));
-        assertThat(tags, hasKey("CWE-200"));
+        assertThat(tags.size(), is(equalTo(8)));
+        assertThat(tags, hasKey("CWE-550"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_ERRH_01_ERR.getTag()));
@@ -125,6 +128,7 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
         assertThat(tags, hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getCweId(), is(equalTo(550)));
     }
 
     @Test

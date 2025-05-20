@@ -43,6 +43,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class InformationDisclosureDebugErrorsScanRuleUnitTest
@@ -94,7 +95,7 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
@@ -103,6 +104,7 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_ERRH_01_ERR.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));
@@ -123,6 +125,7 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         Alert alert = alerts.get(0);
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getCweId(), is(equalTo(1295)));
     }
 
     @Test
@@ -157,7 +160,6 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         assertThat(alert.getUri(), equalTo(URI));
         assertThat(alert.getRisk(), equalTo(Alert.RISK_LOW));
         assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
-        assertThat(alert.getCweId(), equalTo(200));
         assertThat(alert.getWascId(), equalTo(13));
         assertThat(alert.getEvidence(), equalTo(debugError));
     }
@@ -175,7 +177,6 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         expectedAlerts++;
         assertThat(alertsRaised.size(), equalTo(expectedAlerts));
         Alert alert = alertsRaised.get(expectedAlerts - 1);
-        assertThat(alert.getCweId(), equalTo(200));
         assertThat(alert.getWascId(), equalTo(13));
         assertThat(alert.getEvidence(), equalTo(DEFAULT_ERROR_MESSAGE));
 
@@ -189,7 +190,6 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         expectedAlerts++;
         assertThat(alertsRaised.size(), equalTo(expectedAlerts));
         alert = alertsRaised.get(expectedAlerts - 1);
-        assertThat(alert.getCweId(), equalTo(200));
         assertThat(alert.getWascId(), equalTo(13));
         assertThat(alert.getEvidence(), equalTo(DEFAULT_ERROR_MESSAGE.toLowerCase()));
 
@@ -203,7 +203,6 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         expectedAlerts++;
         assertThat(alertsRaised.size(), equalTo(expectedAlerts));
         alert = alertsRaised.get(expectedAlerts - 1);
-        assertThat(alert.getCweId(), equalTo(200));
         assertThat(alert.getWascId(), equalTo(13));
         assertThat(alert.getEvidence(), equalTo(DEFAULT_ERROR_MESSAGE.toUpperCase()));
     }
@@ -290,7 +289,6 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getCweId(), equalTo(200));
         assertThat(alertsRaised.get(0).getWascId(), equalTo(13));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(DEFAULT_ERROR_MESSAGE));
     }
@@ -310,7 +308,6 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         expectedAlerts++;
         assertThat(alertsRaised.size(), equalTo(expectedAlerts));
         Alert alert = alertsRaised.get(expectedAlerts - 1);
-        assertThat(alert.getCweId(), equalTo(200));
         assertThat(alert.getWascId(), equalTo(13));
         assertThat(alert.getEvidence(), equalTo(DEFAULT_ERROR_MESSAGE));
 
@@ -347,7 +344,6 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         expectedAlerts++;
         assertThat(alertsRaised.size(), equalTo(expectedAlerts));
         alert = alertsRaised.get(expectedAlerts - 1);
-        assertThat(alert.getCweId(), equalTo(200));
         assertThat(alert.getWascId(), equalTo(13));
         assertThat(alert.getEvidence(), equalTo(debugError));
     }

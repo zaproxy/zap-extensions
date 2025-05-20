@@ -24,6 +24,7 @@ import java.awt.Frame;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import org.apache.logging.log4j.LogManager;
@@ -41,7 +42,9 @@ import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
+import org.zaproxy.zap.extension.zest.ZestStatementFromJson;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestClientLaunch;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 
@@ -63,6 +66,11 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     private static final String FIELD_BROWSER = "zest.dialog.script.label.browser";
     private static final String ERROR_CLIENT = "zest.dialog.script.error.client";
     private static final String THREAD_PREFIX = "ZAP-client-browser-";
+
+    private static List<String> BROWSERS =
+            List.of(
+                    ExtensionSelenium.getName(Browser.FIREFOX),
+                    ExtensionSelenium.getName(Browser.CHROME));
 
     private int threadId = 1;
     private static final Logger LOGGER = LogManager.getLogger(ZestRecordScriptDialog.class);
@@ -86,7 +94,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         this.addTextField(0, FIELD_TITLE, "");
         this.addComboField(0, FIELD_TYPE, this.getScriptTypes(), "", false);
         this.addComboField(0, FIELD_RECORD, this.getRecordTypes(), "", false);
-        this.addComboField(0, FIELD_BROWSER, getBrowsers(), "", false);
+        this.addComboField(0, FIELD_BROWSER, BROWSERS, "", false);
 
         this.addNodeSelectField(0, FIELD_CLIENT_NODE, node, true, false);
 
@@ -146,6 +154,8 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
                 list.add(Constant.messages.getString(st.getI18nKey()));
             }
         }
+        // Alphabetic order best, and it just so happens Auth scripts will appear at the top
+        Collections.sort(list);
 
         return list;
     }
@@ -170,16 +180,6 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     private boolean isServerSide() {
         return this.getStringValue(FIELD_RECORD)
                 .equals(Constant.messages.getString("zest.dialog.script.record.type.server"));
-    }
-
-    private List<String> getBrowsers() {
-        List<String> browsers = new ArrayList<>();
-        // String firefox = Browser.FIREFOX.getId();
-        String chrome = Browser.CHROME.getId();
-
-        // browsers.add(Character.toUpperCase(firefox.charAt(0)) + firefox.substring(1));
-        browsers.add(Character.toUpperCase(chrome.charAt(0)) + chrome.substring(1));
-        return browsers;
     }
 
     private List<String> getSites() {
@@ -263,6 +263,15 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
             }
             String url = this.getStringValue(FIELD_CLIENT_NODE);
             String browser = this.getStringValue(FIELD_BROWSER);
+            extension.addToParent(
+                    scriptNode,
+                    new ZestClientLaunch(
+                            ZestStatementFromJson.WINDOW_HANDLE_BROWSER_EXTENSION,
+                            browser,
+                            url.toLowerCase(Locale.ROOT),
+                            false),
+                    false,
+                    false);
             extension.startClientRecording(url);
             Thread browserThread =
                     new Thread(() -> launchBrowser(url, browser), THREAD_PREFIX + threadId++);

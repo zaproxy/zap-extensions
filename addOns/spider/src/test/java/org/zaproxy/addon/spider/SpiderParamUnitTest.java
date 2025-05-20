@@ -31,6 +31,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 import org.parosproxy.paros.Constant;
@@ -155,5 +156,28 @@ class SpiderParamUnitTest {
         param.load(configuration);
         // Then
         assertThat(param.isParseDsStore(), is(equalTo(enabled)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-10, 0", "-1, 0", "0, 0", "1, 1", "10, 10"})
+    void shouldLoadConfigWithMaxParseSizeBytes(int value, int expected) {
+        // Given
+        String configKey = "spider.maxParseSizeBytes";
+        configuration = new ZapXmlConfiguration();
+        configuration.setProperty(configKey, value);
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(param.getMaxParseSizeBytes(), is(equalTo(expected)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-10, 0", "-1, 0", "0, 0", "1, 1", "10, 10"})
+    void shouldSetAndPersistMaxParseSizeBytes(int value, int expected) {
+        // Given / When
+        param.setMaxParseSizeBytes(value);
+        // Then
+        assertThat(param.getMaxParseSizeBytes(), is(equalTo(expected)));
+        assertThat(configuration.getInt("spider.maxParseSizeBytes"), is(equalTo(expected)));
     }
 }

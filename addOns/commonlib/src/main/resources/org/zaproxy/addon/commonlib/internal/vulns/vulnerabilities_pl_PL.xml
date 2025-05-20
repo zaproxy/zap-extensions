@@ -438,8 +438,19 @@ Brak możliwości wyszukania komentarzy HTML / Skryptu przed przekazaniem do śr
 Numery wersji oprogramowania i szczegółowe komunikaty o błędach (takie jak numery wersji ASP.NET) są przykładami niewłaściwych konfiguracji serwerów. Ta informacja jest przydatna atakującemu, dostarczając szczegółowych informacji o strukturze, językach lub predefiniowanych funkcjach wykorzystywanych przez aplikację internetową. Większość domyślnych konfiguracji serwerów udostępnia numery wersji oprogramowania i szczegółowe komunikaty o błędach do celów debugowania i rozwiązywania problemów. Zmiany w konfiguracji mogą być zrobione do wyłączenia tych funkcji, zapobiegając wyświetlania tych informacji.
 
 Strony, które podają różne odpowiedzi w oparciu o ważność danych, mogą również doprowadzić do wycieku informacji; w szczególności, gdy dane uznane za poufne ujawniają się w wyniku projektu aplikacji internetowej. Przykłady poufnych danych obejmują(ale nie są limitowane): numery kont, identyfikatory użytkowników(Numer prawa jazdy, Numer paszportu, Numery Ubezpieczenia Społecznego itd.) oraz konkretne informacje o użytkownikach (hasła, sesje, adresy). Wyciek informacji w tym kontekście dotyczy ujawnienia kluczowych danych użytkownika uznanych za poufne lub tajne, które nie powinny być ujawniane w zwykłym widoku, nawet dla użytkownika. Numery kart kredytowych i inne ściśle regulowane informacje są pierwszorzędnymi przykładami danych użytkowników, które należy dodatkowo zabezpieczyć przed ujawnieniem lub wyciekiem, nawet przy odpowiednim szyfrowaniu i kontroli dostępu, które już istnieją.</desc>
-	<solution>Podziel twój system na "bezpieczne" strefy gdzie zaufane granice mogą być jednoznacznie narysowane. Nie pozwól poufnym danym wyjść poza granice zaufania i zawsze uważaj podczas kontaktowania się z przedziałem poza bezpiecznym obszarem.</solution>
-	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
+	<solution>
+    * Have a clear definition of which information is considered sensitive and which isn't. Take privacy laws, regulatory requirements, and business needs into account.
+    * Store sensitive data only if you have to.
+    * Implement checks for sensitive information in your devops pipeline. Steps that could be taken include stripping developer comments, removing debugging information and sensitive logs, as well as making error messages less verbose.
+    * In situations where the sensitive information must be used, for instance, backend microservices, ensure trust boundaries are appropriately drawn. Example: set up an isolated, well secured kubernetes cluster with well configured access controls, then only grant access to authorized clients.
+    * In situations where error messages need to be returned to the user, use messages that are as generic as possible eg "invalid credentials" instead of "invalid username" or "invalid password".
+    * When using third party technologies, understand how the software works, its configuration, as well as security risks of using it. After understanding the technology, use only the features that you need and disable everything else.
+    * Detailed debug messages are sometimes necessary, for instance, when adding a new feature to an application. In this case, separate the development environment from the production one. Ensure appropriate access controls are implemented for the development environments.
+    * All sensitive data should be encrypted before storage. Ensure up-to-date and strong standard algorithms, protocols, and keys are in place; use proper key management.
+</solution>
+<reference>https://portswigger.net/web-security/information-disclosure</reference>
+<reference>https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure</reference>
+<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
 <vuln_items>wasc_14</vuln_items>
@@ -989,7 +1000,17 @@ Istnieją dwa główne typy procesów, które wymagają sprawdzenia poprawności
 "Kontrola przepływu" odnosi się do procesów wieloetapowych, które wymagają, aby każdy krok był wykonywany w określonej kolejności przez użytkownika. Gdy atakujący wykonuje krok nieprawidłowo lub niezgodnie z kolejnością, kontrola dostępu może zostać ominięta i może wystąpić błąd integralności aplikacji. Przykładami wieloetapowych procesów są przelewy, odzyskiwanie hasła, przeprowadzenie zakupu i rejestracja konta.
 
 "Logika biznesowa" odnosi się do kontekstu, w którym proces będzie wykonywany zgodnie z wymogami biznesowymi. Wykorzystanie słabości logiki biznesowej wymaga znajomości biznesu; jeśli nie jest potrzebna wiedza, aby ją wykorzystać, najprawdopodobniej nie jest to błąd logiki biznesowej. Z tego powodu typowe środki bezpieczeństwa, takie jak skanowanie i weryfikacja kodu, nie znajdą tej klasy słabości. Jedno z podejść do testowania oferuje OWASP w swoim Przewodniku Testowania.</desc>
-	<solution/>
+	<solution>Make sure that all operations within a multi-step process are either performed entirely or not at all. If one step fails, the changes made must be canceled. Fuzzing inputs is a good way to test for anomalies and to verify the results after the flow completes.
+
+Make sure the correct order of steps in the flow is enforced and that the order cannot be changed or bypassed by the user.
+
+Developers and testers must have a solid understanding of the domain that the application serves.
+
+Do not rely on implicit assumptions about how users or different application parts will behave.
+
+Identify all references to other code that interacts with each component and evaluate the possible side-effects if a malicious actor manipulates these dependencies in unexpected ways.
+
+Maintain clear code, design documents, and data flow diagrams for all transactions and workflows, noting any assumptions made at each stage and what the expected behavior is.</solution>
 	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
 	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>

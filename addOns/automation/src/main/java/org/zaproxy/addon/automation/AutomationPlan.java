@@ -31,6 +31,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -293,6 +294,18 @@ public class AutomationPlan {
         return finished;
     }
 
+    public String toYaml() throws IOException {
+        try (StringWriter writer = new StringWriter()) {
+            Data data = new Data();
+            data.setEnv(this.env.getData());
+            for (AutomationJob job : this.jobs) {
+                data.addJob(job.getData());
+            }
+            writer.append(writeObjectAsString(data));
+            return writer.toString();
+        }
+    }
+
     public boolean save() throws FileNotFoundException, JsonProcessingException {
         if (file == null) {
             LOGGER.error("Cannot save plan as it has no file set");
@@ -306,15 +319,18 @@ public class AutomationPlan {
                 data.addJob(job.getData());
             }
 
-            FilterProvider filters =
-                    new SimpleFilterProvider()
-                            .addFilter(
-                                    DefaultPropertyFilter.FILTER_ID, new DefaultPropertyFilter());
-            writer.println(YAML_OBJECT_MAPPER.writer(filters).writeValueAsString(data));
+            writer.println(writeObjectAsString(data));
         }
         this.changed = false;
         AutomationEventPublisher.publishEvent(AutomationEventPublisher.PLAN_SAVED, this, null);
         return true;
+    }
+
+    public static String writeObjectAsString(Object obj) throws JsonProcessingException {
+        FilterProvider filters =
+                new SimpleFilterProvider()
+                        .addFilter(DefaultPropertyFilter.FILTER_ID, new DefaultPropertyFilter());
+        return YAML_OBJECT_MAPPER.writer(filters).writeValueAsString(obj);
     }
 
     public static class Data {

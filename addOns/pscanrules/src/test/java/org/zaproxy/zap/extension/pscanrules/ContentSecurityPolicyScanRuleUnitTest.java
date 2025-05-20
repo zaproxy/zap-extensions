@@ -37,11 +37,13 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 class ContentSecurityPolicyScanRuleUnitTest
         extends PassiveScannerTest<ContentSecurityPolicyScanRule> {
 
+    // Note: This policy does not include sandbox, report-uri, or plugin-types
     private static final String REASONABLE_POLICY =
             "default-src 'self'; script-src 'self' "
                     + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
@@ -63,13 +65,16 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));
@@ -95,10 +100,10 @@ class ContentSecurityPolicyScanRuleUnitTest
                         .filter(alert -> Alert.RISK_MEDIUM == alert.getRisk())
                         .count();
         // Then
-        assertThat(count, is(equalTo(12)));
+        assertThat(count, is(equalTo(13)));
         assertThat(countInfos, is(equalTo(1L)));
         assertThat(countLows, is(equalTo(3L)));
-        assertThat(countMediums, is(equalTo(8L)));
+        assertThat(countMediums, is(equalTo(9L)));
     }
 
     @Test
@@ -128,7 +133,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         rule.setAlertThreshold(AlertThreshold.LOW);
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(4));
+        assertThat(alertsRaised.size(), equalTo(5));
     }
 
     @Test
@@ -138,7 +143,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(4));
+        assertThat(alertsRaised.size(), equalTo(5));
 
         assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Notices"));
         assertThat(
@@ -151,22 +156,19 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
 
-        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(
+                alertsRaised.get(1).getName(),
+                equalTo("CSP: Failure to Define Directive with No Fallback"));
         assertThat(
                 alertsRaised.get(1).getOtherInfo(),
                 equalTo(
-                        "The following directives either allow wildcard sources (or ancestors), are not "
-                                + "defined, or are overly broadly defined:\nscript-src, style-src, img-src, "
-                                + "connect-src, frame-src, frame-ancestors, font-src, media-src, object-src, "
-                                + "manifest-src, worker-src, form-action\n\nThe directive(s): "
-                                + "frame-ancestors, form-action are among the directives that do not fallback "
-                                + "to default-src, missing/excluding them is the same as allowing anything."));
+                        "The directive(s): frame-ancestors, form-action is/are among the directives that do not fallback to default-src."));
         assertThat(
                 alertsRaised.get(1).getEvidence(),
                 equalTo("default-src: 'none'; report_uri /__cspreport__"));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
-        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-4"));
+        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-13"));
     }
 
     @Test
@@ -178,15 +180,17 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(4));
-        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(alertsRaised.size(), equalTo(5));
+        assertThat(
+                alertsRaised.get(1).getName(),
+                equalTo("CSP: Failure to Define Directive with No Fallback"));
         assertThat(alertsRaised.get(1).getOtherInfo(), not(containsString("frame-ancestors")));
         assertThat(
                 alertsRaised.get(1).getEvidence(),
                 equalTo("default-src: 'none'; report_uri /__cspreport__; frame-ancestors 'none'"));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
-        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-4"));
+        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-13"));
     }
 
     @Test
@@ -213,7 +217,7 @@ class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    void shouldAlertOnWildcardFrameAncestorsDirective() {
+    void shouldAlertOnNoFallbackFrameAncestorsDirective() {
         // Given
         HttpMessage msg =
                 createHttpMessage("frame-ancestors *; default-src 'self'; form-action 'none'");
@@ -222,20 +226,19 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
 
-        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("CSP: Failure to Define Directive with No Fallback"));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
                 equalTo(
-                        "The following directives either allow wildcard sources (or ancestors), are not "
-                                + "defined, or are overly broadly defined:\nframe-ancestors"
-                                + "\n\nThe directive(s): frame-ancestors are among the directives that do not "
-                                + "fallback to default-src, missing/excluding them is the same as allowing anything."));
+                        "The directive(s): frame-ancestors is/are among the directives that do not fallback to default-src."));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo("frame-ancestors *; default-src 'self'; form-action 'none'"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
-        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-4"));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-13"));
     }
 
     @Test
@@ -422,7 +425,7 @@ class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
-    void shouldAlertWithWildcardDirectiveWhenApplicableAndIgnoreTrustedTypesInMeta() {
+    void shouldAlertWithNoFallbackWhenApplicableAndIgnoreTrustedTypesInMeta() {
         // Given
         String policy = "default-src none; report-to csp-endpoint; require-trusted-types 'script'";
         HttpMessage msg = createHttpMessage();
@@ -439,16 +442,15 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(alertsRaised.size(), equalTo(2));
         assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Notices"));
         Alert alert = alertsRaised.get(1);
-        assertThat(alert.getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(alert.getName(), equalTo("CSP: Failure to Define Directive with No Fallback"));
         assertThat(
                 alert.getOtherInfo(),
                 equalTo(
-                        "The following directives either allow wildcard sources (or ancestors), are not defined, or are overly broadly defined:\n"
-                                + "form-action\n\nThe directive(s): form-action are among the directives that do not fallback to default-src, missing/excluding them is the same as allowing anything."));
+                        "The directive(s): form-action is/are among the directives that do not fallback to default-src."));
         assertThat(alert.getEvidence(), equalTo(policy));
         assertThat(alert.getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
-        assertThat(alert.getAlertRef(), equalTo("10055-4"));
+        assertThat(alert.getAlertRef(), equalTo("10055-13"));
     }
 
     @ParameterizedTest
@@ -473,14 +475,22 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(3));
+        assertThat(alertsRaised.size(), equalTo(4));
         // Verify the specific alerts
-        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: script-src unsafe-inline"));
-        assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
-        assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
-        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-5"));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("CSP: Failure to Define Directive with No Fallback"));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-13"));
 
-        assertThat(alertsRaised.get(2).getName(), equalTo("CSP: style-src unsafe-inline"));
+        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-4"));
+
+        assertThat(alertsRaised.get(2).getName(), equalTo("CSP: script-src unsafe-inline"));
+        assertThat(alertsRaised.get(2).getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(alertsRaised.get(2).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+        assertThat(alertsRaised.get(2).getAlertRef(), equalTo("10055-5"));
+
+        assertThat(alertsRaised.get(3).getName(), equalTo("CSP: style-src unsafe-inline"));
     }
 
     @Test
@@ -490,14 +500,22 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(3));
+        assertThat(alertsRaised.size(), equalTo(4));
         // Verify the specific alerts
-        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: script-src unsafe-inline"));
-        assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
-        assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
-        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-5"));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("CSP: Failure to Define Directive with No Fallback"));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-13"));
 
-        assertThat(alertsRaised.get(2).getName(), equalTo("CSP: style-src unsafe-inline"));
+        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-4"));
+
+        assertThat(alertsRaised.get(2).getName(), equalTo("CSP: script-src unsafe-inline"));
+        assertThat(alertsRaised.get(2).getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(alertsRaised.get(2).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+        assertThat(alertsRaised.get(2).getAlertRef(), equalTo("10055-5"));
+
+        assertThat(alertsRaised.get(3).getName(), equalTo("CSP: style-src unsafe-inline"));
     }
 
     @Test
@@ -507,12 +525,12 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(3));
+        assertThat(alertsRaised.size(), equalTo(4));
         // Verify the specific alerts
-        assertThat(alertsRaised.get(2).getName(), equalTo("CSP: script-src unsafe-eval"));
-        assertThat(alertsRaised.get(2).getRisk(), equalTo(Alert.RISK_MEDIUM));
-        assertThat(alertsRaised.get(2).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
-        assertThat(alertsRaised.get(2).getAlertRef(), equalTo("10055-10"));
+        assertThat(alertsRaised.get(3).getName(), equalTo("CSP: script-src unsafe-eval"));
+        assertThat(alertsRaised.get(3).getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(alertsRaised.get(3).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+        assertThat(alertsRaised.get(3).getAlertRef(), equalTo("10055-10"));
     }
 
     @Test
@@ -525,23 +543,33 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(3));
+        assertThat(alertsRaised.size(), equalTo(4));
         // Verify the specific alerts
-        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("CSP: Failure to Define Directive with No Fallback"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("style-src 'unsafe-inline'"));
-        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-4"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                equalTo(
+                        "The directive(s): frame-ancestors, form-action is/are among the directives that do not fallback to default-src."));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-13"));
 
-        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: script-src unsafe-inline"));
-        assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
-        assertThat(alertsRaised.get(1).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: Wildcard Directive"));
         assertThat(alertsRaised.get(1).getEvidence(), equalTo("style-src 'unsafe-inline'"));
-        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-5"));
+        assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-4"));
 
-        assertThat(alertsRaised.get(2).getName(), equalTo("CSP: style-src unsafe-inline"));
+        assertThat(alertsRaised.get(2).getName(), equalTo("CSP: script-src unsafe-inline"));
         assertThat(alertsRaised.get(2).getRisk(), equalTo(Alert.RISK_MEDIUM));
         assertThat(alertsRaised.get(2).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
         assertThat(alertsRaised.get(2).getEvidence(), equalTo("style-src 'unsafe-inline'"));
-        assertThat(alertsRaised.get(2).getAlertRef(), equalTo("10055-6"));
+        assertThat(alertsRaised.get(2).getAlertRef(), equalTo("10055-5"));
+
+        assertThat(alertsRaised.get(3).getName(), equalTo("CSP: style-src unsafe-inline"));
+        assertThat(alertsRaised.get(3).getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(alertsRaised.get(3).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+        assertThat(alertsRaised.get(3).getEvidence(), equalTo("style-src 'unsafe-inline'"));
+        assertThat(alertsRaised.get(3).getAlertRef(), equalTo("10055-6"));
     }
 
     @Test
@@ -556,9 +584,11 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Then
         assertThat(alertsRaised.size(), equalTo(3));
         // Verify the specific alerts
-        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("CSP: Failure to Define Directive with No Fallback"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("default-src 'unsafe-inline'"));
-        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-4"));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-13"));
 
         assertThat(alertsRaised.get(1).getName(), equalTo("CSP: script-src unsafe-inline"));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
@@ -584,9 +614,11 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Then
         assertThat(alertsRaised.size(), equalTo(2));
         // Verify the specific alerts
-        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("CSP: Failure to Define Directive with No Fallback"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(policy));
-        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-4"));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-13"));
 
         assertThat(alertsRaised.get(1).getName(), equalTo("CSP: script-src unsafe-hashes"));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
@@ -606,9 +638,11 @@ class ContentSecurityPolicyScanRuleUnitTest
         // Then
         assertThat(alertsRaised.size(), equalTo(2));
         // Verify the specific alerts
-        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("CSP: Failure to Define Directive with No Fallback"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(policy));
-        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-4"));
+        assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-13"));
 
         assertThat(alertsRaised.get(1).getName(), equalTo("CSP: style-src unsafe-hashes"));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
@@ -647,6 +681,38 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
                 is(equalTo("Warnings:\nThe prefetch-src directive has been deprecated\n")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                // No form-action
+                "default-src 'self'; script-src 'self' "
+                        + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
+                        + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
+                        + "fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self';",
+                // No frame-ancestors
+                "default-src 'self'; script-src 'self' "
+                        + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
+                        + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
+                        + "fonts.gstatic.com; worker-src 'self'; form-action 'none'"
+            })
+    void shouldAlertWhenMissingRelevantDirectiveWithoutFallback(String policy) {
+        // Given
+        HttpMessage msg = createHttpMessage("", policy);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(equalTo(1)));
+        assertThat(
+                alertsRaised.get(0).getDescription(),
+                is(
+                        equalTo(
+                                "The Content Security Policy fails to define one of the directives that has no "
+                                        + "fallback. Missing/excluding them is the same as allowing anything.")));
+        assertThat(
+                alertsRaised.get(0).getName(),
+                equalTo("CSP: Failure to Define Directive with No Fallback"));
     }
 
     private static HttpMessage createHttpMessageWithReasonableCsp(String cspHeaderName) {

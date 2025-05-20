@@ -28,14 +28,15 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -147,8 +148,25 @@ class AjaxSpiderJobUnitTest {
         // Given
         AutomationProgress progress = new AutomationProgress();
         String yamlStr =
-                "parameters:\n"
-                        + "  context: context\n  url: url\n  user: user\n  runOnlyIfModern: true";
+                """
+                parameters:
+                  context: context
+                  url: url
+                  user: user
+                  maxDuration: 11
+                  maxCrawlDepth: 12
+                  numberOfBrowsers: 13
+                  browserId: mybrowser
+                  runOnlyIfModern: true
+                  inScopeOnly: false
+                  enableExtensions: true
+                  clickDefaultElems: false
+                  clickElemsOnce: false
+                  eventWait: 2000
+                  maxCrawlStates: 14
+                  randomInputs: false
+                  reloadWait: 3000
+                """;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
 
@@ -162,7 +180,19 @@ class AjaxSpiderJobUnitTest {
         assertThat(job.getParameters().getContext(), is(equalTo("context")));
         assertThat(job.getParameters().getUrl(), is(equalTo("url")));
         assertThat(job.getParameters().getUser(), is(equalTo("user")));
+        assertThat(job.getParameters().getMaxDuration(), is(equalTo(11)));
+        assertThat(job.getParameters().getMaxCrawlDepth(), is(equalTo(12)));
+        assertThat(job.getParameters().getNumberOfBrowsers(), is(equalTo(13)));
+        assertThat(job.getParameters().getBrowserId(), is(equalTo("mybrowser")));
         assertThat(job.getParameters().getRunOnlyIfModern(), is(equalTo(Boolean.TRUE)));
+        assertThat(job.getParameters().getInScopeOnly(), is(equalTo(Boolean.FALSE)));
+        assertThat(job.getParameters().getEnableExtensions(), is(equalTo(Boolean.TRUE)));
+        assertThat(job.getParameters().getClickDefaultElems(), is(equalTo(Boolean.FALSE)));
+        assertThat(job.getParameters().getClickElemsOnce(), is(equalTo(Boolean.FALSE)));
+        assertThat(job.getParameters().getEventWait(), is(equalTo(2000)));
+        assertThat(job.getParameters().getMaxCrawlStates(), is(equalTo(14)));
+        assertThat(job.getParameters().getRandomInputs(), is(equalTo(Boolean.FALSE)));
+        assertThat(job.getParameters().getReloadWait(), is(equalTo(3000)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
@@ -177,7 +207,7 @@ class AjaxSpiderJobUnitTest {
                 job.getConfigParameters(new AjaxSpiderParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(10)));
+        assertThat(params.size(), is(equalTo(11)));
         assertThat(params.containsKey("maxDuration"), is(equalTo(true)));
         assertThat(params.containsKey("browserId"), is(equalTo(true)));
         assertThat(params.containsKey("clickDefaultElems"), is(equalTo(true)));
@@ -189,6 +219,7 @@ class AjaxSpiderJobUnitTest {
         assertThat(params.containsKey("numberOfBrowsers"), is(equalTo(true)));
         assertThat(params.containsKey("randomInputs"), is(equalTo(true)));
         assertThat(params.containsKey("reloadWait"), is(equalTo(true)));
+        assertThat(params.containsKey("enableExtensions"), is(equalTo(true)));
     }
 
     private static class AjaxSpiderParamWrapper {
@@ -212,6 +243,29 @@ class AjaxSpiderJobUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.getErrors(), is(empty()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldLoadTemplate(boolean minTemplate) {
+        // Given
+        AjaxSpiderJob job = new AjaxSpiderJob();
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data;
+        if (minTemplate) {
+            data = yaml.load(job.getTemplateDataMin());
+        } else {
+            data = yaml.load(job.getTemplateDataMax());
+        }
+        job.setJobData(((LinkedHashMap<?, ?>) ((ArrayList<?>) data).get(0)));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
     @Test

@@ -19,12 +19,14 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,6 +51,7 @@ import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.parosproxy.paros.core.scanner.PluginFactoryTestHelper;
 import org.parosproxy.paros.core.scanner.PluginTestHelper;
 import org.yaml.snakeyaml.Yaml;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.PolicyDefinition.Rule;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
@@ -348,5 +351,21 @@ class PolicyDefinitionUnitTest {
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(policyDefinition.getScanPolicy("test", progress), is(nullValue()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 50000, 99999})
+    void shouldAlwaysIncludeIdWhenSerializingARule(int id) throws JsonProcessingException {
+        // Given
+        Rule rule =
+                new Rule(
+                        id,
+                        "Test Rule",
+                        AttackStrength.MEDIUM.name(),
+                        AlertThreshold.MEDIUM.name());
+        // When
+        String ruleYaml = AutomationPlan.writeObjectAsString(rule);
+        // Then
+        assertThat(ruleYaml, containsString("id: " + id));
     }
 }

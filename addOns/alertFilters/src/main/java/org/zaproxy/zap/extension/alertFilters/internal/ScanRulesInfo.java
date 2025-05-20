@@ -34,10 +34,10 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.PassiveScanData;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -49,7 +49,7 @@ public class ScanRulesInfo extends AbstractList<ScanRulesInfo.Entry> {
     private Map<String, Entry> entriesById;
 
     public ScanRulesInfo(
-            ExtensionActiveScan extensionActiveScan, ExtensionPassiveScan extensionPassiveScan) {
+            ExtensionActiveScan extensionActiveScan, ExtensionPassiveScan2 extensionPassiveScan) {
         entries = new ArrayList<>();
         entriesById = new HashMap<>();
         ScanPolicy sp = extensionActiveScan.getPolicyManager().getDefaultScanPolicy();
@@ -57,7 +57,8 @@ public class ScanRulesInfo extends AbstractList<ScanRulesInfo.Entry> {
             addEntry(scanRule, scanRule.getId(), scanRule.getName());
         }
         if (extensionPassiveScan != null) {
-            for (PluginPassiveScanner scanRule : extensionPassiveScan.getPluginPassiveScanners()) {
+            for (PluginPassiveScanner scanRule :
+                    extensionPassiveScan.getPassiveScannersManager().getScanRules()) {
                 addEntry(scanRule, scanRule.getPluginId(), scanRule.getName());
             }
         }

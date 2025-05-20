@@ -79,6 +79,9 @@
     "cats": [
       27
     ],
+    "cookies": {
+      "CFID": ""
+    },
     "description": "ColdFusion Markup Language (CFML), is a scripting language for web development that runs on the JVM, the .NET framework, and Google App Engine.",
     "icon": "CFML.png",
     "website": "https://adobe.com/products/coldfusion-family.html"
@@ -358,6 +361,20 @@
     ],
     "website": "https://www.ctt.pt"
   },
+  "CUE": {
+    "cats": [
+      1
+    ],
+    "description": "CUE is a unified media enterprise platform tailored for news media organizations seeking efficiency and revenue growth in the media market.",
+    "icon": "CUE.svg",
+    "pricing": [
+      "poa"
+    ],
+    "scripts": [
+      "\\.cue\\.cloud"
+    ],
+    "website": "https://www.stibodx.com/"
+  },
   "Caast.tv": {
     "cats": [
       5
@@ -448,7 +465,7 @@
     "cpe": "cpe:2.3:a:caddyserver:caddy:*:*:*:*:*:*:*:*",
     "description": "Caddy is a Go-based web server known for its simplicity and automatic HTTPS features.",
     "headers": {
-      "Server": "^Caddy$"
+      "Server": "Caddy"
     },
     "icon": "caddy.svg",
     "implies": [
@@ -795,6 +812,22 @@
     ],
     "saas": true,
     "website": "https://www.canto.com"
+  },
+  "Cantrip": {
+    "cats": [
+      51
+    ],
+    "description": "Cantrip is a tool that uses artificial intelligence to generate personalized websites.",
+    "meta": {
+      "author": "Cantrip\\.io",
+      "generator": "^Cantrip Website Builder$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://cantrip.io"
   },
   "Canva": {
     "cats": [
@@ -1240,6 +1273,29 @@
     ],
     "website": "https://www.cartkit.com"
   },
+  "CartPops": {
+    "cats": [
+      6
+    ],
+    "description": "CartPops is a conversion-optimized AJAX fly-out cart solution for WooCommerce that replaces the traditional cart page and is compatible with any theme.",
+    "icon": "CartPops.svg",
+    "implies": [
+      "WooCommerce"
+    ],
+    "js": {
+      "CartPops.drawer": "",
+      "CartPopsConfig": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "saas": true,
+    "website": "https://cartpops.com"
+  },
   "CartStack": {
     "cats": [
       98
@@ -1296,6 +1352,21 @@
       "cdn\\.cartsguru\\.io/"
     ],
     "website": "https://www.carts.guru"
+  },
+  "Cartum": {
+    "cats": [
+      6
+    ],
+    "description": "Cartum is a platform offering essential tools for launching and managing online stores.",
+    "js": {
+      "Horoshop.Widgets": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://cartum.io"
   },
   "Carussel": {
     "cats": [
@@ -1475,6 +1546,24 @@
     ],
     "website": "https://celeritastransporte.com"
   },
+  "Cellxpert": {
+    "cats": [
+      71
+    ],
+    "description": "Cellxpert is a SaaS platform for affiliate and partner program management, providing tools for tracking, reporting, and optimizing performance-based marketing campaigns.",
+    "dom": [
+      "link[href*='.cellxpert.com/']"
+    ],
+    "icon": "Cellxpert.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.cellxpert\\.com/"
+    ],
+    "website": "https://www.cellxpert.com"
+  },
   "Celum": {
     "cats": [
       95
@@ -1502,6 +1591,9 @@
     },
     "icon": "cendyn.svg",
     "saas": true,
+    "scriptSrc": [
+      "plugins\\.traveltripper\\.io/"
+    ],
     "website": "https://www.cendyn.com"
   },
   "Censhare": {
@@ -1914,6 +2006,22 @@
     ],
     "website": "https://www.chatbot.com"
   },
+  "ChatFood": {
+    "cats": [
+      52
+    ],
+    "description": "ChatFood is a platform providing mobile ordering tailored for hospitality brands.",
+    "icon": "ChatFood.svg",
+    "js": {
+      "ChatFoodWidget": "",
+      "ChatFoodWidgetClient": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.chatfood.io"
+  },
   "ChatGen": {
     "cats": [
       52
@@ -2025,6 +2133,25 @@
     ],
     "website": "https://chatango.com"
   },
+  "Chatbaby": {
+    "cats": [
+      52
+    ],
+    "description": "Chatbaby is a service for creating custom ChatGPT chatbots tailored to website content.",
+    "icon": "Chatbaby.svg",
+    "js": {
+      "$$chatbaby": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.chatbaby\\.co/"
+    ],
+    "website": "https://chatbaby.co"
+  },
   "Chatbase": {
     "cats": [
       52
@@ -2043,6 +2170,23 @@
     "saas": true,
     "website": "https://www.chatbase.co"
   },
+  "Chatgo": {
+    "cats": [
+      52
+    ],
+    "description": "Chatgo is a messenger widget designed for integration with websites and e-shops, enabling communication and engagement.",
+    "icon": "Chatgo.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.chatgo\\.cz"
+    ],
+    "website": "https://www.chatgo.cz"
+  },
   "Chatify": {
     "cats": [
       52
@@ -2060,6 +2204,65 @@
       "cdn\\.chatify\\.com/"
     ],
     "website": "https://www.chatify.com"
+  },
+  "Chative": {
+    "cats": [
+      52
+    ],
+    "description": "Chative is a platform that provides live chat and chatbot solutions for real-time customer interactions.",
+    "icon": "Chative.svg",
+    "js": {
+      "Chative.app_id": "",
+      "ChativeApi": "",
+      "ChativeEvents": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.chative\\.io/"
+    ],
+    "website": "https://chative.io"
+  },
+  "Chatlio": {
+    "cats": [
+      52
+    ],
+    "description": "Chatlio is a live chat solution that integrates with Slack, enabling real-time communication and customer support directly within the Slack platform.",
+    "icon": "Chatlio.svg",
+    "js": {
+      "ChatlioReact": "",
+      "ChatlioReactDOM": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "w\\.chatlio\\.com/"
+    ],
+    "website": "https://chatlio.com"
+  },
+  "Chatlyn": {
+    "cats": [
+      52,
+      53
+    ],
+    "description": "Chatlyn is an AI-powered customer engagement platform designed to automate client communication and optimize engagement, enhancing customer satisfaction.",
+    "icon": "Chatlyn.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.chatlyn\\.com/"
+    ],
+    "website": "https://chatlyn.com"
   },
   "Chatra": {
     "cats": [
@@ -2107,6 +2310,44 @@
     ],
     "website": "https://www.chatsimple.ai"
   },
+  "Chatt": {
+    "cats": [
+      41,
+      52,
+      90
+    ],
+    "description": "Chatt is an all-in-one platform that provides businesses with reviews, messaging, and payment solutions.",
+    "icon": "Chatt.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scripts": [
+      "getchatt\\.com"
+    ],
+    "website": "https://getchatt.com"
+  },
+  "Chatway": {
+    "cats": [
+      52
+    ],
+    "description": "Chatway is a live chat tool for websites, designed to facilitate customer engagement through real-time conversations.",
+    "icon": "Chatway.svg",
+    "js": {
+      "$chatway": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.chatway\\.app/"
+    ],
+    "website": "https://chatway.app"
+  },
   "Chatwoot": {
     "cats": [
       52
@@ -2125,6 +2366,39 @@
     ],
     "saas": true,
     "website": "https://www.chatwoot.com"
+  },
+  "Chaty": {
+    "cats": [
+      52
+    ],
+    "description": "Chaty is a communication tool that enables customer engagement through messaging apps like WhatsApp and Messenger.",
+    "icon": "Chaty.svg",
+    "js": {
+      "close_chaty": "",
+      "launch_chaty": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.chaty\\.app/"
+    ],
+    "website": "https://chaty.app/"
+  },
+  "Chayns": {
+    "cats": [
+      1
+    ],
+    "description": "Chayns is a web platform that enables businesses and organizations to create customizable websites and apps, providing tools for digital communication, content management, and ecommerce integration.",
+    "icon": "Chayns.svg",
+    "saas": true,
+    "scriptSrc": [
+      "api\\.chayns-static\\.space"
+    ],
+    "website": "https://chayns.site"
   },
   "Checkfront": {
     "cats": [
@@ -2501,13 +2775,16 @@
     "cats": [
       1
     ],
-    "description": "Next-generation engagement tools for 21st century democracy.",
+    "description": "Citizen Space is an engagement platform by Delib that enhances democratic processes globally.",
     "dom": [
       "a[href='https://www.delib.net/citizen_space']"
     ],
     "icon": "CitizenSpace.svg",
+    "js": {
+      "cs_embedded_content": ""
+    },
     "pricing": [
-      "payg"
+      "poa"
     ],
     "saas": true,
     "scriptSrc": [
@@ -2719,6 +2996,25 @@
     ],
     "website": "https://www.classcreator.com"
   },
+  "ClassFit": {
+    "cats": [
+      72
+    ],
+    "description": "ClassFit is a provider of a booking and scheduling software for fitness centers.",
+    "icon": "ClassFit.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.classfit\\.com"
+    ],
+    "scripts": [
+      "\\.classfit\\.com"
+    ],
+    "website": "https://classfit.com"
+  },
   "Classeh": {
     "cats": [
       21
@@ -2766,6 +3062,19 @@
       "classy\\.org"
     ],
     "website": "https://www.classy.org/"
+  },
+  "Clear": {
+    "cats": [
+      16
+    ],
+    "description": "Clear is a platform that offers secure identity verification.",
+    "icon": "Clear.svg",
+    "js": {
+      "ClearMe.Environments": "",
+      "clearMeClientID": ""
+    },
+    "saas": true,
+    "website": "https://www.clearme.com"
   },
   "ClearSale": {
     "cats": [
@@ -3164,6 +3473,22 @@
     "saas": true,
     "website": "https://www.clicksign.com"
   },
+  "Clickskeks": {
+    "cats": [
+      67
+    ],
+    "description": "Clickskeks is an all-in-one cookie consent management platform for businesses.",
+    "icon": "Clickskeks.svg",
+    "js": {
+      "Clickskeks": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.clickskeks.at/"
+  },
   "Clicktripz": {
     "cats": [
       36
@@ -3214,6 +3539,24 @@
       "static\\.getclicky\\.com"
     ],
     "website": "https://getclicky.com"
+  },
+  "Client Chat Live": {
+    "cats": [
+      52
+    ],
+    "description": "Client Chat Live is a tool that converts website visitors into clients through live chat functionality.",
+    "dom": [
+      "link[href*='platform.clientchatlive.com/']"
+    ],
+    "icon": "ClientChatLive.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.clientchatlive\\.com/"
+    ],
+    "website": "https://clientchatlive.com"
   },
   "ClientJS": {
     "cats": [
@@ -3472,8 +3815,12 @@
     "cpe": "cpe:2.3:a:cloudflare:cloudflare:*:*:*:*:*:*:*:*",
     "description": "Cloudflare is a web-infrastructure and website-security company, providing content-delivery-network services, DDoS mitigation, Internet security, and distributed domain-name-server services.",
     "dns": {
-      "NS": "\\.cloudflare\\.com",
-      "SOA": "\\.cloudflare\\.com"
+      "NS": [
+        "\\.cloudflare\\.com"
+      ],
+      "SOA": [
+        "\\.cloudflare\\.com"
+      ]
     },
     "dom": [
       "img[src*='//cdn.cloudflare']"
@@ -3770,6 +4117,24 @@
     ],
     "website": "https://clutch.co/content/add-review-widget-your-website"
   },
+  "CmonSite": {
+    "cats": [
+      6
+    ],
+    "description": "CmonSite is a French-based platform for building websites and ecommerce stores.",
+    "icon": "CmonSite.svg",
+    "js": {
+      "BASEURL": "www\\.cmonsite\\.fr",
+      "CmonSite.CookieManagement": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.cmonsite.fr"
+  },
   "CoConstruct": {
     "cats": [
       19
@@ -3886,6 +4251,9 @@
       "exp_tracker": ""
     },
     "cpe": "cpe:2.3:a:codeigniter:codeigniter:*:*:*:*:*:*:*:*",
+    "dom": [
+      "input[name*='ci_csrf_token']"
+    ],
     "html": [
       "<input[^>]+name=\"ci_csrf_token\""
     ],
@@ -4455,6 +4823,18 @@
     ],
     "website": "https://commerceserver.net"
   },
+  "Commerce Vision": {
+    "cats": [
+      6
+    ],
+    "description": "Commerce Vision is a provider of enterprise-level B2B and B2C ecommerce solutions integrated with ERP applications.",
+    "headers": {
+      "Content-Security-Policy": "\\.commercevision\\.com\\.au"
+    },
+    "icon": "CommerceVision.svg",
+    "saas": true,
+    "website": "https://www.commercevision.com.au"
+  },
   "Commerce.js": {
     "cats": [
       6
@@ -4622,7 +5002,9 @@
     ],
     "js": {
       "CCM_IMAGE_PATH": "",
-      "Concrete": ""
+      "Concrete": "",
+      "ConcreteAlert": "",
+      "ConcreteEvent": ""
     },
     "meta": {
       "generator": "^concrete5(?: - ([\\d.]+)$)?\\;version:\\1"
@@ -4872,7 +5254,9 @@
     ],
     "description": "Contabo is a German hosting provider, previously known by the name Giga-International.",
     "dns": {
-      "SOA": "\\.contabo\\.net"
+      "SOA": [
+        "\\.contabo\\.net"
+      ]
     },
     "icon": "Contabo.svg",
     "pricing": [
@@ -5475,6 +5859,27 @@
     ],
     "website": "https://www.conveythis.com/"
   },
+  "Convincely": {
+    "cats": [
+      32
+    ],
+    "description": "Convincely is a platform designed to rapidly launch and optimize personalized sales funnels for businesses.",
+    "icon": "Convincely.svg",
+    "js": {
+      "convincely3.analyticsService": ""
+    },
+    "pricing": [
+      "freemium",
+      "high",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "app\\.convincely\\.com/"
+    ],
+    "website": "https://www.convincely.com"
+  },
   "Conviva": {
     "cats": [
       14,
@@ -5776,6 +6181,9 @@
     ],
     "cpe": "cpe:2.3:a:coppermine-gallery:coppermine_photo_gallery:*:*:*:*:*:*:*:*",
     "description": "Coppermine is an open-source image gallery application.",
+    "dom": [
+      "link[href*='/coppermine.css'][rel='stylesheet']"
+    ],
     "html": [
       "<!--Coppermine Photo Gallery ([\\d.]+)\\;version:\\1"
     ],
@@ -6021,7 +6429,7 @@
     "headers": {
       "Server": "CouchDB/([\\d.]+)\\;version:\\1"
     },
-    "icon": "CouchDB.png",
+    "icon": "CouchDB.svg",
     "website": "https://couchdb.apache.org"
   },
   "Countdown Timer Ultimate": {
@@ -6176,6 +6584,7 @@
       1
     ],
     "cookies": {
+      "CRAFT_CSRF_TOKEN": "",
       "CraftSessionId": ""
     },
     "cpe": "cpe:2.3:a:craftcms:craft_cms:*:*:*:*:*:*:*:*",
@@ -7179,6 +7588,9 @@
       "recurring"
     ],
     "saas": true,
+    "scripts": [
+      "\\.commercetools\\.com"
+    ],
     "website": "https://commercetools.com",
     "xhr": [
       "\\.commercetools\\.com/"

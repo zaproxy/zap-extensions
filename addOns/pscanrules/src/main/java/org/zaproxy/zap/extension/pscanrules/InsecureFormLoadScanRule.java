@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.htmlparser.jericho.Element;
@@ -29,6 +31,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -41,11 +44,20 @@ public class InsecureFormLoadScanRule extends PluginPassiveScanner
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.insecureformload.";
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                    CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A02_CRYPO_FAIL,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                                CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.DEV_STD.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     @Override
     public String getName() {

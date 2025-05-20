@@ -21,6 +21,7 @@ package org.zaproxy.addon.retire;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -44,6 +45,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.retire.model.Repo;
 
@@ -109,9 +111,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         assertEquals(1, alertsRaised.size());
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertEquals("/1.2.19/angular.min.js", alertsRaised.get(0).getEvidence());
-        assertEquals(
-                "https://github.com/angular/angular.js/commit/8f31f1ff43b673a24f84422d5c13d6312b2c4d94\n",
-                alertsRaised.get(0).getReference());
+        assertRefs(alertsRaised.get(0));
     }
 
     @Test
@@ -140,9 +140,7 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         assertEquals(1, alertsRaised.size());
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertEquals(fileName, alertsRaised.get(0).getEvidence());
-        assertEquals(
-                "https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/\n",
-                alertsRaised.get(0).getReference());
+        assertRefs(alertsRaised.get(0));
     }
 
     @Test
@@ -162,11 +160,12 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
     void shouldRaiseAlertOnVulnerableContent() {
         // Given
         String content =
-                "/*!\n"
-                        + " * Bootstrap v3.3.7 (http://getbootstrap.com)\n"
-                        + " * Copyright 2011-2016 Twitter, Inc.\n"
-                        + " * Licensed under the MIT license\n"
-                        + " */";
+                """
+                /*!
+                 * Bootstrap v3.3.7 (http://getbootstrap.com)
+                 * Copyright 2011-2016 Twitter, Inc.
+                 * Licensed under the MIT license
+                 */""";
         HttpMessage msg = createMessage("http://example.com/angular.min.js", content);
         msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "text/javascript");
         given(passiveScanData.isPage200(any())).willReturn(true);
@@ -176,22 +175,39 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         assertEquals(1, alertsRaised.size());
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertEquals("* Bootstrap v3.3.7", alertsRaised.get(0).getEvidence());
-        assertEquals(
-                "https://github.com/twbs/bootstrap/issues/20184\n",
-                alertsRaised.get(0).getReference());
-        // Two Constant OWASP tags plus one CVE and CWE
-        assertEquals(4, alertsRaised.get(0).getTags().size());
+        assertRefs(alertsRaised.get(0));
+        assertEquals(7, alertsRaised.get(0).getTags().size());
+    }
+
+    @Test
+    void shouldNotRaiseAlertOnNonVulnerableContent() {
+        // Given
+        String content =
+                """
+                /*!
+                 * Bootstrap v3.4.0 (http://getbootstrap.com)
+                 * Copyright 2011-2016 Twitter, Inc.
+                 * Licensed under the MIT license
+                 */""";
+        HttpMessage msg = createMessage("http://example.com/angular.min.js", content);
+        msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "text/javascript");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test
     void shouldRaiseAlertOnHashOfVulnerableContent() {
         // Given
         String content =
-                "/*!\n"
-                        + " * Hash test content v0.0.1\n"
-                        + " * Copyright 2011-2016 Null, Inc.\n"
-                        + " * Licensed under the MIT license\n"
-                        + " */";
+                """
+                /*!
+                 * Hash test content v0.0.1
+                 * Copyright 2011-2016 Null, Inc.
+                 * Licensed under the MIT license
+                 */""";
         HttpMessage msg = createMessage("http://example.com/hash.js", content);
         msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "text/javascript");
         given(passiveScanData.isPage200(any())).willReturn(true);
@@ -201,14 +217,17 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         assertEquals(1, alertsRaised.size());
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertEquals(
-                "CVE-XXXX-XXX2\n"
-                        + "CVE-XXXX-XXX1\n"
-                        + "CVE-XXXX-XXX0\n"
-                        + "The library matched the known vulnerable hash e19cea51d7542303f6e8949a0ae27dd3509ea566.",
+                """
+                The identified library hash-test-entry, version 0.0.1 is vulnerable.
+                CVE-XXXX-XXX2
+                CVE-XXXX-XXX1
+                CVE-XXXX-XXX0
+                The library matched the known vulnerable hash e19cea51d7542303f6e8949a0ae27dd3509ea566.
+                http://example.com/hash-test-entry
+                http://example.com/hash-test-entry2
+                """,
                 alertsRaised.get(0).getOtherInfo());
-        assertEquals(
-                "http://example.com/hash-test-entry\nhttp://example.com/hash-test-entry2\n",
-                alertsRaised.get(0).getReference());
+        assertRefs(alertsRaised.get(0));
     }
 
     @Test
@@ -225,14 +244,19 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
     void shouldReturnExpectedMappings() {
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
+        int cweId = rule.getExampleAlerts().get(0).getCweId();
         // Then
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(cweId, is(equalTo(1395)));
+        assertThat(tags.size(), is(equalTo(5)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));
@@ -247,13 +271,32 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         List<Alert> alerts = rule.getExampleAlerts();
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
-        assertThat(alerts.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        Alert example = alerts.get(0);
+        assertThat(example.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(
+                example.getDescription(),
+                is(equalTo("The identified library appears to be vulnerable.")));
+        assertThat(example.getEvidence(), is(equalTo("13.3.7")));
+        assertThat(
+                example.getOtherInfo(),
+                is(
+                        equalTo(
+                                "The identified library ExampleLibrary.js, version 13.3.7 is vulnerable.\n")));
+        assertRefs(example);
     }
 
     @Test
     @Override
     public void shouldHaveValidReferences() {
         super.shouldHaveValidReferences();
+    }
+
+    private static void assertRefs(Alert alert) {
+        assertThat(
+                alert.getReference(),
+                is(
+                        equalTo(
+                                "https://owasp.org/Top10/A06_2021-Vulnerable_and_Outdated_Components/")));
     }
 
     private static HttpMessage createMessage(String url, String body) {

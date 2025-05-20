@@ -24,6 +24,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.util.List;
+import java.util.Optional;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -31,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.httpclient.URI;
@@ -43,12 +46,15 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType.AutoDetectSessionManagementMethod;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
+import org.zaproxy.addon.authhelper.internal.AuthenticationStep;
+import org.zaproxy.addon.authhelper.internal.StepsPanel;
+import org.zaproxy.addon.commonlib.internal.TotpSupport;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
 import org.zaproxy.zap.authentication.AuthenticationMethodType;
 import org.zaproxy.zap.authentication.UsernamePasswordAuthenticationCredentials;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.selenium.BrowserUI;
 import org.zaproxy.zap.extension.selenium.BrowsersComboBoxModel;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
@@ -81,6 +87,8 @@ public class AuthTestDialog extends StandardFieldsDialog {
     private static final String BROWSER_LABEL = "authhelper.auth.test.dialog.label.browser";
     private static final String WAIT_LABEL = "authhelper.auth.test.dialog.label.wait";
     private static final String DEMO_LABEL = "authhelper.auth.test.dialog.label.demo";
+    private static final String RECORD_DIAGNOSTICS_LABEL =
+            "authhelper.auth.test.dialog.label.recdiag";
     private static final String DIAGNOSTICS_LABEL = "authhelper.auth.test.dialog.label.diag";
     private static final String COPY_LABEL = "authhelper.auth.test.dialog.label.copy";
 
@@ -102,10 +110,15 @@ public class AuthTestDialog extends StandardFieldsDialog {
     private JLabel statusLabel = new JLabel();
     private JLabel sessionIdLabel = new JLabel();
     private JLabel verifIdLabel = new JLabel();
+    private JButton[] extraButtons;
+
+    private StepsPanel stepsPanel;
 
     private ZapTextArea diagnosticField;
     private Boolean usernameFieldFound;
     private Boolean passwordFieldFound;
+
+    private BrowsersComboBoxModel browserComboModel;
 
     private ExtensionAuthhelper ext;
 
@@ -115,7 +128,9 @@ public class AuthTestDialog extends StandardFieldsDialog {
                 "authhelper.auth.test.dialog.title",
                 DisplayUtils.getScaledDimension(600, 480),
                 new String[] {
-                    "authhelper.auth.test.dialog.tab.test", "authhelper.auth.test.dialog.tab.diag"
+                    "authhelper.auth.test.dialog.tab.test",
+                    "authhelper.auth.test.dialog.tab.steps",
+                    "authhelper.auth.test.dialog.tab.diag"
                 });
 
         this.ext = ext;
@@ -132,15 +147,22 @@ public class AuthTestDialog extends StandardFieldsDialog {
         ExtensionSelenium extSel =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
 
-        BrowsersComboBoxModel browserComboModel = extSel.createBrowsersComboBoxModel();
+        browserComboModel = extSel.createBrowsersComboBoxModel();
         browserComboModel.setSelectedBrowser(params.getBrowser());
         this.addComboField(0, BROWSER_LABEL, browserComboModel);
         this.addNumberField(0, WAIT_LABEL, 0, Integer.MAX_VALUE, params.getWait());
         this.addCheckBoxField(0, DEMO_LABEL, params.isDemoMode());
+        this.addCheckBoxField(0, RECORD_DIAGNOSTICS_LABEL, params.isRecordDiagnostics());
         this.addCustomComponent(0, getResultsPanel());
         this.addPadding(0);
 
-        this.addMultilineField(1, DIAGNOSTICS_LABEL, "");
+        int tab = 1;
+        stepsPanel = new StepsPanel(this, true);
+        stepsPanel.setSteps(params.getSteps());
+        setCustomTabPanel(tab, stepsPanel.getPanel());
+
+        tab++;
+        addMultilineField(tab, DIAGNOSTICS_LABEL, "");
         diagnosticField = (ZapTextArea) this.getField(DIAGNOSTICS_LABEL);
         diagnosticField.setEditable(false);
         ext.setAuthDiagCollectorOutput(diagnosticField);
@@ -150,22 +172,22 @@ public class AuthTestDialog extends StandardFieldsDialog {
         JButton copyButton =
                 new JButton(Constant.messages.getString("authhelper.auth.test.dialog.button.copy"));
         copyButton.addActionListener(
-                l -> {
-                    Toolkit.getDefaultToolkit()
-                            .getSystemClipboard()
-                            .setContents(new StringSelection(diagnosticField.getText()), null);
-                });
+                l ->
+                        Toolkit.getDefaultToolkit()
+                                .getSystemClipboard()
+                                .setContents(new StringSelection(diagnosticField.getText()), null));
 
         buttonPanel.add(new JLabel(), LayoutHelper.getGBC(0, 0, 1, 0.3D));
         buttonPanel.add(copyButton, LayoutHelper.getGBC(1, 0, 1, 0.3D));
         buttonPanel.add(new JLabel(), LayoutHelper.getGBC(2, 0, 1, 0.3D));
 
-        this.addCustomComponent(1, COPY_LABEL, buttonPanel);
+        addCustomComponent(tab, COPY_LABEL, buttonPanel);
 
         ZapTextField text = (ZapTextField) this.getField(LOGIN_URL_LABEL);
         text.setText(params.getLoginUrl());
 
         this.setHideOnSave(false);
+        this.pack();
     }
 
     @Override
@@ -235,9 +257,14 @@ public class AuthTestDialog extends StandardFieldsDialog {
 
     private void authenticate() {
         StatsListener statsListener = null;
+        boolean demoMode = getBoolValue(DEMO_LABEL);
         try {
+            String username = this.getStringValue(USERNAME_LABEL);
+            String password = this.getStringValue(PASSWORD_LABEL);
+
             this.diagnosticField.setText("");
             ext.enableAuthDiagCollector(true);
+            ext.setAuthDiagCollectorCredentials(username, password);
 
             // Delete the context if it already exists
             Session session = Model.getSingleton().getSession();
@@ -258,20 +285,23 @@ public class AuthTestDialog extends StandardFieldsDialog {
                     ExtensionAuthhelper.BROWSER_BASED_AUTH_TYPE.createAuthenticationMethod(
                             context.getId());
             am.setLoginPageUrl(loginUrl);
+            am.setDiagnostics(getBoolValue(RECORD_DIAGNOSTICS_LABEL));
 
             JComboBox<?> browserCombo = (JComboBox<?>) this.getField(BROWSER_LABEL);
             String browserId = ((BrowserUI) browserCombo.getSelectedItem()).getBrowser().getId();
             am.setBrowserId(browserId);
             am.setLoginPageWait(this.getIntValue(WAIT_LABEL));
+            am.setAuthenticationSteps(
+                    stepsPanel.getSteps().stream().filter(AuthenticationStep::isEnabled).toList());
             reloadAuthenticationMethod(am);
             context.setAuthenticationMethod(am);
 
             // Set up user
-            String username = this.getStringValue(USERNAME_LABEL);
             User user = new User(context.getId(), username);
             UsernamePasswordAuthenticationCredentials upCreds =
-                    new UsernamePasswordAuthenticationCredentials(
-                            username, this.getStringValue(PASSWORD_LABEL));
+                    TotpSupport.createUsernamePasswordAuthenticationCredentials(
+                            am, username, password);
+            setTotp(stepsPanel.getSteps(), upCreds);
             user.setAuthenticationCredentials(upCreds);
             user.setEnabled(true);
             Control.getSingleton()
@@ -293,7 +323,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
             } catch (Exception e) {
                 // Ignore - not yet supported so will default to "poll"
             }
-            if (this.getBoolValue(DEMO_LABEL)) {
+            if (demoMode) {
                 AuthUtils.setDemoMode(true);
             }
 
@@ -344,10 +374,10 @@ public class AuthTestDialog extends StandardFieldsDialog {
                 }
             }
             context = session.getContext(contextName);
-            ExtensionPassiveScan extPscan =
+            ExtensionPassiveScan2 extPscan =
                     Control.getSingleton()
                             .getExtensionLoader()
-                            .getExtension(ExtensionPassiveScan.class);
+                            .getExtension(ExtensionPassiveScan2.class);
 
             int count = 0;
             int score = 0;
@@ -407,14 +437,39 @@ public class AuthTestDialog extends StandardFieldsDialog {
             if (statsListener != null) {
                 Stats.removeListener(statsListener);
             }
-            if (this.getBoolValue(DEMO_LABEL)) {
+            if (demoMode) {
                 AuthUtils.setDemoMode(false);
             }
             ext.enableAuthDiagCollector(false);
         }
     }
 
-    private void reloadAuthenticationMethod(AuthenticationMethod am) throws ConfigurationException {
+    private static void setTotp(
+            List<AuthenticationStep> steps, UsernamePasswordAuthenticationCredentials credentials) {
+        if (!TotpSupport.isTotpInCore()) {
+            return;
+        }
+
+        Optional<AuthenticationStep> optStep =
+                steps.stream()
+                        .filter(e -> e.getType() == AuthenticationStep.Type.TOTP_FIELD)
+                        .findFirst();
+        if (optStep.isEmpty()) {
+            return;
+        }
+
+        AuthenticationStep totpStep = optStep.get();
+        TotpSupport.TotpData totpData =
+                new TotpSupport.TotpData(
+                        totpStep.getTotpSecret(),
+                        totpStep.getTotpPeriod(),
+                        totpStep.getTotpDigits(),
+                        totpStep.getTotpAlgorithm());
+        TotpSupport.setTotpData(totpData, credentials);
+    }
+
+    private static void reloadAuthenticationMethod(AuthenticationMethod am)
+            throws ConfigurationException {
         // OK, this does look weird, but it is the easiest way to actually get
         // the session management data loaded :/
         AuthenticationMethodType type = am.getType();
@@ -423,7 +478,7 @@ public class AuthTestDialog extends StandardFieldsDialog {
         type.importData(config, am);
     }
 
-    private void reloadSessionManagementMethod(SessionManagementMethod smm)
+    private static void reloadSessionManagementMethod(SessionManagementMethod smm)
             throws ConfigurationException {
         // OK, this does look weird, but it is the easiest way to actually get
         // the session management data loaded :/
@@ -439,11 +494,48 @@ public class AuthTestDialog extends StandardFieldsDialog {
     }
 
     @Override
+    public JButton[] getExtraButtons() {
+        if (extraButtons == null) {
+            JButton resetButton =
+                    new JButton(
+                            Constant.messages.getString(
+                                    "authhelper.auth.test.dialog.button.reset"));
+            resetButton.addActionListener(
+                    e -> {
+                        ((JTextField) getField(CONTEXT_LABEL))
+                                .setText(
+                                        Constant.messages.getString(
+                                                "authhelper.auth.test.dialog.default-context"));
+                        setFieldValue(LOGIN_URL_LABEL, "");
+                        setFieldValue(USERNAME_LABEL, "");
+                        setFieldValue(PASSWORD_LABEL, "");
+                        setFieldValue(WAIT_LABEL, AuthhelperParam.DEFAULT_WAIT);
+                        browserComboModel.setSelectedBrowser(AuthhelperParam.DEFAULT_BROWSER);
+                        setFieldValue(DEMO_LABEL, false);
+                        setFieldValue(RECORD_DIAGNOSTICS_LABEL, false);
+                        stepsPanel.getSteps().forEach(step -> step.setEnabled(false));
+
+                        resetResultsPanel();
+                        diagnosticField.setText("");
+
+                        this.saveDetails();
+                    });
+
+            extraButtons = new JButton[] {resetButton};
+        }
+        return extraButtons;
+    }
+
+    @Override
     public void save() {
         resetResultsPanel();
-        Thread t = new Thread(() -> authenticate(), "ZAP-auth-tester");
+        Thread t = new Thread(this::authenticate, "ZAP-auth-tester");
         t.start();
         // Save the values for next time
+        this.saveDetails();
+    }
+
+    private void saveDetails() {
         AuthhelperParam params = this.ext.getParam();
         params.setLoginUrl(this.getStringValue(LOGIN_URL_LABEL));
         params.setUsername(this.getStringValue(USERNAME_LABEL));
@@ -451,6 +543,8 @@ public class AuthTestDialog extends StandardFieldsDialog {
         params.setBrowser(((BrowserUI) browserCombo.getSelectedItem()).getBrowser().getId());
         params.setWait(this.getIntValue(WAIT_LABEL));
         params.setDemoMode(this.getBoolValue(DEMO_LABEL));
+        params.setRecordDiagnostics(getBoolValue(RECORD_DIAGNOSTICS_LABEL));
+        params.setSteps(stepsPanel.getSteps());
     }
 
     @Override

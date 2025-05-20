@@ -20,13 +20,18 @@
 package org.zaproxy.addon.reports;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.alert.AlertNode;
+import org.zaproxy.zap.utils.I18N;
 
 class ReportHelperUnitTest {
 
@@ -163,6 +168,33 @@ class ReportHelperUnitTest {
         assertThat(ex1sql2Alerts.size(), is(0));
         assertThat(ex2sql2Alerts.size(), is(0));
         assertThat(ex3sql2Alerts.size(), is(1));
+    }
+
+    @Test
+    void shouldGetStatisticsString() throws Exception {
+        // Given
+        Constant.messages = mock(I18N.class);
+        String statsKey = "some.stats.key";
+        String resourceKey = "reports.report." + statsKey;
+        given(Constant.messages.containsKey(resourceKey)).willReturn(true);
+        String expectedString = "Statistic Xyz";
+        given(Constant.messages.getString(resourceKey)).willReturn(expectedString);
+        // When
+        String string = ReportHelper.getStatisticsString(statsKey);
+        // Then
+        assertThat(string, is(equalTo(expectedString)));
+    }
+
+    @Test
+    void shouldGetStatsKeyForMissingStatisticsString() throws Exception {
+        // Given
+        Constant.messages = mock(I18N.class);
+        String statsKey = "some.stats.key";
+        given(Constant.messages.containsKey("reports.report." + statsKey)).willReturn(false);
+        // When
+        String string = ReportHelper.getStatisticsString(statsKey);
+        // Then
+        assertThat(string, is(equalTo(statsKey)));
     }
 
     AlertNode newAlertNode(int risk, String name, String url) {

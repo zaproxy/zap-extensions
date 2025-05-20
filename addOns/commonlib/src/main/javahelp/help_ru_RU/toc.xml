@@ -3,7 +3,9 @@
 <toc version="2.0">
     <tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
         <tocitem text="Дополнения" tocid="addons">
-            <tocitem text="Общая библиотека " target="commonlib"/>
+            <tocitem text="Общая библиотека " target="commonlib">
+                <tocitem text="Tabbed Output Panel" target="commonlib.output.panel"/>
+            </tocitem>
         </tocitem>
     </tocitem>
 </toc>

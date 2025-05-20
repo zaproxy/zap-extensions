@@ -5,9 +5,35 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [1.32.0] - 2025-04-09
+### Added
+- Add an alert tag for scan rules that are believed to be of interest to Penetration Testers (essentially everything except the Example rules).
+
+## [1.31.0] - 2025-03-25
+### Added
+- Replace the default Output panel with a tabbed version to allow multiple sources of output to be displayed in separate tabs.
+- Add support functionality for usage of TOTP data defined under user credentials.
+
+## [1.30.0] - 2025-01-09
+### Added
+- Add solutions to Insufficient Process Validation vulnerability (Issue 8056).
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Improve solution and add more references to 'Information Leakage' vulnerability (Issue 8056).
+
+## [1.29.0] - 2024-12-23
 ### Changed
 - Dependency updates.
 - Let the Value Generator add-on provide the custom values through this add-on (Issue 8016).
+
+### Added
+- Policy tags for use with scan rules and the new Scan Policies add-on.
+
+### Fixed
+- Be more lenient with the input used for providing values, to prevent exceptions.
 
 ## [1.28.0] - 2024-09-24
 ### Changed
@@ -185,6 +211,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.32.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.32.0
+[1.31.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.31.0
+[1.30.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.30.0
+[1.29.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.29.0
 [1.28.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.28.0
 [1.27.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.27.0
 [1.26.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.26.0

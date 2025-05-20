@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Passive Scan Tags
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Passive Scan Tags</H1>
+<p>
+This screen allows you to configure the tags that are added by the passive scanner.
+</p>
+You can add, modify and remove the tags via the appropriate buttons.
+
+<H2>Tag Interpolation</H2>
+In order to allow some flexibility in Tag creation and content it is possible for the user to specify a regular expression with capturing groups
+which will be used to replace the group identifiers (ex: $1) in the resulting tag.
+<p>
+For example, a tag could be defined as follows:
+<table border=1>
+  <tr>
+    <th>Field</th><th>Value</th><th>Note</th>
+  </tr>
+  <tr>
+    <td>Name:</td><td>Test</td><td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>Tag:</td><td>$1-SOMETAG</td><td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>Response Body Regex:</td><td>(\d{3})</td><td>Find strings of 3 numbers, using a capturing group (round brackets).</td>
+  </tr>
+</table>
+<b>Result:</b> When 3 digit strings are passively identified in response body content (the regex matches) the messages will be
+tagged such as "123-SOMETAG", "345-SOMETAG", etc.
+
+<H2>See also</H2>
+<table>
+	<tr>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+		<td><a href="../pscan.html">Passive Scanner</a></td>
+		<td>the introduction to Passive Scanner add-on</td>
+	</tr>
+</table>
+
+</BODY>
+</HTML>

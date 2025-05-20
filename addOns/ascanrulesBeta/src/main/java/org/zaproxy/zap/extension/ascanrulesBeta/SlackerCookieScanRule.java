@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +39,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
@@ -58,11 +61,19 @@ public class SlackerCookieScanRule extends AbstractAppPlugin implements CommonAc
     // going to classify this as #45, Fingerprinting.
     // #01, Authentication could be applicable.
     private static final String[] HIGH_RISK_COOKIE_NAMES = {"session", "userid"};
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
-                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
-                    CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
+                                CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                                CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
+
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_45");
     private static final Logger LOGGER = LogManager.getLogger(SlackerCookieScanRule.class);
 

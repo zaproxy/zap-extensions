@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -108,7 +109,9 @@ public class PolicyDefinition extends AutomationData {
                         } else {
                             progress.warn(
                                     Constant.messages.getString(
-                                            "automation.error.ascan.rule.unknown", jobName, id));
+                                            "automation.error.ascan.rule.unknown",
+                                            jobName,
+                                            String.valueOf(id)));
                         }
                     }
                 }
@@ -200,7 +203,7 @@ public class PolicyDefinition extends AutomationData {
                         Constant.messages.getString(
                                 "automation.info.ascan.rule.setstrength",
                                 jobName,
-                                rule.getId(),
+                                String.valueOf(rule.getId()),
                                 pluginSt.name()));
             }
             AlertThreshold pluginTh =
@@ -212,7 +215,7 @@ public class PolicyDefinition extends AutomationData {
                         Constant.messages.getString(
                                 "automation.info.ascan.rule.setthreshold",
                                 jobName,
-                                rule.getId(),
+                                String.valueOf(rule.getId()),
                                 pluginTh.name()));
             }
         }
@@ -230,7 +233,9 @@ public class PolicyDefinition extends AutomationData {
     @Getter
     @Setter
     public static class Rule extends AutomationData {
+        @JsonInclude(JsonInclude.Include.ALWAYS)
         private int id;
+
         private String name;
         private String threshold;
         private String strength;

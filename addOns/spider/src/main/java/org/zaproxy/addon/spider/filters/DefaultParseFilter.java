@@ -117,7 +117,8 @@ public class DefaultParseFilter extends ParseFilter {
         }
 
         // Check response body size
-        if (responseMessage.getResponseBody().length() > params.getMaxParseSizeBytes()) {
+        if (params.getMaxParseSizeBytes() != 0
+                && responseMessage.getResponseBody().length() > params.getMaxParseSizeBytes()) {
             getLogger()
                     .debug("Resource too large: {}", responseMessage.getRequestHeader().getURI());
             return filterResultMaxSize;

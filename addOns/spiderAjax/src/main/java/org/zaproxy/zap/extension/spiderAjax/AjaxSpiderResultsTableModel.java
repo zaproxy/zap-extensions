@@ -85,6 +85,7 @@ public class AjaxSpiderResultsTableModel
         addState(statesMap, ResourceState.OUT_OF_SCOPE, "outofscope");
         addState(statesMap, ResourceState.EXCLUDED, "excluded");
         addState(statesMap, ResourceState.IO_ERROR, "ioerror");
+        addState(statesMap, ResourceState.THIRD_PARTY, "thirdparty");
     }
 
     public AjaxSpiderResultsTableModel() {

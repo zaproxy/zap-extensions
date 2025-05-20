@@ -26,7 +26,7 @@ import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
@@ -35,7 +35,7 @@ public class PassiveScriptSynchronizer {
     private static final Logger LOGGER = LogManager.getLogger(PassiveScriptSynchronizer.class);
 
     private ExtensionScript extScript;
-    private ExtensionPassiveScan extPscan;
+    private ExtensionPassiveScan2 extPscan;
 
     private final Map<ScriptWrapper, PassiveScriptScanRule> scriptToScanRuleMap = new HashMap<>();
 
@@ -79,7 +79,7 @@ public class PassiveScriptSynchronizer {
                             .getConstructor(ScriptWrapper.class, metadata.getClass())
                             .newInstance(script, metadata);
 
-            if (!getExtPscan().addPluginPassiveScanner(scanRule)) {
+            if (!getExtPscan().getPassiveScannersManager().add(scanRule)) {
                 LOGGER.error("Failed to install script scan rule: {}", script.getName());
                 return;
             }
@@ -108,7 +108,7 @@ public class PassiveScriptSynchronizer {
     }
 
     private boolean unloadScanRule(PassiveScriptScanRule scanRule) {
-        if (!getExtPscan().removePluginPassiveScanner(scanRule)) {
+        if (!getExtPscan().getPassiveScannersManager().remove(scanRule)) {
             LOGGER.error("Failed to uninstall script scan rule: {}", scanRule.getName());
             return false;
         }
@@ -123,12 +123,12 @@ public class PassiveScriptSynchronizer {
         return extScript;
     }
 
-    private ExtensionPassiveScan getExtPscan() {
+    private ExtensionPassiveScan2 getExtPscan() {
         if (extPscan == null) {
             extPscan =
                     Control.getSingleton()
                             .getExtensionLoader()
-                            .getExtension(ExtensionPassiveScan.class);
+                            .getExtension(ExtensionPassiveScan2.class);
         }
         return extPscan;
     }

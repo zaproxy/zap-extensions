@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class ProxyDisclosureScanRuleUnitTest extends ActiveScannerTest<ProxyDisclosureScanRule> {
 
@@ -41,15 +42,16 @@ class ProxyDisclosureScanRuleUnitTest extends ActiveScannerTest<ProxyDisclosureS
         int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(200)));
+        assertThat(cwe, is(equalTo(204)));
         assertThat(wasc, is(equalTo(45)));
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getValue())));

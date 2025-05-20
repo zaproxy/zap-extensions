@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.automation.tests;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -284,6 +286,8 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
         private String statistic;
         private String site;
         private String operator;
+
+        @JsonInclude(value = Include.NON_NULL)
         private Long value;
 
         public Data(AutomationStatisticTest test) {

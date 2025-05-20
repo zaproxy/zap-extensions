@@ -21,13 +21,16 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.PolicyTag;
 
 class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetMismatchScanRule> {
 
@@ -55,6 +58,16 @@ class CharsetMismatchScanRuleUnitTest extends PassiveScannerTest<CharsetMismatch
     @Override
     protected CharsetMismatchScanRule createScanner() {
         return new CharsetMismatchScanRule();
+    }
+
+    @Test
+    void shouldReturnExpectedMappings() {
+        // Given / When
+        Map<String, String> tags = rule.getAlertTags();
+        // Then
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.containsKey(PolicyTag.QA_STD.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(PolicyTag.PENTEST.getTag()), is(equalTo(true)));
     }
 
     @Test

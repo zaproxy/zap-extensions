@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -36,6 +38,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PiiUtils;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.addon.commonlib.binlist.BinList;
 import org.zaproxy.addon.commonlib.binlist.BinRecord;
@@ -55,10 +58,18 @@ public class PiiScanRule extends PluginPassiveScanner implements CommonPassiveSc
     private static final int PLUGIN_ID = 10062;
     private static final Pattern PATH_PATTERN =
             Pattern.compile("(?:\\.pdf)\\z", Pattern.CASE_INSENSITIVE);
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
+                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        alertTags.put(PolicyTag.QA_STD.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     private enum CreditCard {
         AMERICAN_EXPRESS("American Express", "\\b(?:3[47][0-9]{13})\\b"),

@@ -7,7 +7,7 @@
 
   <maps>
      <homeID>addon.pscan</homeID>
-     <mapref location="../common/map.jhm"/>
+     <mapref location="map.jhm"/>
   </maps>
 
   <view>

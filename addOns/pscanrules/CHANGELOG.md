@@ -4,7 +4,47 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- All rules have been tagged of interest to Penetration Testers, as well as adding tags associated with DEV or QA applicability.
+
 ### Changed
+- Depends on an updated version of the Common Library add-on.
+- Clarified details of the Viewstate scan rule alerts, in some instances they were misleading (containing colons suggesting further data).
+
+## [64] - 2025-03-25
+### Changed
+- The CSP scan rule now treats Wildcard directives separately from those which are undefined but have no fallback (Issue 8700).
+
+## [63] - 2025-03-04
+### Fixed
+- Refactored Loosely Scoped Cookie to comply with the latest RFC standards and streamline the loosely scoped cookie check (Issue 8863).
+- The Absence of Anti-CSRF Tokens scan rule now only considers forms with GET method at Low Threshold. (Forms submitted via GET, not forms delivered via GET.)
+- The Information Disclosure - Suspicious Comments scan rule:
+    - Should now be less false positive prone on JavaScript findings (Issues 6622 & 6736).
+    - Now skips obvious font requests even if their content type is text/html or text related.
+- Updated Timestamp Disclosure Scan Rule to skip JavaScript files when Alert Threshold is set to High (Issue 8380).
+
+### Changed
+- Replace usage of CWE-200 for the following rules (Issue 8712):
+    - Application Error Disclosure (Issue 8716)
+    - HTTP Server Response Header
+    - Hash Disclosure
+    - Information Disclosure - Debug Error Messages
+    - Information Disclosure - Sensitive Information in HTTP Referrer Header
+    - Information Disclosure - Sensitive Information in URL
+    - Information Disclosure - Suspicious Comments
+    - Private IP Disclosure
+    - Server Leaks Information via "X-Powered-By" HTTP Response Header
+    - Session ID in URL Rewrite
+    - Timestamp Disclosure
+    - X-Backend-Server Header Information Leak
+    - X-ChromeLogger-Data (XCOLD) Header Information Leak
+    - X-Debug-Token Information Leak
+- Removed lack of "report-uri" or "plugin-types" from "CSP: Wildcard Directive" alerts when missing. plugin-types is deprecated and report-uri has no impact for this issue. (Issue 8700)
+
+## [62] - 2025-01-10
+### Changed
+- Update minimum ZAP version to 2.16.0.
 - Updated help with specific Category identifiers for use with the Custom Payloads add-on for rules:
     - Application Error Disclosure
     - Information Disclosure - Suspicious Comments
@@ -574,6 +614,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[64]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v64
+[63]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v63
+[62]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v62
 [61]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v61
 [60]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v60
 [59]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v59

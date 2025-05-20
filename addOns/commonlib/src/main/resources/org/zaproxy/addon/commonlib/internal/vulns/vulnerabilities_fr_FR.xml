@@ -436,8 +436,19 @@ Oublier de retirer les commentaires des pages HTML ou des scripts avant un dépl
 Les numéros de version de logiciel et des messages d'erreur détaillés (par exemple les numéros de version ASP.NET) sont des exemples de configurations de serveur incorrectes. Cette information est utile pour un agresseur, en lui fournissant un aperçu détaillé sur le framework, les langages ou les fonctions prédéfinies utilisées par une application internet. La plupart des configurations serveur par défaut fournissent les numéros de version de logiciel et des messages d'erreur détaillés pour le débogage et à des fins de dépannage. Ces configurations peuvent être modifiées pour désactiver ces fonctionnalités, empêchant l'affichage de ces informations.
 
 Des pages fournissant des réponses différentes selon la validité des données injectées peuvent aussi conduire à une fuite d'information; plus précisément lorsque des données jugées confidentielles sont révélées à cause de la conception de l'application web. Des exemples de données sensibles incluent (mais ne sont pas limités à): numéros de compte, identifiants de l'utilisateur (numéro du permis de conduire, numéro de passeport, numéros de sécurité sociale, etc.) et les informations spécifiques à l'utilisateur (mots de passe, sessions, adresses). Dans ce contexte, la fuite d'informations concerne la divulgation de données-clés de l'utilisateur, données jugées confidentielles ou secrètes, et qui ne doivent en aucun cas être exposées en claire, pas même à l'utilisateur. Les numéros de carte de crédit et autres informations fortement réglementées sont d'excellents exemples de données de l'utilisateur qui ont besoin d'être davantage protégées contre l'exposition ou la fuite, même si des mesures appropriées de cryptage et d'accès ont déjà été mises en place.</desc>
-	<solution>Compartimentez votre système pour avoir des zones "sécurisées", où les limites de confiance peuvent être établies sans ambiguïté. Ne permettez pas que des données sensibles sortent de la limite de confiance et soyez toujours attentif à l'interface avec un compartiment situé hors de la zone sûre.</solution>
-	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
+	<solution>
+    * Have a clear definition of which information is considered sensitive and which isn't. Take privacy laws, regulatory requirements, and business needs into account.
+    * Store sensitive data only if you have to.
+    * Implement checks for sensitive information in your devops pipeline. Steps that could be taken include stripping developer comments, removing debugging information and sensitive logs, as well as making error messages less verbose.
+    * In situations where the sensitive information must be used, for instance, backend microservices, ensure trust boundaries are appropriately drawn. Example: set up an isolated, well secured kubernetes cluster with well configured access controls, then only grant access to authorized clients.
+    * In situations where error messages need to be returned to the user, use messages that are as generic as possible eg "invalid credentials" instead of "invalid username" or "invalid password".
+    * When using third party technologies, understand how the software works, its configuration, as well as security risks of using it. After understanding the technology, use only the features that you need and disable everything else.
+    * Detailed debug messages are sometimes necessary, for instance, when adding a new feature to an application. In this case, separate the development environment from the production one. Ensure appropriate access controls are implemented for the development environments.
+    * All sensitive data should be encrypted before storage. Ensure up-to-date and strong standard algorithms, protocols, and keys are in place; use proper key management.
+</solution>
+<reference>https://portswigger.net/web-security/information-disclosure</reference>
+<reference>https://owasp.org/www-project-top-ten/2017/A3_2017-Sensitive_Data_Exposure</reference>
+<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
 <vuln_items>wasc_14</vuln_items>
@@ -980,7 +991,17 @@ Il existe deux principaux types de processus nécessitant une validation: le flu
 Le "flux de contrôle" se réfère à des processus en plusieurs étapes, qui nécessitent que chacune des étapes soit effectuée par l'utilisateur dans un ordre spécifique. Quand un agresseur effectue l'étape incorrectement ou dans un ordre différent, les contrôles d'accès peuvent être contournés et une erreur d'intégrité peut se produire dans l'application. Des exemples de procéssus à plusieurs étapes sont: virements, récupération de mot de passe, achats en ligne et enregistrement de nouveau compte.
 
 La "logique métier" se réfère au contexte dans lequel un processus s'exécutera selon les exigences métier. Exploiter une faille de logique métier exige la connaissance de l'entreprise et de ses affaires; si aucune connaissance n'est nécessaire pour exploiter cette faille, alors il ne s'agit très probablement pas d'un défaut de logique métier. Pour cette raison, les mesures de sécurité typiques, telles que les analyses de code et les revues de code, ne permettront pas de trouver cette classe de faille. Une approche pour tester la logique métier est fournie par OWASP dans leur Guide de test.</desc>
-	<solution/>
+	<solution>Make sure that all operations within a multi-step process are either performed entirely or not at all. If one step fails, the changes made must be canceled. Fuzzing inputs is a good way to test for anomalies and to verify the results after the flow completes.
+
+Make sure the correct order of steps in the flow is enforced and that the order cannot be changed or bypassed by the user.
+
+Developers and testers must have a solid understanding of the domain that the application serves.
+
+Do not rely on implicit assumptions about how users or different application parts will behave.
+
+Identify all references to other code that interacts with each component and evaluate the possible side-effects if a malicious actor manipulates these dependencies in unexpected ways.
+
+Maintain clear code, design documents, and data flow diagrams for all transactions and workflows, noting any assumptions made at each stage and what the expected behavior is.</solution>
 	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
 	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>

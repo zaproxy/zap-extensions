@@ -4,11 +4,19 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [51] - 2025-01-10
 ### Added
 - Stats counter to the main toolbar button (Issue 8375).
 
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Depend on Passive Scanner add-on (Issue 7959).
+
 ### Fixed
 - An exception that prevented the look and feel from changing completely.
+- Issues setting the AJAX Spider options.
 
 ## [50] - 2024-09-24
 ### Changed
@@ -274,6 +282,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[51]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v48

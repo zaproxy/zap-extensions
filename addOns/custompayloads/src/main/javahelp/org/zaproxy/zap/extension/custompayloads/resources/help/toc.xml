@@ -8,6 +8,7 @@
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Custom Payloads" target="custompayloads">
 				<tocitem text="API" target="custompayloads.api" />
+				<tocitem text="Options" target="custompayloads.options" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

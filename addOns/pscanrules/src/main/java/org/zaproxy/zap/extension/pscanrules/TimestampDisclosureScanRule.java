@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,6 +42,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.PolicyTag;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -93,10 +95,17 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.timestampdisclosure.";
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
+    private static final Map<String, String> ALERT_TAGS;
+
+    static {
+        Map<String, String> alertTags =
+                new HashMap<>(
+                        CommonAlertTag.toMap(
+                                CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
+                                CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED));
+        alertTags.put(PolicyTag.PENTEST.getTag(), "");
+        ALERT_TAGS = Collections.unmodifiableMap(alertTags);
+    }
 
     /**
      * ignore the following response headers for the purposes of the comparison, since they cause
@@ -123,9 +132,12 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (ResourceIdentificationUtils.isFont(msg)) {
+        if (ResourceIdentificationUtils.isFont(msg)
+                || (this.getAlertThreshold().equals(AlertThreshold.HIGH)
+                        && ResourceIdentificationUtils.isJavaScript(msg))) {
             return;
         }
+
         LOGGER.debug("Checking message {} for timestamps", msg.getRequestHeader().getURI());
 
         List<HttpHeaderField> responseparts = new ArrayList<>();
@@ -198,7 +210,9 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
-                .setCweId(200) // CWE Id 200 - Information Exposure
+                // CWE-497: Exposure of Sensitive System Information to an Unauthorized Control
+                // Sphere
+                .setCweId(497)
                 .setWascId(13); // WASC Id - Info leakage
     }
 

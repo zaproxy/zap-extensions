@@ -38,8 +38,11 @@ import static org.mockito.Mockito.withSettings;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.model.Model;
 import org.yaml.snakeyaml.Yaml;
@@ -50,6 +53,8 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.exim.Exporter;
 import org.zaproxy.addon.exim.ExporterOptions;
+import org.zaproxy.addon.exim.ExporterOptions.Source;
+import org.zaproxy.addon.exim.ExporterOptions.Type;
 import org.zaproxy.addon.exim.ExporterResult;
 import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.model.Context;
@@ -61,6 +66,11 @@ class ExportJobUnitTest extends TestUtils {
     private ExtensionExim extension;
     private Exporter exporter;
     private ExportJob job;
+
+    @BeforeAll
+    static void setupMessages() {
+        mockMessages(new ExtensionExim());
+    }
 
     @BeforeEach
     void setUp() {
@@ -166,7 +176,9 @@ class ExportJobUnitTest extends TestUtils {
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
-        assertThat(progress.getInfos(), hasItem("Job export: Exported 42 message(s)."));
+        assertThat(
+                progress.getInfos(),
+                hasItem("Job export: Exported 42 message(s) / node(s) to /some/file."));
     }
 
     @Test
@@ -196,6 +208,83 @@ class ExportJobUnitTest extends TestUtils {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors(), contains("Job export Error: Error while exporting"));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = Type.class,
+            names = {"HAR", "URL"})
+    void shouldReportErrorSiteTreeExportWithNonYamlFormat(Type type) {
+        // Given
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class));
+        given(env.getContextWrapper(any())).willReturn(contextWrapper);
+        String yamlStr =
+                "parameters:\n"
+                        + "  source: SitesTree\n"
+                        + "  type: "
+                        + type.getId()
+                        + "\n"
+                        + "  fileName: /some/file";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+        ExporterResult result = mock();
+        given(exporter.export(any())).willReturn(result);
+
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.setPlan(plan);
+
+        // When
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(
+                progress.getErrors(),
+                contains(
+                        "Job export Invalid type for Sites Tree, only YAML is supported: " + type));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = Source.class,
+            names = {"HISTORY", "ALL"})
+    void shouldReportErrorNonSitesTreeExportWithYamlFormat(Source source) {
+        // Given
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        ContextWrapper contextWrapper = new ContextWrapper(mock(Context.class));
+        given(env.getContextWrapper(any())).willReturn(contextWrapper);
+        String yamlStr =
+                "parameters:\n"
+                        + "  source: "
+                        + source.getId()
+                        + "\n"
+                        + "  type: YAML\n"
+                        + "  fileName: /some/file";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+        ExporterResult result = mock();
+        given(exporter.export(any())).willReturn(result);
+
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.setPlan(plan);
+
+        // When
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(
+                progress.getErrors(),
+                contains("Job export Invalid type for " + source + ", YAML is not supported"));
     }
 
     private static void assertValidTemplate(String value) {

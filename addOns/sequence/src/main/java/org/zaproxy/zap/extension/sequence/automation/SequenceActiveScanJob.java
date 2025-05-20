@@ -49,7 +49,6 @@ import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.jobs.PolicyDefinition;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
-import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.sequence.ExtensionSequence;
 import org.zaproxy.zap.extension.sequence.StdActiveScanRunner;
 import org.zaproxy.zap.extension.sequence.StdActiveScanRunner.SequenceStepData;
@@ -72,8 +71,8 @@ public class SequenceActiveScanJob extends AutomationJob {
 
     private static final String DEFAULT_SEQ_POLICY = "Sequence";
 
+    private final ExtensionSequence extSeq;
     private final ExtensionActiveScan extAScan;
-    private final ExtensionScript extScript;
 
     private Parameters parameters = new Parameters();
     private PolicyDefinition policyDefinition = new PolicyDefinition();
@@ -81,15 +80,15 @@ public class SequenceActiveScanJob extends AutomationJob {
 
     private static Map<String, List<SequenceStepData>> ascans = new HashMap<>();
 
-    public SequenceActiveScanJob(ExtensionActiveScan extAScan, ExtensionScript extScript) {
+    public SequenceActiveScanJob(ExtensionSequence extSeq, ExtensionActiveScan extAScan) {
+        this.extSeq = extSeq;
         this.extAScan = extAScan;
-        this.extScript = extScript;
         data = new Data(this, this.parameters, this.policyDefinition);
     }
 
     @Override
     public AutomationJob newJob() throws AutomationJobException {
-        return new SequenceActiveScanJob(extAScan, extScript);
+        return new SequenceActiveScanJob(extSeq, extAScan);
     }
 
     @Override
@@ -201,7 +200,7 @@ public class SequenceActiveScanJob extends AutomationJob {
             }
 
             Map<String, List<SequenceStepData>> result = new HashMap<>();
-            Stream<ZestScriptWrapper> sequenceZestScripts = getSequenceScripts();
+            Stream<ZestScriptWrapper> sequenceZestScripts = extSeq.getSequences();
             if (StringUtils.isEmpty(parameters.getSequence())) {
                 sequenceZestScripts.forEach(
                         e ->
@@ -238,12 +237,6 @@ public class SequenceActiveScanJob extends AutomationJob {
         } finally {
             extAScan.setPanelSwitch(true);
         }
-    }
-
-    private Stream<ZestScriptWrapper> getSequenceScripts() {
-        return extScript.getScripts(ExtensionSequence.TYPE_SEQUENCE).stream()
-                .filter(ZestScriptWrapper.class::isInstance)
-                .map(ZestScriptWrapper.class::cast);
     }
 
     private static List<SequenceStepData> scanSequence(
@@ -351,9 +344,8 @@ public class SequenceActiveScanJob extends AutomationJob {
 
     @Override
     public void showDialog() {
-        List<String> sequences = new ArrayList<>();
-        sequences.add("");
-        getSequenceScripts().map(ZestScriptWrapper::getName).forEach(sequences::add);
+        List<String> sequences = extSeq.getSequenceNames();
+        sequences.add(0, "");
 
         new SequenceActiveScanJobDialog(this, sequences).setVisible(true);
     }

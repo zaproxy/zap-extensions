@@ -7,6 +7,8 @@
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Client Side Integration" image="client-icon" target="addon.client">
+				<tocitem text="Automation" target="addon.client.auto"/>
+				<tocitem text="Spider" target="addon.client.spider"/>
 				<tocitem text="Passive Scanning" target="addon.client.pscan"/>
 				<tocitem text="AJAX Spider Enhancement" target="addon.client.ajaxscan"/>
 				<tocitem text="Firefox Profile" target="addon.client.fxprofile"/>

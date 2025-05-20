@@ -21,7 +21,7 @@ package org.zaproxy.addon.pscan.internal.ui;
 
 import java.awt.Dialog;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.pscan.scanner.RegexAutoTagScanner;
+import org.zaproxy.addon.pscan.internal.RegexAutoTagScanner;
 
 class DialogModifyAutoTagScanner extends DialogAddAutoTagScanner {
 

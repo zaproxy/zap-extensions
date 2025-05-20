@@ -44,7 +44,7 @@ public class ExporterResult {
         return count;
     }
 
-    void incrementCount() {
+    public void incrementCount() {
         this.count++;
     }
 

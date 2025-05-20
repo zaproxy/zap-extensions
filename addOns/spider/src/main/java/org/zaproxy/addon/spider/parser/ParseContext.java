@@ -114,6 +114,7 @@ public class ParseContext {
      * @return the value generator, never {@code null}.
      * @deprecated (0.13.0) Use {@link #getValueProvider()} instead.
      */
+    @SuppressWarnings("removal")
     @Deprecated(since = "0.13.0", forRemoval = true)
     public ValueGenerator getValueGenerator() {
         return new ValueGenerator() {

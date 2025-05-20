@@ -19,6 +19,10 @@
  */
 package org.zaproxy.addon.automation;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,6 +44,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.commonlib.internal.TotpSupport;
+import org.zaproxy.zap.authentication.AuthenticationCredentials;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType.FormBasedAuthenticationMethod;
 import org.zaproxy.zap.authentication.GenericAuthenticationCredentials;
@@ -91,7 +97,6 @@ public class ContextWrapper {
         this.data.setSessionManagement(new SessionManagementData(context));
         this.data.setTechnology(new TechnologyData(context));
         this.data.setStructure(new StructureData(context));
-        this.data.setAuthentication(new AuthenticationData(context));
 
         if (getExtUserMgmt() != null) {
             ArrayList<UserData> users = new ArrayList<>();
@@ -101,9 +106,11 @@ public class ContextWrapper {
                     UsernamePasswordAuthenticationCredentials upCreds =
                             (UsernamePasswordAuthenticationCredentials)
                                     user.getAuthenticationCredentials();
-                    users.add(
+                    UserData ud =
                             new UserData(
-                                    user.getName(), upCreds.getUsername(), upCreds.getPassword()));
+                                    user.getName(), upCreds.getUsername(), upCreds.getPassword());
+                    setTotpData(upCreds, ud);
+                    users.add(ud);
                 } else if (user.getAuthenticationCredentials()
                         instanceof GenericAuthenticationCredentials) {
                     GenericAuthenticationCredentials genCreds =
@@ -113,6 +120,8 @@ public class ContextWrapper {
                             (Map<String, String>) JobUtils.getPrivateField(genCreds, "paramValues");
                     UserData ud = new UserData(user.getName());
                     ud.setCredentials(paramValues);
+                    setTotpData(genCreds, ud);
+                    ud.getInternalCredentials().setTotp(null);
                     users.add(ud);
                 } else if (MANUAL_AUTH_CREDS_CANONICAL_NAME.equals(
                         user.getAuthenticationCredentials().getClass().getCanonicalName())) {
@@ -128,6 +137,21 @@ public class ContextWrapper {
                 this.getData().setUsers(users);
             }
         }
+        this.data.setAuthentication(new AuthenticationData(context, getData().getUsers()));
+    }
+
+    private static void setTotpData(AuthenticationCredentials credentials, UserData ud) {
+        TotpSupport.TotpData coreData = TotpSupport.getTotpData(credentials);
+        if (coreData == null) {
+            return;
+        }
+
+        UserData.TotpData totpData = new UserData.TotpData();
+        totpData.setSecret(coreData.secret());
+        totpData.setPeriod(String.valueOf(coreData.period()));
+        totpData.setDigits(String.valueOf(coreData.digits()));
+        totpData.setAlgorithm(coreData.algorithm());
+        ud.getInternalCredentials().setTotp(totpData);
     }
 
     public ContextWrapper(
@@ -198,6 +222,8 @@ public class ContextWrapper {
                                                 "automation.error.context.baduser", userObj));
                             } else {
                                 UserData ud = new UserData();
+                                readTotpData(ud, userObj);
+                                forceCredentialsStringType(userObj);
                                 JobUtils.applyParamsToObject(
                                         (LinkedHashMap<?, ?>) userObj, ud, "users", null, progress);
                                 if (env.getUser(ud.getName()) != null) {
@@ -230,6 +256,43 @@ public class ContextWrapper {
         if (data.getUrls().isEmpty()) {
             progress.error(
                     Constant.messages.getString("automation.error.context.nourl", contextData));
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static void readTotpData(UserData ud, Object userObj) {
+        Object credentials = ((LinkedHashMap) userObj).get("credentials");
+        if (!(credentials instanceof LinkedHashMap map)) {
+            return;
+        }
+
+        Object data = map.remove("totp");
+        if (!(data instanceof LinkedHashMap)) {
+            return;
+        }
+
+        try {
+            ud.getInternalCredentials()
+                    .setTotp(
+                            JsonMapper.builder()
+                                    .build()
+                                    .convertValue(data, UserData.TotpData.class));
+        } catch (Exception e) {
+        }
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private void forceCredentialsStringType(Object userObj) {
+        Object credentials = ((LinkedHashMap) userObj).get("credentials");
+        if (credentials instanceof LinkedHashMap) {
+            ((LinkedHashMap) credentials)
+                    .replaceAll(
+                            (k, v) -> {
+                                if (v instanceof Number) {
+                                    return v.toString();
+                                }
+                                return v;
+                            });
         }
     }
 
@@ -326,7 +389,9 @@ public class ContextWrapper {
             getData().getSessionManagement().initContextSessionManagement(context, progress, env);
         }
         if (getData().getAuthentication() != null) {
-            getData().getAuthentication().initContextAuthentication(context, progress, env);
+            getData()
+                    .getAuthentication()
+                    .initContextAuthentication(context, progress, env, getData().getUsers());
         }
         if (getData().getTechnology() != null) {
             getData().getTechnology().initContextTechnology(context, progress);
@@ -353,25 +418,25 @@ public class ContextWrapper {
                                 .getCanonicalName()
                                 .equals(AuthenticationData.BROWSER_BASED_AUTH_METHOD_CLASSNAME)) {
                     UsernamePasswordAuthenticationCredentials upCreds =
-                            new UsernamePasswordAuthenticationCredentials(
+                            TotpSupport.createUsernamePasswordAuthenticationCredentials(
+                                    authMethod,
                                     env.replaceVars(ud.getCredential(UserData.USERNAME_CREDENTIAL)),
                                     env.replaceVars(
                                             ud.getCredential(UserData.PASSWORD_CREDENTIAL)));
+
+                    setTotpData(ud, upCreds, env);
                     user.setAuthenticationCredentials(upCreds);
                 } else if (authMethod instanceof ManualAuthenticationMethod) {
                     user.setAuthenticationCredentials(
                             authMethod.getType().createAuthenticationCredentials());
                 } else if (authMethod instanceof ScriptBasedAuthenticationMethod) {
-                    ScriptBasedAuthenticationMethod scriptMethod =
-                            (ScriptBasedAuthenticationMethod) authMethod;
-                    String[] credName =
-                            (String[])
-                                    JobUtils.getPrivateField(scriptMethod, "credentialsParamNames");
                     GenericAuthenticationCredentials genCreds =
-                            new GenericAuthenticationCredentials(credName);
+                            (GenericAuthenticationCredentials)
+                                    authMethod.createAuthenticationCredentials();
                     for (Entry<String, String> cred : ud.getCredentials().entrySet()) {
                         genCreds.setParam(cred.getKey(), env.replaceVars(cred.getValue()));
                     }
+                    setTotpData(ud, genCreds, env);
                     user.setAuthenticationCredentials(genCreds);
                 } else {
                     LOGGER.error(
@@ -381,6 +446,39 @@ public class ContextWrapper {
                 extUserMgmt.getContextUserAuthManager(context.getId()).addUser(user);
             }
         }
+    }
+
+    private static void setTotpData(
+            UserData ud, AuthenticationCredentials credentials, AutomationEnvironment env) {
+        if (ud.getInternalCredentials().getTotp() == null) {
+            return;
+        }
+
+        String algorithm = env.replaceVars(ud.getInternalCredentials().getTotp().getAlgorithm());
+        TotpSupport.TotpData totpData =
+                new TotpSupport.TotpData(
+                        env.replaceVars(ud.getInternalCredentials().getTotp().getSecret()),
+                        getInt(
+                                env.replaceVars(ud.getInternalCredentials().getTotp().getPeriod()),
+                                30),
+                        getInt(
+                                env.replaceVars(ud.getInternalCredentials().getTotp().getDigits()),
+                                6),
+                        algorithm == null ? "SHA1" : algorithm);
+        TotpSupport.setTotpData(totpData, credentials);
+    }
+
+    private static int getInt(String value, int defaultValue) {
+        if (value == null) {
+            return defaultValue;
+        }
+
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            LOGGER.warn("An error occurred while parsing: {}", value, e);
+        }
+        return defaultValue;
     }
 
     public List<String> getUserNames() {
@@ -436,7 +534,7 @@ public class ContextWrapper {
         public static final String PASSWORD_CREDENTIAL = "password";
 
         private String name;
-        private Map<String, String> credentials = new HashMap<>();
+        private Credentials credentials = new Credentials();
 
         public UserData() {}
 
@@ -446,8 +544,8 @@ public class ContextWrapper {
 
         public UserData(String name, String username, String password) {
             this.name = name;
-            this.credentials.put(USERNAME_CREDENTIAL, username);
-            this.credentials.put(PASSWORD_CREDENTIAL, password);
+            this.credentials.getParameters().put(USERNAME_CREDENTIAL, username);
+            this.credentials.getParameters().put(PASSWORD_CREDENTIAL, password);
         }
 
         public String getName() {
@@ -460,24 +558,54 @@ public class ContextWrapper {
 
         public void setUsername(String username) {
             // Required for backwards compatibility
-            this.credentials.put(USERNAME_CREDENTIAL, username);
+            this.credentials.getParameters().put(USERNAME_CREDENTIAL, username);
         }
 
         public void setPassword(String password) {
             // Required for backwards compatibility
-            this.credentials.put(PASSWORD_CREDENTIAL, password);
+            this.credentials.getParameters().put(PASSWORD_CREDENTIAL, password);
         }
 
+        @JsonIgnore
         public Map<String, String> getCredentials() {
-            return credentials;
+            return credentials.getParameters();
         }
 
         public String getCredential(String key) {
-            return this.credentials.get(key);
+            return this.credentials.getParameters().get(key);
         }
 
         public void setCredentials(Map<String, String> credentials) {
-            this.credentials = credentials;
+            this.credentials.setParameters(credentials);
+        }
+
+        @JsonGetter("credentials")
+        public Credentials getInternalCredentials() {
+            return credentials;
+        }
+
+        @Getter
+        @Setter
+        public static class Credentials {
+
+            @JsonAnyGetter private Map<String, String> parameters = new HashMap<>();
+
+            private TotpData totp;
+
+            @JsonIgnore
+            public Map<String, String> getParameters() {
+                return parameters;
+            }
+        }
+
+        @Getter
+        @Setter
+        public static class TotpData {
+
+            private String secret;
+            private String period;
+            private String digits;
+            private String algorithm;
         }
     }
 

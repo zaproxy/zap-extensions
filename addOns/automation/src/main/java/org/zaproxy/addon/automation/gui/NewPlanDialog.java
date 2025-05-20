@@ -40,6 +40,7 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
+import org.zaproxy.addon.automation.jobs.ExitStatusJob;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -64,7 +65,12 @@ public class NewPlanDialog extends StandardFieldsDialog {
     private static final String REPORT_JOB_NAME = "report";
 
     private static final String[] BASELINE_PROFILE = {
-        "passiveScan-config", "spider", "spiderAjax", "passiveScan-wait", REPORT_JOB_NAME
+        "passiveScan-config",
+        "spider",
+        "spiderAjax",
+        "passiveScan-wait",
+        REPORT_JOB_NAME,
+        ExitStatusJob.JOB_NAME
     };
     private static final String[] IMPORT_PROFILE = {
         "passiveScan-config",
@@ -73,16 +79,32 @@ public class NewPlanDialog extends StandardFieldsDialog {
         "spiderAjax",
         "passiveScan-wait",
         ActiveScanJob.JOB_NAME,
-        REPORT_JOB_NAME
+        REPORT_JOB_NAME,
+        ExitStatusJob.JOB_NAME
     };
     private static final String[] OPENAPI_PROFILE = {
-        "passiveScan-config", "openapi", "passiveScan-wait", ActiveScanJob.JOB_NAME, REPORT_JOB_NAME
+        "passiveScan-config",
+        "openapi",
+        "passiveScan-wait",
+        ActiveScanJob.JOB_NAME,
+        REPORT_JOB_NAME,
+        ExitStatusJob.JOB_NAME
     };
     private static final String[] GRAPHQL_PROFILE = {
-        "passiveScan-config", "graphql", "passiveScan-wait", ActiveScanJob.JOB_NAME, REPORT_JOB_NAME
+        "passiveScan-config",
+        "graphql",
+        "passiveScan-wait",
+        ActiveScanJob.JOB_NAME,
+        REPORT_JOB_NAME,
+        ExitStatusJob.JOB_NAME
     };
     private static final String[] SOAP_PROFILE = {
-        "passiveScan-config", "soap", "passiveScan-wait", ActiveScanJob.JOB_NAME, REPORT_JOB_NAME
+        "passiveScan-config",
+        "soap",
+        "passiveScan-wait",
+        ActiveScanJob.JOB_NAME,
+        REPORT_JOB_NAME,
+        ExitStatusJob.JOB_NAME
     };
     private static final String[] FULL_SCAN_PROFILE = {
         "passiveScan-config",
@@ -90,7 +112,8 @@ public class NewPlanDialog extends StandardFieldsDialog {
         "spiderAjax",
         "passiveScan-wait",
         ActiveScanJob.JOB_NAME,
-        REPORT_JOB_NAME
+        REPORT_JOB_NAME,
+        ExitStatusJob.JOB_NAME
     };
 
     private JList<String> contextList;

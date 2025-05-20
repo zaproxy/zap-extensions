@@ -15,6 +15,14 @@ zapAddOn {
             localeToken.set("%LC%")
         }
 
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.32.0 & < 2.0.0")
+                }
+            }
+        }
+
         extensions {
             register("org.zaproxy.addon.pscan.automation.ExtensionPscanAutomation") {
                 classnames {
@@ -33,6 +41,13 @@ zapAddOn {
 
     apiClientGen {
         api.set("org.zaproxy.addon.pscan.PassiveScanApi")
+    }
+}
+
+crowdin {
+    configuration {
+        tokens.put("%messagesPath%", "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/")
+        tokens.put("%helpPath%", "org/zaproxy/addon/${zapAddOn.addOnId.get()}/")
     }
 }
 

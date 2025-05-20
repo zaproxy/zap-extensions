@@ -20,22 +20,86 @@
 package org.zaproxy.addon.authhelper;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import net.sf.json.JSONObject;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.db.RecordContext;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
+import org.zaproxy.zap.authentication.AuthenticationMethod;
+import org.zaproxy.zap.extension.api.ApiDynamicActionImplementor;
+import org.zaproxy.zap.extension.api.ApiResponse;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class BrowserBasedAuthenticationMethodTypeUnitTest {
+
+    @AfterAll
+    static void cleanUp() {
+        Model.setSingletonForTesting(new Model());
+    }
+
+    @Test
+    void shouldBeConfiguredThroughTheApi() throws Exception {
+        // Given
+        ApiDynamicActionImplementor api =
+                new BrowserBasedAuthenticationMethodType().getSetMethodForContextApiAction();
+        Model model = mock(Model.class);
+        Model.setSingletonForTesting(model);
+        Session session = mock(Session.class);
+        given(model.getSession()).willReturn(session);
+        int contextId = 1;
+        Context context = new Context(session, contextId);
+        given(session.getContext(contextId)).willReturn(context);
+
+        JSONObject params = new JSONObject();
+        params.put("contextId", contextId);
+        params.put("loginPageUrl", "https://www.example.com");
+        params.put("browserId", "example");
+        params.put("loginPageWait", "7");
+
+        // When
+        api.handleAction(params);
+
+        // Then
+        AuthenticationMethod method = context.getAuthenticationMethod();
+        assertThat(method, is(instanceOf(BrowserBasedAuthenticationMethod.class)));
+        BrowserBasedAuthenticationMethod bba = (BrowserBasedAuthenticationMethod) method;
+        assertThat(bba.getLoginPageUrl(), is(equalTo("https://www.example.com")));
+        assertThat(bba.getLoginPageWait(), is(equalTo(7)));
+        assertThat(bba.getBrowserId(), is(equalTo("example")));
+    }
+
+    @Test
+    void shouldGetConfigurationThroughTheApi() {
+        // Given
+        BrowserBasedAuthenticationMethod method =
+                new BrowserBasedAuthenticationMethodType().createAuthenticationMethod(0);
+        method.setLoginPageUrl("https://www.example.com");
+        method.setLoginPageWait(7);
+        method.setBrowserId("example");
+
+        // When
+        ApiResponse response = method.getApiResponseRepresentation();
+
+        // The
+        String expectedResponse =
+                """
+                {"method":{"browserId":"example","loginPageWait":7,"loginPageUrl":"https://www.example.com"}}""";
+        assertThat(response.toJSON().toString(), is(equalTo(expectedResponse)));
+    }
 
     @Test
     void shouldExportAndImportData() throws Exception {

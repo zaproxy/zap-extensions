@@ -7,8 +7,14 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Changed
-- Maintenance changes.
+- Link to repositories/documentation instead of service URLs in the help content.
+- No longer provide a default server URL for Interactsh due to (random) unavailability.
 
+## [0.21.0] - 2025-01-09
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Maintenance changes.
+- Include the handler and source when logging interactions not found in the permanent database.
 
 ## [0.20.0] - 2024-09-17
 ### Added 
@@ -182,6 +188,7 @@ Button is disabled in that case.
 
 ## [0.1.0] - 2021-08-04
 
+[0.21.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.19.0
 [0.18.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.18.0

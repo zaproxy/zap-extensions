@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>ZAP Test Server</H1>
+	<h2>HTML elements that appear after random time, and off screen</h2>
+
+	<table style="width:2000px">
+	<tr>
+		<td id="top-left"/>
+		<td style="width:90%"></td>
+		<td id="top-right"/>
+	</tr>
+	<tr style="height:2000px">
+		<td>
+		<td style="width:90%"></td>
+		<td/>
+	</tr>
+	<tr>
+		<td id="bottom-left"/>
+		<td style="width:90%"></td>
+		<td id="bottom-right"/>
+	</tr>
+	</table>
+
+	<script>
+        function getRndTime() {
+            return 1000 + Math.floor(Math.random() * 4000);
+        }       
+
+        function createLink(name) {
+        	var linkName = "link-" + name;
+            var link = document.createElement("a");
+            var txt = document.createTextNode(linkName);
+            link.appendChild(txt);
+            link.title = linkName;
+            link.id = linkName;
+            link.href = "#"
+            document.getElementById(name).appendChild(link);
+        }
+
+        function createInput(name) {
+        	var inputName = "input-" + name;
+            var input = document.createElement("input");
+            input.attribute = "text";
+            input.id = inputName;
+            document.getElementById(name).appendChild(input);
+        }
+
+        function createButton(name) {
+        	var buttonName = "button-" + name;
+            var button = document.createElement("button");
+            var txt = document.createTextNode(buttonName);
+            button.appendChild(txt);
+            button.type = "button";
+            button.id = buttonName;
+            document.getElementById(name).appendChild(button);
+        }
+
+        setTimeout(function(){ createLink("top-left"); }, getRndTime());
+        setTimeout(function(){ createLink("top-right"); }, getRndTime());
+        setTimeout(function(){ createLink("bottom-left"); }, getRndTime());
+        setTimeout(function(){ createLink("bottom-right"); }, getRndTime());
+
+        setTimeout(function(){ createInput("top-left"); }, getRndTime());
+        setTimeout(function(){ createInput("top-right"); }, getRndTime());
+        setTimeout(function(){ createInput("bottom-left"); }, getRndTime());
+        setTimeout(function(){ createInput("bottom-right"); }, getRndTime());
+
+        setTimeout(function(){ createButton("top-left"); }, getRndTime());
+        setTimeout(function(){ createButton("top-right"); }, getRndTime());
+        setTimeout(function(){ createButton("bottom-left"); }, getRndTime());
+        setTimeout(function(){ createButton("bottom-right"); }, getRndTime());
+	</script>
+	
+	<ul>
+	<li><a href="./">..</a>
+	</ul>
+
+	<div class="buttonsDiv">
+		<a href="/"><button>Index page</button></a>
+	</div>
+</div>
+
+</body>
+</html>

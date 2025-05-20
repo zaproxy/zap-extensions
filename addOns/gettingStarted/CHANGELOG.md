@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [19] - 2025-01-09
+### Changed
+- Update Getting Started Guide for 2.16.0.
+
 ## [18] - 2024-09-24
 ### Changed
 - Rebrand to ZAP by Checkmarx.
@@ -91,6 +95,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[19]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/gettingStarted-v16

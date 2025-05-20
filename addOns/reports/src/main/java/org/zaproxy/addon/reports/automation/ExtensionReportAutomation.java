@@ -78,7 +78,7 @@ public class ExtensionReportAutomation extends ExtensionAdaptor {
         Control.getSingleton()
                 .getExtensionLoader()
                 .getExtension(ExtensionReports.class)
-                .setReportDataHandler(reportDataHandler);
+                .addReportDataHandler(reportDataHandler);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class ExtensionReportAutomation extends ExtensionAdaptor {
         Control.getSingleton()
                 .getExtensionLoader()
                 .getExtension(ExtensionReports.class)
-                .setReportDataHandler(null);
+                .removeReportDataHandler(reportDataHandler);
     }
 
     @Override

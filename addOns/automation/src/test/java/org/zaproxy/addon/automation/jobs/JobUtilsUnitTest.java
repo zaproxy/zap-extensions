@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,6 +46,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InOrder;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -128,6 +131,22 @@ class JobUtilsUnitTest extends TestUtils {
         // Then
         assertThat(dest.getValueString(), is(nullValue()));
         assertThat(dest.isBool(), is(nullValue()));
+    }
+
+    @Test
+    void shouldApplyObjectToObjectInExpectedOrder() {
+        // Given
+        Data source = new Data("A", Boolean.TRUE);
+        Data dest = mock(Data.class);
+        InOrder inOrder = inOrder(dest);
+        AutomationProgress progress = mock(AutomationProgress.class);
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.replaceVars(any())).willAnswer(invocation -> invocation.getArgument(0));
+        // When
+        JobUtils.applyObjectToObject(source, dest, "name", new String[] {}, progress, env);
+        // Then
+        inOrder.verify(dest).setValueString("A");
+        inOrder.verify(dest).setBool(Boolean.TRUE);
     }
 
     @Test
@@ -307,6 +326,29 @@ class JobUtilsUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldGetExistingScriptWrapperSkippingUnsavedScripts() {
+        // Given
+        ExtensionScript extensionScript = mockExtensionLoader(mock(ExtensionScript.class));
+        File file = new File("/script.ext");
+        String type = "type";
+        String engineName = "engine";
+        AutomationProgress progress = mock(AutomationProgress.class);
+        ScriptWrapper unsavedScriptWrapper = mock(ScriptWrapper.class);
+        given(unsavedScriptWrapper.getFile()).willReturn(null);
+        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
+        given(scriptWrapper.getFile()).willReturn(file);
+        given(scriptWrapper.getEngineName()).willReturn(engineName);
+        given(extensionScript.getScripts(type))
+                .willReturn(List.of(unsavedScriptWrapper, scriptWrapper));
+        // When
+        ScriptWrapper obtainedScriptWrapper =
+                JobUtils.getScriptWrapper(file, type, engineName, progress);
+        // Then
+        assertThat(obtainedScriptWrapper, is(sameInstance(scriptWrapper)));
+        verifyNoInteractions(progress);
+    }
+
+    @Test
     void shouldAddScriptWrapperIfNotPresent() throws Exception {
         // Given
         ExtensionScript extensionScript = mockExtensionLoader(mock(ExtensionScript.class));
@@ -337,13 +379,14 @@ class JobUtilsUnitTest extends TestUtils {
         File file = new File("/script.ext");
         String type = "type";
         String engineName = "engine";
-        given(extensionScript.getEngineWrapper(engineName)).willReturn(null);
+        given(extensionScript.getEngineWrapper(engineName))
+                .willThrow(InvalidParameterException.class);
         AutomationProgress progress = mock(AutomationProgress.class);
         // When
         ScriptWrapper obtainedScriptWrapper =
                 JobUtils.getScriptWrapper(file, type, engineName, progress);
         // Then
-        verify(progress).error("!automation.error.env.sessionmgmt.engine.bad!");
+        verify(progress).error("!automation.error.script.engine.bad!");
         assertThat(obtainedScriptWrapper, is(nullValue()));
     }
 

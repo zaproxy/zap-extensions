@@ -166,7 +166,7 @@ public class Repo {
                                 new Result(repoEntry.getKey(), hashEntry.getValue(), vulnData, "");
                         result.setOtherinfo(
                                 Constant.messages.getString(
-                                        "retire.rule.otherinfo", hashEntry.getKey()));
+                                        "retire.rule.otherinfo.hash", hashEntry.getKey()));
                         return result;
                     }
                 }
@@ -288,7 +288,7 @@ public class Repo {
                 vulnData.setRisk(vnext.getRisk());
             }
         }
-        return vulnData;
+        return vulnData.getRisk() > 0 ? vulnData : VulnerabilityData.EMPTY;
     }
 
     private static boolean isGoodCandidate(String version) {
@@ -305,6 +305,11 @@ public class Repo {
             // Nothing to do, it might happen
         }
         return isAllZeros != 0; // Not a good value if all zero
+    }
+
+    /** For testing purposes only */
+    Map<String, RepoEntry> getEntries() {
+        return entries;
     }
 
     public static class VulnerabilityData {

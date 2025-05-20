@@ -54,7 +54,7 @@ class SarifReportDataSupportUnitTest {
     })
     void resolveSemanticZapVersion(String zapVersion, String expectedSemanticVersion) {
         /* prepare */
-        reportData = new ReportData();
+        reportData = new ReportData("test");
         SarifReportDataSupport toTest = new SarifReportDataSupport(reportData);
 
         /* execute */
@@ -67,7 +67,7 @@ class SarifReportDataSupportUnitTest {
     @Test
     void threeAlertsTwoDifferentResultInTwoSarifRules() {
         /* prepare */
-        reportData = new ReportData();
+        reportData = new ReportData("test");
         AlertNode rootNode = new AlertNode(0, "root");
         reportData.setAlertTreeRootNode(rootNode);
 
@@ -124,7 +124,7 @@ class SarifReportDataSupportUnitTest {
     @Test
     void ruleHasFullDescription() {
         /* prepare */
-        reportData = new ReportData();
+        reportData = new ReportData("test");
         AlertNode rootNode = new AlertNode(0, "root");
         reportData.setAlertTreeRootNode(rootNode);
 

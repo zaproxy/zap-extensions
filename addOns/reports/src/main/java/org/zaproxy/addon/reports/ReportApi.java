@@ -121,10 +121,6 @@ public class ReportApi extends ApiImplementor {
         LOGGER.debug("Request for handleApiAction: {} (params: {})", name, params);
         switch (name) {
             case ACTION_GENERATE:
-                ReportData reportData = new ReportData();
-
-                reportData.setTitle(params.getString(PARAM_TITLE));
-
                 Template template =
                         extReports.getTemplateByConfigName(params.getString(PARAM_TEMPLATE));
                 if (template == null) {
@@ -134,6 +130,9 @@ public class ReportApi extends ApiImplementor {
                                     "reports.api.error.templateDoesNotExist",
                                     params.getString(PARAM_TEMPLATE)));
                 }
+                ReportData reportData = new ReportData(template.getConfigName());
+
+                reportData.setTitle(params.getString(PARAM_TITLE));
 
                 List<String> themes = template.getThemes();
                 if (isContainedParam(PARAM_THEME, params)) {

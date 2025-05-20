@@ -84,4 +84,8 @@ public class TemplateFormat {
 
         return values;
     }
+
+    public boolean engineSpecificCheck(String regex, String output, String renderTest) {
+        return true;
+    }
 }

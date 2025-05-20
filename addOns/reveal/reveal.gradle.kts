@@ -16,3 +16,7 @@ zapAddOn {
         messages.set(file("src/main/resources/org/zaproxy/zap/extension/reveal/resources/Messages.properties"))
     }
 }
+
+dependencies {
+    testImplementation(project(":testutils"))
+}
