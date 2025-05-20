@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [48.6.0] - 2025-05-20
 ### Added
 - Client element waitForMsec parameter.
 
@@ -403,6 +403,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[48.6.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.6.0
 [48.5.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.5.0
 [48.4.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.4.0
 [48.3.0]: https://github.com/zaproxy/zap-extensions/releases/zest-v48.3.0
