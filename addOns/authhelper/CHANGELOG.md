@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Include the script used by the Client Script Based Authentication.
   - Add the initiator to the HTTP Messages to know what those messages correspond to.
   - Include the tag name of the Web Element, now collecting `button`s along with `input`s.
+- Detection of session tokens in non standard headers.
 
 ### Changed
 - Warn when the recorded script used with Client Script Based Authentication does not launch a browser.
@@ -38,6 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Handle missing username field in Browser Based Authentication.
 - Correct the processing of cookies with the same name in Header Based Session Management method.
 - Correct redirection handling when checking verification URLs.
+- Verification URL comparison.
 
 ## [0.25.0] - 2025-03-25
 ### Changed

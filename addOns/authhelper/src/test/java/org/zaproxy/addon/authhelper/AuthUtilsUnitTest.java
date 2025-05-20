@@ -741,6 +741,7 @@ class AuthUtilsUnitTest extends TestUtils {
         String token1 = "96438673498764398";
         String token2 = "bndkdfsojhgkdshgk";
         String token3 = "89jdhf9834herg03s";
+        String token4 = "3ys96hdtr28f6gsjr";
 
         HttpMessage msg =
                 new HttpMessage(
@@ -753,6 +754,7 @@ class AuthUtilsUnitTest extends TestUtils {
         msg.getRequestHeader()
                 .addHeader(HttpFieldsNames.COOKIE, "id=" + token2 + "; SameSite=Strict");
         msg.getRequestHeader().addHeader(HttpFieldsNames.AUTHORIZATION, token3);
+        msg.getRequestHeader().addHeader("x-auth-token", token4);
 
         // When
         Set<SessionToken> tokens = AuthUtils.getRequestSessionTokens(msg);
@@ -766,22 +768,26 @@ class AuthUtilsUnitTest extends TestUtils {
                 });
 
         // Then
-        assertThat(tokens.size(), is(equalTo(3)));
+        assertThat(tokens.size(), is(equalTo(4)));
         assertThat(stArray[0].getSource(), is(equalTo(SessionToken.COOKIE_SOURCE)));
         assertThat(stArray[1].getSource(), is(equalTo(SessionToken.HEADER_SOURCE)));
         assertThat(stArray[2].getSource(), is(equalTo(SessionToken.HEADER_SOURCE)));
+        assertThat(stArray[3].getSource(), is(equalTo(SessionToken.HEADER_SOURCE)));
 
         assertThat(stArray[0].getToken(), is(equalTo("cookie:id")));
         assertThat(stArray[1].getToken(), is(equalTo("header:authorization")));
         assertThat(stArray[2].getToken(), is(equalTo("header:authorization")));
+        assertThat(stArray[3].getToken(), is(equalTo("header:x-auth-token")));
 
         assertThat(stArray[0].getValue(), is(equalTo(token2)));
         assertThat(stArray[1].getValue(), is(equalTo(token3)));
         assertThat(stArray[2].getValue(), is(equalTo(token1)));
+        assertThat(stArray[3].getValue(), is(equalTo(token4)));
 
         assertThat(stArray[0].getFullValue(), is(equalTo(token2)));
         assertThat(stArray[1].getFullValue(), is(equalTo(token3)));
         assertThat(stArray[2].getFullValue(), is(equalTo("Bearer " + token1)));
+        assertThat(stArray[3].getFullValue(), is(equalTo(token4)));
     }
 
     @Test

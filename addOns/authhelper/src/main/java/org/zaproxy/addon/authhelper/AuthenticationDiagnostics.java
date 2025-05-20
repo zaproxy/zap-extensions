@@ -309,18 +309,26 @@ public class AuthenticationDiagnostics implements AutoCloseable {
         }
     }
 
+    private void finishCurrentStep(String url, String description) {
+        currentStep.setCreateTimestamp(Instant.now());
+        currentStep.setUrl(url);
+        currentStep.setDescription(description);
+        createStep();
+    }
+
+    public void recordStep(String description) {
+        if (!enabled) {
+            return;
+        }
+        finishCurrentStep("", description);
+    }
+
     public void recordStep(HttpMessage message, String description) {
         if (!enabled) {
             return;
         }
-
-        currentStep.setCreateTimestamp(Instant.now());
-        currentStep.setUrl(message.getRequestHeader().getURI().toString());
-        currentStep.setDescription(description);
-
         addMessageToStep(message);
-
-        createStep();
+        finishCurrentStep(message.getRequestHeader().getURI().toString(), description);
     }
 
     private static String getAttribute(WebElement element, String name) {

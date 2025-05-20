@@ -518,12 +518,10 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                     return session;
                 }
 
-                HttpMessage fallbackMsg = handler.getFallbackMsg();
                 diags.recordStep(
-                        fallbackMsg,
-                        Constant.messages.getString("authhelper.auth.method.diags.steps.fallback"));
-                // We don't expect this to work, but it will prevent some NPEs
-                WebSession session = sessionManagementMethod.extractWebSession(fallbackMsg);
+                        Constant.messages.getString(
+                                "authhelper.auth.method.diags.steps.emptysession"));
+                WebSession session = sessionManagementMethod.createEmptyWebSession();
 
                 recordCloseStep(zestRunner, diags);
                 return session;
