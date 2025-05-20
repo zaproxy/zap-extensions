@@ -17,11 +17,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.llm.ui.settings;
+package org.zaproxy.addon.llm.ui;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
+import java.util.function.Consumer;
+
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -34,40 +36,39 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.view.AbstractParamPanel;
-import org.zaproxy.addon.llm.ExtensionLlm;
+import org.zaproxy.addon.llm.LlmOptions;
 
 public class LlmOptionsPanel extends AbstractParamPanel {
 
     private static final Logger LOGGER = LogManager.getLogger(LlmOptionsPanel.class);
-    private ExtensionLlm extensionLlm;
 
-    private static final long serialVersionUID = -2690686914494943483L;
+    private static final long serialVersionUID = 1L;
+
+    private final Consumer<Boolean> configured;
 
     private JTextField apiKeyTextField;
     private JTextField llmendpointTextField;
 
     private JComboBox<String> llmModelsComboBox;
 
-    public LlmOptionsPanel(ExtensionLlm extensionLlm) {
+    public LlmOptionsPanel(Consumer<Boolean> configured) {
         super();
-        this.extensionLlm = extensionLlm;
-        this.initComponents();
-    }
 
-    private void initComponents() {
-        super.setName(Constant.messages.getString("llm.options.title"));
+        this.configured = configured;
+
+        setName(Constant.messages.getString("llm.options.title"));
 
         JLabel llmApiKey = new JLabel(Constant.messages.getString("llm.options.label.apikey"));
-        this.apiKeyTextField = new JPasswordField();
+        apiKeyTextField = new JPasswordField();
 
         JLabel llmendpoint = new JLabel(Constant.messages.getString("llm.options.label.endpoint"));
-        this.llmendpointTextField = new JTextField();
+        llmendpointTextField = new JTextField();
 
         JLabel llmModelsLabel = new JLabel("Select LLM Model:");
-        this.llmModelsComboBox = new JComboBox<>(new String[] {"gpt-4o"});
+        llmModelsComboBox = new JComboBox<>(new String[] {"gpt-4o"});
 
         GroupLayout layout = new GroupLayout(this);
-        super.setLayout(layout);
+        setLayout(layout);
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
 
@@ -75,59 +76,59 @@ public class LlmOptionsPanel extends AbstractParamPanel {
                 layout.createSequentialGroup()
                         .addGroup(
                                 layout.createParallelGroup(
-                                                GroupLayout.Alignment.TRAILING) // Align labels
+                                                GroupLayout.Alignment.TRAILING)
                                         .addComponent(llmApiKey)
                                         .addComponent(llmendpoint)
                                         .addComponent(llmModelsLabel))
                         .addGroup(
                                 layout.createParallelGroup(
-                                                GroupLayout.Alignment.LEADING) // Align input fields
-                                        .addComponent(this.apiKeyTextField)
-                                        .addComponent(this.llmendpointTextField)
-                                        .addComponent(this.llmModelsComboBox)));
+                                                GroupLayout.Alignment.LEADING)
+                                        .addComponent(apiKeyTextField)
+                                        .addComponent(llmendpointTextField)
+                                        .addComponent(llmModelsComboBox)));
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(llmApiKey)
-                                        .addComponent(this.apiKeyTextField))
+                                        .addComponent(apiKeyTextField))
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(llmendpoint)
-                                        .addComponent(this.llmendpointTextField))
+                                        .addComponent(llmendpointTextField))
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(llmModelsLabel)
-                                        .addComponent(this.llmModelsComboBox)));
+                                        .addComponent(llmModelsComboBox)));
     }
 
     @Override
     public String getHelpIndex() {
-        return "llm.options";
+        return "addon.llm.options";
     }
 
     @Override
-    public void initParam(Object object) {
-        final LlmOptionsParam llmOptionsParam =
-                ((OptionsParam) object).getParamSet(LlmOptionsParam.class);
-        this.apiKeyTextField.setText(Objects.toString(llmOptionsParam.getApiKey(), ""));
-        this.llmendpointTextField.setText(Objects.toString(llmOptionsParam.getEndpoint(), ""));
+    public void initParam(Object options) {
+        LlmOptions llmOptionsParam =
+                ((OptionsParam) options).getParamSet(LlmOptions.class);
+        apiKeyTextField.setText(Objects.toString(llmOptionsParam.getApiKey(), ""));
+        llmendpointTextField.setText(Objects.toString(llmOptionsParam.getEndpoint(), ""));
     }
 
     @Override
-    public void saveParam(Object object) {
-        final LlmOptionsParam param = ((OptionsParam) object).getParamSet(LlmOptionsParam.class);
-        param.setApiKey(this.apiKeyTextField.getText());
-        param.setEndpoint(this.llmendpointTextField.getText());
-        param.setModelName(this.llmModelsComboBox.getSelectedItem().toString());
-        this.extensionLlm.setLlmExtEnabled(true);
+    public void saveParam(Object options) {
+        LlmOptions param = ((OptionsParam) options).getParamSet(LlmOptions.class);
+        param.setApiKey(apiKeyTextField.getText());
+        param.setEndpoint(llmendpointTextField.getText());
+        param.setModelName(llmModelsComboBox.getSelectedItem().toString());
+        configured.accept(true);
     }
 
     @Override
     public void validateParam(Object object) throws Exception {
-        String endpoint = this.llmendpointTextField.getText();
-        String apiKey = this.apiKeyTextField.getText();
+        String endpoint = llmendpointTextField.getText();
+        String apiKey = apiKeyTextField.getText();
 
         if (StringUtils.isNoneEmpty(apiKey)) {
 

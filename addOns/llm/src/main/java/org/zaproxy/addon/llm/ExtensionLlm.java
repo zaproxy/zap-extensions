@@ -20,41 +20,31 @@
 package org.zaproxy.addon.llm;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.llm.ui.ImportDialog;
+import org.zaproxy.addon.llm.ui.LlmOptionsPanel;
 import org.zaproxy.addon.llm.ui.LlmReviewAlertMenu;
-import org.zaproxy.addon.llm.ui.settings.LlmOptionsPanel;
-import org.zaproxy.addon.llm.ui.settings.LlmOptionsParam;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 /**
  * An extension for ZAP that enables researchers to leverage Language Learning Models (LLMs) to
  * augment the functionalities of ZAP.
- *
- * <p>{@link ExtensionAdaptor} classes are the main entry point for adding/loading functionalities
- * provided by the add-ons.
- *
- * @see #hook(ExtensionHook)
  */
 public class ExtensionLlm extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionLlm";
+
     protected static final String PREFIX = "llm";
-    private static final String[] ROOT = {};
 
     private ZapMenuItem menuLLM;
     private ImportDialog importDialog;
     private LlmReviewAlertMenu llmReviewAlertMenu;
-    private LlmOptionsParam llmOptionsParam;
-    private LlmOptionsPanel llmOptionsPanel;
+    private LlmOptions options;
 
     public ExtensionLlm() {
         super(NAME);
@@ -62,41 +52,49 @@ public class ExtensionLlm extends ExtensionAdaptor {
     }
 
     @Override
-    public void init() {
-        super.init();
-        llmOptionsParam = getOptionsParam();
+    public String getUIName() {
+        return Constant.messages.getString(PREFIX + ".name");
+    }
+
+    @Override
+    public String getDescription() {
+        return Constant.messages.getString(PREFIX + ".desc");
     }
 
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        extensionHook.getHookView().addOptionPanel(getOptionsPanel());
-        extensionHook.addOptionsParamSet(getOptionsParam());
-        extensionHook.getHookMenu().addImportMenuItem(getMenuLlm());
-        extensionHook.getHookMenu().addPopupMenuItem(getCheckLlmMenu());
+        options = new LlmOptions();
+        extensionHook.addOptionsParamSet(options);
 
-        extensionHook.addSessionListener(
-                new SessionChangedListener() {
-                    @Override
-                    public void sessionAboutToChange(Session session) {
-                        if (importDialog != null) {
-                            importDialog.clearFields();
+        if (hasView()) {
+            extensionHook.getHookView().addOptionPanel(new LlmOptionsPanel(this::setLlmExtEnabled));
+            extensionHook.getHookMenu().addImportMenuItem(getMenuLlm());
+            extensionHook.getHookMenu().addPopupMenuItem(getCheckLlmMenu());
+
+            extensionHook.addSessionListener(
+                    new SessionChangedListener() {
+                        @Override
+                        public void sessionAboutToChange(Session session) {
+                            if (importDialog != null) {
+                                importDialog.clearFields();
+                            }
                         }
-                    }
 
-                    @Override
-                    public void sessionChanged(Session session) {
-                    }
+                        @Override
+                        public void sessionChanged(Session session) {
+                        }
 
-                    @Override
-                    public void sessionScopeChanged(Session session) {
-                    }
+                        @Override
+                        public void sessionScopeChanged(Session session) {
+                        }
 
-                    @Override
-                    public void sessionModeChanged(Control.Mode mode) {
-                    }
-                });
+                        @Override
+                        public void sessionModeChanged(Control.Mode mode) {
+                        }
+                    });
+        }
     }
 
     @Override
@@ -121,7 +119,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
             menuLLM.addActionListener(
                     e -> {
                         if (importDialog == null) {
-                            importDialog = new ImportDialog(getView().getMainFrame(), this);
+                            importDialog = new ImportDialog(getView().getMainFrame(), options);
                         }
                         importDialog.setVisible(true);
                     });
@@ -129,43 +127,27 @@ public class ExtensionLlm extends ExtensionAdaptor {
         return menuLLM;
     }
 
-    @Override
-    public String getDescription() {
-        return Constant.messages.getString(PREFIX + ".desc");
-    }
-
     private LlmReviewAlertMenu getCheckLlmMenu() {
         if (llmReviewAlertMenu == null) {
-            llmReviewAlertMenu = new LlmReviewAlertMenu(this);
+            llmReviewAlertMenu = new LlmReviewAlertMenu(options, this::isConfigured);
         }
         return llmReviewAlertMenu;
     }
 
-    private LlmOptionsPanel getOptionsPanel() {
-        if (llmOptionsPanel == null) {
-            llmOptionsPanel = new LlmOptionsPanel(this);
-        }
-        return llmOptionsPanel;
-    }
-
-    public LlmOptionsParam getOptionsParam() {
-        if (llmOptionsParam == null) {
-            llmOptionsParam = new LlmOptionsParam();
-        }
-        return llmOptionsParam;
-    }
-
-    public boolean isConfigured() {
-        return StringUtils.isNotEmpty(this.llmOptionsParam.getApiKey());
+    private boolean isConfigured() {
+        return StringUtils.isNotEmpty(options.getApiKey());
     }
 
     @Override
     public void optionsLoaded() {
         super.optionsLoaded();
-        setLlmExtEnabled(isConfigured());
+
+        if (hasView()) {
+            setLlmExtEnabled(isConfigured());
+        }
     }
 
-    public void setLlmExtEnabled(boolean enable) {
+    private void setLlmExtEnabled(boolean enable) {
         getMenuLlm().setEnabled(enable);
         getCheckLlmMenu().setEnabled(enable);
     }

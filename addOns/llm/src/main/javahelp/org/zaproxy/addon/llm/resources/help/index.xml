@@ -4,7 +4,6 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-    <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="llm" target="llm" />
-    <indexitem text="llm - options" target="llm.options"/>
+    <indexitem text="llm" target="addon.llm" />
+    <indexitem text="llm - options" target="addon.llm.options"/>
 </index>

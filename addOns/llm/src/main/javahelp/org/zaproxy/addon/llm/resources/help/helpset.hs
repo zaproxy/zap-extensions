@@ -6,7 +6,7 @@
   <title>LLM Integration Add-On</title>
 
   <maps>
-     <homeID>llm</homeID>
+     <homeID>addon.llm</homeID>
      <mapref location="map.jhm"/>
   </maps>
 

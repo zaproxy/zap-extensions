@@ -72,6 +72,7 @@ var addOns =
         "jsonview",
         "jython",
         "kotlin",
+        "llm",
         "network",
         "oast",
         "onlineMenu",
@@ -120,7 +121,6 @@ var addOns =
         "websocket",
         "webuipoc",
         "zest",
-        "llm"
     )
 
 addOns.forEach { include("$addOnsProjectName:$it") }

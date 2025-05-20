@@ -4,8 +4,7 @@
          "http://java.sun.com/products/javahelp/map_1_0.dtd">
 
 <map version="1.0">
-	<mapID target="llm-icon" url="contents/images/robot.png" />
-    <mapID target="llm" url="contents/llm.html" />
-    <mapID target="llm.about" url="contents/about.html" />
-    <mapID target="llm.options" url="contents/options.html"/>
+    <mapID target="addon.llm.icon" url="contents/images/agent.png" />
+    <mapID target="addon.llm" url="contents/llm.html" />
+    <mapID target="addon.llm.options" url="contents/options.html"/>
 </map>

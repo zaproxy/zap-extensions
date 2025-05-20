@@ -21,46 +21,40 @@ package org.zaproxy.addon.llm.ui;
 
 import java.awt.Component;
 import java.util.Set;
+import java.util.function.Supplier;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.llm.ExtensionLlm;
+import org.zaproxy.addon.llm.LlmOptions;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
-import org.zaproxy.addon.llm.ui.settings.LlmOptionsParam;
 import org.zaproxy.zap.extension.alert.PopupMenuItemAlert;
 
 @SuppressWarnings("serial")
 public class LlmReviewAlertMenu extends PopupMenuItemAlert {
 
-    private static final long serialVersionUID = 1L;
-    private ExtensionLlm extensionLlm;
     private static final Logger LOGGER = LogManager.getLogger(LlmReviewAlertMenu.class);
 
+    private static final long serialVersionUID = 1L;
 
-    public LlmReviewAlertMenu(ExtensionLlm ext) {
+    private final LlmOptions options;
+    private final Supplier<Boolean> configured;
+
+    public LlmReviewAlertMenu(LlmOptions options, Supplier<Boolean> configured) {
         super(Constant.messages.getString("llm.menu.review.title"), true);
-        this.extensionLlm = ext;
+
+        this.options = options;
+        this.configured = configured;
     }
 
     @Override
     public void performAction(Alert alert) {
-
-
         try {
-            // Prevent GUI from freezing using threads
-            final Runnable r = new Runnable() {
-                @Override
-                public void run() {
-                    reviewAlert(alert);
-                }
-            };
-
-            // Start a new thread to run the reviewAlert method
-            new Thread(r).start();
+            new Thread(() -> reviewAlert(alert)).start();
         } catch (Exception e) {
-            showWarningDialog(Constant.messages.getString("llm.reviewalert.error"));
+            View.getSingleton().showWarningDialog(Constant.messages.getString("llm.reviewalert.error"));
             LOGGER.error(e);
         }
     }
@@ -75,7 +69,7 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (super.isEnableForComponent(invoker)) {
-            setEnabled(extensionLlm.isConfigured());
+            setEnabled(configured.get());
             return true;
         }
         return false;
@@ -87,16 +81,11 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
     }
 
     private void reviewAlert(Alert alert){
-        LlmOptionsParam llmOptionsParam = extensionLlm.getOptionsParam();
         LlmCommunicationService llmCommunicationService =
                 new LlmCommunicationService(
-                        llmOptionsParam.getModelName(),
-                        llmOptionsParam.getApiKey(),
-                        llmOptionsParam.getEndpoint());
+                        options.getModelName(),
+                        options.getApiKey(),
+                        options.getEndpoint());
         llmCommunicationService.reviewAlert(alert);
-    }
-
-    public void showWarningDialog(String message) {
-        View.getSingleton().showWarningDialog(message);
     }
 }

@@ -1,7 +1,7 @@
 description = "An add-on to leverage LLM within ZAP."
 
 zapAddOn {
-    addOnName.set("LLM Extension")
+    addOnName.set("LLM Support")
 
     manifest {
         author.set("Abdessamad TEMMAR")
@@ -17,11 +17,8 @@ crowdin {
 }
 
 dependencies {
-
-    zapAddOn("automation")
-    zapAddOn("commonlib")
-
-    testImplementation(project(":testutils"))
     implementation("dev.langchain4j:langchain4j:0.35.0")
     implementation("dev.langchain4j:langchain4j-azure-open-ai:0.35.0")
+
+    testImplementation(project(":testutils"))
 }

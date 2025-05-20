@@ -43,9 +43,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.llm.ExtensionLlm;
+import org.zaproxy.addon.llm.LlmOptions;
 import org.zaproxy.addon.llm.services.LlmCommunicationService;
-import org.zaproxy.addon.llm.ui.settings.LlmOptionsParam;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapHtmlLabel;
@@ -56,18 +55,19 @@ public class ImportDialog extends AbstractDialog {
 
     private static final long serialVersionUID = -7074394202143400215L;
 
-    private final ExtensionLlm extLlm;
+    private final LlmOptions options;
+
     private JTextField fieldOpenapi;
     private JButton buttonChooseFile;
     private JButton buttonCancel;
     private JButton buttonImport;
     private JProgressBar progressBar;
-    private LlmOptionsParam llmOptionsParam;
 
-    public ImportDialog(JFrame parent, final ExtensionLlm extLlm) {
+    public ImportDialog(JFrame parent, LlmOptions options) {
         super(parent, true);
+        this.options = options;
+
         super.setTitle(Constant.messages.getString("llm.importDialog.title"));
-        this.extLlm = extLlm;
         centreDialog();
         setLayout(new GridBagLayout());
 
@@ -112,16 +112,15 @@ public class ImportDialog extends AbstractDialog {
     private boolean importOpenapi() {
 
         String openapiLocation = getOpenapiField().getText();
-        llmOptionsParam = extLlm.getOptionsParam();
         Integer endpointCount = 0;
 
-        if (StringUtils.isEmpty(llmOptionsParam.getApiKey())) {
+        if (StringUtils.isEmpty(options.getApiKey())) {
             showWarningDialog(Constant.messages.getString("llm.options.apikey.error.undefinded"));
             throw new RuntimeException(
                     Constant.messages.getString("llm.options.apikey.error.undefinded"));
         }
 
-        if (StringUtils.isEmpty(llmOptionsParam.getEndpoint())) {
+        if (StringUtils.isEmpty(options.getEndpoint())) {
             showWarningDialog(Constant.messages.getString("llm.options.endpoint.error.undefinded"));
             throw new RuntimeException(
                     Constant.messages.getString("llm.options.endpoint.error.undefinded"));
@@ -129,9 +128,9 @@ public class ImportDialog extends AbstractDialog {
 
         LlmCommunicationService llmCommunicationService =
                 new LlmCommunicationService(
-                        llmOptionsParam.getModelName(),
-                        llmOptionsParam.getApiKey(),
-                        llmOptionsParam.getEndpoint());
+                        options.getModelName(),
+                        options.getApiKey(),
+                        options.getEndpoint());
 
         if (StringUtils.isEmpty(openapiLocation)) {
             ThreadUtils.invokeAndWaitHandled(

@@ -6,9 +6,8 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="LLM Integration" image="llm-icon" target="llm">
-				<tocitem text="About" target="llm.about"/>
-				<tocitem text="Options" target="llm.options"/>
+			<tocitem text="LLM Support" image="addon.llm.icon" target="addon.llm">
+				<tocitem text="Options" target="addon.llm.options"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>
