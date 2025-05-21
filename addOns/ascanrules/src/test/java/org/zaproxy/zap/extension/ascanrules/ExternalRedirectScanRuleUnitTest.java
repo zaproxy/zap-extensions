@@ -45,6 +45,8 @@ import org.zaproxy.zap.testutils.NanoServerHandler;
 /** Unit test for {@link ExternalRedirectScanRule}. */
 class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirectScanRule> {
 
+    private static final String ALLOWED_DESTINATION = "https://good.expected.com";
+
     @Override
     protected ExternalRedirectScanRule createScanner() {
         return new ExternalRedirectScanRule();
@@ -77,6 +79,7 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         TRIM,
         ADD,
         NEITHER,
+        ALLOW_LIST,
         CONCAT_PARAM,
         CONCAT_PATH
     };
@@ -107,21 +110,30 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
                     case CONCAT_PATH:
                         site = HttpHeader.SCHEME_HTTPS + "example.com/" + site;
                         break;
-                    case NEITHER:
+                    case ALLOW_LIST, NEITHER:
                     default:
                         // Nothing to do
                 }
-                if (site != null && site.length() > 0) {
-                    Response response =
-                            newFixedLengthResponse(
-                                    NanoHTTPD.Response.Status.REDIRECT,
-                                    NanoHTTPD.MIME_HTML,
-                                    "Redirect");
-                    response.addHeader(header, site);
+
+                Response response = newFixedLengthResponse("<html><body></body></html>");
+
+                Response redirectResponse =
+                        newFixedLengthResponse(
+                                NanoHTTPD.Response.Status.REDIRECT,
+                                NanoHTTPD.MIME_HTML,
+                                "Redirect");
+                redirectResponse.addHeader(header, site);
+
+                if (PayloadHandling.ALLOW_LIST.equals(payloadHandling)) {
+                    if (site.contains(ALLOWED_DESTINATION)) {
+                        return redirectResponse;
+                    }
                     return response;
                 }
-                String response = "<html><body></body></html>";
-                return newFixedLengthResponse(response);
+                if (site != null && site.length() > 0) {
+                    return redirectResponse;
+                }
+                return response;
             }
         };
     }
@@ -200,6 +212,27 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("site"));
         assertThat(alertsRaised.get(0).getEvidence().endsWith(".owasp.org"), equalTo(true));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {HttpFieldsNames.LOCATION, HttpFieldsNames.REFRESH})
+    void shouldReportRedirectWithLocationOrRefreshHeaderSimpleAllowlist(String header)
+            throws Exception {
+        // Given
+        String test = "/";
+
+        nano.addHandler(createHttpRedirectHandler(test, header, PayloadHandling.ALLOW_LIST));
+        HttpMessage msg = getHttpMessage(test + "?site=" + ALLOWED_DESTINATION);
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("site"));
+        assertThat(
+                alertsRaised.get(0).getAttack().contains(".owasp.org/?" + ALLOWED_DESTINATION),
+                equalTo(true));
+        assertThat(alertsRaised.get(0).getEvidence().contains(".owasp.org"), equalTo(true));
     }
 
     @ParameterizedTest
