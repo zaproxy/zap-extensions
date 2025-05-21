@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - The content length is now properly set on responses which have been modified (Issue 8947).
 
+### Changed
+- Maintenance changes.
+
 ## [9] - 2025-01-10
 ### Changed
 - Update minimum ZAP version to 2.16.0.
