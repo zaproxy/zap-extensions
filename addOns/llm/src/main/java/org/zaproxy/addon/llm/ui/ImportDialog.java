@@ -128,9 +128,7 @@ public class ImportDialog extends AbstractDialog {
 
         LlmCommunicationService llmCommunicationService =
                 new LlmCommunicationService(
-                        options.getModelName(),
-                        options.getApiKey(),
-                        options.getEndpoint());
+                        options.getModelName(), options.getApiKey(), options.getEndpoint());
 
         if (StringUtils.isEmpty(openapiLocation)) {
             ThreadUtils.invokeAndWaitHandled(
@@ -143,7 +141,7 @@ public class ImportDialog extends AbstractDialog {
             return false;
         }
 
-        if (isValidURL(openapiLocation)){
+        if (isValidURL(openapiLocation)) {
             endpointCount = llmCommunicationService.importOpenapiFromUrl(openapiLocation);
         } else if (new File(openapiLocation).canRead()) {
             endpointCount = llmCommunicationService.importOpenapiFromFile(openapiLocation);
@@ -160,13 +158,11 @@ public class ImportDialog extends AbstractDialog {
             showMessageDialog(
                     Constant.messages.getString("llm.importDialog.import.success", endpointCount));
             return true;
-        }else{
+        } else {
             showWarningDialog(
                     Constant.messages.getString("llm.importDialog.import.failure", endpointCount));
             return false;
-
         }
-
     }
 
     private static void setContextMenu(JTextField field) {
@@ -300,7 +296,7 @@ public class ImportDialog extends AbstractDialog {
         getOpenapiField().setText("");
     }
 
-    private boolean isValidURL(String url){
+    private boolean isValidURL(String url) {
         try {
             new URL(url).toURI();
             new URI(url, true);
@@ -308,6 +304,6 @@ public class ImportDialog extends AbstractDialog {
             // Not a valid URI
             return false;
         }
-       return true;
+        return true;
     }
 }

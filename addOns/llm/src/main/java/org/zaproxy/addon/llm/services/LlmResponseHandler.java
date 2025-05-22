@@ -21,11 +21,7 @@ package org.zaproxy.addon.llm.services;
 
 import dev.langchain4j.model.chat.listener.ChatModelErrorContext;
 import dev.langchain4j.model.chat.listener.ChatModelListener;
-import dev.langchain4j.model.chat.listener.ChatModelRequest;
-import dev.langchain4j.model.chat.listener.ChatModelRequestContext;
-import dev.langchain4j.model.chat.listener.ChatModelResponse;
 import dev.langchain4j.model.chat.listener.ChatModelResponseContext;
-import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,7 +38,6 @@ public class LlmResponseHandler implements ChatModelListener {
     public void onError(ChatModelErrorContext errorContext) {
         LOGGER.error("LLM Error : {} ", errorContext.error().getMessage());
         throw new RuntimeException(
-                String.format("LLM Error : %s", errorContext.error().getMessage())
-        );
+                String.format("LLM Error : %s", errorContext.error().getMessage()));
     }
 }

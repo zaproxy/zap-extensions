@@ -45,8 +45,9 @@ public class Requestor {
     public String getResponseBody(HttpRequest httpRequest) throws IOException {
         HttpMessage httpMessage = new HttpMessage();
         httpMessage.setRequestHeader(
-                String.format("%s %s %s", httpRequest.getMethod(), httpRequest.getUrl(), HttpRequestHeader.HTTP11)
-        );
+                String.format(
+                        "%s %s %s",
+                        httpRequest.getMethod(), httpRequest.getUrl(), HttpRequestHeader.HTTP11));
         sender.sendAndReceive(httpMessage, true);
 
         return httpMessage.getResponseBody().toString();
@@ -59,8 +60,11 @@ public class Requestor {
                 HttpMessage httpMessage = new HttpMessage();
 
                 httpMessage.setRequestHeader(
-                        String.format("%s %s %s", httpRequest.getMethod(), httpRequest.getUrl(), HttpRequestHeader.HTTP11)
-                );
+                        String.format(
+                                "%s %s %s",
+                                httpRequest.getMethod(),
+                                httpRequest.getUrl(),
+                                HttpRequestHeader.HTTP11));
 
                 for (Map.Entry<String, String> header : httpRequest.getHeaders().entrySet()) {
                     httpMessage.getRequestHeader().setHeader(header.getKey(), header.getValue());

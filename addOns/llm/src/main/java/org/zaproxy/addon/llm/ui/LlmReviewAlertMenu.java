@@ -22,7 +22,6 @@ package org.zaproxy.addon.llm.ui;
 import java.awt.Component;
 import java.util.Set;
 import java.util.function.Supplier;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -54,7 +53,8 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
         try {
             new Thread(() -> reviewAlert(alert)).start();
         } catch (Exception e) {
-            View.getSingleton().showWarningDialog(Constant.messages.getString("llm.reviewalert.error"));
+            View.getSingleton()
+                    .showWarningDialog(Constant.messages.getString("llm.reviewalert.error"));
             LOGGER.error(e);
         }
     }
@@ -80,12 +80,10 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
         return true;
     }
 
-    private void reviewAlert(Alert alert){
+    private void reviewAlert(Alert alert) {
         LlmCommunicationService llmCommunicationService =
                 new LlmCommunicationService(
-                        options.getModelName(),
-                        options.getApiKey(),
-                        options.getEndpoint());
+                        options.getModelName(), options.getApiKey(), options.getEndpoint());
         llmCommunicationService.reviewAlert(alert);
     }
 }

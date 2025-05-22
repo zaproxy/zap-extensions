@@ -20,10 +20,9 @@
 package org.zaproxy.addon.llm.communication;
 
 import dev.langchain4j.model.output.structured.Description;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 public class HttpRequestList {
 

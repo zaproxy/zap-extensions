@@ -83,16 +83,13 @@ public class ExtensionLlm extends ExtensionAdaptor {
                         }
 
                         @Override
-                        public void sessionChanged(Session session) {
-                        }
+                        public void sessionChanged(Session session) {}
 
                         @Override
-                        public void sessionScopeChanged(Session session) {
-                        }
+                        public void sessionScopeChanged(Session session) {}
 
                         @Override
-                        public void sessionModeChanged(Control.Mode mode) {
-                        }
+                        public void sessionModeChanged(Control.Mode mode) {}
                     });
         }
     }

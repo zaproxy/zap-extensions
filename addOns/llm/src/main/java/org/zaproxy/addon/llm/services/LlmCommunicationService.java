@@ -40,7 +40,6 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpSender;
-import org.zaproxy.addon.llm.LlmOptions;
 import org.zaproxy.addon.llm.communication.Confidence;
 import org.zaproxy.addon.llm.communication.HttpRequestList;
 import org.zaproxy.addon.llm.utils.HistoryPersister;
@@ -84,7 +83,8 @@ public class LlmCommunicationService {
     private Integer importHttpCalls(String swaggercontent) throws IOException {
         HttpRequestList listHttpRequest = llmAssistant.extractHttpRequests(swaggercontent);
         if (listHttpRequest == null) {
-            throw new RuntimeException("An issue occurred when trying to get response from the LLM");
+            throw new RuntimeException(
+                    "An issue occurred when trying to get response from the LLM");
         }
         requestor.run(listHttpRequest);
         return listHttpRequest.getRequests().size();
@@ -100,7 +100,8 @@ public class LlmCommunicationService {
             // Check for successful response code or throw error
             if (connection.getResponseCode() != 200) {
                 throw new RuntimeException(
-                        String.format("Failed : HTTP error code : %s ", connection.getResponseCode()));
+                        String.format(
+                                "Failed : HTTP error code : %s ", connection.getResponseCode()));
             }
 
             // Read the response
@@ -144,11 +145,15 @@ public class LlmCommunicationService {
             LOGGER.debug("Reviewing alert : {}", alert.getName());
             LOGGER.debug("Confidence level from ZAP : {}", alert.getConfidence());
             conf_llm = llmAssistant.review(alert.getDescription(), alert.getEvidence());
-            LOGGER.debug( "Confidence level from LLM : {} | Explanation : {}", conf_llm.getLevel(), conf_llm.getExplanation());
+            LOGGER.debug(
+                    "Confidence level from LLM : {} | Explanation : {}",
+                    conf_llm.getLevel(),
+                    conf_llm.getExplanation());
             updatedAlert.setConfidence(conf_llm.getLevel());
             updatedAlert.setOtherInfo(
-                    String.format("LLM Explanation: %s \n %s", conf_llm.getExplanation(), alert.getOtherInfo())
-            );
+                    String.format(
+                            "LLM Explanation: %s \n %s",
+                            conf_llm.getExplanation(), alert.getOtherInfo()));
             Map<String, String> alertTags = alert.getTags();
 
             alertTags.putIfAbsent(AI_REVIEWD_TAG_KEY, "");
@@ -173,7 +178,7 @@ public class LlmCommunicationService {
         }
     }
 
-    static private ExtensionAlert getExtAlert() {
+    private static ExtensionAlert getExtAlert() {
         return Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
     }
 }

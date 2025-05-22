@@ -60,7 +60,6 @@ public class LlmOptions extends VersionedAbstractParam {
         modelName = getString(MODEL_NAME_PROPERTY, "");
     }
 
-
     @Override
     protected void updateConfigsImpl(int fileVersion) {}
 

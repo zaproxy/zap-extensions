@@ -23,7 +23,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
 import java.util.function.Consumer;
-
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -75,14 +74,12 @@ public class LlmOptionsPanel extends AbstractParamPanel {
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
                         .addGroup(
-                                layout.createParallelGroup(
-                                                GroupLayout.Alignment.TRAILING)
+                                layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                         .addComponent(llmApiKey)
                                         .addComponent(llmendpoint)
                                         .addComponent(llmModelsLabel))
                         .addGroup(
-                                layout.createParallelGroup(
-                                                GroupLayout.Alignment.LEADING)
+                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addComponent(apiKeyTextField)
                                         .addComponent(llmendpointTextField)
                                         .addComponent(llmModelsComboBox)));
@@ -110,8 +107,7 @@ public class LlmOptionsPanel extends AbstractParamPanel {
 
     @Override
     public void initParam(Object options) {
-        LlmOptions llmOptionsParam =
-                ((OptionsParam) options).getParamSet(LlmOptions.class);
+        LlmOptions llmOptionsParam = ((OptionsParam) options).getParamSet(LlmOptions.class);
         apiKeyTextField.setText(Objects.toString(llmOptionsParam.getApiKey(), ""));
         llmendpointTextField.setText(Objects.toString(llmOptionsParam.getEndpoint(), ""));
     }
@@ -142,7 +138,8 @@ public class LlmOptionsPanel extends AbstractParamPanel {
                 connection.setReadTimeout(5000);
             } catch (Exception e) {
                 // Endpoint is not reachable
-                LOGGER.error("Failed to reach the LLM endpoint: HTTP error code: {}", e.getMessage());
+                LOGGER.error(
+                        "Failed to reach the LLM endpoint: HTTP error code: {}", e.getMessage());
                 throw new IllegalArgumentException(
                         Constant.messages.getString("llm.options.endpoint.error.unreachable"));
             } finally {
