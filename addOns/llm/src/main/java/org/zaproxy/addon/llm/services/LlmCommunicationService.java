@@ -24,6 +24,7 @@ import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.azure.AzureOpenAiChatModel;
 import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.service.AiServices;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -40,6 +41,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.llm.LlmOptions;
 import org.zaproxy.addon.llm.communication.Confidence;
 import org.zaproxy.addon.llm.communication.HttpRequestList;
 import org.zaproxy.addon.llm.utils.HistoryPersister;
@@ -58,19 +60,10 @@ public class LlmCommunicationService {
     static ChatLanguageModel model;
     ChatMemory chatMemory;
 
-    public LlmCommunicationService(String modelName, String apiKey, String endpoint) {
+    public LlmCommunicationService(LlmOptions options) {
         listener = new LlmResponseHandler();
         chatMemory = MessageWindowChatMemory.withMaxMessages(10);
-        model =
-                AzureOpenAiChatModel.builder()
-                        .apiKey(apiKey)
-                        .deploymentName(modelName)
-                        .endpoint(endpoint)
-                        .temperature(0.3)
-                        .responseFormat(new ChatCompletionsJsonResponseFormat())
-                        .listeners(List.of(listener))
-                        .logRequestsAndResponses(true)
-                        .build();
+        model = buildModel(options);
 
         llmAssistant =
                 AiServices.builder(LlmAssistant.class)
@@ -78,6 +71,31 @@ public class LlmCommunicationService {
                         .chatMemory(chatMemory)
                         .build();
         requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR, new HistoryPersister());
+    }
+
+    private ChatLanguageModel buildModel(LlmOptions options) {
+        return switch (options.getModelProvider()) {
+            case AZURE_OPENAI ->
+                    AzureOpenAiChatModel.builder()
+                            .apiKey(options.getApiKey())
+                            .deploymentName(options.getModelName())
+                            .endpoint(options.getEndpoint())
+                            .temperature(0.3)
+                            .responseFormat(new ChatCompletionsJsonResponseFormat())
+                            .listeners(List.of(listener))
+                            .logRequestsAndResponses(true)
+                            .build();
+            case OLLAMA ->
+                    OllamaChatModel.builder()
+                            .baseUrl(options.getEndpoint())
+                            .modelName(options.getModelName())
+                            .temperature(0.3)
+                            .listeners(List.of(listener))
+                            .logRequests(true)
+                            .logResponses(true)
+                            .build();
+            default -> throw new RuntimeException("Unknown model provider");
+        };
     }
 
     private Integer importHttpCalls(String swaggercontent) throws IOException {

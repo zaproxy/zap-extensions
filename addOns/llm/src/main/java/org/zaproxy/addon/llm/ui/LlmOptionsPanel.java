@@ -36,6 +36,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.addon.llm.LlmOptions;
+import org.zaproxy.addon.llm.LlmProvider;
 
 public class LlmOptionsPanel extends AbstractParamPanel {
 
@@ -45,10 +46,10 @@ public class LlmOptionsPanel extends AbstractParamPanel {
 
     private final Consumer<Boolean> configured;
 
+    private JComboBox<LlmProvider> modelProviderComboBox;
     private JTextField apiKeyTextField;
     private JTextField llmendpointTextField;
-
-    private JComboBox<String> llmModelsComboBox;
+    private JTextField modelNameTextField;
 
     public LlmOptionsPanel(Consumer<Boolean> configured) {
         super();
@@ -57,14 +58,19 @@ public class LlmOptionsPanel extends AbstractParamPanel {
 
         setName(Constant.messages.getString("llm.options.title"));
 
+        JLabel modelProviderLabel =
+                new JLabel(Constant.messages.getString("llm.options.label.modelprovider"));
+        modelProviderComboBox = new JComboBox<>(LlmProvider.values());
+
         JLabel llmApiKey = new JLabel(Constant.messages.getString("llm.options.label.apikey"));
         apiKeyTextField = new JPasswordField();
 
         JLabel llmendpoint = new JLabel(Constant.messages.getString("llm.options.label.endpoint"));
         llmendpointTextField = new JTextField();
 
-        JLabel llmModelsLabel = new JLabel("Select LLM Model:");
-        llmModelsComboBox = new JComboBox<>(new String[] {"gpt-4o"});
+        JLabel modelNameLabel =
+                new JLabel(Constant.messages.getString("llm.options.label.modelname"));
+        modelNameTextField = new JTextField();
 
         GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
@@ -75,17 +81,23 @@ public class LlmOptionsPanel extends AbstractParamPanel {
                 layout.createSequentialGroup()
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                        .addComponent(modelProviderLabel)
                                         .addComponent(llmApiKey)
                                         .addComponent(llmendpoint)
-                                        .addComponent(llmModelsLabel))
+                                        .addComponent(modelNameLabel))
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(modelProviderComboBox)
                                         .addComponent(apiKeyTextField)
                                         .addComponent(llmendpointTextField)
-                                        .addComponent(llmModelsComboBox)));
+                                        .addComponent(modelNameTextField)));
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(modelProviderLabel)
+                                        .addComponent(modelProviderComboBox))
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(llmApiKey)
@@ -96,8 +108,8 @@ public class LlmOptionsPanel extends AbstractParamPanel {
                                         .addComponent(llmendpointTextField))
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(llmModelsLabel)
-                                        .addComponent(llmModelsComboBox)));
+                                        .addComponent(modelNameLabel)
+                                        .addComponent(modelNameTextField)));
     }
 
     @Override
@@ -115,9 +127,10 @@ public class LlmOptionsPanel extends AbstractParamPanel {
     @Override
     public void saveParam(Object options) {
         LlmOptions param = ((OptionsParam) options).getParamSet(LlmOptions.class);
+        param.setModelProvider((LlmProvider) modelProviderComboBox.getSelectedItem());
         param.setApiKey(apiKeyTextField.getText());
         param.setEndpoint(llmendpointTextField.getText());
-        param.setModelName(llmModelsComboBox.getSelectedItem().toString());
+        param.setModelName(modelNameTextField.getText());
         configured.accept(true);
     }
 

@@ -19,6 +19,7 @@ crowdin {
 dependencies {
     implementation("dev.langchain4j:langchain4j:0.35.0")
     implementation("dev.langchain4j:langchain4j-azure-open-ai:0.35.0")
+    implementation("dev.langchain4j:langchain4j-ollama:0.35.0")
 
     testImplementation(project(":testutils"))
 }

@@ -33,9 +33,12 @@ public class LlmOptions extends VersionedAbstractParam {
 
     private static final String BASE_KEY = "llm";
 
+    public static final String MODEL_PROVIDER_PROPERTY = BASE_KEY + ".modelprovider";
     public static final String APIKEY_PROPERTY = BASE_KEY + ".apikey";
     public static final String ENDPOINT_PROPERTY = BASE_KEY + ".endpoint";
     public static final String MODEL_NAME_PROPERTY = BASE_KEY + ".modelname";
+
+    private LlmProvider modelProvider;
 
     private String apiKey;
 
@@ -55,6 +58,7 @@ public class LlmOptions extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
+        modelProvider = getEnum(MODEL_PROVIDER_PROPERTY, LlmProvider.NONE);
         apiKey = getString(APIKEY_PROPERTY, "");
         endpoint = getString(ENDPOINT_PROPERTY, "");
         modelName = getString(MODEL_NAME_PROPERTY, "");
@@ -88,5 +92,14 @@ public class LlmOptions extends VersionedAbstractParam {
     public void setModelName(String modelName) {
         this.modelName = modelName;
         getConfig().setProperty(MODEL_NAME_PROPERTY, this.modelName);
+    }
+
+    public LlmProvider getModelProvider() {
+        return modelProvider;
+    }
+
+    public void setModelProvider(LlmProvider modelProvider) {
+        this.modelProvider = modelProvider;
+        getConfig().setProperty(MODEL_PROVIDER_PROPERTY, this.modelProvider.name());
     }
 }

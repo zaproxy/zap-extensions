@@ -19,7 +19,6 @@
  */
 package org.zaproxy.addon.llm;
 
-import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -132,7 +131,7 @@ public class ExtensionLlm extends ExtensionAdaptor {
     }
 
     private boolean isConfigured() {
-        return StringUtils.isNotEmpty(options.getApiKey());
+        return options.getModelProvider() != LlmProvider.NONE;
     }
 
     @Override

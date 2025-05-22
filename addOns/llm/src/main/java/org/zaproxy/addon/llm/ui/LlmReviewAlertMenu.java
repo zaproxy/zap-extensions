@@ -81,9 +81,7 @@ public class LlmReviewAlertMenu extends PopupMenuItemAlert {
     }
 
     private void reviewAlert(Alert alert) {
-        LlmCommunicationService llmCommunicationService =
-                new LlmCommunicationService(
-                        options.getModelName(), options.getApiKey(), options.getEndpoint());
+        LlmCommunicationService llmCommunicationService = new LlmCommunicationService(options);
         llmCommunicationService.reviewAlert(alert);
     }
 }

@@ -126,9 +126,7 @@ public class ImportDialog extends AbstractDialog {
                     Constant.messages.getString("llm.options.endpoint.error.undefinded"));
         }
 
-        LlmCommunicationService llmCommunicationService =
-                new LlmCommunicationService(
-                        options.getModelName(), options.getApiKey(), options.getEndpoint());
+        LlmCommunicationService llmCommunicationService = new LlmCommunicationService(options);
 
         if (StringUtils.isEmpty(openapiLocation)) {
             ThreadUtils.invokeAndWaitHandled(
