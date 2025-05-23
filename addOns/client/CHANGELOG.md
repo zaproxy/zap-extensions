@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Updated Chrome and Firefox extensions to v0.0.13.
+- Added optional parameters for Page Load Time and Max Crawl Depth to the Client Spider API.
 
 ### Fixed
 - Client Spider to allow all requests while authenticating.
