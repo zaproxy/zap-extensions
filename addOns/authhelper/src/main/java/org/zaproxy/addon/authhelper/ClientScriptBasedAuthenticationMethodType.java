@@ -69,7 +69,9 @@ import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zest.core.v1.ZestActionSleep;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
+import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthenticationMethodType {
 
@@ -351,6 +353,16 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
             return zestScript.getStatements().stream().anyMatch(ZestClientLaunch.class::isInstance);
         }
 
+        private void removeCloseStatements(ZestScript zestScript) {
+            for (int i = 0; i < zestScript.getStatements().size(); i++) {
+                ZestStatement stmt = zestScript.getStatements().get(i);
+                if (stmt instanceof ZestClientWindowClose close) {
+                    zestScript.getStatements().remove(i);
+                    i -= 1;
+                }
+            }
+        }
+
         @Override
         public WebSession authenticate(
                 SessionManagementMethod sessionManagementMethod,
@@ -401,6 +413,7 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
                         zestRunner.registerHandler(getHandler(user));
                         zestScript.add(
                                 new ZestActionSleep(TimeUnit.SECONDS.toMillis(getLoginPageWait())));
+                        removeCloseStatements(zestScript);
                     } else {
                         LOGGER.warn("Expected authScript to be a Zest script");
                         return null;
@@ -528,7 +541,6 @@ public class ClientScriptBasedAuthenticationMethodType extends ScriptBasedAuthen
 
             } finally {
                 if (zestRunner != null) {
-                    // Close any webdrivers left open
                     zestRunner
                             .getWebDrivers()
                             .forEach(
