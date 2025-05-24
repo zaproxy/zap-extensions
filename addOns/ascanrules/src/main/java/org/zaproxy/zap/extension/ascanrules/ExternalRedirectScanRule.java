@@ -100,29 +100,31 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
     private static final String REDIRECT_SITE = SITE_HOST + OWASP_SUFFIX;
 
     /** The various (prioritized) payload to try */
-    private static final String[] REDIRECT_TARGETS = {
-        REDIRECT_SITE,
-        HttpHeader.SCHEME_HTTPS + REDIRECT_SITE,
-        HttpHeader.SCHEME_HTTPS + REDIRECT_SITE.replace(".", "%2e"), // Double encode the dots
-        "5;URL='https://" + REDIRECT_SITE + "'",
-        "URL='http://" + REDIRECT_SITE + "'",
+    private enum RedirectPayloads {
+        PLAIN_SITE(REDIRECT_SITE, false),
+        HTTPS_SITE(HttpHeader.SCHEME_HTTPS + REDIRECT_SITE, false),
+        // Double encode the dots
+        HTTPS_PERIOD_ENCODE(HttpHeader.SCHEME_HTTPS + REDIRECT_SITE.replace(".", "%2e"), false),
+        HTTPS_REFRESH("5;URL='https://" + REDIRECT_SITE + "'", false),
+        HTTPS_LOCATION("URL='http://" + REDIRECT_SITE + "'", false),
         // Simple allow list bypass, ex: https://evil.com?<original_value>
-        // Where "original_value" is whatever the parameter value initially was, ex:
+        // Where <original_value> is whatever the parameter value initially was, ex:
         // https://good.expected.com
-        HttpHeader.SCHEME_HTTPS + REDIRECT_SITE + "/?" + ORIGINAL_VALUE_PLACEHOLDER,
-        "5;URL='https://" + REDIRECT_SITE + "/?" + ORIGINAL_VALUE_PLACEHOLDER + "'",
-        HttpHeader.SCHEME_HTTPS + "\\" + REDIRECT_SITE,
-        HttpHeader.SCHEME_HTTP + "\\" + REDIRECT_SITE,
-        HttpHeader.SCHEME_HTTP + REDIRECT_SITE,
-        "//" + REDIRECT_SITE,
-        "\\\\" + REDIRECT_SITE,
-        "HtTp://" + REDIRECT_SITE,
-        "HtTpS://" + REDIRECT_SITE,
+        HTTPS_ORIG_PARAM(
+                HttpHeader.SCHEME_HTTPS + REDIRECT_SITE + "/?" + ORIGINAL_VALUE_PLACEHOLDER, true),
+        HTTPS_REFRESH_ORIG_PARAM(
+                "5;URL='https://" + REDIRECT_SITE + "/?" + ORIGINAL_VALUE_PLACEHOLDER + "'", true),
+        HTTPS_WRONG_SLASH(HttpHeader.SCHEME_HTTPS + "\\" + REDIRECT_SITE, false),
+        HTTP_WRONG_SLASH(HttpHeader.SCHEME_HTTP + "\\" + REDIRECT_SITE, false),
+        HTTP(HttpHeader.SCHEME_HTTP + REDIRECT_SITE, false),
+        NO_SCHEME("//" + REDIRECT_SITE, false),
+        NO_SCHEME_WRONG_SLASH("\\\\" + REDIRECT_SITE, false),
+        HTTPS_MIXED_CASE("HtTpS://" + REDIRECT_SITE, false),
+        HTTP_MIXED_CASE("HtTp://" + REDIRECT_SITE, false);
 
-        // http://kotowicz.net/absolute/
-        // I never met real cases for these
-        // to be evaluated in the future
-        /*
+        /* http://kotowicz.net/absolute/
+        I never met real cases for these
+        to be evaluated in the future
         "/\\" + REDIRECT_SITE,
         "\\/" + REDIRECT_SITE,
         "\r \t//" + REDIRECT_SITE,
@@ -133,7 +135,23 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
         "://" + REDIRECT_SITE,
         ".:." + REDIRECT_SITE
         */
-    };
+
+        private final String payload;
+        private final boolean hasPlaceHolder;
+
+        RedirectPayloads(String payload, boolean hasPlaceHolder) {
+            this.payload = payload;
+            this.hasPlaceHolder = hasPlaceHolder;
+        }
+
+        public String getPayload() {
+            return payload;
+        }
+
+        public boolean hasPlaceHolder() {
+            return hasPlaceHolder;
+        }
+    }
 
     // Get WASC Vulnerability description
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_38");
@@ -180,37 +198,9 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
     @Override
     public void scan(HttpMessage msg, String param, String value) {
 
-        // Number of targets to try
-        int targetCount = 0;
-
-        // Debug only
         LOGGER.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
-
         // Figure out how aggressively we should test
-        switch (this.getAttackStrength()) {
-            case LOW:
-                // Check only for baseline targets (2 reqs / param)
-                targetCount = 3;
-                break;
-
-            case MEDIUM:
-                // This works out as a total of 9 reqs / param
-                targetCount = 9;
-                break;
-
-            case HIGH:
-                // This works out as a total of 15 reqs / param
-                targetCount = REDIRECT_TARGETS.length;
-                break;
-
-            case INSANE:
-                // This works out as a total of 15 reqs / param
-                targetCount = REDIRECT_TARGETS.length;
-                break;
-
-            default:
-                break;
-        }
+        int payloadCount = getPayloadCount();
 
         LOGGER.debug(
                 "Checking [{}][{}], parameter [{}] for Open Redirect Vulnerabilities",
@@ -218,27 +208,27 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
                 getBaseMsg().getRequestHeader().getURI(),
                 param);
 
-        // For each target in turn
-        // note that depending on the AttackLevel,
-        // the number of elements that we will try changes.
-        String payload;
         String redirectUrl;
+        int payloadIdx = 0;
 
-        for (int h = 0; h < targetCount; h++) {
-            if (isStop()) {
+        // For each payload in turn
+        // note that depending on the Strength,
+        // the number of elements that we will try changes.
+        for (RedirectPayloads payload : RedirectPayloads.values()) {
+            if (isStop() || ++payloadIdx == payloadCount) {
                 return;
             }
 
-            payload =
-                    REDIRECT_TARGETS[h].contains(ORIGINAL_VALUE_PLACEHOLDER)
-                            ? REDIRECT_TARGETS[h].replace(ORIGINAL_VALUE_PLACEHOLDER, value)
-                            : REDIRECT_TARGETS[h];
+            String injection = payload.getPayload();
+            if (payload.hasPlaceHolder()) {
+                injection = payload.getPayload().replace(ORIGINAL_VALUE_PLACEHOLDER, value);
+            }
 
             // Get a new copy of the original message (request only) for each parameter value to try
             HttpMessage testMsg = getNewMsg();
-            setParameter(testMsg, param, payload);
+            setParameter(testMsg, param, injection);
 
-            LOGGER.debug("Testing [{}] = [{}]", param, payload);
+            LOGGER.debug("Testing [{}] = [{}]", param, injection);
 
             try {
                 // Send the request and retrieve the response
@@ -246,58 +236,54 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin
                 sendAndReceive(testMsg, false);
 
                 String payloadScheme =
-                        StringUtils.containsIgnoreCase(payload, HttpHeader.HTTPS)
+                        StringUtils.containsIgnoreCase(injection, HttpHeader.HTTPS)
                                 ? HttpHeader.HTTPS
                                 : HttpHeader.HTTP;
-                // If it's a meta based injection the use the base url
+                // If it's a meta based injection then use the base URL
                 redirectUrl =
-                        (payload.startsWith("5;") || payload.startsWith("URL="))
+                        (injection.startsWith("5;") || injection.startsWith("URL="))
                                 ? payloadScheme + "://" + REDIRECT_SITE
-                                : payload;
+                                : injection;
 
                 // Get back if a redirection occurs
                 int redirectType = isRedirected(redirectUrl, testMsg);
 
                 if (redirectType != NO_REDIRECT) {
-                    // We Found IT!
-                    // First do logging
                     LOGGER.debug(
                             "[External Redirection Found] on parameter [{}] with payload [{}]",
                             param,
-                            payload);
+                            injection);
 
-                    buildAlert(param, payload, redirectType, redirectUrl, testMsg).raise();
-
-                    // All done. No need to look for vulnerabilities on subsequent
-                    // parameters on the same request (to reduce performance impact)
+                    buildAlert(param, injection, redirectType, redirectUrl, testMsg).raise();
                     return;
                 }
             } catch (IOException ex) {
-                // Do not try to internationalize this.. we need an error message in any event..
-                // if it's in English, it's still better than not having it at all.
                 LOGGER.warn(
                         "External Redirect vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                         param,
-                        payload,
+                        injection,
                         ex);
             }
         }
     }
 
+    private int getPayloadCount() {
+        return switch (this.getAttackStrength()) {
+            case LOW -> 3;
+            case MEDIUM -> 9;
+            case HIGH, INSANE -> RedirectPayloads.values().length;
+            default -> 9;
+        };
+    }
+
     private String getAlertReference(int redirectType) {
-        switch (redirectType) {
-            case REDIRECT_LOCATION_HEADER:
-                return getId() + "-1";
-            case REDIRECT_REFRESH_HEADER:
-                return getId() + "-2";
-            case REDIRECT_LOCATION_META:
-            case REDIRECT_REFRESH_META:
-                return getId() + "-3";
-            case REDIRECT_JAVASCRIPT:
-                return getId() + "-4";
-            default:
-                return "";
-        }
+        return switch (redirectType) {
+            case REDIRECT_LOCATION_HEADER -> getId() + "-1";
+            case REDIRECT_REFRESH_HEADER -> getId() + "-2";
+            case REDIRECT_LOCATION_META, REDIRECT_REFRESH_META -> getId() + "-3";
+            case REDIRECT_JAVASCRIPT -> getId() + "-4";
+            default -> "";
+        };
     }
 
     private AlertBuilder buildAlert(
