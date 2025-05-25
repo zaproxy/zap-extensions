@@ -39,6 +39,7 @@ import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.ascanrules.ExtensionAscanRules;
 import org.zaproxy.zap.extension.ascanrules.HiddenFilesScanRule;
 import org.zaproxy.zap.extension.ascanrules.UserAgentScanRule;
+import org.zaproxy.zap.extension.ascanrules.XpathInjectionScanRule;
 import org.zaproxy.zap.extension.custompayloads.ExtensionCustomPayloads;
 import org.zaproxy.zap.extension.custompayloads.PayloadCategory;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -72,6 +73,7 @@ class ExtensionPayloaderUnitTest extends TestUtils {
         ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         ExtensionPayloader ep = new ExtensionPayloader();
+        mockMessages(new ExtensionAscanRules());
         ExtensionHook eh = mock(ExtensionHook.class);
         ExtensionCustomPayloads ecp = mock(ExtensionCustomPayloads.class);
         given(extensionLoader.getExtension(ExtensionCustomPayloads.class)).willReturn(ecp);
@@ -81,8 +83,10 @@ class ExtensionPayloaderUnitTest extends TestUtils {
                 ArgumentCaptor.forClass(PayloadCategory.class);
         MockedStatic<UserAgentScanRule> uaRule = mockStatic(UserAgentScanRule.class);
         MockedStatic<HiddenFilesScanRule> hffRule = mockStatic(HiddenFilesScanRule.class);
+        MockedStatic<XpathInjectionScanRule> xpathRule = mockStatic(XpathInjectionScanRule.class);
         ArgumentCaptor<Supplier> uaSuppliers = ArgumentCaptor.forClass(Supplier.class);
         ArgumentCaptor<Supplier> hffSuppliers = ArgumentCaptor.forClass(Supplier.class);
+        ArgumentCaptor<Supplier> xpathSuppliers = ArgumentCaptor.forClass(Supplier.class);
         // When
         ep.hook(eh);
         ep.unload();
@@ -98,15 +102,24 @@ class ExtensionPayloaderUnitTest extends TestUtils {
         Supplier<?> outHffSupplier = hffSuppliers.getAllValues().get(1);
         assertThat(outHffSupplier, is(equalTo(null)));
 
-        verify(ecp, times(2)).addPayloadCategory(inCategories.capture());
+        xpathRule.verify(
+                () -> XpathInjectionScanRule.setErrorProvider(xpathSuppliers.capture()), times(2));
+        // The supplier should be set null on unload, second invocation
+        Supplier<?> outXpathSupplier = xpathSuppliers.getAllValues().get(1);
+        assertThat(outXpathSupplier, is(equalTo(null)));
+
+        verify(ecp, times(3)).addPayloadCategory(inCategories.capture());
         PayloadCategory inCategory1 = inCategories.getAllValues().get(0);
         PayloadCategory inCategory2 = inCategories.getAllValues().get(1);
+        PayloadCategory inCategory3 = inCategories.getAllValues().get(2);
 
-        verify(ecp, times(2)).removePayloadCategory(outCategories.capture());
+        verify(ecp, times(3)).removePayloadCategory(outCategories.capture());
         PayloadCategory outCategory1 = outCategories.getAllValues().get(0);
         PayloadCategory outCategory2 = outCategories.getAllValues().get(1);
+        PayloadCategory outCategory3 = outCategories.getAllValues().get(2);
 
         assertThat(inCategory1.getName(), is(equalTo(outCategory1.getName())));
         assertThat(inCategory2.getName(), is(equalTo(outCategory2.getName())));
+        assertThat(inCategory3.getName(), is(equalTo(outCategory3.getName())));
     }
 }

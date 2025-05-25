@@ -27,6 +27,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.extension.ascanrules.HiddenFilesScanRule;
 import org.zaproxy.zap.extension.ascanrules.UserAgentScanRule;
+import org.zaproxy.zap.extension.ascanrules.XpathInjectionScanRule;
 import org.zaproxy.zap.extension.custompayloads.ExtensionCustomPayloads;
 import org.zaproxy.zap.extension.custompayloads.PayloadCategory;
 
@@ -38,6 +39,7 @@ public class ExtensionPayloader extends ExtensionAdaptor {
     private static ExtensionCustomPayloads ecp;
     private PayloadCategory uaCategory;
     private PayloadCategory hfCategory;
+    private PayloadCategory xpathErrorCategory;
 
     public ExtensionPayloader() {
         super(NAME);
@@ -64,6 +66,14 @@ public class ExtensionPayloader extends ExtensionAdaptor {
                         HiddenFilesScanRule.getHiddenFiles());
         ecp.addPayloadCategory(hfCategory);
         HiddenFilesScanRule.setPayloadProvider(hfCategory::getPayloadsIterator);
+
+        xpathErrorCategory =
+                new PayloadCategory(
+                        List.of(),
+                        XpathInjectionScanRule.DEFAULT_DISABLED_ERRORS,
+                        XpathInjectionScanRule.ERRORS_PAYLOAD_CATEGORY);
+        ecp.addPayloadCategory(xpathErrorCategory);
+        XpathInjectionScanRule.setErrorProvider(xpathErrorCategory::getPayloadsIterator);
     }
 
     @Override
@@ -77,6 +87,8 @@ public class ExtensionPayloader extends ExtensionAdaptor {
         ecp.removePayloadCategory(uaCategory);
         HiddenFilesScanRule.setPayloadProvider(null);
         ecp.removePayloadCategory(hfCategory);
+        XpathInjectionScanRule.setErrorProvider(null);
+        ecp.removePayloadCategory(xpathErrorCategory);
     }
 
     @Override

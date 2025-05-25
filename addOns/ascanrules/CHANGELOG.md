@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- The XPath Injection scan rule now supports error patterns provided via the Custom Payloads add-on (Issue 8958). A minimum of Custom Payloads 1.29.0 is required to take advantage of this optional functionality.
 
 ## [72] - 2025-06-20
 ### Added
