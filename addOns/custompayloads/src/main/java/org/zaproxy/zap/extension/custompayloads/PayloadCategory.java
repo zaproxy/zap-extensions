@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.custompayloads;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,12 +30,22 @@ public final class PayloadCategory {
     private List<CustomPayload> payloads;
 
     public PayloadCategory(String name, List<String> defaultPayloads) {
-        this(name, defaultPayloads, Collections.emptyList());
+        this(name, defaultPayloads, List.of());
+    }
+
+    /**
+     * @since 0.15.0
+     */
+    public PayloadCategory(
+            List<String> defaultPayloads, List<String> disabledPayloads, String name) {
+        this(name, defaultPayloads);
+        this.defaultPayloads.addAll(createDisabledPayloads(name, disabledPayloads));
+        this.payloads = this.defaultPayloads;
     }
 
     PayloadCategory(String name, List<String> defaultPayloads, List<CustomPayload> payloads) {
         this.name = Objects.requireNonNull(name);
-        this.defaultPayloads = createDefaultPayloads(name, defaultPayloads);
+        this.defaultPayloads = createEnabledPayloads(name, defaultPayloads);
         this.payloads = Objects.requireNonNull(payloads);
     }
 
@@ -60,16 +69,25 @@ public final class PayloadCategory {
         return defaultPayloads;
     }
 
-    private static List<CustomPayload> createDefaultPayloads(String name, List<String> payloads) {
+    private static List<CustomPayload> createEnabledPayloads(String name, List<String> payloads) {
+        return createPayloads(name, payloads, true);
+    }
+
+    private static List<CustomPayload> createDisabledPayloads(String name, List<String> payloads) {
+        return createPayloads(name, payloads, false);
+    }
+
+    private static List<CustomPayload> createPayloads(
+            String name, List<String> payloads, boolean enabled) {
         Objects.requireNonNull(payloads);
 
         if (payloads.isEmpty()) {
-            return Collections.emptyList();
+            return new ArrayList<>();
         }
 
         List<CustomPayload> defaultPayloads = new ArrayList<>(payloads.size());
         for (String payload : payloads) {
-            defaultPayloads.add(new CustomPayload(name, payload));
+            defaultPayloads.add(new CustomPayload(enabled, name, payload));
         }
         return defaultPayloads;
     }

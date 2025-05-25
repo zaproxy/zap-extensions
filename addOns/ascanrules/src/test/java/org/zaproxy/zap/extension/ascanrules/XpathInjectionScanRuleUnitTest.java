@@ -19,19 +19,27 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
+import fi.iki.elonen.NanoHTTPD;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.PolicyTag;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class XpathInjectionScanRuleUnitTest extends ActiveScannerTest<XpathInjectionScanRule> {
+
+    private static final String TEST_ERROR_STRING = "FooExceptionBar";
 
     @Override
     protected XpathInjectionScanRule createScanner() {
@@ -47,7 +55,7 @@ class XpathInjectionScanRuleUnitTest extends ActiveScannerTest<XpathInjectionSca
         // Then
         assertThat(cwe, is(equalTo(643)));
         assertThat(wasc, is(equalTo(39)));
-        assertThat(tags.size(), is(equalTo(13)));
+        assertThat(tags.size(), is(equalTo(14)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()),
                 is(equalTo(true)));
@@ -59,6 +67,7 @@ class XpathInjectionScanRuleUnitTest extends ActiveScannerTest<XpathInjectionSca
                 is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.HIPAA.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(CommonAlertTag.PCI_DSS.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.API.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_STD.getTag()), is(equalTo(true)));
         assertThat(tags.containsKey(PolicyTag.DEV_FULL.getTag()), is(equalTo(true)));
@@ -92,5 +101,66 @@ class XpathInjectionScanRuleUnitTest extends ActiveScannerTest<XpathInjectionSca
     @Override
     public void shouldHaveValidReferences() {
         super.shouldHaveValidReferences();
+    }
+
+    @Test
+    void shouldRaiseAlertIfResponseContainsExpectedErrorForInjectedInput()
+            throws HttpMalformedHeaderException {
+        // Given
+        String testPath = "/shouldRaiseAlertIfResponseContainsExpectedErrorForInjectedInput/";
+        this.nano.addHandler(createXpathHandler(testPath, "XPathException"));
+        HttpMessage msg = getHttpMessage(testPath + "?query=xxx");
+        this.rule.init(msg, this.parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("XPathException")));
+    }
+
+    @Test
+    void shouldNotRaiseAlertIfResponseDoesNotContainExpectedErrorForInjectedInput()
+            throws HttpMalformedHeaderException {
+        // Given
+        String testPath =
+                "/shouldNotRaiseAlertIfResponseDoesNotContainExpectedErrorForInjectedInput/";
+        this.nano.addHandler(createXpathHandler(testPath, "FooBar"));
+        HttpMessage msg = getHttpMessage(testPath + "?query=xxx");
+        this.rule.init(msg, this.parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised, is(empty()));
+    }
+
+    @Test
+    void shouldRaiseAlertIfResponseContainsExpectedCustomErrorForInjectedInput()
+            throws HttpMalformedHeaderException {
+        // Given
+        String testPath = "/shouldRaiseAlertIfResponseContainsExpectedCustomErrorForInjectedInput/";
+        this.nano.addHandler(createXpathHandler(testPath, TEST_ERROR_STRING));
+        HttpMessage msg = getHttpMessage(testPath + "?query=xxx");
+        this.rule.init(msg, this.parent);
+        XpathInjectionScanRule.setErrorProvider(() -> List.of(TEST_ERROR_STRING));
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo(TEST_ERROR_STRING)));
+    }
+
+    private static NanoServerHandler createXpathHandler(String path, String indicator) {
+        return new NanoServerHandler(path) {
+            @Override
+            protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                String site = getFirstParamValue(session, "query");
+                if (site.equals("\"'")) {
+                    return newFixedLengthResponse(
+                            "<html><body>%s</body></html>".formatted(indicator));
+                } else {
+                    return newFixedLengthResponse("<html><body></body></html>");
+                }
+            }
+        };
     }
 }
