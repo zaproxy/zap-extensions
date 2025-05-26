@@ -103,6 +103,10 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         given(session.getContextsForUrl(anyString())).willReturn(Arrays.asList(context));
         given(model.getSession()).willReturn(session);
 
+        history = new ArrayList<>();
+        historyProvider = new TestHistoryProvider();
+        AuthUtils.setHistoryProvider(historyProvider);
+
         String body = "Response Body";
         String token = "12345678901234567890";
         HttpMessage msg =
@@ -196,6 +200,9 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
                 DiagnosticDataLoader.loadTestData(
                         this.getResourcePath("internal/bodgeit.diags").toFile());
 
+        history = new ArrayList<>();
+        historyProvider = new TestHistoryProvider();
+        AuthUtils.setHistoryProvider(historyProvider);
         // When
         msgs.forEach(
                 msg -> {
