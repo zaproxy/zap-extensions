@@ -62,18 +62,11 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
             SessionManagementRequestDetails smDetails =
                     new SessionManagementRequestDetails(
                             msg, new ArrayList<>(responseTokens.values()), Alert.CONFIDENCE_MEDIUM);
-            getAlert(smDetails).raise();
             LOGGER.debug(
                     "Found {} response session token(s) in {}",
                     responseTokens.size(),
                     msg.getRequestHeader().getURI());
-            smDetails
-                    .getTokens()
-                    .forEach(
-                            t -> {
-                                AuthUtils.recordSessionToken(t);
-                                Stats.incCounter("stats.auth.detect.session." + t.getKey());
-                            });
+            processSessionMgmtDetailsTokens(smDetails);
         }
         Set<SessionToken> requestTokens = AuthUtils.getRequestSessionTokens(msg);
         LOGGER.debug(
@@ -85,36 +78,24 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
             List<SessionToken> foundTokens = new ArrayList<>();
             for (SessionToken st : requestTokens) {
                 SessionToken sourceToken = AuthUtils.containsSessionToken(st.getValue());
-                if (sourceToken != null) {
+                if (sourceToken == null) {
+                    SessionManagementRequestDetails smrd =
+                            AuthUtils.findSessionTokenSource(st.getValue());
+                    if (smrd != null) {
+                        processSessionMgmtDetailsTokens(smrd);
+                        foundTokens.addAll(smrd.getTokens());
+                    } else {
+                        LOGGER.debug("Failed to find source of {}", st.getKey());
+                    }
+                } else {
                     foundTokens.add(sourceToken);
                     LOGGER.debug("Found source of {}", st.getKey());
-                } else {
-                    LOGGER.debug("Failed to find source of {}", st.getKey());
                 }
             }
             LOGGER.debug(
                     "Found a total of {} request token(s) in {}",
                     foundTokens.size(),
                     msg.getRequestHeader().getURI());
-
-            if (foundTokens.isEmpty()) {
-                // These are not 'known' session tokens, see if we can find any of them
-                for (SessionToken st : requestTokens) {
-                    SessionManagementRequestDetails smrd =
-                            AuthUtils.findSessionTokenSource(st.getValue());
-                    if (smrd != null) {
-                        // Yes, found the token in a 'non standard' place
-                        getAlert(smrd).raise();
-                        LOGGER.debug(
-                                "Found {} 'unknown' response session token(s) in {}",
-                                responseTokens.size(),
-                                msg.getRequestHeader().getURI());
-
-                        Stats.incCounter("stats.auth.detect.session." + st.getKey());
-                        foundTokens.addAll(smrd.getTokens());
-                    }
-                }
-            }
             if (!foundTokens.isEmpty()) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(
@@ -157,6 +138,17 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                 requestTokens.forEach(st -> LOGGER.debug("Missed token {}", st.getToken()));
             }
         }
+    }
+
+    private void processSessionMgmtDetailsTokens(SessionManagementRequestDetails smDetails) {
+        getAlert(smDetails).raise();
+        smDetails
+                .getTokens()
+                .forEach(
+                        t -> {
+                            AuthUtils.recordSessionToken(t);
+                            Stats.incCounter("stats.auth.detect.session." + t.getKey());
+                        });
     }
 
     /**
