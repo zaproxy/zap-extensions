@@ -85,7 +85,7 @@ public class OpenApiWithCaptchaOtpVerificationPage extends TestPage {
                 captcha,
                 expectedCaptcha);
 
-        if (user != null && totp != null && totp.equals("123456") && isCaptchaValid) {
+        if (user != null && totp != null && getParent().validateTotp(token, totp) && isCaptchaValid) {
             response.put("result", "OK");
             response.put("user", user);
             getParent().markTokenVerified(token);

@@ -10,7 +10,7 @@
 	
 	<div id="result"></div>
 
-	<form>
+	<form onsubmit="return false;">
 	<table style="border: none;">
 	<tr>
 		<td>TOTP Passcode:</td>
@@ -30,12 +30,7 @@
 	</tr>
 	</table>
 	</form>
-	<p>
-	Test credentials:
-	<ul>
-		<li>totp = 123456
-	</ul>
-	</p>
+	<p><strong>Your TOTP Code:</strong> <span id="totpCodeDisplay"></span></p>
 </div>
 <script>
 function submitTOTP() {
@@ -69,12 +64,27 @@ function submitTOTP() {
 }
 
 document.getElementById('totp').onkeydown = function(e){
-    if (e.keyCode == 13) {
+    if (e.key === "Enter" || e.keyCode == 13) {
         // Handle return key
+		e.preventDefault();
         submitTOTP();
     }
 };
 
+document.getElementById('captcha').onkeydown = function(e){
+    if (e.key === "Enter" || e.keyCode == 13) {
+        // Handle return key
+		e.preventDefault();
+        submitTOTP();
+    }
+};
+
+window.addEventListener("load", function () {
+    const code = sessionStorage.getItem("totpcode");
+    if (code) {
+        document.getElementById("totpCodeDisplay").textContent = code;
+    }
+});
 </script>
 </body>
 </html>

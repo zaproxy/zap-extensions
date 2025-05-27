@@ -73,7 +73,7 @@ public class OpenApiWithLockoutOtpVerificationPage extends TestPage {
 
         if (getParent().isLockedOut(token)) {
             response.put("result", "LOCKED");
-        } else if (user != null && "123456".equals(totp)) {
+        } else if (user != null && totp != null && getParent().validateTotp(token, totp)) {
             response.put("result", "OK");
             response.put("user", user);
             getParent().markTokenVerified(token);

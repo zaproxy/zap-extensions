@@ -55,8 +55,12 @@ public class OpenApiWithBlankOtpLoginPage extends TestPage {
 
         JSONObject response = new JSONObject();
         if (getParent().isValid(username, password)) {
+            String token = getParent().getToken(username);
+            getParent().setUser(token, username);
+            String totp = getParent().generateAndStoreTotp(token);
             response.put("result", "OK");
-            response.put("accesstoken", getParent().getToken(username));
+            response.put("accesstoken", token);
+            response.put("totp", totp);
         } else {
             response.put("result", "FAIL");
         }

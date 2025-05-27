@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.zaproxy.addon.dev.TestAuthDirectory;
 import org.zaproxy.addon.dev.TestProxyServer;
+import org.zaproxy.addon.dev.auth.totp.TestTotp;
 
 /**
  * A directory which contains an OpenAPI spec. The spec is available unauthenticated but the
@@ -31,7 +32,6 @@ import org.zaproxy.addon.dev.TestProxyServer;
  */
 public class OpenApiWithOtpSimpleAuthDir extends TestAuthDirectory {
     private Map<String, Boolean> verifiedTokens = new HashMap<>();
-    private Map<String, String> currentTotpCodes = new HashMap<>();
     private Map<String, String> tokenToUserMap = new HashMap<>();
 
     public OpenApiWithOtpSimpleAuthDir(TestProxyServer server, String name) {
@@ -49,18 +49,13 @@ public class OpenApiWithOtpSimpleAuthDir extends TestAuthDirectory {
         return verifiedTokens.getOrDefault(token, false);
     }
 
-    private int totpIndex = 0;
-    private static final String[] CYCLE_TOTP_CODES = {"135135", "351351", "513513"};
-
     public String generateAndStoreTotp(String token) {
-        String code = CYCLE_TOTP_CODES[totpIndex];
-        totpIndex = (totpIndex + 1) % CYCLE_TOTP_CODES.length;
-        currentTotpCodes.put(token, code);
+        String code = TestTotp.generateCurrentCode();
         return code;
     }
 
     public boolean validateTotp(String token, String code) {
-        return code != null && code.equals(currentTotpCodes.get(token));
+        return TestTotp.isCodeValid(code);
     }
 
     public void setUser(String token, String user) {

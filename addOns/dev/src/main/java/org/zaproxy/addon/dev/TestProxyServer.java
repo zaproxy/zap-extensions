@@ -34,10 +34,6 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.dev.api.openapi.simpleAuth.OpenApiSimpleAuthDir;
-import org.zaproxy.addon.dev.api.openapi.simpleAuthTotpBlankCodeVuln.OpenApiWithBlankOtpSimpleAuthDir;
-import org.zaproxy.addon.dev.api.openapi.simpleAuthTotpCaptcha.OpenApiWithCaptchaOtpSimpleAuthDir;
-import org.zaproxy.addon.dev.api.openapi.simpleAuthTotpLockout.OpenApiWithLockoutOtpSimpleAuthDir;
-import org.zaproxy.addon.dev.api.openapi.simpleAuthWithOTP.OpenApiWithOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.api.openapi.simpleUnauth.OpenApiSimpleUnauthDir;
 import org.zaproxy.addon.dev.auth.jsonMultipleCookies.JsonMultipleCookiesDir;
 import org.zaproxy.addon.dev.auth.nonStdJsonBearer.NonStdJsonBearerDir;
@@ -50,6 +46,10 @@ import org.zaproxy.addon.dev.auth.simpleJsonBearer.SimpleJsonBearerDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerCookie.SimpleJsonBearerCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerJsCookie.SimpleJsonBearerJsCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonCookie.SimpleJsonCookieDir;
+import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpBlankCodeVuln.OpenApiWithBlankOtpSimpleAuthDir;
+import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpCaptcha.OpenApiWithCaptchaOtpSimpleAuthDir;
+import org.zaproxy.addon.dev.auth.totp.simpleAuthTotpLockout.OpenApiWithLockoutOtpSimpleAuthDir;
+import org.zaproxy.addon.dev.auth.totp.simpleAuthWithOTP.OpenApiWithOtpSimpleAuthDir;
 import org.zaproxy.addon.dev.seq.performance.PerformanceDir;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
@@ -90,18 +90,20 @@ public class TestProxyServer {
         authDir.addDirectory(new PasswordNewPageDir(this, "password-new-page"));
         authDir.addDirectory(new PasswordAddedNoSubmitDir(this, "password-added-nosubmit"));
         authDir.addDirectory(new JsonMultipleCookiesDir(this, "json-multiple-cookies"));
+        TestDirectory totpDir = new TestDirectory(this, "totp");
+        authDir.addDirectory(totpDir);
+        totpDir.addDirectory(new OpenApiWithOtpSimpleAuthDir(this, "simple-auth-with-otp"));
+        totpDir.addDirectory(
+                new OpenApiWithBlankOtpSimpleAuthDir(this, "simple-auth-otp-blank-code-vuln"));
+        totpDir.addDirectory(
+                new OpenApiWithLockoutOtpSimpleAuthDir(this, "simple-auth-otp-lockout"));
+        totpDir.addDirectory(
+                new OpenApiWithCaptchaOtpSimpleAuthDir(this, "simple-auth-otp-captcha"));
 
         TestDirectory apiDir = new TestDirectory(this, "api");
         TestDirectory openapiDir = new TestDirectory(this, "openapi");
         apiDir.addDirectory(openapiDir);
         openapiDir.addDirectory(new OpenApiSimpleAuthDir(this, "simple-auth"));
-        openapiDir.addDirectory(new OpenApiWithOtpSimpleAuthDir(this, "simple-auth-with-otp"));
-        openapiDir.addDirectory(
-                new OpenApiWithBlankOtpSimpleAuthDir(this, "simple-auth-otp-blank-code-vuln"));
-        openapiDir.addDirectory(
-                new OpenApiWithLockoutOtpSimpleAuthDir(this, "simple-auth-otp-lockout"));
-        openapiDir.addDirectory(
-                new OpenApiWithCaptchaOtpSimpleAuthDir(this, "simple-auth-otp-captcha"));
         openapiDir.addDirectory(new OpenApiSimpleUnauthDir(this, "simple-unauth"));
 
         TestDirectory htmlDir = new TestDirectory(this, "html");

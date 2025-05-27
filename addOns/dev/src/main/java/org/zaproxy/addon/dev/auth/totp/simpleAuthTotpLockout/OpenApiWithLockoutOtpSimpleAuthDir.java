@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.zaproxy.addon.dev.TestAuthDirectory;
 import org.zaproxy.addon.dev.TestProxyServer;
+import org.zaproxy.addon.dev.auth.totp.TestTotp;
 
 /**
  * A directory which contains an OpenAPI spec. The spec is available unauthenticated but the
@@ -33,6 +34,7 @@ public class OpenApiWithLockoutOtpSimpleAuthDir extends TestAuthDirectory {
 
     private Map<String, Boolean> verifiedTokens = new HashMap<>();
     private Map<String, Integer> failedAttempts = new HashMap<>();
+    private Map<String, String> tokenToUserMap = new HashMap<>();
     private static final int MAX_ATTEMPTS = 3;
 
     public OpenApiWithLockoutOtpSimpleAuthDir(TestProxyServer server, String name) {
@@ -43,14 +45,29 @@ public class OpenApiWithLockoutOtpSimpleAuthDir extends TestAuthDirectory {
     }
 
     public void markTokenVerified(String token) {
-        if (token != null) {
-            verifiedTokens.put(token, true);
-            failedAttempts.remove(token); // reset on success
-        }
+        verifiedTokens.put(token, true);
     }
 
     public boolean isTokenVerified(String token) {
         return verifiedTokens.getOrDefault(token, false);
+    }
+
+    public String generateAndStoreTotp(String token) {
+        String code = TestTotp.generateCurrentCode();
+        return code;
+    }
+
+    public boolean validateTotp(String token, String code) {
+        return TestTotp.isCodeValid(code);
+    }
+
+    public void setUser(String token, String user) {
+        tokenToUserMap.put(token, user);
+    }
+
+    @Override
+    public String getUser(String token) {
+        return tokenToUserMap.get(token);
     }
 
     public void recordFailedAttempt(String token) {

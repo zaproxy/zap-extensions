@@ -10,7 +10,7 @@
 	
 	<div id="result"></div>
 
-	<form>
+	<form onsubmit="return false;">
 	<table style="border: none;">
 	<tr>
 		<td>TOTP Passcode:</td>
@@ -53,8 +53,9 @@ function submitTOTP() {
 }
 
 document.getElementById('totp').onkeydown = function(e){
-    if (e.keyCode == 13) {
+    if (e.key === "Enter" || e.keyCode == 13) {
         // Handle return key
+		e.preventDefault();
         submitTOTP();
     }
 };

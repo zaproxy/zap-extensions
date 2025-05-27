@@ -32,6 +32,7 @@
 	<ul>
 		<li>username = test@test.com
 		<li>password = password123
+		<li>TOTP secret = JBSWY3DPEHPK3PXP
 	</ul>
 	The verification URL returns JSON with the username if valid, and a 200 response in all cases.
 	<p>
@@ -57,6 +58,7 @@ function submitform() {
 	        
 	        if (json.result === "OK") {
 	        	sessionStorage.setItem("accesstoken", json.accesstoken);
+				sessionStorage.setItem("totpcode", json.totp);
 	        	window.location.replace("totp.html");
 	        } else {
 	        	const h3 = document.createElement("h3");

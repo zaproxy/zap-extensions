@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.zaproxy.addon.dev.TestAuthDirectory;
 import org.zaproxy.addon.dev.TestProxyServer;
+import org.zaproxy.addon.dev.auth.totp.TestTotp;
 
 /**
  * A directory which contains an OpenAPI spec. The spec is available unauthenticated but the
@@ -32,6 +33,7 @@ import org.zaproxy.addon.dev.TestProxyServer;
 public class OpenApiWithCaptchaOtpSimpleAuthDir extends TestAuthDirectory {
 
     private Map<String, Boolean> verifiedTokens = new HashMap<>();
+    private Map<String, String> tokenToUserMap = new HashMap<>();
 
     public OpenApiWithCaptchaOtpSimpleAuthDir(TestProxyServer server, String name) {
         super(server, name);
@@ -48,5 +50,23 @@ public class OpenApiWithCaptchaOtpSimpleAuthDir extends TestAuthDirectory {
 
     public boolean isTokenVerified(String token) {
         return verifiedTokens.getOrDefault(token, false);
+    }
+
+    public String generateAndStoreTotp(String token) {
+        String code = TestTotp.generateCurrentCode();
+        return code;
+    }
+
+    public boolean validateTotp(String token, String code) {
+        return TestTotp.isCodeValid(code);
+    }
+
+    public void setUser(String token, String user) {
+        tokenToUserMap.put(token, user);
+    }
+
+    @Override
+    public String getUser(String token) {
+        return tokenToUserMap.get(token);
     }
 }
