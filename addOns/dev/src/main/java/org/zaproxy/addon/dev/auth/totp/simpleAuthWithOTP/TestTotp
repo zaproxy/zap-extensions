@@ -1,0 +1,37 @@
+import com.eatthepath.otp.TimeBasedOneTimePasswordGenerator;
+import org.apache.commons.codec.binary.Base32;
+
+package org.zaproxy.addon.dev.auth.totp.simpleAuthWithOTP;
+
+import com.eatthepath.otp.TimeBasedOneTimePasswordGenerator;
+import org.apache.commons.codec.binary.Base32;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.util.concurrent.TimeUnit;
+public class TestTotp {
+    // Known Base32 secret (use this in your test QR code too)
+    private static final String BASE32_SECRET = "JBSWY3DPEHPK3PXP";
+
+    public static String generateCurrentCode() {
+        try {
+            TimeBasedOneTimePasswordGenerator totp = new TimeBasedOneTimePasswordGenerator(
+                    30, TimeUnit.SECONDS, 6); // 30s period, 6 digits
+
+            Base32 base32 = new Base32();
+            byte[] keyBytes = base32.decode(BASE32_SECRET);
+            SecretKey secretKey = new SecretKeySpec(keyBytes, "HmacSHA1");
+
+            return String.format("%06d", totp.generateOneTimePassword(secretKey, Instant.now()));
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            throw new RuntimeException("Failed to generate TOTP", e);
+        }
+    }
+
+    public static boolean isCodeValid(String userCode) {
+        return userCode != null && userCode.equals(generateCurrentCode());
+    }
+}
