@@ -61,6 +61,8 @@ public class ClientSpiderApi extends ApiImplementor {
     private static final String PARAM_SUBTREE_ONLY = "subtreeOnly";
     private static final String PARAM_URL = "url";
     private static final String PARAM_USER_NAME = "userName";
+    private static final String PARAM_MAX_CRAWL_DEPTH = "maxCrawlDepth";
+    private static final String PARAM_PAGE_LOAD_TIME = "pageLoadTime";
 
     private final ExtensionClientIntegration extension;
 
@@ -71,7 +73,7 @@ public class ClientSpiderApi extends ApiImplementor {
     public ClientSpiderApi(ExtensionClientIntegration extension) {
         this.extension = extension;
 
-        addApiAction(
+        this.addApiAction(
                 new ApiAction(
                         ACTION_START_SCAN,
                         null,
@@ -80,11 +82,13 @@ public class ClientSpiderApi extends ApiImplementor {
                                 PARAM_URL,
                                 PARAM_CONTEXT_NAME,
                                 PARAM_USER_NAME,
-                                PARAM_SUBTREE_ONLY)));
+                                PARAM_SUBTREE_ONLY,
+                                PARAM_MAX_CRAWL_DEPTH,
+                                PARAM_PAGE_LOAD_TIME)));
 
-        addApiAction(new ApiAction(ACTION_STOP_SCAN, List.of(PARAM_SCAN_ID)));
+        this.addApiAction(new ApiAction(ACTION_STOP_SCAN, List.of(PARAM_SCAN_ID)));
 
-        addApiView(new ApiView(VIEW_STATUS, List.of(PARAM_SCAN_ID)));
+        this.addApiView(new ApiView(VIEW_STATUS, List.of(PARAM_SCAN_ID)));
     }
 
     @Override
@@ -102,15 +106,16 @@ public class ClientSpiderApi extends ApiImplementor {
         LOGGER.debug("Request for handleApiAction: {} (params: {})", name, params);
 
         switch (name) {
-            case ACTION_START_SCAN:
+            case ACTION_START_SCAN -> {
                 return startScan(name, params);
+            }
 
-            case ACTION_STOP_SCAN:
+            case ACTION_STOP_SCAN -> {
                 extension.stopScan(getClientSpider(params).getScanId());
                 return ApiResponseElement.OK;
+            }
 
-            default:
-                throw new ApiException(ApiException.Type.BAD_ACTION);
+            default -> throw new ApiException(ApiException.Type.BAD_ACTION);
         }
     }
 
@@ -142,16 +147,19 @@ public class ClientSpiderApi extends ApiImplementor {
         ClientOptions options = extension.getClientParam().clone();
         options.setBrowserId(getBrowser(params));
 
-        User user = getUser(params, context);
+        if (params.containsKey(PARAM_MAX_CRAWL_DEPTH)) {
+            int maxDepth = ApiUtils.getIntParam(params, PARAM_MAX_CRAWL_DEPTH);
+            options.setMaxDepth(maxDepth);
+        }
+        if (params.containsKey(PARAM_PAGE_LOAD_TIME)) {
+            int pageLoad = ApiUtils.getIntParam(params, PARAM_PAGE_LOAD_TIME);
+            options.setPageLoadTimeInSecs(pageLoad);
+        }
 
+        User user = getUser(params, context);
+        boolean subtreeOnly = getParam(params, PARAM_SUBTREE_ONLY, false);
         try {
-            int scanId =
-                    extension.startScan(
-                            url,
-                            options,
-                            context,
-                            user,
-                            getParam(params, PARAM_SUBTREE_ONLY, false));
+            int scanId = extension.startScan(url, options, context, user, subtreeOnly);
             return new ApiResponseElement(name, Integer.toString(scanId));
         } catch (Exception e) {
             throw new ApiException(ApiException.Type.INTERNAL_ERROR, e);
@@ -240,15 +248,13 @@ public class ClientSpiderApi extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
-
         switch (name) {
-            case VIEW_STATUS:
+            case VIEW_STATUS -> {
                 ClientSpider scan = getClientSpider(params);
-                int progress = scan.isStopped() ? 100 : scan.getProgress();
-                return new ApiResponseElement(name, Integer.toString(progress));
+                return new ApiResponseElement(name, Integer.toString(scan.getProgress()));
+            }
 
-            default:
-                throw new ApiException(ApiException.Type.BAD_VIEW);
+            default -> throw new ApiException(ApiException.Type.BAD_VIEW);
         }
     }
 
