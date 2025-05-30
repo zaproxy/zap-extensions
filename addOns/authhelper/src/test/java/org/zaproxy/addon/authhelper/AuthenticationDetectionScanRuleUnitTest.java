@@ -33,6 +33,8 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.control.Control;
@@ -353,23 +355,34 @@ class AuthenticationDetectionScanRuleUnitTest
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
-    @Test
-    void shouldIgnoreUnknownContentType() throws HttpMalformedHeaderException {
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "Blah",
+                "text/css",
+                "text/javascript",
+                "image/png",
+                "image/svg+xml",
+                "font/ttf"
+            })
+    void shouldIgnoreUnknownOrUnwantedContentTypes(String contentType)
+            throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("POST http://www.example.com/login/ HTTP/1.1");
-        msg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, "Blah");
+        msg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, contentType);
         msg.getRequestHeader().setHeader(HttpHeader.REFERER, "http://www.example.com/");
         msg.setRequestBody("user=test2&pwd=pass123");
         msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
         msg.setResponseBody("<html></html>");
         msg.setResponseHeader(
-                "HTTP/1.1 200 OK\r\n"
-                        + "Server: Apache-Coyote/1.1\r\n"
-                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
-                        + "Content-Length: "
-                        + msg.getResponseBody().length()
-                        + "\r\n");
+                """
+                HTTP/1.1 200 OK\r
+                Server: Apache-Coyote/1.1\r
+                Content-Type: text/html;charset=ISO-8859-1\r
+                Content-Length: %s\r\n\r
+                """
+                        .formatted(msg.getResponseBody().length()));
         // When
         scanHttpResponseReceive(msg);
         // Then

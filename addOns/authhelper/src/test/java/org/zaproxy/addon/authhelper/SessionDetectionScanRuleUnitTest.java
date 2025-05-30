@@ -19,10 +19,10 @@
  */
 package org.zaproxy.addon.authhelper;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -36,6 +36,8 @@ import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
@@ -46,6 +48,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -434,6 +437,38 @@ class SessionDetectionScanRuleUnitTest extends PassiveScannerTest<SessionDetecti
         Alert expected = alertsRaised.get(0);
         assertThat(expected.getParam(), is(equalTo("jwt")));
         assertThat(expected.getOtherInfo(), is(equalTo("json:jwt")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "Blah",
+                "text/css",
+                "text/javascript",
+                "image/png",
+                "image/svg+xml",
+                "font/ttf"
+            })
+    void shouldIgnoreUnknownOrUnwantedContentTypes(String contentType)
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/login/ HTTP/1.1");
+        msg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, contentType);
+        msg.getRequestHeader().setHeader(HttpHeader.REFERER, "https://www.example.com/");
+        msg.setResponseBody("<html></html>");
+        msg.setResponseHeader(
+                """
+                HTTP/1.1 200 OK\r
+                Server: Apache-Coyote/1.1\r
+                Content-Type: text/html;charset=ISO-8859-1\r
+                Content-Length: %s\r\n\r
+                """
+                        .formatted(msg.getResponseBody().length()));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 
     class TestHistoryProvider extends HistoryProvider {

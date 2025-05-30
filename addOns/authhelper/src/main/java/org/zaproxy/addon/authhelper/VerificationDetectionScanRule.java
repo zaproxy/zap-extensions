@@ -22,6 +22,7 @@ package org.zaproxy.addon.authhelper;
 import java.util.List;
 import java.util.Set;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -54,7 +55,7 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
-        if (!AuthUtils.isRelevantToAuth(msg)) {
+        if (!AuthUtils.isRelevantToAuth(msg) || isPoorCandidate(msg)) {
             return;
         }
         if (!HttpRequestHeader.GET.equals(msg.getRequestHeader().getMethod())
@@ -91,6 +92,12 @@ public class VerificationDetectionScanRule extends PluginPassiveScanner {
                 }
             }
         }
+    }
+
+    private static boolean isPoorCandidate(HttpMessage msg) {
+        String escapedPathQuery = msg.getRequestHeader().getURI().getEscapedPathQuery();
+        return AuthUtils.POOR_CANDIDATE_INDICATORS.stream()
+                .anyMatch(keyword -> StringUtils.containsIgnoreCase(escapedPathQuery, keyword));
     }
 
     protected AlertBuilder getAlert(VerificationRequestDetails verifDetails) {
