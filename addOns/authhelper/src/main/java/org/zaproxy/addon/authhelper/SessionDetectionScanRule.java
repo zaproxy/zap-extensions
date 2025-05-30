@@ -84,6 +84,14 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
             List<SessionToken> foundTokens = new ArrayList<>();
             for (SessionToken st : requestTokens) {
                 SessionToken sourceToken = AuthUtils.containsSessionToken(st.getValue());
+                SessionManagementRequestDetails smrd =
+                        AuthUtils.findSessionTokenSource(st.getValue());
+                if (smrd != null && sourceToken == null) {
+                    getAlert(smrd).raise();
+                    Stats.incCounter("stats.auth.detect.session." + st.getKey());
+                    foundTokens.addAll(smrd.getTokens());
+                    foundTokens.add(st);
+                }
                 if (sourceToken != null) {
                     foundTokens.add(sourceToken);
                     LOGGER.debug("Found source of {}", st.getKey());
@@ -95,25 +103,6 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                     "Found a total of {} request token(s) in {}",
                     foundTokens.size(),
                     msg.getRequestHeader().getURI());
-
-            if (foundTokens.isEmpty()) {
-                // These are not 'known' session tokens, see if we can find any of them
-                for (SessionToken st : requestTokens) {
-                    SessionManagementRequestDetails smrd =
-                            AuthUtils.findSessionTokenSource(st.getValue());
-                    if (smrd != null) {
-                        // Yes, found the token in a 'non standard' place
-                        getAlert(smrd).raise();
-                        LOGGER.debug(
-                                "Found {} 'unknown' response session token(s) in {}",
-                                responseTokens.size(),
-                                msg.getRequestHeader().getURI());
-
-                        Stats.incCounter("stats.auth.detect.session." + st.getKey());
-                        foundTokens.addAll(smrd.getTokens());
-                    }
-                }
-            }
             if (!foundTokens.isEmpty()) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug(
