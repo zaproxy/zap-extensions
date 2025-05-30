@@ -46,6 +46,7 @@ import net.htmlparser.jericho.Source;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
+import net.sf.json.util.JSONUtils;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
@@ -761,7 +762,9 @@ public class AuthUtils {
         }
 
         String responseData = msg.getResponseBody().toString();
-        if (msg.getResponseHeader().isJson() && StringUtils.isNotBlank(responseData)) {
+        if (msg.getResponseHeader().isJson()
+                && StringUtils.isNotBlank(responseData)
+                && !extractJsonString(map, responseData)) {
             Map<String, SessionToken> tokens = new HashMap<>();
             try {
                 try {
@@ -796,6 +799,17 @@ public class AuthUtils {
         }
 
         return map;
+    }
+
+    private static boolean extractJsonString(Map<String, SessionToken> map, String response) {
+        if (response.startsWith("\"") && JSONUtils.isString(response)) {
+            addToMap(
+                    map,
+                    new SessionToken(
+                            SessionToken.JSON_SOURCE, "", JSONUtils.stripQuotes(response)));
+            return true;
+        }
+        return false;
     }
 
     public static List<Pair<String, String>> getHeaderTokens(
@@ -844,7 +858,9 @@ public class AuthUtils {
     public static Map<String, SessionToken> getAllTokens(HttpMessage msg, boolean incReqCookies) {
         Map<String, SessionToken> tokens = new HashMap<>();
         String responseData = msg.getResponseBody().toString();
-        if (msg.getResponseHeader().isJson() && StringUtils.isNotBlank(responseData)) {
+        if (msg.getResponseHeader().isJson()
+                && StringUtils.isNotBlank(responseData)
+                && !extractJsonString(tokens, responseData)) {
             // Extract json response data
             try {
                 try {

@@ -403,7 +403,7 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldExtractJsonSessionTokens() throws Exception {
+    void shouldExtractJsonSessionTokensInObject() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage(new URI("https://example.com/test", true));
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "blah-blah-json");
@@ -422,6 +422,30 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(
                 tokens.get("json:auth.accessToken").getValue(),
                 is(equalTo("example-session-token")));
+    }
+
+    @Test
+    void shouldExtractJsonSessionTokenInString() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage(new URI("https://example.com/test", true));
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "blah-blah-json");
+        msg.getResponseBody().setBody("\"example-session-token\"");
+
+        // When
+        Map<String, SessionToken> tokens = AuthUtils.getResponseSessionTokens(msg);
+
+        // Then
+        assertThat(tokens.size(), is(equalTo(1)));
+        assertSessionToken(
+                tokens.get("json:"), SessionToken.JSON_SOURCE, "", "example-session-token");
+    }
+
+    private static void assertSessionToken(
+            SessionToken token, String source, String key, String value) {
+        assertThat(token, is(notNullValue()));
+        assertThat(token.getSource(), is(equalTo(source)));
+        assertThat(token.getKey(), is(equalTo(key)));
+        assertThat(token.getValue(), is(equalTo(value)));
     }
 
     @Test
