@@ -103,6 +103,9 @@ public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (!AuthUtils.isRelevantToAuth(msg)) {
+            return;
+        }
         TreeSet<HtmlParameter> params;
         AuthenticationRequestDetails.AuthDataType type =
                 AuthenticationRequestDetails.AuthDataType.FORM;

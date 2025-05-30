@@ -19,6 +19,14 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
+
 /** Unit test for {@link VerificationDetectionScanRule}. */
 class VerificationDetectionScanRuleUnitTest
         extends PassiveScannerTest<VerificationDetectionScanRule> {
@@ -26,5 +34,31 @@ class VerificationDetectionScanRuleUnitTest
     @Override
     protected VerificationDetectionScanRule createScanner() {
         return new VerificationDetectionScanRule();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"logout", "log-off", "sign-out", "sign-off", "end-session"})
+    void shouldIgnoreSeemingLogoutUrls(String pathComponent) throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET http://www.example.com/%s HTTP/1.1".formatted(pathComponent));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"logout", "log-off", "sign-out", "sign-off", "end-session"})
+    void shouldIgnoreSeemingLogoutQueries(String queryComponent)
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(
+                "GET http://www.example.com/?action=%s HTTP/1.1".formatted(queryComponent));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised, hasSize(0));
     }
 }
