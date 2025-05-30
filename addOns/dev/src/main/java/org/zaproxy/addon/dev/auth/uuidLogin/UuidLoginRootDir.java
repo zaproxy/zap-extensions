@@ -17,11 +17,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.auth.sso1;
+package org.zaproxy.addon.dev.auth.uuidLogin;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +30,6 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.dev.DevHttpSenderListener;
 import org.zaproxy.addon.dev.DevUtils;
@@ -41,33 +41,37 @@ import org.zaproxy.addon.dev.TestProxyServer;
  * A test app which uses multiple domains:
  *
  * <ul>
- *   <li>start.sso1.zap Redirects to the sso domain
- *   <li>sso.sso1.zap Handles the login, generates a token used by both the app and the api
- *   <li>app.sso1.zap The actual app (cannot be accessed except via sso)
- *   <li>api.sso1.zap An API used by the app
+ *   <li>start.uuid1.zap Redirects to the domain
+ *   <li>login.uuid1.zap Handles the login, generates a token used by both the app and the api
+ *   <li>app.uuid1.zap The actual app (cannot be accessed except via start)
+ *   <li>api.uuid1.zap An API used by the app
  * </ul>
+ *
+ * Note that there is no direct link to the Login page, start.uuid1 redirects to a unique URL
  */
-public class SSO1RootDir extends TestAuthDirectory {
+public class UuidLoginRootDir extends TestAuthDirectory {
 
     private Set<String> tokens = new HashSet<>();
 
-    private static final Logger LOGGER = LogManager.getLogger(SSO1RootDir.class);
+    private static final Logger LOGGER = LogManager.getLogger(UuidLoginRootDir.class);
 
     private static final List<String> TEST_PAGES = List.of("test1", "test2", "test3", "test4");
 
-    public SSO1RootDir(TestProxyServer server, String name) {
+    private Set<String> loginPages = new HashSet<>();
+
+    public UuidLoginRootDir(TestProxyServer server, String name) {
         super(server, name);
         server.addDomainListener(
-                "https://start.sso1.zap",
+                "https://start.uuid1.zap",
                 new DevHttpSenderListener(this.getServer()) {
                     @Override
                     public void onHttpResponseReceive(
                             HttpMessage msg, int initiator, HttpSender sender) {
                         try {
                             if (msg.getRequestHeader().getURI().getPath().length() <= 1) {
-                                // Redirect to SSO with a "return" param
-                                DevUtils.setRedirect(
-                                        msg, "https://sso.sso1.zap/?service=app.sso1.zap");
+                                String uuid = UUID.randomUUID().toString();
+                                loginPages.add(uuid);
+                                DevUtils.setRedirect(msg, "https://login.uuid1.zap/" + uuid);
                             }
                         } catch (URIException e) {
                             LOGGER.error(e.getMessage(), e);
@@ -75,72 +79,62 @@ public class SSO1RootDir extends TestAuthDirectory {
                     }
                 });
         server.addDomainListener(
-                "https://sso.sso1.zap",
+                "https://login.uuid1.zap",
                 new DevHttpSenderListener(this.getServer()) {
                     @Override
                     public void onHttpResponseReceive(
                             HttpMessage msg, int initiator, HttpSender sender) {
-                        // Initial hack to show this works
                         String page = getPageName(msg);
+                        String body = "";
                         boolean redirect = false;
 
                         try {
-                            String body = "";
-                            String service = DevUtils.getUrlParam(msg, "service");
-                            if (HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod())) {
-                                service = DevUtils.getFormParam(msg, "service");
-                            }
-                            if (TestDirectory.INDEX_PAGE.equals(page)) {
-                                if (service == null) {
-                                    body =
-                                            server.getTextFile(SSO1RootDir.this, "error.html")
-                                                    .replace(
-                                                            "<!-- ERROR -->",
-                                                            "No service specified");
-
-                                } else {
-                                    if (HttpRequestHeader.POST.equals(
-                                            msg.getRequestHeader().getMethod())) {
-                                        if ("test@test.com"
-                                                        .equals(DevUtils.getFormParam(msg, "user"))
-                                                && "password123"
-                                                        .equals(
-                                                                DevUtils.getFormParam(
-                                                                        msg, "password"))) {
-
-                                            DevUtils.setRedirect(
-                                                    msg,
-                                                    "https://" + service + "/?token=" + getToken());
-                                            redirect = true;
-                                        } else {
-                                            body =
-                                                    server.getTextFile(
-                                                                    SSO1RootDir.this, "login.html")
-                                                            .replace(
-                                                                    "<!-- RESULT -->",
-                                                                    "Bad username or password");
-                                        }
+                            if (loginPages.contains(page)) {
+                                if (HttpRequestHeader.POST.equals(
+                                        msg.getRequestHeader().getMethod())) {
+                                    if ("test@test.com".equals(DevUtils.getFormParam(msg, "user"))
+                                            && "password123"
+                                                    .equals(
+                                                            DevUtils.getFormParam(
+                                                                    msg, "password"))) {
+                                        // Success. Remove the UUID so it cannot be reused.
+                                        loginPages.remove(page);
+                                        DevUtils.setRedirect(
+                                                msg, "https://app.uuid1.zap/?token=" + getToken());
+                                        redirect = true;
                                     } else {
-                                        body = server.getTextFile(SSO1RootDir.this, "login.html");
+                                        body =
+                                                server.getTextFile(
+                                                                UuidLoginRootDir.this, "login.html")
+                                                        .replace(
+                                                                "<!-- RESULT -->",
+                                                                "Bad username or password");
                                     }
-                                    body = body.replace("<!-- SERVICE -->", service);
+                                } else {
+                                    body = server.getTextFile(UuidLoginRootDir.this, "login.html");
                                 }
                                 msg.setResponseBody(body);
-                                if (!redirect) {
+                                if (redirect) {
+                                    msg.getResponseHeader()
+                                            .setContentLength(msg.getResponseBody().length());
+                                } else {
                                     msg.setResponseHeader(
                                             TestProxyServer.getDefaultResponseHeader(
                                                     TestProxyServer.CONTENT_TYPE_HTML_UTF8,
                                                     msg.getResponseBody().length()));
                                 }
+
+                            } else {
+                                // Fallback for CSS etc pages
+                                server.handleFile(page, msg);
                             }
-                        } catch (Exception e) {
+                        } catch (HttpMalformedHeaderException e) {
                             LOGGER.error(e.getMessage(), e);
                         }
-                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
                     }
                 });
         server.addDomainListener(
-                "https://app.sso1.zap",
+                "https://app.uuid1.zap",
                 new DevHttpSenderListener(this.getServer()) {
                     @Override
                     public void onHttpResponseReceive(
@@ -150,7 +144,7 @@ public class SSO1RootDir extends TestAuthDirectory {
                             if (!HttpRequestHeader.GET.equals(msg.getRequestHeader().getMethod())) {
                                 // Passthrough
                             } else if (TestDirectory.INDEX_PAGE.equals(page)) {
-                                String body = server.getTextFile(SSO1RootDir.this, "app.html");
+                                String body = server.getTextFile(UuidLoginRootDir.this, "app.html");
 
                                 msg.setResponseBody(body);
                                 msg.setResponseHeader(
@@ -158,7 +152,8 @@ public class SSO1RootDir extends TestAuthDirectory {
                                                 TestProxyServer.CONTENT_TYPE_HTML_UTF8,
                                                 msg.getResponseBody().length()));
                             } else if (TEST_PAGES.contains(page)) {
-                                String body = server.getTextFile(SSO1RootDir.this, "app-test.html");
+                                String body =
+                                        server.getTextFile(UuidLoginRootDir.this, "app-test.html");
 
                                 msg.setResponseBody(body);
                                 msg.setResponseHeader(
@@ -172,7 +167,7 @@ public class SSO1RootDir extends TestAuthDirectory {
                     }
                 });
         server.addDomainListener(
-                "https://api.sso1.zap",
+                "https://api.uuid1.zap",
                 new DevHttpSenderListener(this.getServer()) {
                     @Override
                     public void onHttpResponseReceive(
@@ -182,17 +177,18 @@ public class SSO1RootDir extends TestAuthDirectory {
                         if (!HttpRequestHeader.GET.equals(msg.getRequestHeader().getMethod())) {
                             // Passthrough
                         } else if (!tokens.contains(token)) {
-                            DevUtils.setRedirect(msg, "https://start.sso1.zap");
+                            DevUtils.setRedirect(msg, "https://start.uuid1.zap");
                             redirect = true;
                         } else {
                             String body = "[\"test1\", \"test2\", \"test3\"]";
 
                             msg.setResponseBody(body);
+
                             try {
                                 msg.setResponseHeader(
-                                        new HttpResponseHeader(
-                                                "HTTP/1.1 200 OK\r\n"
-                                                        + "Content-Type: application/json"));
+                                        TestProxyServer.getDefaultResponseHeader(
+                                                TestProxyServer.CONTENT_TYPE_HTML_UTF8,
+                                                msg.getResponseBody().length()));
                             } catch (HttpMalformedHeaderException e) {
                                 LOGGER.error(e.getMessage(), e);
                             }
@@ -200,7 +196,7 @@ public class SSO1RootDir extends TestAuthDirectory {
                         if (!redirect) {
                             msg.getResponseHeader()
                                     .setHeader(
-                                            "Access-Control-Allow-Origin", "https://app.sso1.zap");
+                                            "Access-Control-Allow-Origin", "https://app.uuid1.zap");
                             msg.getResponseHeader()
                                     .setHeader("Access-Control-Allow-Headers", "Authorization");
                         }

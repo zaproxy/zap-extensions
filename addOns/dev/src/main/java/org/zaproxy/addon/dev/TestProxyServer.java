@@ -47,6 +47,7 @@ import org.zaproxy.addon.dev.auth.simpleJsonBearerDiffCookies.SimpleJsonBearerDi
 import org.zaproxy.addon.dev.auth.simpleJsonBearerJsCookie.SimpleJsonBearerJsCookieDir;
 import org.zaproxy.addon.dev.auth.simpleJsonCookie.SimpleJsonCookieDir;
 import org.zaproxy.addon.dev.auth.sso1.SSO1RootDir;
+import org.zaproxy.addon.dev.auth.uuidLogin.UuidLoginRootDir;
 import org.zaproxy.addon.dev.csrf.basic.BasicCsrfDir;
 import org.zaproxy.addon.dev.seq.performance.PerformanceDir;
 import org.zaproxy.addon.network.ExtensionNetwork;
@@ -61,6 +62,8 @@ public class TestProxyServer {
     public static final String STATUS_FORBIDDEN = "403 Forbidden";
     public static final String STATUS_NOT_FOUND = "404 Not Found";
     public static final String STATUS_REDIRECT = "302 Found";
+
+    public static final String CONTENT_TYPE_HTML_UTF8 = "text/html; charset=UTF-8";
 
     private static final Logger LOGGER = LogManager.getLogger(TestProxyServer.class);
 
@@ -95,6 +98,7 @@ public class TestProxyServer {
         authDir.addDirectory(new PasswordAddedNoSubmitDir(this, "password-added-nosubmit"));
         authDir.addDirectory(new JsonMultipleCookiesDir(this, "json-multiple-cookies"));
         authDir.addDirectory(new SSO1RootDir(this, "sso1"));
+        authDir.addDirectory(new UuidLoginRootDir(this, "uuid-login"));
 
         TestDirectory apiDir = new TestDirectory(this, "api");
         TestDirectory openapiDir = new TestDirectory(this, "openapi");
