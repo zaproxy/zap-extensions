@@ -41,6 +41,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Correct redirection handling when checking verification URLs.
 - Verification URL comparison.
 - Use the session token from JSON string response.
+- Do not auto configure the Header Based Session Management method with duplicated session tokens.
 
 ## [0.25.0] - 2025-03-25
 ### Changed
