@@ -7,7 +7,7 @@ zapAddOn {
     addOnStatus.set(AddOnStatus.BETA)
 
     manifest {
-        author.set("Jay Ball (veggiespam) and the ZAP Dev Team")
+        author.set("Jay Ball (@veggiespam) and the ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/image-location-and-privacy-scanner/")
 
         dependencies {
@@ -23,8 +23,7 @@ zapAddOn {
 dependencies {
     zapAddOn("commonlib")
 
-    implementation("com.adobe.xmp:xmpcore:6.0.6")
-    implementation("com.drewnoakes:metadata-extractor:2.13.0")
+    implementation("com.drewnoakes:metadata-extractor:2.19.0")
 
     testImplementation(project(":testutils"))
 }

@@ -151,7 +151,7 @@ class ImageLocationScanRuleUnitTest extends PassiveScannerTestUtils<ImageLocatio
     private static void validateAlert(Alert alert) {
         assertThat(alert.getPluginId(), equalTo(PLUGIN_ID));
         assertThat(alert.getRisk(), equalTo(Alert.RISK_INFO));
-        assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
         assertThat(alert.getUri(), equalTo(URI));
     }
 
