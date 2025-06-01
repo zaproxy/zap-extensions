@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base href="http://example.com/sample/">
+<meta charset="UTF-8">
+<title>Param Elements - Spider HTML Parser</title>
+</head>
+<body>
+
+<param name="ref" value="//param.example.com/base/scheme">sub-domain using base scheme</param><br />
+<param value="http://param.example.com:8000/b">sub-domain (http)</param><br />
+<param value="https://param.example.com/c?a=b#fragment">sub-domain (https)</param><br />
+<param value="param/relative">relative</param><br />
+<param value="">relative (same page)</param><br />
+<param value="/param/absolute">absolute</param><br />
+<param value="ftp://param.example.com/">ftp</param><br />
+
+Ignored:<br />
+<param>no value</param><br />
+<param value="mailto:param@example.com">mailto:</param><br />
+<param value="javascript:hello();">javascript:</param><br />
+<param value="scheme://param.example.com/invalid">scheme:</param>
+
+</body>
+</html>

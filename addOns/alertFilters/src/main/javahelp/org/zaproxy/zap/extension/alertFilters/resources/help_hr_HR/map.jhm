@@ -6,4 +6,7 @@
 <map version="1.0">
 	<mapID target="flags-icon" url="contents/images/flags.png" />
     <mapID target="addon.alertFilter" url="contents/alertFilter.html" />
+    <mapID target="addon.contextAlertFilter" url="contents/contextAlertFilter.html" />
+    <mapID target="addon.globalAlertFilter" url="contents/globalAlertFilter.html" />
+    <mapID target="addon.automation" url="contents/automation.html" />
 </map>

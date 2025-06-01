@@ -19,23 +19,23 @@
  */
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hamcrest.Matcher;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link UriBuilder}. */
-public class UriBuilderUnitTest {
+class UriBuilderUnitTest {
 
     private static final ParseMethod PARSE = new ParseMethod("parse", UriBuilder::parse);
     private static final ParseMethod PARSE_LENIENT =
@@ -50,7 +50,7 @@ public class UriBuilderUnitTest {
                     Pair.of(PARSE_LENIENT, PARSE));
 
     @Test
-    public void shouldParseWithNullValue() {
+    void shouldParseWithNullValue() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -89,7 +89,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldParseWithEmptyValue() {
+    void shouldParseWithEmptyValue() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -103,7 +103,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldParseWithJustRelativePath() {
+    void shouldParseWithJustRelativePath() {
         // Given
         ParseMethod method = PARSE;
         String value = "relativePath";
@@ -115,7 +115,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldParseLenientWithJustAuthority() {
+    void shouldParseLenientWithJustAuthority() {
         // Given
         ParseMethod method = PARSE_LENIENT;
         String value = "authority";
@@ -127,7 +127,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldParseWithAbsolutePath() {
+    void shouldParseWithAbsolutePath() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -145,7 +145,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldParseWithAuthorityAndNoScheme() {
+    void shouldParseWithAuthorityAndNoScheme() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -163,7 +163,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldParseWithEmptyAuthority() {
+    void shouldParseWithEmptyAuthority() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -177,7 +177,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldParseWithScheme() {
+    void shouldParseWithScheme() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -195,47 +195,41 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldFailToParseWithEmptyScheme() {
+    void shouldFailToParseWithEmptyScheme() {
         PARSE_METHODS.forEach(
                 method -> {
-                    try {
-                        // Given
-                        String value = "://";
-                        // When
-                        UriBuilder.parse(value);
-                        fail("Expected IllegalArgumentException");
-                    } catch (IllegalArgumentException e) {
-                        // Then
-                        assertThat(
-                                "Parsed with: " + method,
-                                e.getMessage(),
-                                containsString("Expected non-empty scheme"));
-                    }
+                    // Given
+                    String value = "://";
+                    // When / Then
+                    IllegalArgumentException e =
+                            assertThrows(
+                                    IllegalArgumentException.class, () -> UriBuilder.parse(value));
+                    assertThat(
+                            "Parsed with: " + method,
+                            e.getMessage(),
+                            containsString("Expected non-empty scheme"));
                 });
     }
 
     @Test
-    public void shouldFailToParseWithMalformedScheme() {
+    void shouldFailToParseWithMalformedScheme() {
         PARSE_METHODS.forEach(
                 method -> {
-                    try {
-                        // Given
-                        String value = "notscheme//";
-                        // When
-                        UriBuilder.parse(value);
-                        fail("Expected IllegalArgumentException");
-                    } catch (IllegalArgumentException e) {
-                        // Then
-                        assertThat(
-                                "Parsed with: " + method,
-                                e.getMessage(),
-                                containsString("Expected no scheme"));
-                    }
+                    // Given
+                    String value = "notscheme//";
+                    // When / Then
+                    IllegalArgumentException e =
+                            assertThrows(
+                                    IllegalArgumentException.class, () -> UriBuilder.parse(value));
+                    assertThat(
+                            "Parsed with: " + method,
+                            e.getMessage(),
+                            containsString("Expected no scheme"));
                 });
     }
 
     @Test
-    public void shouldParseWithSchemeAndAuthority() {
+    void shouldParseWithSchemeAndAuthority() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -253,7 +247,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldParseWithSchemeAuthorityAndEmptyPath() {
+    void shouldParseWithSchemeAuthorityAndEmptyPath() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -271,7 +265,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldParseWithSchemeAuthorityAndNonEmptyPath() {
+    void shouldParseWithSchemeAuthorityAndNonEmptyPath() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -289,24 +283,20 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldThrowNullPointerIfMergingToNull() {
+    void shouldThrowNullPointerIfMergingToNull() {
         PARSE_METHODS.forEach(
                 method -> {
-                    try {
-                        // Given
-                        UriBuilder uriBuilder = method.parse("");
-                        // When
-                        uriBuilder.merge(null);
-                        fail("Expected NullPointerException");
-                    } catch (NullPointerException e) {
-                        // Then
-                        assertThat("Parsed with: " + method, e, is(not(nullValue())));
-                    }
+                    // Given
+                    UriBuilder uriBuilder = method.parse("");
+                    // When / Then
+                    NullPointerException e =
+                            assertThrows(NullPointerException.class, () -> uriBuilder.merge(null));
+                    assertThat("Parsed with: " + method, e, is(not(nullValue())));
                 });
     }
 
     @Test
-    public void shouldMergeSchemeIfNull() {
+    void shouldMergeSchemeIfNull() {
         PARSE_METHODS_MERGE.forEach(
                 pair -> {
                     // Given
@@ -329,7 +319,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldNotMergeSchemeIfNotNull() {
+    void shouldNotMergeSchemeIfNotNull() {
         PARSE_METHODS_MERGE.forEach(
                 pair -> {
                     // Given
@@ -352,7 +342,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldMergeAuthorityIfNull() {
+    void shouldMergeAuthorityIfNull() {
         PARSE_METHODS_MERGE.forEach(
                 pair -> {
                     // Given
@@ -375,7 +365,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldNotMergeAuthorityIfNotNull() {
+    void shouldNotMergeAuthorityIfNotNull() {
         PARSE_METHODS_MERGE.forEach(
                 pair -> {
                     // Given
@@ -398,7 +388,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldMergePathIfNull() {
+    void shouldMergePathIfNull() {
         PARSE_METHODS_MERGE.forEach(
                 pair -> {
                     // Given
@@ -421,7 +411,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldNotMergePathIfNotNull() {
+    void shouldNotMergePathIfNotNull() {
         PARSE_METHODS_MERGE.forEach(
                 pair -> {
                     // Given
@@ -444,7 +434,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldMergeSchemeAuthorityIfJustAbsolutePath() {
+    void shouldMergeSchemeAuthorityIfJustAbsolutePath() {
         PARSE_METHODS_MERGE.forEach(
                 pair -> {
                     // Given
@@ -467,7 +457,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldMergeRelativePath() {
+    void shouldMergeRelativePath() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -487,7 +477,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldMergeRelativePathWithPathEndedWithSlash() {
+    void shouldMergeRelativePathWithPathEndedWithSlash() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -507,7 +497,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldMergeRelativePathWithNoPath() {
+    void shouldMergeRelativePathWithNoPath() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -526,7 +516,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldMergeSchemeAuthorityAndPathIfAllNull() {
+    void shouldMergeSchemeAuthorityAndPathIfAllNull() {
         PARSE_METHODS_MERGE.forEach(
                 pair -> {
                     // Given
@@ -549,7 +539,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldSetDefaulPathIfNotAlreadySet() {
+    void shouldSetDefaulPathIfNotAlreadySet() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -562,7 +552,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldNotSetDefaulPathIfAlreadySet() {
+    void shouldNotSetDefaulPathIfAlreadySet() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -576,7 +566,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldBeEmptyWithoutSchemeAuthorityAndPath() {
+    void shouldBeEmptyWithoutSchemeAuthorityAndPath() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -589,7 +579,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldNotBeEmptyWithScheme() {
+    void shouldNotBeEmptyWithScheme() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -602,7 +592,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldNotBeEmptyWithAuthority() {
+    void shouldNotBeEmptyWithAuthority() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -615,7 +605,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldNotBeEmptyWithPath() {
+    void shouldNotBeEmptyWithPath() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -628,7 +618,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldCopy() {
+    void shouldCopy() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -650,7 +640,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldBuildWithSchemeAndAuthority() {
+    void shouldBuildWithSchemeAndAuthority() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -663,7 +653,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldBuildWithSchemeAuthorityAndPath() {
+    void shouldBuildWithSchemeAuthorityAndPath() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -677,7 +667,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldBuildAfterMergeRelativePathWithNoPath() {
+    void shouldBuildAfterMergeRelativePathWithNoPath() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -694,7 +684,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldBuildAfterMergeRelativePathWithEmptyPath() {
+    void shouldBuildAfterMergeRelativePathWithEmptyPath() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -711,7 +701,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldBuildAfterMergeAbsolutePathWithNoPath() {
+    void shouldBuildAfterMergeAbsolutePathWithNoPath() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -728,7 +718,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldBuildAfterMergeAbsolutePathWithEmptyPath() {
+    void shouldBuildAfterMergeAbsolutePathWithEmptyPath() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -745,7 +735,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldBuildRemovingSlashAtTheEnd() {
+    void shouldBuildRemovingSlashAtTheEnd() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -759,7 +749,7 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldBuildNormalisingPath() {
+    void shouldBuildNormalisingPath() {
         PARSE_METHODS.forEach(
                 method -> {
                     // Given
@@ -773,60 +763,43 @@ public class UriBuilderUnitTest {
     }
 
     @Test
-    public void shouldFailToBuildWithNoScheme() {
+    void shouldFailToBuildWithNoScheme() {
         PARSE_METHODS.forEach(
                 method -> {
-                    try {
-                        // Given
-                        UriBuilder uriBuilder = method.parse("//example.com/");
-                        // When
-                        uriBuilder.build();
-                        fail("Expected IllegalArgumentException");
-                    } catch (IllegalArgumentException e) {
-                        // Then
-                        assertThat(
-                                "Parsed with: " + method, e.getMessage(), containsString("scheme"));
-                    }
+                    // Given
+                    UriBuilder uriBuilder = method.parse("//example.com/");
+                    // When / Then
+                    IllegalArgumentException e =
+                            assertThrows(IllegalArgumentException.class, () -> uriBuilder.build());
+                    assertThat("Parsed with: " + method, e.getMessage(), containsString("scheme"));
                 });
     }
 
     @Test
-    public void shouldFailToBuildWithNoAuthority() {
+    void shouldFailToBuildWithNoAuthority() {
         PARSE_METHODS.forEach(
                 method -> {
-                    try {
-                        // Given
-                        UriBuilder uriBuilder = method.parse("http://");
-                        // When
-                        uriBuilder.build();
-                        fail("Expected IllegalArgumentException");
-                    } catch (IllegalArgumentException e) {
-                        // Then
-                        assertThat(
-                                "Parsed with: " + method,
-                                e.getMessage(),
-                                containsString("authority"));
-                    }
+                    // Given
+                    UriBuilder uriBuilder = method.parse("http://");
+                    // When / Then
+                    IllegalArgumentException e =
+                            assertThrows(IllegalArgumentException.class, () -> uriBuilder.build());
+                    assertThat(
+                            "Parsed with: " + method, e.getMessage(), containsString("authority"));
                 });
     }
 
     @Test
-    public void shouldFailToBuildWithMalformedUri() {
+    void shouldFailToBuildWithMalformedUri() {
         PARSE_METHODS.forEach(
                 method -> {
-                    try {
-                        // Given
-                        UriBuilder uriBuilder = method.parse("http://x%0");
-                        // When
-                        uriBuilder.build();
-                        fail("Expected IllegalArgumentException");
-                    } catch (IllegalArgumentException e) {
-                        // Then
-                        assertThat(
-                                "Parsed with: " + method,
-                                e.getMessage(),
-                                containsString("normalise"));
-                    }
+                    // Given
+                    UriBuilder uriBuilder = method.parse("http://x%0");
+                    // When / Then
+                    IllegalArgumentException e =
+                            assertThrows(IllegalArgumentException.class, () -> uriBuilder.build());
+                    assertThat(
+                            "Parsed with: " + method, e.getMessage(), containsString("normalise"));
                 });
     }
 

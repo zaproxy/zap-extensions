@@ -35,7 +35,7 @@ public class SoapAPI extends ApiImplementor {
     private static final String ACTION_IMPORT_URL = "importUrl";
     private static final String PARAM_URL = "url";
     private static final String PARAM_FILE = "file";
-    private ExtensionImportWSDL extension = null;
+    private final ExtensionImportWSDL extension;
 
     /** Provided only for API client generator usage. */
     public SoapAPI() {
@@ -61,20 +61,20 @@ public class SoapAPI extends ApiImplementor {
                 throw new ApiException(ApiException.Type.DOES_NOT_EXIST, file.getAbsolutePath());
             }
 
-            extension.fileUrlWSDLImport(file);
+            extension.syncImportWsdlFile(file);
 
             return ApiResponseElement.OK;
 
         } else if (ACTION_IMPORT_URL.equals(name)) {
             String url = params.getString(PARAM_URL);
             try {
-                new URI(url, false);
+                new URI(url, true);
             } catch (Exception e) {
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_URL);
             }
 
             try {
-                extension.extUrlWSDLImport(url);
+                extension.syncImportWsdlUrl(url);
                 return ApiResponseElement.OK;
             } catch (Exception e) {
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_URL);

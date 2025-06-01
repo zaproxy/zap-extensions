@@ -26,11 +26,6 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 public class ExtensionImageLocationScanner extends ExtensionAdaptor {
 
     @Override
-    public String getAuthor() {
-        return ILS.pluginAuthor;
-    }
-
-    @Override
     public String getName() {
         return "ExtensionImageLocationScanner";
     }

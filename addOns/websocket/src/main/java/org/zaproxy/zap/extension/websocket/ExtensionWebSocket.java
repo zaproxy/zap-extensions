@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.websocket;
 
+import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +40,8 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -54,9 +56,6 @@ import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.ViewDelegate;
-import org.parosproxy.paros.extension.manualrequest.ExtensionManualRequestEditor;
-import org.parosproxy.paros.extension.manualrequest.ManualRequestEditorDialog;
-import org.parosproxy.paros.extension.manualrequest.http.impl.ManualHttpRequestEditorDialog;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -67,7 +66,6 @@ import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
-import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.brk.BreakpointMessageHandler2;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
@@ -87,8 +85,6 @@ import org.zaproxy.zap.extension.websocket.brk.WebSocketBreakpointsUiManagerInte
 import org.zaproxy.zap.extension.websocket.brk.WebSocketProxyListenerBreak;
 import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
-import org.zaproxy.zap.extension.websocket.manualsend.ManualWebSocketSendEditorDialog;
-import org.zaproxy.zap.extension.websocket.manualsend.WebSocketPanelSender;
 import org.zaproxy.zap.extension.websocket.pscan.WebSocketPassiveScannerManager;
 import org.zaproxy.zap.extension.websocket.pscan.scripts.ScriptsWebSocketPassiveScanner;
 import org.zaproxy.zap.extension.websocket.treemap.WebSocketTreeMap;
@@ -97,7 +93,6 @@ import org.zaproxy.zap.extension.websocket.ui.OptionsParamWebSocket;
 import org.zaproxy.zap.extension.websocket.ui.OptionsWebSocketPanel;
 import org.zaproxy.zap.extension.websocket.ui.PopupExcludeWebSocketContextMenu;
 import org.zaproxy.zap.extension.websocket.ui.PopupIncludeWebSocketContextMenu;
-import org.zaproxy.zap.extension.websocket.ui.ResendWebSocketMessageMenuItem;
 import org.zaproxy.zap.extension.websocket.ui.SessionExcludeFromWebSocket;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesPayloadFilter;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketPanel;
@@ -105,9 +100,6 @@ import org.zaproxy.zap.extension.websocket.ui.httppanel.component.WebSocketCompo
 import org.zaproxy.zap.extension.websocket.ui.httppanel.models.ByteWebSocketPanelViewModel;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.models.StringWebSocketPanelViewModel;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.views.WebSocketSyntaxHighlightTextView;
-import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargePayloadUtil;
-import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargePayloadView;
-import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargetPayloadViewModel;
 import org.zaproxy.zap.extension.websocket.utility.WebSocketUtils;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.view.HttpPanelManager;
@@ -125,7 +117,7 @@ import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 public class ExtensionWebSocket extends ExtensionAdaptor
         implements PersistentConnectionListener, SessionChangedListener, SiteMapListener {
 
-    private static final Logger logger = Logger.getLogger(ExtensionWebSocket.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionWebSocket.class);
 
     /**
      * The script icon.
@@ -221,7 +213,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
     private WebSocketSenderScriptListener webSocketSenderScriptListener;
 
     /** Script type used to register Websocket sender scripts. */
-    private ScriptType websocketSenderSciptType;
+    private ScriptType websocketSenderScriptType;
 
     private WebSocketEventPublisher eventPublisher;
 
@@ -293,7 +285,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             WebSocketProxy.setChannelIdGenerator(table.getMaxChannelId());
 
         } catch (SQLException e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 
@@ -331,10 +323,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         try {
             setChannelIgnoreList(Model.getSingleton().getSession().getExcludeFromProxyRegexs());
         } catch (WebSocketException e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
 
-        if (getView() != null) {
+        if (hasView()) {
             ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
             ExtensionHookView hookView = extensionHook.getHookView();
             ExtensionHookMenu hookMenu = extensionHook.getHookMenu();
@@ -368,6 +360,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                         new WebSocketBreakpointMessageHandler(
                                 extBreak.getBreakpointManagementInterface(), config);
                 wsBrkMessageHandler.setEnabledBreakpoints(extBreak.getBreakpointsEnabledList());
+                wsBrkMessageHandler.setEnabledIgnoreRules(Collections.emptyList());
 
                 // listen on new messages such that breakpoints can apply
                 addAllChannelObserver(new WebSocketProxyListenerBreak(this, wsBrkMessageHandler));
@@ -383,45 +376,18 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
             // setup workpanel (window containing Request, Response & Break tab)
             initializeWebSocketsForWorkPanel();
-
-            // setup manualrequest extension
-            ExtensionManualRequestEditor extManReqEdit =
-                    (ExtensionManualRequestEditor)
-                            extLoader.getExtension(ExtensionManualRequestEditor.NAME);
-            if (extManReqEdit != null) {
-                WebSocketPanelSender sender = new WebSocketPanelSender();
-                addAllChannelObserver(sender);
-
-                sendDialog = createManualSendDialog(sender);
-                extManReqEdit.addManualSendEditor(sendDialog);
-                hookMenu.addToolsMenuItem(sendDialog.getMenuItem());
-
-                resenderDialog = createReSendDialog(sender);
-
-                // add 'Resend Message' menu item to WebSocket tab context menu
-                hookMenu.addPopupMenuItem(new ResendWebSocketMessageMenuItem(resenderDialog));
-
-                // setup persistent connection listener for http manual send editor
-                ManualRequestEditorDialog sendEditor =
-                        extManReqEdit.getManualSendEditor(HttpMessage.class);
-                if (sendEditor != null) {
-                    ManualHttpRequestEditorDialog httpSendEditor =
-                            (ManualHttpRequestEditorDialog) sendEditor;
-                    httpSendEditor.addPersistentConnectionListener(this);
-                }
-            }
         }
         // setup sender script interface
         this.extensionScript =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (this.extensionScript != null) {
-            websocketSenderSciptType =
+            websocketSenderScriptType =
                     new ScriptType(
                             SCRIPT_TYPE_WEBSOCKET_SENDER,
                             "websocket.script.type.websocketsender",
-                            getView() != null ? getScriptSenderIcon() : null,
+                            hasView() ? getScriptSenderIcon() : null,
                             true);
-            this.extensionScript.registerScriptType(websocketSenderSciptType);
+            this.extensionScript.registerScriptType(websocketSenderScriptType);
             webSocketSenderScriptListener = new WebSocketSenderScriptListener();
             addAllChannelSenderListener(webSocketSenderScriptListener);
         }
@@ -448,10 +414,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                     new ScriptType(
                             SCRIPT_TYPE_WEBSOCKET_PASSIVE,
                             "websocket.pscan.scripts.type.passive",
-                            getView() != null ? getScriptPassiveScanIcon() : null,
+                            hasView() ? getScriptPassiveScanIcon() : null,
                             true);
             this.extensionScript.registerScriptType(websocketPassiveScanScriptType);
-            webSocketScriptPassiveScanner = new ScriptsWebSocketPassiveScanner();
+            webSocketScriptPassiveScanner = new ScriptsWebSocketPassiveScanner(extensionScript);
 
             webSocketPassiveScannerManager.add(webSocketScriptPassiveScanner);
             webSocketPassiveScannerManager.setAllEnable(true);
@@ -463,20 +429,17 @@ public class ExtensionWebSocket extends ExtensionAdaptor
     }
 
     @Override
-    public void postInstall() {
-        super.postInstall();
-
-        if (webSocketPassiveScannerManager != null) {
-            registerDefaultScripts(websocketPassiveScanScriptType);
-        }
-    }
-
-    @Override
     public void postInit() {
         super.postInit();
 
-        if (webSocketPassiveScannerManager != null && !webSocketPassiveScannerManager.hasTable()) {
-            webSocketPassiveScannerManager.setTable(table);
+        if (webSocketPassiveScannerManager != null) {
+            // Always register the built (non template) in scripts, so that they get used from a new
+            // install
+            registerDefaultScripts(websocketPassiveScanScriptType);
+
+            if (!webSocketPassiveScannerManager.hasTable()) {
+                webSocketPassiveScannerManager.setTable(table);
+            }
         }
     }
 
@@ -491,12 +454,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
         HttpSender.removeListener(httpSenderListener);
 
-        // close all existing connections
-        for (Entry<Integer, WebSocketProxy> wsEntry : wsProxies.entrySet()) {
-            WebSocketProxy wsProxy = wsEntry.getValue();
-            wsProxy.shutdown();
-        }
-
         Control control = Control.getSingleton();
         ExtensionLoader extLoader = control.getExtensionLoader();
 
@@ -505,41 +462,16 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             extLoader.getExtension(ExtensionBreak.class).removeBreakpointsUiManager(brkManager);
         }
 
-        // clear up manualrequest extension
-        ExtensionManualRequestEditor extManReqEdit =
-                (ExtensionManualRequestEditor)
-                        extLoader.getExtension(ExtensionManualRequestEditor.NAME);
-        if (extManReqEdit != null) {
-            extManReqEdit.removeManualSendEditor(WebSocketMessageDTO.class);
-
-            // clear up persistent connection listener for http manual send editor
-            ManualRequestEditorDialog sendEditor =
-                    extManReqEdit.getManualSendEditor(HttpMessage.class);
-            if (sendEditor != null) {
-                ManualHttpRequestEditorDialog httpSendEditor =
-                        (ManualHttpRequestEditorDialog) sendEditor;
-                httpSendEditor.removePersistentConnectionListener(this);
-            }
-        }
-
         if (table != null) {
             getModel().getDb().removeDatabaseListener(table);
         }
 
-        if (getView() != null) {
+        if (hasView()) {
             getWebSocketPanel().unload();
 
             getView().getSessionDialog().removeParamPanel(sessionExcludePanel);
 
             clearupWebSocketsForWorkPanel();
-
-            if (sendDialog != null) {
-                sendDialog.unload();
-            }
-
-            if (resenderDialog != null) {
-                resenderDialog.unload();
-            }
         }
 
         // unregister the WebSocket Sender script type and remove the listener
@@ -547,21 +479,30 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
             removeAllChannelSenderListener(webSocketSenderScriptListener);
-            extensionScript.removeScripType(websocketSenderSciptType);
+            extensionScript.removeScriptType(websocketSenderScriptType);
+        }
+    }
+
+    @Override
+    public void stop() {
+        // close all existing connections
+        for (Entry<Integer, WebSocketProxy> wsEntry : wsProxies.entrySet()) {
+            WebSocketProxy wsProxy = wsEntry.getValue();
+            wsProxy.shutdown();
         }
 
         // shut down Passive Scanner & unregister the WebSocket Passive Scan script type
         if (webSocketPassiveScannerManager != null) {
             webSocketPassiveScannerManager.shutdownThread();
-            extensionScript.removeScripType(websocketPassiveScanScriptType);
+            extensionScript.removeScriptType(websocketPassiveScanScriptType);
         }
 
         eventPublisher.shutdown();
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
+    public String getUIName() {
+        return Constant.messages.getString("websocket.name");
     }
 
     @Override
@@ -613,7 +554,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         try {
             return Optional.of(this.extensionScript.loadScript(scriptWrapper));
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return Optional.empty();
         }
     }
@@ -638,7 +579,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
             return Optional.of(newScriptPath.toFile());
         } catch (IOException e) {
-            logger.error("Template can't be copied to script directory", e);
+            LOGGER.error("Template can't be copied to script directory", e);
             return Optional.empty();
         }
     }
@@ -733,18 +674,21 @@ public class ExtensionWebSocket extends ExtensionAdaptor
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean onHandshakeResponse(
-            HttpMessage httpMessage, Socket inSocket, ZapGetMethod method) {
+            HttpMessage httpMessage, Socket inSocket, org.zaproxy.zap.ZapGetMethod method) {
         boolean keepSocketOpen = false;
 
         if (httpMessage.isWebSocketUpgrade()) {
-            logger.debug(
+            LOGGER.debug(
                     "Got WebSockets upgrade request. Handle socket connection over to WebSockets extension.");
             if (focusWebSocketsTabOnHandshake) {
-                // Show the tab in case its been closed
-                this.getWebSocketPanel().setTabFocus();
                 // Don't constantly request focus on the tab, once is enough.
                 focusWebSocketsTabOnHandshake = false;
+                EventQueue.invokeLater(
+                        () ->
+                                // Show the tab in case its been closed
+                                this.getWebSocketPanel().setTabFocus());
             }
 
             if (method != null) {
@@ -755,7 +699,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
                 addWebSocketsChannel(httpMessage, inSocket, outSocket, outReader);
             } else {
-                logger.error("Unable to retrieve upgraded outgoing channel.");
+                LOGGER.error("Unable to retrieve upgraded outgoing channel.");
             }
         }
 
@@ -779,7 +723,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             HttpRequestHeader requestHeader = handshakeMessage.getRequestHeader();
             String targetHost = requestHeader.getHostName();
             int targetPort = requestHeader.getHostPort();
-            if (logger.isDebugEnabled()) {
+            if (LOGGER.isDebugEnabled()) {
                 StringBuilder logMessage = new StringBuilder(200);
                 logMessage.append("Got WebSockets channel from ");
                 if (localSocket != null) {
@@ -793,7 +737,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 logMessage.append(" to ");
                 logMessage.append(targetHost).append(':').append(targetPort);
 
-                logger.debug(logMessage.toString());
+                LOGGER.debug(logMessage.toString());
             }
 
             // parse HTTP handshake
@@ -849,7 +793,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 try {
                     localSocket.close();
                 } catch (IOException e1) {
-                    logger.warn(e.getMessage(), e1);
+                    LOGGER.warn(e.getMessage(), e1);
                 }
             }
 
@@ -857,7 +801,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 try {
                     remoteReader.close();
                 } catch (IOException e1) {
-                    logger.warn(e.getMessage(), e1);
+                    LOGGER.warn(e.getMessage(), e1);
                 }
             }
 
@@ -865,14 +809,13 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 try {
                     remoteSocket.close();
                 } catch (IOException e1) {
-                    logger.warn(e.getMessage(), e1);
+                    LOGGER.warn(e.getMessage(), e1);
                 }
             }
-            logger.error(
-                    "Adding WebSockets channel failed due to: '"
-                            + e.getClass()
-                            + "' "
-                            + e.getMessage(),
+            LOGGER.error(
+                    "Adding WebSockets channel failed due to: '{}' {}",
+                    e.getClass(),
+                    e.getMessage(),
                     e);
             return;
         }
@@ -963,7 +906,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                     .setUrls(RecordSessionUrl.TYPE_EXCLUDE_FROM_WEBSOCKET, nonEmptyIgnoreList);
             ignoredChannelList = nonEmptyIgnoreList;
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
 
             ignoredChannelList.clear();
             preparedIgnoredChannels.clear();
@@ -1010,7 +953,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
     }
 
     /**
-     * If given channel is blacklisted, then nothing should be stored. Moreover it should not appear
+     * If given channel is deny listed, then nothing should be stored. Moreover it should not appear
      * in user interface, but messages should be forwarded.
      *
      * @param channel
@@ -1020,7 +963,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         boolean doNotStore = false;
 
         if (config.isForwardAll()) {
-            // all channels are blacklisted
+            // all channels are deny listed
             doNotStore = true;
         } else if (!preparedIgnoredChannels.isEmpty()) {
             for (Pattern p : preparedIgnoredChannels) {
@@ -1123,7 +1066,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         try {
         	WebSocketProxy.setChannelIdGenerator(table.getMaxChannelId());
         } catch (SQLException e) {
-        	logger.error("Unable to retrieve current channelId value!", e);
+        	LOGGER.error("Unable to retrieve current channelId value!", e);
         }
         */
 
@@ -1139,12 +1082,12 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 ignoredList.add(record.getUrl());
             }
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         } finally {
             try {
                 setChannelIgnoreList(ignoredList);
             } catch (WebSocketException e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
     }
@@ -1244,13 +1187,14 @@ public class ExtensionWebSocket extends ExtensionAdaptor
     /** WebSockets can be excluded from the current session via this GUI panel. */
     private SessionExcludeFromWebSocket sessionExcludePanel;
 
-    /** Send custom WebSocket messages. */
-    private ManualWebSocketSendEditorDialog sendDialog;
-
-    /** Resends custom WebSocket messages. */
-    private ManualWebSocketSendEditorDialog resenderDialog;
-
-    private WebSocketPanel getWebSocketPanel() {
+    /**
+     * Gets the WebSocket panel.
+     *
+     * <p><strong>Note:</strong> Not part of the public API.
+     *
+     * @return the panel, never {@code null}.
+     */
+    public WebSocketPanel getWebSocketPanel() {
         if (panel == null) {
             panel = new WebSocketPanel(storage.getTable(), getBrkManager());
         }
@@ -1303,15 +1247,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         viewFactory = new SyntaxHighlightTextViewFactory();
         manager.addRequestViewFactory(WebSocketComponent.NAME, viewFactory);
         manager.addResponseViewFactory(WebSocketComponent.NAME, viewFactory);
-
-        // support large payloads on incoming and outgoing messages
-        viewFactory = new WebSocketLargePayloadViewFactory();
-        manager.addRequestViewFactory(WebSocketComponent.NAME, viewFactory);
-        manager.addResponseViewFactory(WebSocketComponent.NAME, viewFactory);
-
-        viewSelectorFactory = new WebSocketLargePayloadDefaultViewSelectorFactory();
-        manager.addRequestDefaultViewSelectorFactory(WebSocketComponent.NAME, viewSelectorFactory);
-        manager.addResponseDefaultViewSelectorFactory(WebSocketComponent.NAME, viewSelectorFactory);
     }
 
     private void clearupWebSocketsForWorkPanel() {
@@ -1339,17 +1274,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 WebSocketComponent.NAME, SyntaxHighlightTextViewFactory.NAME);
         manager.removeResponseViewFactory(
                 WebSocketComponent.NAME, SyntaxHighlightTextViewFactory.NAME);
-
-        // support large payloads on incoming and outgoing messages
-        manager.removeRequestViewFactory(
-                WebSocketComponent.NAME, WebSocketLargePayloadViewFactory.NAME);
-        manager.removeResponseViewFactory(
-                WebSocketComponent.NAME, WebSocketLargePayloadViewFactory.NAME);
-
-        manager.removeRequestDefaultViewSelectorFactory(
-                WebSocketComponent.NAME, WebSocketLargePayloadDefaultViewSelectorFactory.NAME);
-        manager.removeResponseDefaultViewSelectorFactory(
-                WebSocketComponent.NAME, WebSocketLargePayloadDefaultViewSelectorFactory.NAME);
     }
 
     /**
@@ -1481,122 +1405,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         public Object getOptions() {
             return null;
         }
-    }
-
-    private static final class WebSocketLargePayloadViewFactory implements HttpPanelViewFactory {
-
-        public static final String NAME = "WebSocketLargePayloadViewFactory";
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-
-        @Override
-        public HttpPanelView getNewView() {
-            return new WebSocketLargePayloadView(new WebSocketLargetPayloadViewModel());
-        }
-
-        @Override
-        public Object getOptions() {
-            return null;
-        }
-    }
-
-    private static final class WebSocketLargePayloadDefaultViewSelectorFactory
-            implements HttpPanelDefaultViewSelectorFactory {
-
-        public static final String NAME = "WebSocketLargePayloadDefaultViewSelectorFactory";
-        private static HttpPanelDefaultViewSelector defaultViewSelector = null;
-
-        private HttpPanelDefaultViewSelector getDefaultViewSelector() {
-            if (defaultViewSelector == null) {
-                createViewSelector();
-            }
-            return defaultViewSelector;
-        }
-
-        private synchronized void createViewSelector() {
-            if (defaultViewSelector == null) {
-                defaultViewSelector = new WebSocketLargePayloadDefaultViewSelector();
-            }
-        }
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-
-        @Override
-        public HttpPanelDefaultViewSelector getNewDefaultViewSelector() {
-            return getDefaultViewSelector();
-        }
-
-        @Override
-        public Object getOptions() {
-            return null;
-        }
-    }
-
-    private static final class WebSocketLargePayloadDefaultViewSelector
-            implements HttpPanelDefaultViewSelector {
-
-        public static final String NAME = "WebSocketLargePayloadDefaultViewSelector";
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-
-        @Override
-        public boolean matchToDefaultView(Message aMessage) {
-            return WebSocketLargePayloadUtil.isLargePayload(aMessage);
-        }
-
-        @Override
-        public String getViewName() {
-            return WebSocketLargePayloadView.NAME;
-        }
-
-        @Override
-        public int getOrder() {
-            // has to come before HexDefaultViewSelector
-            return 15;
-        }
-    }
-
-    /**
-     * This method initializes the dialog for crafting custom messages.
-     *
-     * @param sender
-     * @return
-     */
-    private ManualWebSocketSendEditorDialog createManualSendDialog(WebSocketPanelSender sender) {
-        ManualWebSocketSendEditorDialog sendDialog =
-                new ManualWebSocketSendEditorDialog(
-                        getWebSocketPanel().getChannelsModel(),
-                        sender,
-                        true,
-                        "websocket.manual_send");
-        sendDialog.setTitle(Constant.messages.getString("websocket.manual_send.menu"));
-        return sendDialog;
-    }
-
-    /**
-     * This method initializes the re-send WebSocket message dialog.
-     *
-     * @param sender
-     * @return
-     */
-    private ManualWebSocketSendEditorDialog createReSendDialog(WebSocketPanelSender sender) {
-        ManualWebSocketSendEditorDialog resendDialog =
-                new ManualWebSocketSendEditorDialog(
-                        getWebSocketPanel().getChannelsModel(),
-                        sender,
-                        true,
-                        "websocket.manual_resend");
-        resendDialog.setTitle(Constant.messages.getString("websocket.manual_send.popup"));
-        return resendDialog;
     }
 
     @Override

@@ -22,23 +22,23 @@ package org.zaproxy.zap.extension.wappalyzer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 
+@SuppressWarnings("serial")
 public class TechTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;
 
-    private final Vector<String> columnNames;
-    private List<ApplicationMatch> apps = new ArrayList<ApplicationMatch>();
+    private final List<String> columnNames;
+    private List<ApplicationMatch> apps;
 
     private int lastAddedRow;
     private int lastEditedRow;
 
     public TechTableModel() {
         super();
-        columnNames = new Vector<>();
+        columnNames = new ArrayList<>();
         columnNames.add(Constant.messages.getString("wappalyzer.table.header.name"));
         columnNames.add(Constant.messages.getString("wappalyzer.table.header.version"));
         columnNames.add(Constant.messages.getString("wappalyzer.table.header.category"));
@@ -48,7 +48,7 @@ public class TechTableModel extends AbstractTableModel {
         // Dont currently support confidence
         // columnNames.add(Constant.messages.getString("wappalyzer.table.header.confidence"));
 
-        apps = Collections.synchronizedList(new ArrayList<ApplicationMatch>());
+        apps = Collections.synchronizedList(new ArrayList<>());
 
         lastAddedRow = -1;
         lastEditedRow = -1;
@@ -84,13 +84,13 @@ public class TechTableModel extends AbstractTableModel {
                 obj = app.getVersion();
                 break;
             case 2:
-                obj = categoriesToString(app.getApplication().getCategories());
+                obj = getCategoriesString(app.getApplication());
                 break;
             case 3:
                 obj = app.getApplication().getWebsite();
                 break;
             case 4:
-                obj = listToString(app.getApplication().getImplies());
+                obj = getImpliesString(app.getApplication());
                 break;
             case 5:
                 obj = app.getApplication().getCpe();
@@ -99,7 +99,15 @@ public class TechTableModel extends AbstractTableModel {
         return obj;
     }
 
-    private String categoriesToString(List<String> list) {
+    public String getCategoriesString(Application app) {
+        return categoriesToString(app.getCategories());
+    }
+
+    public String getImpliesString(Application app) {
+        return listToString(app.getImplies());
+    }
+
+    private static String categoriesToString(List<String> list) {
         if (list == null) {
             return null;
         }
@@ -116,7 +124,7 @@ public class TechTableModel extends AbstractTableModel {
         return sb.toString();
     }
 
-    private String listToString(List<String> list) {
+    private static String listToString(List<String> list) {
         if (list == null) {
             return null;
         }
@@ -203,5 +211,9 @@ public class TechTableModel extends AbstractTableModel {
 
     public List<ApplicationMatch> getApps() {
         return apps;
+    }
+
+    public Application getApp(int row) {
+        return apps.get(row).getApplication();
     }
 }

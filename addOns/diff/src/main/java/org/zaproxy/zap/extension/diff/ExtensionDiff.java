@@ -27,6 +27,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.extension.diff.ZapDiffRowGenerator.Builder;
 import org.zaproxy.zap.extension.diff.diff_match_patch.Diff;
 
@@ -49,7 +50,7 @@ public class ExtensionDiff extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             if (diffDialog != null) {
                 diffDialog.dispose();
                 diffDialog = null;
@@ -58,10 +59,11 @@ public class ExtensionDiff extends ExtensionAdaptor {
         super.unload();
     }
 
+    @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuDiffRequests());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuDiffResponses());
         }
@@ -72,6 +74,7 @@ public class ExtensionDiff extends ExtensionAdaptor {
             popupMenuDiffRequests =
                     new PopupMenuDiff(
                             Constant.messages.getString("diff.diff.req.popup"), this, true);
+            popupMenuDiffRequests.setWeight(MenuWeights.MENU_COMPARE_REQ_WEIGHT);
         }
         return popupMenuDiffRequests;
     }
@@ -81,13 +84,9 @@ public class ExtensionDiff extends ExtensionAdaptor {
             popupMenuDiffResponses =
                     new PopupMenuDiff(
                             Constant.messages.getString("diff.diff.resp.popup"), this, false);
+            popupMenuDiffResponses.setWeight(MenuWeights.MENU_COMPARE_RESP_WEIGHT);
         }
         return popupMenuDiffResponses;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     private void stringToList(String str, List<String> list) {
@@ -122,8 +121,8 @@ public class ExtensionDiff extends ExtensionAdaptor {
         }
         diffDialog.clearPanels();
 
-        List<String> msgList1 = new ArrayList<String>();
-        List<String> msgList2 = new ArrayList<String>();
+        List<String> msgList1 = new ArrayList<>();
+        List<String> msgList2 = new ArrayList<>();
 
         if (request) {
             stringToList(msg1.getRequestHeader().toString(), msgList1);
@@ -161,8 +160,8 @@ public class ExtensionDiff extends ExtensionAdaptor {
                      * so everything is highlighted.
                      */
 
-                    List<int[]> leftHighlighters = new ArrayList<int[]>();
-                    List<int[]> rightHighlighters = new ArrayList<int[]>();
+                    List<int[]> leftHighlighters = new ArrayList<>();
+                    List<int[]> rightHighlighters = new ArrayList<>();
 
                     LinkedList<Diff> diffs = dmp.diff_main(dr.getOldLine(), dr.getNewLine());
                     for (Diff diff : diffs) {

@@ -6,5 +6,7 @@
 <map version="1.0">
 	<mapID target="addon.wappalyzer.icon" url="contents/images/wappalyzer.png" />
 
-	<mapID target="addon.wappalyzer.wappalyzer" url="contents/wappalyzer.html" />
+	<mapID target="addon.wappalyzer" url="contents/wappalyzer.html" />
+	<mapID target="addon.wappalyzer.api" url="contents/api.html" />
+	<mapID target="addon.wappalyzer.options" url="contents/options.html" />
 </map>

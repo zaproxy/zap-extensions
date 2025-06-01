@@ -22,14 +22,8 @@ package org.zaproxy.zap.extension.zest.menu;
 import java.util.regex.Pattern;
 import javax.swing.JTree;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestActionFail;
-import org.mozilla.zest.core.v1.ZestComment;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestExpressionRegex;
-import org.mozilla.zest.core.v1.ZestJSON;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestVariables;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -42,12 +36,20 @@ import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
+import org.zaproxy.zest.core.v1.ZestActionFail;
+import org.zaproxy.zest.core.v1.ZestComment;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestExpressionRegex;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestVariables;
 
+@SuppressWarnings("serial")
 public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 2282358266003940700L;
 
-    private static final Logger LOGGER = Logger.getLogger(ZestGenerateScriptFromAlertMenu.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(ZestGenerateScriptFromAlertMenu.class);
 
     private ExtensionZest extension;
 
@@ -74,7 +76,7 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageCon
         try {
             performActionImpl(msg);
         } catch (Exception e) {
-            LOGGER.error("Failer to generate script from alert menu: " + e.getMessage(), e);
+            LOGGER.error("Failed to generate script from alert menu: {}", e.getMessage(), e);
         }
     }
 
@@ -188,7 +190,7 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageCon
         ScriptWrapper sw = new ScriptWrapper();
         sw.setName(sz.getTitle());
         sw.setDescription(sz.getDescription());
-        sw.setContents(ZestJSON.toString(sz));
+        sw.setContents(extension.convertElementToString(sz));
         sw.setType(extension.getExtScript().getScriptType(ExtensionScript.TYPE_STANDALONE));
         sw.setEngine(this.extension.getZestEngineWrapper());
 

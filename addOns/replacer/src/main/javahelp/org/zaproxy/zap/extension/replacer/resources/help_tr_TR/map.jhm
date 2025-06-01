@@ -6,4 +6,5 @@
 <map version="1.0">
     <mapID target="replacer-icon" url="contents/images/edit-replace.png" />
     <mapID target="replacer" url="contents/replacer.html" />
+    <mapID target="replacer.automation" url="contents/automation.html" />
 </map>

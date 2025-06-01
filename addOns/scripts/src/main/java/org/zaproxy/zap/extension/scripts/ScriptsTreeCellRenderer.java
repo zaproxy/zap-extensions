@@ -39,6 +39,7 @@ import org.zaproxy.zap.view.OverlayIcon;
  * tooltips you have to enable them via: <code>
  * ToolTipManager.sharedInstance().registerComponent(tree);</code>
  */
+@SuppressWarnings("serial")
 public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 
     private static final String RESOURCE_ROOT =
@@ -123,7 +124,7 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
 
             if (node.isRoot() || node.getParent().isRoot()) {
                 // Top 2 levels use same icon .. for now ;)
-                setIcon(DisplayUtils.getScaledIcon(ExtensionScriptsUI.ICON));
+                setIcon(DisplayUtils.getScaledIcon(ExtensionScriptsUI.getIcon()));
 
             } else if (userObject != null && userObject instanceof ScriptWrapper) {
                 OverlayIcon icon;
@@ -151,13 +152,16 @@ public class ScriptsTreeCellRenderer extends DefaultTreeCellRenderer {
                         } else {
                             icon =
                                     new OverlayIcon(
-                                            DisplayUtils.getScaledIcon(ExtensionScriptsUI.ICON));
+                                            DisplayUtils.getScaledIcon(
+                                                    ExtensionScriptsUI.getIcon()));
                         }
                     } else if (engine.getIcon() != null) {
                         icon = new OverlayIcon(DisplayUtils.getScaledIcon(engine.getIcon()));
                     } else {
                         // Default to the blank script
-                        icon = new OverlayIcon(DisplayUtils.getScaledIcon(ExtensionScriptsUI.ICON));
+                        icon =
+                                new OverlayIcon(
+                                        DisplayUtils.getScaledIcon(ExtensionScriptsUI.getIcon()));
                     }
                     if (script.isChanged() && !node.isTemplate()) {
                         icon.add(DisplayUtils.getScaledIcon(PENCIL_OVERLAY_ICON));

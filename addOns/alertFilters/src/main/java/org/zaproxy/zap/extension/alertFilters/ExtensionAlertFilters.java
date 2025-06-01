@@ -19,22 +19,20 @@
  */
 package org.zaproxy.zap.extension.alertFilters;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.SwingUtilities;
+import java.util.Objects;
+import java.util.Set;
 import org.apache.commons.configuration.Configuration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Plugin;
-import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.RecordAlert;
 import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -45,23 +43,23 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.Session.OnContextsChangedListener;
+import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.ZAP;
-import org.zaproxy.zap.control.CoreFunctionality;
-import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.alert.AlertEventPublisher;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.alert.PopupMenuItemAlert;
+import org.zaproxy.zap.extension.alertFilters.internal.ScanRulesInfo;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
-import org.zaproxy.zap.extension.ascan.PolicyManager;
-import org.zaproxy.zap.extension.ascan.ScanPolicy;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ContextDataFactory;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.StructuralNode;
 import org.zaproxy.zap.model.StructuralSiteNode;
+import org.zaproxy.zap.utils.Stats;
+import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.AbstractContextPropertiesPanel;
 import org.zaproxy.zap.view.ContextPanelFactory;
 
@@ -95,19 +93,17 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     private ExtensionAlert extAlert = null;
     private ExtensionHistory extHistory = null;
     private AlertFilterAPI api = null;
-    private int lastAlert = -1;
 
-    private static Map<String, Integer> nameToId = new HashMap<String, Integer>();
-    private static Map<Integer, String> idToName = new HashMap<Integer, String>();
-    private static List<String> allRuleNames;
+    private static ScanRulesInfo scanRulesInfo;
     private static ExtensionActiveScan extAscan;
 
     private GlobalAlertFilterParam globalAlertFilterParam;
     private OptionsGlobalAlertFilterPanel optionsGlobalAlertFilterPanel;
 
-    private Logger log = Logger.getLogger(this.getClass());
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionAlertFilters.class);
 
     private OnContextsChangedListenerImpl contextsChangedListener;
+    private DialogAddAlertFilter addDialog = null;
 
     public ExtensionAlertFilters() {
         super(NAME);
@@ -137,48 +133,16 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         return extAscan;
     }
 
-    public static List<String> getAllRuleNames() {
-        if (allRuleNames == null) {
-            allRuleNames = new ArrayList<String>();
-            PolicyManager pm = getExtAscan().getPolicyManager();
-            ScanPolicy sp = pm.getDefaultScanPolicy();
-            for (Plugin plugin : sp.getPluginFactory().getAllPlugin()) {
-                allRuleNames.add(plugin.getName());
-                nameToId.put(plugin.getName(), Integer.valueOf(plugin.getId()));
-                idToName.put(Integer.valueOf(plugin.getId()), plugin.getName());
-            }
-            List<PluginPassiveScanner> listTest =
-                    new ArrayList<>(CoreFunctionality.getBuiltInPassiveScanRules());
-            listTest.addAll(ExtensionFactory.getAddOnLoader().getPassiveScanRules());
-            for (PluginPassiveScanner scanner : listTest) {
-                if (scanner.getName() != null) {
-                    allRuleNames.add(scanner.getName());
-                    nameToId.put(scanner.getName(), Integer.valueOf(scanner.getPluginId()));
-                    idToName.put(Integer.valueOf(scanner.getPluginId()), scanner.getName());
-                }
-            }
-            Collections.sort(allRuleNames);
+    public static ScanRulesInfo getScanRulesInfo() {
+        if (scanRulesInfo == null) {
+            scanRulesInfo =
+                    new ScanRulesInfo(
+                            getExtAscan(),
+                            Control.getSingleton()
+                                    .getExtensionLoader()
+                                    .getExtension(ExtensionPassiveScan2.class));
         }
-        return allRuleNames;
-    }
-
-    public static int getIdForRuleName(String name) {
-        if (allRuleNames == null) {
-            // init
-            getAllRuleNames();
-        }
-        if (nameToId.containsKey(name)) {
-            return nameToId.get(name);
-        }
-        return -1;
-    }
-
-    public static String getRuleNameForId(int ruleId) {
-        if (allRuleNames == null) {
-            // init
-            getAllRuleNames();
-        }
-        return idToName.get(Integer.valueOf(ruleId));
+        return scanRulesInfo;
     }
 
     @Override
@@ -194,7 +158,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         // Register this as a context data factory
         extensionHook.addContextDataFactory(this);
 
-        if (getView() != null) {
+        if (hasView()) {
             // Factory for generating Session Context alertFilters panels
             extensionHook.getHookView().addContextPanelFactory(this);
             extensionHook.getHookView().addOptionPanel(getOptionGlobalAlertFilterPanel());
@@ -209,9 +173,8 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
                                 @Override
                                 protected void performAction(Alert alert) {
-                                    AlertFilter af =
-                                            getOptionGlobalAlertFilterPanel()
-                                                    .showAddDialogue(new AlertFilter(-1, alert));
+                                    DialogAddAlertFilter dialog = showAddDialog(alert);
+                                    AlertFilter af = dialog.getAlertFilter();
                                     if (af != null) {
                                         if (af.getContextId() >= 0) {
                                             getContextAlertFilterManager(af.getContextId())
@@ -232,9 +195,23 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         extensionHook.addApiImplementor(api);
     }
 
+    private DialogAddAlertFilter showAddDialog(Alert alert) {
+        if (addDialog == null) {
+            addDialog = new DialogAddAlertFilter(this, View.getSingleton().getMainFrame());
+            addDialog.pack();
+        }
+        addDialog.clearFields();
+        addDialog.setCanChangeContext(true);
+        addDialog.setAlertFilter(new AlertFilter(-1, alert));
+        addDialog.setVisible(true);
+        return addDialog;
+    }
+
     private OptionsGlobalAlertFilterPanel getOptionGlobalAlertFilterPanel() {
         if (optionsGlobalAlertFilterPanel == null) {
-            optionsGlobalAlertFilterPanel = new OptionsGlobalAlertFilterPanel(this);
+            optionsGlobalAlertFilterPanel =
+                    new OptionsGlobalAlertFilterPanel(
+                            this, View.getSingleton().getOptionsDialog(null));
         }
         return optionsGlobalAlertFilterPanel;
     }
@@ -254,22 +231,8 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     /**
@@ -290,37 +253,40 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     @Override
     public void loadContextData(Session session, Context context) {
         try {
-            List<String> encodedAlertFilters =
-                    session.getContextDataStrings(context.getIndex(), TYPE_ALERT_FILTER);
-            ContextAlertFilterManager afManager = getContextAlertFilterManager(context.getIndex());
-            for (String e : encodedAlertFilters) {
-                AlertFilter af = AlertFilter.decode(context.getIndex(), e);
-                afManager.addAlertFilter(af);
-            }
+            addAlertFilters(
+                    context, session.getContextDataStrings(context.getId(), TYPE_ALERT_FILTER));
         } catch (Exception ex) {
-            log.error("Unable to load AlertFilters.", ex);
+            LOGGER.error("Unable to load AlertFilters.", ex);
         }
+    }
+
+    private void addAlertFilters(Context ctx, List<?> source) {
+        ContextAlertFilterManager m = getContextAlertFilterManager(ctx.getId());
+        source.stream()
+                .map(e -> AlertFilter.decode(ctx.getId(), e.toString()))
+                .filter(Objects::nonNull)
+                .forEach(m::addAlertFilter);
     }
 
     @Override
     public void persistContextData(Session session, Context context) {
         try {
             List<String> encodedAlertFilters = new ArrayList<>();
-            ContextAlertFilterManager afManager = getContextAlertFilterManager(context.getIndex());
+            ContextAlertFilterManager afManager = getContextAlertFilterManager(context.getId());
             if (afManager != null) {
                 for (AlertFilter af : afManager.getAlertFilters()) {
                     encodedAlertFilters.add(AlertFilter.encode(af));
                 }
-                session.setContextData(context.getIndex(), TYPE_ALERT_FILTER, encodedAlertFilters);
+                session.setContextData(context.getId(), TYPE_ALERT_FILTER, encodedAlertFilters);
             }
         } catch (Exception ex) {
-            log.error("Unable to persist AlertFilters", ex);
+            LOGGER.error("Unable to persist AlertFilters", ex);
         }
     }
 
     @Override
     public void exportContextData(Context ctx, Configuration config) {
-        ContextAlertFilterManager m = getContextAlertFilterManager(ctx.getIndex());
+        ContextAlertFilterManager m = getContextAlertFilterManager(ctx.getId());
         if (m != null) {
             for (AlertFilter af : m.getAlertFilters()) {
                 config.addProperty(CONTEXT_CONFIG_ALERT_FILTER, AlertFilter.encode(af));
@@ -330,17 +296,12 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     @Override
     public void importContextData(Context ctx, Configuration config) {
-        List<Object> list = config.getList(CONTEXT_CONFIG_ALERT_FILTER);
-        ContextAlertFilterManager m = getContextAlertFilterManager(ctx.getIndex());
-        for (Object o : list) {
-            AlertFilter af = AlertFilter.decode(ctx.getIndex(), o.toString());
-            m.addAlertFilter(af);
-        }
+        addAlertFilters(ctx, config.getList(CONTEXT_CONFIG_ALERT_FILTER));
     }
 
     @Override
     public AbstractContextPropertiesPanel getContextPanel(Context ctx) {
-        return getContextPanel(ctx.getIndex());
+        return getContextPanel(ctx.getId());
     }
 
     /**
@@ -352,7 +313,9 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     private ContextAlertFilterPanel getContextPanel(int contextId) {
         ContextAlertFilterPanel panel = this.alertFilterPanelsMap.get(contextId);
         if (panel == null) {
-            panel = new ContextAlertFilterPanel(this, contextId);
+            panel =
+                    new ContextAlertFilterPanel(
+                            this, View.getSingleton().getSessionDialog(), contextId);
             this.alertFilterPanelsMap.put(contextId, panel);
         }
         return panel;
@@ -370,8 +333,8 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     @Override
     public void discardContext(Context ctx) {
-        this.contextManagers.remove(ctx.getIndex());
-        this.alertFilterPanelsMap.remove(ctx.getIndex());
+        this.contextManagers.remove(ctx.getId());
+        this.alertFilterPanelsMap.remove(ctx.getId());
     }
 
     private ExtensionAlert getExtAlert() {
@@ -397,66 +360,45 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         TableAlert tableAlert = Model.getSingleton().getDb().getTableAlert();
 
         String alertId = event.getParameters().get(AlertEventPublisher.ALERT_ID);
-        if (alertId != null) {
-            // From 2.4.3 an alertId is included with these events, which makes life much simpler!
-            try {
-                handleAlert(tableAlert.read(Integer.parseInt(alertId)));
-            } catch (Exception e) {
-                log.error("Error handling alert", e);
+        try {
+            RecordAlert rc = tableAlert.read(Integer.parseInt(alertId));
+            if (rc == null) {
+                return;
             }
-        } else {
-            // Required for pre 2.4.3 versions
-            RecordAlert recordAlert;
-            while (true) {
-                try {
-                    this.lastAlert++;
-                    recordAlert = tableAlert.read(this.lastAlert);
-                    if (recordAlert == null) {
-                        break;
-                    }
-                    handleAlert(recordAlert);
-
-                } catch (DatabaseException e) {
-                    break;
-                }
-            }
-            // The loop will always go 1 further than necessary
-            this.lastAlert--;
+            handleAlert(rc);
+        } catch (Exception e) {
+            LOGGER.error("Error handling alert", e);
         }
     }
 
     private void handleAlert(final RecordAlert recordAlert) {
         final Alert alert = this.getAlert(recordAlert);
         if (alert == null || alert.getHistoryRef() == null) {
-            log.error(
-                    "No alert or href for "
-                            + recordAlert.getAlertId()
-                            + " "
-                            + recordAlert.getHistoryId());
+            LOGGER.error(
+                    "No alert or href for {} {}",
+                    recordAlert.getAlertId(),
+                    recordAlert.getHistoryId());
         } else {
             if (alert.getHistoryRef().getSiteNode() != null) {
                 this.handleAlert(alert);
             } else {
                 // Have to add the SiteNode on the EDT
-                SwingUtilities.invokeLater(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    StructuralNode node =
-                                            SessionStructure.addPath(
-                                                    Model.getSingleton().getSession(),
-                                                    alert.getHistoryRef(),
-                                                    alert.getHistoryRef().getHttpMessage());
+                ThreadUtils.invokeLater(
+                        () -> {
+                            try {
+                                StructuralNode node =
+                                        SessionStructure.addPath(
+                                                Model.getSingleton(),
+                                                alert.getHistoryRef(),
+                                                alert.getHistoryRef().getHttpMessage());
 
-                                    if (node instanceof StructuralSiteNode) {
-                                        StructuralSiteNode ssn = (StructuralSiteNode) node;
-                                        alert.getHistoryRef().setSiteNode(ssn.getSiteNode());
-                                    }
-                                    handleAlert(alert);
-                                } catch (Exception e) {
-                                    log.error("Error handling alert", e);
+                                if (node instanceof StructuralSiteNode) {
+                                    StructuralSiteNode ssn = (StructuralSiteNode) node;
+                                    alert.getHistoryRef().setSiteNode(ssn.getSiteNode());
                                 }
+                                handleAlert(alert);
+                            } catch (Exception e) {
+                                LOGGER.error("Error handling alert", e);
                             }
                         });
             }
@@ -465,9 +407,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     private void handleAlert(Alert alert) {
         String uri = alert.getUri();
-        if (log.isDebugEnabled()) {
-            log.debug("Alert: " + this.lastAlert + " URL: " + uri);
-        }
+        LOGGER.debug("Alert: {} URL: {}", alert.getAlertId(), uri);
         // Loop through global rules and apply as necessary
         for (AlertFilter filter : this.globalAlertFilterParam.getGlobalAlertFilters()) {
             if (filter.appliesToAlert(alert, true)) {
@@ -480,14 +420,10 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         for (ContextAlertFilterManager mgr : this.contextManagers.values()) {
             Context context = Model.getSingleton().getSession().getContext(mgr.getContextId());
             if (context.isInContext(uri)) {
-                if (log.isDebugEnabled()) {
-                    log.debug(
-                            "Is in context "
-                                    + context.getIndex()
-                                    + " got "
-                                    + mgr.getAlertFilters().size()
-                                    + " filters");
-                }
+                LOGGER.debug(
+                        "Is in context {} got {} filters",
+                        context.getId(),
+                        mgr.getAlertFilters().size());
                 // Its in this context
                 for (AlertFilter filter : mgr.getAlertFilters()) {
                     if (filter.appliesToAlert(alert, true)) {
@@ -511,13 +447,10 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
             updAlert.setRiskConfidence(filter.getNewRisk(), alert.getConfidence());
         }
         try {
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "Setting Alert with plugin id : "
-                                + alert.getPluginId()
-                                + " to "
-                                + filter.getNewRisk());
-            }
+            LOGGER.debug(
+                    "Setting Alert with plugin id : {} to {}",
+                    alert.getPluginId(),
+                    filter.getNewRisk());
             getExtAlert().updateAlert(updAlert);
             getExtAlert().updateAlertInTree(origAlert, updAlert);
             if (alert.getHistoryRef() != null) {
@@ -528,8 +461,10 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                     alert.getHistoryRef().getSiteNode().updateAlert(updAlert);
                 }
             }
+            Stats.incCounter(
+                    "stats.alertFilter." + alert.getAlertRef() + ".risk." + filter.getNewRisk());
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -537,7 +472,10 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         int historyId = recordAlert.getHistoryId();
         if (historyId > 0) {
             HistoryReference href = this.getExtHistory().getHistoryReference(historyId);
-            return new Alert(recordAlert, href);
+            Alert alert = new Alert(recordAlert, href);
+            // TODO remove once targeting 2.17+
+            alert.setHistoryId(recordAlert.getHistoryId());
+            return alert;
         } else {
             // Not ideal :/
             return new Alert(recordAlert);
@@ -545,9 +483,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     }
 
     @Override
-    public void sessionChanged(Session session) {
-        this.lastAlert = -1;
-    }
+    public void sessionChanged(Session session) {}
 
     @Override
     public void sessionAboutToChange(Session session) {
@@ -597,5 +533,21 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
             }
         }
         return count;
+    }
+
+    public Set<AlertFilter> getGlobalAlertFilters() {
+        return Collections.unmodifiableSet(this.globalAlertFilterParam.getGlobalAlertFilters());
+    }
+
+    public boolean addGlobalAlertFilter(AlertFilter af) {
+        return this.globalAlertFilterParam.addAlertFilter(af);
+    }
+
+    public boolean removeGlobalAlertFilter(AlertFilter af) {
+        return this.globalAlertFilterParam.removeFilter(af);
+    }
+
+    public void deleteAllGlobalAlertFilters() {
+        this.globalAlertFilterParam.deleteGlobalAlertFilters();
     }
 }

@@ -25,19 +25,21 @@ import com.sittinglittleduck.DirBuster.BaseCase;
 import com.sittinglittleduck.DirBuster.DirToCheck;
 import com.sittinglittleduck.DirBuster.ExtToCheck;
 import com.sittinglittleduck.DirBuster.GenBaseCase;
-import com.sittinglittleduck.DirBuster.HTTPHeader;
+import com.sittinglittleduck.DirBuster.HttpStatus;
 import com.sittinglittleduck.DirBuster.Manager;
+import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import com.sittinglittleduck.DirBuster.WorkUnit;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Vector;
 import java.util.concurrent.BlockingQueue;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-/** @author James */
+/**
+ * @author James
+ */
 public class BruteForceWorkGenerator implements Runnable {
     private String[] list = {"a", "b", "c", "d"};
     private int[] listindex;
@@ -58,17 +60,15 @@ public class BruteForceWorkGenerator implements Runnable {
     // private String failString = Config.failCaseString;
 
     private String currentDir = "/";
-    Vector extToCheck = new Vector(10, 5);
+    Vector<ExtToCheck> extToCheck = new Vector<>(10, 5);
     private int failcode = 404;
     private boolean doingDirs = true;
 
     /* Logger object for the class */
-    private static final Logger LOG = Logger.getLogger(BruteForceWorkGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(BruteForceWorkGenerator.class);
 
     // find bug UuF
     // HttpState initialState;
-
-    HttpClient httpclient;
 
     /** Creates a new instance of BruteForceWorkGenerator */
     public BruteForceWorkGenerator(Manager manager) {
@@ -85,10 +85,9 @@ public class BruteForceWorkGenerator implements Runnable {
         dirQueue = manager.dirQueue;
         fileExtention = manager.getFileExtention();
         firstPart = manager.getFirstPartOfURL();
-
-        httpclient = manager.getHttpclient();
     }
 
+    @Override
     public void run() {
         boolean recursive = true;
 
@@ -98,23 +97,19 @@ public class BruteForceWorkGenerator implements Runnable {
             try {
                 URL headurl = new URL(firstPart);
 
-                HeadMethod httphead = new HeadMethod(headurl.toString());
-
-                // set the custom HTTP headers
-                Vector HTTPheaders = manager.getHTTPHeaders();
-                for (int a = 0; a < HTTPheaders.size(); a++) {
-                    HTTPHeader httpHeader = (HTTPHeader) HTTPheaders.elementAt(a);
-                    httphead.setRequestHeader(httpHeader.getHeader(), httpHeader.getValue());
-                }
-                int responceCode = httpclient.executeMethod(httphead);
+                int responceCode =
+                        manager.getHttpClient()
+                                .send(HttpMethod.HEAD, headurl.toString())
+                                .getStatusCode();
 
                 // if the responce code is method not implemented or fails
-                if (responceCode == 501 || responceCode == 400) {
+                if (responceCode == HttpStatus.NOT_IMPLEMENTED
+                        || responceCode == HttpStatus.BAD_REQUEST) {
                     // switch the mode to just GET requests
                     manager.setAuto(false);
                 }
             } catch (IOException e) {
-                LOG.error(e);
+                LOGGER.error(e);
             }
         }
 
@@ -129,7 +124,7 @@ public class BruteForceWorkGenerator implements Runnable {
                 // get any extention that need to be checked
                 extToCheck = tempDirToCheck.getExts();
             } catch (InterruptedException e) {
-                LOG.debug(e);
+                LOGGER.debug(e);
             }
 
             started = currentDir;
@@ -147,7 +142,7 @@ public class BruteForceWorkGenerator implements Runnable {
                             GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
 
                 } catch (IOException e) {
-                    LOG.error(e);
+                    LOGGER.error(e);
                 }
 
                 // baseCaseObj = new BaseCase(null, failcode, true, failurl, baseCase);
@@ -166,7 +161,7 @@ public class BruteForceWorkGenerator implements Runnable {
                 BaseCase baseCaseObj = null;
                 URL failurl = null;
                 for (int b = 0; b < extToCheck.size(); b++) {
-                    ExtToCheck tempExt = (ExtToCheck) extToCheck.elementAt(b);
+                    ExtToCheck tempExt = extToCheck.elementAt(b);
                     if (tempExt.toCheck()) {
                         fileExtention = "";
                         if (tempExt.getName().equals(ExtToCheck.BLANK_EXT)) {
@@ -183,7 +178,7 @@ public class BruteForceWorkGenerator implements Runnable {
                                             manager, firstPart + currentDir, false, fileExtention);
 
                         } catch (IOException e) {
-                            LOG.error(e);
+                            LOGGER.error(e);
                         }
 
                         // call function to generate the brute force
@@ -216,7 +211,7 @@ public class BruteForceWorkGenerator implements Runnable {
         int chrx, endchr;
         String temp = "";
         /* print the current index */
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int x = 0; x < len; x++) {
             chrx = listindex[x];
             // printf("%c", charlist[chrx]);
@@ -227,13 +222,13 @@ public class BruteForceWorkGenerator implements Runnable {
         // System.out.println(temp);
         try {
 
-            String method;
+            HttpMethod method;
             if (manager.getAuto()
                     && !baseCaseObj.useContentAnalysisMode()
                     && !baseCaseObj.isUseRegexInstead()) {
-                method = "HEAD";
+                method = HttpMethod.HEAD;
             } else {
-                method = "GET";
+                method = HttpMethod.GET;
             }
 
             if (doingDirs) {
@@ -247,9 +242,9 @@ public class BruteForceWorkGenerator implements Runnable {
                 workQueue.put(new WorkUnit(currentURL, false, method, baseCaseObj, temp));
             }
         } catch (InterruptedException e) {
-            LOG.debug(e);
+            LOGGER.debug(e);
         } catch (MalformedURLException e) {
-            LOG.debug("Bad URL", e);
+            LOGGER.debug("Bad URL", e);
         }
     }
 
@@ -297,18 +292,14 @@ public class BruteForceWorkGenerator implements Runnable {
 
     // calculates the total number of tries per pass
     private void calcTotalPerPass(int listLength, int minLen, int maxLen) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("listLen: " + listLength + " minLen: " + minLen + " maxLen: " + maxLen);
-        }
+        LOGGER.debug("listLen: {} minLen: {} maxLen: {}", listLength, minLen, maxLen);
 
         double total = 0;
         for (int a = minLen; a <= maxLen; a++) {
             total = total + Math.pow(listLength, a);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Total for a pure brute force = " + total);
-        }
+        LOGGER.debug("Total for a pure brute force = {}", total);
         manager.setTotalPass(total);
     }
 }

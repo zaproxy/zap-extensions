@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+    <mapID target="addon.pscan.icon" url="../common/images/pscan.png" />
+    <mapID target="addon.pscan" url="contents/pscan.html" />
+    <mapID target="addon.pscan.api" url="contents/api.html" />
+    <mapID target="addon.pscan.automation" url="contents/automation.html" />
+    <mapID target="addon.pscan.automation.pscanconf" url="contents/job-pscanconf.html" />
+    <mapID target="addon.pscan.automation.pscanwait" url="contents/job-pscanwait.html" />
+    <mapID target="addon.pscan.options" url="contents/options/options.html" />
+    <mapID target="addon.pscan.options.rules" url="contents/options/rules.html" />
+    <mapID target="addon.pscan.options.scanner" url="contents/options/scanner.html" />
+    <mapID target="addon.pscan.options.tags" url="contents/options/tags.html" />
+</map>

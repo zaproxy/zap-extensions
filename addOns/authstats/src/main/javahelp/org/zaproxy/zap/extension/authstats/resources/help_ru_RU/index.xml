@@ -5,5 +5,5 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="Authentication Statistics" target="authStats" />
+	<indexitem text="Статистика аутентификации" target="authStats" />
 </index>

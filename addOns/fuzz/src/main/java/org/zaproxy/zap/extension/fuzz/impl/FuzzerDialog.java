@@ -22,10 +22,9 @@ package org.zaproxy.zap.extension.fuzz.impl;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -34,6 +33,9 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.border.EtchedBorder;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
 import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessor;
 import org.zaproxy.zap.extension.fuzz.FuzzerOptions;
 import org.zaproxy.zap.extension.fuzz.payloads.PayloadGeneratorMessageLocation;
@@ -42,10 +44,12 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.component.split.request.RequestSplitComponent;
 import org.zaproxy.zap.extension.httppanel.component.split.response.ResponseSplitComponent;
 import org.zaproxy.zap.model.MessageLocation;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class FuzzerDialog<
                 M extends Message, FO extends FuzzerOptions, FMP extends FuzzerMessageProcessor<M>>
         extends StandardFieldsDialog {
@@ -66,6 +70,8 @@ public class FuzzerDialog<
 
     private List<PayloadGeneratorMessageLocation<?>> fuzzLocations;
     private FuzzerMessageProcessorsTablePanel<M, FMP> fuzzerMessageProcessorsTablePanel;
+
+    private boolean isEditable;
 
     public FuzzerDialog(
             Frame owner,
@@ -98,14 +104,17 @@ public class FuzzerDialog<
                                 .getNameDefaultPayloadGenerator());
 
         outgoingMessage = outgoing;
-        this.fuzzMessagePanel = new FuzzMessagePanel();
+        this.fuzzMessagePanel = new FuzzMessagePanel(this);
+
         if (outgoingMessage) {
             fuzzMessagePanel.addComponent(new RequestSplitComponent<>(), new ZapXmlConfiguration());
             HttpPanelManager.getInstance().addRequestPanel(fuzzMessagePanel);
+            withExtensionFuzz(ext -> ext.getClientMessagePanelManager().addPanel(fuzzMessagePanel));
         } else {
             fuzzMessagePanel.addComponent(
                     new ResponseSplitComponent<>(), new ZapXmlConfiguration());
             HttpPanelManager.getInstance().addResponsePanel(fuzzMessagePanel);
+            withExtensionFuzz(ext -> ext.getServerMessagePanelManager().addPanel(fuzzMessagePanel));
         }
         fuzzMessagePanel.setMessage(message, true);
 
@@ -130,14 +139,55 @@ public class FuzzerDialog<
         }
     }
 
+    protected boolean isEditable() {
+        return isEditable;
+    }
+
+    protected void setMessageEditable(boolean editable) {
+        isEditable = editable;
+        try {
+            if (editable) {
+                fuzzLocationsPanel.reset();
+            } else {
+                fuzzMessagePanel.saveData();
+                // Reset the message to show any automatic changes.
+                fuzzMessagePanel.setMessage(getMessage());
+                Stats.incCounter(ExtensionFuzz.MESSAGES_EDITED_STATS);
+            }
+            this.fuzzMessagePanel.setEditable(editable);
+
+        } catch (Exception e) {
+            View.getSingleton()
+                    .showWarningDialog(
+                            this,
+                            Constant.messages.getString("fuzz.fuzzer.dialog.warn.badmessage"));
+        }
+    }
+
+    public Message getMessage() {
+        return fuzzMessagePanel.getMessage();
+    }
+
+    private static void withExtensionFuzz(Consumer<ExtensionFuzz> consumer) {
+        ExtensionFuzz extFuzz =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
+        if (extFuzz != null) {
+            consumer.accept(extFuzz);
+        }
+    }
+
     @Override
     public void dispose() {
         super.dispose();
 
         if (outgoingMessage) {
             HttpPanelManager.getInstance().removeRequestPanel(fuzzMessagePanel);
+            withExtensionFuzz(
+                    ext -> ext.getClientMessagePanelManager().removePanel(fuzzMessagePanel));
         } else {
             HttpPanelManager.getInstance().removeResponsePanel(fuzzMessagePanel);
+            withExtensionFuzz(
+                    ext -> ext.getServerMessagePanelManager().removePanel(fuzzMessagePanel));
         }
     }
 
@@ -212,16 +262,12 @@ public class FuzzerDialog<
             JButton resetButton =
                     new JButton(Constant.messages.getString("fuzz.fuzzer.dialog.button.reset"));
             resetButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            fuzzLocationsPanel.reset();
-                            optionsPanel.reset();
-                            fuzzMessagePanel.reset();
-                            if (fuzzerMessageProcessorsTablePanel != null) {
-                                fuzzerMessageProcessorsTablePanel.reset();
-                            }
+                    e -> {
+                        fuzzLocationsPanel.reset();
+                        optionsPanel.reset();
+                        fuzzMessagePanel.reset();
+                        if (fuzzerMessageProcessorsTablePanel != null) {
+                            fuzzerMessageProcessorsTablePanel.reset();
                         }
                     });
 
@@ -242,6 +288,9 @@ public class FuzzerDialog<
 
     @Override
     public String validateFields() {
+        if (this.isEditable) {
+            return Constant.messages.getString("fuzz.fuzzer.dialog.warn.editMode");
+        }
         if (!fuzzLocationsPanel.hasLocations()) {
             return Constant.messages.getString("fuzz.fuzzer.dialog.warn.noFuzzLocations");
         }

@@ -39,6 +39,7 @@ import org.zaproxy.zap.view.table.AbstractCustomColumnHistoryReferencesTableMode
 import org.zaproxy.zap.view.table.AbstractHistoryReferencesTableEntry;
 import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableEntry;
 
+@SuppressWarnings("serial")
 public class AjaxSpiderResultsTableModel
         extends AbstractCustomColumnHistoryReferencesTableModel<
                 AjaxSpiderResultsTableModel.AjaxSpiderTableEntry> {
@@ -84,6 +85,7 @@ public class AjaxSpiderResultsTableModel
         addState(statesMap, ResourceState.OUT_OF_SCOPE, "outofscope");
         addState(statesMap, ResourceState.EXCLUDED, "excluded");
         addState(statesMap, ResourceState.IO_ERROR, "ioerror");
+        addState(statesMap, ResourceState.THIRD_PARTY, "thirdparty");
     }
 
     public AjaxSpiderResultsTableModel() {
@@ -117,15 +119,11 @@ public class AjaxSpiderResultsTableModel
         }
         final AjaxSpiderTableEntry entry = new AjaxSpiderTableEntry(latestHistoryReference, state);
         EventQueue.invokeLater(
-                new Runnable() {
-
-                    @Override
-                    public void run() {
-                        final int row = resources.size();
-                        idsToRows.put(Integer.valueOf(entry.getHistoryId()), Integer.valueOf(row));
-                        resources.add(entry);
-                        fireTableRowsInserted(row, row);
-                    }
+                () -> {
+                    final int row = resources.size();
+                    idsToRows.put(entry.getHistoryId(), Integer.valueOf(row));
+                    resources.add(entry);
+                    fireTableRowsInserted(row, row);
                 });
     }
 
@@ -279,14 +277,7 @@ public class AjaxSpiderResultsTableModel
                 return;
             }
 
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            refreshEntry(id);
-                        }
-                    });
+            EventQueue.invokeLater(() -> refreshEntry(id));
         }
 
         private void refreshEntries() {
@@ -295,14 +286,7 @@ public class AjaxSpiderResultsTableModel
                 return;
             }
 
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            refreshEntries();
-                        }
-                    });
+            EventQueue.invokeLater(this::refreshEntries);
         }
 
         public void refreshEntryRows() {

@@ -22,7 +22,7 @@ package org.zaproxy.zap.extension.pscanrulesBeta;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
-public abstract class PassiveScannerTest<T extends PluginPassiveScanner>
+abstract class PassiveScannerTest<T extends PluginPassiveScanner>
         extends PassiveScannerTestUtils<T> {
 
     @Override

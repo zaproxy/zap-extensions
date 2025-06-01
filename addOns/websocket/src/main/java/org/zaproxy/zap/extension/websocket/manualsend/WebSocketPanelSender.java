@@ -23,12 +23,12 @@ import java.awt.EventQueue;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
-import org.parosproxy.paros.extension.manualrequest.MessageSender;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -47,10 +47,13 @@ import org.zaproxy.zap.extension.websocket.client.RequestOutOfScopeException;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketPanel;
 import org.zaproxy.zap.model.SessionStructure;
 
-/** Knows how to send {@link HttpMessage} objects. Contains a list of valid WebSocket channels. */
-public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
+/**
+ * Knows how to send {@link WebSocketMessageDTO} objects. Contains a list of valid WebSocket
+ * channels.
+ */
+class WebSocketPanelSender implements WebSocketObserver {
 
-    private static final Logger logger = Logger.getLogger(WebSocketPanelSender.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketPanelSender.class);
 
     private Map<Integer, WebSocketProxy> connectedProxies;
     private Map<Integer, WebSocketProxy> closedProxies;
@@ -61,12 +64,12 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
         closedProxies = new HashMap<>();
     }
 
-    @Override
-    public void handleSendMessage(Message aMessage) throws IOException {
+    void handleSendMessage(Message aMessage) throws IOException {
         final WebSocketMessageDTO websocketMessage = (WebSocketMessageDTO) aMessage;
 
-        if (websocketMessage.channel == null || websocketMessage.channel.id == null) {
-            logger.warn(
+        if (websocketMessage.getChannel() == null
+                || websocketMessage.getChannel().getId() == null) {
+            LOGGER.warn(
                     "Invalid WebSocket channel selected. Unable to send manual crafted message!");
             throw new IllegalArgumentException(
                     Constant.messages.getString("websocket.manual_send.fail.invalid_channel")
@@ -74,8 +77,8 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
                             + Constant.messages.getString("websocket.manual_send.fail"));
         }
 
-        if (websocketMessage.opcode == null) {
-            logger.warn(
+        if (websocketMessage.getOpcode() == null) {
+            LOGGER.warn(
                     "Invalid WebSocket opcode selected. Unable to send manual crafted message!");
             throw new IllegalArgumentException(
                     Constant.messages.getString("websocket.manual_send.fail.invalid_opcode")
@@ -83,9 +86,9 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
                             + Constant.messages.getString("websocket.manual_send.fail"));
         }
 
-        WebSocketProxy wsProxy = getDelegate(websocketMessage.channel.id);
-        if (!websocketMessage.isOutgoing && wsProxy.isClientMode()) {
-            logger.warn(
+        WebSocketProxy wsProxy = getDelegate(websocketMessage.getChannel().getId());
+        if (!websocketMessage.isOutgoing() && wsProxy.isClientMode()) {
+            LOGGER.warn(
                     "Invalid WebSocket direction 'incoming' selected for Proxy in Client Mode. Unable to send manual crafted message!");
             throw new IllegalArgumentException(
                     Constant.messages.getString(
@@ -96,12 +99,9 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
         wsProxy.sendAndNotify(websocketMessage, Initiator.MANUAL_REQUEST);
     }
 
-    @Override
-    public void cleanup() {}
-
     private WebSocketProxy getDelegate(Integer channelId) {
         if (closedProxies.containsKey(channelId)) {
-            logger.warn(
+            LOGGER.warn(
                     "Selected WebSocket channel is not connected. Unable to send manual crafted message!");
             throw new IllegalArgumentException(
                     Constant.messages.getString("websocket.manual_send.fail.disconnected_channel")
@@ -200,10 +200,10 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
                 extHistory.addHistory(ref);
             }
 
-            SessionStructure.addPath(Model.getSingleton().getSession(), ref, httpMessage);
+            SessionStructure.addPath(Model.getSingleton(), ref, httpMessage);
 
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            logger.warn("Failed to persist message sent:", e);
+            LOGGER.warn("Failed to persist message sent:", e);
         }
     }
 

@@ -31,23 +31,36 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-import javax.xml.xpath.*;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.zaproxy.zap.utils.XmlUtils;
 
 public class SAMLMessage {
 
-    protected static final Logger log = Logger.getLogger(SAMLMessage.class);
+    protected static final Logger LOGGER = LogManager.getLogger(SAMLMessage.class);
     private boolean messageChanged;
     private HttpMessage httpMessage;
     private String samlMessageString;
@@ -156,7 +169,7 @@ public class SAMLMessage {
                     }
                 }
             } catch (XPathExpressionException e) {
-                log.warn(attribute.getxPath() + " is not a valid XPath", e);
+                LOGGER.warn("{} is not a valid XPath", attribute.getxPath(), e);
             }
         }
     }
@@ -208,7 +221,7 @@ public class SAMLMessage {
                     }
                 }
             } catch (XPathExpressionException e) {
-                log.warn(attribute.getxPath() + " is not a valid XPath", e);
+                LOGGER.warn("{} is not a valid XPath", attribute.getxPath(), e);
             }
         }
         if (SAMLConfiguration.getInstance().getXSWEnabled()) {
@@ -224,7 +237,7 @@ public class SAMLMessage {
                     }
                 }
             } catch (XPathExpressionException e) {
-                log.warn("'/Response//Signature' is not a valid XPath", e);
+                LOGGER.warn("'/Response//Signature' is not a valid XPath", e);
             }
         }
     }
@@ -313,11 +326,11 @@ public class SAMLMessage {
             httpMessage.setRequestBody(newParamBuilder.toString());
             httpMessage.getRequestHeader().setContentLength(newParamBuilder.length());
         } catch (UnsupportedEncodingException e) {
-            log.warn("Unsupported encoding.", e);
+            LOGGER.warn("Unsupported encoding.", e);
         } catch (URIException e) {
-            log.warn("Unsupported URI query", e);
+            LOGGER.warn("Unsupported URI query", e);
         } catch (SAMLException e) {
-            log.warn("saml message extraction failed", e);
+            LOGGER.warn("saml message extraction failed", e);
         }
         messageChanged = false; // the message is permanently modified, can't revert from here on
     }
@@ -374,7 +387,7 @@ public class SAMLMessage {
                 buildAttributeMap();
                 messageChanged = false;
             } catch (SAMLException ignored) {
-                log.warn(ignored);
+                LOGGER.warn(ignored);
             }
         }
     }
@@ -420,7 +433,7 @@ public class SAMLMessage {
             transformer.transform(xmlInput, xmlOutput);
             return xmlOutput.getWriter().toString();
         } catch (Exception e) {
-            log.warn("error in parsing saml message.", e);
+            LOGGER.warn("error in parsing saml message.", e);
             return samlMessageString;
         }
     }
@@ -442,7 +455,7 @@ public class SAMLMessage {
                 messageChanged = true;
             } catch (SAMLException e) {
                 this.samlMessageString = oldValue;
-                log.warn("Not a valid saml message", e);
+                LOGGER.warn("Not a valid saml message", e);
             }
         }
     }

@@ -1,0 +1,8 @@
+name: High Level Report Sample 
+format: HTML
+mode: HTML
+extension: html
+sections:
+ - riskSummaryChart
+ - bugsCountChart
+ - vulnerabilityImpact

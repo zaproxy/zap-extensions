@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.sse.ui;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.collections.map.LRUMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.zaproxy.zap.extension.sse.ServerSentEvent;
@@ -34,13 +35,14 @@ import org.zaproxy.zap.utils.PagingTableModel;
 
 /**
  * This model uses a database table to load only needed entries from database. Moreover it shows
- * only those entries that are not blacklisted by the given filter.
+ * only those entries that are not deny listed by the given filter.
  */
+@SuppressWarnings("serial")
 public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
 
     private static final long serialVersionUID = -5047686640383236512L;
 
-    private static final Logger logger = Logger.getLogger(EventStreamViewModel.class);
+    private static final Logger LOGGER = LogManager.getLogger(EventStreamViewModel.class);
 
     private static final int PAYLOAD_PREVIEW_LENGTH = 150;
 
@@ -109,7 +111,9 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
         return activeStreamId;
     }
 
-    /** @return size of currently visible messages */
+    /**
+     * @return size of currently visible messages
+     */
     @Override
     public int getRowCount() {
         if (table == null) {
@@ -119,17 +123,17 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
             synchronized (cachedRowCountSemaphore) {
                 if (cachedRowCount == null) {
                     cachedRowCount =
-                            table.getEventCount(getCriterionMessage(), getCriterianInScope());
+                            table.getEventCount(getCriterionMessage(), getCriterionInScope());
                 }
                 return cachedRowCount;
             }
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return 0;
         }
     }
 
-    protected List<Integer> getCriterianInScope() {
+    protected List<Integer> getCriterionInScope() {
         if (filter.getShowJustInScope()) {
             List<Integer> inScopeStreamIds = new ArrayList<>();
 
@@ -142,7 +146,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
                 }
                 return inScopeStreamIds;
             } catch (DatabaseException e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
 
@@ -204,29 +208,35 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
         try {
             return table.getEvents(
                     getCriterionMessage(),
-                    getCriterianInScope(),
+                    getCriterionInScope(),
                     offset,
                     length,
                     PAYLOAD_PREVIEW_LENGTH);
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return new ArrayList<>(0);
         }
     }
 
-    /** @return number of columns */
+    /**
+     * @return number of columns
+     */
     @Override
     public int getColumnCount() {
         return COLUMN_COUNT;
     }
 
-    /** @return name of the given column index */
+    /**
+     * @return name of the given column index
+     */
     @Override
     public String getColumnName(int columnIndex) {
         return COLUMN_NAMES[columnIndex];
     }
 
-    /** @return type of column for given column index */
+    /**
+     * @return type of column for given column index
+     */
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
@@ -271,7 +281,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
 
                 return fullEvent;
             } catch (DatabaseException e) {
-                logger.error("Error retrieving full event!", e);
+                LOGGER.error("Error retrieving full event!", e);
                 return event;
             }
         }
@@ -308,9 +318,9 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
      * @param event
      */
     public void fireMessageArrived(ServerSentEvent event) {
-        boolean isWhitelistedChannel =
+        boolean isAllowlistedChannel =
                 (activeStreamId == null) || event.getStreamId().equals(activeStreamId);
-        if ((filter != null && filter.isBlacklisted(event)) || !isWhitelistedChannel) {
+        if ((filter != null && filter.isDenylisted(event)) || !isAllowlistedChannel) {
             // no need to fire update, as it isn't active now
         } else {
             // find out where it is inserted and update precisely
@@ -341,7 +351,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
         try {
             return table.getIndexOf(criteria, null);
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             // maybe I'm right with this guess - try
             return event.getId() - 1;
         }

@@ -4,17 +4,21 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Pantalla de opciones de aplicaciones</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Pantalla de opciones de aplicaciones</h1>
 	<p>
-		Esta pantalla te permite configurar las <a href="concepts.html">aplicaciones</a> que pueden ser invocadas.<br> Por defecto no se encuentra ninguna aplicación disponible, usted deberá agregar todas las aplicaciones de las que desee hacer uso.
+		Esta pantalla te permite configurar las <a href="concepts.html">aplicaciones</a> that
+		can be invoked.<br> By default there are no applications available, you need to add
+		all of the applications that you want to use.
 	<h3>Mostrar Nombre</h3>
 	El nombre que será usado para ésta aplicación ZAP.
 	<br>
 
 	<h3>Comando completo</h3>
 	La ruta de acceso completa de la aplicación que usted desea invocar.
-	<br> Sólo un comando puede ser especificado. Si desea ejecutar múltiples comandos en una sola corrida, o establecer variables ambientales, entonces usted debe crear una línea de códigos (script) o un archivo por lotes y luego invocarlos desde ZAP.
+	<br> Only one command can be specified. If you want to run multiple commands in one
+	go, or set up environmental variables, then you should create a script or batch file and
+	then invoke this from ZAP.
 
 	<h3>Parámetros</h3>
 	Los parámetros que ZAP debería pasar al comando.
@@ -50,14 +54,28 @@
 			<td>%postdata%</td>
 			<td>la data POST enviada, si existe, junto con cualquier línea nueva reemplazada con "\n"</td>
 		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%msgid%</td>
+			<td>the HTTP message id to fetch data from the API (/JSON/core/view/message/?id=$msgid), 
+				does not alway exist, will return -1 if no message id
+			</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>%header-{{ header }}%</td>
+			<td>the request header by name (if any), e.g. <code>%header-user-agent%</code> would return the value of the User-Agent header</td>
+		</tr>
 	</table>
 	Así que si un comando aceptó una URL utilizando "-u" el parámetro se especificaría como: "-u %url%"
 
 	<h3>Capturar Salida</h3>
 	De estar marcado y ser ejecutado el comando, cualquier salida que genere será mostrada en la
 	<i>Pestaña de salida</i>.
-	<br> Usted debe siempre usar esta opción al ejecutar líneas de código o comandos que no poseen una interfaz de usuario propia.
-	<br> Usted también puede usar ésta opción para la resolución de problemas - si alguna aplicación no corre como se esperaba, copie el comando correr y trate de ejecutarlo desde un prompt de línea de comandos.
+	<br> You should always use this option when running scripts or commands that do not
+	have a UI.
+	<br> You can also use this option for troubleshooting - if an application does not
+	run as expected then copy the command run and try it from a command line prompt.
 
 	<h3>Salida a Nota</h3>
 	De estar marcada, cualquier salida será anexada a una

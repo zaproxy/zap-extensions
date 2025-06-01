@@ -23,8 +23,6 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,15 +30,16 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyListener;
-import org.parosproxy.paros.core.proxy.ProxyParam;
 import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.DatabaseUnsupportedException;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -52,6 +51,8 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -72,8 +73,6 @@ import org.zaproxy.zap.extension.plugnhack.httppanel.component.ClientComponent;
 import org.zaproxy.zap.extension.plugnhack.httppanel.models.ByteClientPanelViewModel;
 import org.zaproxy.zap.extension.plugnhack.httppanel.models.StringClientPanelViewModel;
 import org.zaproxy.zap.extension.plugnhack.httppanel.views.ClientSyntaxHighlightTextView;
-import org.zaproxy.zap.extension.plugnhack.manualsend.ClientMessagePanelSender;
-import org.zaproxy.zap.extension.plugnhack.manualsend.ManualClientMessageSendEditorDialog;
 import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelComponentFactory;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelDefaultViewSelectorFactory;
@@ -82,13 +81,16 @@ import org.zaproxy.zap.view.HttpPanelManager.HttpPanelViewFactory;
 public class ExtensionPlugNHack extends ExtensionAdaptor
         implements ProxyListener, SessionChangedListener {
 
-    private static final Logger logger = Logger.getLogger(ExtensionPlugNHack.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionPlugNHack.class);
+
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionNetwork.class);
 
     private static final String REPLACE_ROOT_TOKEN = "__REPLACE_ROOT__";
     private static final String REPLACE_ID_TOKEN = "__REPLACE_ID__";
     private static final String REPLACE_NONCE = "__REPLACE_NONCE__";
     private static final String SCRIPT_START =
-            "<!-- OWASP ZAP Start of injected code -->\n" + "<script>\n";
+            "<!-- ZAP Start of injected code -->\n" + "<script>\n";
 
     private static final String SCRIPT_API = "/OTHER/pnh/other/manifest/";
     private static final String SCRIPT_END =
@@ -102,7 +104,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                     + "','"
                     + REPLACE_ID_TOKEN
                     + "');\n"
-                    + "<!-- OWASP ZAP End of injected code -->\n"
+                    + "<!-- ZAP End of injected code -->\n"
                     + "</script>\n";
 
     public static final String NAME = "ExtensionPlugNHack";
@@ -121,32 +123,12 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     public static final String SAFARI_ICON_RESOURCE =
             "/org/zaproxy/zap/extension/plugnhack/resources/icons/safari-icon.png";
 
-    public static final ImageIcon CLIENT_ACTIVE_ICON =
-            new ImageIcon(ZAP.class.getResource(CLIENT_ACTIVE_ICON_RESOURCE));
-    public static final ImageIcon CLIENT_INACTIVE_ICON =
-            new ImageIcon(ZAP.class.getResource(CLIENT_INACTIVE_ICON_RESOURCE));
-
-    public static final ImageIcon CHANGED_ICON =
-            new ImageIcon(
-                    ExtensionPlugNHack.class.getResource(
-                            "/org/zaproxy/zap/extension/plugnhack/resources/icons/screwdriver.png"));
-    public static final ImageIcon DROPPED_ICON =
-            new ImageIcon(
-                    ExtensionPlugNHack.class.getResource(
-                            "/org/zaproxy/zap/extension/plugnhack/resources/icons/bin-metal.png"));
-    public static final ImageIcon PENDING_ICON =
-            new ImageIcon(
-                    ExtensionPlugNHack.class.getResource(
-                            "/org/zaproxy/zap/extension/plugnhack/resources/icons/hourglass.png"));
-    public static final ImageIcon ORACLE_ICON =
-            new ImageIcon(
-                    ExtensionPlugNHack.class.getResource(
-                            "/org/zaproxy/zap/extension/plugnhack/resources/icons/burn.png"));
+    private static ImageIcon clientActiveIcon;
+    private static ImageIcon clientInactiveIcon;
 
     private static final int poll = 3000;
 
     private ClientsPanel clientsPanel = null;
-    private PopupMenuResend popupMenuResend = null;
 
     private PlugNHackAPI api = new PlugNHackAPI(this);
     private MonitoredPagesManager mpm = new MonitoredPagesManager(this);
@@ -160,12 +142,11 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     // private PopupMenuShowResponseInBrowser popupMenuShowResponseInBrowser = null;
 
     private ClientBreakpointMessageHandler brkMessageHandler = null;
-    private ManualClientMessageSendEditorDialog resendDialog = null;
     private ClientConfigDialog clientConfigDialog = null;
 
     private ClientBreakpointsUiManagerInterface brkManager = null;
 
-    private List<String> knownTypes = new ArrayList<String>();
+    private List<String> knownTypes = new ArrayList<>();
 
     private Thread timeoutThread = null;
     private boolean shutdown = false;
@@ -173,6 +154,8 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
 
     private ClientTable clientTable = null;
     private MessageTable messageTable = null;
+
+    private ExtensionNetwork extensionNetwork;
 
     /*
      * TODO
@@ -185,13 +168,33 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     }
 
     @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
+    }
+
+    public static ImageIcon getClientActiveIcon() {
+        if (clientActiveIcon == null) {
+            clientActiveIcon = new ImageIcon(ZAP.class.getResource(CLIENT_ACTIVE_ICON_RESOURCE));
+        }
+        return clientActiveIcon;
+    }
+
+    public static ImageIcon getClientInactiveIcon() {
+        if (clientInactiveIcon == null) {
+            clientInactiveIcon =
+                    new ImageIcon(ZAP.class.getResource(CLIENT_INACTIVE_ICON_RESOURCE));
+        }
+        return clientInactiveIcon;
+    }
+
+    @Override
     public void databaseOpen(Database db) throws DatabaseUnsupportedException {
         clientTable = new ClientTable();
         db.addDatabaseListener(clientTable);
         try {
             clientTable.databaseOpen(db.getDatabaseServer());
         } catch (DatabaseException e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
 
         messageTable = new MessageTable();
@@ -199,7 +202,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         try {
             messageTable.databaseOpen(db.getDatabaseServer());
         } catch (DatabaseException e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 
@@ -209,7 +212,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                     @Override
                     public void run() {
                         this.setName("ZAP-pnh-timeout");
-                        // Cant init extBreak here - Control wont have been initialized
+                        // Can't init extBreak here - Control wont have been initialized
                         boolean ctrlInit = false;
                         ExtensionBreak extBreak = null;
                         while (!shutdown) {
@@ -262,11 +265,10 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         extensionHook.addProxyListener(this);
         extensionHook.addSessionListener(this);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuOpenAndMonitorUrl());
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuMonitorSubtree());
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuMonitorScope());
-            extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuResend());
             // TODO Work in progress
             // extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuShowResponseInBrowser());
             extensionHook.getHookView().addStatusPanel(getClientsPanel());
@@ -329,10 +331,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     public void unload() {
         super.unload();
 
-        // Explicitly call "stop()" as it's not being called by the core during/after the unloading.
-        // TODO Remove once the bug is fixed in core.
-        stop();
-
         if (View.isInitialised()) {
             // clear up Session Properties
             getView().getSessionDialog().removeParamPanel(monitoredClientsPanel);
@@ -358,14 +356,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         Database db = Model.getSingleton().getDb();
         db.removeDatabaseListener(clientTable);
         db.removeDatabaseListener(messageTable);
-    }
-
-    private PopupMenuResend getPopupMenuResend() {
-        if (popupMenuResend == null) {
-            popupMenuResend = new PopupMenuResend(this);
-        }
-
-        return this.popupMenuResend;
     }
 
     private void initializeClientsForWorkPanel() {
@@ -430,22 +420,8 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("plugnhack.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     private PopupMenuOpenAndMonitorUrl getPopupMenuOpenAndMonitorUrl() {
@@ -485,9 +461,8 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                     int endHeadTag = body.indexOf('>', startHeadOffset);
                     if (endHeadTag > 0) {
                         endHeadTag++;
-                        logger.debug(
-                                "Injecting PnH script into "
-                                        + msg.getRequestHeader().getURI().toString());
+                        LOGGER.debug(
+                                "Injecting PnH script into {}", msg.getRequestHeader().getURI());
                         // this assign the unique id
                         MonitoredPage page = mpm.monitorPage(msg);
                         try {
@@ -497,7 +472,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                                 this.getClientsPanel().setTabFocus();
                             }
                         } catch (SQLException e) {
-                            logger.error(e.getMessage(), e);
+                            LOGGER.error(e.getMessage(), e);
                         }
 
                         body =
@@ -517,34 +492,24 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                         injected = true;
                     }
                     if (!injected) {
-                        logger.debug(
-                                "Cant inject PnH script into "
-                                        + msg.getRequestHeader().getURI().toString()
-                                        + " no head tag found "
-                                        + msg.getResponseHeader().getStatusCode());
+                        LOGGER.debug(
+                                "Can't inject PnH script into {} no head tag found {}",
+                                msg.getRequestHeader().getURI(),
+                                msg.getResponseHeader().getStatusCode());
                     }
                 }
             } catch (ApiException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return true;
     }
 
-    protected ManualClientMessageSendEditorDialog getResendDialog() {
-        if (resendDialog == null) {
-            resendDialog =
-                    new ManualClientMessageSendEditorDialog(
-                            new ClientMessagePanelSender(this), true, "plugnhack.resend.popup");
-        }
-
-        return resendDialog;
-    }
     /*
     public void setMonitored(MonitoredPage page, boolean monitored) {
     	SiteNode node = Model.getSingleton().getSession().getSiteTree().findNode(page.getMessage());
     	if (node != null) {
-    		logger.debug("setMonitored " + node.getNodeName() + " " + monitored);
+    		LOGGER.debug("setMonitored {} {}", node.getNodeName(), monitored);
     		if (monitored) {
     			node.addCustomIcon(CLIENT_ACTIVE_ICON_RESOURCE, false);
     		} else {
@@ -567,7 +532,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                 try {
                     this.clientTable.update(page);
                 } catch (SQLException e) {
-                    logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }
@@ -589,7 +554,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                 this.messageTable.insert(cmsg);
             }
         } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -599,21 +564,19 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
 
     public boolean isSiteBeingMonitored(String site) {
         if (site == null || site.length() == 0) {
-            logger.debug("isSiteBeingMonitored " + site + " returning false (empty site)");
+            LOGGER.debug("isSiteBeingMonitored {} returning false (empty site)", site);
             return false;
         }
         for (MonitoredPage page : this.mpm.getActiveClients()) {
             if (page.getURI().toString().startsWith(site)) {
-                logger.debug("isSiteBeingMonitored " + site + " returning true");
+                LOGGER.debug("isSiteBeingMonitored {} returning true", site);
                 return true;
             }
         }
-        logger.debug(
-                "isSiteBeingMonitored "
-                        + site
-                        + " returning false (did not match any of the "
-                        + this.mpm.getActiveClients().size()
-                        + " pages actively monitored)");
+        LOGGER.debug(
+                "isSiteBeingMonitored {} returning false (did not match any of the {} pages actively monitored)",
+                site,
+                this.mpm.getActiveClients().size());
         return false;
     }
 
@@ -635,13 +598,13 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
 
     private String getPnhScript() throws ApiException {
         if (pnhScript == null) {
-            pnhScript = ExtensionPlugNHack.getStringReource("resources/pnh_probe.js");
+            pnhScript = ExtensionPlugNHack.getStringResource("resources/pnh_probe.js");
         }
 
         return pnhScript;
     }
 
-    public static String getStringReource(String resourceName) throws ApiException {
+    public static String getStringResource(String resourceName) throws ApiException {
         InputStream in = null;
         StringBuilder sb = new StringBuilder();
         try {
@@ -654,7 +617,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
             return sb.toString();
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new ApiException(ApiException.Type.INTERNAL_ERROR);
 
         } finally {
@@ -675,19 +638,19 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         return this.oracleManager.registerOracle(data);
     }
 
-    public void addOracleListnner(OracleListener listenner) {
-        this.oracleManager.addListener(listenner);
+    public void addOracleListener(OracleListener listener) {
+        this.oracleManager.addListener(listener);
     }
 
-    public void removeOracleListenner(OracleListener listenner) {
-        this.oracleManager.removeListener(listenner);
+    public void removeOracleListenner(OracleListener listener) {
+        this.oracleManager.removeListener(listener);
     }
 
     /*
      * Called when the specified oracle is invoked in the client, e.g. as a result on an XSS
      */
     public void oracleInvoked(int id) {
-        logger.debug("Oracle invoked for " + id);
+        LOGGER.debug("Oracle invoked for {}", id);
         this.oracleManager.oracleInvoked(id);
     }
 
@@ -700,7 +663,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                 this.getClientsPanel().setTabFocus();
             }
         } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return page.getId();
     }
@@ -709,17 +672,27 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         this.mpm.stopMonitoring(id);
     }
 
-    public void addMonitoredPageListenner(MonitoredPageListener listenner) {
-        this.mpm.addListener(listenner);
+    public void addMonitoredPageListenner(MonitoredPageListener listener) {
+        this.mpm.addListener(listener);
     }
 
-    public void removeMonitoredPageListenner(MonitoredPageListener listenner) {
-        this.mpm.removeListener(listenner);
+    public void removeMonitoredPageListenner(MonitoredPageListener listener) {
+        this.mpm.removeListener(listener);
     }
 
     protected String getApiRoot() {
-        ProxyParam proxyParams = Model.getSingleton().getOptionsParam().getProxyParam();
-        return "http://" + proxyParams.getProxyIp() + ":" + proxyParams.getProxyPort();
+        ServerInfo serverInfo = getExtensionNetwork().getMainProxyServerInfo();
+        return "http://" + serverInfo.getAddress() + ":" + serverInfo.getPort();
+    }
+
+    private ExtensionNetwork getExtensionNetwork() {
+        if (extensionNetwork == null) {
+            extensionNetwork =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionNetwork.class);
+        }
+        return extensionNetwork;
     }
 
     @Override
@@ -734,15 +707,9 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
 
         } else {
             try {
-                EventQueue.invokeAndWait(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                sessionChangedEventHandler(session);
-                            }
-                        });
+                EventQueue.invokeAndWait(() -> sessionChangedEventHandler(session));
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -777,7 +744,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                 }
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

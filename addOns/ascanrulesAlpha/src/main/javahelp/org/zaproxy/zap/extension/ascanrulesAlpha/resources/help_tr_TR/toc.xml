@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP Kullanıcı Kılavuzu" tocid="toplevelitem">
 		<tocitem text="Eklentiler" tocid="addons">
-			<tocitem text="Aktif Tarama Kuralları - alfa" image="ascanalpha-icon" target="ascanalpha"/>
+			<tocitem text="Active Scan Rules - Alpha" image="ascanalpha-icon" target="ascanalpha"/>
 		</tocitem>
 	</tocitem>
 </toc>

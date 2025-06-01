@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Command Line</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Command Line</h1>
 	Quick Start add-on supports the following command line options:
 	<table>
@@ -16,8 +16,9 @@
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td>-quickout</td>
-			<td>Specifies the file to write the XML report to. If not set in 'inline' and
-				daemon modes the report is written to default output stream.</td>
+			<td>Specifies the file to write the report to. The report format will depend on the file extension - supported file extensions are 
+			<pre>.html</pre>, <pre>.json</pre>, <pre>.md</pre>, <pre>.xml</pre>. If none of these extensions are used then the format will be XML. 
+			If not set in 'inline' and daemon modes the report is written to default output stream.</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>

@@ -51,6 +51,7 @@ public class MinimumDistance extends Base
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#help()
 	 */
+	@Override
 	public void help()
 	{
 		puts("\n\t|-------------------------------------------------------------|");
@@ -74,6 +75,7 @@ public class MinimumDistance extends Base
 	 * <p>
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#test(java.lang.String)
 	 */
+	@Override
 	public void test(String filename) throws Exception
 	{
 		point[] pts;

@@ -21,31 +21,37 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestJSON;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.impl.ZestScriptEngineFactory;
+import java.util.Locale;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.selenium.Browser;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
+import org.zaproxy.zap.extension.zest.ZestStatementFromJson;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestClientLaunch;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 
+@SuppressWarnings("serial")
 public class ZestRecordScriptDialog extends StandardFieldsDialog {
+
+    private static final int ZEST_CLIENT_RECORDER_INITIATOR = -73;
 
     private static final String FIELD_TITLE = "zest.dialog.script.label.title";
     private static final String FIELD_PREFIX = "zest.dialog.script.label.prefix";
@@ -57,8 +63,17 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     private static final String FIELD_APPROX = "zest.dialog.script.label.approx";
     private static final String FIELD_LOAD = "zest.dialog.script.label.load";
     private static final String FIELD_CLIENT_NODE = "zest.dialog.script.label.clientnode";
+    private static final String FIELD_BROWSER = "zest.dialog.script.label.browser";
+    private static final String ERROR_CLIENT = "zest.dialog.script.error.client";
+    private static final String THREAD_PREFIX = "ZAP-client-browser-";
 
-    private static final Logger logger = Logger.getLogger(ZestRecordScriptDialog.class);
+    private static List<String> BROWSERS =
+            List.of(
+                    ExtensionSelenium.getName(Browser.FIREFOX),
+                    ExtensionSelenium.getName(Browser.CHROME));
+
+    private int threadId = 1;
+    private static final Logger LOGGER = LogManager.getLogger(ZestRecordScriptDialog.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -79,6 +94,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         this.addTextField(0, FIELD_TITLE, "");
         this.addComboField(0, FIELD_TYPE, this.getScriptTypes(), "", false);
         this.addComboField(0, FIELD_RECORD, this.getRecordTypes(), "", false);
+        this.addComboField(0, FIELD_BROWSER, BROWSERS, "", false);
 
         this.addNodeSelectField(0, FIELD_CLIENT_NODE, node, true, false);
 
@@ -99,28 +115,28 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
             getField(FIELD_PREFIX).setEnabled(false);
         } else {
             getField(FIELD_CLIENT_NODE).setEnabled(false);
+            getField(FIELD_BROWSER).setEnabled(false);
         }
 
         this.addFieldListener(
                 FIELD_RECORD,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (isServerSide()) {
-                            getField(FIELD_CLIENT_NODE).setEnabled(false);
-                            getField(FIELD_PREFIX).setEnabled(true);
+                e -> {
+                    if (isServerSide()) {
+                        getField(FIELD_CLIENT_NODE).setEnabled(false);
+                        getField(FIELD_PREFIX).setEnabled(true);
 
-                            getField(FIELD_STATUS).setEnabled(true);
-                            getField(FIELD_LENGTH).setEnabled(true);
-                            getField(FIELD_APPROX).setEnabled(true);
-                        } else {
-                            getField(FIELD_CLIENT_NODE).setEnabled(true);
-                            getField(FIELD_PREFIX).setEnabled(false);
+                        getField(FIELD_STATUS).setEnabled(true);
+                        getField(FIELD_LENGTH).setEnabled(true);
+                        getField(FIELD_APPROX).setEnabled(true);
+                        getField(FIELD_BROWSER).setEnabled(false);
+                    } else {
+                        getField(FIELD_CLIENT_NODE).setEnabled(true);
+                        getField(FIELD_PREFIX).setEnabled(false);
 
-                            getField(FIELD_STATUS).setEnabled(false);
-                            getField(FIELD_LENGTH).setEnabled(false);
-                            getField(FIELD_APPROX).setEnabled(false);
-                        }
+                        getField(FIELD_STATUS).setEnabled(false);
+                        getField(FIELD_LENGTH).setEnabled(false);
+                        getField(FIELD_APPROX).setEnabled(false);
+                        getField(FIELD_BROWSER).setEnabled(true);
                     }
                 });
     }
@@ -131,13 +147,15 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     }
 
     private List<String> getScriptTypes() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         for (ScriptType st : extension.getExtScript().getScriptTypes()) {
             if (st.hasCapability(ScriptType.CAPABILITY_APPEND)) {
                 list.add(Constant.messages.getString(st.getI18nKey()));
             }
         }
+        // Alphabetic order best, and it just so happens Auth scripts will appear at the top
+        Collections.sort(list);
 
         return list;
     }
@@ -153,10 +171,9 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     }
 
     private List<String> getRecordTypes() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add(Constant.messages.getString("zest.dialog.script.record.type.server"));
-        // TODO disable until support improved...
-        // list.add(Constant.messages.getString("zest.dialog.script.record.type.client"));
+        list.add(Constant.messages.getString("zest.dialog.script.record.type.client"));
         return list;
     }
 
@@ -166,9 +183,9 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     }
 
     private List<String> getSites() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add(""); // Always start with the blank option
-        SiteNode siteRoot = (SiteNode) Model.getSingleton().getSession().getSiteTree().getRoot();
+        SiteNode siteRoot = Model.getSingleton().getSession().getSiteTree().getRoot();
         if (siteRoot != null && siteRoot.getChildCount() > 0) {
             SiteNode child = (SiteNode) siteRoot.getFirstChild();
             while (child != null) {
@@ -177,6 +194,23 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
             }
         }
         return list;
+    }
+
+    private void launchBrowser(String url, String browserName) {
+        ExtensionSelenium extSelenium =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+        try {
+            WebDriver wd =
+                    extSelenium.getProxiedBrowserByName(
+                            ZEST_CLIENT_RECORDER_INITIATOR, browserName, null);
+            wd.get(url);
+        } catch (RuntimeException e) {
+            String msg =
+                    extSelenium.getWarnMessageFailedToStart(
+                            browserName.toLowerCase(Locale.ROOT), e);
+            cancelPressed();
+            View.getSingleton().showWarningDialog(msg);
+        }
     }
 
     @Override
@@ -198,13 +232,13 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
             try {
                 script.setPrefix(this.getStringValue(FIELD_PREFIX));
             } catch (MalformedURLException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
 
         scriptWrapper.setName(script.getTitle());
         scriptWrapper.setDescription(script.getDescription());
-        scriptWrapper.setContents(ZestJSON.toString(script));
+        scriptWrapper.setContents(extension.convertElementToString(script));
         scriptWrapper.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
 
         if (this.isServerSide()) {
@@ -215,37 +249,33 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
                 scriptWrapper.setIncLengthAssertion(this.getBoolValue(FIELD_LENGTH));
                 scriptWrapper.setLengthApprox(this.getIntValue(FIELD_APPROX));
             }
-
-        } else {
-            // Client side
         }
-
-        ScriptNode scriptNode = extension.add(scriptWrapper, false);
-
-        extension.updated(scriptNode);
+        boolean allowFocus = isServerSide();
+        ScriptNode scriptNode = extension.add(scriptWrapper, false, allowFocus);
+        extension.updated(scriptNode, allowFocus);
         extension.setRecordingNode(scriptNode);
 
         if (!this.isServerSide()) {
-            String url = this.getStringValue(FIELD_CLIENT_NODE);
-            Extension extPnh =
-                    Control.getSingleton().getExtensionLoader().getExtension("ExtensionPlugNHack");
-            if (extPnh != null) {
-
-                Method method = null;
-                try {
-                    URI uri = new URI(url, true);
-
-                    extension.startClientRecording(url);
-
-                    method = extPnh.getClass().getMethod("launchAndRecordClient", URI.class);
-
-                    method.invoke(extPnh, uri);
-
-                } catch (Exception e) {
-                    // Its an older version, so just dont try to use it
-                    e.printStackTrace();
-                }
+            if (!this.extension.isClientAccessible()) {
+                LOGGER.warn(ERROR_CLIENT);
+                View.getSingleton().showWarningDialog(Constant.messages.getString(ERROR_CLIENT));
+                return;
             }
+            String url = this.getStringValue(FIELD_CLIENT_NODE);
+            String browser = this.getStringValue(FIELD_BROWSER);
+            extension.addToParent(
+                    scriptNode,
+                    new ZestClientLaunch(
+                            ZestStatementFromJson.WINDOW_HANDLE_BROWSER_EXTENSION,
+                            browser,
+                            url.toLowerCase(Locale.ROOT),
+                            false),
+                    false,
+                    false);
+            extension.startClientRecording(url);
+            Thread browserThread =
+                    new Thread(() -> launchBrowser(url, browser), THREAD_PREFIX + threadId++);
+            browserThread.start();
         }
     }
 
@@ -253,6 +283,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     public void cancelPressed() {
         super.cancelPressed();
         extension.cancelScriptRecording();
+        extension.stopClientRecording();
     }
 
     @Override

@@ -4,11 +4,11 @@
          "http://java.sun.com/products/javahelp/toc_2_0.dtd">
 
 <toc version="2.0">
-	<tocitem text="ZAP User Guide" tocid="toplevelitem">
-		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Access Control Testing" image="accessControl.icon" target="accessControl.concepts" >
-				<tocitem text="Tab" target="accessControl.tab"/>
-				<tocitem text="Context Options" target="accessControl.contextOptions"/>
+	<tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
+		<tocitem text="Дополнения" tocid="addons">
+			<tocitem text="Тестирование контроля доступа " image="accessControl.icon" target="accessControl.concepts" >
+				<tocitem text="Вкладка" target="accessControl.tab"/>
+				<tocitem text="Параметры контекста " target="accessControl.contextOptions"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

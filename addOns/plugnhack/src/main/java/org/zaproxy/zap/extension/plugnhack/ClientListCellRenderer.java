@@ -91,9 +91,9 @@ public class ClientListCellRenderer extends JPanel implements ListCellRenderer<M
         }
 
         if (page.isActive()) {
-            id.setIcon(DisplayUtils.getScaledIcon(ExtensionPlugNHack.CLIENT_ACTIVE_ICON));
+            id.setIcon(DisplayUtils.getScaledIcon(ExtensionPlugNHack.getClientActiveIcon()));
         } else {
-            id.setIcon(DisplayUtils.getScaledIcon(ExtensionPlugNHack.CLIENT_INACTIVE_ICON));
+            id.setIcon(DisplayUtils.getScaledIcon(ExtensionPlugNHack.getClientInactiveIcon()));
         }
         url.setIcon(DisplayUtils.getScaledIcon(page.getIcon()));
 

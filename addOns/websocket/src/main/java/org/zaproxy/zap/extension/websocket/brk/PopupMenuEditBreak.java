@@ -25,6 +25,7 @@ import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.brk.BreakpointsPanel;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
 
+@SuppressWarnings("serial")
 public class PopupMenuEditBreak extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
@@ -41,14 +42,7 @@ public class PopupMenuEditBreak extends ExtensionPopupMenuItem {
     }
 
     private void initialize() {
-        this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        extension.editUiSelectedBreakpoint();
-                    }
-                });
+        this.addActionListener(e -> extension.editUiSelectedBreakpoint());
     }
 
     @Override

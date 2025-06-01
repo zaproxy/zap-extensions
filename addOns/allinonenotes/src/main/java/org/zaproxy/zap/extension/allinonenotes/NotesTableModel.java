@@ -24,6 +24,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 
+@SuppressWarnings("serial")
 public class NotesTableModel extends AbstractTableModel {
 
     private static final String PREFIX = "allinonenotes";
@@ -38,7 +39,7 @@ public class NotesTableModel extends AbstractTableModel {
         columnNames = new ArrayList<>(COLUMN_COUNT);
         columnNames.add(Constant.messages.getString(PREFIX + ".columnHeaders.requestId"));
         columnNames.add(Constant.messages.getString(PREFIX + ".columnHeaders.noteContent"));
-    };
+    }
 
     @Override
     public String getColumnName(int col) {
@@ -68,10 +69,12 @@ public class NotesTableModel extends AbstractTableModel {
         }
     }
 
+    @Override
     public boolean isCellEditable(int row, int col) {
         return false;
     }
 
+    @Override
     public void setValueAt(Object value, int rowIdx, int colIdx) {
         switch (colIdx) {
             case 0:

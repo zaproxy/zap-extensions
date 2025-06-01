@@ -26,18 +26,20 @@ import javax.swing.JTree;
 import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestConditional;
-import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestStatement;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
 import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zest.core.v1.ZestConditional;
+import org.zaproxy.zest.core.v1.ZestContainer;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestTreeTransferHandler extends TransferHandler {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(ZestTreeTransferHandler.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestTreeTransferHandler.class);
     private ExtensionZest extension;
 
     public ZestTreeTransferHandler(ExtensionZest ext) {
@@ -48,7 +50,7 @@ public class ZestTreeTransferHandler extends TransferHandler {
     public boolean canImport(TransferHandler.TransferSupport support) {
         // Debug logging commented out as it produces loads of messages. Useful if debugging DnD
         // issues of course ;)
-        // logger.debug("canImport " + support.getComponent().getClass().getCanonicalName());
+        // LOGGER.debug("canImport {}", support.getComponent().getClass().getCanonicalName());
 
         support.setShowDropLocation(true);
 
@@ -69,7 +71,7 @@ public class ZestTreeTransferHandler extends TransferHandler {
             return false;
         } else if (!(dragZew.getElement() instanceof ZestStatement)) {
             // Dont support other elements yet
-            // logger.debug("canImport cant drag to a non ZestStatement " +
+            // LOGGER.debug("canImport cant drag to a non ZestStatement {}",
             // dragZew.getElement().getClass().getCanonicalName());
             return false;
         } else if (dragZew.getShadowLevel() > 0) {
@@ -83,24 +85,24 @@ public class ZestTreeTransferHandler extends TransferHandler {
         TreePath dest = dl.getPath();
         ScriptNode parent = (ScriptNode) dest.getLastPathComponent();
         if (parent.getUserObject() == null) {
-            // logger.debug("canImport cant paste to a null user object " + parent.toString());
+            // LOGGER.debug("canImport cant paste to a null user object {}", parent.toString());
             return false;
         } else if (parent.getUserObject() instanceof ZestScriptWrapper) {
             // Can always paste into scripts, more checks later
         } else if (!(parent.getUserObject() instanceof ZestElementWrapper)) {
-            // logger.debug("canImport cant paste to a node of class " +
+            // LOGGER.debug("canImport cant paste to a node of class {}",
             // parent.getUserObject().getClass().getCanonicalName());
             return false;
         } else {
             ZestElementWrapper dropZew = (ZestElementWrapper) parent.getUserObject();
             if (dropZew == null || !(dropZew.getElement() instanceof ZestContainer)) {
                 // Dont support other elements yet
-                // logger.debug("canImport cant paste to a non ZestContainer " +
+                // LOGGER.debug("canImport cant paste to a non ZestContainer {}",
                 // dropZew.getElement().getClass().getCanonicalName());
                 return false;
             } else if (dropZew.getElement() instanceof ZestConditional
                     && dropZew.getShadowLevel() == 0) {
-                // logger.debug("canImport cant paste to an IF statement");
+                // LOGGER.debug("canImport cant paste to an IF statement");
                 return false;
             }
         }
@@ -109,9 +111,9 @@ public class ZestTreeTransferHandler extends TransferHandler {
         ZestScriptWrapper sw = extension.getZestTreeModel().getScriptWrapper(parent);
         if (sw == null) {
             return false;
-        } else if (ExtensionPassiveScan.SCRIPT_TYPE_PASSIVE.equals(sw.getTypeName())
+        } else if (ExtensionPassiveScan2.SCRIPT_TYPE_PASSIVE.equals(sw.getTypeName())
                 && !isSafe(dragStmt)) {
-            // logger.debug("canImport cant paste unsafe stmts into passive script");
+            // LOGGER.debug("canImport cant paste unsafe stmts into passive script");
             return false;
         }
 
@@ -120,17 +122,17 @@ public class ZestTreeTransferHandler extends TransferHandler {
             // prevent drop between shadow nodes
             ScriptNode nextSibling = (ScriptNode) parent.getChildAt(childIndex);
             if (nextSibling != null) {
-                // logger.debug("canImport nextSibling is " + nextSibling.getNodeName());
+                // LOGGER.debug("canImport nextSibling is {}", nextSibling.getNodeName());
                 ZestElementWrapper sibZew = (ZestElementWrapper) nextSibling.getUserObject();
                 if (sibZew.getShadowLevel() > 0) {
-                    // logger.debug("canImport cant paste before shadow node");
+                    // LOGGER.debug("canImport cant paste before shadow node");
                     return false;
                 }
             }
         }
         if (parent == dragNode.getParent()
                 && childIndex == dragNode.getParent().getIndex(dragNode)) {
-            // logger.debug("canImport cant paste into the same location");
+            // LOGGER.debug("canImport cant paste into the same location");
             return false;
         }
 
@@ -153,13 +155,13 @@ public class ZestTreeTransferHandler extends TransferHandler {
 
     @Override
     public int getSourceActions(JComponent c) {
-        logger.debug("getSourceActions " + c.getClass().getCanonicalName());
+        LOGGER.debug("getSourceActions {}", c.getClass().getCanonicalName());
         return TransferHandler.COPY_OR_MOVE;
     }
 
     @Override
     public boolean importData(TransferHandler.TransferSupport support) {
-        logger.debug("importData " + support.getComponent().getClass().getCanonicalName());
+        LOGGER.debug("importData {}", support.getComponent().getClass().getCanonicalName());
 
         if (!support.isDrop()) {
             return false;
@@ -194,7 +196,7 @@ public class ZestTreeTransferHandler extends TransferHandler {
             }
         }
 
-        List<ScriptNode> nodes = new ArrayList<ScriptNode>();
+        List<ScriptNode> nodes = new ArrayList<>();
         nodes.add(dragNode);
 
         extension.pasteToNode((ScriptNode) parent, nodes, cut, beforeChild, afterChild);

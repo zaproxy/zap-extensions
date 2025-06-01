@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+    <meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <title>BOAST Options</title>
+</head>
+<body>
+<h1>BOAST Options</h1>
+<p>
+    The BOAST Options screen allows you to configure the settings that affect how ZAP interacts with BOAST servers.
+</p>
+
+<h3>Server URI</h3>
+
+<p>This address should point to the URI that will be used for registrations and polling.</p>
+<p>A valid URI will include the scheme, the host, the port, and the <code>/events</code> endpoint. The host must be
+    running a working instance of BOAST.</p>
+<p>An example of a valid URI is: <code>https://example.com:1337/events</code>.</p>
+
+<h3>Polling Frequency</h3>
+
+<p>This option allows you to change the frequency of polling the registered BOAST servers. It takes values in
+    seconds. The minimum allowed value is 10 seconds and the maximum is 21600 seconds (6 hours). The default value is 60
+    seconds.</p>
+
+<h3>Active Servers</h3>
+
+<p>This table lists the Payloads and Canary values of all registered BOAST Servers. An entry is added each time you
+    register a new BOAST server.</p>
+
+<h4>Payload</h4>
+
+<p>The Payload is the address of an active BOAST server that can be used in out-of-band attacks.</p>
+
+<h4>Canary</h4>
+
+<p>The Canary value is a random string that is returned to the target web application when it makes a request to the
+    corresponding Payload address.</p>
+<p>Consider an example of how this value could be used: if the target web application ends up using the canary value
+    somewhere, then it may be vulnerable to out-of-band injection attacks. </p>
+
+
+<H2>See also</H2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td>
+            <a href="boast.html">BOAST Help</a></td>
+        <td>&nbsp;</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><a href="https://github.com/marcoagner/boast">BOAST on GitHub</a></td>
+        <td>&nbsp;</td>
+    </tr>
+</table>
+</body>
+</html>

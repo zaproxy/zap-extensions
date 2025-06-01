@@ -31,8 +31,9 @@ public class PathGenerator {
     }
 
     public String generateFullPath(OperationModel operationModel) {
-        String queryString = "?";
-        if (operationModel.getOperation().getParameters() != null)
+        StringBuilder queryString = new StringBuilder("?");
+        String newPath = operationModel.getPath();
+        if (operationModel.getOperation().getParameters() != null) {
             for (Parameter parameter : operationModel.getOperation().getParameters()) {
                 if (parameter == null) {
                     continue;
@@ -40,16 +41,13 @@ public class PathGenerator {
                 String parameterType = parameter.getIn();
                 if ("query".equals(parameterType)) {
                     String value = dataGenerator.generate(parameter.getName(), parameter);
-                    queryString += parameter.getName() + "=" + value + "&";
+                    queryString.append(parameter.getName()).append('=').append(value).append('&');
                 } else if ("path".equals(parameterType)) {
                     String value = dataGenerator.generate(parameter.getName(), parameter);
-                    String newPath =
-                            operationModel
-                                    .getPath()
-                                    .replace("{" + parameter.getName() + "}", value);
-                    operationModel.setPath(newPath);
+                    newPath = newPath.replace("{" + parameter.getName() + "}", value);
                 }
             }
-        return operationModel.getPath() + queryString.substring(0, queryString.length() - 1);
+        }
+        return newPath + queryString.substring(0, queryString.length() - 1);
     }
 }

@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.custompayloads;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
+@SuppressWarnings("serial")
 public class AbstractColumnTableModel<T> extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;

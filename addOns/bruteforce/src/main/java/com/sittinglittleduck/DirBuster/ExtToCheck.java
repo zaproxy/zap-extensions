@@ -22,7 +22,9 @@
 
 package com.sittinglittleduck.DirBuster;
 
-/** @author james */
+/**
+ * @author james
+ */
 public class ExtToCheck {
     public static final String BLANK_EXT = "BLANK";
     private String name;

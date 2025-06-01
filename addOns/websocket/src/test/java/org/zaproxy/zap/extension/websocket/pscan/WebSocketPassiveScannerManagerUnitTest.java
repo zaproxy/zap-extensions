@@ -19,34 +19,33 @@
  */
 package org.zaproxy.zap.extension.websocket.pscan;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Iterator;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.extension.websocket.alerts.AlertManager;
 import org.zaproxy.zap.testutils.WebSocketTestUtils;
 
-public class WebSocketPassiveScannerManagerUnitTest extends WebSocketTestUtils {
+class WebSocketPassiveScannerManagerUnitTest extends WebSocketTestUtils {
 
     private WebSocketPassiveScannerManager wsPscanManager;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         wsPscanManager = new WebSocketPassiveScannerManager(mock(AlertManager.class));
-        super.setUpLog();
     }
 
     @Test
-    public void shouldHaveNoScannerByDefault() {
+    void shouldHaveNoScannerByDefault() {
         assertFalse(wsPscanManager.getIterator().hasNext());
     }
 
     @Test
-    public void shouldAddWebSocketPassiveScanner() {
+    void shouldAddWebSocketPassiveScanner() {
         // Given
         WebSocketPassiveScanner wsScanner = mock(WebSocketPassiveScanner.class);
         // When
@@ -57,7 +56,7 @@ public class WebSocketPassiveScannerManagerUnitTest extends WebSocketTestUtils {
     }
 
     @Test
-    public void shouldIgnorePassiveScannerWithSameName() {
+    void shouldIgnorePassiveScannerWithSameName() {
         // Given
         // Scanner 1
         WebSocketPassiveScanner wsScanner1 = mock(WebSocketPassiveScanner.class);
@@ -79,7 +78,7 @@ public class WebSocketPassiveScannerManagerUnitTest extends WebSocketTestUtils {
     }
 
     @Test
-    public void shouldRemovePassiveScanner() {
+    void shouldRemovePassiveScanner() {
         // Given
         WebSocketPassiveScanner scanner1 = mock(WebSocketPassiveScanner.class);
         when(scanner1.getName()).thenReturn("WsScanner-1");
@@ -101,7 +100,7 @@ public class WebSocketPassiveScannerManagerUnitTest extends WebSocketTestUtils {
     }
 
     @Test
-    public void shouldAllowToChangeWhileIterating() {
+    void shouldAllowToChangeWhileIterating() {
         // Given
         WebSocketPassiveScanner scanner1 = mock(WebSocketPassiveScanner.class);
         when(scanner1.getName()).thenReturn("WsScanner-1");
@@ -127,7 +126,7 @@ public class WebSocketPassiveScannerManagerUnitTest extends WebSocketTestUtils {
     }
 
     @Test
-    public void shouldDisableScanner() {
+    void shouldDisableScanner() {
         // Given
         WebSocketPassiveScanner scanner1 = mock(WebSocketPassiveScanner.class);
 

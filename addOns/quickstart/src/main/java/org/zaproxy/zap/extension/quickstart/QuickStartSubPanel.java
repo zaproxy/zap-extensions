@@ -19,18 +19,13 @@
  */
 package org.zaproxy.zap.extension.quickstart;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
-import org.jdesktop.swingx.JXPanel;
 import org.jdesktop.swingx.ScrollableSizeHint;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -38,7 +33,8 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.FontUtils.Size;
 import org.zaproxy.zap.view.LayoutHelper;
 
-public abstract class QuickStartSubPanel extends JXPanel {
+@SuppressWarnings("serial")
+public abstract class QuickStartSubPanel extends QuickStartBackgroundPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -54,27 +50,13 @@ public abstract class QuickStartSubPanel extends JXPanel {
     }
 
     private void initialize() {
-        this.setLayout(new GridBagLayout());
         this.setScrollableHeightHint(ScrollableSizeHint.PREFERRED_STRETCH);
-        this.setBackground(Color.white);
         this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 
-        JPanel topPanel = new JPanel();
-        BoxLayout layout = new BoxLayout(topPanel, BoxLayout.X_AXIS);
-        topPanel.setLayout(layout);
-        topPanel.setBackground(Color.WHITE);
-        topPanel.add(getBackButton());
-        JLabel topTitle = new JLabel(Constant.messages.getString(this.getTitleKey()));
-        topTitle.setBackground(Color.WHITE);
-        topTitle.setFont(FontUtils.getFont(Size.much_larger));
-        topPanel.add(Box.createHorizontalGlue());
-        topPanel.add(topTitle);
-        topPanel.add(Box.createHorizontalGlue());
-
         int panelY = 0;
-        topPanel.add(new JLabel(this.getIcon()));
         this.add(
-                topPanel,
+                new TitlePanel(
+                        Constant.messages.getString(getTitleKey()), getBackButton(), getIcon()),
                 LayoutHelper.getGBC(0, panelY, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
 
         this.add(
@@ -129,13 +111,7 @@ public abstract class QuickStartSubPanel extends JXPanel {
             backButton.setToolTipText(
                     Constant.messages.getString("quickstart.button.tooltip.back"));
 
-            backButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            qsp.backToMainPanel();
-                        }
-                    });
+            backButton.addActionListener(e -> qsp.backToMainPanel());
         }
         return backButton;
     }

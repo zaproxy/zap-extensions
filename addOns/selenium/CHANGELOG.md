@@ -5,7 +5,220 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Update Selenium to version 4.32.0.
+### Fixed
+- Prevent concurrent modification exceptions.
 
+## [15.36.0] - 2025-03-25
+### Changed
+- Update Selenium to version 4.30.0.
+
+## [15.35.0] - 2025-03-11
+### Added
+- Add debug log for the Firefox profile creation.
+
+### Changed
+- Create profiles with Firefox headless.
+
+## [15.34.0] - 2025-02-27
+### Changed
+- Update Selenium to version 4.29.0.
+
+## [15.33.0] - 2025-01-23
+### Added
+- Allow to log browser's `console.log`, done at DEBUG level with the name `org.zaproxy.webdriver`.
+
+### Changed
+- Use WebDriver BiDi with Chrome.
+- Update Selenium to version 4.28.0.
+
+## [15.32.0] - 2025-01-10
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+## [15.31.0] - 2024-12-23
+### Changed
+- Update Selenium to version 4.27.0.
+- Use WebDriver BiDi with Firefox.
+
+## [15.30.0] - 2024-09-24
+### Changed
+- Update Selenium to version 4.25.0.
+- Update script template:
+  - selenium/Selenium default template.js - update documentation.
+
+## [15.29.0] - 2024-09-02
+### Added
+- Link to "no browser" FAQ in warning messages.
+
+### Changed
+- Update Selenium to version 4.24.0.
+
+## [15.28.0] - 2024-08-12
+### Changed
+- Update Selenium to version 4.23.1.
+
+## [15.27.0] - 2024-07-22
+### Changed
+- Update Selenium to version 4.23.0.
+
+## [15.26.0] - 2024-06-21
+### Changed
+- Update Selenium to version 4.22.0.
+
+## [15.25.0] - 2024-05-31
+### Changed
+- Ensure the specified WebDriver is executable always.
+
+## [15.24.0] - 2024-05-21
+### Changed
+- Update Selenium to version 4.21.0.
+
+## [15.23.0] - 2024-05-07
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+## [15.22.0] - 2024-04-26
+### Changed
+- Update Selenium to version 4.20.0.
+
+## [15.21.0] - 2024-04-02
+### Changed
+- Update Selenium to version 4.19.1.
+
+## [15.20.0] - 2024-03-28
+### Added
+- Support for menu weights (Issue 8369).
+
+### Changed
+- Update Selenium to version 4.19.0.
+- Update HtmlUnit to major version 3.
+
+### Fixed
+- A typo on the intro page in the add-on's help.
+
+## [15.19.0] - 2024-02-22
+### Changed
+- Update Selenium to version 4.18.1.
+- Maintenance changes.
+
+## [15.18.0] - 2024-01-26
+### Changed
+- Update Selenium to version 4.17.0.
+
+## [15.17.0] - 2024-01-18
+### Changed
+- Update Selenium to version 4.16.1.
+
+## [15.16.0] - 2023-11-10
+### Changed
+- Update Selenium to version 4.15.0.
+
+### Fixed
+- Add vertical scroll bar to the options panel to prevent the options from being hidden when resizing the Options dialogue (Issue 8178).
+
+## [15.15.0] - 2023-10-12
+### Changed
+- Update Selenium to version 4.14.0.
+- Update minimum ZAP version to 2.14.0.
+
+## [15.14.0] - 2023-09-26
+### Added
+- Add statistics for browser launch successes and failures that include the requester, e.g.:
+  - `stats.selenium.launch.<requester-id>.<browser-id>`
+  - `stats.selenium.launch.<requester-id>.<browser-id>.failure`
+- Allow to configure additional (CLI) arguments for Chrome and Firefox.
+- Support for selecting a default Firefox profile.
+
+### Changed
+- Maintenance changes.
+- Update Selenium to version 4.12.1.
+
+## [15.13.0] - 2023-07-11
+### Changed
+- Update minimum ZAP version to 2.13.0.
+- Update Selenium to version 4.
+
+### Removed
+- Remove support for Opera and PhantomJS (no longer being actively maintained).
+
+## [15.12.1] - 2023-05-26
+### Fixed
+- Install Firefox extensions without using a profile (Issue 7878).
+
+## [15.12.0] - 2023-05-23
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Disable JSON view in Firefox for DOM XSS rule to prevent hangs when the "Save As" option is invoked.
+
+## [15.11.0] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+
+## [15.10.0] - 2022-09-23
+### Added
+- Option to register and run 'browserHooks'.
+
+### Changed
+- Maintenance changes.
+
+## [15.9.0] - 2022-05-06
+### Changed
+- Use Network add-on to obtain main proxy address/port.
+
+### Fixed
+- Restore usage of bundled ChromeDriver ([Issue #7272](https://github.com/zaproxy/zaproxy/issues/7272)).
+
+## [15.8.0] - 2022-03-29
+### Added
+- Support aarch64/arm64 WebDrivers.
+- Allow to choose the location of Chrome binary (Issue 7166).
+
+## [15.7.0] - 2022-02-17
+### Added
+- Statistics, number of browsers launched.
+
+### Fixed
+- Quit all browsers when ZAP shuts down ([Issue #6643](https://github.com/zaproxy/zaproxy/issues/6643)).
+
+## [15.6.0] - 2021-12-13
+### Changed
+- Update minimum ZAP version to 2.11.1.
+- Maintenance changes (Issue 6963).
+
+## [15.5.1] - 2021-11-28
+### Fixed
+- Address exception when saving the options (Issue 6951).
+
+## [15.5.0] - 2021-11-25
+### Added
+- Support for browser extensions.
+### Changed
+- Dependency updates.
+
+## [15.4.0] - 2021-10-06
+### Changed
+- Now using 2.10 logging infrastructure (Log4j 2.x).
+- Update links to zaproxy repo.
+- Maintenance changes (some changes impact the visibility of variables and getters/setters, which may impact third party add-ons or scripts).
+- Update minimum ZAP version to 2.11.0.
+- Disable open URL in browser from GUI in containers unless override option enabled.
+
+## [15.3.0] - 2020-12-15
+### Changed
+- Invoke Selenium scripts synchronously for AJAX Spider's browsers, to prevent interferences with the crawler.
+- Update minimum ZAP version to 2.10.0.
+
+## [15.2.0] - 2020-03-31
+### Added
+- Support for selenium scripts which are invoked when browsers are launched.
+
+### Changed
+- Update minimum ZAP version to 2.9.0.
+- Set Firefox browser.tabs.documentchannel pref to false to fix HUD issue
 
 ## [15.1.0] - 2020-01-17
 ### Added
@@ -91,5 +304,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.36.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.36.0
+[15.35.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.35.0
+[15.34.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.34.0
+[15.33.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.33.0
+[15.32.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.32.0
+[15.31.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.31.0
+[15.30.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.30.0
+[15.29.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.29.0
+[15.28.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.28.0
+[15.27.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.27.0
+[15.26.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.26.0
+[15.25.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.25.0
+[15.24.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.24.0
+[15.23.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.23.0
+[15.22.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.22.0
+[15.21.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.21.0
+[15.20.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.20.0
+[15.19.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.19.0
+[15.18.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.18.0
+[15.17.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.17.0
+[15.16.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.16.0
+[15.15.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.15.0
+[15.14.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.14.0
+[15.13.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.13.0
+[15.12.1]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.12.1
+[15.12.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.12.0
+[15.11.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.11.0
+[15.10.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.10.0
+[15.9.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.9.0
+[15.8.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.8.0
+[15.7.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.7.0
+[15.6.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.6.0
+[15.5.1]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.5.1
+[15.5.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.5.0
+[15.4.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.4.0
+[15.3.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.3.0
+[15.2.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.2.0
 [15.1.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.1.0
 [15.0.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.0.0

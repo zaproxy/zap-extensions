@@ -23,7 +23,8 @@ import java.awt.Component;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 import javax.swing.JTable;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -33,12 +34,13 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.ContextExcludePanel;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 
+@SuppressWarnings("serial")
 public class PopupExcludeWebSocketFromContextMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = -2345060529128495874L;
 
-    private static final Logger logger =
-            Logger.getLogger(PopupExcludeWebSocketFromContextMenu.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(PopupExcludeWebSocketFromContextMenu.class);
 
     private WebSocketPopupHelper wsPopupHelper;
     private Context context;
@@ -67,14 +69,11 @@ public class PopupExcludeWebSocketFromContextMenu extends ExtensionPopupMenuItem
 
     private void initialize() {
         addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        try {
-                            performAction();
-                        } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
-                        }
+                evt -> {
+                    try {
+                        performAction();
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
                     }
                 });
     }
@@ -82,19 +81,19 @@ public class PopupExcludeWebSocketFromContextMenu extends ExtensionPopupMenuItem
     protected void performAction() throws SQLException {
         WebSocketMessageDTO message = wsPopupHelper.getSelectedMessage();
         if (message != null) {
-            String url = Pattern.quote(message.channel.getContextUrl());
+            String url = Pattern.quote(message.getChannel().getContextUrl());
 
             Session session = Model.getSingleton().getSession();
 
             View.getSingleton().getSessionDialog().recreateUISharedContexts(session);
 
             Context uiSharedContext =
-                    View.getSingleton().getSessionDialog().getUISharedContext(context.getIndex());
+                    View.getSingleton().getSessionDialog().getUISharedContext(context.getId());
             uiSharedContext.addExcludeFromContextRegex(url);
 
             View.getSingleton()
                     .showSessionDialog(
-                            session, ContextExcludePanel.getPanelName(context.getIndex()), false);
+                            session, ContextExcludePanel.getPanelName(context.getId()), false);
         }
     }
 
@@ -106,7 +105,7 @@ public class PopupExcludeWebSocketFromContextMenu extends ExtensionPopupMenuItem
             WebSocketMessageDTO message = wsPopupHelper.getSelectedMessage();
 
             if (message != null) {
-                String url = message.channel.getContextUrl();
+                String url = message.getChannel().getContextUrl();
                 setEnabled(isEnabledForUrl(url));
             } else {
                 setEnabled(false);

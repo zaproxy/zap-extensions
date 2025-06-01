@@ -34,7 +34,7 @@ public class TokenAnalysisTestResult {
         COUNT_4_BITS,
         COUNT_8_BITS,
         COUNT_16_BITS
-    };
+    }
 
     public enum Result {
         FAIL,
@@ -42,7 +42,7 @@ public class TokenAnalysisTestResult {
         MEDIUM,
         HIGH,
         PASS
-    };
+    }
 
     private static ResourceBundle resourceBundle;
 

@@ -30,7 +30,8 @@ import java.util.GregorianCalendar;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
@@ -38,10 +39,11 @@ import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
 
+@SuppressWarnings("serial")
 public class RevisitDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(RevisitDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(RevisitDialog.class);
 
     private JPanel jPanel;
     private JButton resetButton;
@@ -73,12 +75,14 @@ public class RevisitDialog extends AbstractDialog {
     private Date startTime;
     private Date endTime;
 
-    /** @throws HeadlessException */
+    /**
+     * @throws HeadlessException
+     */
     public RevisitDialog(ExtensionRevisit extension) throws HeadlessException {
         super();
         this.extension = extension;
         this.setAlwaysOnTop(true);
-        initialize();
+        init();
     }
 
     /**
@@ -91,11 +95,11 @@ public class RevisitDialog extends AbstractDialog {
         super(arg0, arg1);
         this.extension = extension;
         this.setAlwaysOnTop(true);
-        initialize();
+        init();
     }
 
     /** This method initializes this */
-    private void initialize() {
+    private void init() {
         this.setContentPane(getJPanel());
         this.pack();
 
@@ -143,6 +147,7 @@ public class RevisitDialog extends AbstractDialog {
         }
         getOkButton().setEnabled(true);
     }
+
     /**
      * This method initializes jPanel
      *
@@ -300,7 +305,7 @@ public class RevisitDialog extends AbstractDialog {
         try {
             extension.setEnabledForSite(sn, getStartCal().getTime(), getEndCal().getTime());
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
 
         RevisitDialog.this.dispose();
@@ -310,13 +315,7 @@ public class RevisitDialog extends AbstractDialog {
         if (okButton == null) {
             okButton = new JButton();
             okButton.setText(Constant.messages.getString("all.button.ok"));
-            okButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            saveAndClose();
-                        }
-                    });
+            okButton.addActionListener(e -> saveAndClose());
         }
         return okButton;
     }
@@ -325,13 +324,7 @@ public class RevisitDialog extends AbstractDialog {
         if (cancelButton == null) {
             cancelButton = new JButton();
             cancelButton.setText(Constant.messages.getString("all.button.cancel"));
-            cancelButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            RevisitDialog.this.dispose();
-                        }
-                    });
+            cancelButton.addActionListener(e -> RevisitDialog.this.dispose());
         }
         return cancelButton;
     }
@@ -340,13 +333,7 @@ public class RevisitDialog extends AbstractDialog {
         if (resetButton == null) {
             resetButton = new JButton();
             resetButton.setText(Constant.messages.getString("revisit.dialog.button.reset"));
-            resetButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            RevisitDialog.this.init(sn, startTime, endTime);
-                        }
-                    });
+            resetButton.addActionListener(e -> RevisitDialog.this.init(sn, startTime, endTime));
         }
         return resetButton;
     }

@@ -22,7 +22,7 @@ package org.zaproxy.zap.extension.sqliplugin;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * Service class used to store test's platform details parsed from the XML payload configuration
@@ -32,7 +32,7 @@ import org.jdom.Element;
  */
 public class SQLiTestDetails {
     /*
-       Which details can be infered if the payload succeed.
+       Which details can be inferred if the payload succeed.
 
        Sub-tags: <dbms>
            What is the database management system (e.g. MySQL).
@@ -63,7 +63,9 @@ public class SQLiTestDetails {
     private static final String TAG_DETAILS_DBMS_VERSION = "dbms_version";
     private static final String TAG_DETAILS_OS = "os";
 
-    /** @param el */
+    /**
+     * @param el
+     */
     protected SQLiTestDetails(Element el) {
         this();
 
@@ -83,7 +85,9 @@ public class SQLiTestDetails {
         }
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public List<DBMSHelper> getDbms() {
         return this.dbms;
     }
@@ -96,12 +100,16 @@ public class SQLiTestDetails {
         return this.dbms.contains(dbms);
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public String getDbmsVersion() {
         return dbmsVersion;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public String getOs() {
         return os;
     }

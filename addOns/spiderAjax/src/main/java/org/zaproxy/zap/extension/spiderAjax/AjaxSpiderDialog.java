@@ -21,29 +21,29 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
-import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
+import org.zaproxy.zap.extension.spiderAjax.internal.ScopeCheckComponent;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class AjaxSpiderDialog extends StandardFieldsDialog {
 
     protected static final String[] LABELS = {
@@ -67,7 +67,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     private static final String FIELD_EVENT_WAIT = "spiderajax.options.label.eventwait";
     private static final String FIELD_RELOAD_WAIT = "spiderajax.options.label.reloadwait";
 
-    private static final Logger logger = Logger.getLogger(AjaxSpiderDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(AjaxSpiderDialog.class);
     private static final long serialVersionUID = 1L;
 
     private ExtensionAjax extension = null;
@@ -77,7 +77,8 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
 
     private Target target;
     private AjaxSpiderParam params = null;
-    // private OptionsAjaxSpiderTableModel ajaxSpiderClickModel = null;
+    private ScopeCheckComponent scopeCheckComponent;
+    private AllowedResourcesTableModel allowedResourcesTableModel;
 
     /**
      * Flag that holds the previous checked state of the "Subtree Only" checkbox.
@@ -93,6 +94,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     public AjaxSpiderDialog(ExtensionAjax ext, Frame owner, Dimension dim) {
         super(owner, "spiderajax.scandialog.title", dim, LABELS);
 
+        this.allowedResourcesTableModel = new AllowedResourcesTableModel();
         this.extension = ext;
         this.extUserMgmt =
                 Control.getSingleton()
@@ -106,7 +108,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
             this.target = target;
         }
 
-        logger.debug("init " + this.target);
+        LOGGER.debug("init {}", this.target);
         if (params == null) {
             params = this.extension.getAjaxSpiderParam();
         }
@@ -120,29 +122,24 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         this.addCheckBoxField(0, FIELD_SUBTREE_ONLY, subtreeOnlyPreviousCheckedState);
         this.addFieldListener(
                 FIELD_IN_SCOPE,
-                new ActionListener() {
+                e -> {
+                    boolean selected = getBoolValue(FIELD_IN_SCOPE);
 
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        boolean selected = getBoolValue(FIELD_IN_SCOPE);
-
-                        getField(FIELD_CONTEXT)
-                                .setEnabled(
-                                        !selected
-                                                && ((JComboBox<?>) getField(FIELD_CONTEXT))
-                                                                .getItemCount()
-                                                        > 1);
-                        getField(FIELD_USER)
-                                .setEnabled(
-                                        !selected
-                                                && ((JComboBox<?>) getField(FIELD_USER))
-                                                                .getItemCount()
-                                                        > 1);
-                    }
+                    getField(FIELD_CONTEXT)
+                            .setEnabled(
+                                    !selected
+                                            && ((JComboBox<?>) getField(FIELD_CONTEXT))
+                                                            .getItemCount()
+                                                    > 1);
+                    getField(FIELD_USER)
+                            .setEnabled(
+                                    !selected
+                                            && ((JComboBox<?>) getField(FIELD_USER)).getItemCount()
+                                                    > 1);
                 });
 
         List<ProvidedBrowserUI> browserList = getExtSelenium().getProvidedBrowserUIList();
-        List<String> browserNames = new ArrayList<String>();
+        List<String> browserNames = new ArrayList<>();
         String defaultBrowser = null;
         for (ProvidedBrowserUI browser : browserList) {
             browserNames.add(browser.getName());
@@ -158,25 +155,14 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
 
         this.addPadding(0);
 
-        this.addFieldListener(
-                FIELD_CONTEXT,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        setUsers();
-                    }
-                });
+        this.addFieldListener(FIELD_CONTEXT, e -> setUsers());
 
         this.addFieldListener(
                 FIELD_ADVANCED,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
+                e ->
                         // Save the adv option permanently for next time
 
-                        setAdvancedOptions(getBoolValue(FIELD_ADVANCED));
-                    }
-                });
+                        setAdvancedOptions(getBoolValue(FIELD_ADVANCED)));
 
         if (target != null) {
             this.targetSelected(FIELD_START, this.target);
@@ -197,6 +183,16 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         this.addNumberField(1, FIELD_DURATION, 0, Integer.MAX_VALUE, params.getMaxDuration());
         this.addNumberField(1, FIELD_EVENT_WAIT, 1, Integer.MAX_VALUE, params.getEventWait());
         this.addNumberField(1, FIELD_RELOAD_WAIT, 1, Integer.MAX_VALUE, params.getReloadWait());
+
+        scopeCheckComponent = new ScopeCheckComponent();
+        scopeCheckComponent.setScopeCheck(params.getScopeCheck());
+        addCustomComponent(1, scopeCheckComponent.getComponent());
+        allowedResourcesTableModel.setAllowedResources(params.getAllowedResources());
+        AllowedResourcesPanel allowedResourcesPanel =
+                new AllowedResourcesPanel(this, allowedResourcesTableModel);
+        allowedResourcesPanel.setRemoveWithoutConfirmation(
+                !params.isConfirmRemoveAllowedResource());
+        addCustomComponent(1, allowedResourcesPanel);
 
         this.addPadding(1);
 
@@ -266,7 +262,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     @Override
     public void targetSelected(String field, Target target) {
         boolean contextSelected = false;
-        List<String> ctxNames = new ArrayList<String>();
+        List<String> ctxNames = new ArrayList<>();
         if (target != null) {
             this.target = target;
             if (target.getStartNode() != null) {
@@ -301,7 +297,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         if (context != null && extUserMgmt != null) {
             String userName = this.getStringValue(FIELD_USER);
             List<User> users =
-                    this.extUserMgmt.getContextUserAuthManager(context.getIndex()).getUsers();
+                    this.extUserMgmt.getContextUserAuthManager(context.getId()).getUsers();
             for (User user : users) {
                 if (userName.equals(user.getName())) {
                     return user;
@@ -316,7 +312,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         Context context = this.getSelectedContext();
         List<String> userNames = new ArrayList<>();
         if (context != null && extUserMgmt != null) {
-            List<User> users = extUserMgmt.getContextUserAuthManager(context.getIndex()).getUsers();
+            List<User> users = extUserMgmt.getContextUserAuthManager(context.getId()).getUsers();
             userNames.add("");
             for (User user : users) {
                 userNames.add(user.getName());
@@ -348,13 +344,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         if (extraButtons == null) {
             JButton resetButton =
                     new JButton(Constant.messages.getString("spiderajax.scandialog.button.reset"));
-            resetButton.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            reset();
-                        }
-                    });
+            resetButton.addActionListener(e -> reset());
 
             extraButtons = new JButton[] {resetButton};
         }
@@ -364,7 +354,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
     /** Use the save method to launch a scan */
     @Override
     public void save() {
-        AjaxSpiderParam params = (AjaxSpiderParam) this.extension.getAjaxSpiderParam().clone();
+        AjaxSpiderParam params = this.extension.getAjaxSpiderParam().clone();
 
         String selectedBrowser = getSelectedBrowser();
         if (selectedBrowser != null) {
@@ -378,9 +368,9 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
             params.setMaxDuration(this.getIntValue(FIELD_DURATION));
             params.setEventWait(this.getIntValue(FIELD_EVENT_WAIT));
             params.setReloadWait(this.getIntValue(FIELD_RELOAD_WAIT));
+            params.setAllowedResources(allowedResourcesTableModel.getElements());
 
-            // params.setElems(getAjaxSpiderClickModel().getElements());
-
+            params.setScopeCheck(scopeCheckComponent.getScopeCheck());
         }
 
         URI startUri = null;
@@ -400,7 +390,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         }
 
         AjaxSpiderTarget.Builder targetBuilder =
-                AjaxSpiderTarget.newBuilder(extension.getModel().getSession())
+                AjaxSpiderTarget.newBuilder(extension)
                         .setInScopeOnly(getBoolValue(FIELD_IN_SCOPE))
                         .setOptions(params)
                         .setStartUri(startUri)
@@ -510,16 +500,6 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         String selectedBrowser = getSelectedBrowser();
         if (selectedBrowser == null) {
             return Constant.messages.getString("spiderajax.scandialog.nobrowser.error");
-        }
-
-        if (Browser.PHANTOM_JS.getId() == selectedBrowser) {
-            String host = startUri.getHost();
-            if ("localhost".equalsIgnoreCase(host)
-                    || "127.0.0.1".equals(host)
-                    || "[::1]".equals(host)) {
-                return Constant.messages.getString(
-                        "spiderajax.warn.message.phantomjs.bug.invalid.target");
-            }
         }
 
         return null;

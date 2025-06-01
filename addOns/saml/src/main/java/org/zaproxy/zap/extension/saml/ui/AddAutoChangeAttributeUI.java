@@ -19,13 +19,24 @@
  */
 package org.zaproxy.zap.extension.saml.ui;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.saml.*;
+import org.zaproxy.zap.extension.saml.Attribute;
+import org.zaproxy.zap.extension.saml.PassiveAttributeChangeListener;
+import org.zaproxy.zap.extension.saml.SAMLConfiguration;
+import org.zaproxy.zap.extension.saml.SamlI18n;
 
 public class AddAutoChangeAttributeUI extends JDialog {
 
@@ -80,42 +91,33 @@ public class AddAutoChangeAttributeUI extends JDialog {
 
         final JButton okButton = new JButton(SamlI18n.getMessage("saml.addchangeattrib.btn.ok"));
         okButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (comboBoxAttribSelect.getSelectedItem() == null) {
-                            View.getSingleton()
-                                    .showWarningDialog(
-                                            SamlI18n.getMessage(
-                                                    "saml.addchangeattrib.msg.attribnotselected"));
-                            return;
-                        }
-                        if (txtAttribValues.getText().equals("")) {
-                            JOptionPane.showMessageDialog(
-                                    AddAutoChangeAttributeUI.this,
-                                    SamlI18n.getMessage("saml.addchangeattrib.msg.novalue"),
-                                    SamlI18n.getMessage("saml.addchangeattrib.msg.valueerror"),
-                                    JOptionPane.ERROR_MESSAGE);
-                            return;
-                        }
-                        Attribute attribute =
-                                ((Attribute) comboBoxAttribSelect.getSelectedItem()).createCopy();
-                        attribute.setValue(txtAttribValues.getText());
-                        listener.onAddDesiredAttribute(attribute);
-                        AddAutoChangeAttributeUI.this.setVisible(false);
+                e -> {
+                    if (comboBoxAttribSelect.getSelectedItem() == null) {
+                        View.getSingleton()
+                                .showWarningDialog(
+                                        SamlI18n.getMessage(
+                                                "saml.addchangeattrib.msg.attribnotselected"));
+                        return;
                     }
+                    if (txtAttribValues.getText().equals("")) {
+                        JOptionPane.showMessageDialog(
+                                AddAutoChangeAttributeUI.this,
+                                SamlI18n.getMessage("saml.addchangeattrib.msg.novalue"),
+                                SamlI18n.getMessage("saml.addchangeattrib.msg.valueerror"),
+                                JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    Attribute attribute =
+                            ((Attribute) comboBoxAttribSelect.getSelectedItem()).createCopy();
+                    attribute.setValue(txtAttribValues.getText());
+                    listener.onAddDesiredAttribute(attribute);
+                    AddAutoChangeAttributeUI.this.setVisible(false);
                 });
         footerPanel.add(okButton);
         getRootPane().setDefaultButton(okButton);
 
         JButton cancelButton = new JButton(SamlI18n.getMessage("saml.addchangeattrib.btn.cancel"));
-        cancelButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        AddAutoChangeAttributeUI.this.setVisible(false);
-                    }
-                });
+        cancelButton.addActionListener(e -> AddAutoChangeAttributeUI.this.setVisible(false));
         footerPanel.add(cancelButton);
     }
 

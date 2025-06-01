@@ -46,7 +46,7 @@ public class ClientMessage implements Message {
     private Date received;
     private State state = State.received;
     private boolean changed = false;
-    private Map<String, Object> extraFields = new HashMap<String, Object>();
+    private Map<String, Object> extraFields = new HashMap<>();
 
     public ClientMessage() {
         json = new JSONObject();
@@ -96,6 +96,7 @@ public class ClientMessage implements Message {
         this.json.put("to", to);
     }
 
+    @Override
     public String getType() {
         return this.json.optString("type", null);
     }
@@ -122,7 +123,7 @@ public class ClientMessage implements Message {
 
     public Map<String, Object> toMap() {
         // TODO: can maybe just pull the values map from this.json and augment a clone of that?
-        HashMap<String, Object> map = new HashMap<String, Object>();
+        HashMap<String, Object> map = new HashMap<>();
         if (this.getTo() != null) {
             map.put("to", this.getTo());
         }

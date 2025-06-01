@@ -19,26 +19,27 @@
  */
 package org.zaproxy.zap.extension.openapi.converter.swagger;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidUrlException;
 
 /** Unit test for {@link InvalidUrlException}. */
-public class InvalidUrlExceptionUnitTest {
+class InvalidUrlExceptionUnitTest {
 
-    @Test(expected = NullPointerException.class)
-    public void shouldFailToCreateException2ArgWithNullUrl() {
+    @Test
+    void shouldFailToCreateException2ArgWithNullUrl() {
         // Given
         String url = null;
-        // When
-        new InvalidUrlException(url, null);
-        // Then = NullPointerException
+        // When / Then
+        assertThrows(NullPointerException.class, () -> new InvalidUrlException(url, null));
     }
 
     @Test
-    public void shouldCreateException2ArgWithNonNullUrl() {
+    void shouldCreateException2ArgWithNonNullUrl() {
         // Given
         String url = "url";
         // When
@@ -47,17 +48,16 @@ public class InvalidUrlExceptionUnitTest {
         assertThat(iue.getUrl(), is(equalTo(url)));
     }
 
-    @Test(expected = NullPointerException.class)
-    public void shouldFailToCreateException3ArgWithNullUrl() {
+    @Test
+    void shouldFailToCreateException3ArgWithNullUrl() {
         // Given
         String url = null;
-        // When
-        new InvalidUrlException(url, null, null);
-        // Then = NullPointerException
+        // When / Then
+        assertThrows(NullPointerException.class, () -> new InvalidUrlException(url, null, null));
     }
 
     @Test
-    public void shouldCreateException3ArgWithNonNullUrl() {
+    void shouldCreateException3ArgWithNonNullUrl() {
         // Given
         String url = "url";
         // When

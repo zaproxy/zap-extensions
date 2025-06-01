@@ -24,11 +24,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Vector;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ReportWriter {
 
-    private static final Logger log = Logger.getLogger(ReportWriter.class);
+    private static final Logger LOGGER = LogManager.getLogger(ReportWriter.class);
 
     private final String fileToWriteTo;
     private final Manager manager;
@@ -44,12 +45,12 @@ public class ReportWriter {
     public void writeReportHeadless() {
         Vector<HeadlessResult> data = manager.getHeadlessResult();
 
-        Vector<HeadlessResult> dirs = new Vector<HeadlessResult>(100, 10);
-        Vector<HeadlessResult> files = new Vector<HeadlessResult>(100, 10);
-        Vector<HeadlessResult> errors = new Vector<HeadlessResult>(100, 10);
+        Vector<HeadlessResult> dirs = new Vector<>(100, 10);
+        Vector<HeadlessResult> files = new Vector<>(100, 10);
+        Vector<HeadlessResult> errors = new Vector<>(100, 10);
 
-        Vector dirCodes = new Vector(100, 10);
-        Vector fileCodes = new Vector(100, 10);
+        Vector<String> dirCodes = new Vector<>(100, 10);
+        Vector<String> fileCodes = new Vector<>(100, 10);
 
         for (int a = 0; a < data.size(); a++) {
             if (data.elementAt(a).getType() == HeadlessResult.FILE) {
@@ -91,7 +92,7 @@ public class ReportWriter {
                 out.newLine();
                 out.newLine();
                 for (int a = 0; a < dirCodes.size(); a++) {
-                    String foundCode = (String) dirCodes.elementAt(a);
+                    String foundCode = dirCodes.elementAt(a);
                     int foundCodeInt = Integer.parseInt(foundCode);
                     out.write("Dirs found with a " + foundCode + " response:");
                     out.newLine();
@@ -119,7 +120,7 @@ public class ReportWriter {
                 out.newLine();
                 out.newLine();
                 for (int a = 0; a < fileCodes.size(); a++) {
-                    String foundCode = (String) fileCodes.elementAt(a);
+                    String foundCode = fileCodes.elementAt(a);
                     int foundCodeInt = Integer.parseInt(foundCode);
                     out.write("Files found with a " + foundCode + " responce:");
                     out.newLine();
@@ -157,7 +158,7 @@ public class ReportWriter {
             out.close();
 
         } catch (IOException ex) {
-            log.error(ex);
+            LOGGER.error(ex);
         }
     }
 

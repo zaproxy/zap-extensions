@@ -26,6 +26,7 @@ import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class ZestParameterDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_PARAM_NAME = "zest.dialog.param.label.name";
@@ -65,8 +66,8 @@ public class ZestParameterDialog extends StandardFieldsDialog implements ZestDia
         this.addTextField(FIELD_PARAM_VALUE, value);
         this.addPadding();
 
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_PARAM_NAME));
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_PARAM_VALUE));
+        setFieldMainPopupMenu(FIELD_PARAM_NAME);
+        setFieldMainPopupMenu(FIELD_PARAM_VALUE);
     }
 
     @Override

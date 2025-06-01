@@ -1,0 +1,25 @@
+===1 ==========
+GET http://example.org/1 HTTP/1.1
+Host: example.org
+
+
+HTTP/1.1 200 OK
+Content-Type: text/html
+content-length: 40
+
+<!DOCTYPE html>
+<html lang="en">
+</html>
+
+===2 ==========
+GET http://example.org/2 HTTP/1.1
+Host: example.org
+
+
+HTTP/1.1 200 OK
+Content-Type: text/html
+content-length: 40
+
+<!DOCTYPE html>
+<html lang="en">
+</html>

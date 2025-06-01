@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="ZAP guia do usuário" tocid="toplevelitem">
 		<tocitem text="Complementos" tocid="addons">
-			<tocitem text="Substituto" image="replacer-icon" target="replacer"/>
+			<tocitem text="Substituto" image="replacer-icon" target="replacer">
+				<tocitem text="Automation" target="replacer.automation" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

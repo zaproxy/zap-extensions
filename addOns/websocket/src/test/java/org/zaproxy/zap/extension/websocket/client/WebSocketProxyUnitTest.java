@@ -19,34 +19,34 @@
  */
 package org.zaproxy.zap.extension.websocket.client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import fi.iki.elonen.NanoWSD;
 import fi.iki.elonen.NanoWSD.WebSocketFrame;
 import java.util.Stack;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy;
 import org.zaproxy.zap.testutils.WebSocketTestUtils;
 import org.zaproxy.zap.testutils.websocket.server.NanoWebSocketConnection;
 
-public class WebSocketProxyUnitTest extends WebSocketTestUtils {
+class WebSocketProxyUnitTest extends WebSocketTestUtils {
 
     private static final String HOST_NAME = "localhost";
 
-    @Before
+    @BeforeEach
     public void openWebSocketServer() throws Exception {
         super.startWebSocketServer(HOST_NAME);
         super.setUpZap();
     }
 
-    @After
+    @AfterEach
     @Override
     public void stopWebSocketServer() {
         super.stopWebSocketServer();
@@ -58,7 +58,7 @@ public class WebSocketProxyUnitTest extends WebSocketTestUtils {
     }
 
     @Test
-    public void shouldAnswerToPingWithPong() throws Exception {
+    void shouldAnswerToPingWithPong() throws Exception {
         ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
         HttpMessage handshakeRequest =
                 new HttpMessage(
@@ -82,7 +82,7 @@ public class WebSocketProxyUnitTest extends WebSocketTestUtils {
     }
 
     @Test
-    public void shouldReceiveMessagesFromServer() throws Exception {
+    void shouldReceiveMessagesFromServer() throws Exception {
         ServerConnectionEstablisher establisher = new ServerConnectionEstablisher();
         HttpMessage handshakeRequest =
                 new HttpMessage(

@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Automation Framework - delay Job
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Automation Framework - delay Job</H1>
+
+This job waits for a specified time unless one of a specific set of conditions are met.<br>
+It can be used to wait for regression tests being proxied through ZAP in order to explore your application more thoroughly.
+<p>
+The time parameter supports the formats <code>hh:mm:ss</code>, <code>mm:ss</code> and <code>ss</code>, so "5" is 5 seconds, 
+"1:30" is one minute and 30 seconds and "2:20:30" is 2 hours, 20 minutes and 30 seconds.
+<p>
+The conditions supported are:
+<ul>
+<li>The creation of the file given by the optional fileName parameter
+<li>Calling the static method: <code>org.zaproxy.addon.automation.jobs.DelayJob.setEndJob(true);</code>
+<li>Calling the API end point: <code>authentication / action / endDelayJob</code>
+</ul>
+
+<H2>YAML</H2>
+
+<pre>
+  - type: delay                        # Pause the plan for a set period of time or event (file created, static method called, API end point called)
+    parameters:
+      time:                            # String: The time to wait, format any of ['hh:mm:ss', 'mm:ss', 'ss'], default: 0
+      fileName:                        # String: Name of a file which will cause the job to end early if created, default: empty
+</pre>
+
+</BODY>
+</HTML>

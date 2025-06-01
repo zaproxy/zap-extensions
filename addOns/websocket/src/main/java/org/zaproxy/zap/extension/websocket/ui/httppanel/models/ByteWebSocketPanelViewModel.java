@@ -26,14 +26,14 @@ public class ByteWebSocketPanelViewModel extends AbstractWebSocketBytePanelViewM
 
     @Override
     public byte[] getData() {
-        if (webSocketMessage == null || webSocketMessage.payload == null) {
+        if (webSocketMessage == null || webSocketMessage.getPayload() == null) {
             return new byte[0];
         }
 
-        if (webSocketMessage.payload instanceof String) {
-            return ((String) webSocketMessage.payload).getBytes();
-        } else if (webSocketMessage.payload instanceof byte[]) {
-            return (byte[]) webSocketMessage.payload;
+        if (webSocketMessage.getPayload() instanceof String) {
+            return ((String) webSocketMessage.getPayload()).getBytes();
+        } else if (webSocketMessage.getPayload() instanceof byte[]) {
+            return (byte[]) webSocketMessage.getPayload();
         }
 
         return new byte[0];
@@ -41,17 +41,17 @@ public class ByteWebSocketPanelViewModel extends AbstractWebSocketBytePanelViewM
 
     @Override
     public void setData(byte[] data) {
-        if (webSocketMessage.opcode != null) {
-            if (webSocketMessage.opcode == WebSocketMessage.OPCODE_BINARY) {
-                webSocketMessage.payload = data;
+        if (webSocketMessage.getOpcode() != null) {
+            if (webSocketMessage.getOpcode() == WebSocketMessage.OPCODE_BINARY) {
+                webSocketMessage.setPayload(data);
             } else {
-                webSocketMessage.payload = new String(data, Charset.forName("UTF-8"));
+                webSocketMessage.setPayload(new String(data, Charset.forName("UTF-8")));
             }
         } else {
-            if (webSocketMessage.payload instanceof String) {
-                webSocketMessage.payload = new String(data, Charset.forName("UTF-8"));
-            } else if (webSocketMessage.payload instanceof byte[]) {
-                webSocketMessage.payload = data;
+            if (webSocketMessage.getPayload() instanceof String) {
+                webSocketMessage.setPayload(new String(data, Charset.forName("UTF-8")));
+            } else if (webSocketMessage.getPayload() instanceof byte[]) {
+                webSocketMessage.setPayload(data);
             }
         }
     }

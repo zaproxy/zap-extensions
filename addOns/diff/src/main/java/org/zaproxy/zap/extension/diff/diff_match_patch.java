@@ -175,7 +175,7 @@ public class diff_match_patch {
     // Check for equality (speedup).
     LinkedList<Diff> diffs;
     if (text1.equals(text2)) {
-      diffs = new LinkedList<Diff>();
+      diffs = new LinkedList<>();
       if (text1.length() != 0) {
         diffs.add(new Diff(Operation.EQUAL, text1));
       }
@@ -223,7 +223,7 @@ public class diff_match_patch {
    */
   private LinkedList<Diff> diff_compute(String text1, String text2,
                                         boolean checklines, long deadline) {
-    LinkedList<Diff> diffs = new LinkedList<Diff>();
+    LinkedList<Diff> diffs = new LinkedList<>();
 
     if (text1.length() == 0) {
       // Just add some text (speedup).
@@ -474,7 +474,7 @@ public class diff_match_patch {
     }
     // Diff took too long and hit the deadline or
     // number of diffs equals number of characters, no commonality at all.
-    LinkedList<Diff> diffs = new LinkedList<Diff>();
+    LinkedList<Diff> diffs = new LinkedList<>();
     diffs.add(new Diff(Operation.DELETE, text1));
     diffs.add(new Diff(Operation.INSERT, text2));
     return diffs;
@@ -517,8 +517,8 @@ public class diff_match_patch {
    *     unique strings is intentionally blank.
    */
   protected LinesToCharsResult diff_linesToChars(String text1, String text2) {
-    List<String> lineArray = new ArrayList<String>();
-    Map<String, Integer> lineHash = new HashMap<String, Integer>();
+    List<String> lineArray = new ArrayList<>();
+    Map<String, Integer> lineHash = new HashMap<>();
     // e.g. linearray[4] == "Hello\n"
     // e.g. linehash.get("Hello\n") == 4
 
@@ -547,7 +547,7 @@ public class diff_match_patch {
     String line;
     StringBuilder chars = new StringBuilder();
     // Walk the text, pulling out a substring for each line.
-    // text.split('\n') would would temporarily double our memory footprint.
+    // text.split('\n') would temporarily double our memory footprint.
     // Modifying text would create many large strings to garbage collect.
     while (lineEnd < text.length() - 1) {
       lineEnd = text.indexOf('\n', lineStart);
@@ -772,7 +772,7 @@ public class diff_match_patch {
       return;
     }
     boolean changes = false;
-    Stack<Diff> equalities = new Stack<Diff>();  // Stack of qualities.
+    Stack<Diff> equalities = new Stack<>();  // Stack of qualities.
     String lastequality = null; // Always equal to equalities.lastElement().text
     ListIterator<Diff> pointer = diffs.listIterator();
     // Number of characters that changed prior to the equality.
@@ -1035,7 +1035,7 @@ public class diff_match_patch {
       return;
     }
     boolean changes = false;
-    Stack<Diff> equalities = new Stack<Diff>();  // Stack of equalities.
+    Stack<Diff> equalities = new Stack<>();  // Stack of equalities.
     String lastequality = null; // Always equal to equalities.lastElement().text
     ListIterator<Diff> pointer = diffs.listIterator();
     // Is there an insertion operation before the last equality.
@@ -1175,7 +1175,7 @@ public class diff_match_patch {
             pointer.remove();
           }
           if (both_types) {
-            // Factor out any common prefixies.
+            // Factor out any common prefixes.
             commonlength = diff_commonPrefix(text_insert, text_delete);
             if (commonlength != 0) {
               if (pointer.hasPrevious()) {
@@ -1191,7 +1191,7 @@ public class diff_match_patch {
               text_insert = text_insert.substring(commonlength);
               text_delete = text_delete.substring(commonlength);
             }
-            // Factor out any common suffixies.
+            // Factor out any common suffixes.
             commonlength = diff_commonSuffix(text_insert, text_delete);
             if (commonlength != 0) {
               thisDiff = pointer.next();
@@ -1469,7 +1469,7 @@ public class diff_match_patch {
    */
   public LinkedList<Diff> diff_fromDelta(String text1, String delta)
       throws IllegalArgumentException {
-    LinkedList<Diff> diffs = new LinkedList<Diff>();
+    LinkedList<Diff> diffs = new LinkedList<>();
     int pointer = 0;  // Cursor in text1
     String[] tokens = delta.split("\t");
     for (String token : tokens) {
@@ -1702,7 +1702,7 @@ public class diff_match_patch {
    * @return Hash of character locations.
    */
   protected Map<Character, Integer> match_alphabet(String pattern) {
-    Map<Character, Integer> s = new HashMap<Character, Integer>();
+    Map<Character, Integer> s = new HashMap<>();
     char[] char_pattern = pattern.toCharArray();
     for (char c : char_pattern) {
       s.put(c, 0);
@@ -1830,7 +1830,7 @@ public class diff_match_patch {
       throw new IllegalArgumentException("Null inputs. (patch_make)");
     }
 
-    LinkedList<Patch> patches = new LinkedList<Patch>();
+    LinkedList<Patch> patches = new LinkedList<>();
     if (diffs.isEmpty()) {
       return patches;  // Get rid of the null case.
     }
@@ -1912,7 +1912,7 @@ public class diff_match_patch {
    * @return Array of patch objects.
    */
   public LinkedList<Patch> patch_deepCopy(LinkedList<Patch> patches) {
-    LinkedList<Patch> patchesCopy = new LinkedList<Patch>();
+    LinkedList<Patch> patchesCopy = new LinkedList<>();
     for (Patch aPatch : patches) {
       Patch patchCopy = new Patch();
       for (Diff aDiff : aPatch.diffs) {
@@ -2231,12 +2231,12 @@ public class diff_match_patch {
    */
   public List<Patch> patch_fromText(String textline)
       throws IllegalArgumentException {
-    List<Patch> patches = new LinkedList<Patch>();
+    List<Patch> patches = new LinkedList<>();
     if (textline.length() == 0) {
       return patches;
     }
     List<String> textList = Arrays.asList(textline.split("\n"));
-    LinkedList<String> text = new LinkedList<String>(textList);
+    LinkedList<String> text = new LinkedList<>(textList);
     Patch patch;
     Pattern patchHeader
         = Pattern.compile("^@@ -(\\d+),?(\\d*) \\+(\\d+),?(\\d*) @@$");
@@ -2347,6 +2347,7 @@ public class diff_match_patch {
      * Display a human-readable version of this Diff.
      * @return text version.
      */
+    @Override
     public String toString() {
       String prettyText = this.text.replace('\n', '\u00b6');
       return "Diff(" + this.operation + ",\"" + prettyText + "\")";
@@ -2358,7 +2359,11 @@ public class diff_match_patch {
      * @param d Another Diff to compare against.
      * @return true or false.
      */
+    @Override
     public boolean equals(Object d) {
+      if (d == null || !(d instanceof Diff)) {
+          return false;
+      }
       try {
         return (((Diff) d).operation == this.operation)
                && (((Diff) d).text.equals(this.text));
@@ -2389,16 +2394,17 @@ public class diff_match_patch {
      * Constructor.  Initializes with an empty list of diffs.
      */
     public Patch() {
-      this.diffs = new LinkedList<Diff>();
+      this.diffs = new LinkedList<>();
     }
 
 
     /**
-     * Emmulate GNU diff's format.
+     * Emulate GNU diff's format.
      * Header: @@ -382,8 +481,9 @@
-     * Indicies are printed as 1-based, not 0-based.
+     * Indices are printed as 1-based, not 0-based.
      * @return The GNU diff string.
      */
+    @Override
     public String toString() {
       String coords1, coords2;
       if (this.length1 == 0) {

@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Authentication Request Identification
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Authentication Request Identification</H1>
+
+This <a href="authhelper.html">add-on</a> includes a passive scan rule which attempts to identify authentication requests.<br>
+It identifies authentication requests by the presence of commonly used username and password field names.
+It also uses commonly used URL segments to identify more likely authentication requests, 
+and uses commonly used registration URL segments to ignore registration requests.
+<p>
+The rule will not attempt to identify very unusual authentication requests - automation is one of the end goals so false negatives
+(missing unusual authentication requests) are more desirable than false positives (incorrectly identifying an authentication request). 
+<p>
+If this rule identifies an authentication request that is part of the context that you have set to use the
+<a href="autodetect-auth.html">Auto-Detect Authentication Method</a> then this rule will update the context to use the authentication method identified.
+<br>
+If an authentication request is not identified then check to make sure it is made to a site which is included in the context.<br>
+If it is not then add the site to the context and authenticate again via your browser.
+<p>
+The 'Other Info' field is used to report a set of key-value pairs which can be easily parsed. The current keys supported are:
+<ul>
+<li>userParam
+<li>userValue
+<li>passwordParam
+<li>csrfToken
+</ul>
+There can potentially be multiple csrfTokens.
+<p>
+The rule will currently identify:
+<ul>
+<li>Form-based authentication requests
+<li>JSON-based authentication requests
+</ul>
+
+If this rule fails to identify one of the above types of authentication requests then you can raise an 
+<a href="https://github.com/zaproxy/zaproxy/issues">issue</a> with the complete request and response details 
+(having obfuscated any sensitive information) and we will investigate it.
+
+<p>
+
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/AuthenticationDetectionScanRule.java">AuthenticationDetectionScanRule.java</a>
+
+</BODY>
+</HTML>

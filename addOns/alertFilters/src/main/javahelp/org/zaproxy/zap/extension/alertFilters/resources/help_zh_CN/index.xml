@@ -5,5 +5,8 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="alertFilter" target="addon.alertFilter" />
+	<indexitem text="警报过滤器" target="addon.alertFilter" />
+	<indexitem text="上下文警报过滤器" target="addon.contextAlertFilter" />
+	<indexitem text="全局警报过滤器" target="addon.globalAlertFilter" />
+	<indexitem text="自动化" target="addon.automation" />
 </index>

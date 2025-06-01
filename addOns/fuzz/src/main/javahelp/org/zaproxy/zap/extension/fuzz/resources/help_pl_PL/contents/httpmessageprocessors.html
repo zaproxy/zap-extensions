@@ -6,9 +6,9 @@
 HTTP Message Processors
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>HTTP Message Processors</h1>
-The HTTP Message Processors can access and change the HTTP messages being fuzzed, control the fuzzing process and interact with the ZAP UI.
+HTTP Message Processors can access and change the HTTP messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
 <p>
 Built-in HTTP Message Processors include:
 
@@ -30,6 +30,10 @@ Allows to select the enabled Fuzzer HTTP Processor scripts. The scripts allow yo
 <li>Raise alerts</li>
 </ul>
 
+Scripts can include both Required and Optional parameters the values for which the user will be prompted to provide when the Processor is added to the fuzzer.
+The parameter names are defined within the script(s) via the methods <code>getRequiredParamsNames</code> and <code>getOptionalParamsNames</code>, each of which
+simply return an array of strings representing the parameters names.
+
 <h3>Payload Reflection Detector</h3>
 Indicates in the State column of results table if one of the injected payloads were found in the response, using "<img src="images/reflected_icon.png"> Reflected".<br>
 <strong>Note:</strong> This processor is automatically added to the list of processors.
@@ -40,10 +44,10 @@ for all request methods. No change is done if the size of the request body is ze
 <strong>Note:</strong> This processor is automatically added to the list of processors.
 
 <h3>Tag Creator</h3>
-Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table
+Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table.
 
 <h3>User Message Processor</h3>
-Allows to fuzz as a user, using one of the users defined in the contexts that include the HTTP message being fuzzed. Users must
+Allows to fuzz as a user, using one of the users defined in the Contexts that include the HTTP message being fuzzed. Users must
 exist to be able to select and add this processor.
 
 <p>

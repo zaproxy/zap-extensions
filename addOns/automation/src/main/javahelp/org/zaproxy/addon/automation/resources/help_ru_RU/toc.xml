@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+<toc version="2.0">
+	<tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
+		<tocitem text="Дополнения" tocid="addons">
+			<tocitem text="Автоматизация Фреймворк " image="automation-icon" target="automation">
+				<tocitem text="GUI  (Графический Интерфейс)" target="automation.gui"/>
+				<tocitem text="Options" target="automation.options"/>
+				<tocitem text="Environment" target="automation.env"/>
+				<tocitem text="Authentication" target="automation.auth"/>
+				<tocitem text="Job: addOns" target="automation.addons"/>
+				<tocitem text="Job: activeScan-config" target="automation.ascanconfig"/>
+				<tocitem text="Job: activeScan-policy" target="automation.ascanpolicy"/>
+				<tocitem text="Job: activeScan" target="automation.ascan"/>
+				<tocitem text="Job: delay" target="automation.delay"/>
+				<tocitem text="Job: exitstatus" target="automation.exitstatus"/>
+				<tocitem text="Job: requestor" target="automation.requestor"/>
+				<tocitem text="Tests" target="automation.tests"/>
+				<tocitem text="Test: alert" target="automation.tests.alert"/>
+				<tocitem text="Test: monitor" target="automation.tests.monitor"/>
+				<tocitem text="Test: stats" target="automation.tests.stats"/>
+				<tocitem text="Test: url" target="automation.tests.url"/>
+				<tocitem text="About" target="automation.about"/>
+			</tocitem>
+		</tocitem>
+	</tocitem>
+</toc>

@@ -30,7 +30,8 @@ import java.util.Set;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
@@ -41,9 +42,9 @@ import org.zaproxy.zap.extension.alert.ExtensionAlert;
  * An {@link ExtensionPopupMenuItem} that exposes the selected {@link Alert alerts} of the Alerts
  * tree.
  *
- * @since TODO add version
  * @see #performAction(Alert)
  */
+@SuppressWarnings("serial")
 public abstract class PopupMenuItemAlert extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
@@ -52,7 +53,7 @@ public abstract class PopupMenuItemAlert extends ExtensionPopupMenuItem {
     private Method getAlertPanelMethod;
     private Method getTreeAlert;
 
-    private static final Logger log = Logger.getLogger(PopupMenuItemAlert.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuItemAlert.class);
 
     /**
      * Constructs a {@code PopupMenuItemAlert} with the given label and with no support for multiple
@@ -123,7 +124,7 @@ public abstract class PopupMenuItemAlert extends ExtensionPopupMenuItem {
             return Collections.emptySet();
         }
 
-        HashSet<Alert> alertNodes = new HashSet<Alert>();
+        HashSet<Alert> alertNodes = new HashSet<>();
         if (!isMultiSelect()) {
             DefaultMutableTreeNode alertNode =
                     (DefaultMutableTreeNode) paths[0].getLastPathComponent();
@@ -196,7 +197,9 @@ public abstract class PopupMenuItemAlert extends ExtensionPopupMenuItem {
         return true;
     }
 
-    /** @see #isButtonEnabledForNumberOfSelectedAlerts(int) */
+    /**
+     * @see #isButtonEnabledForNumberOfSelectedAlerts(int)
+     */
     @Override
     public boolean isEnableForComponent(Component invoker) {
         if (this.extAlert == null) {
@@ -269,7 +272,7 @@ public abstract class PopupMenuItemAlert extends ExtensionPopupMenuItem {
                 Set<Alert> alerts = getAlertNodes();
                 performActions(alerts);
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

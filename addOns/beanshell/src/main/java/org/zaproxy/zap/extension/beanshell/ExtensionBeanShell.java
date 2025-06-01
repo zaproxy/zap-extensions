@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.beanshell;
 
 import java.awt.Dimension;
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -41,7 +39,7 @@ public class ExtensionBeanShell extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenuBeanShell());
         }
     }
@@ -53,7 +51,7 @@ public class ExtensionBeanShell extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             if (beanShellConsoleDialog != null) {
                 // TODO Stop BeanShell threads.
                 // Background:
@@ -76,12 +74,9 @@ public class ExtensionBeanShell extends ExtensionAdaptor {
         if (menuBeanShell == null) {
             menuBeanShell = new ZapMenuItem("beanshell.menu.title");
             menuBeanShell.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            BeanShellConsoleFrame dialog = getBeanShellConsoleDialog();
-                            dialog.setVisible(true);
-                        }
+                    e -> {
+                        BeanShellConsoleFrame dialog = getBeanShellConsoleDialog();
+                        dialog.setVisible(true);
                     });
         }
         return menuBeanShell;
@@ -89,8 +84,7 @@ public class ExtensionBeanShell extends ExtensionAdaptor {
 
     BeanShellConsoleFrame getBeanShellConsoleDialog() {
         if (beanShellConsoleDialog == null) {
-            beanShellConsoleDialog =
-                    new BeanShellConsoleFrame(getView().getMainFrame(), false, this);
+            beanShellConsoleDialog = new BeanShellConsoleFrame();
             beanShellConsoleDialog.setView(getView());
             beanShellConsoleDialog.setPreferredSize(new Dimension(600, 600));
             beanShellConsoleDialog.setTitle(Constant.messages.getString("beanshell.title"));
@@ -99,21 +93,7 @@ public class ExtensionBeanShell extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("beanshell.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 }

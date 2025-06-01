@@ -20,9 +20,12 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.net.URI;
-import org.apache.log4j.Logger;
+import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.zap.extension.spiderAjax.internal.ExcludedElement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.Target;
@@ -31,7 +34,7 @@ import org.zaproxy.zap.users.User;
 /** A target of AJAX spider scans. */
 public final class AjaxSpiderTarget {
 
-    private static final Logger LOGGER = Logger.getLogger(AjaxSpiderTarget.class);
+    private static final Logger LOGGER = LogManager.getLogger(AjaxSpiderTarget.class);
 
     private final URI startUri;
     private final boolean inScopeOnly;
@@ -39,6 +42,7 @@ public final class AjaxSpiderTarget {
     private final User user;
     private final AjaxSpiderParam options;
     private final boolean subtreeOnly;
+    private final List<ExcludedElement> excludedElements;
 
     private AjaxSpiderTarget(
             URI startUri,
@@ -46,13 +50,15 @@ public final class AjaxSpiderTarget {
             Context context,
             User user,
             AjaxSpiderParam options,
-            boolean subtreeOnly) {
+            boolean subtreeOnly,
+            List<ExcludedElement> excludedElements) {
         this.startUri = startUri;
         this.inScopeOnly = inScopeOnly;
         this.context = context;
         this.user = user;
         this.options = options;
         this.subtreeOnly = subtreeOnly;
+        this.excludedElements = excludedElements;
     }
 
     /**
@@ -111,18 +117,29 @@ public final class AjaxSpiderTarget {
         return options;
     }
 
+    /**
+     * Gets the elements excluded from crawling.
+     *
+     * @return the excluded elements.
+     */
+    public List<ExcludedElement> getExcludedElements() {
+        return excludedElements;
+    }
+
     public Target toTarget() {
         Target target = new Target();
         try {
+            // It is worth noting that this will not find anything if the start node is not in the
+            // Sites Tree
             target.setStartNode(
                     SessionStructure.find(
-                            Model.getSingleton().getSession().getSessionId(),
+                            Model.getSingleton(),
                             new org.apache.commons.httpclient.URI(
                                     this.getStartUri().toString(), false),
                             "GET",
                             ""));
         } catch (Exception e) {
-            LOGGER.error("Failed to convert target URL " + this.getStartUri().toString(), e);
+            LOGGER.error("Failed to convert target URL {}", this.getStartUri(), e);
         }
         target.setContext(getContext());
         target.setInScopeOnly(this.isInScopeOnly());
@@ -130,37 +147,46 @@ public final class AjaxSpiderTarget {
     }
 
     /**
-     * Creates a new build of targets.
+     * Creates a new builder of targets.
      *
      * @param session the current session
      * @return a new builder, never {@code null}.
+     * @throws IllegalArgumentException if the given parameter is {@code null}.
      */
     public static Builder newBuilder(Session session) {
-        return new Builder(session);
+        return new Builder(session, null);
+    }
+
+    /**
+     * Creates a new builder of targets.
+     *
+     * @param extension the AJAX Spider extension.
+     * @return a new builder, never {@code null}.
+     * @throws NullPointerException if the given parameter is {@code null}.
+     */
+    public static Builder newBuilder(ExtensionAjax extension) {
+        return new Builder(extension.getModel().getSession(), extension);
     }
 
     /** A builder of {@link AjaxSpiderTarget}. */
     public static final class Builder {
 
         private final Session session;
+        private final ExtensionAjax extension;
         private URI startUri;
         private boolean inScopeOnly;
         private Context context;
         private User user;
         private AjaxSpiderParam options;
         private boolean subtreeOnly;
+        private List<ExcludedElement> excludedElements;
 
-        /**
-         * Constructs a {@code Builder} with the given session
-         *
-         * @param session the current session
-         * @throws IllegalArgumentException if the given parameter is {@code null}.
-         */
-        private Builder(Session session) {
+        private Builder(Session session, ExtensionAjax extension) {
             if (session == null) {
                 throw new IllegalArgumentException("The parameter session must not be null.");
             }
             this.session = session;
+            this.extension = extension;
         }
 
         /**
@@ -202,7 +228,9 @@ public final class AjaxSpiderTarget {
          */
         public Builder setUser(User user) {
             this.user = user;
-            this.context = user.getContext();
+            if (user != null) {
+                this.context = user.getContext();
+            }
 
             return this;
         }
@@ -244,6 +272,18 @@ public final class AjaxSpiderTarget {
         }
 
         /**
+         * Sets the elements excluded from crawling.
+         *
+         * @param excludedElements the excluded elements.
+         * @return this builder
+         */
+        public Builder setExcludedElements(List<ExcludedElement> excludedElements) {
+            this.excludedElements = excludedElements;
+
+            return this;
+        }
+
+        /**
          * Builds a new target using the configurations previously set.
          *
          * @return a new {@code AjaxSpiderTarget} with configurations previously set.
@@ -266,13 +306,30 @@ public final class AjaxSpiderTarget {
             if (context != null) {
                 if (!context.isInContext(startUri.toString())) {
                     throw new IllegalStateException(
-                            "The starting URI does not belong to the context.");
+                            "The starting URI does not belong to the context: " + startUri);
                 }
             } else if (inScopeOnly && !session.isInScope(startUri.toString())) {
                 throw new IllegalStateException("The starting URI is not in scope.");
             }
 
-            return new AjaxSpiderTarget(startUri, inScopeOnly, context, user, options, subtreeOnly);
+            List<ExcludedElement> effectiveExcludedElements;
+            if (excludedElements != null) {
+                effectiveExcludedElements = excludedElements;
+            } else if (context != null && extension != null) {
+                effectiveExcludedElements =
+                        extension.getContextDataManager().getExcludedElements(context);
+            } else {
+                effectiveExcludedElements = List.of();
+            }
+
+            return new AjaxSpiderTarget(
+                    startUri,
+                    inScopeOnly,
+                    context,
+                    user,
+                    options,
+                    subtreeOnly,
+                    effectiveExcludedElements);
         }
     }
 }

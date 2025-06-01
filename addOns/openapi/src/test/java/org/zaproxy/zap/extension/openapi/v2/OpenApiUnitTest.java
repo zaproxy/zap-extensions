@@ -20,11 +20,12 @@
 package org.zaproxy.zap.extension.openapi.v2;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
@@ -33,23 +34,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.extension.openapi.AbstractServerTest;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerException;
 import org.zaproxy.zap.extension.openapi.network.RequesterListener;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
-import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-public class OpenApiUnitTest extends AbstractServerTest {
+class OpenApiUnitTest extends AbstractServerTest {
 
     @Test
-    public void shouldExplorePetStoreJson()
-            throws NullPointerException, IOException, SwaggerException {
+    void shouldExplorePetStoreJson() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
 
@@ -63,7 +63,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
         // No parsing errors
         assertThat(converter.getErrorMessages(), is(empty()));
 
-        final Map<String, String> accessedUrls = new HashMap<String, String>();
+        final Map<String, String> accessedUrls = new HashMap<>();
         RequesterListener listener =
                 new RequesterListener() {
                     @Override
@@ -76,14 +76,13 @@ public class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
 
     @Test
-    public void shouldExplorePetStoreYaml()
-            throws NullPointerException, IOException, SwaggerException {
+    void shouldExplorePetStoreYaml() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreYaml/";
         String defnName = "defn.yaml";
 
@@ -97,7 +96,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
         // No parsing errors
         assertThat(converter.getErrorMessages(), is(empty()));
 
-        final Map<String, String> accessedUrls = new HashMap<String, String>();
+        final Map<String, String> accessedUrls = new HashMap<>();
         RequesterListener listener =
                 new RequesterListener() {
                     @Override
@@ -110,13 +109,13 @@ public class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
 
     @Test
-    public void shouldExplorePetStoreOverridingHost()
+    void shouldExplorePetStoreOverridingHost()
             throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
@@ -133,7 +132,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
                         null,
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
                         null);
-        final Map<String, String> accessedUrls = new HashMap<String, String>();
+        final Map<String, String> accessedUrls = new HashMap<>();
         RequesterListener listener =
                 new RequesterListener() {
                     @Override
@@ -146,13 +145,13 @@ public class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkPetStoreRequests(accessedUrls, altHost);
     }
 
     @Test
-    public void shouldExplorePetStoreWithDefaultHost()
+    void shouldExplorePetStoreWithDefaultHost()
             throws NullPointerException, IOException, SwaggerException {
         // Given
         String test = "/PetStoreJson/";
@@ -184,13 +183,13 @@ public class OpenApiUnitTest extends AbstractServerTest {
                 };
         requestor.addListener(listener);
         // When
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
         // Then
         checkPetStoreRequests(accessedUrls, defaultHost);
     }
 
-    @Test(expected = SwaggerException.class)
-    public void shouldFailToExplorePetStoreWithoutHost() throws Exception {
+    @Test
+    void shouldFailToExplorePetStoreWithoutHost() throws Exception {
         // Given
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
@@ -206,7 +205,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
                         defaultHost,
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
                         null);
-        final Map<String, String> accessedUrls = new HashMap<String, String>();
+        final Map<String, String> accessedUrls = new HashMap<>();
         RequesterListener listener =
                 new RequesterListener() {
 
@@ -220,13 +219,12 @@ public class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        // When
-        requestor.run(converter.getRequestModels());
-        // Then = SwaggerException
+        // When / Then
+        assertThrows(SwaggerException.class, () -> requestor.run(converter.getRequestModels(null)));
     }
 
     @Test
-    public void shouldExplorePetStoreWithDefaultScheme() throws Exception {
+    void shouldExplorePetStoreWithDefaultScheme() throws Exception {
         // Given
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
@@ -258,13 +256,13 @@ public class OpenApiUnitTest extends AbstractServerTest {
                 };
         requestor.addListener(listener);
         // When
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
         // Then
         checkPetStoreRequests(accessedUrls, "localhost:" + nano.getListeningPort());
     }
 
-    @Test(expected = SwaggerException.class)
-    public void shouldFailToExplorePetStoreWithoutScheme() throws Exception {
+    @Test
+    void shouldFailToExplorePetStoreWithoutScheme() throws Exception {
         // Given
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
@@ -281,13 +279,12 @@ public class OpenApiUnitTest extends AbstractServerTest {
                         defaultScheme,
                         requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
                         null);
-        // When
-        converter.getRequestModels();
-        // Then = SwaggerException
+        // When / Then
+        assertThrows(SwaggerException.class, () -> converter.getRequestModels(null));
     }
 
     @Test
-    public void shouldExplorePetStoreYamlLoop()
+    void shouldExplorePetStoreYamlLoop()
             throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreYamlLoop/";
         String defnName = "defn.yaml";
@@ -315,17 +312,16 @@ public class OpenApiUnitTest extends AbstractServerTest {
                 };
         requestor.addListener(listener);
         // When
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
         // Then
         assertThat(converter.getErrorMessages(), is(empty()));
         assertEquals(
-                "{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"John Doe\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\",\"x\":\"John Doe\"}],\"status\":\"available\"}",
+                "{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"John Doe\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\",\"x\":{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"John Doe\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\",\"x\":\"John Doe\"}],\"status\":\"available\"}}],\"status\":\"available\"}",
                 accessedUrls.get("POST http://" + host + "/PetStore/pet"));
     }
 
     @Test
-    public void shouldUseValueGenerator()
-            throws NullPointerException, IOException, SwaggerException {
+    void shouldUseValueGenerator() throws NullPointerException, IOException, SwaggerException {
         String test = "/PetStoreJson/";
         String defnName = "defn.json";
         this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn.json"));
@@ -333,8 +329,8 @@ public class OpenApiUnitTest extends AbstractServerTest {
         Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
         HttpMessage defnMsg = this.getHttpMessage(test + defnName);
 
-        ValueGenerator vg =
-                new ValueGenerator() {
+        ValueProvider valueProvider =
+                new ValueProvider() {
                     @Override
                     public String getValue(
                             URI uri,
@@ -372,8 +368,9 @@ public class OpenApiUnitTest extends AbstractServerTest {
 
         Converter converter =
                 new SwaggerConverter(
-                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), vg);
-        final Map<String, String> accessedUrls = new HashMap<String, String>();
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()),
+                        valueProvider);
+        final Map<String, String> accessedUrls = new HashMap<>();
         RequesterListener listener =
                 new RequesterListener() {
                     @Override
@@ -386,9 +383,54 @@ public class OpenApiUnitTest extends AbstractServerTest {
                     }
                 };
         requestor.addListener(listener);
-        requestor.run(converter.getRequestModels());
+        requestor.run(converter.getRequestModels(null));
 
         checkPetStoreRequestsValGen(accessedUrls, "localhost:" + nano.getListeningPort());
+    }
+
+    @Test
+    void shouldExplorePetStoreYamlWithExamples()
+            throws NullPointerException, IOException, SwaggerException {
+        String test = "/PetStoreYamlExamples/";
+        String defnName = "defn.yaml";
+
+        this.nano.addHandler(new DefnServerHandler(test, defnName, "PetStore_defn_examples.yaml"));
+
+        Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpMessage defnMsg = this.getHttpMessage(test + defnName);
+        SwaggerConverter converter =
+                new SwaggerConverter(
+                        requestor.getResponseBody(defnMsg.getRequestHeader().getURI()), null);
+        // No parsing errors
+        assertThat(converter.getErrorMessages(), is(empty()));
+
+        final Map<String, String> accessedUrls = new HashMap<>();
+        RequesterListener listener =
+                new RequesterListener() {
+                    @Override
+                    public void handleMessage(HttpMessage message, int initiator) {
+                        accessedUrls.put(
+                                message.getRequestHeader().getMethod()
+                                        + " "
+                                        + message.getRequestHeader().getURI().toString(),
+                                message.getRequestBody().toString());
+                    }
+                };
+        requestor.addListener(listener);
+        requestor.run(converter.getRequestModels(null));
+
+        assertEquals(accessedUrls.size(), 2);
+
+        assertTrue(
+                accessedUrls.containsKey(
+                        "GET http://localhost:"
+                                + nano.getListeningPort()
+                                + "/PetStore/pet/findByStatus?status=available"));
+        assertTrue(
+                accessedUrls.containsKey(
+                        "GET http://localhost:"
+                                + nano.getListeningPort()
+                                + "/PetStore/pet/42424242"));
     }
 
     private void checkPetStoreRequestsValGen(Map<String, String> accessedUrls, String host) {
@@ -421,9 +463,6 @@ public class OpenApiUnitTest extends AbstractServerTest {
                 accessedUrls.get("POST http://" + host + "/PetStore/pet/32"));
         assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/pet/32"));
         assertEquals("", accessedUrls.get("DELETE http://" + host + "/PetStore/pet/32"));
-        assertTrue(
-                accessedUrls.containsKey("POST http://" + host + "/PetStore/pet/32/uploadImage"));
-        assertEquals("", accessedUrls.get("POST http://" + host + "/PetStore/pet/32/uploadImage"));
         assertTrue(accessedUrls.containsKey("GET http://" + host + "/PetStore/store/inventory"));
         assertEquals("", accessedUrls.get("GET http://" + host + "/PetStore/store/inventory"));
         assertTrue(accessedUrls.containsKey("POST http://" + host + "/PetStore/store/order"));
@@ -470,7 +509,7 @@ public class OpenApiUnitTest extends AbstractServerTest {
         assertTrue(accessedUrls.containsKey("DELETE http://" + host + "/PetStore/user/fsmith"));
         assertEquals("", accessedUrls.get("DELETE http://" + host + "/PetStore/user/fsmith"));
         // And that there arent any spurious ones
-        assertEquals(20, accessedUrls.size());
+        assertEquals(19, accessedUrls.size());
     }
 
     private class DefnServerHandler extends NanoServerHandler {

@@ -21,8 +21,8 @@ package org.zaproxy.zap.extension.browserView;
 
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
-import org.apache.log4j.Logger;
-import org.parosproxy.paros.Constant;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
@@ -38,7 +38,7 @@ public class ExtensionHttpPanelBrowserView extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionHttpPanelBrowserView";
 
-    private static final Logger LOGGER = Logger.getLogger(ExtensionHttpPanelBrowserView.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionHttpPanelBrowserView.class);
 
     /**
      * The name of the system property used to keep track of initialisation errors of JavaFX.
@@ -72,7 +72,7 @@ public class ExtensionHttpPanelBrowserView extends ExtensionAdaptor {
 
         extensionHook.addOptionsParamSet(browserViewParam);
 
-        if (getView() != null) {
+        if (hasView()) {
             javaFxAvailable = isJavaFxAvailable();
 
             if (javaFxAvailable) {
@@ -96,7 +96,8 @@ public class ExtensionHttpPanelBrowserView extends ExtensionAdaptor {
             javafx.embed.swing.JFXPanel unused = new javafx.embed.swing.JFXPanel();
             return true;
         } catch (Throwable e) {
-            LOGGER.warn("Unable to use JavaFX:", e);
+            LOGGER.warn("Unable to use JavaFX: {}", e.getMessage());
+            LOGGER.debug(e);
             System.setProperty(ZAP_JAVAFX_INIT_FAILED_SYSTEM_PROPERTY, "true");
         }
         return false;
@@ -111,7 +112,7 @@ public class ExtensionHttpPanelBrowserView extends ExtensionAdaptor {
     public void start() {
         super.start();
 
-        if (getView() != null && !javaFxAvailable && browserViewParam.isWarnOnJavaFXInitError()) {
+        if (hasView() && !javaFxAvailable && browserViewParam.isWarnOnJavaFXInitError()) {
             JCheckBox checkBoxDoNotShowErrorAgain =
                     new JCheckBox(
                             getMessages()
@@ -138,7 +139,7 @@ public class ExtensionHttpPanelBrowserView extends ExtensionAdaptor {
     public void unload() {
         super.unload();
 
-        if (getView() != null && javaFxAvailable) {
+        if (hasView() && javaFxAvailable) {
             HttpPanelManager panelManager = HttpPanelManager.getInstance();
             panelManager.removeResponseViewFactory(
                     ResponseSplitComponent.NAME, ResponseBrowserViewFactory.NAME);
@@ -191,10 +192,5 @@ public class ExtensionHttpPanelBrowserView extends ExtensionAdaptor {
         public Object getOptions() {
             return null;
         }
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 }

@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.processor;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 
 public class JavaScriptUnescapeProcessor implements DefaultPayloadProcessor {
@@ -30,7 +30,7 @@ public class JavaScriptUnescapeProcessor implements DefaultPayloadProcessor {
 
     @Override
     public DefaultPayload process(DefaultPayload payload) {
-        payload.setValue(StringEscapeUtils.unescapeJavaScript(payload.getValue()));
+        payload.setValue(StringEscapeUtils.unescapeEcmaScript(payload.getValue()));
         return payload;
     }
 

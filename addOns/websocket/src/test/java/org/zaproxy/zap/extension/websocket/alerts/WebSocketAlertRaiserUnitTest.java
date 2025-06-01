@@ -19,29 +19,33 @@
  */
 package org.zaproxy.zap.extension.websocket.alerts;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.websocket.WebSocketChannelDTO;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.testutils.WebSocketTestUtils;
 
-public class WebSocketAlertRaiserUnitTest extends WebSocketTestUtils {
+class WebSocketAlertRaiserUnitTest extends WebSocketTestUtils {
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         super.setUpZap();
     }
 
     @Test
-    public void shouldBuildAlert() {
+    void shouldBuildAlert() {
         // Given
         WebSocketAlertThread webSocketAlertThread = mock(WebSocketAlertThread.class);
         WebSocketMessageDTO message = mock(WebSocketMessageDTO.class);
-        message.channel = mock(WebSocketChannelDTO.class);
+        given(message.getChannel()).willReturn(mock(WebSocketChannelDTO.class));
+        given(message.getChannel().getId()).willReturn(1);
         WebSocketAlertRaiser alertRaiser =
                 new WebSocketAlertRaiser(webSocketAlertThread, 0, message);
 
@@ -59,21 +63,19 @@ public class WebSocketAlertRaiserUnitTest extends WebSocketTestUtils {
     }
 
     @Test
-    public void shouldNotBuildAlertWhenMissingNameAndSource() {
+    void shouldNotBuildAlertWhenMissingNameAndSource() {
         // Given
         WebSocketAlertThread webSocketAlertThread = mock(WebSocketAlertThread.class);
         WebSocketMessageDTO message = mock(WebSocketMessageDTO.class);
-        message.channel = mock(WebSocketChannelDTO.class);
+        given(message.getChannel()).willReturn(mock(WebSocketChannelDTO.class));
+        given(message.getChannel().getId()).willReturn(1);
         WebSocketAlertRaiser alertRaiser =
                 new WebSocketAlertRaiser(webSocketAlertThread, 0, message);
-        try {
-            // When
-            alertRaiser.raise();
-            // Then
-            fail("Expected an IllegalStateException to be thrown");
-        } catch (IllegalStateException e) {
-            assertTrue(e.getMessage().contains("Alert Name"));
-            assertTrue(e.getMessage().contains("Alert Source"));
-        }
+        // When
+        IllegalStateException e =
+                assertThrows(IllegalStateException.class, () -> alertRaiser.raise());
+        // Then
+        assertTrue(e.getMessage().contains("Alert Name"));
+        assertTrue(e.getMessage().contains("Alert Source"));
     }
 }

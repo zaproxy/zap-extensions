@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.DatabaseException;
@@ -34,7 +35,7 @@ import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
 public class HttpFuzzerTaskProcessorUtils {
 
-    private static final Logger LOGGER = Logger.getLogger(HttpFuzzerTaskProcessorUtils.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpFuzzerTaskProcessorUtils.class);
 
     private static final int PLUGIN_ID = 50002;
 
@@ -101,21 +102,24 @@ public class HttpFuzzerTaskProcessorUtils {
         }
 
         if (extensionAlert != null) {
-            Alert alert = new Alert(PLUGIN_ID, risk, confidence, name);
-            String uri = fuzzResult.getHttpMessage().getRequestHeader().getURI().toString();
+            Alert alert =
+                    Alert.builder()
+                            .setPluginId(PLUGIN_ID)
+                            .setRisk(risk)
+                            .setConfidence(confidence)
+                            .setName(name)
+                            .setDescription(description)
+                            .setParam(param)
+                            .setAttack(attack)
+                            .setOtherInfo(otherInfo)
+                            .setSolution(solution)
+                            .setReference(reference)
+                            .setEvidence(evidence)
+                            .setCweId(cweId)
+                            .setWascId(wascId)
+                            .setMessage(fuzzResult.getHttpMessage())
+                            .build();
 
-            alert.setDetail(
-                    description,
-                    uri,
-                    param,
-                    attack,
-                    otherInfo,
-                    solution,
-                    reference,
-                    evidence,
-                    cweId,
-                    wascId,
-                    fuzzResult.getHttpMessage());
             if (historyReference == null) {
                 try {
                     historyReference =
@@ -146,7 +150,9 @@ public class HttpFuzzerTaskProcessorUtils {
         return payloads;
     }
 
-    /** @deprecated (2.0.0) Use {@link #getPayloads()} instead. */
+    /**
+     * @deprecated (2.0.0) Use {@link #getPayloads()} instead.
+     */
     @Deprecated
     @SuppressWarnings("javadoc")
     public List<Object> getPaylaods() {

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE orm SYSTEM "file:/javax/jdo/orm.dtd">
+<orm>
+    <package name="org.zaproxy.addon.oast.services.boast">
+        <class name="BoastEntity" table="BOAST">
+            <field name="id">
+                <column name="ID" length="26" jdbc-type="CHAR"/>
+            </field>
+            <field name="canary">
+                <column name="CANARY" length="26" jdbc-type="CHAR"/>
+            </field>
+            <field name="secret">
+                <column name="SECRET" length="44" jdbc-type="CHAR"/>
+            </field>
+            <field name="uri">
+                <column name="URI" length="512" jdbc-type="VARCHAR"/>
+            </field>
+            <field name="registeredTimestamp">
+                <column name="REGISTERED_TIMESTAMP" jdbc-type="TIMESTAMP"/>
+            </field>
+        </class>
+    </package>
+</orm>

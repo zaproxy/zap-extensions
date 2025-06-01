@@ -7,5 +7,6 @@
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="quick start" target="quickstart" />
 	<indexitem text="quick start command line" target="quickstart.cmdline" />
+	<indexitem text="quick start zapit scan" target="quickstart.zapit" />
 	<indexitem text="quick start launch options" target="quickstart.launch.options" />
 </index>

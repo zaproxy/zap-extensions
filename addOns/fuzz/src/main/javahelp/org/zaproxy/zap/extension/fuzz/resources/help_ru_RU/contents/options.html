@@ -3,31 +3,47 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>
-Options Fuzz screen
+Экран опций фаззера 
 </title>
 </head>
-<body bgcolor="#ffffff">
-<h1>Options Fuzzer screen</h1>
+<body>
+<h1>Экран опций фаззера </h1>
 <p>
-This screen allows you to configure the <a href="concepts.html">fuzzing</a> options:
+Этот экран позволяет настроить  <a href="concepts.html">фаззинг</a> опции
 
-<h3>Default category</h3>
-The category that will be initially selected shown when the <a href="dialogue.html">Fuzz dialog</a> is displayed. 
+<h3>Категория по умолчанию</h3>
+Категория, которая будет изначально выбрана при  <a href="dialogue.html">Диалог фаззера</a> отображается. 
 
-<h3>Concurrent scanning threads per host</h3>
-The number of threads the scanner will use per host.<br>
-Increasing the number of threads will speed up the scan but may put extra strain on the computer ZAP is running on and the target host.
+<h3>Добавить пользовательский файл Fuzz </h3>
+Позволяет добавлять собственные файлы для использования при фаззинге. <br>
+Это должны быть текстовые файлы с одной полезной нагрузкой на строку. <br>
+Файлы добавляются в каталог «фаззеров» в домашнем каталоге ZAP. 
 
-<h3>Add custom Fuzz file</h3>
-Allows you to add your own files to be used when fuzzing.<br>
-These should be text files with one attack per line.<br>
-Files are added to the 'fuzzers' directory underneath the ZAP home directory.
+<h3>Готовые фаззеры в пользовательском интерфейсе </h3>
+Он определяет количество фаззеров (которые завершили свое выполнение)
+видны на вкладке фаззера. 
 
-<h2>See also</h2>
+<h3>Повторные попытки при ошибке ввода-вывода </h3>
+Повторные вероятные поступления 
+
+<h3>Максимум. Допускаются ошибки </h3>
+If the number of errors exceed this limit, the fuzzer will stop its execution.
+
+<h3>Стратегия замены полезной нагрузки </h3>
+Правила, определенные для управления порядком повторения нескольких списков полезной нагрузки. 
+
+<h3>Параллельное сканирование потоков на сканирование </h3>
+Количество потоков, которые фаззер будет использовать за сканирование. <br>
+Количество потоков, которые фазер будет использовать для сканирования. 
+
+<h3>Задержка при фаззинге (в миллисекундах) </h3>
+Количество миллисекунд между запросами фаззера к целевому хосту, обычно
+избегайте блокировки целью или если цель реализует какое-то требование регулирования. 
+
+<h2>Смотрите также </h2>
 <table>
-<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Fuzzer concepts</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="concepts.html">Концепции Фаззер</a></td></tr>
 </table>
-
 
 </body>
 </html>

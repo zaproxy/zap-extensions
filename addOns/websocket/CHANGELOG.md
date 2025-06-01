@@ -4,7 +4,97 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Add website alert links to the help page (Issue 8189).
+- Replace usage of CWE-200 for the following rules (Issue 8712):
+    - Email Disclosure.
+    - Debug Error Disclosure.
 
+## [32] - 2025-01-10
+### Changed
+- Update minimum ZAP version to 2.16.0.
+
+### Fixed
+- Correct location/function of New Context context menu item.
+
+## [31] - 2024-05-07
+### Added
+- Support for menu weights (Issue 8369)
+### Changed
+- Update minimum ZAP version to 2.15.0.
+- Maintenance changes.
+
+## [30] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
+- Maintenance changes.
+
+## [29] - 2023-07-11
+### Changed
+- Update minimum ZAP version to 2.13.0.
+- Maintenance changes.
+- Replace usage of singletons with injected variables (e.g. `model`, `control`) in scripts.
+
+## [28] - 2023-01-03
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Prevent exception if no display (Issue 3978).
+
+## [27] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Maintenance changes.
+- Use the Requester add-on for the WebSocket Message Editor dialogues.
+
+### Fixed
+- Correctly handle no message in the WebSocket message panel.
+
+## [26] - 2022-05-20
+### Changed
+- Maintenance changes.
+- Cache WebSocket Passive Rules scripts for better performance with all script engines.
+
+### Fixed
+- Handle errors caused by WebSocket Passive Rules scripts, which would break the passive scan.
+
+## [25] - 2022-03-14
+### Changed
+- Update minimum ZAP version to 2.11.1.
+- Update the reference links used in the Username IDOR passive scan script.
+- Reset the name of the connection threads when not actively used.
+
+### Fixed
+- Fix exception when manually reconnecting to the server.
+- Stop properly when shutting down.
+
+## [24] - 2021-10-06
+### Changed
+- Now using 2.10 logging infrastructure (Log4j 2.x).
+- Maintenance changes (some changes impact the visibility of variables and add getters/setters, which may impact third party add-ons or scripts).
+- Update links to repository.
+- Support passive scan alert examples so they can be added to the website
+- Missing default scripts will always be added and enabled on start up.
+- Update minimum ZAP version to 2.11.0.
+
+## [23] - 2020-12-18
+### Changed
+- Update minimum ZAP version to 2.10.0.
+
+### Fixed
+ - Fix exception when handling breakpoints with ZAP 2.10.0.
+ - Terminology
+
+## [22] - 2020-08-17
+### Changed
+- Update minimum ZAP version to 2.9.0.
+- Allow to use newer versions of Fuzzer add-on.
+- Maintenance changes.
+
+### Fixed
+- Correctly handle API request without parameters.
+- Fixed an exception which was occurring when the tab was shown when a handshake response was first encountered during a ZAP session.
 
 ## [21] - 2020-01-17
 ### Added
@@ -149,6 +239,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[32]: https://github.com/zaproxy/zap-extensions/releases/websocket-v32
+[31]: https://github.com/zaproxy/zap-extensions/releases/websocket-v31
+[30]: https://github.com/zaproxy/zap-extensions/releases/websocket-v30
+[29]: https://github.com/zaproxy/zap-extensions/releases/websocket-v29
+[28]: https://github.com/zaproxy/zap-extensions/releases/websocket-v28
+[27]: https://github.com/zaproxy/zap-extensions/releases/websocket-v27
+[26]: https://github.com/zaproxy/zap-extensions/releases/websocket-v26
+[25]: https://github.com/zaproxy/zap-extensions/releases/websocket-v25
+[24]: https://github.com/zaproxy/zap-extensions/releases/websocket-v24
+[23]: https://github.com/zaproxy/zap-extensions/releases/websocket-v23
+[22]: https://github.com/zaproxy/zap-extensions/releases/websocket-v22
 [21]: https://github.com/zaproxy/zap-extensions/releases/websocket-v21
 [20]: https://github.com/zaproxy/zap-extensions/releases/websocket-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/websocket-v19

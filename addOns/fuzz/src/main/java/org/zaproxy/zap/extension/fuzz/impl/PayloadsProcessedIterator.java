@@ -48,6 +48,7 @@ class PayloadsProcessedIterator<E extends Payload>
 
     @Override
     public E next() {
+        @SuppressWarnings("unchecked")
         E value = (E) payloadIterator.next().copy();
         for (PayloadProcessor<E> processor : processors) {
             try {

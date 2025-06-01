@@ -1,0 +1,11 @@
+<svg class="logo_kunkalabs-glyph" viewBox="0 0 53.217 35.928" xmlns="http://www.w3.org/2000/svg">
+    <style type="text/css">
+        .logo_kunkalabs-glyph__light{fill:#5ECDDE;}
+        .logo_kunkalabs-glyph__dark{fill:#27AABE;}
+        .logo_kunkalabs-glyph__shadow{fill:#249BAD;}
+    </style>
+    <polygon class="logo_kunkalabs-glyph__light" points="26.665,0 26.665,35.928 53.217,35.928"> </polygon>
+    <polygon class="logo_kunkalabs-glyph__dark" points="0,0 0,35.928 26.551,35.928"> </polygon>
+    <polygon class="logo_kunkalabs-glyph__light" points="0,35.928 0,0 26.551,0"> </polygon>
+    <polygon class="logo_kunkalabs-glyph__shadow" points="13.282,17.964 0,35.928 0,35.928 16.874,22.783"> </polygon>
+</svg>

@@ -26,7 +26,6 @@ import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
@@ -45,7 +44,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import javax.swing.text.Highlighter.HighlightPainter;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
@@ -55,7 +55,7 @@ import org.zaproxy.zap.view.LayoutHelper;
 public class DiffDialog extends AbstractDialog implements AdjustmentListener {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(DiffDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(DiffDialog.class);
 
     private JPanel jPanel = null;
     private JTextArea txtDisplayLeft = null;
@@ -69,7 +69,9 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
     private JLabel rightHeader = null;
     private JCheckBox syncCheckbox = null;
 
-    /** @throws HeadlessException */
+    /**
+     * @throws HeadlessException
+     */
     public DiffDialog() throws HeadlessException {
         super();
         initialize();
@@ -112,6 +114,7 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
 
         pack();
     }
+
     /**
      * This method initializes jPanel
      *
@@ -147,13 +150,9 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
 
             JButton close = new JButton(Constant.messages.getString("diff.diff.close.button"));
             close.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
+                    e ->
                             DiffDialog.this.dispatchEvent(
-                                    new WindowEvent(DiffDialog.this, WindowEvent.WINDOW_CLOSING));
-                        }
-                    });
+                                    new WindowEvent(DiffDialog.this, WindowEvent.WINDOW_CLOSING)));
 
             footer.add(
                     getSyncCheckbox(), LayoutHelper.getGBC(0, 0, 1, 0.0D, new Insets(2, 10, 2, 2)));
@@ -213,7 +212,7 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
         try {
             hilite.addHighlight(start, end, painter);
         } catch (BadLocationException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -247,10 +246,11 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
             }
 
         } catch (BadLocationException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return end;
     }
+
     /**
      * This method initializes jScrollPane
      *

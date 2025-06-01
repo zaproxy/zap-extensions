@@ -20,16 +20,17 @@
 // TODO convert this over to a thread, so it doe snot tie up the workers :)
 package com.sittinglittleduck.DirBuster;
 
+import com.sittinglittleduck.DirBuster.SimpleHttpClient.HttpMethod;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.Vector;
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Attributes;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class is to paser the returned html pages and extract other dirs and files from them
@@ -45,7 +46,7 @@ public class HTMLparse extends Thread {
     private boolean continueWorking = true;
 
     /* Logging object for the class */
-    private static final Logger LOG = Logger.getLogger(HTMLparse.class);
+    private static final Logger LOGGER = LogManager.getLogger(HTMLparse.class);
 
     /** Creates a new instance of HTMLparse */
     public HTMLparse(Manager manager) {
@@ -58,6 +59,7 @@ public class HTMLparse extends Thread {
         this.interrupt();
     }
 
+    @Override
     public void run() {
         while (continueWorking) {
             working = false;
@@ -67,7 +69,7 @@ public class HTMLparse extends Thread {
             try {
                 parseUnit = manager.parseQueue.take();
             } catch (InterruptedException ex) {
-                LOG.debug(ex);
+                LOGGER.debug(ex);
                 return;
             }
             working = true;
@@ -77,28 +79,22 @@ public class HTMLparse extends Thread {
             if (sourceAsString != null || work != null) {
                 if (!sourceAsString.equals("")) {
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Parsing text from " + work.getWork().toString());
-                        LOG.debug("Parsed text - " + sourceAsString);
-                    }
+                    LOGGER.debug("Parsing text from {}", work.getWork());
+                    LOGGER.debug("Parsed text - {}", sourceAsString);
 
-                    Vector links = new Vector(50, 10);
-                    Vector imageLinks = new Vector(50, 10);
-                    Vector foundItems = new Vector(20, 10);
+                    Vector<String> links = new Vector<>(50, 10);
+                    Vector<String> foundItems = new Vector<>(20, 10);
 
                     // create the source
                     Source source = new Source(sourceAsString);
 
-                    Vector elementsToParse = manager.getElementsToParse();
+                    Vector<HTMLelementToParse> elementsToParse = manager.getElementsToParse();
 
                     // loop trought all the things we wish to parse
                     for (int z = 0; z < elementsToParse.size(); z++) {
-                        HTMLelementToParse elementToParse =
-                                (HTMLelementToParse) elementsToParse.elementAt(z);
+                        HTMLelementToParse elementToParse = elementsToParse.elementAt(z);
 
-                        for (Iterator i = source.getAllElements(elementToParse.getTag()).iterator();
-                                i.hasNext(); ) {
-                            Element element = (Element) i.next();
+                        for (Element element : source.getAllElements(elementToParse.getTag())) {
                             Attributes attributes = element.getAttributes();
                             Attribute attr = attributes.get(elementToParse.getAttr());
                             // System.out.println(href.getValue());
@@ -116,11 +112,11 @@ public class HTMLparse extends Thread {
                                                     .equalsIgnoreCase(work.getWork().getHost())) {
                                         // add to vector to remove duplicates
                                         // links.addElement(urlString);
-                                        Vector found = processURL(tempURL);
+                                        Vector<String> found = processURL(tempURL);
 
                                         if (found != null) {
                                             for (int a = 0; a < found.size(); a++) {
-                                                String item = (String) found.elementAt(a);
+                                                String item = found.elementAt(a);
                                                 if (!foundItems.contains(item)) {
                                                     foundItems.addElement(item);
                                                 }
@@ -130,28 +126,27 @@ public class HTMLparse extends Thread {
                                 }
 
                             } catch (MalformedURLException e) {
-                                LOG.debug("Bad URL", e);
+                                LOGGER.debug("Bad URL", e);
                             }
                         }
 
                         try {
                             Thread.sleep(100);
                         } catch (InterruptedException ex) {
-                            LOG.debug(ex);
+                            LOGGER.debug(ex);
                             return;
                         }
                     } // end of for loop for elements
 
                     // process all the found items
                     for (int a = 0; a < foundItems.size(); a++) {
-                        String founditem = (String) foundItems.elementAt(a);
+                        String founditem = foundItems.elementAt(a);
                         // System.out.println((String) foundItems.elementAt(a));
 
                         boolean process = true;
 
                         for (int b = 0; b < manager.extsToMiss.size(); b++) {
-                            if (founditem.endsWith(
-                                    "." + (String) manager.extsToMiss.elementAt(b))) {
+                            if (founditem.endsWith("." + manager.extsToMiss.elementAt(b))) {
                                 process = false;
                                 break;
                             }
@@ -168,14 +163,14 @@ public class HTMLparse extends Thread {
                                 // get base case for item
                                 BaseCase baseCase = findBaseCasePoint(founditem);
                                 if (baseCase != null) {
-                                    String method = "";
+                                    HttpMethod method;
                                     // create work unit for item
                                     if (manager.getAuto()
                                             && !baseCase.useContentAnalysisMode()
                                             && !baseCase.isUseRegexInstead()) {
-                                        method = "HEAD";
+                                        method = HttpMethod.HEAD;
                                     } else {
-                                        method = "GET";
+                                        method = HttpMethod.GET;
                                     }
 
                                     try {
@@ -204,9 +199,9 @@ public class HTMLparse extends Thread {
                                             // queue");
                                         }
                                     } catch (MalformedURLException ex) {
-                                        LOG.debug("Bad URL", ex);
+                                        LOGGER.debug("Bad URL", ex);
                                     } catch (InterruptedException ex) {
-                                        LOG.debug(ex);
+                                        LOGGER.debug(ex);
                                         return;
                                     }
                                 }
@@ -223,9 +218,9 @@ public class HTMLparse extends Thread {
      *
      * @param url url to be processed
      */
-    private Vector processURL(URL url) {
+    private Vector<String> processURL(URL url) {
         try {
-            Vector foundItems = new Vector(10, 10);
+            Vector<String> foundItems = new Vector<>(10, 10);
 
             String toProcess = url.getPath();
             boolean noFile = url.getPath().endsWith("/");
@@ -248,7 +243,7 @@ public class HTMLparse extends Thread {
 
             return foundItems;
         } catch (InterruptedException ex) {
-            LOG.debug(ex);
+            LOGGER.debug(ex);
             return null;
         }
     }
@@ -290,9 +285,9 @@ public class HTMLparse extends Thread {
             return GenBaseCase.genBaseCase(
                     manager, manager.getFirstPartOfURL() + baseItem, isDir, fileExtention);
         } catch (MalformedURLException ex) {
-            LOG.debug("Bad URL", ex);
+            LOGGER.debug("Bad URL", ex);
         } catch (IOException | InterruptedException ex) {
-            LOG.debug(ex);
+            LOGGER.debug(ex);
         }
 
         return null;

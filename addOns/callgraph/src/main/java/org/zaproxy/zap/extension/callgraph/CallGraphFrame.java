@@ -34,8 +34,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.security.InvalidParameterException;
 import java.sql.Connection;
@@ -50,7 +48,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.db.paros.ParosDatabase;
@@ -63,14 +62,16 @@ import org.parosproxy.paros.view.AbstractFrame;
  *
  * @author 70pointer@gmail.com
  */
+@SuppressWarnings("serial")
 public class CallGraphFrame extends AbstractFrame {
 
     private static final long serialVersionUID = 6666666666666666666L;
 
-    private static final Logger log = Logger.getLogger(CallGraphFrame.class);
+    private static final Logger LOGGER = LogManager.getLogger(CallGraphFrame.class);
     private FontMetrics fontmetrics = null;
     private mxGraph graph =
             new mxGraph() {
+                @Override
                 public String getToolTipForCell(Object cell) {
                     if (model.isEdge(cell)) {
                         // the value is truncated, so get the id, which is the full URL instead
@@ -98,7 +99,7 @@ public class CallGraphFrame extends AbstractFrame {
             setupGraph(urlPattern);
             setupFrame();
         } catch (SQLException e) {
-            log.error("Failed to setup the graph", e);
+            LOGGER.error("Failed to setup the graph", e);
         }
     }
 
@@ -112,7 +113,7 @@ public class CallGraphFrame extends AbstractFrame {
         Connection conn = null;
         Statement st = null;
         ResultSet rs = null;
-        Map<String, String> schemaAuthorityToColor = new HashMap<String, String>();
+        Map<String, String> schemaAuthorityToColor = new HashMap<>();
         // use some web safe colours. Currently, there are 24 colours.
         String[] colors = {
             "#FFFF00", "#FFCC00", "#FF9900", "#FF6600", "#FF3300", "#CCFF00", "#CCCC00", "#CC9900",
@@ -127,7 +128,7 @@ public class CallGraphFrame extends AbstractFrame {
             // do not cater for
             // ad-hoc queries on the table
             /*
-             * TODO Add-ons should NOT make their own connections to the db any more - the db layer is plugable
+             * TODO Add-ons should NOT make their own connections to the db any more - the db layer is pluggable
              * so could be implemented in a completely different way
              * TODO: how? There is currently no API to do this.
              */
@@ -177,16 +178,13 @@ public class CallGraphFrame extends AbstractFrame {
                         }
                         addVertex(path, url, "fillColor=" + color);
                     } catch (Exception e) {
-                        log.error("Error graphing node for URL " + url, e);
+                        LOGGER.error("Error graphing node for URL {}", url, e);
                     }
                 } else {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "URL "
-                                        + url
-                                        + " does not match the specified pattern "
-                                        + urlPattern
-                                        + ", so not adding it as a vertex");
+                    LOGGER.debug(
+                            "URL {} does not match the specified pattern {}, so not adding it as a vertex",
+                            url,
+                            urlPattern);
                 }
             }
             // close the resultset and statement
@@ -217,24 +215,18 @@ public class CallGraphFrame extends AbstractFrame {
                 // remove urls that do not match the pattern specified (all sites / one site)
                 Matcher urlmatcher1 = urlPattern.matcher(predecessor);
                 if (!urlmatcher1.find()) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "Predecessor URL "
-                                        + predecessor
-                                        + " does not match the specified pattern "
-                                        + urlPattern
-                                        + ", so not adding it as a vertex");
+                    LOGGER.debug(
+                            "Predecessor URL {} does not match the specified pattern {}, so not adding it as a vertex",
+                            predecessor,
+                            urlPattern);
                     continue; // to the next iteration
                 }
                 Matcher urlmatcher2 = urlPattern.matcher(url);
                 if (!urlmatcher2.find()) {
-                    if (log.isDebugEnabled())
-                        log.debug(
-                                "URL "
-                                        + url
-                                        + " does not match the specified pattern "
-                                        + urlPattern
-                                        + ", so not adding it as a vertex");
+                    LOGGER.debug(
+                            "URL {} does not match the specified pattern {}, so not adding it as a vertex",
+                            url,
+                            urlPattern);
                     continue; // to the next iteration
                 }
 
@@ -243,12 +235,10 @@ public class CallGraphFrame extends AbstractFrame {
                 mxCell predecessorVertex = (mxCell) graphmodel.getCell(predecessor);
                 mxCell postdecessorVertex = (mxCell) graphmodel.getCell(url);
                 if (predecessorVertex == null || postdecessorVertex == null) {
-                    log.warn(
-                            "Could not find graph node for "
-                                    + predecessor
-                                    + " or for "
-                                    + url
-                                    + ". Ignoring it.");
+                    LOGGER.warn(
+                            "Could not find graph node for {} or for {}. Ignoring it.",
+                            predecessor,
+                            url);
                     continue;
                 }
                 // add the edge (ie, add the dependency between 2 URLs)
@@ -286,7 +276,7 @@ public class CallGraphFrame extends AbstractFrame {
                 }
             }
         } catch (SQLException e) {
-            log.error("Error trying to setup the graph", e);
+            LOGGER.error("Error trying to setup the graph", e);
             throw e;
         } finally {
 
@@ -328,47 +318,40 @@ public class CallGraphFrame extends AbstractFrame {
         // zoom to fit button
         JButton btZoomToFit = new JButton(Constant.messages.getString("callgraph.button.zoomfit"));
         btZoomToFit.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        double newScale = 1;
-                        Dimension graphSize = graphComponent.getGraphControl().getSize();
-                        Dimension viewPortSize = graphComponent.getViewport().getSize();
-                        int gw = (int) graphSize.getWidth();
-                        int gh = (int) graphSize.getHeight();
-                        if (gw > 0 && gh > 0) {
-                            int w = (int) viewPortSize.getWidth();
-                            int h = (int) viewPortSize.getHeight();
+                e -> {
+                    double newScale = 1;
+                    Dimension graphSize = graphComponent.getGraphControl().getSize();
+                    Dimension viewPortSize = graphComponent.getViewport().getSize();
+                    int gw = (int) graphSize.getWidth();
+                    int gh = (int) graphSize.getHeight();
+                    if (gw > 0 && gh > 0) {
+                        int w = (int) viewPortSize.getWidth();
+                        int h = (int) viewPortSize.getHeight();
 
-                            newScale = Math.min((double) w / gw, (double) h / gh);
-                        }
-                        graphComponent.zoomTo(newScale, true);
+                        newScale = Math.min((double) w / gw, (double) h / gh);
                     }
+                    graphComponent.zoomTo(newScale, true);
                 });
         buttonBar.add(btZoomToFit);
 
         // center graph
         JButton btCenter = new JButton(Constant.messages.getString("callgraph.button.centregraph"));
         btCenter.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        Dimension graphSize = graphComponent.getGraphControl().getSize();
-                        Dimension viewPortSize = graphComponent.getViewport().getSize();
-                        int x = graphSize.width / 2 - viewPortSize.width / 2;
-                        int y = graphSize.height / 2 - viewPortSize.height / 2;
-                        int w = viewPortSize.width;
-                        int h = viewPortSize.height;
-                        graphComponent
-                                .getGraphControl()
-                                .scrollRectToVisible(new Rectangle(x, y, w, h));
-                    }
+                e -> {
+                    Dimension graphSize = graphComponent.getGraphControl().getSize();
+                    Dimension viewPortSize = graphComponent.getViewport().getSize();
+                    int x = graphSize.width / 2 - viewPortSize.width / 2;
+                    int y = graphSize.height / 2 - viewPortSize.height / 2;
+                    int w = viewPortSize.width;
+                    int h = viewPortSize.height;
+                    graphComponent.getGraphControl().scrollRectToVisible(new Rectangle(x, y, w, h));
                 });
         buttonBar.add(btCenter);
 
         // add a rubberband zoom on the mouse selection event
         new mxRubberband(graphComponent) {
 
+            @Override
             public void mouseReleased(MouseEvent e) {
                 // get bounds before they are reset
                 Rectangle rect = bounds;

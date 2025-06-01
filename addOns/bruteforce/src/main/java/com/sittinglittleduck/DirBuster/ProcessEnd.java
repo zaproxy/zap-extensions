@@ -36,17 +36,18 @@ public class ProcessEnd extends TimerTask {
         this.manager = manager;
     }
 
+    @Override
     public void run() {
         if (manager.dirQueue.isEmpty()
                 && manager.workQueue.isEmpty()
                 && manager.parseQueue.isEmpty()) {
             // test to see if all the workers are done
             boolean allWorkersFinished = true;
-            Vector workers = manager.getWorkers();
-            Vector parsers = manager.getParseWorkers();
+            Vector<Worker> workers = manager.getWorkers();
+            Vector<HTMLparse> parsers = manager.getParseWorkers();
 
             for (int a = 0; a < workers.size(); a++) {
-                if (((Worker) workers.elementAt(a)).isWorking()) {
+                if (workers.elementAt(a).isWorking()) {
                     // there is a worker still working so break
                     allWorkersFinished = false;
                     break;
@@ -54,7 +55,7 @@ public class ProcessEnd extends TimerTask {
             }
 
             for (int a = 0; a < parsers.size(); a++) {
-                if (((HTMLparse) parsers.elementAt(a)).isWorking()) {
+                if (parsers.elementAt(a).isWorking()) {
                     allWorkersFinished = false;
                     break;
                 }
@@ -70,11 +71,11 @@ public class ProcessEnd extends TimerTask {
             if (manager.urlFuzz || manager.pureBrutefuzz) {
                 if (manager.isURLFuzzGenFinished()) {
                     boolean allWorkersFinished = true;
-                    Vector workers = manager.getWorkers();
-                    Vector parsers = manager.getParseWorkers();
+                    Vector<Worker> workers = manager.getWorkers();
+                    Vector<HTMLparse> parsers = manager.getParseWorkers();
 
                     for (int a = 0; a < workers.size(); a++) {
-                        if (((Worker) workers.elementAt(a)).isWorking()) {
+                        if (workers.elementAt(a).isWorking()) {
                             // there is a worker still working so break
                             allWorkersFinished = false;
                             break;
@@ -82,7 +83,7 @@ public class ProcessEnd extends TimerTask {
                     }
 
                     for (int a = 0; a < parsers.size(); a++) {
-                        if (((HTMLparse) parsers.elementAt(a)).isWorking()) {
+                        if (parsers.elementAt(a).isWorking()) {
                             allWorkersFinished = false;
                             break;
                         }

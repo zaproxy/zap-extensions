@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.accessControl.view;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,8 +34,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.log4j.Logger;
-import org.jdesktop.swingx.JXTable;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.decorator.AbstractHighlighter;
 import org.jdesktop.swingx.decorator.ComponentAdapter;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
@@ -63,27 +61,31 @@ import org.zaproxy.zap.extension.httpsessions.HttpSessionsPanel;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.scan.BaseScannerThreadManager;
 import org.zaproxy.zap.utils.DesktopUtils;
+import org.zaproxy.zap.utils.TableExportButton;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.panels.AbstractScanToolbarStatusPanel;
+import org.zaproxy.zap.view.table.HistoryReferencesTable;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 /**
  * The status panel used for the Access Control extension. It allows ZAP users to control and
  * configure the scans, generate a report and see the scan results.
  */
+@SuppressWarnings("serial")
 public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
         implements AccessControlScanListener {
 
     private static final long serialVersionUID = 3717381205061196129L;
 
     private static final String PANEL_NAME = "AccessControlStatusPanel";
-    private static final Logger log = Logger.getLogger(AccessControlStatusPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(AccessControlStatusPanel.class);
     private static final AccessControlResultsTableModel EMPTY_RESULTS_MODEL =
             new AccessControlResultsTableModel();
 
-    private JXTable resultsTable;
+    private HistoryReferencesTable resultsTable;
     private JScrollPane workPane;
     private JButton reportButton;
+    private TableExportButton<HistoryReferencesTable> exportButton = null;
 
     private Map<Integer, AccessControlResultsTableModel> resultsModels;
     private AccessControlResultsTableModel currentResultsModel;
@@ -121,7 +123,6 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
             workPane = new JScrollPane();
             workPane.setName("AccessControlResultsPane");
             workPane.setViewportView(getScanResultsTable());
-            workPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
         }
         return workPane;
     }
@@ -131,10 +132,10 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
      *
      * @return the scan results table
      */
-    private JXTable getScanResultsTable() {
+    private HistoryReferencesTable getScanResultsTable() {
         if (resultsTable == null) {
             // Create the table with a default, empty TableModel and the proper settings
-            resultsTable = new JXTable(EMPTY_RESULTS_MODEL);
+            resultsTable = new HistoryReferencesTable(EMPTY_RESULTS_MODEL);
             resultsTable.setColumnSelectionAllowed(false);
             resultsTable.setCellSelectionEnabled(false);
             resultsTable.setRowSelectionAllowed(true);
@@ -145,7 +146,6 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
             this.setScanResultsTableColumnSizes();
 
             resultsTable.setName(PANEL_NAME);
-            resultsTable.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
             resultsTable.setDoubleBuffered(true);
             resultsTable.setSelectionMode(
                     javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -184,7 +184,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
             return;
         }
 
-        this.currentResultsModel = getResultsModel(context.getIndex());
+        this.currentResultsModel = getResultsModel(context.getId());
         this.getScanResultsTable().setModel(this.currentResultsModel);
         this.setScanResultsTableColumnSizes();
     }
@@ -242,37 +242,36 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
             // Add the proper behavior for the generate report button: allow users to select a
             // report location, generate the report and open it in the browser
             reportButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            File targetFile = selectReportLocation();
-                            if (targetFile == null) {
-                                return;
-                            }
-
-                            File generatedFile = null;
-                            try {
-                                generatedFile =
-                                        extension.generateAccessControlReport(
-                                                getSelectedContext().getIndex(), targetFile);
-                            } catch (ParserConfigurationException e1) {
-                                log.error("Failed to generate access control report:", e1);
-                            }
-                            // Check if the generation was OK
-                            if (generatedFile == null) {
-                                View.getSingleton()
-                                        .showMessageDialog(
-                                                Constant.messages.getString(
-                                                        "report.unknown.error",
-                                                        targetFile.getName()));
-                                return;
-                            }
-
-                            // Try to show the report in the default browser
-                            DesktopUtils.openUrlInBrowser(generatedFile.toURI());
+                    e -> {
+                        File targetFile = selectReportLocation();
+                        if (targetFile == null) {
+                            return;
                         }
+
+                        File generatedFile = null;
+                        try {
+                            generatedFile =
+                                    extension.generateAccessControlReport(
+                                            getSelectedContext().getId(), targetFile);
+                        } catch (ParserConfigurationException e1) {
+                            LOGGER.error("Failed to generate access control report:", e1);
+                        }
+                        // Check if the generation was OK
+                        if (generatedFile == null) {
+                            View.getSingleton()
+                                    .showMessageDialog(
+                                            Constant.messages.getString(
+                                                    "report.unknown.error", targetFile.getName()));
+                            return;
+                        }
+
+                        // Try to show the report in the default browser
+                        DesktopUtils.openUrlInBrowser(generatedFile.toURI());
                     });
             toolbar.add(reportButton, LayoutHelper.getGBC(gridX++, 0, 1, 0));
+            toolbar.add(
+                    new TableExportButton<>(getScanResultsTable()),
+                    LayoutHelper.getGBC(gridX++, 0, 1, 0));
         }
         return gridX;
     }
@@ -329,11 +328,11 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
 
     @Override
     protected void startScan(Context context) {
-        log.debug("Access Control start on Context: " + context);
+        LOGGER.debug("Access Control start on Context: {}", context);
         extension.showScanOptionsDialog(context);
     }
 
-    // @Override
+    @Override
     protected boolean hasOptions() {
         // We don't have options for the Access Control extension so remove them.
         return false;
@@ -363,7 +362,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
                     try {
                         displayMessageInHttpPanel(hRef.getHttpMessage());
                     } catch (HttpMalformedHeaderException | DatabaseException e) {
-                        log.error(e.getMessage(), e);
+                        LOGGER.error(e.getMessage(), e);
                     }
                 }
             }

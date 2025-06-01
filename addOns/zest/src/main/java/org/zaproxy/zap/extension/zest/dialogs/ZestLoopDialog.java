@@ -21,33 +21,34 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestLoop;
-import org.mozilla.zest.core.v1.ZestLoopClientElements;
-import org.mozilla.zest.core.v1.ZestLoopFile;
-import org.mozilla.zest.core.v1.ZestLoopInteger;
-import org.mozilla.zest.core.v1.ZestLoopRegex;
-import org.mozilla.zest.core.v1.ZestLoopString;
-import org.mozilla.zest.core.v1.ZestLoopTokenFileSet;
-import org.mozilla.zest.core.v1.ZestLoopTokenIntegerSet;
-import org.mozilla.zest.core.v1.ZestLoopTokenStringSet;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestStatement;
+import javax.swing.JFileChooser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestLoop;
+import org.zaproxy.zest.core.v1.ZestLoopClientElements;
+import org.zaproxy.zest.core.v1.ZestLoopFile;
+import org.zaproxy.zest.core.v1.ZestLoopInteger;
+import org.zaproxy.zest.core.v1.ZestLoopRegex;
+import org.zaproxy.zest.core.v1.ZestLoopString;
+import org.zaproxy.zest.core.v1.ZestLoopTokenFileSet;
+import org.zaproxy.zest.core.v1.ZestLoopTokenIntegerSet;
+import org.zaproxy.zest.core.v1.ZestLoopTokenStringSet;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
     private static final long serialVersionUID = 3720969585202318312L;
 
@@ -77,7 +78,7 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
     private static final String FIELD_EXACT = "zest.dialog.loop.regex.exact";
     private static final String FIELD_GROUP = "zest.dialog.loop.regex.group";
 
-    private static final Logger logger = Logger.getLogger(ZestLoopDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestLoopDialog.class);
 
     public ZestLoopDialog(ExtensionZest extension, Frame owner, Dimension dim) {
         super(owner, "zest.dialog.loop.add.title", dim);
@@ -150,36 +151,28 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
                         .getFuzzerDelegate()
                         .getFuzzersForCategory(this.getStringValue(CATEGORY_FUZZ)),
                 "");
-        // TODO replace with a file selector when one is available
-        this.addTextField(FILE_PATH, path);
+        this.addFileSelectField(FILE_PATH, new File(path), JFileChooser.FILES_ONLY, null);
         this.addFieldListener(
                 CATEGORY_FUZZ,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
+                e ->
                         setComboFields(
                                 FILE_FUZZ,
                                 extension
                                         .getFuzzerDelegate()
                                         .getFuzzersForCategory(getStringValue(CATEGORY_FUZZ)),
-                                "");
-                    }
-                });
+                                ""));
         this.addFieldListener(
                 FILE_FUZZ,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent arg0) {
-                        File f =
-                                extension
-                                        .getFuzzerDelegate()
-                                        .getFuzzerFile(
-                                                getStringValue(CATEGORY_FUZZ),
-                                                getStringValue(FILE_FUZZ));
+                e -> {
+                    File f =
+                            extension
+                                    .getFuzzerDelegate()
+                                    .getFuzzerFile(
+                                            getStringValue(CATEGORY_FUZZ),
+                                            getStringValue(FILE_FUZZ));
 
-                        if (f != null && f.exists()) {
-                            setFieldValue(FILE_PATH, f.getAbsolutePath());
-                        }
+                    if (f != null && f.exists()) {
+                        setFieldValue(FILE_PATH, f.getAbsolutePath());
                     }
                 });
     }
@@ -193,7 +186,7 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
     private void drawLoopClientElementsDialog(ZestLoopClientElements loop) {
         // Pull down of all the valid window ids
         ZestScript script = extension.getZestTreeModel().getScriptWrapper(parent).getZestScript();
-        List<String> windowIds = new ArrayList<String>(script.getClientWindowHandles());
+        List<String> windowIds = new ArrayList<>(script.getClientWindowHandles());
         Collections.sort(windowIds);
         this.addComboField(
                 ZestClientElementDialog.FIELD_WINDOW_HANDLE, windowIds, loop.getWindowHandle());
@@ -208,7 +201,7 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
                 ZestClientElementDialog.FIELD_ELEMENT_TYPE, getElementTypeFields(), clientType);
         this.addTextField(ZestClientElementDialog.FIELD_ELEMENT, loop.getElement());
 
-        ZestZapUtils.setMainPopupMenu(this.getField(ZestClientElementDialog.FIELD_ELEMENT));
+        setFieldMainPopupMenu(ZestClientElementDialog.FIELD_ELEMENT);
     }
 
     private void drawLoopRegexDialog(ZestLoopRegex loop) {
@@ -219,14 +212,14 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
     }
 
     private List<String> getVariableNames() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         list.addAll(script.getZestScript().getVariableNames());
         Collections.sort(list);
         return list;
     }
 
     private List<String> getElementTypeFields() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (String type : ZestClientElementDialog.ELEMENT_TYPES) {
             list.add(
                     Constant.messages.getString(
@@ -266,7 +259,7 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
                         new ZestLoopTokenFileSet(selectedFile.getAbsolutePath());
                 loopFile.setSet(fileSet);
             } catch (FileNotFoundException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         } else if (this.loop instanceof ZestLoopInteger) {
             ZestLoopInteger loopInteger = (ZestLoopInteger) this.loop;

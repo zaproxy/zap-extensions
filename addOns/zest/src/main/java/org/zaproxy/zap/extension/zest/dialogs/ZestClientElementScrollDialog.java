@@ -1,0 +1,85 @@
+/*
+ * Zed Attack Proxy (ZAP) and its related class files.
+ *
+ * ZAP is an HTTP/HTTPS proxy for assessing web application security.
+ *
+ * Copyright 2014 The ZAP Development Team
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.zaproxy.zap.extension.zest.dialogs;
+
+import java.awt.Dimension;
+import java.awt.Frame;
+import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.script.ScriptNode;
+import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
+import org.zaproxy.zest.core.v1.ZestClientElement;
+import org.zaproxy.zest.core.v1.ZestClientElementScroll;
+import org.zaproxy.zest.core.v1.ZestStatement;
+
+public class ZestClientElementScrollDialog extends ZestClientElementDialog {
+
+    private static final String FIELD_X = "zest.dialog.client.label.x";
+    private static final String FIELD_Y = "zest.dialog.client.label.y";
+
+    private static final long serialVersionUID = 1L;
+
+    public ZestClientElementScrollDialog(ExtensionZest ext, Frame owner, Dimension dim) {
+        super(ext, owner, "zest.dialog.clientElementScroll.add.title", dim);
+    }
+
+    @Override
+    public void init(
+            ZestScriptWrapper script,
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement req,
+            ZestClientElement client,
+            boolean add) {
+        super.init(script, parent, child, req, client, add);
+
+        this.addNumberField(
+                FIELD_X,
+                Integer.MIN_VALUE,
+                Integer.MAX_VALUE,
+                ((ZestClientElementScroll) client).getX());
+        this.addNumberField(
+                FIELD_Y,
+                Integer.MIN_VALUE,
+                Integer.MAX_VALUE,
+                ((ZestClientElementScroll) client).getY());
+
+        if (add) {
+            this.setTitle(Constant.messages.getString("zest.dialog.clientElementScroll.add.title"));
+        } else {
+            this.setTitle(
+                    Constant.messages.getString("zest.dialog.clientElementScroll.edit.title"));
+        }
+
+        setFieldMainPopupMenu(FIELD_X);
+        setFieldMainPopupMenu(FIELD_Y);
+    }
+
+    @Override
+    public void saveFields() {
+        ((ZestClientElementScroll) this.getClient()).setX(this.getIntValue(FIELD_X));
+        ((ZestClientElementScroll) this.getClient()).setY(this.getIntValue(FIELD_Y));
+    }
+
+    @Override
+    public String validateFields() {
+        return super.validateFields();
+    }
+}

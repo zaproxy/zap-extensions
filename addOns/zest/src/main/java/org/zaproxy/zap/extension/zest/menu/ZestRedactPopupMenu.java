@@ -20,15 +20,14 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import org.mozilla.zest.core.v1.ZestRequest;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextArea;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zest.core.v1.ZestRequest;
 
+@SuppressWarnings("serial")
 public class ZestRedactPopupMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 2282358266003940700L;
@@ -44,12 +43,7 @@ public class ZestRedactPopupMenu extends ExtensionPopupMenuItem {
         this.extension = extension;
 
         this.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        extension.getDialogManager().showZestRedactDialog(node, replace);
-                    }
-                });
+                e -> extension.getDialogManager().showZestRedactDialog(node, replace));
     }
 
     @Override

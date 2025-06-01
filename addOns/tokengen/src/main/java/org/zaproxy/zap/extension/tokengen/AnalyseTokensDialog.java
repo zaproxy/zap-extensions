@@ -23,8 +23,6 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -37,7 +35,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.parosproxy.paros.model.Model;
@@ -45,6 +44,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyserListenner {
 
     private static final long serialVersionUID = 1L;
@@ -68,11 +68,13 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 
     TokenAnalyserThread analyserThread = null;
 
-    private static Logger log = Logger.getLogger(AnalyseTokensDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(AnalyseTokensDialog.class);
 
     private ResourceBundle messages;
 
-    /** @throws HeadlessException */
+    /**
+     * @throws HeadlessException
+     */
     public AnalyseTokensDialog(ResourceBundle messages) throws HeadlessException {
         super(View.getSingleton().getMainFrame(), false);
         this.messages = messages;
@@ -175,7 +177,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 
     @Override
     public void notifyTestResult(TokenAnalysisTestResult result) {
-        log.debug("notifyTestResult " + result.getType() + " " + result.getResult().name());
+        LOGGER.debug("notifyTestResult {} {}", result.getType(), result.getResult().name());
         this.getTokenAnalysisResultsTableModel().addResult(result);
         this.addDetailTitle(result.getName());
         this.addDetails(result.getDetails());
@@ -194,12 +196,9 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
             cancelButton = new JButton();
             cancelButton.setText(messages.getString("tokengen.button.cancel"));
             cancelButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            stopAnalysis();
-                            setVisible(false);
-                        }
+                    e -> {
+                        stopAnalysis();
+                        setVisible(false);
                     });
         }
         return cancelButton;
@@ -209,13 +208,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
         if (saveButton == null) {
             saveButton = new JButton();
             saveButton.setText(messages.getString("tokengen.analyse.button.save"));
-            saveButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            saveAnalysis();
-                        }
-                    });
+            saveButton.addActionListener(e -> saveAnalysis());
         }
         return saveButton;
     }
@@ -240,7 +233,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
             } catch (Exception e) {
                 View.getSingleton()
                         .showWarningDialog(messages.getString("tokengen.analyse.save.error"));
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -303,6 +296,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
         }
         return errorsScrollPane;
     }
+
     /**
      * This method initializes txtOutput
      *

@@ -19,40 +19,64 @@
  */
 package org.zaproxy.zap.extension.soap;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.ValueProvider;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class WSDLCustomParserTestCase extends TestUtils {
+class WSDLCustomParserTestCase extends TestUtils {
 
+    private ValueProvider valueProvider;
+    private Supplier<Date> dateSupplier;
     private String wsdlContent;
     private WSDLCustomParser parser;
 
-    @Before
-    public void setUp() throws Exception {
-        /* Simple log configuration to prevent Log4j malfunction. */
-        BasicConfigurator.configure();
-        Logger rootLogger = Logger.getRootLogger();
-        rootLogger.setLevel(Level.OFF);
-
+    @BeforeEach
+    @SuppressWarnings("unchecked")
+    void setUp() throws Exception {
         /* Gets test wsdl file and retrieves its content as String. */
         Path wsdlPath = getResourcePath("resources/test.wsdl");
         wsdlContent = new String(Files.readAllBytes(wsdlPath), StandardCharsets.UTF_8);
 
-        parser = new WSDLCustomParser();
+        valueProvider = mock(ValueProvider.class);
+        dateSupplier = mock(Supplier.class, withSettings().strictness(Strictness.LENIENT));
+        parser = new WSDLCustomParser(() -> valueProvider, null, dateSupplier);
     }
 
     @Test
-    public void parseWSDLContentTest() {
+    void parseWSDLContentTest() {
         /* Positive case. Checks the method's return value. */
         boolean result = parser.extContentWSDLImport(wsdlContent, false);
         assertTrue(result);
@@ -66,7 +90,7 @@ public class WSDLCustomParserTestCase extends TestUtils {
     }
 
     @Test
-    public void canBeWSDLparsedTest() {
+    void canBeWSDLparsedTest() {
         /* Positive case. */
         boolean result = parser.canBeWSDLparsed(wsdlContent);
         assertTrue(result);
@@ -78,7 +102,7 @@ public class WSDLCustomParserTestCase extends TestUtils {
     }
 
     @Test
-    public void createSoapRequestTest() {
+    void createSoapRequestTest() {
         parser.extContentWSDLImport(wsdlContent, false);
         /* Positive case. */
         HttpMessage result = parser.createSoapRequest(parser.getLastConfig());
@@ -86,5 +110,59 @@ public class WSDLCustomParserTestCase extends TestUtils {
         /* Negative case. */
         result = parser.createSoapRequest(new SOAPMsgConfig());
         assertNull(result);
+    }
+
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"generated"})
+    void addParameterShouldUseValueProviderWhenAvailable(String genValue) {
+        // Given
+        String path = "CelsiusToFahrenheit/Celsius";
+        String paramType = "s:string";
+        String name = "Celsius";
+        Map<String, String> fieldAttributes = new HashMap<>();
+        fieldAttributes.put("Control Type", "TEXT");
+        fieldAttributes.put("type", name);
+
+        when(valueProvider.getValue(
+                        eq(null),
+                        eq(null),
+                        eq(name),
+                        anyString(),
+                        eq(List.of()),
+                        eq(Map.of()),
+                        eq(fieldAttributes)))
+                .thenReturn(genValue);
+
+        // Then
+        Map<String, String> expectedParams = new HashMap<>();
+        expectedParams.put("xpath:/" + path, genValue);
+        assertEquals(expectedParams, parser.addParameter(path, paramType, name, null));
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+            value = {
+                "string, paramValue",
+                "int, 0",
+                "double, 0",
+                "long, 0",
+                "date, 2023-11-21",
+                "dateTime, 2023-11-21T05:16:40+0000",
+                "something, ''"
+            })
+    void shouldGenerateAppropriateDefaultValueForValueProvider(
+            String paramType, String expectedDefaultValue) {
+        // Given
+        ArgumentCaptor<String> defaultValueArgCaptor = ArgumentCaptor.forClass(String.class);
+        given(dateSupplier.get()).willReturn(new Date(1700587000000L));
+        // When
+        parser.addParameter("", paramType, "", null);
+
+        // Then
+        verify(valueProvider)
+                .getValue(
+                        any(), any(), any(), defaultValueArgCaptor.capture(), any(), any(), any());
+        assertThat(defaultValueArgCaptor.getValue(), is(equalTo(expectedDefaultValue)));
     }
 }

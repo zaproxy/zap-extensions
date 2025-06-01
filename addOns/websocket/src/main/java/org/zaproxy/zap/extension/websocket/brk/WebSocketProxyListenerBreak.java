@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.websocket.brk;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.brk.BreakpointMessageHandler2;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
 import org.zaproxy.zap.extension.websocket.WebSocketException;
@@ -36,7 +37,7 @@ import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
 /** Gets notified about WebSocket messages and checks if breakpoint applies. */
 public class WebSocketProxyListenerBreak implements WebSocketObserver {
 
-    private static final Logger logger = Logger.getLogger(WebSocketProxyListenerBreak.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketProxyListenerBreak.class);
 
     private BreakpointMessageHandler2 wsBrkMessageHandler;
 
@@ -99,19 +100,19 @@ public class WebSocketProxyListenerBreak implements WebSocketObserver {
             return continueNotifying;
         }
 
-        if (message.isOutgoing) {
+        if (message.isOutgoing()) {
             // already safe => onlyIfInScope can be false
             if (wsBrkMessageHandler.handleMessageReceivedFromClient(message, false)) {
                 // As the DTO that is shown and modified in the
                 // Request/Response panels we must set the content to message
                 // here.
-                setPayload(wsMessage, message.payload);
+                setPayload(wsMessage, message.getPayload());
                 continueNotifying = true;
             }
         } else {
             // already safe => onlyIfInScope can be false
             if (wsBrkMessageHandler.handleMessageReceivedFromServer(message, false)) {
-                setPayload(wsMessage, message.payload);
+                setPayload(wsMessage, message.getPayload());
                 continueNotifying = true;
             }
         }
@@ -132,7 +133,7 @@ public class WebSocketProxyListenerBreak implements WebSocketObserver {
                 message.setPayload((byte[]) payload);
             }
         } catch (WebSocketException e) {
-            logger.error(e);
+            LOGGER.error(e);
         }
     }
 }

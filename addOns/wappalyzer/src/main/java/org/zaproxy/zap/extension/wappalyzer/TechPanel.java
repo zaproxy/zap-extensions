@@ -21,17 +21,26 @@ package org.zaproxy.zap.extension.wappalyzer;
 
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
-import java.awt.Toolkit;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.Box;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableCellRenderer;
 import org.jdesktop.swingx.JXTable;
@@ -39,11 +48,15 @@ import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.jdesktop.swingx.renderer.MappedValue;
 import org.jdesktop.swingx.renderer.StringValues;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.utils.TableExportButton;
+import org.zaproxy.zap.view.ZapToggleButton;
 
+@SuppressWarnings("serial")
 public class TechPanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;
@@ -63,6 +76,8 @@ public class TechPanel extends AbstractPanel {
     private TechTableModel techModel = new TechTableModel();
 
     private TableExportButton<JXTable> exportButton = null;
+    private ZapToggleButton enableButton = null;
+    private JButton optionsButton;
 
     private static final Icon TRANSPARENT_ICON =
             new Icon() {
@@ -86,26 +101,22 @@ public class TechPanel extends AbstractPanel {
     public TechPanel(ExtensionWappalyzer extension) {
         super();
         this.extension = extension;
-        initialize();
-    }
-
-    @SuppressWarnings("deprecation")
-    private void initialize() {
         this.setLayout(new CardLayout());
         this.setSize(474, 251);
         this.setName(Constant.messages.getString("wappalyzer.panel.title"));
-        this.setIcon(ExtensionWappalyzer.WAPPALYZER_ICON);
+        this.setIcon(
+                new ImageIcon(
+                        getClass().getResource(ExtensionWappalyzer.RESOURCE + "/wappalyzer.png")));
         this.setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
-                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                        KeyEvent.VK_T,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.ALT_DOWN_MASK
-                                | KeyEvent.SHIFT_DOWN_MASK,
-                        false));
+                this.extension
+                        .getView()
+                        .getMenuShortcutKeyStroke(
+                                KeyEvent.VK_T,
+                                InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK,
+                                false));
         this.setMnemonic(Constant.messages.getChar("wappalyzer.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
+        this.getEnableToggleButton().setSelected(extension.isWappalyzerEnabled());
     }
 
     /**
@@ -113,11 +124,11 @@ public class TechPanel extends AbstractPanel {
      *
      * @return javax.swing.JPanel
      */
-    private javax.swing.JPanel getPanelCommand() {
+    private JPanel getPanelCommand() {
         if (panelCommand == null) {
 
-            panelCommand = new javax.swing.JPanel();
-            panelCommand.setLayout(new java.awt.GridBagLayout());
+            panelCommand = new JPanel();
+            panelCommand.setLayout(new GridBagLayout());
             panelCommand.setName("Params");
 
             GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
@@ -125,17 +136,17 @@ public class TechPanel extends AbstractPanel {
 
             gridBagConstraints1.gridx = 0;
             gridBagConstraints1.gridy = 0;
-            gridBagConstraints1.insets = new java.awt.Insets(2, 2, 2, 2);
-            gridBagConstraints1.anchor = java.awt.GridBagConstraints.NORTHWEST;
-            gridBagConstraints1.fill = java.awt.GridBagConstraints.HORIZONTAL;
+            gridBagConstraints1.insets = new Insets(2, 2, 2, 2);
+            gridBagConstraints1.anchor = GridBagConstraints.NORTHWEST;
+            gridBagConstraints1.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraints1.weightx = 1.0D;
             gridBagConstraints2.gridx = 0;
             gridBagConstraints2.gridy = 1;
             gridBagConstraints2.weightx = 1.0;
             gridBagConstraints2.weighty = 1.0;
-            gridBagConstraints2.fill = java.awt.GridBagConstraints.BOTH;
-            gridBagConstraints2.insets = new java.awt.Insets(0, 0, 0, 0);
-            gridBagConstraints2.anchor = java.awt.GridBagConstraints.NORTHWEST;
+            gridBagConstraints2.fill = GridBagConstraints.BOTH;
+            gridBagConstraints2.insets = new Insets(0, 0, 0, 0);
+            gridBagConstraints2.anchor = GridBagConstraints.NORTHWEST;
 
             panelCommand.add(this.getPanelToolbar(), gridBagConstraints1);
             panelCommand.add(getJScrollPane(), gridBagConstraints2);
@@ -143,61 +154,24 @@ public class TechPanel extends AbstractPanel {
         return panelCommand;
     }
 
-    private javax.swing.JToolBar getPanelToolbar() {
+    private JToolBar getPanelToolbar() {
         if (panelToolbar == null) {
 
-            panelToolbar = new javax.swing.JToolBar();
-            panelToolbar.setLayout(new java.awt.GridBagLayout());
+            panelToolbar = new JToolBar();
             panelToolbar.setEnabled(true);
             panelToolbar.setFloatable(false);
             panelToolbar.setRollover(true);
-            panelToolbar.setPreferredSize(new java.awt.Dimension(800, 30));
-            panelToolbar.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 12));
+            panelToolbar.setPreferredSize(new Dimension(800, 30));
             panelToolbar.setName("WappTechToolbar");
 
-            GridBagConstraints gridBagConstraints0 = new GridBagConstraints();
-            GridBagConstraints gridBagConstraints1 = new GridBagConstraints();
-            GridBagConstraints gridBagConstraints2 = new GridBagConstraints();
-            GridBagConstraints gridBagConstraints3 = new GridBagConstraints();
-            GridBagConstraints gridBagConstraintsx = new GridBagConstraints();
-
-            gridBagConstraints0.gridx = 0;
-            gridBagConstraints0.gridy = 0;
-            gridBagConstraints0.insets = new java.awt.Insets(0, 0, 0, 0);
-            gridBagConstraints0.anchor = java.awt.GridBagConstraints.WEST;
-
-            gridBagConstraints1.gridx = 1;
-            gridBagConstraints1.gridy = 0;
-            gridBagConstraints1.insets = new java.awt.Insets(0, 0, 0, 0);
-            gridBagConstraints1.anchor = java.awt.GridBagConstraints.WEST;
-
-            gridBagConstraints2.gridx = 2;
-            gridBagConstraints2.gridy = 0;
-            gridBagConstraints2.insets = new java.awt.Insets(0, 0, 0, 0);
-            gridBagConstraints2.anchor = java.awt.GridBagConstraints.WEST;
-
-            gridBagConstraints3.gridx = 3;
-            gridBagConstraints3.gridy = 0;
-            gridBagConstraints3.insets = new java.awt.Insets(0, 0, 0, 0);
-            gridBagConstraints3.anchor = java.awt.GridBagConstraints.WEST;
-
-            gridBagConstraintsx.gridx = 3;
-            gridBagConstraintsx.gridy = 0;
-            gridBagConstraintsx.weightx = 1.0;
-            gridBagConstraintsx.weighty = 1.0;
-            gridBagConstraintsx.insets = new java.awt.Insets(0, 0, 0, 0);
-            gridBagConstraintsx.anchor = java.awt.GridBagConstraints.EAST;
-            gridBagConstraintsx.fill = java.awt.GridBagConstraints.HORIZONTAL;
-
-            JLabel t1 = new JLabel();
-
             panelToolbar.add(
-                    new JLabel(Constant.messages.getString("wappalyzer.toolbar.site.label")),
-                    gridBagConstraints1);
-            panelToolbar.add(getSiteSelect(), gridBagConstraints2);
-            panelToolbar.add(getExportButton(), gridBagConstraints3);
+                    new JLabel(Constant.messages.getString("wappalyzer.toolbar.site.label")));
+            panelToolbar.add(getSiteSelect());
+            panelToolbar.add(getExportButton());
+            panelToolbar.add(getEnableToggleButton());
 
-            panelToolbar.add(t1, gridBagConstraintsx);
+            panelToolbar.add(Box.createHorizontalGlue());
+            panelToolbar.add(getOptionsButton());
         }
         return panelToolbar;
     }
@@ -206,14 +180,31 @@ public class TechPanel extends AbstractPanel {
         if (jScrollPane == null) {
             jScrollPane = new JScrollPane();
             jScrollPane.setViewportView(getTechTable());
-            jScrollPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
         }
         return jScrollPane;
     }
 
     protected JXTable getTechTable() {
         if (techTable == null) {
-            techTable = new JXTable(techModel);
+            techTable =
+                    new JXTable(techModel) {
+                        private static final long serialVersionUID = -5249686560976842645L;
+
+                        @Override
+                        public String getToolTipText(MouseEvent e) {
+                            String tip = "";
+                            int rowIndex = rowAtPoint(e.getPoint());
+
+                            if (rowIndex != -1) {
+                                tip =
+                                        techModel
+                                                .getApp(convertRowIndexToModel(rowIndex))
+                                                .getDescription();
+                            }
+
+                            return tip.isEmpty() ? null : tip;
+                        }
+                    };
 
             techTable.setColumnSelectionAllowed(false);
             techTable.setCellSelectionEnabled(false);
@@ -231,16 +222,15 @@ public class TechPanel extends AbstractPanel {
                                         Icon icon = ((Application) item).getIcon();
                                         return icon != null ? icon : TRANSPARENT_ICON;
                                     }),
-                            JLabel.LEADING);
+                            SwingConstants.LEADING);
             techTable.setDefaultRenderer(Application.class, renderer);
 
             techTable.setName(PANEL_NAME);
-            techTable.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
             techTable.setDoubleBuffered(true);
             techTable.addMouseListener(
-                    new java.awt.event.MouseAdapter() {
+                    new MouseAdapter() {
                         @Override
-                        public void mousePressed(java.awt.event.MouseEvent e) {
+                        public void mousePressed(MouseEvent e) {
 
                             if (SwingUtilities.isRightMouseButton(e)) {
 
@@ -270,18 +260,14 @@ public class TechPanel extends AbstractPanel {
         if (siteSelect == null) {
             siteSelect = new JComboBox<>(siteModel);
             siteSelect.addItem(Constant.messages.getString("params.toolbar.site.select"));
+            siteSelect.setPreferredSize(new Dimension(250, 22));
             siteSelect.setSelectedIndex(0);
 
             siteSelect.addActionListener(
-                    new java.awt.event.ActionListener() {
-
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-
-                            String item = (String) siteSelect.getSelectedItem();
-                            if (item != null && siteSelect.getSelectedIndex() > 0) {
-                                siteSelected(item);
-                            }
+                    e -> {
+                        String item = (String) siteSelect.getSelectedItem();
+                        if (item != null && siteSelect.getSelectedIndex() > 0) {
+                            siteSelected(item);
                         }
                     });
         }
@@ -332,15 +318,72 @@ public class TechPanel extends AbstractPanel {
 
     protected String getSelectedApplicationName() {
         if (this.getTechTable().getSelectedRow() >= 0) {
-            return (String) this.getTechTable().getValueAt(this.getTechTable().getSelectedRow(), 1);
+            int modelRow = getTechTable().convertRowIndexToModel(getTechTable().getSelectedRow());
+            return techModel.getApp(modelRow).getName();
         }
         return null;
     }
 
     private TableExportButton<JXTable> getExportButton() {
         if (exportButton == null) {
-            exportButton = new TableExportButton<JXTable>(getTechTable());
+            exportButton = new TableExportButton<>(getTechTable());
         }
         return exportButton;
+    }
+
+    ZapToggleButton getEnableToggleButton() {
+        if (enableButton == null) {
+            enableButton =
+                    new ZapToggleButton(
+                            Constant.messages.getString("wappalyzer.toolbar.toggle.state.enabled"),
+                            true);
+            enableButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            TechPanel.class.getResource(
+                                    ExtensionWappalyzer.RESOURCE + "/off.png")));
+            enableButton.setToolTipText(
+                    Constant.messages.getString(
+                            "wappalyzer.toolbar.toggle.state.disabled.tooltip"));
+            enableButton.setSelectedIcon(
+                    DisplayUtils.getScaledIcon(
+                            TechPanel.class.getResource(ExtensionWappalyzer.RESOURCE + "/on.png")));
+            enableButton.setSelectedToolTipText(
+                    Constant.messages.getString("wappalyzer.toolbar.toggle.state.enabled.tooltip"));
+            enableButton.addItemListener(
+                    event -> {
+                        if (event.getStateChange() == ItemEvent.SELECTED) {
+                            enableButton.setText(
+                                    Constant.messages.getString(
+                                            "wappalyzer.toolbar.toggle.state.enabled"));
+                            extension.setWappalyzer(true);
+                        } else {
+                            enableButton.setText(
+                                    Constant.messages.getString(
+                                            "wappalyzer.toolbar.toggle.state.disabled"));
+                            extension.setWappalyzer(false);
+                        }
+                    });
+        }
+        return enableButton;
+    }
+
+    private JButton getOptionsButton() {
+        if (optionsButton == null) {
+            optionsButton = new JButton();
+            optionsButton.setToolTipText(
+                    Constant.messages.getString("wappalyzer.toolbar.options.name"));
+            optionsButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            TechPanel.class.getResource("/resource/icon/16/041.png")));
+
+            optionsButton.addActionListener(
+                    e ->
+                            Control.getSingleton()
+                                    .getMenuToolsControl()
+                                    .options(
+                                            Constant.messages.getString(
+                                                    "wappalyzer.optionspanel.name")));
+        }
+        return optionsButton;
     }
 }

@@ -4,12 +4,31 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [16] - 2025-04-30
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Maintenance changes.
+- The included active scan rule has been tagged of interest to Penetration Testers.
+
+## [15] - 2021-10-20
+### Fixed
+- Re-ordered variable initialization to prevent an NPE.
+
+## [14] - 2021-10-07
 ### Added
 - Add help and link to the code.
 - Add info and repo URLs.
+- OWASP Top Ten 2021/2017 mappings.
+
+### Fixed
+ - Terminology
 
 ### Changed
+- Update minimum ZAP version to 2.11.0.
 - Maintenance changes.
+- Updated owasp.org references (Issue 5962).
 
 ## [13] - 2019-06-07
 
@@ -37,7 +56,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Split boundary and plugin definition in two different files
 - Updated all plugin and boundary files to the newest SQLMap database
-- Changed to target DB tecnhonolgy (Issue 1618).
+- Changed to target DB technology (Issue 1618).
 
 ## 8 - 2015-04-20
 
@@ -66,4 +85,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Added support for HyperSQL DB
 
+[16]: https://github.com/zaproxy/zap-extensions/releases/sqliplugin-v16
+[15]: https://github.com/zaproxy/zap-extensions/releases/sqliplugin-v15
+[14]: https://github.com/zaproxy/zap-extensions/releases/sqliplugin-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/sqliplugin-v13

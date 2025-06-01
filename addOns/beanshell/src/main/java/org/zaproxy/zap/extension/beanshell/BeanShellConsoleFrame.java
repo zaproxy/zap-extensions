@@ -22,12 +22,9 @@ package org.zaproxy.zap.extension.beanshell;
 import bsh.EvalError;
 import bsh.Interpreter;
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -38,9 +35,9 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpSender;
@@ -48,6 +45,7 @@ import org.parosproxy.paros.view.AbstractFrame;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class BeanShellConsoleFrame extends AbstractFrame {
 
     private static final long serialVersionUID = 1L;
@@ -58,7 +56,6 @@ public class BeanShellConsoleFrame extends AbstractFrame {
     private JButton btnLoad = null;
     private JButton btnSave = null;
     private JButton btnSaveAs = null;
-    private Extension extension = null;
     private Interpreter interpreter = null;
     private String scriptsDir = System.getProperty("user.dir") + "/scripts/";
     private File currentScriptFile = null;
@@ -66,25 +63,13 @@ public class BeanShellConsoleFrame extends AbstractFrame {
 
     private JPanel jPanel = null;
 
-    private static final Logger log = Logger.getLogger(BeanShellConsoleFrame.class);
-
-    /** @throws HeadlessException */
-    public BeanShellConsoleFrame() throws HeadlessException {
-        super();
-        initialize();
-    }
+    private static final Logger LOGGER = LogManager.getLogger(BeanShellConsoleFrame.class);
 
     /**
-     * @param parent
-     * @param modal
-     * @param extension
      * @throws HeadlessException
      */
-    public BeanShellConsoleFrame(Frame parent, boolean modal, Extension extension)
-            throws HeadlessException {
-        // super(parent, modal);
+    public BeanShellConsoleFrame() throws HeadlessException {
         super();
-        this.extension = extension;
         initialize();
     }
 
@@ -110,6 +95,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
         }
         return panelCommand;
     }
+
     /**
      * This method initializes jButton
      *
@@ -120,12 +106,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
             btnEvaluate = new JButton();
             btnEvaluate.setText(Constant.messages.getString("beanshell.button.evaluate"));
             btnEvaluate.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            beanShellEval(getBeanShellPanel().getTxtEditor().getText());
-                        }
-                    });
+                    e -> beanShellEval(getBeanShellPanel().getTxtEditor().getText()));
         }
         return btnEvaluate;
     }
@@ -155,9 +136,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                     input.close();
                 }
             } catch (IOException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug(e.getMessage(), e);
-                }
+                LOGGER.debug(e.getMessage(), e);
             }
         }
 
@@ -176,9 +155,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                     output.close();
                 }
             } catch (IOException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug(e.getMessage(), e);
-                }
+                LOGGER.debug(e.getMessage(), e);
             }
         }
     }
@@ -189,34 +166,31 @@ public class BeanShellConsoleFrame extends AbstractFrame {
             btnLoad.setText(Constant.messages.getString("beanshell.button.load"));
 
             btnLoad.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (getBeanShellPanel().isSaved() == false) {
-                                int confirm =
-                                        view.showConfirmDialog(
-                                                Constant.messages.getString(
-                                                        "beanshell.dialog.unsaved"));
-                                if (confirm == JOptionPane.CANCEL_OPTION) return;
-                            }
-                            JFileChooser fc = new JFileChooser(scriptsDir);
-                            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                            int result = fc.showOpenDialog(getBeanShellPanel());
+                    e -> {
+                        if (getBeanShellPanel().isSaved() == false) {
+                            int confirm =
+                                    view.showConfirmDialog(
+                                            Constant.messages.getString(
+                                                    "beanshell.dialog.unsaved"));
+                            if (confirm == JOptionPane.CANCEL_OPTION) return;
+                        }
+                        JFileChooser fc = new JFileChooser(scriptsDir);
+                        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                        int result = fc.showOpenDialog(getBeanShellPanel());
 
-                            if (result == JFileChooser.APPROVE_OPTION) {
-                                try {
-                                    String temp = loadScript(fc.getSelectedFile());
-                                    getBeanShellPanel().getTxtEditor().setText(temp);
-                                    getBeanShellPanel().getTxtEditor().discardAllEdits();
-                                    getBeanShellPanel().setSaved(true);
-                                    currentScriptFile = fc.getSelectedFile();
-                                } catch (IOException ex) {
-                                    log.error(ex.getMessage(), ex);
-                                    View.getSingleton()
-                                            .showWarningDialog(
-                                                    Constant.messages.getString(
-                                                            "beanshell.error.message.loading.script"));
-                                }
+                        if (result == JFileChooser.APPROVE_OPTION) {
+                            try {
+                                String temp = loadScript(fc.getSelectedFile());
+                                getBeanShellPanel().getTxtEditor().setText(temp);
+                                getBeanShellPanel().getTxtEditor().discardAllEdits();
+                                getBeanShellPanel().setSaved(true);
+                                currentScriptFile = fc.getSelectedFile();
+                            } catch (IOException ex) {
+                                LOGGER.error(ex.getMessage(), ex);
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                Constant.messages.getString(
+                                                        "beanshell.error.message.loading.script"));
                             }
                         }
                     });
@@ -230,42 +204,39 @@ public class BeanShellConsoleFrame extends AbstractFrame {
             btnSave.setText(Constant.messages.getString("beanshell.button.save"));
 
             btnSave.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (currentScriptFile != null) {
+                    e -> {
+                        if (currentScriptFile != null) {
+                            try {
+                                saveScript(
+                                        getBeanShellPanel().getTxtEditor().getText(),
+                                        currentScriptFile);
+                                getBeanShellPanel().setSaved(true);
+                            } catch (IOException ex) {
+                                LOGGER.error(ex.getMessage(), ex);
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                Constant.messages.getString(
+                                                        "beanshell.error.message.saving.script"));
+                            }
+
+                        } else {
+                            JFileChooser fc = new WritableFileChooser(new File(scriptsDir));
+                            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                            int result = fc.showSaveDialog(getBeanShellPanel());
+
+                            if (result == JFileChooser.APPROVE_OPTION) {
                                 try {
                                     saveScript(
                                             getBeanShellPanel().getTxtEditor().getText(),
-                                            currentScriptFile);
+                                            fc.getSelectedFile());
                                     getBeanShellPanel().setSaved(true);
+                                    currentScriptFile = fc.getSelectedFile();
                                 } catch (IOException ex) {
-                                    log.error(ex.getMessage(), ex);
+                                    LOGGER.error(ex.getMessage(), ex);
                                     View.getSingleton()
                                             .showWarningDialog(
                                                     Constant.messages.getString(
                                                             "beanshell.error.message.saving.script"));
-                                }
-
-                            } else {
-                                JFileChooser fc = new WritableFileChooser(new File(scriptsDir));
-                                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                                int result = fc.showSaveDialog(getBeanShellPanel());
-
-                                if (result == JFileChooser.APPROVE_OPTION) {
-                                    try {
-                                        saveScript(
-                                                getBeanShellPanel().getTxtEditor().getText(),
-                                                fc.getSelectedFile());
-                                        getBeanShellPanel().setSaved(true);
-                                        currentScriptFile = fc.getSelectedFile();
-                                    } catch (IOException ex) {
-                                        log.error(ex.getMessage(), ex);
-                                        View.getSingleton()
-                                                .showWarningDialog(
-                                                        Constant.messages.getString(
-                                                                "beanshell.error.message.saving.script"));
-                                    }
                                 }
                             }
                         }
@@ -280,39 +251,28 @@ public class BeanShellConsoleFrame extends AbstractFrame {
             btnSaveAs.setText(Constant.messages.getString("beanshell.button.saveas"));
 
             btnSaveAs.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            JFileChooser fc = new WritableFileChooser(new File(scriptsDir));
-                            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                            int result = fc.showSaveDialog(getBeanShellPanel());
-                            if (result == JFileChooser.APPROVE_OPTION) {
-                                try {
-                                    saveScript(
-                                            getBeanShellPanel().getTxtEditor().getText(),
-                                            fc.getSelectedFile());
-                                    getBeanShellPanel().setSaved(true);
-                                    currentScriptFile = fc.getSelectedFile();
-                                } catch (IOException ex) {
-                                    log.error(ex.getMessage(), ex);
-                                    View.getSingleton()
-                                            .showWarningDialog(
-                                                    Constant.messages.getString(
-                                                            "beanshell.error.message.saving.script"));
-                                }
+                    e -> {
+                        JFileChooser fc = new WritableFileChooser(new File(scriptsDir));
+                        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                        int result = fc.showSaveDialog(getBeanShellPanel());
+                        if (result == JFileChooser.APPROVE_OPTION) {
+                            try {
+                                saveScript(
+                                        getBeanShellPanel().getTxtEditor().getText(),
+                                        fc.getSelectedFile());
+                                getBeanShellPanel().setSaved(true);
+                                currentScriptFile = fc.getSelectedFile();
+                            } catch (IOException ex) {
+                                LOGGER.error(ex.getMessage(), ex);
+                                View.getSingleton()
+                                        .showWarningDialog(
+                                                Constant.messages.getString(
+                                                        "beanshell.error.message.saving.script"));
                             }
                         }
                     });
         }
         return btnSaveAs;
-    }
-
-    public void setExtension(Extension extension) {
-        this.extension = extension;
-    }
-
-    private Extension getExtension() {
-        return extension;
     }
 
     @Override
@@ -351,11 +311,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
             gbc.fill = java.awt.GridBagConstraints.BOTH;
             gbc.anchor = java.awt.GridBagConstraints.NORTHWEST;
 
-            HttpSender sender =
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            true,
-                            HttpSender.BEAN_SHELL_INITIATOR);
+            HttpSender sender = new HttpSender(HttpSender.BEAN_SHELL_INITIATOR);
             try {
                 getInterpreter().set("model", Model.getSingleton());
                 getInterpreter().set("sites", Model.getSingleton().getSession().getSiteTree());
@@ -370,7 +326,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                 getInterpreter().eval("import org.parosproxy.paros.db.*");
                 getInterpreter().eval("import org.parosproxy.paros.model.*;");
             } catch (EvalError e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             new Thread(getInterpreter()).start();
             jPanel.add(getBeanShellPanel(), gbc);

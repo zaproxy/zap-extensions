@@ -27,8 +27,9 @@ import java.util.Map;
 import net.sf.json.JSONException;
 import net.sf.json.JSONSerializer;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang.time.FastDateFormat;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.time.FastDateFormat;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.websocket.utility.InvalidUtf8Exception;
@@ -41,44 +42,44 @@ import org.zaproxy.zap.extension.websocket.utility.Utf8Util;
 public class WebSocketMessageDTO implements Message {
 
     /** Each message is sent on a specific connection. Ensure that it is not <code>null</code>! */
-    public WebSocketChannelDTO channel;
+    private WebSocketChannelDTO channel;
 
     /** Consecutive number for each message unique for one given channel. */
-    public Integer id;
+    private Integer id;
 
     /** Used for sorting, containing time of arrival in milliseconds. */
-    public Long timestamp;
+    private Long timestamp;
 
     /** When the message was finished (it might consist of several frames). */
-    public String dateTime;
+    private String dateTime;
 
     /**
      * You can retrieve a textual version of this opcode via: {@link
      * WebSocketMessage#opcode2string(int)}.
      */
-    public Integer opcode;
+    private Integer opcode;
 
     /** Textual representation of {@link WebSocketMessageDTO#opcode}. */
-    public String readableOpcode;
+    private String readableOpcode;
 
     /**
      * Might be either a string (readable representation for TEXT frames) OR byte[].
      *
      * <p>If it is a byte[] then it might be readable though.
      */
-    public Object payload;
+    private Object payload;
 
     /** For close messages, there is always a reason. */
-    public Integer closeCode;
+    private Integer closeCode;
 
     /** Outgoing or incoming message. */
-    public Boolean isOutgoing;
+    private Boolean outgoing;
 
     /** Number of the payload bytes. */
-    public Integer payloadLength;
+    private Integer payloadLength;
 
     /** Temporary object holding arbitrary values. */
-    public volatile Object tempUserObj;
+    private volatile Object tempUserObj;
 
     /** Used to format {@link WebSocketMessage#timestamp} in user's locale. */
     protected static final FastDateFormat dateFormatter;
@@ -87,7 +88,7 @@ public class WebSocketMessageDTO implements Message {
      * Marks this object as changed, indicating that frame headers have to be built manually on
      * forwarding.
      */
-    public boolean hasChanged;
+    private boolean hasChanged;
 
     /** Use the static initializer for setting up one date formatter for all instances. */
     static {
@@ -97,9 +98,11 @@ public class WebSocketMessageDTO implements Message {
                         SimpleDateFormat.SHORT, SimpleDateFormat.MEDIUM, Constant.getLocale());
     }
 
-    private static final Logger LOG = Logger.getLogger(WebSocketMessageDTO.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketMessageDTO.class);
 
-    /** @param channel */
+    /**
+     * @param channel
+     */
     public WebSocketMessageDTO(WebSocketChannelDTO channel) {
         this.channel = channel;
     }
@@ -130,8 +133,8 @@ public class WebSocketMessageDTO implements Message {
 
     @Override
     public String toString() {
-        if (channel.id != null && id != null) {
-            return "#" + channel.id + "." + id;
+        if (channel.getId() != null && id != null) {
+            return "#" + channel.getId() + "." + id;
         }
         return "";
     }
@@ -145,7 +148,7 @@ public class WebSocketMessageDTO implements Message {
         other.channel = this.channel;
         other.closeCode = this.closeCode;
         other.dateTime = this.dateTime;
-        other.isOutgoing = this.isOutgoing;
+        other.outgoing = this.outgoing;
         other.id = this.id;
         other.opcode = this.opcode;
         other.payload = this.payload;
@@ -196,20 +199,21 @@ public class WebSocketMessageDTO implements Message {
         }
     }
 
+    @Override
     public boolean isForceIntercept() {
         // Not currently supported for WebSockets
         return false;
     }
 
     public Map<String, String> toMap(boolean fullPayload) {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("id", Integer.toString(this.id));
         map.put("opcode", Integer.toString(this.opcode));
         map.put("opcodeString", this.readableOpcode);
         map.put("timestamp", Long.toString(this.timestamp));
-        map.put("outgoing", Boolean.toString(this.isOutgoing));
-        map.put("channelId", Integer.toString(this.channel.id));
-        map.put("channelHost", this.channel.host);
+        map.put("outgoing", Boolean.toString(this.outgoing));
+        map.put("channelId", Integer.toString(this.channel.getId()));
+        map.put("channelHost", this.channel.getHost());
         map.put("thisId", Integer.toString(this.id));
         map.put("payloadLength", Integer.toString(this.payloadLength));
         if (fullPayload) {
@@ -229,7 +233,7 @@ public class WebSocketMessageDTO implements Message {
                 try {
                     map.put("payload", this.getReadablePayload());
                 } catch (InvalidUtf8Exception e) {
-                    LOG.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         } else {
@@ -243,8 +247,104 @@ public class WebSocketMessageDTO implements Message {
         return map;
     }
 
-    // @Override
+    @Override
     public Map<String, String> toEventData() {
         return this.toMap(true);
+    }
+
+    public WebSocketChannelDTO getChannel() {
+        return channel;
+    }
+
+    public void setChannel(WebSocketChannelDTO channel) {
+        this.channel = channel;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public Integer getOpcode() {
+        return opcode;
+    }
+
+    public void setOpcode(Integer opcode) {
+        this.opcode = opcode;
+    }
+
+    public String getReadableOpcode() {
+        return readableOpcode;
+    }
+
+    public void setReadableOpcode(String readableOpcode) {
+        this.readableOpcode = readableOpcode;
+    }
+
+    public Object getPayload() {
+        return payload;
+    }
+
+    public void setPayload(Object payload) {
+        this.payload = payload;
+    }
+
+    public Integer getCloseCode() {
+        return closeCode;
+    }
+
+    public void setCloseCode(Integer closeCode) {
+        this.closeCode = closeCode;
+    }
+
+    public Boolean isOutgoing() {
+        return outgoing;
+    }
+
+    public void setOutgoing(Boolean isOutgoing) {
+        this.outgoing = isOutgoing;
+    }
+
+    public Integer getPayloadLength() {
+        return payloadLength;
+    }
+
+    public void setPayloadLength(Integer payloadLength) {
+        this.payloadLength = payloadLength;
+    }
+
+    public Object getTempUserObj() {
+        return tempUserObj;
+    }
+
+    public void setTempUserObj(Object tempUserObj) {
+        this.tempUserObj = tempUserObj;
+    }
+
+    public boolean hasChanged() {
+        return hasChanged;
+    }
+
+    public void setHasChanged(boolean hasChanged) {
+        this.hasChanged = hasChanged;
     }
 }

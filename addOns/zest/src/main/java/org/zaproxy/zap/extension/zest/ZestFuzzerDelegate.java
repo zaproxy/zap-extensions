@@ -31,7 +31,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.owasp.jbrofuzz.core.Database;
 import org.owasp.jbrofuzz.core.Fuzzer;
 import org.owasp.jbrofuzz.core.NoSuchFuzzerException;
@@ -47,7 +48,7 @@ public class ZestFuzzerDelegate {
 
     public static final String JBROFUZZ_CATEGORY_PREFIX = "jbrofuzz / ";
 
-    private static final Logger logger = Logger.getLogger(ZestFuzzerDelegate.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestFuzzerDelegate.class);
 
     public ZestFuzzerDelegate() {
         this.loadFiles();
@@ -84,7 +85,7 @@ public class ZestFuzzerDelegate {
 
     public List<String> getFuzzersForCategory(String category) {
         if (category == null || category.length() == 0) {
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             list.add("");
             return list;
         } else if (category.startsWith(JBROFUZZ_CATEGORY_PREFIX)) {
@@ -103,7 +104,7 @@ public class ZestFuzzerDelegate {
     }
 
     public List<String> getAllFuzzCategories() {
-        List<String> cats = new ArrayList<String>();
+        List<String> cats = new ArrayList<>();
         cats.add("");
         for (String cat : getJBroFuzzCategories()) {
             if (cat.length() > 0) {
@@ -128,9 +129,9 @@ public class ZestFuzzerDelegate {
                 fuzzer = getJBroFuzzer(fuzzerName);
                 fuzzerFile = fromFuzzer(fuzzer);
             } catch (NoSuchFuzzerException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             } catch (IOException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
 
         } else {

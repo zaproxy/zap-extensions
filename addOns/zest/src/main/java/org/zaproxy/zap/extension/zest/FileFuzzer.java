@@ -28,7 +28,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class FileFuzzer {
 
@@ -36,7 +37,7 @@ public class FileFuzzer {
     private int length = -1;
     private List<String> fuzzStrs = new ArrayList<>();
     private Iterator<String> iter = null;
-    private static Logger log = Logger.getLogger(FileFuzzer.class);
+    private static final Logger LOGGER = LogManager.getLogger(FileFuzzer.class);
 
     protected FileFuzzer(File file) {
         this.file = file;
@@ -57,15 +58,15 @@ public class FileFuzzer {
             }
 
         } catch (FileNotFoundException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException e) {
-                    log.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }

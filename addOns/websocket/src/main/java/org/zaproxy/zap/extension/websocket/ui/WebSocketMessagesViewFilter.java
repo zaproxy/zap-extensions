@@ -50,7 +50,9 @@ public class WebSocketMessagesViewFilter {
         opcodeList = list;
     }
 
-    /** @return Null if all opcodes are allowed */
+    /**
+     * @return Null if all opcodes are allowed
+     */
     public List<Integer> getOpcodes() {
         return opcodeList;
     }
@@ -80,7 +82,9 @@ public class WebSocketMessagesViewFilter {
         return payloadFilter;
     }
 
-    /** @return Null if both directions should be shown */
+    /**
+     * @return Null if both directions should be shown
+     */
     public Direction getDirection() {
         return direction;
     }
@@ -93,7 +97,7 @@ public class WebSocketMessagesViewFilter {
         return isShowJustInScope;
     }
 
-    /** Resets this filter. Message will no longer be blacklisted. */
+    /** Resets this filter. Message will no longer be deny listed. */
     public void reset() {
         opcodeList = null;
         direction = null;
@@ -106,27 +110,27 @@ public class WebSocketMessagesViewFilter {
      * @param message
      * @return True if the given entry is filtered out, false if valid.
      */
-    public boolean isBlacklisted(WebSocketMessageDTO message) {
-        if (isShowJustInScope && !message.channel.isInScope()) {
+    public boolean isDenylisted(WebSocketMessageDTO message) {
+        if (isShowJustInScope && !message.getChannel().isInScope()) {
             return true;
         }
 
         if (opcodeList != null) {
-            if (!opcodeList.contains(message.opcode)) {
+            if (!opcodeList.contains(message.getOpcode())) {
                 return true;
             }
         }
 
         if (direction != null) {
-            if (message.isOutgoing && !direction.equals(Direction.OUTGOING)) {
+            if (message.isOutgoing() && !direction.equals(Direction.OUTGOING)) {
                 return true;
-            } else if (!message.isOutgoing && !direction.equals(Direction.INCOMING)) {
+            } else if (!message.isOutgoing() && !direction.equals(Direction.INCOMING)) {
                 return true;
             }
         }
 
         if (payloadFilter != null
-                && message.payload instanceof String
+                && message.getPayload() instanceof String
                 && !payloadFilter.isMessageValidWithPattern(message)) {
             return true;
             // binary messages are not affected by pattern
@@ -134,12 +138,16 @@ public class WebSocketMessagesViewFilter {
         return false;
     }
 
-    /** @return short description of applied filter */
+    /**
+     * @return short description of applied filter
+     */
     public String toShortString() {
         return toString(false);
     }
 
-    /** @return description of applied filter */
+    /**
+     * @return description of applied filter
+     */
     public String toLongString() {
         return toString(true);
     }

@@ -21,7 +21,9 @@
 
 package com.sittinglittleduck.DirBuster;
 
-/** @author james */
+/**
+ * @author james
+ */
 public class HTMLelementToParse {
     private String tag;
     private String attr;

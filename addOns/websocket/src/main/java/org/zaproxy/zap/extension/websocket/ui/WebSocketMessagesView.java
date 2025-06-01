@@ -27,10 +27,10 @@ import java.awt.event.MouseListener;
 import java.util.Vector;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
@@ -44,7 +44,7 @@ public class WebSocketMessagesView implements Runnable {
 
     public static final String PANEL_NAME = "websocket.table";
 
-    private static final Logger logger = Logger.getLogger(WebSocketMessagesView.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketMessagesView.class);
 
     protected JXTable view;
     protected WebSocketMessagesViewModel model;
@@ -137,26 +137,22 @@ public class WebSocketMessagesView implements Runnable {
     }
 
     protected ListSelectionListener getListSelectionListener() {
-        return new ListSelectionListener() {
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                // only display messages when there are no more selection changes.
-                if (!e.getValueIsAdjusting()) {
-                    int rowIndex = view.getSelectedRow();
-                    if (rowIndex < 0) {
-                        // selection got filtered away
-                        return;
-                    }
-
-                    WebSocketMessagesViewModel model = (WebSocketMessagesViewModel) view.getModel();
-
-                    // as we use a JXTable here, that can be sorted, we have to
-                    // transform the row index to the appropriate model row
-                    int modelRow = view.convertRowIndexToModel(rowIndex);
-                    final WebSocketMessageDTO message = model.getDTO(modelRow);
-                    readAndDisplay(message);
+        return e -> {
+            // only display messages when there are no more selection changes.
+            if (!e.getValueIsAdjusting()) {
+                int rowIndex = view.getSelectedRow();
+                if (rowIndex < 0) {
+                    // selection got filtered away
+                    return;
                 }
+
+                WebSocketMessagesViewModel model = (WebSocketMessagesViewModel) view.getModel();
+
+                // as we use a JXTable here, that can be sorted, we have to
+                // transform the row index to the appropriate model row
+                int modelRow = view.convertRowIndexToModel(rowIndex);
+                final WebSocketMessageDTO message = model.getDTO(modelRow);
+                readAndDisplay(message);
             }
         };
     }
@@ -219,25 +215,22 @@ public class WebSocketMessagesView implements Runnable {
             try {
                 final WebSocketMessageDTO msg = message;
                 EventQueue.invokeAndWait(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                if (msg.isOutgoing.booleanValue()) {
-                                    requestPanel.setMessage(msg);
-                                    responsePanel.clearView(false);
-                                    requestPanel.setTabFocus();
-                                } else {
-                                    requestPanel.clearView(true);
-                                    responsePanel.setMessage(msg, true);
-                                    responsePanel.setTabFocus();
-                                }
-                                getViewComponent().requestFocusInWindow();
+                        () -> {
+                            if (msg.isOutgoing().booleanValue()) {
+                                requestPanel.setMessage(msg);
+                                responsePanel.clearView(false);
+                                requestPanel.setTabFocus();
+                            } else {
+                                requestPanel.clearView(true);
+                                responsePanel.setMessage(msg, true);
+                                responsePanel.setTabFocus();
                             }
+                            getViewComponent().requestFocusInWindow();
                         });
 
             } catch (Exception e) {
                 // ZAP: Added logging.
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
 
             // wait some time to allow another selection event to be triggered
@@ -264,7 +257,8 @@ public class WebSocketMessagesView implements Runnable {
                 displayQueue.clear();
             }
 
-            message.tempUserObj = WebSocketPanel.connectedChannelIds.contains(message.channel.id);
+            message.setTempUserObj(
+                    WebSocketPanel.connectedChannelIds.contains(message.getChannel().getId()));
             displayQueue.add(message);
         }
 

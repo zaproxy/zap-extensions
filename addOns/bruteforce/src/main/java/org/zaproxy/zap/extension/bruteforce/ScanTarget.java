@@ -37,7 +37,6 @@ public class ScanTarget implements Comparable<ScanTarget> {
     private boolean scanned;
 
     private String stringRepresentation;
-    private String htmlStringRepresentation;
 
     public ScanTarget(URI uri) {
         this.uri = copyURI(uri);
@@ -61,7 +60,6 @@ public class ScanTarget implements Comparable<ScanTarget> {
         }
 
         this.stringRepresentation = createHostPortString(host, port);
-        buildHtmlStringRepresentation();
     }
 
     protected ScanTarget(String value) {
@@ -70,7 +68,7 @@ public class ScanTarget implements Comparable<ScanTarget> {
         this.host = "";
         this.port = 0;
 
-        this.htmlStringRepresentation = value;
+        this.stringRepresentation = value;
     }
 
     public URI getURI() {
@@ -90,18 +88,11 @@ public class ScanTarget implements Comparable<ScanTarget> {
     }
 
     public void setScanned(boolean scanned) {
-        if (this.scanned != scanned) {
-            this.scanned = scanned;
-            buildHtmlStringRepresentation();
-        }
+        this.scanned = scanned;
     }
 
-    private void buildHtmlStringRepresentation() {
-        if (scanned) {
-            this.htmlStringRepresentation = htmlScannedTarget(stringRepresentation);
-        } else {
-            this.htmlStringRepresentation = htmlNotScannedTarget(stringRepresentation);
-        }
+    public boolean isScanned() {
+        return scanned;
     }
 
     private static URI copyURI(URI uri) {
@@ -130,21 +121,9 @@ public class ScanTarget implements Comparable<ScanTarget> {
         return HTTP_DEFAULT_PORT;
     }
 
-    private static String htmlScannedTarget(String site) {
-        return "<html><b>" + site + "</b></html>";
-    }
-
-    private static String htmlNotScannedTarget(String site) {
-        return "<html>" + site + "</html>";
-    }
-
-    public String toPlainString() {
-        return stringRepresentation;
-    }
-
     @Override
     public String toString() {
-        return htmlStringRepresentation;
+        return stringRepresentation;
     }
 
     @Override

@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.websocket.ui;
 import java.awt.Component;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.popup.PopupMenuItemContextExclude;
 
@@ -35,6 +36,11 @@ public class PopupExcludeWebSocketContextMenu extends PopupMenuItemContextExclud
     @Override
     public String getParentMenuName() {
         return MENU_NAME;
+    }
+
+    @Override
+    public int getParentWeight() {
+        return MenuWeights.MENU_EXC_CHANNEL_CONTEXT_WEIGHT;
     }
 
     @Override

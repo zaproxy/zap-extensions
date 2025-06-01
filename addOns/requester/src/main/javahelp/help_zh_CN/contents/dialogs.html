@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>Manual Request Editor dialog</TITLE>
+</HEAD>
+<BODY>
+	<H1>Manual Request Editor dialog</H1>
+
+	This dialog allows you to create a HTTP request from scratch which will
+	be submitted to the specified target, or resend an existing HTTP
+	request after making any changes to it that you want to.
+
+	<H2>Request tab</H2>
+
+	This shows the request header and data, either in one or two panels
+	depending on the options chosen.
+	<br />
+	<br /> A 'Method' pull down allows you to switch between the HTTP
+	methods.
+	<br> Note that when the method is changed to a POST then any URL
+	parameters are moved into the body, and when the method is changed from
+	a POST then any parameters in the body are moved to the URL.
+	<br />
+	<br /> Pull downs allow you to select different Views for the Request
+	header and body.
+
+	<H3>
+		<img src="images/view-split.png" width="16" height="16" alt="" />&nbsp;
+		Split display for header and body
+	</H3>
+	This changes the display so that separate panes are used for the header
+	and body.
+	<br>
+
+	<H3>
+		<img src="images/view-all.png" width="16" height="16" alt="" />&nbsp;
+		Combined display for header and body
+	</H3>
+	This changes the display so that the header and body are shown in one
+	pane.
+	<br>
+
+	<H3>
+		<img src="images/fugue/globe-green.png" width="16" height="16" alt="" />&nbsp;
+		Use current tracking session
+	</H3>
+	See the 'Use Global HTTP State' option in Options > Network >
+	Connection options screen.
+	<br>
+
+	<H3>
+		<img src="images/fugue/cookie.png" width="16" height="16" alt="" />&nbsp;
+		Accept cookies
+	</H3>
+	This option controls whether encountered cookies should be added to
+	subsequent requests. For example if a request is sent that results in a
+	response with Set-Cookie header(s) should those cookies values be added
+	to subsequent send attempts from the Manual Request dialog?
+	<br>
+
+	<H3>
+		<img src="images/follow-redirect.png" width="16" height="16" alt="" />&nbsp;
+		Follow redirect
+	</H3>
+	If selected automatically follows any redirects sent to the browser.
+	<br>
+
+	<H3>
+		<img src="images/fugue/application-resize.png" width="16" height="16"
+			alt="" />&nbsp; Update Content Length
+	</H3>
+	By default ZAP will automatically update (or add) the Content-Length
+	header to match the size of the data submitted. If this option is
+	unselected then ZAP will not update the header allowing you to specify
+	any value you like.
+	<br>
+
+	<H3>
+		<img src="images/fugue/server.png" width="16" height="16" alt="" />&nbsp;
+		Update Host Header
+	</H3>
+	By default ZAP will automatically update (or add) the Host header to
+	match the URL specified. If this option is unselected then ZAP will not
+	update the header allowing you to specify any value you like.
+	<br>
+
+	<H3>
+		<img src="images/csrf-button.png" width="16" height="16" alt="" />&nbsp;
+		Regenerate Anti-CSRF Token
+	</H3>
+	If selected automatically regenerates Anti-CSRF tokens if any exist.
+	Currently only supported in the message body and requires that the
+	Anti-CSRF extension is enabled.
+	<br>
+
+	<H3>
+		<img src="images/lowercase-header-button.png" width="16" height="16"
+			alt="" />&nbsp; Lowercase Header Names
+	</H3>
+	This will lowercase all the header names, making them compliant with
+	HTTP/2.
+	<br>
+
+	<H3>
+		<img src="images/layout-tabbed.png" width="16" height="16" alt="" />&nbsp;
+		Request and Response tabs side by side
+	</H3>
+	This changes the display so that the request and response tabs are side
+	by side.
+	<br> This increases the information that can be displayed but
+	means you cannot see both the request and response at the same time.
+
+	<H3>
+		<img src="images/layout-vertical-split.png" width="16" height="16"
+			alt="" />&nbsp; Request shown above Response
+	</H3>
+	This changes the display so that the request panel is shown above the
+	response panel.
+	<br> This decreases the information that can be displayed but
+	means you can see both the request and response at the same time.
+
+	<H3>
+		<img src="images/layout-horizontal-split.png" width="16" height="16"
+			alt="" />&nbsp; Request and Response panels side by side
+	</H3>
+	This changes the display so that the request panel is shown to the left
+	of the response panel.
+	<br> This decreases the information that can be displayed but
+	means you can see both the request and response at the same time.
+
+	<H2>Response tab</H2>
+
+	This shows the data sent to your browser in response to the request
+	that you submitted, either in one or two panels depending on the
+	options chosen.
+	<br />
+	<br /> Pull downs allow you to select different Views for the Response
+	header and body.
+
+
+	<H2>Accessed via</H2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>Top level Tools menu</td>
+			<td>'Manual Request Editor...' menu item</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td>In any GUI component that has a HTTP message</td>
+			<td>'Open/Resend with Request Editor...' context menu item</td>
+		</tr>
+	</table>
+
+	<H2>See also</H2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="requester.html">Requester</a></td>
+			<td>the introduction to Requester add-on</td>
+		</tr>
+	</table>
+</BODY>
+</HTML>

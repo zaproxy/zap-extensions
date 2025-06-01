@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.tips;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -65,7 +63,7 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addHelpMenuItem(getMenuTipsAndTricks());
         }
     }
@@ -79,13 +77,7 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
         if (menuTipsAndTricks == null) {
             menuTipsAndTricks = new ZapMenuItem(PREFIX + ".topmenu.help.tips");
 
-            menuTipsAndTricks.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent ae) {
-                            displayRandomTip();
-                        }
-                    });
+            menuTipsAndTricks.addActionListener(e -> displayRandomTip());
         }
         return menuTipsAndTricks;
     }
@@ -93,7 +85,7 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
     private List<String> getTipsAndTricks() {
         if (tipsAndTricks == null) {
             // Need to load them in
-            tipsAndTricks = new ArrayList<String>();
+            tipsAndTricks = new ArrayList<>();
 
             ResourceBundle rb = Constant.messages.getMessageBundle(PREFIX);
             Enumeration<String> enm = rb.getKeys();
@@ -104,7 +96,7 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
                 }
             }
 
-            if (tipsAndTricks.size() == 0) {
+            if (tipsAndTricks.isEmpty()) {
                 this.getMenuTipsAndTricks().setEnabled(false);
             }
         }
@@ -127,30 +119,16 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     /**
      * Generate the help file including all of the tips
      *
-     * @param parmas
+     * @param params
      */
-    public static void main(String[] parmas) {
+    public static void main(String[] params) {
         Properties props = new Properties();
         File f = new File("src/org/zaproxy/zap/extension/tips/resources/Messages.properties");
         try {
@@ -178,7 +156,7 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
             fw.write("<H2>Full list of tips</H2>\n");
 
             Set<Object> keys = props.keySet();
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
             for (Object key : keys) {
                 if (key.toString().startsWith(TIPS_PREFIX)) {
                     list.add(props.getProperty(key.toString()));

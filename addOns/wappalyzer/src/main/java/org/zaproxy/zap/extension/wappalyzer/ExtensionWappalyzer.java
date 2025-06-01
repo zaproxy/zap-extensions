@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.wappalyzer;
 
 import java.awt.EventQueue;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -31,14 +29,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-import javax.swing.ImageIcon;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -47,69 +51,123 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.addon.pscan.ExtensionPassiveScan2;
+import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
+import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ScanPanel;
 import org.zaproxy.zap.view.SiteMapListener;
 import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 
 public class ExtensionWappalyzer extends ExtensionAdaptor
-        implements SessionChangedListener, SiteMapListener, WappalyzerApplicationHolder {
+        implements SessionChangedListener,
+                SiteMapListener,
+                ApplicationHolder,
+                ExampleAlertProvider {
 
     public static final String NAME = "ExtensionWappalyzer";
 
     public static final String RESOURCE = "/org/zaproxy/zap/extension/wappalyzer/resources";
 
-    public static final ImageIcon WAPPALYZER_ICON =
-            new ImageIcon(ExtensionWappalyzer.class.getResource(RESOURCE + "/wappalyzer.png"));
+    public static final String TECHNOLOGIES_PATH = "resources/technologies/";
+    public static final String CATEGORIES_PATH = "resources/categories.json";
 
     private TechPanel techPanel = null;
     private PopupMenuEvidence popupMenuEvidence = null;
 
-    private Map<String, String> categories = new HashMap<String, String>();
-    private List<Application> applications = new ArrayList<Application>();
+    private List<Application> applications = new ArrayList<>();
 
     private ExtensionSearch extSearch = null;
 
-    private Map<String, TechTableModel> siteTechMap = new HashMap<String, TechTableModel>();
+    private Map<String, TechTableModel> siteTechMap;
+    private boolean enabled;
+    private TechDetectParam techDetectParam;
 
-    private static final Logger logger = Logger.getLogger(ExtensionWappalyzer.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionWappalyzer.class);
 
     /** The dependencies of the extension. */
-    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            List.of(ExtensionPassiveScan2.class);
 
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionPassiveScan.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
+    private TechPassiveScanner passiveScanner;
+
+    public enum Mode {
+        QUICK(Constant.messages.getString("wappalyzer.mode.quick")),
+        EXHAUSTIVE(Constant.messages.getString("wappalyzer.mode.exhaustive"));
+        private final String name;
+
+        Mode(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String toString() {
+            return getName();
+        }
     }
 
-    private WappalyzerPassiveScanner passiveScanner;
-    private WappalyzerAPI api;
-
     /**
-     * TODO Implementaion Version handling Confidence handling - need to test for daemon mode (esp
+     * TODO implement Version handling Confidence handling - need to test for daemon mode (esp
      * revisits) Issues Handle load session - store tech in db? Sites pull down not populated if no
-     * tech found - is this actually a problem? One pattern still fails to compile
+     * tech found - is this actually a problem?
      */
     public ExtensionWappalyzer() {
         super(NAME);
         this.setOrder(201);
-
-        try {
-            WappalyzerJsonParser parser = new WappalyzerJsonParser();
-            WappalyzerData result = parser.parseDefaultAppsJson();
-            this.applications = result.getApplications();
-            this.categories = result.getCategories();
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
     }
 
     @Override
     public void init() {
         super.init();
-        passiveScanner = new WappalyzerPassiveScanner(this);
+
+        recreateSiteTreeMap();
+
+        // Prevent jsvg from logging too many, not so useful messages.
+        setLogLevel(
+                List.of(
+                        "com.github.weisj.jsvg.util.ResourceUtil",
+                        "com.github.weisj.jsvg.parser.css.impl.SimpleCssParser",
+                        "com.github.weisj.jsvg.parser.css.impl.Lexer",
+                        "com.github.weisj.jsvg.parser.SVGLoader",
+                        "com.github.weisj.jsvg.nodes.Image",
+                        "com.github.weisj.jsvg.nodes.container.BaseContainerNode"),
+                Level.OFF);
+
+        List<String> technologyFiles = new ArrayList<>();
+        try (ZipFile zip = new ZipFile(getAddOn().getFile())) {
+            zip.stream()
+                    .filter(ExtensionWappalyzer::isTechnology)
+                    .map(ExtensionWappalyzer::techToResourcePath)
+                    .forEach(technologyFiles::add);
+        } catch (IOException e) {
+            LOGGER.error("Failed to enumerate Tech Detection technologies:", e);
+        }
+
+        TechData result =
+                new TechsJsonParser().parse(CATEGORIES_PATH, technologyFiles, View.isInitialised());
+        this.applications = result.getApplications();
+
+        enabled = true;
+        techDetectParam = new TechDetectParam();
+        passiveScanner = new TechPassiveScanner(this);
+    }
+
+    private static boolean isTechnology(ZipEntry entry) {
+        String name = entry.getName();
+        return name.contains(TECHNOLOGIES_PATH) && name.endsWith(".json");
+    }
+
+    private static String techToResourcePath(ZipEntry entry) {
+        String name = entry.getName();
+        return name.substring(name.lastIndexOf(TECHNOLOGIES_PATH));
+    }
+
+    TechPassiveScanner getPassiveScanner() {
+        return passiveScanner;
     }
 
     @Override
@@ -119,21 +177,53 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         extensionHook.addSessionListener(this);
         extensionHook.addSiteMapListener(this);
 
-        if (getView() != null) {
+        if (hasView()) {
             @SuppressWarnings("unused")
             ExtensionHookView pv = extensionHook.getHookView();
             extensionHook.getHookView().addStatusPanel(getTechPanel());
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuEvidence());
+            extensionHook.getHookView().addOptionPanel(new TechOptionsPanel());
         }
 
-        this.api = new WappalyzerAPI(this);
-        extensionHook.addApiImplementor(this.api);
+        extensionHook.addApiImplementor(new TechApi(this));
+        extensionHook.addOptionsParamSet(techDetectParam);
 
-        ExtensionPassiveScan extPScan =
-                Control.getSingleton()
-                        .getExtensionLoader()
-                        .getExtension(ExtensionPassiveScan.class);
-        extPScan.addPassiveScanner(passiveScanner);
+        getPscanExtension().getPassiveScannersManager().add(passiveScanner);
+        extensionHook.addOptionsChangedListener(passiveScanner);
+    }
+
+    private static ExtensionPassiveScan2 getPscanExtension() {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionPassiveScan2.class);
+    }
+
+    @Override
+    public void optionsLoaded() {
+        super.optionsLoaded();
+
+        setWappalyzer(techDetectParam.isEnabled());
+        passiveScanner.setMode(techDetectParam.getMode());
+        passiveScanner.setRaiseAlerts(techDetectParam.isRaiseAlerts());
+    }
+
+    void setWappalyzer(boolean enabled) {
+        if (this.enabled == enabled) {
+            return;
+        }
+        this.enabled = enabled;
+
+        techDetectParam.setEnabled(enabled);
+        getPassiveScanner().setEnabled(enabled);
+
+        if (hasView()) {
+            ThreadUtils.invokeLater(
+                    () -> getTechPanel().getEnableToggleButton().setSelected(enabled));
+        }
+    }
+
+    boolean isWappalyzerEnabled() {
+        return enabled;
     }
 
     private TechPanel getTechPanel() {
@@ -159,11 +249,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     public void unload() {
         super.unload();
 
-        ExtensionPassiveScan extPScan =
-                Control.getSingleton()
-                        .getExtensionLoader()
-                        .getExtension(ExtensionPassiveScan.class);
-        extPScan.removePassiveScanner(passiveScanner);
+        getPscanExtension().getPassiveScannersManager().remove(passiveScanner);
     }
 
     @Override
@@ -172,22 +258,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("wappalyzer.desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override
@@ -195,30 +267,45 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         return Constant.messages.getString("wappalyzer.name");
     }
 
+    @Override
     public List<Application> getApplications() {
         return this.applications;
     }
 
     public TechTableModel getTechModelForSite(String site) {
-        TechTableModel model = this.siteTechMap.get(site);
-        if (model == null) {
-            model = new TechTableModel();
-            this.siteTechMap.put(site, model);
-            if (getView() != null) {
-                // Add to site pulldown
-                this.getTechPanel().addSite(site);
-            }
+        TechTableModel model = this.siteTechMap.computeIfAbsent(site, s -> new TechTableModel());
+        if (hasView()) {
+            // Add to site pulldown
+            this.getTechPanel().addSite(site);
         }
         return model;
     }
 
+    @Override
     public void addApplicationsToSite(String site, ApplicationMatch applicationMatch) {
 
-        this.getTechModelForSite(site).addApplication(applicationMatch);
+        if (!hasView() || EventQueue.isDispatchThread()) {
+            this.getTechModelForSite(site).addApplication(applicationMatch);
+        } else {
+            EventQueue.invokeLater(
+                    () -> this.getTechModelForSite(site).addApplication(applicationMatch));
+        }
+    }
+
+    /**
+     * Accept an {@code URI} which will be normalized into a site string usable by the Tech
+     * Detection add-on and adds the provided {@code ApplicationMatch}
+     *
+     * @param uri The URI to be normalized and used
+     * @param applicationMatch the ApplicationMatch for the tech to be added
+     * @since 21.44.0
+     */
+    public void addApplicationsToSite(URI uri, ApplicationMatch applicationMatch) {
+        this.addApplicationsToSite(normalizeSite(uri), applicationMatch);
     }
 
     public Application getSelectedApp() {
-        if (View.isInitialised()) {
+        if (hasView()) {
             String appName = this.getTechPanel().getSelectedApplicationName();
             if (appName != null) {
                 return this.getApplication(appName);
@@ -228,7 +315,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     }
 
     public String getSelectedSite() {
-        if (View.isInitialised()) {
+        if (hasView()) {
             return this.getTechPanel().getCurrentSite();
         }
         return null;
@@ -243,9 +330,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         try {
             return lead + uri.getAuthority();
         } catch (URIException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Unable to get authority from: " + uri.toString(), e);
-            }
+            LOGGER.debug("Unable to get authority from: {}", uri, e);
             // Shouldn't happen, but sure fallback
             return ScanPanel.cleanSiteName(uri.toString(), true);
         }
@@ -256,10 +341,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             site = normalizeSite(new URI(site == null ? "" : site, false));
         } catch (URIException ue) {
             // Shouldn't happen, but sure fallback
-            if (logger.isDebugEnabled()) {
-                logger.debug(
-                        "Falling back to 'CleanSiteName'. Failed to create URI from: " + site, ue);
-            }
+            LOGGER.debug(
+                    "Falling back to 'CleanSiteName'. Failed to create URI from: {}", site, ue);
             site = ScanPanel.cleanSiteName(site, true);
         }
         return site;
@@ -277,9 +360,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     }
 
     public void search(Pattern p, ExtensionSearch.Type type) {
-        ExtensionSearch extSearch = this.getExtensionSearch();
-        if (extSearch != null) {
-            extSearch.search(p.pattern(), type, true, false);
+        if (getExtensionSearch() != null) {
+            getExtensionSearch().search(p.pattern(), type, true, false);
         }
     }
 
@@ -300,7 +382,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     @Override
     public void sessionChanged(final Session session) {
-        if (getView() == null) {
+        if (!hasView()) {
             return;
         }
 
@@ -309,41 +391,42 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
         } else {
             try {
-                EventQueue.invokeAndWait(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                sessionChangedEventHandler(session);
-                            }
-                        });
+                EventQueue.invokeAndWait(() -> sessionChangedEventHandler(session));
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
 
+    private void recreateSiteTreeMap() {
+        siteTechMap = Collections.synchronizedMap(new HashMap<>());
+    }
+
     private void sessionChangedEventHandler(Session session) {
         // Clear all scans
-        siteTechMap = new HashMap<String, TechTableModel>();
-        this.getTechPanel().reset();
-        if (session == null) {
-            // Closedown
-            return;
-        }
+        recreateSiteTreeMap();
+        getPassiveScanner().reset();
+        if (hasView()) {
+            this.getTechPanel().reset();
+            if (session == null) {
+                // Closedown
+                return;
+            }
 
-        // TODO Repopulate
-        SiteNode root = (SiteNode) session.getSiteTree().getRoot();
-        @SuppressWarnings("unchecked")
-        Enumeration<TreeNode> en = root.children();
-        while (en.hasMoreElements()) {
-            String site =
-                    normalizeSite(((SiteNode) en.nextElement()).getHistoryReference().getURI());
-            this.getTechPanel().addSite(site);
+            // Repopulate
+            SiteNode root = session.getSiteTree().getRoot();
+            @SuppressWarnings("unchecked")
+            Enumeration<TreeNode> en = root.children();
+            while (en.hasMoreElements()) {
+                String site =
+                        normalizeSite(((SiteNode) en.nextElement()).getHistoryReference().getURI());
+                this.getTechPanel().addSite(site);
+            }
         }
     }
 
     @Override
-    public void sessionModeChanged(Mode arg0) {
+    public void sessionModeChanged(org.parosproxy.paros.control.Control.Mode arg0) {
         // Ignore
     }
 
@@ -355,13 +438,49 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     @Override
     public void postInstall() {
         super.postInstall();
-        if (getView() != null) {
-            getTechPanel().setTabFocus();
-            // Un-comment to test icon rendering
-            /*
-             * getApplications() .forEach( app -> addApplicationsToSite( "http://localhost", new
-             * ApplicationMatch(app)));
-             */
+        if (hasView()) {
+            EventQueue.invokeLater(this::focusTab);
         }
+    }
+
+    private void focusTab() {
+        getTechPanel().setTabFocus();
+        // Un-comment to test icon rendering
+        /*
+         * getApplications() .forEach( app -> addApplicationsToSite( "http://localhost",
+         * new ApplicationMatch(app)));
+         */
+    }
+
+    private static void setLogLevel(List<String> classnames, Level level) {
+        boolean updateLoggers = false;
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration configuration = ctx.getConfiguration();
+        for (String classname : classnames) {
+            LoggerConfig loggerConfig = configuration.getLoggerConfig(classname);
+            if (!classname.equals(loggerConfig.getName())) {
+                configuration.addLogger(
+                        classname,
+                        LoggerConfig.newBuilder()
+                                .withLoggerName(classname)
+                                .withLevel(level)
+                                .withConfig(configuration)
+                                .build());
+                updateLoggers = true;
+            }
+        }
+
+        if (updateLoggers) {
+            ctx.updateLoggers();
+        }
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return passiveScanner.getExampleAlerts();
+    }
+
+    public String getHelpLink() {
+        return passiveScanner.getHelpLink();
     }
 }

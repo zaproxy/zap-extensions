@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.fuzz;
 
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -38,12 +37,13 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-import javax.swing.KeyStroke;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.owasp.jbrofuzz.core.Database;
 import org.owasp.jbrofuzz.version.JBroFuzzPrefs;
 import org.parosproxy.paros.Constant;
@@ -54,7 +54,6 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.ViewDelegate;
 import org.parosproxy.paros.model.Session;
-import org.zaproxy.zap.Version;
 import org.zaproxy.zap.extension.AddonFilesChangedListener;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.DefaultStringPayloadGenerator;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.FileStringPayloadGenerator;
@@ -114,19 +113,22 @@ import org.zaproxy.zap.view.messagecontainer.SelectableContentMessageContainer;
 
 public class ExtensionFuzz extends ExtensionAdaptor {
 
-    private static final Logger LOGGER = Logger.getLogger(ExtensionFuzz.class);
+    public static final String FUZZER_PREFIX = "stats.fuzz.";
+    public static final String STARTED_POSTFIX = ".started";
+    public static final String PAYLOAD_PROCESSOR_RUN_STATS =
+            FUZZER_PREFIX + "payload.processors.run";
+    public static final String PAYLOAD_PROCESSOR_ERROR_STATS =
+            FUZZER_PREFIX + "payload.processors.error";
+    public static final String HTTP_MSG_PROCESSOR_RUN_STATS =
+            FUZZER_PREFIX + "HTTP.message.processors.run";
+    public static final String HTTP_MSG_PROCESSOR_ERROR_STATS =
+            FUZZER_PREFIX + "HTTP.message.processors.error";
+    public static final String MESSAGES_SENT_STATS = FUZZER_PREFIX + "messages.sent";
+    public static final String MESSAGES_EDITED_STATS = FUZZER_PREFIX + "messages.edited";
 
-    private static final ImageIcon SCRIPT_PAYLOAD_GENERATOR_ICON =
-            new ImageIcon(
-                    ExtensionFuzz.class.getResource(
-                            "resources/icons/script-payload-generator.png"));
-    private static final ImageIcon SCRIPT_PAYLOAD_PROCESSOR_ICON =
-            new ImageIcon(
-                    ExtensionFuzz.class.getResource(
-                            "resources/icons/script-payload-processor.png"));
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionFuzz.class);
 
     public static final String NAME = "ExtensionFuzz";
-    public static final Version CURRENT_VERSION = new Version("2.0.1");
 
     private static final String JBROFUZZ_CATEGORY_PREFIX = "jbrofuzz";
 
@@ -149,8 +151,11 @@ public class ExtensionFuzz extends ExtensionAdaptor {
     private ScriptType scriptTypeProcessor;
     private ZapMenuItem menuItemCustomScan = null;
 
+    private MessagePanelManager clientMessagePanelManager;
+    private MessagePanelManager serverMessagePanelManager;
+
     public ExtensionFuzz() {
-        super(NAME, CURRENT_VERSION);
+        super(NAME);
 
         setI18nPrefix("fuzz");
     }
@@ -294,7 +299,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                     new ScriptType(
                             ScriptStringPayloadGenerator.TYPE_NAME,
                             "fuzz.payloads.script.type.payloadgenerator",
-                            SCRIPT_PAYLOAD_GENERATOR_ICON,
+                            createIcon("script-payload-generator.png"),
                             true,
                             true);
             extensionScript.registerScriptType(scriptTypeGenerator);
@@ -306,7 +311,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                     new ScriptType(
                             ScriptStringPayloadProcessor.TYPE_NAME,
                             "fuzz.payloads.script.type.payloadprocessor",
-                            SCRIPT_PAYLOAD_PROCESSOR_ICON,
+                            createIcon("script-payload-processor.png"),
                             true,
                             true);
             extensionScript.registerScriptType(scriptTypeProcessor);
@@ -314,6 +319,16 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                     ScriptStringPayloadProcessorAdapter.class,
                     new ScriptStringPayloadProcessorAdapterUIHandler(extensionScript));
         }
+
+        clientMessagePanelManager = new MessagePanelManager();
+        serverMessagePanelManager = new MessagePanelManager();
+    }
+
+    private ImageIcon createIcon(String path) {
+        if (hasView()) {
+            return new ImageIcon(getClass().getResource("resources/icons/" + path));
+        }
+        return null;
     }
 
     @Override
@@ -323,7 +338,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
         extensionHook.addOptionsParamSet(fuzzOptions);
         extensionHook.addAddonFilesChangedListener(new FuzzerFilesUpdater());
 
-        if (getView() != null) {
+        if (hasView()) {
             PayloadGeneratorUIHandlersRegistry payloadGeneratorsUIRegistry =
                     PayloadGeneratorUIHandlersRegistry.getInstance();
             payloadGeneratorsUIRegistry.registerPayloadUI(
@@ -354,24 +369,19 @@ public class ExtensionFuzz extends ExtensionAdaptor {
             fuzzScansPanel.unload();
         }
 
-        if (getView() != null) {
+        if (hasView()) {
             ExtensionScript extensionScript =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
 
             if (extensionScript != null) {
-                extensionScript.removeScripType(scriptTypeGenerator);
-                extensionScript.removeScripType(scriptTypeProcessor);
+                extensionScript.removeScriptType(scriptTypeGenerator);
+                extensionScript.removeScriptType(scriptTypeProcessor);
             }
         }
     }
 
     protected FuzzOptions getFuzzOptions() {
         return fuzzOptions;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override
@@ -412,27 +422,34 @@ public class ExtensionFuzz extends ExtensionAdaptor {
         fuzzersController.stopAllScans();
     }
 
-    @SuppressWarnings("deprecation")
+    /**
+     * Gets the panel manager for client messages.
+     *
+     * @return the panel manager for client messages, {@code null} if there's no view.
+     */
+    public MessagePanelManager getClientMessagePanelManager() {
+        return clientMessagePanelManager;
+    }
+
+    /**
+     * Gets the panel manager for server messages.
+     *
+     * @return the panel manager for server messages, {@code null} if there's no view.
+     */
+    public MessagePanelManager getServerMessagePanelManager() {
+        return serverMessagePanelManager;
+    }
+
     private ZapMenuItem getMenuItemCustomScan() {
         if (menuItemCustomScan == null) {
             menuItemCustomScan =
                     new ZapMenuItem(
                             "fuzz.menu.tools.fuzz",
-                            // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke
-                            // with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                            KeyStroke.getKeyStroke(
-                                    KeyEvent.VK_F,
-                                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                            | KeyEvent.ALT_DOWN_MASK,
-                                    false));
+                            getView()
+                                    .getMenuShortcutKeyStroke(
+                                            KeyEvent.VK_F, KeyEvent.ALT_DOWN_MASK, false));
 
-            menuItemCustomScan.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            fuzzerStarter.actionPerformed(e);
-                        }
-                    });
+            menuItemCustomScan.addActionListener(e -> fuzzerStarter.actionPerformed(e));
         }
 
         return menuItemCustomScan;
@@ -469,8 +486,8 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                             if (depth != 0) {
                                 categoryNames.add(dir.getFileName().toString());
                             }
-                            directories.push(new ArrayList<FuzzerPayloadCategory>());
-                            files.push(new ArrayList<FuzzerPayloadSource>());
+                            directories.push(new ArrayList<>());
+                            files.push(new ArrayList<>());
 
                             depth++;
                             return super.preVisitDirectory(dir, attrs);
@@ -534,7 +551,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
     }
 
     private static String createSubCategoryFullName(List<String> categories) {
-        if (categories == null || categories.size() == 0) {
+        if (categories == null || categories.isEmpty()) {
             return "";
         }
         if (categories.size() == 1) {
@@ -574,7 +591,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
 
     public <M extends Message, F extends Fuzzer<M>> void addFuzzerHandler(
             FuzzerHandler<M, F> fuzzerHandler) {
-        fuzzerHandlers.add(fuzzerHandler);
+        fuzzerHandlers.add(Objects.requireNonNull(fuzzerHandler));
 
         if (defaultFuzzerHandler == null) {
             defaultFuzzerHandler = fuzzerHandler;
@@ -636,8 +653,8 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                     return fh;
                 } catch (ClassCastException e) {
                     LOGGER.warn(
-                            "FuzzerHandler not consistent with required message type: "
-                                    + fuzzerHandler.getClass().getCanonicalName());
+                            "FuzzerHandler not consistent with required message type: {}",
+                            fuzzerHandler.getClass().getCanonicalName());
                 }
             }
         }

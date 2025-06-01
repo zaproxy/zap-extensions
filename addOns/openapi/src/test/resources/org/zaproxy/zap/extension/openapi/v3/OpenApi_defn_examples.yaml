@@ -1,0 +1,165 @@
+openapi: 3.0.0
+components:
+  schemas:
+    Pet:
+      type: object
+      properties:
+        age:
+          type: integer
+          example: 3
+        name:
+          type: string
+          example: Fluffy
+paths:
+  /query-parameter-with-example:
+    get:
+      parameters:
+        - name: petId
+          in: query
+          description: ID of pet to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+          example: 42
+      responses:
+        '201':
+          description: Created
+  /query-parameter-with-examples:
+    get:
+      parameters:
+        - name: petId
+          in: query
+          description: ID of pet to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+          examples:
+            petId:
+              value: 42
+      responses:
+        '201':
+          description: Created
+  /query-parameter-with-example-in-schema:
+    get:
+      parameters:
+        - name: petId
+          in: query
+          description: ID of pet to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 42
+      responses:
+        '201':
+          description: Created
+  # Using Example defined in a references schema
+  /pets-with-example:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+      responses:
+        '201':
+          description: Created
+  # Using Examples defined in a json request body
+  /pets-with-json-media-type-examples:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+            examples:
+              fluffy-example:
+                description: a pet called Big Fluffy
+                value:
+                  age: 6
+                  name: Big Fluffy
+              fawkes-example:
+                description: a pet called Small Fawkes
+                value:
+                  age: 1
+                  name: Small Fawkes
+      responses:
+        '201':
+          description: Created
+  /pets-with-json-media-type-example:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+            example:
+              age: 1
+              name: Small Fluffy
+      responses:
+        '201':
+          description: Created
+  # Using an Array with examples for the properties described in the items
+  /pets-with-array-example:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  age:
+                    type: integer
+                    example: 3
+                  name:
+                    type: string
+                    example: Fluffy
+      responses:
+        '201':
+          description: Created
+  # Using an Array has an example formatted as string
+  /pets-with-array-full-example-string:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  age:
+                    type: integer
+                  name:
+                    type: string
+              example: '[{"age":3,"name":"Fluffy"},{"age":512,"name":"Fawkes"}]'
+      responses:
+        '201':
+          description: Created
+  # Array has an example formatted as a yaml array
+  /pets-with-array-full-example-yaml:
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  age:
+                    type: integer
+                  name:
+                    type: string
+              example:
+                - age: 3
+                  name: "Fluffy"
+                - age: 512
+                  name: "Fawkes"
+      responses:
+        '201':
+          description: Created

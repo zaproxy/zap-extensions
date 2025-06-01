@@ -10,6 +10,10 @@
          		<tocitem text="Aba" target="websocket.tab"/>
 				<tocitem text="Opções" target="websocket.options"/>
 				<tocitem text="Propriedades da Sessão" target="websocket.sessionProperties"/>
+				<tocitem text="Scripts" target="websocket.script"/>
+				<tocitem text="API" target="websocket.api"/>
+        <tocitem text="Passive Scan Rules" target="websocket.pscanrules"/>
+				<tocitem text="About" target="websocket.about"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

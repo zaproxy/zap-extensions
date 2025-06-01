@@ -24,13 +24,14 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 /**
  * A {@code ComboBoxModel} of {@code BrowserUI}s.
  *
  * @see BrowserUI
  */
+@SuppressWarnings("serial")
 public class BrowsersComboBoxModel extends AbstractListModel<BrowserUI>
         implements ComboBoxModel<BrowserUI> {
 

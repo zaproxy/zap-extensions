@@ -82,7 +82,6 @@ paths:
                 - available
                 - pending
                 - sold
-              default: available
       responses:
         "200":
           description: successful operation
@@ -230,45 +229,6 @@ paths:
           description: Invalid ID supplied
         "404":
           description: Pet not found
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-  "/pet/{petId}/uploadImage":
-    post:
-      tags:
-        - pet
-      summary: uploads an image
-      description: ""
-      operationId: uploadFile
-      parameters:
-        - name: petId
-          in: path
-          description: ID of pet to update
-          required: true
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                additionalMetadata:
-                  description: Additional data to pass to server
-                  type: string
-                file:
-                  description: file to upload
-                  type: string
-                  format: binary
-      responses:
-        "200":
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ApiResponse"
       security:
         - petstore_auth:
             - write:pets
@@ -600,7 +560,6 @@ components:
             - delivered
         complete:
           type: boolean
-          default: false
       xml:
         name: Order
     Category:
@@ -662,7 +621,6 @@ components:
           $ref: "#/components/schemas/Category"
         name:
           type: string
-          example: doggie
         photoUrls:
           type: array
           xml:

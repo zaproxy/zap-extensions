@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.quickstart.launch;
 
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URL;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -128,7 +126,7 @@ public class OptionsQuickStartLaunchPanel extends AbstractParamPanel {
 
     private JComboBox<String> getStartPageOption() {
         if (startPageOption == null) {
-            startPageOption = new JComboBox<String>();
+            startPageOption = new JComboBox<>();
             /*
              * Note that the indexes are explicitly used in setUrlFieldState()
              * initParam(Object obj) validateParam(Object obj)
@@ -139,13 +137,7 @@ public class OptionsQuickStartLaunchPanel extends AbstractParamPanel {
                     Constant.messages.getString("quickstart.launch.start.pulldown.blank"));
             startPageOption.addItem(
                     Constant.messages.getString("quickstart.launch.start.pulldown.url"));
-            startPageOption.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent arg0) {
-                            setUrlFieldState();
-                        }
-                    });
+            startPageOption.addActionListener(e -> setUrlFieldState());
         }
         return startPageOption;
     }

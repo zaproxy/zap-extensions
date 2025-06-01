@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.fuzz.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.zaproxy.zap.extension.fuzz.payloads.ui.PayloadGeneratorUI;
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.view.messagelocation.MessageLocationHighlight;
 import org.zaproxy.zap.view.messagelocation.MessageLocationTableEntry;
@@ -53,10 +54,11 @@ public class FuzzLocationTableEntry extends MessageLocationTableEntry {
     public void setPayloads(List<PayloadTableEntry> payloads) {
         this.payloads = new ArrayList<>(payloads);
 
-        numberOfPayloads = 0;
-        for (PayloadTableEntry payloadTableEntry : payloads) {
-            numberOfPayloads += payloadTableEntry.getPayloadGeneratorUI().getNumberOfPayloads();
-        }
+        numberOfPayloads =
+                Utils.sumLongToInt(
+                        payloads.stream()
+                                .map(PayloadTableEntry::getPayloadGeneratorUI)
+                                .mapToLong(PayloadGeneratorUI::getNumberOfPayloads));
     }
 
     public List<PayloadTableEntry> getPayloads() {

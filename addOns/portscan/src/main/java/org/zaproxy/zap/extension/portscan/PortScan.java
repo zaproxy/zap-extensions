@@ -22,18 +22,20 @@ package org.zaproxy.zap.extension.portscan;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import javax.swing.DefaultListModel;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.network.ConnectionParam;
+import org.zaproxy.addon.network.ConnectionOptions;
+import org.zaproxy.addon.network.common.HttpProxy;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ScanListenner;
 import org.zaproxy.zap.model.ScanThread;
@@ -48,7 +50,7 @@ public class PortScan extends ScanThread implements ScanListenner {
     private boolean pauseScan = false;
     private boolean unpauseScan = false;
     private boolean isPaused = false;
-    private ScanListenner listenner;
+    private ScanListenner listener;
     private int maxPort = 0;
     private int threads = 0;
     private int threadIndex = -1;
@@ -58,36 +60,36 @@ public class PortScan extends ScanThread implements ScanListenner {
     private boolean useProxy = true;
     private List<PortScan> subThreads = new ArrayList<>();
 
-    private static Logger log = Logger.getLogger(PortScan.class);
+    private static final Logger LOGGER = LogManager.getLogger(PortScan.class);
 
-    public PortScan(String site, ScanListenner listenner, PortScanParam portScanParam) {
-        super(site, listenner);
+    public PortScan(String site, ScanListenner listener, PortScanParam portScanParam) {
+        super(site, listener);
         this.site = site;
-        this.listenner = listenner;
+        this.listener = listener;
         this.maxPort = portScanParam.getMaxPort();
         this.threads = portScanParam.getThreadPerScan();
         this.timeout = portScanParam.getTimeoutInMs();
         this.useProxy = portScanParam.isUseProxy();
 
-        log.debug("PortScan : " + site + " threads: " + threads);
+        LOGGER.debug("PortScan : {} threads: {}", site, threads);
     }
 
     private PortScan(
             String site,
-            ScanListenner listenner,
+            ScanListenner listener,
             PortScanResultsTableModel resultsTableModel,
             int maxPort,
             int threads,
             int threadIndex) {
-        super(site, listenner);
+        super(site, listener);
         this.site = site;
-        this.listenner = listenner;
+        this.listener = listener;
         this.maxPort = maxPort;
         this.threads = threads;
         this.threadIndex = threadIndex;
 
         this.resultsTableModel = resultsTableModel;
-        log.debug("PortScan : " + site + " threads: " + threads + " threadIndex: " + threadIndex);
+        LOGGER.debug("PortScan : {} threads: {} threadIndex: {}", site, threads, threadIndex);
     }
 
     @Override
@@ -99,8 +101,8 @@ public class PortScan extends ScanThread implements ScanListenner {
             // This is a sub thread
             runScan();
         }
-        if (this.listenner != null) {
-            this.listenner.scanFinshed(site);
+        if (this.listener != null) {
+            this.listener.scanFinshed(site);
         }
         stopScan = true;
     }
@@ -109,7 +111,7 @@ public class PortScan extends ScanThread implements ScanListenner {
         // Do the scan
         // If there are multiple sub threads then they will start at a different point
         Date start = new Date();
-        log.debug("Starting scan on " + site + " at " + start);
+        LOGGER.debug("Starting scan on {} at {}", site, start);
         reset();
 
         stopScan = false;
@@ -118,11 +120,7 @@ public class PortScan extends ScanThread implements ScanListenner {
             startPort = 1;
         }
 
-        ConnectionParam connParams = Model.getSingleton().getOptionsParam().getConnectionParam();
-        SocketAddress sa =
-                new InetSocketAddress(
-                        connParams.getProxyChainName(), connParams.getProxyChainPort());
-        final java.net.Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.SOCKS, sa);
+        Proxy proxy = getProxy();
 
         for (port = startPort; port < maxPort; port += threads) {
             try {
@@ -145,37 +143,25 @@ public class PortScan extends ScanThread implements ScanListenner {
                     }
                 }
                 if (stopScan) {
-                    log.debug("Scanned stopped");
+                    LOGGER.debug("Scanned stopped");
                     break;
                 }
-                if (this.listenner != null) {
-                    this.listenner.scanProgress(site, port, maxPort);
+                if (this.listener != null) {
+                    this.listener.scanProgress(site, port, maxPort);
                 }
 
-                Socket s = null;
-                if (useProxy
-                        && Model.getSingleton()
-                                .getOptionsParam()
-                                .getConnectionParam()
-                                .isUseProxy(site)) {
+                if (proxy != Proxy.NO_PROXY) {
 
                     FutureTask<Integer> ft =
                             new FutureTask<>(
-                                    new Callable<Integer>() {
-
-                                        @Override
-                                        public Integer call() {
-                                            Socket s = new Socket(proxy);
-                                            SocketAddress endpoint =
-                                                    new InetSocketAddress(site, port);
-                                            try {
-                                                s.connect(endpoint, timeout);
-                                                s.close();
-                                            } catch (IOException e) {
-                                                return null;
-                                            }
-                                            return port;
+                                    () -> {
+                                        SocketAddress endpoint = new InetSocketAddress(site, port);
+                                        try (Socket s = new Socket(proxy)) {
+                                            s.connect(endpoint, timeout);
+                                        } catch (IOException e) {
+                                            return null;
                                         }
+                                        return port;
                                     });
                     new Thread(ft).start();
                     try {
@@ -187,11 +173,11 @@ public class PortScan extends ScanThread implements ScanListenner {
 
                 } else {
                     // Not using a proxy
-                    s = new Socket();
-                    s.connect(new InetSocketAddress(site, port), timeout);
-                    s.close();
+                    try (Socket s = new Socket()) {
+                        s.connect(new InetSocketAddress(site, port), timeout);
+                    }
                 }
-                log.debug("Site : " + site + " open port: " + port);
+                LOGGER.debug("Site : {} open port: {}", site, port);
 
                 addResult(port);
             } catch (IOException ex) {
@@ -199,22 +185,28 @@ public class PortScan extends ScanThread implements ScanListenner {
             }
         }
         Date stop = new Date();
-        log.debug("Finished scan on " + site + " at " + stop);
-        log.debug("Took " + ((stop.getTime() - start.getTime()) / 60000) + " mins ");
+        LOGGER.debug("Finished scan on {} at {}", site, stop);
+        LOGGER.debug("Took {} mins", ((stop.getTime() - start.getTime()) / 60000));
+    }
+
+    private Proxy getProxy() {
+        if (useProxy) {
+            ConnectionOptions connectionOptions =
+                    Model.getSingleton().getOptionsParam().getParamSet(ConnectionOptions.class);
+            if (connectionOptions.isUseHttpProxy(site)) {
+                HttpProxy proxy = connectionOptions.getHttpProxy();
+                SocketAddress sa = new InetSocketAddress(proxy.getHost(), proxy.getPort());
+                return new Proxy(Proxy.Type.SOCKS, sa);
+            }
+        }
+        return Proxy.NO_PROXY;
     }
 
     private void addResult(final int port) {
         if (EventQueue.isDispatchThread()) {
             resultsTableModel.addPort(port);
         } else {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            addResult(port);
-                        }
-                    });
+            EventQueue.invokeLater(() -> addResult(port));
         }
     }
 
@@ -309,7 +301,7 @@ public class PortScan extends ScanThread implements ScanListenner {
     public void scanProgress(String host, int progress, int maximum) {
         if (progress > this.progress) {
             this.progress = progress;
-            this.listenner.scanProgress(site, progress, maximum);
+            this.listener.scanProgress(site, progress, maximum);
         }
     }
 
@@ -342,14 +334,7 @@ public class PortScan extends ScanThread implements ScanListenner {
         if (EventQueue.isDispatchThread()) {
             resultsTableModel.clear();
         } else {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            reset();
-                        }
-                    });
+            EventQueue.invokeLater(this::reset);
         }
     }
 

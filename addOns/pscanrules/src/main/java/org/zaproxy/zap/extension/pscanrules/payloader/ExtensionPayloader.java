@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.pscanrules.payloader;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -29,22 +27,19 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.extension.custompayloads.ExtensionCustomPayloads;
 import org.zaproxy.zap.extension.custompayloads.PayloadCategory;
-import org.zaproxy.zap.extension.pscanrules.ApplicationErrorScanner;
-import org.zaproxy.zap.extension.pscanrules.UsernameIdorScanner;
+import org.zaproxy.zap.extension.pscanrules.ApplicationErrorScanRule;
+import org.zaproxy.zap.extension.pscanrules.InformationDisclosureSuspiciousCommentsScanRule;
+import org.zaproxy.zap.extension.pscanrules.UsernameIdorScanRule;
 
 public class ExtensionPayloader extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionPayloaderPscanRulesRelease";
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionCustomPayloads.class);
     private static ExtensionCustomPayloads ecp;
     private PayloadCategory idorCategory;
     private PayloadCategory errorCategory;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionCustomPayloads.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private PayloadCategory suspiciousCommentsCategory;
 
     public ExtensionPayloader() {
         super(NAME);
@@ -60,17 +55,25 @@ public class ExtensionPayloader extends ExtensionAdaptor {
                         .getExtension(ExtensionCustomPayloads.class);
         idorCategory =
                 new PayloadCategory(
-                        UsernameIdorScanner.USERNAME_IDOR_PAYLOAD_CATEGORY,
-                        UsernameIdorScanner.DEFAULT_USERNAMES);
+                        UsernameIdorScanRule.USERNAME_IDOR_PAYLOAD_CATEGORY,
+                        UsernameIdorScanRule.DEFAULT_USERNAMES);
         ecp.addPayloadCategory(idorCategory);
-        UsernameIdorScanner.setPayloadProvider(() -> idorCategory.getPayloadsIterator());
+        UsernameIdorScanRule.setPayloadProvider(idorCategory::getPayloadsIterator);
 
         errorCategory =
                 new PayloadCategory(
-                        ApplicationErrorScanner.ERRORS_PAYLOAD_CATEGORY,
-                        ApplicationErrorScanner.DEFAULT_ERRORS);
+                        ApplicationErrorScanRule.ERRORS_PAYLOAD_CATEGORY,
+                        ApplicationErrorScanRule.DEFAULT_ERRORS);
         ecp.addPayloadCategory(errorCategory);
-        ApplicationErrorScanner.setPayloadProvider(() -> errorCategory.getPayloadsIterator());
+        ApplicationErrorScanRule.setPayloadProvider(errorCategory::getPayloadsIterator);
+
+        suspiciousCommentsCategory =
+                new PayloadCategory(
+                        InformationDisclosureSuspiciousCommentsScanRule.CUSTOM_PAYLOAD_CATEGORY,
+                        InformationDisclosureSuspiciousCommentsScanRule.DEFAULT_PAYLOADS);
+        ecp.addPayloadCategory(suspiciousCommentsCategory);
+        InformationDisclosureSuspiciousCommentsScanRule.setPayloadProvider(
+                suspiciousCommentsCategory::getPayloadsIterator);
     }
 
     @Override
@@ -80,18 +83,17 @@ public class ExtensionPayloader extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        UsernameIdorScanner.setPayloadProvider(null);
+        UsernameIdorScanRule.setPayloadProvider(null);
         ecp.removePayloadCategory(idorCategory);
+        ApplicationErrorScanRule.setPayloadProvider(null);
+        ecp.removePayloadCategory(errorCategory);
+        InformationDisclosureSuspiciousCommentsScanRule.setPayloadProvider(null);
+        ecp.removePayloadCategory(suspiciousCommentsCategory);
     }
 
     @Override
     public List<Class<? extends Extension>> getDependencies() {
         return DEPENDENCIES;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override

@@ -21,20 +21,16 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.KeyStroke;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -44,6 +40,7 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.utils.TableExportButton;
 import org.zaproxy.zap.view.ScanStatus;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
@@ -52,16 +49,17 @@ import org.zaproxy.zap.view.table.HistoryReferencesTable;
  * This class creates the Spider AJAX Panel where the found URLs are displayed It has a button to
  * stop the crawler and another one to open the options.
  */
+@SuppressWarnings("serial")
 public class SpiderPanel extends AbstractPanel implements SpiderListener {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = Logger.getLogger(SpiderPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(SpiderPanel.class);
 
     private javax.swing.JScrollPane scrollLog = null;
     private javax.swing.JPanel AJAXSpiderPanel = null;
     private javax.swing.JToolBar panelToolbar = null;
     private JLabel filterStatus = null;
     private int foundCount = 0;
-    private JLabel foundLabel = new JLabel();;
+    private JLabel foundLabel = new JLabel();
     private ExtensionAjax extension = null;
     private SpiderThread runnable = null;
     private JButton stopScanButton;
@@ -75,8 +73,6 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 
     private ScanStatus scanStatus = null;
 
-    private JLabel activeScansNameLabel = null;
-    private JLabel activeScansValueLabel = null;
     private List<String> activeScans = new ArrayList<>();
 
     private String targetSite;
@@ -85,12 +81,6 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
     public SpiderPanel(ExtensionAjax e) {
         super();
         this.extension = e;
-        initialize();
-    }
-
-    /** This method initializes this class and its attributes */
-    @SuppressWarnings("deprecation")
-    private void initialize() {
         this.setLayout(new BorderLayout());
         if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
             this.setSize(600, 200);
@@ -98,18 +88,13 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         this.add(getAJAXSpiderPanel(), java.awt.BorderLayout.CENTER);
         scanStatus =
                 new ScanStatus(
-                        new ImageIcon(
-                                SpiderPanel.class.getResource("/resource/icon/16/spiderAjax.png")),
+                        extension.getIcon(),
                         this.extension.getMessages().getString("spiderajax.panel.title"));
 
         this.setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        // TODO Use getMenuShortcutKeyMaskEx() (and remove warn suppression) when
-                        // targeting Java 10+
-                        KeyEvent.VK_J,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.SHIFT_DOWN_MASK,
-                        false));
+                this.extension
+                        .getView()
+                        .getMenuShortcutKeyStroke(KeyEvent.VK_J, KeyEvent.SHIFT_DOWN_MASK, false));
         this.setMnemonic(Constant.messages.getChar("spiderajax.panel.mnemonic"));
 
         if (View.isInitialised()) {
@@ -134,7 +119,9 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         return scrollLog;
     }
 
-    /** @return the AJAX Spider Panel */
+    /**
+     * @return the AJAX Spider Panel
+     */
     private javax.swing.JPanel getAJAXSpiderPanel() {
         if (AJAXSpiderPanel == null) {
 
@@ -166,7 +153,9 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         return AJAXSpiderPanel;
     }
 
-    /** @return The Stop Scan Button */
+    /**
+     * @return The Stop Scan Button
+     */
     private JButton getStopScanButton() {
         if (stopScanButton == null) {
             stopScanButton = new JButton();
@@ -175,13 +164,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
             stopScanButton.setIcon(
                     new ImageIcon(SpiderPanel.class.getResource("/resource/icon/16/142.png")));
             stopScanButton.setEnabled(false);
-            stopScanButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            stopScan();
-                        }
-                    });
+            stopScanButton.addActionListener(e -> stopScan());
         }
         return stopScanButton;
     }
@@ -216,24 +199,17 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         this.getStopScanButton().setEnabled(false);
     }
 
-    /** @return The Start Scan Button */
+    /**
+     * @return The Start Scan Button
+     */
     private JButton getStartScanButton() {
         if (startScanButton == null) {
             startScanButton = new JButton();
             startScanButton.setText(
                     this.extension.getMessages().getString("spiderajax.toolbar.button.start"));
-            startScanButton.setIcon(
-                    new ImageIcon(
-                            SpiderPanel.class.getResource("/resource/icon/16/spiderAjax.png")));
+            startScanButton.setIcon(extension.getIcon());
             startScanButton.setEnabled(!Mode.safe.equals(Control.getSingleton().getMode()));
-            startScanButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            extension.showScanDialog(null);
-                        }
-                    });
+            startScanButton.addActionListener(e -> extension.showScanDialog((Target) null));
         }
         return startScanButton;
     }
@@ -261,7 +237,9 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         return !visitedUrls.contains(msg.getRequestHeader().getURI().toString());
     }
 
-    /** @return the Options Button */
+    /**
+     * @return the Options Button
+     */
     private JButton getOptionsButton() {
         if (optionsButton == null) {
             optionsButton = new JButton();
@@ -270,28 +248,27 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
             optionsButton.setIcon(
                     new ImageIcon(SpiderPanel.class.getResource("/resource/icon/16/041.png")));
             optionsButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
+                    e ->
                             Control.getSingleton()
                                     .getMenuToolsControl()
                                     .options(
                                             extension
                                                     .getMessages()
-                                                    .getString("spiderajax.options.title"));
-                        }
-                    });
+                                                    .getString("spiderajax.options.title")));
         }
         return optionsButton;
     }
 
     private TableExportButton<HistoryReferencesTable> getExportButton() {
         if (exportButton == null) {
-            exportButton = new TableExportButton<HistoryReferencesTable>(getSpiderResultsTable());
+            exportButton = new TableExportButton<>(getSpiderResultsTable());
         }
         return exportButton;
     }
-    /** @return the panel toolbar */
+
+    /**
+     * @return the panel toolbar
+     */
     private javax.swing.JToolBar getPanelToolbar() {
         if (panelToolbar == null) {
 
@@ -374,7 +351,9 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         return spiderResultsTable;
     }
 
-    /** @param filter the history filter */
+    /**
+     * @param filter the history filter
+     */
     public void setFilterStatus(HistoryFilter filter) {
         filterStatus.setText(filter.toShortString());
         filterStatus.setToolTipText(filter.toLongString());
@@ -418,46 +397,12 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         try {
             new Thread(runnable, "ZAP-AjaxSpider").start();
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
         }
-    }
-
-    /** @return the active scans name label */
-    private JLabel getActiveScansNameLabel() {
-        if (activeScansNameLabel == null) {
-            activeScansNameLabel = new javax.swing.JLabel();
-            activeScansNameLabel.setText(
-                    Constant.messages.getString("spiderajax.panel.toolbar.currentscans.label"));
-        }
-        return activeScansNameLabel;
-    }
-
-    /** @return he number of active scans */
-    private JLabel getActiveScansValueLabel() {
-        if (activeScansValueLabel == null) {
-            activeScansValueLabel = new javax.swing.JLabel();
-            activeScansValueLabel.setText("" + activeScans.size());
-        }
-        return activeScansValueLabel;
     }
 
     /** sets the number of active scans */
     private void setActiveScanLabels() {
-        getActiveScansValueLabel().setText("" + activeScans.size());
-        StringBuilder sb = new StringBuilder();
-        Iterator<String> iter = activeScans.iterator();
-        sb.append("<html>");
-        while (iter.hasNext()) {
-            sb.append(iter.next());
-            sb.append("<br>");
-        }
-        sb.append("</html>");
-
-        final String toolTip = sb.toString();
-
-        getActiveScansNameLabel().setToolTipText(toolTip);
-        getActiveScansValueLabel().setToolTipText(toolTip);
-
         scanStatus.setScanCount(activeScans.size());
     }
 
@@ -499,7 +444,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
     public void foundMessage(
             HistoryReference historyReference, HttpMessage httpMessage, ResourceState state) {
         boolean added = addHistoryUrl(historyReference, httpMessage, targetSite, state);
-        if (View.isInitialised() && added) {
+        if (View.isInitialised() && state == ResourceState.PROCESSED && added) {
             foundCount++;
             this.foundLabel.setText(Integer.toString(this.foundCount));
         }

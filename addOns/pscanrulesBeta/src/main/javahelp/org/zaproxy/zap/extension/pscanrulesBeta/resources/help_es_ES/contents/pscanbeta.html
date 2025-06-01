@@ -6,75 +6,141 @@
 Reglas de Escaneo pasivo - Beta
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Reglas de Escaneo pasivo - Beta</h1>
-En este complemento se incluyen las siguientes reglas de escaneo pasivo de calidad beta:
 
-<h2>Incompatibilidad de caracteres</h2>
-<p>Esto comprobación identifica respuestas donde el encabezado HTTP Content-Type declara un conjunto de caracteres distinto al conjunto de caracteres definido por el cuerpo del HTML o XML. Cuando hay una incompatibilidad de caracteres entre el encabezado HTTP y el cuerpo del contenido, los navegadores web son forzados a determinar en un modo de rastreo de contenido indeseable el conjunto de caracteres correcto del contenido.</p>
-<p>Este escáner maneja varias condiciones dependiendo del umbral configurado para el escáner:</p>
+<h2>General Configuration</h2>
+
+<h3>Trusted Domains</h3>
+You can specify a comma separated list of URL regex patterns using the <code>rules.domains.trusted</code> parameter via the Options 'Rule configuration' panel.
+Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
+Following rules supports <b>Trusted Domains</b> :
 <ul>
-  <li>Todos los umbrales:
-    <ul>
-      <li>Header Versus Meta Content-Type Charset - La declaración del encabezado HTTP Content-Type no coincide con lo que está declarado en la etiqueta META Content-Type.</li>
-      <li>Header Versus Meta Charset - La declaración en el encabezado HTTP Content-Type no coincide con lo que esta declarado en la etiqueta META Charset.</li>
-    </ul>
-  </li>
-  <li>Umbral bajo:
-    <ul>
-      <li>Meta Content-Type Charset Missing - La respuesta no contiene una declaración META Content-Type, lo cual que podría pasar por alto clientes más antiguos.</li>
-      <li>Meta Charset Versus Meta Content-Type Charset - La respuesta contiene tanto una declaración META Content-Type y una declaración META Charset, y no coinciden.</li>
-    </ul>
-  </li>
+ <li>Sub Resource Integrity Attribute Missing</li>
 </ul>
-Para más referencias:<br>
-<a href="http://www.w3.org/TR/html401/charset.html#h-5.2.2">http://www.w3.org/TR/html401/charset.html#h-5.2.2</a><br>
-<a href="http://www.w3.org/TR/html5/document-metadata.html#charset">http://www.w3.org/TR/html5/document-metadata.html#charset</a>
 
-<h2>Cookie - Rastreado de forma imprecisa</h2>
-Las cookies pueden ser exploraras por un dominio o ruta. Esta comprobación solo se ocupa del rastreo del dominio. El rastreo de dominio aplicado a la cookie determina cuáles dominios pueden acceder a ella. Por ejemplo, una cookie puede ser rastreada estrictamente a un subdominio, por ejemplo www.nottrusted.com, o ser rastreado de forma imprecisaun dominio principal e.g. nottrusted.com. En este último caso, cualquier subdominio de nottrusted.com puede acceder la cookie. Las cookies rastreadas de forma imprecisa son comunes en mega-aplicaciones como google.com y live.com.
+<hr>
 
-<h2>CSRF Countermeasures</h2>
-El plugin CSRFCountermeasures identifica las vulnerabilidades "potenciales" con la falta de conocimiento de las contramedidas CSRF en las páginas con formularios.<br>
-Post 2.5.0 puede especificar una lista de identificadores separada por coma en el parámetro 
-<code>rules.csrf.ignorelist</code> a través el panel de Opciones "Configuracion de Reglas".
-Cualquier FORMULARIO con un nombre o ID que coincida con uno de estos identificadores será ignorado cuando se escaneen tokens Anti-CSRF faltantes.
-Solo utilice esta función para ignorar formularios que se sabe que son seguros, por ejemplo formularios de búsqueda.
+The following beta status passive scan rules are included in this add-on:
 
+<h2 id="id-10049">Content Cacheability</h2>
+This scan rule analyzes the cache control and pragma headers in HTTP traffic and reports on the cacheability of the requests from a RFC7234 point of view.
+<p>
+Alerts generated:
+<ul>
+ <li><b>Non-Storable Content</b></li>
+ <li><b>Storable but Non-Cacheable Content</b></li>
+ <li><b>Storable and Cacheable Content</b></li>
+</ul>
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/CacheableScanRule.java">CacheableScanRule.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10049/">10049</a>
 
-<h2>Revelación de información: errores de depuración</h2>
-Este escáner pasivo comprueba el contenido de las respuestas web de fragmentos de mensaje de error de depuración.
-El acceso a tales detalles puede proporcionarle los recursos a un individuo malicioso para abusar del sitio web.
-También puede filtrar información no destinada específicamente para el consumo del usuario final.
+<h2 id="id-10110">Dangerous JS Functions</h2>
+This scan rule checks for any dangerous JS functions present in a site response.<br>
+<strong>Note:</strong> If the Custom Payloads add-on is installed you can add your own function names (payloads) in the Custom Payloads options panel.
+They will also be searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the amount of time needed to passively scan.
+<br>
+The Custom Payloads category for this rule is: <code>JS-Function</code>.
+<br>
+<strong>Note:</strong> &dollar; is stripped from the start of the strings/payloads and is optionally included when the patterns are assembled.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/JsFunctionScanRule.java">JsFunctionScanRule.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10110/">10110</a>
 
-<h2>Revelación de Información: en URL</h2>
-Los intentos de identificar la existencia de detalles sensibles dentro de los mismos URLs visitados (puede incluir parámetros, nombres de documentos, nombres de directorio, etc.).
+<h2 id="id-10009">In Page Banner Information Leak</h2>
+Analyzes response body content for the presence of web or application server banners (when the responses have error status codes).<br>
+If the Threshold is Low then status 200 - Ok responses are analyzed as well.<br>
+The presence of such banners may facilitate more targeted attacks against known vulnerabilities.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/InPageBannerInfoLeakScanRule.java">InPageBannerInfoLeakScanRule.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10009/">10009</a>
 
-<h2>Revelación de Información: Referente</h2>
-Identifica la existencia de detalles sensibles dentro del campo del encabezado Referrer de solicitudes HTTP (puede incluir parámetros, nombres de documentos, nombres de directorio, etc.).
+<h2 id="id-90002">Java Serialization Object</h2>
+Java Serialization Object (JSO) is a way to save and exchange objects between Java applications.<br>
+Different problems are associated with JSO. Sensitive data can leak to the stream of bytes.<br>
+An attacker can also modify the data and exploit JSO to do a Remote Code Execution on the server.<br>
+JSO should not be used by Java programs. Strong controls must be done on serialized data.<br>
+JSO are a type of vulnerabilities associated to A8:2017-Insecure Deserialization.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/JsoScanRule.java">JsoScanRule.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90002/">90002</a>
 
-<h2>Revelación de Información: Comentarios sospechosos</h2>
-Analiza el contenido web para identificar comentarios que contengan detalles potencialmente sensibles. Lo cual puede conducir a ataques futuros o la revelación de información no deseada.
+<h2 id="id-10063">Permissions Policy Header Not Set</h2>
+This rule checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Permissions-Policy" header, 
+and alerts if one is not found. It also alerts if the deprecated header "Feature-Policy" is found.<br>
+Redirects are ignored except at the Low threshold.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10063/">10063</a>
 
-<h2>Autenticación insegura</h2>
-El HTTP básico o autenticación de texto ha sido utilizado en una conexión insegura. Las credenciales pueden ser leídas y luego reutilizadas por alguien con acceso a la red.
+<h2 id="id-90004">Site Isolation Scan Rule</h2>
+Spectre is a side-channel attack allowing an attacker to read data
+from memory. One of the counter-measures is to prevent sensitive data
+from entering the memory and to separate trusted and untrusted documents in
+different browsing contexts. Three headers have been defined to enable that:
+<ul>
+ <li>Cross-Origin-Resource-Policy</li>
+ <li>Cross-Origin-Embedder-Policy</li>
+ <li>Cross-Origin-Opener-Policy</li>
+</ul>
+The Cross-Origin-Embedder-Policy (COEP) header <q>prevents a document from
+ loading any non-same-origin resources which don't explicitly grant the document
+ permission to be loaded.</q> (from
+<a href="https://docs.google.com/document/d/1zDlfvfTJ_9e8Jdc8ehuV4zMEu9ySMCiTGMS9y0GU92k/edit">COOP and COEP explained</a>).
+<blockquote cite="https://resourcepolicy.fyi/">
+ The Cross-Origin-Resource-Policy (CORP) header allows you
+ to control the set of origins that are empowered to include
+ a resource. It is a robust defense against attacks like Spectre,
+ as it allows browsers to block a given response before it enters
+ an attacker's process.
+</blockquote>
+For example, an attacker site can include an image tag with an attribute
+src to an internal content. The browser will load the data. With a
+side-channel attack, an attacker will be able to read it.
 
-<h2>JSF ViewState inseguro</h2>
-La respuesta a la siguiente dirección URL contiene un valor ViewState que no posee ninguna protección criptográfica.
+The Cross-Origin-Opener-Policy (COOP) header forces the browser to create
+multiple browsing contexts to separate trusted and untrusted documents.
 
-<h2>Servlet Parameter Pollution</h2>
-Busca el contenido de respuesta de formularios HTML que no especifique un elemento de acción. Version 3 of the 
+Site Isolation is complementary with Cross-Origin-Resource-Blocking, a
+mechanism managed independently by the browser.
+
+<p>
+ Alerts generated:
+<ul>
+ <li><b>Cross-Origin-Resource-Policy Header Missing or Invalid</b></li>
+ <li><b>Cross-Origin-Embedder-Policy Header Missing or Invalid</b></li>
+ <li><b>Cross-Origin-Opener-Policy Header Missing or Invalid</b></li>
+</ul>
+<p>
+ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SiteIsolationScanRule.java">SiteIsolationScanRule.java</a><br>
+ Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90004/">90004</a>
+
+<h2 id="id-10026">Servlet Parameter Pollution</h2>
+Searches response content for HTML forms which fail to specify an action element. Version 3 of the 
 Java Servlet spec calls for aggregation of query string and post data elements which may result in 
-unintended handling of user controlled data. Esto puede afectar otros marcos de trabajo y también tecnologías.
+unintended handling of user controlled data. This may impact other frameworks and technologies as well.
+<strong>Note:</strong> This scan rule will only analyze responses on LOW Threshold, and in Context URLs for which the Tech JSP/Servlet is applicable.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ServletParameterPollutionScanRule.java">ServletParameterPollutionScanRule.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10026/">10026</a>
 
-<h2>VIEWSTATE</h2>
-Intenta identificar parámetros VIEWSTATE y analiza dichos parámetros para las mejores y variadas prácticas o medidas de protección como: 
-<ul>
-	<li>Aquellas basadas ASP.NET 1.0 and 1.1.</li>
-	<li>La firma faltante VIEWSTATE.</li>
-	<li>Dividir VIEWSTATE.</li>
-	<li>VIEWSTATE que contienen patrones IP o correo electrónico.</li>
-</ul>
+<h2 id="id-10099">Source Code Disclosure</h2>
+Application Source Code was disclosed by the web server.<br>
+NOTE: Ignores CSS, JavaScript, images, font files, and responses that contain ISO control characters (those which are likely binary files).
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10099/">10099</a>
+
+<h2 id="id-90003">Sub Resource Integrity Attribute Missing</h2>
+This rule checks whether the integrity attribute in the script or the link element served by an external resource (for example: CDN) is missing.<br>
+It helps mitigate an attack where the CDN has been compromised and content has been replaced by malicious content.<br>
+Note: A suggested integrity hash value will be present in the relevant Alert's Other Info details if it can be resolved to a script in the Sites Tree.
+<p>
+This rule supports <b>Trusted Domains</b>, check "General Configuration" for more information.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a><br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90003/">90003</a>
 
 </body>
 </html>

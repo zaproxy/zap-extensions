@@ -22,20 +22,22 @@ package org.zaproxy.zap.extension.sse;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.extension.sse.db.ServerSentEventStream;
 
 public class EventStreamProxy {
 
-    private static final Logger logger = Logger.getLogger(EventStreamProxy.class);
+    private static final Logger LOGGER = LogManager.getLogger(EventStreamProxy.class);
 
     private static Comparator<EventStreamObserver> observersComparator;
 
@@ -45,7 +47,7 @@ public class EventStreamProxy {
         OPEN,
         CLOSED, // ready state
         EXCLUDED,
-        INCLUDED; // no Server-Sent Events state, used for new black- or whitelisted streams
+        INCLUDED; // no Server-Sent Events state, used for new allow/deny listed streams
     }
 
     //	private final HttpMessage message;
@@ -68,11 +70,11 @@ public class EventStreamProxy {
 
     private ServerSentEventStream dataStreamObject;
 
-    public EventStreamProxy(HttpMessage message, BufferedReader reader, BufferedWriter writer) {
-        //		this.message = message;
+    public EventStreamProxy(
+            HttpMessage message, BufferedReader reader, BufferedWriter writer, Socket socket) {
         this.writer = writer;
 
-        listener = new EventStreamListener(this, reader);
+        listener = new EventStreamListener(this, reader, socket);
 
         HttpRequestHeader reqHeader = message.getRequestHeader();
 
@@ -88,7 +90,7 @@ public class EventStreamProxy {
             try {
                 Thread.sleep(5);
             } catch (InterruptedException e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
         dataStreamObject.setHistoryId(message.getHistoryRef().getHistoryId());
@@ -96,15 +98,13 @@ public class EventStreamProxy {
 
     public void start() {
         // TODO use thread pool
-        (new Thread(listener)).start();
+        (new Thread(listener, "ZAP-SSE-Listener")).start();
         notifyStateObservers(State.OPEN);
     }
 
     public void stop() {
         try {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Close Server-Sent Events stream #" + dataStreamObject.getId());
-            }
+            LOGGER.debug("Close Server-Sent Events stream #{}", dataStreamObject.getId());
 
             listener.close(); // closes reader
             writer.close();
@@ -112,9 +112,7 @@ public class EventStreamProxy {
             notifyStateObservers(State.CLOSED);
             dataStreamObject.setEndTimestamp(Calendar.getInstance().getTimeInMillis());
         } catch (IOException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("An exception occurred while stopping the proxy:", e);
-            }
+            LOGGER.debug("An exception occurred while stopping the proxy:", e);
         }
         // TODO close thread also?
     }
@@ -152,7 +150,7 @@ public class EventStreamProxy {
                 field = line.substring(0, colonIndex);
 
                 int dataIndex = colonIndex + 1;
-                if (line.charAt(dataIndex) == ' ') {
+                if (dataIndex < line.length() && line.charAt(dataIndex) == ' ') {
                     // do not include first whitespace
                     dataIndex++;
                 }
@@ -198,9 +196,7 @@ public class EventStreamProxy {
         sse.setStreamId(dataStreamObject.getId());
         sse.finishData();
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Processed Server-Sent Event" + sse.toString());
-        }
+        LOGGER.debug("Processed Server-Sent Event {}", sse);
 
         boolean doForward = notifyObservers(sse);
         if (doForward) {
@@ -216,12 +212,7 @@ public class EventStreamProxy {
             writer.write(sse.getRawEvent() + "\n\n");
             writer.flush();
         } catch (IOException e) {
-            logger.warn(
-                    "Forwarding event "
-                            + sse.toString()
-                            + " was not possible due to: "
-                            + e.getMessage(),
-                    e);
+            LOGGER.warn("Forwarding event {} was not possible due to: {}", sse, e.getMessage(), e);
             stop();
         }
     }
@@ -241,7 +232,7 @@ public class EventStreamProxy {
 
     /**
      * Helper to inform about new {@link WebSocketProxy#state}. Also called when a former {@link
-     * WebSocketProxy#isForwardOnly} channel is no longer blacklisted {@link State#INCLUDED} or
+     * WebSocketProxy#isForwardOnly} channel is no longer deny listed {@link State#INCLUDED} or
      * vice-versa {@link State#EXCLUDED}.
      */
     protected void notifyStateObservers(State state) {
@@ -271,21 +262,17 @@ public class EventStreamProxy {
     private static Comparator<EventStreamObserver> getObserversComparator() {
         if (observersComparator == null) {
             observersComparator =
-                    new Comparator<EventStreamObserver>() {
+                    (o1, o2) -> {
+                        int order1 = o1.getServerSentEventObservingOrder();
+                        int order2 = o2.getServerSentEventObservingOrder();
 
-                        @Override
-                        public int compare(EventStreamObserver o1, EventStreamObserver o2) {
-                            int order1 = o1.getServerSentEventObservingOrder();
-                            int order2 = o2.getServerSentEventObservingOrder();
-
-                            if (order1 < order2) {
-                                return -1;
-                            } else if (order1 > order2) {
-                                return 1;
-                            }
-
-                            return 0;
+                        if (order1 < order2) {
+                            return -1;
+                        } else if (order1 > order2) {
+                            return 1;
                         }
+
+                        return 0;
                     };
         }
         return observersComparator;

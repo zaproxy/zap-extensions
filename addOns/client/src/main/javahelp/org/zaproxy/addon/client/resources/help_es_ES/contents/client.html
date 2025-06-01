@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Client Side Integration
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Client Side Integration</H1>
+
+This add-on adds the following features to ZAP.
+
+<h2>Client Spider</h2>
+
+This add-on adds a <a href="spider.html">Client Spider</a> which is designed to explore modern web apps more effectively.
+
+<h2>Browser Extensions</h2>
+
+This add-on adds a ZAP browser extension to both Firefox and Chrome when they are launched from ZAP.
+<p>
+The extensions stream significant browser based events back to ZAP, giving ZAP an insight into what is going on in the browser.
+<p>
+If you do not launch your browser(s) from ZAP then you can still install these extensions directly from the relevant stores:
+
+<ul>
+<li>Firefox <a href="https://addons.mozilla.org/en-GB/firefox/addon/zap-browser-extension">ZAP Browser Extension</a>
+<li>Chrome <a href="https://chromewebstore.google.com/detail/zap-by-checkmarx-browser/cgkggmillbmmpokepnicllalaohphffo">ZAP Browser Extension</a>
+</ul>
+
+Note that you may need to configure the extensions via their options pages to update the host and API key.
+
+<h2>Passive Scanning</h2>
+
+This add-on provides a <a href="pscan.html">Passive Scanner</a> which passively scans all of the data received from the browser.
+
+<h2>User Interface</h2>
+
+The add-on adds 4 new tabs to ZAP:
+
+<h3>Client Map</h3>
+
+The Client Map is a hierarchical representation of the sites visited, and is similar in some ways to the Sites Tree.
+It includes nodes which represent URLs and ones which represent browser based storage.
+<p>
+Unlike the Sites Tree it includes <a href="https://en.wikipedia.org/wiki/URI_fragment">URI fragments</a> which ZAP cannot otherwise see.
+This means that the Client Map looks very different to the Sites tree for modern web apps, and may give you a better understanding of the
+client side structure of the sites.
+<p>
+The following icons are used for leaf nodes so that you can easily tell their status:
+
+<table>
+	<tr>
+		<td><img src="images/node-standard.png" align="bottom" width="16" height="16" /></td>
+		<td>A URL which will be present in both the Site Tree and the Client Map</td>
+	</tr>
+	<tr>
+		<td><img src="images/node-fragment.png" align="bottom" width="16" height="16" /></td>
+		<td>A URL which will only be present in Client Map as the URL contains a fragment</td>
+	</tr>
+	<tr>
+		<td><img src="images/node-minus.png" align="bottom" width="16" height="16" /></td>
+		<td>A URL which was found in the DOM but which has not been accessed yet</td>
+	</tr>
+	<tr>
+		<td><img src="images/node-redirect.png" align="bottom" width="16" height="16" /></td>
+		<td>A URL which redirects to another URL</td>
+	</tr>
+	<tr>
+		<td><img src="images/node-content-loaded.png" align="bottom" width="16" height="16" /></td>
+		<td>A URL which was loaded as content by the browser (e.g. JavaScript files) rather than as HTML</td>
+	</tr>
+</table>
+
+
+<p>
+Selecting a node that has been visited by ZAP will display details about that node in the Client Details tab.
+<p>
+The following context menu items are supported:
+
+<h4>Export Client Map</h4>
+
+Allows users to export a representation of the Client Map in YAML format. Including all children and the associated component details of each node.
+
+<h4>Copy URLs</h4>
+
+Copies the URLs of the selected nodes into the clipboard, separated by newlines.
+
+<h4>Delete</h4>
+
+Deletes the selected nodes.
+
+<h4>Open in Browser</h4>
+
+Opens the selected node in the chosen browser.
+This menu item is disabled if multiple nodes are selected.
+If the URL contains a fragment then this will be passed to the browser.
+
+<h4>Show in Sites Tree</h4>
+
+Opens the selected node in the Sites Tree.
+The message in the Sites Tree does not necessarily match the same message which created the Site Node.
+This menu item is disabled if multiple nodes are selected or if the URL has not yet been visited.
+If the URL contains a fragment then this will be ignored.
+
+<h3>Client Details</h3>
+
+The Client Details tab shows details about Client Map nodes.
+<p>
+The types of data displayed include:
+<ul>
+<li>Button: Buttons detected in the DOM 
+<li>Cookies: Cookies set in the browser
+<li>FORM: Forms detected in the DOM 
+<li>Input: Input elements detected in the DOM 
+<li>Link: Links detected in the DOM 
+</ul>
+
+The following context menu items are supported:
+
+<h4>Copy HREFs</h4>
+
+Copies the HREFs of the selected entries into the clipboard, separated by newlines.
+
+<h4>Copy IDs</h4>
+
+Copies the IDs of the selected entries into the clipboard, separated by newlines.
+
+<h4>Copy Texts</h4>
+
+Copies the Texts of the selected entries into the clipboard, separated by newlines.
+
+<h3>Client History</h3>
+
+The Client History tab shows all of the client side events sent from the browser extension to ZAP.
+<p>
+In addition to the data displayed in the Client Details tab it also includes:
+
+<ul>
+<li>DOM Mutation: Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">MutationObserver</a> event 
+<li>Node Added: A DOM node added to the specified URL 
+<li>Page Load: Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/load_event">load</a> event 
+<li>Page Unload: Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event">unload</a> event 
+</ul>
+
+The following context menu items are supported:
+
+<h4>Copy Node IDs</h4>
+
+Copies the Node IDs of the selected entries into the clipboard, separated by newlines.
+
+<h4>Copy Node Names</h4>
+
+Copies the Node Names of the selected entries into the clipboard, separated by newlines.
+
+<h4>Copy Source URLs</h4>
+
+Copies the Source URLs of the selected entries into the clipboard, separated by newlines.
+
+<h4>Copy Texts</h4>
+
+Copies the Texts of the selected entries into the clipboard, separated by newlines.
+
+<h4>Copy Types</h4>
+
+Copies the Types of the selected entries into the clipboard, separated by newlines.
+
+<h3>Client Spider</h3>
+
+This is detailed in the <a href="spider.html">Client Spider</a> help page.
+
+<h2>AJAX Spider Enhancement</h2>
+
+This add-on provides an <a href="ajax-scan.html">AJAX Spider Enhancement</a> which can detect URLs referenced in the DOM which were not
+be accessed by the spider.
+
+<h2>Firefox Profile</h2>
+
+It also creates a <a href="firefox-profile.html">Firefox profile</a> and sets it as the default profile that ZAP will use.
+
+<p>
+For more details on how the add-on works see the <a href="internals.html">internals</a> page.
+
+</BODY>
+</HTML>

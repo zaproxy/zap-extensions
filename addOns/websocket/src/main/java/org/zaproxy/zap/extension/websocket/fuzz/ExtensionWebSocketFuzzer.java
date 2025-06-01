@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.websocket.fuzz;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,17 +47,8 @@ import org.zaproxy.zap.extension.websocket.ui.WebSocketPanel;
 
 public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
 
-    private static final ImageIcon WEBSOCKET_FUZZER_PROCESSOR_SCRIPT_ICON =
-            new ImageIcon(ZAP.class.getResource("/resource/icon/16/script-fuzz.png"));
-
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionFuzz.class);
-        dependencies.add(ExtensionWebSocket.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionFuzz.class, ExtensionWebSocket.class);
 
     private WebSocketFuzzerHandler websocketFuzzerHandler;
 
@@ -74,6 +63,11 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
     }
 
     @Override
+    public String getUIName() {
+        return Constant.messages.getString("websocket.fuzzer.name");
+    }
+
+    @Override
     public String getDescription() {
         return Constant.messages.getString("websocket.fuzzer.description");
     }
@@ -81,11 +75,6 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
     @Override
     public List<Class<? extends Extension>> getDependencies() {
         return DEPENDENCIES;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
     }
 
     @Override
@@ -107,7 +96,11 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
                     new ScriptType(
                             WebSocketFuzzerProcessorScript.TYPE_NAME,
                             "websocket.fuzzer.script.type.fuzzerprocessor",
-                            WEBSOCKET_FUZZER_PROCESSOR_SCRIPT_ICON,
+                            hasView()
+                                    ? new ImageIcon(
+                                            ZAP.class.getResource(
+                                                    "/resource/icon/16/script-fuzz.png"))
+                                    : null,
                             true,
                             true);
             extensionScript.registerScriptType(scriptType);
@@ -125,7 +118,7 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
         extensionFuzz.addFuzzerHandler(websocketFuzzerHandler);
 
-        if (getView() != null) {
+        if (hasView()) {
             // Disable for now, there are no places where it would be used
             // extensionHook.getHookMenu()
             //       .addPopupMenuItem(new WebSocketFuzzAttackPopupMenuItem(extensionFuzz,
@@ -151,11 +144,11 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionWebSocket.class);
         extensionWebSocket.removeAllChannelObserver(getAllChannelObserver());
 
-        if (getView() != null) {
+        if (hasView()) {
             ExtensionScript extensionScript =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
             if (extensionScript != null) {
-                extensionScript.removeScripType(scriptType);
+                extensionScript.removeScriptType(scriptType);
             }
         }
         MessageLocationReplacers.getInstance().removeReplacer(WebSocketMessageDTO.class, replacer);

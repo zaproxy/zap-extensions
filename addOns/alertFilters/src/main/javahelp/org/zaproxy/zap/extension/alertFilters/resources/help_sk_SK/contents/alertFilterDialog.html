@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Alert Filter Dialog
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Alert Filter Dialog</H1>
+<p>
+This dialog is shown when you add or modify a 
+<a href="contextAlertFilter.html">Context Alert Filter</a> 
+or a <a href="globalAlertFilter.html">Global Alert Filter</a>
+<p>
+It has the following fields: 
+
+<H3>Scope</H3>
+This can either be 'Global' for a Global Alert Filter or the name of an existing context.
+It is only editable when you create an Alert Filter from an existing Alert.
+
+<H3>Alert Type</H3>
+A pull down containing all of the active and passive alert rules currently installed.
+
+<H3>New Risk Level</H3>
+The new risk level to be assigned to any alerts raised that match the criteria defined by the rule.
+ 
+<H3>URL</H3>
+An optional URL.<br>
+If specified then this rule will be applied if the URL matches the URL of a raised alert.<br>
+
+<H3>URL is Regex?</H3>
+If set and a URL is specified then the URL will be treated as a regex expression when compared with the URL of the alert.<br>
+If it is not set then any specified URL must exactly match the URL of the alert.
+
+<H3>Parameter</H3>
+An optional parameter.<br>
+If specified then this rule will be applied if the parameter exactly matches the parameter of a raised alert.<br>
+
+<H3>Parameter is Regex?</H3>
+If set and a parameter is specified then the parameter will be treated as a regex expression when compared with the parameter of the alert.<br>
+If it is not set then any specified parameter must exactly match the parameter of the alert.
+
+<H3>Attack</H3>
+An optional attack.<br>
+If specified then this rule will be applied if the attack exactly matches the attack of a raised alert.<br>
+
+<H3>Attack is Regex?</H3>
+If set and a attack is specified then the attack will be treated as a regex expression when compared with the attack of the alert.<br>
+If it is not set then any specified attack must exactly match the attack of the alert.
+
+<H3>Evidence</H3>
+An optional evidence.<br>
+If specified then this rule will be applied if the evidence exactly matches the evidence of a raised alert.<br>
+
+<H3>Evidence is Regex?</H3>
+If set and a evidence is specified then the evidence will be treated as a regex expression when compared with the evidence of the alert.<br>
+If it is not set then any specified evidence must exactly match the evidence of the alert.
+
+<H3>Enabled</H3>
+If set then this rule will be applied to all alerts raise against the given context.
+
+<H3>Test Filter</H3>
+The 'Test' button will show a count of how many existing alerts the filter will apply to. 
+It is disabled if the filter is disabled.
+
+<H3>Apply Filter</H3>
+The 'Apply' button will actually apply the filter to all of the existing alerts that it applies to. 
+It will then show a count of the number of alerts iit changed. 
+It is disabled if the filter is disabled.
+
+</BODY>
+</HTML>

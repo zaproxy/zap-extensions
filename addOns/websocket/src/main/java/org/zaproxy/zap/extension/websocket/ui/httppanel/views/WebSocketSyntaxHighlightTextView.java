@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.text.BadLocationException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
@@ -47,6 +48,7 @@ import org.zaproxy.zap.view.messagelocation.MessageLocationProducerFocusListener
 import org.zaproxy.zap.view.messagelocation.TextMessageLocationHighlight;
 import org.zaproxy.zap.view.messagelocation.TextMessageLocationHighlightsManager;
 
+@SuppressWarnings("serial")
 public class WebSocketSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTextView
         implements SelectableContentWebSocketMessageContainer {
 
@@ -72,7 +74,7 @@ public class WebSocketSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTe
                                 View.getSingleton()
                                         .getPopupMenu()
                                         .show(WebSocketSyntaxHighlightTextView.this, x, y);
-                            };
+                            }
                         });
     }
 
@@ -98,7 +100,7 @@ public class WebSocketSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTe
         private static final long serialVersionUID = -6469629120424801024L;
 
         private static final Logger LOGGER =
-                Logger.getLogger(WebSocketSyntaxHighlightTextArea.class);
+                LogManager.getLogger(WebSocketSyntaxHighlightTextArea.class);
 
         private static final String CSS =
                 Constant.messages.getString("http.panel.view.syntaxtext.syntax.css");
@@ -113,7 +115,7 @@ public class WebSocketSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTe
 
         private static WebSocketTokenMakerFactory tokenMakerFactory = null;
 
-        private CaretVisibilityEnforcerOnFocusGain caretVisiblityEnforcer;
+        private CaretVisibilityEnforcerOnFocusGain caretVisibilityEnforcer;
 
         public WebSocketSyntaxHighlightTextArea() {
             addSyntaxStyle(CSS, SyntaxConstants.SYNTAX_STYLE_CSS);
@@ -122,7 +124,7 @@ public class WebSocketSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTe
             addSyntaxStyle(JSON, SyntaxConstants.SYNTAX_STYLE_JSON);
             addSyntaxStyle(XML, SyntaxConstants.SYNTAX_STYLE_XML);
 
-            caretVisiblityEnforcer = new CaretVisibilityEnforcerOnFocusGain(this);
+            caretVisibilityEnforcer = new CaretVisibilityEnforcerOnFocusGain(this);
         }
 
         @Override
@@ -134,7 +136,7 @@ public class WebSocketSyntaxHighlightTextView extends HttpPanelSyntaxHighlightTe
         public void setMessage(Message aMessage) {
             super.setMessage(aMessage);
 
-            caretVisiblityEnforcer.setEnforceVisibilityOnFocusGain(aMessage != null);
+            caretVisibilityEnforcer.setEnforceVisibilityOnFocusGain(aMessage != null);
         }
 
         @Override

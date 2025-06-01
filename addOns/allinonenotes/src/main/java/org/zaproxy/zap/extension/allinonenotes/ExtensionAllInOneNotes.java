@@ -20,10 +20,7 @@
 package org.zaproxy.zap.extension.allinonenotes;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.MalformedURLException;
-import java.net.URL;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -57,9 +54,6 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
      */
     private static final String RESOURCES = "resources";
 
-    private static final ImageIcon ICON =
-            new ImageIcon(ExtensionAllInOneNotes.class.getResource(RESOURCES + "/notepad.png"));
-
     private AbstractPanel statusPanel;
     private NotesTableModel notesTableModel = null;
     private JXTable notesTable = null;
@@ -85,7 +79,7 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         // As long as we're not running as a daemon
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.addSessionListener(this);
             hookView = extensionHook.getHookView();
             eventConsumerImpl = new EventConsumerImpl(getNotesTableModel());
@@ -147,7 +141,7 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
             statusPanel = new AbstractPanel();
             statusPanel.setLayout(new BorderLayout());
             statusPanel.setName(Constant.messages.getString(PREFIX + ".panel.title"));
-            statusPanel.setIcon(ICON);
+            statusPanel.setIcon(new ImageIcon(getClass().getResource(RESOURCES + "/notepad.png")));
             statusPanel.add(getToolBar(), BorderLayout.NORTH);
             statusPanel.add(new JScrollPane(getNotesTable()), BorderLayout.CENTER);
         }
@@ -222,40 +216,20 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
 
     private ActionListener getReloadActionListener() {
         if (reloadActionListener == null) {
-            reloadActionListener =
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            resetNotesTable();
-                        }
-                    };
+            reloadActionListener = e -> resetNotesTable();
         }
         return reloadActionListener;
     }
 
     private TableExportButton<JXTable> getButtonExport() {
         if (exportButton == null) {
-            exportButton = new TableExportButton<JXTable>(getNotesTable());
+            exportButton = new TableExportButton<>(getNotesTable());
         }
         return exportButton;
     }
 
     @Override
-    public String getAuthor() {
-        return "David Vassallo";
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 }

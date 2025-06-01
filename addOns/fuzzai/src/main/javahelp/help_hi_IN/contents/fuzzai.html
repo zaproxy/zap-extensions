@@ -1,0 +1,382 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Fuzz AI Files
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Fuzz AI Files</H1>
+Provides a set of files for fuzzing AIs (for example via an API), based on the 
+<a href="https://osf.io/kb8a5/">Artificial Intelligence Resilience Maturity Model (AI-RMM)</a>.
+<p>
+The following files are included, and will appear as ZAP "Fuzzing Files" payloads.
+
+<H2>Extract Training Data</H2>
+
+<H3>001 By Asking</H3>
+
+This file contains fuzzing payloads specific to AI-RMM Control "Measure 2.7.2"<br>
+The goal is to test if the system has established security and resilience metrics
+to detect potential theft of model training data, including encryption, access controls,
+and alarm thresholds for unauthorized access.
+<br><br>
+Payloads simulate scenarios where model training data security may be compromised.
+Expected system behavior is detailed for each scenario.
+
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>002 Through Hypnosis</H3>
+
+This file contains fuzzing payloads specific to testing LLM "hypnosis" vulnerabilities.<br>
+The goal is to determine if the LLM enters a repetitive state where it unintentionally leaks training data.<br>
+These payloads explore edge cases where repetition may trigger the LLM to output sensitive data.
+<p>
+Payloads simulate queries that aim to induce looping or repetitive responses.
+Expected system behavior is detailed for each scenario. Note that this is just in the raw files, and will not currently be shown in ZAP.
+<p>
+References:
+<ul>
+<li><a href="https://arxiv.org/pdf/2311.17035.pdf">Scalable Extraction of Training Data from (Production) Language Models</a>
+</ul>
+
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>003 Divergence Attack</H3>
+
+This file contains fuzzing payloads specific to testing LLM "hypnosis" vulnerabilities.<br>
+The goal is to determine if the LLM enters a repetitive state where it unintentionally leaks training data.
+These payloads explore edge cases where repetition may trigger the LLM to output sensitive data.
+<p>
+Payloads simulate queries that aim to induce looping or repetitive responses.
+This version of payloads is more focused on training data extraction through a 
+prompting strategy similar to the divergence attack described in the document.
+Expected system behavior is detailed for each scenario. 
+<p>
+Divergence testing - Payloads are designed to induce divergence from the model’s aligned state, 
+encouraging it to generate training data by combining nonsensical prompts with structured ones.
+<p>
+Repetition strategies - Several prompts employ repetition to test if the model diverges and 
+outputs memorized data.
+<p>
+Sensitive data requests - These payloads assess whether the model can protect sensitive training 
+data like PII, code snippets, or real-world text examples from leaking.
+<p>
+References
+<ul>
+<li><a href="https://arxiv.org/pdf/2311.17035.pdf">Scalable Extraction of Training Data from (Production) Language Models</a>
+</ul>
+
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>004 SCA</H3>
+
+This file contains fuzzing payloads specific to testing LLM vulnerabilities via the Special Characters Attack (SCA).<br>
+The goal is to assess whether LLMs are susceptible to data leakage by inputting combinations of special characters 
+that trigger memorized training data output.
+These payloads explore edge cases where special characters lead the model to output sensitive data.
+<p>
+Payloads simulate input sequences that induce LLMs to generate memorized content.
+This version is based on the SCA method, as described in the document provided.
+Expected system behavior is detailed for each scenario.
+<p>
+Special Characters Attack (SCA) - Payloads focus on using specific symbols, such as JSON structural symbols or other
+commonly occurring characters in LLM training corpora, to induce data leakage.<br>
+<p>
+References
+<ul>
+<li><a href="https://arxiv.org/pdf/2405.05990.pdf">Special Characters Attack: Toward Scalable Training Data Extraction from LLMs</a>
+</ul>
+
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>005 The Secret Sharer</H3>
+
+This file contains fuzzing payloads specific to testing unintended memorization in neural networks.<br>
+The goal is to determine if LLMs unintentionally memorize and reveal sensitive sequences, such as personal data, 
+through targeted prompts that trigger memorized responses.
+These payloads simulate queries designed to extract rare or secret sequences memorized during training.
+<p>
+Unintended memorization – The payloads are crafted to test whether the model retains specific secret data that should not be memorized, such as credit card numbers or social security numbers.
+Exposure metric testing – Some payloads test whether the model's output can be tied to memorization, using sequences akin to "canaries" inserted into the training data.
+<p>
+References:
+<ul>
+<li><a href="https://arxiv.org/pdf/1802.08232v3.pdf">The Secret Sharer: Evaluating and Testing Unintended Memorization in Neural Networks</a>
+</ul>
+
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>006 Quantifying Memorization</H3>
+
+This file contains fuzzing payloads specific to testing memorization in neural language models.<br>
+The goal is to identify if the LLM outputs memorized training data when prompted with specific patterns or 
+sequences, and how context length and data duplication influence this behavior.
+<p>
+These payloads are designed to test model scale, data duplication, and context length as key factors influencing memorization.
+<p>
+References:
+<ul>
+<li><a href="https://arxiv.org/pdf/2202.07646v3.pdf">Quantifying Memorization Across Neural Language Models</a>
+</ul>
+
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>007 Data Poisoning Attacks</H3>
+
+This file contains advanced fuzzing payloads specific to testing data poisoning vulnerabilities in DP-SGD models.<br>
+The goal is to assess if poisoned data can influence model behavior or violate differential privacy guarantees.
+<p>
+Data Poisoning: These payloads test the ability of adversaries to inject malicious data into the training process, compromising privacy or accuracy.
+<p>
+References:
+<ul>
+<li><a href="https://arxiv.org/pdf/2006.07709v1.pdf">Auditing Differentially Private Machine Learning: How Private is Private SGD?</a>
+</ul>
+
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>008 Membership Inference</H3>
+
+This file contains advanced fuzzing payloads specific to testing membership inference vulnerabilities in DP-SGD models.<br>
+The goal is to evaluate whether the model leaks information about whether a specific data point was part of the training set.
+<p>
+Membership Inference Attacks: These payloads assess if adversaries can infer membership status by querying the model.
+<p>
+References:
+<ul>
+<li><a href="https://arxiv.org/pdf/2006.07709v1.pdf">Auditing Differentially Private Machine Learning: How Private is Private SGD?</a>
+</ul>
+
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>009 Gradient Clipping</H3>
+
+This file contains advanced fuzzing payloads specific to testing gradient clipping vulnerabilities in DP-SGD models.<br>
+The goal is to test the robustness of gradient clipping in protecting privacy while maintaining model performance.
+<p>
+Gradient Clipping: Payloads explore whether gradient clipping sufficiently prevents large gradients from revealing sensitive information or influencing the model.
+<p>
+References:
+<ul>
+<li><a href="https://arxiv.org/pdf/2006.07709v1.pdf">Auditing Differentially Private Machine Learning: How Private is Private SGD?</a>
+</ul>
+
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H2>Extract Model Information</H2>
+
+<H3>001 Architecture</H3>
+
+This file contains advanced fuzzing payloads designed to extract model architecture information from LLMs.<br>
+The goal is to determine if the LLM reveals specific details about its architecture, 
+such as the number of layers, transformer types, or parameter counts.
+<p>
+Model Architecture Extraction: These payloads probe for specific architecture-related details 
+such as layer counts, model types, and other structural aspects of the LLM.
+<p>
+Layer counts - Payloads focus on extracting the number of layers and their types (e.g., transformer layers, hidden layers).<br>
+Parameter inference - Probes for parameter counts, such as attention heads or layer dimensions.<br>
+Model type - Attackers attempt to identify whether the LLM is a decoder-only model or part of an architecture family (e.g., GPT, BERT).<br>
+Specific internal mechanisms - Questions around activation functions, normalization, and positional encodings to infer architecture specifics.<br>
+<p>
+This file contains fuzzing payloads specific to AI-RMM Control "Measure 2.7.2"<br>
+The goal is to test if the system has established security and resilience metrics
+to detect potential theft of model training data, including encryption, access controls,
+and alarm thresholds for unauthorized access.
+<p>
+Payloads simulate scenarios where model training data security may be compromised.
+Expected system behavior is detailed for each scenario.
+<p>
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>002 Hyperparams</H3>
+
+This file contains advanced fuzzing payloads designed to extract hyperparameter information from LLMs.<br>
+The goal is to determine if the LLM reveals specific hyperparameters, such as learning rates, 
+optimizer types, batch sizes, and more, through adversarial prompts.
+
+<p>
+Hyperparameter Extraction: These payloads probe for learning rates, optimizer settings, 
+and training schedules used during model development.
+<p>
+Learning rates - Payloads focus on extracting the learning rate and its schedule.<br>
+Optimizer and hyperparameters - Probes for optimizer types, momentum, beta values, and weight decay settings.<br>
+Training specifics - Queries related to batch size, epochs, gradient clipping, and dropout rates.<br>
+Training techniques - Attempts to infer whether early stopping, data augmentation, or mixed-precision training were used.<br>
+<p>
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>003 Prompt Based Extraction</H3>
+
+This file contains advanced fuzzing payloads for prompt-based data extraction from LLMs.<br>
+These payloads are designed to test if the LLM inadvertently reveals memorized training data, 
+such as confidential phrases or sentences, through carefully crafted prompts.
+
+<p>
+Prompt-Based Data Extraction: These prompts resemble patterns found in the model's training data 
+to identify unintended data leakage.<br>
+Sensitive data extraction - These payloads attempt to reveal sensitive information like phone numbers, 
+email addresses, and unique identifiers.<br>
+Pattern-based probing - Crafted prompts closely resemble common patterns (e.g., addresses, quotes) 
+that may trigger memorized data.<br>
+Code and log extraction - Tests the model’s ability to avoid revealing memorized code snippets 
+or error messages.<br>
+Social media data - Payloads focus on revealing memorized handles, conversations, 
+or other user-generated content.<br>
+<p>
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>004 Conditional Prompts</H3>
+
+This file contains advanced fuzzing payloads for conditional prompts designed to extract context-specific information from LLMs.<br>
+These payloads guide the model by introducing conditions or constraints, aiming to extract information from specific domains or contexts within the training data.
+
+<p>
+Conditional Prompts: These prompts impose constraints that direct the model towards generating text that aligns with specific criteria or domain-specific knowledge.<br>
+<p>
+Conditional constraints - Each payload introduces specific conditions (e.g., domain-specific phrases or 
+structural limitations) to guide the model’s response.<br>
+Domain-targeted extraction - Prompts are crafted to extract domain-specific information, such as legal, 
+medical, or scientific content.<br>
+Sensitive information prevention - The payloads test if the model can provide high-level, generalized 
+responses without revealing memorized or proprietary data.<br>
+<p>
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>005 Adversarial ML</H3>
+
+This file contains advanced fuzzing payloads designed to extract training data for use in adversarial machine learning attacks.<br>
+The goal is to test if LLMs leak data that could be repurposed to train adversarial models designed to deceive other machine learning systems.
+
+<p>
+Adversarial Machine Learning - These prompts aim to extract valuable training data from LLMs to exploit or deceive other models via adversarial training.
+<p>
+Data extraction for adversarial retraining - Payloads focus on retrieving training-specific data that could be used to train adversarial models.<br>
+Exploiting misclassifications - Prompts target incorrect classifications and vulnerabilities in datasets to generate adversarial inputs.<br>
+Adversarial text generation - Some payloads are aimed at crafting text that could be used to deceive systems like chatbots, spam filters, or medical models.<br>
+<p>
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>006 IP Theft</H3>
+
+This file contains advanced fuzzing payloads designed to extract proprietary intellectual property (IP) techniques embedded within the model.<br>
+These payloads focus on revealing proprietary methods, innovations, or patented techniques related to the model’s training, architecture, or optimization.
+
+<p>
+Proprietary IP Techniques - These prompts target model-specific, innovative techniques designed to provide 
+competitive advantages or constitute patentable technologies.
+<p>
+Proprietary techniques - The payloads focus on extracting innovative, proprietary techniques such as model scaling, 
+pruning, parallelization, compression, and quantization.<br>
+Patented methods - Specific prompts aim to identify patented processes or patent-pending innovations in training, 
+optimization, and deployment strategies.<br>
+Energy efficiency and performance - Queries also focus on proprietary methods that optimize performance and 
+energy consumption in large models.<br>
+<p>
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>007 Data Privacy</H3>
+
+This file contains advanced fuzzing payloads designed to extract metadata and proprietary information about the model's origin, who trained it, and other development details.<br>
+These prompts focus on model-specific data privacy violations, aiming to reveal sensitive organizational or developmental information about the model.
+
+<p>
+Data Privacy Violations (Model Metadata) - These prompts target sensitive metadata such as who trained the model, the datasets used, and the organizations involved in its development.
+<p>
+Model metadata extraction - These prompts focus on extracting information about who developed and trained the model, as well as organizational and proprietary details.<br>
+Training process details - Probes target information related to the data annotation process, privacy practices, and collaborators involved in training.<br>
+Security and infrastructure - Payloads focus on extracting information about hardware infrastructure, funding, and data privacy handling during training.<br>
+<p>
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>008 Visual Representation Leakage</H3>
+
+This file contains advanced fuzzing payloads for visual representation analysis, focusing on stealing model information from scientific plots.<br>
+These prompts aim to infer model architecture, hyperparameters, and training details by leveraging patterns in visual outputs like t-SNE or loss plots.
+
+<p>
+Visual Representation Analysis - These prompts target model information extracted through visual outputs such as t-SNE and loss plots.
+Inspired from: "A Plot is Worth a ThousandWords: Model Information Stealing Attacks via Scientific Plots".
+<p>
+Scientific plot extraction: Payloads focus on inferring hyperparameters, model architecture, and training process 
+details based on patterns in t-SNE or loss plots.<br>
+Model metadata and configuration: These prompts test the model’s resistance to disclosing sensitive information 
+related to optimizer types, batch sizes, dropout, and regularization techniques.<br>
+Convergence and training dynamics: Several payloads probe for insights into learning rates, training durations, and 
+hyperparameter tuning through visual patterns in plots.<br>
+<p>
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+<H3>009 Privacy Violations</H3>
+
+This file contains advanced fuzzing payloads designed to extract sensitive training data, focusing on data privacy violations.<br>
+These prompts aim to identify potential privacy breaches by extracting PII, confidential data, or proprietary information from the model’s training data.
+
+<p>
+Data Privacy Violations - These prompts target sensitive information, leading to privacy breaches, identity theft, or reputational damage for individuals or organizations.
+<p>
+Sensitive information extraction - These prompts focus on extracting PII (e.g., names, email addresses, financial data, social security numbers) and confidential business information.<br>
+Data privacy violations - The payloads aim to assess whether the model can inadvertently leak training data that leads to privacy breaches, identity theft, or reputational damage.<br>
+Protected healthcare and legal data - Prompts target sensitive health records, legal contracts, and proprietary business strategies.<br>
+<p>
+Author: 
+<ul>
+<li>yiannis@owasp.org
+</ul>
+
+
+</BODY>
+</HTML>

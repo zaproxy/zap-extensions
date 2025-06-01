@@ -23,8 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.InputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -36,15 +34,17 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.apache.log4j.Logger;
-import org.parosproxy.paros.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.zaproxy.zap.extension.tab.Tab;
 
-public class TodoList extends AbstractPanel implements Tab {
+public class TodoList extends AbstractPanel {
+
+    private static final Logger LOGGER = LogManager.getLogger(TodoList.class);
 
     private static final long serialVersionUID = 1L;
     private JPanel panel;
@@ -62,7 +62,6 @@ public class TodoList extends AbstractPanel implements Tab {
         panel.setLayout(new GridLayout(0, 1));
         // TODO : add user defined tasks
         panel.add(new JLabel(Constant.messages.getString("todo.set.sheet.label")));
-        Logger logger = Logger.getLogger(TodoList.class);
 
         try {
             NodeList sections = parseXml();
@@ -86,7 +85,7 @@ public class TodoList extends AbstractPanel implements Tab {
             }
 
         } catch (Exception e) {
-            logger.error("Error occurred while parsing cheatsheet");
+            LOGGER.error("Error occurred while parsing cheatsheet");
         }
 
         thePane = new JScrollPane(panel);
@@ -112,15 +111,11 @@ public class TodoList extends AbstractPanel implements Tab {
             this.removeBtn = new JButton();
             removeBtn.setText(Constant.messages.getString("todo.remove.btn.label"));
             removeBtn.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            panel.remove(handle);
-                            panel.repaint();
-                            crazyFix(); // clicking on remove btn does not immediately rerender the
-                            // view.so use fix
-                        }
+                    e -> {
+                        panel.remove(handle);
+                        panel.repaint();
+                        crazyFix(); // clicking on remove btn does not immediately rerender the
+                        // view.so use fix
                     });
             add(checkbox);
             add(this.label);
@@ -142,7 +137,7 @@ public class TodoList extends AbstractPanel implements Tab {
 
     private void crazyFix() {
         // clicking on remove btn does not immediately rerender the view.so use fix
-        // fix : scroll up and down programatically
+        // fix : scroll up and down programmatically
         bar.setValue(bar.getValue() - 1);
         bar.setValue(bar.getValue() + 1);
     }

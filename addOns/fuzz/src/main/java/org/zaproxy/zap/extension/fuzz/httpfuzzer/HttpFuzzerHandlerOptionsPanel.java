@@ -83,8 +83,7 @@ public class HttpFuzzerHandlerOptionsPanel implements FuzzerHandlerOptionsPanel<
 
     @Override
     public HttpFuzzerOptions getOptions(FuzzerOptions baseOptions) {
-        return new HttpFuzzerOptions(
-                baseOptions, followRedirectsCheckBox.isSelected(), false, 100, false);
+        return new HttpFuzzerOptions(baseOptions, followRedirectsCheckBox.isSelected(), false, 100);
     }
 
     @Override

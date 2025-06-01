@@ -26,9 +26,8 @@ import java.util.Map;
 
 public class OracleManager {
 
-    private Map<Integer, Map<String, String>> oracleMap =
-            new HashMap<Integer, Map<String, String>>();
-    private List<OracleListener> listeners = new ArrayList<OracleListener>();
+    private Map<Integer, Map<String, String>> oracleMap = new HashMap<>();
+    private List<OracleListener> listeners = new ArrayList<>();
 
     private int id = 0;
 
@@ -47,7 +46,7 @@ public class OracleManager {
     }
 
     public void reset() {
-        oracleMap = new HashMap<Integer, Map<String, String>>();
+        oracleMap = new HashMap<>();
         id = 0;
     }
 

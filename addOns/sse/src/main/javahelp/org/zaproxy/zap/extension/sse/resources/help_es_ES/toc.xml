@@ -6,8 +6,7 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Eventos enviados por el servidor" image="html5connectivity" >
-		    	<tocitem text="Introducción" target="sse.introduction"/>
+			<tocitem text="Eventos enviados por el servidor" target="sse.introduction" image="html5connectivity" >
 				<tocitem text="Tab" target="sse.tab"/>
 			</tocitem>
 		</tocitem>

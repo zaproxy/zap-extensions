@@ -21,22 +21,29 @@ package org.zaproxy.zap.extension.bruteforce;
 
 import com.sittinglittleduck.DirBuster.BaseCase;
 import com.sittinglittleduck.DirBuster.ExtToCheck;
+import com.sittinglittleduck.DirBuster.HttpResponse;
+import com.sittinglittleduck.DirBuster.SimpleHttpClient;
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.SwingUtilities;
-import org.apache.log4j.Logger;
+import org.apache.commons.httpclient.URI;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
 
@@ -59,7 +66,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
 
     private boolean onlyUnderDirectory;
 
-    private static Logger log = Logger.getLogger(BruteForce.class);
+    private static final Logger LOGGER = LogManager.getLogger(BruteForce.class);
 
     public BruteForce(
             ScanTarget target,
@@ -76,38 +83,22 @@ public class BruteForce extends Thread implements BruteForceListenner {
         this.onlyUnderDirectory = false;
 
         this.tableModel = new BruteForceTableModel();
-        if (log.isDebugEnabled()) {
-            log.debug("BruteForce : " + target.getURI() + "/" + directory + " threads: " + threads);
-        }
+        LOGGER.debug("BruteForce: {}/{} threads: {}", target.getURI(), directory, threads);
 
-        manager = new DirBusterManager(this);
+        manager = new DirBusterManager(new SimpleHttpClientImpl(), this);
 
         manager.setDefaultNoThreads(threads);
 
-        ConnectionParam conParam = Model.getSingleton().getOptionsParam().getConnectionParam();
-
-        // Set up proxy?
-        if (conParam.isUseProxy(target.getHost())) {
-            manager.setProxyRealm(
-                    Model.getSingleton()
-                            .getOptionsParam()
-                            .getConnectionParam()
-                            .getProxyChainRealm());
-            manager.setProxyHost(conParam.getProxyChainName());
-            manager.setProxyPort(conParam.getProxyChainPort());
-            manager.setProxyUsername(conParam.getProxyChainUserName());
-            manager.setProxyPassword(conParam.getProxyChainPassword());
-            manager.setUseProxy(true);
-            manager.setUseProxyAuth(true);
-            log.debug(
-                    "BruteForce : set proxy to "
-                            + manager.getProxyHost()
-                            + ":"
-                            + manager.getProxyPort());
-        }
-
         if (bruteForceParam.isBrowseFiles()) {
             extensions = bruteForceParam.getFileExtensionsList();
+            if (bruteForceParam.isBrowseFilesWithoutExtension()) {
+                List<String> listOfExtensions = new ArrayList<>();
+                listOfExtensions.add(ExtToCheck.BLANK_EXT);
+                listOfExtensions.addAll(extensions);
+                extensions = listOfExtensions;
+            }
+        } else if (bruteForceParam.isBrowseFilesWithoutExtension()) {
+            extensions = Arrays.asList(ExtToCheck.BLANK_EXT);
         } else {
             extensions = Collections.emptyList();
         }
@@ -155,11 +146,11 @@ public class BruteForce extends Thread implements BruteForceListenner {
             if (directory != null) {
                 startPoint = directory;
             }
-            log.debug("BruteForce : starting on " + targetURL + startPoint);
+            LOGGER.debug("BruteForce: starting on {}{}", targetURL, startPoint);
 
             final String fileAbsolutePath = file.getAbsolutePath();
 
-            log.debug("BruteForce : file: " + fileAbsolutePath + " recursive=" + recursive);
+            LOGGER.debug("BruteForce: file: {} recursive={}", fileAbsolutePath, recursive);
             manager.setupManager(
                     startPoint,
                     fileAbsolutePath,
@@ -209,14 +200,14 @@ public class BruteForce extends Thread implements BruteForceListenner {
                 }
             }
         } catch (MalformedURLException ex) {
-            log.error("Failed brute forcing site " + target.getURI(), ex);
+            LOGGER.error("Failed brute forcing site {}", target.getURI(), ex);
         }
 
         if (this.listenner != null) {
             this.listenner.scanFinshed(target);
         }
         stopScan = true;
-        log.info("BruteForce : " + target.getURI() + " finished");
+        LOGGER.info("BruteForce: {} finished", target.getURI());
     }
 
     public void stopScan() {
@@ -320,7 +311,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
                     });
 
         } catch (Exception e) {
-            log.error("Failed to analyse response from " + url, e);
+            LOGGER.error("Failed to analyse response from {}", url, e);
         }
     }
 
@@ -354,5 +345,52 @@ public class BruteForce extends Thread implements BruteForceListenner {
 
     public int getScanId() {
         return scanId;
+    }
+
+    private static class SimpleHttpClientImpl implements SimpleHttpClient {
+
+        private HttpSender httpSender;
+
+        private SimpleHttpClientImpl() {
+            httpSender = new HttpSender(HttpSender.FORCED_BROWSE_INITIATOR);
+        }
+
+        @Override
+        public HttpResponse send(HttpMethod method, String url) throws IOException {
+            HttpMessage httpMessage =
+                    new HttpMessage(
+                            new HttpRequestHeader(method.name(), new URI(url, true), "HTTP/1.1"));
+            httpSender.sendAndReceive(httpMessage, false);
+            return new ZapHttpResponse(httpMessage);
+        }
+    }
+
+    private static class ZapHttpResponse implements HttpResponse {
+
+        private final HttpMessage httpMessage;
+
+        private ZapHttpResponse(HttpMessage httpMessage) {
+            this.httpMessage = httpMessage;
+        }
+
+        @Override
+        public int getStatusCode() {
+            return httpMessage.getResponseHeader().getStatusCode();
+        }
+
+        @Override
+        public String getContentType() {
+            return httpMessage.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
+        }
+
+        @Override
+        public String getResponseHeader() {
+            return httpMessage.getResponseHeader().toString();
+        }
+
+        @Override
+        public String getResponseBody() {
+            return httpMessage.getResponseBody().toString();
+        }
     }
 }

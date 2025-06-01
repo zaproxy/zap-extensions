@@ -32,7 +32,7 @@ public class PopupMenuAddFormhandlerParam extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
 
-    private JTable paramTable = null;
+    private JTable paramTable;
 
     public PopupMenuAddFormhandlerParam() {
         super(Constant.messages.getString("formhandler.popup.menu.params.add.label"));

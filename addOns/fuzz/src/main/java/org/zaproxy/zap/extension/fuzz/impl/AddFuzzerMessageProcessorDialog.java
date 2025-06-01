@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.fuzz.impl;
 import java.awt.CardLayout;
 import java.awt.Dialog;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -35,6 +34,7 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
+@SuppressWarnings("serial")
 public class AddFuzzerMessageProcessorDialog<
                 T1 extends Message, T2 extends FuzzerMessageProcessor<T1>>
         extends AbstractFormDialog {
@@ -166,18 +166,14 @@ public class AddFuzzerMessageProcessorDialog<
             }
 
             payloadUIHandlersComboBox.addItemListener(
-                    new ItemListener() {
+                    e -> {
+                        if (ItemEvent.SELECTED == e.getStateChange()) {
+                            String panelName = (String) e.getItem();
 
-                        @Override
-                        public void itemStateChanged(ItemEvent e) {
-                            if (ItemEvent.SELECTED == e.getStateChange()) {
-                                String panelName = (String) e.getItem();
+                            currentPanel = fuzzerMessageProcessors.getPanel(panelName);
+                            contentsPanelCardLayout.show(contentsPanel, panelName);
 
-                                currentPanel = fuzzerMessageProcessors.getPanel(panelName);
-                                contentsPanelCardLayout.show(contentsPanel, panelName);
-
-                                setHelpTarget(currentPanel.getHelpTarget());
-                            }
+                            setHelpTarget(currentPanel.getHelpTarget());
                         }
                     });
         }

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html data-th-lang="#{report.template.html.lang}" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title data-th-text="${reportTitle}">Report Title</title>
+<link
+	data-th-href="@{{pathToResources}/normalize/normalize.css(pathToResources=${resources})}"
+	href="resources/normalize/normalize.css" rel="stylesheet">
+<link
+	data-th-href="@{{pathToResources}/themes/{theme}/main.css(pathToResources=${resources}, theme=${reportData.theme})}"
+	href="resources/themes/original/main.css" rel="stylesheet">
+<link
+	data-th-href="@{{pathToResources}/themes/{theme}/colors.css(pathToResources=${resources}, theme=${reportData.theme})}"
+	href="resources/themes/original/colors.css" rel="stylesheet">
+</head>
+<body>
+	<header>
+		<h1 data-th-text="${reportTitle}">Report Title</h1>
+		<p>
+			<span data-th-text="#{report.template.generatedWith}">Generated
+				with</span> <a href="https://zaproxy.org"><img
+				data-th-src="@{{pathToResources}/zap32x32.png(pathToResources=${resources})}"
+				src="resources/zap32x32.png" alt="The ZAP logo" class="zap-logo">ZAP</a>
+			<span
+				data-th-text="${#dates.format(new java.util.Date(), #messages.msg('report.template.generatedDatetime'))}">on
+				date, at time</span>
+		</p>
+		<p data-th-text="#{report.zapVersion(${zapVersion})}">ZAP Version
+		</p>
+		<p>
+			ZAP by <a href="https://checkmarx.com/">Checkmarx</a>
+		</p>
+	</header>
+
+	<main
+		data-th-with="MAX_CONFIDENCE_CODE=4, MAX_RISK_CODE=3, alerts=${helper.getDepthFirstChildren(alertTree, false)}, includedConfidenceCodes=${#reportData=reportData, #numbers.sequence(MAX_CONFIDENCE_CODE, 0, -1).{? #code=#this, #reportData.isIncludeConfidence(#code)}}, includedRiskCodes=${#reportData=reportData, #numbers.sequence(MAX_RISK_CODE, 0, -1).{? #code=#this, #reportData.isIncludeRisk(#code)}}, includedConfidenceCodesSize=${includedConfidenceCodes.size()}, includedRiskCodesSize=${includedRiskCodes.size()}, sitesWithAlerts=${#alerts=alerts, #helper=helper, reportData.sites.{? #site=#this, !#alerts.{^ #userObject=#this.userObject, #msgUri=#userObject.msgUri, #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) == #helper.getPortForSite(#msgUri.toString()) &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}.isEmpty()}}">
+
+		<section data-th-if="${reportData.isIncludeSection('contents')}"
+			id="contents" class="contents">
+			<h2 data-th-text="#{report.template.section.contents}">Contents</h2>
+			<nav>
+				<ol>
+					<li data-th-if="${reportData.isIncludeSection('aboutThisReport')}"><a
+						href="#about-this-report"
+						data-th-text="#{report.template.section.aboutThisReport}">About
+							this report</a>
+						<ol>
+							<li
+								data-th-if="${reportData.isIncludeSection('reportDescription') and description != null and !description.isEmpty()}"><a
+								href="#report-description"
+								data-th-text="#{report.template.section.reportDescription}">Report
+									description</a></li>
+							<li
+								data-th-if="${reportData.isIncludeSection('reportParameters')}"><a
+								href="#report-parameters"
+								data-th-text="#{report.template.section.reportParameters}">Report
+									parameters</a></li>
+						</ol></li>
+					<data-th-block data-th-unless="${alerts.isEmpty()}">
+					<li data-th-if="${reportData.isIncludeSection('summaries')}"><a
+						href="#summaries"
+						data-th-text="#{report.template.section.summaries}">Summaries</a>
+						<ol>
+							<li
+								data-th-if="${reportData.isIncludeSection('riskConfidenceCounts')}"><a
+								href="#risk-confidence-counts"
+								data-th-text="#{report.template.section.riskConfidenceCounts}">Alert
+									counts by risk and confidence</a></li>
+							<li data-th-if="${reportData.isIncludeSection('siteRiskCounts')}"><a
+								href="#site-risk-counts"
+								data-th-text="#{report.template.section.siteRiskCounts}">Alert
+									counts by site and risk</a></li>
+							<li
+								data-th-if="${reportData.isIncludeSection('alertTypeCounts')}"><a
+								href="#alert-type-counts"
+								data-th-text="#{report.template.section.alertTypeCounts}">Alert
+									counts by alert type</a></li>
+						</ol></li>
+					<li data-th-if="${reportData.isIncludeSection('alerts')}"><a
+						href="#alerts" data-th-text="#{report.template.section.alerts}">Alerts</a>
+						<ol>
+							<th-block data-th-each="riskCode: ${includedRiskCodes}"
+								data-th-with="filteredAlerts=${#riskCode=riskCode, alerts.{? #this.userObject.risk == #riskCode}}">
+							<th-block data-th-unless="${filteredAlerts.isEmpty()}">
+							<th-block
+								data-th-each="confidenceCode: ${includedConfidenceCodes}"
+								data-th-with="filteredAlerts=${#confidenceCode=confidenceCode, filteredAlerts.{? #this.userObject.confidence == #confidenceCode}}">
+							<li data-th-unless="${filteredAlerts.isEmpty()}"><a
+								data-th-href="@{#alerts--risk-{riskCode}-confidence-{confidenceCode}(riskCode=${riskCode}, confidenceCode=${confidenceCode})}"><span
+									data-th-text="#{report.template.risk}">Risk</span>=<span
+									class="risk-level"
+									data-th-text="${helper.getRiskString(riskCode)}">Risk
+										level</span>, <span data-th-text="#{report.template.confidence}">Confidence</span>=<span
+									class="confidence-level"
+									data-th-text="${helper.getConfidenceString(confidenceCode)}">Confidence
+										level</span> <span data-th-text="|(${filteredAlerts.size()})|">(count)</span></a></li>
+							</th-block> </th-block> </th-block>
+						</ol></li>
+					<li data-th-if="${reportData.isIncludeSection('appendix')}"><a
+						href="#appendix"
+						data-th-text="#{report.template.section.appendix}">Appendix</a>
+						<ol>
+							<li data-th-if="${reportData.isIncludeSection('alertTypes')}"><a
+								href="#alert-types"
+								data-th-text="#{report.template.section.alertTypes}">Alert
+									types</a></li>
+						</ol></li>
+					</data-th-block>
+				</ol>
+			</nav>
+		</section>
+
+		<section
+			data-th-if="${reportData.isIncludeSection('aboutThisReport')}"
+			id="about-this-report" class="about-this-report">
+			<h2 data-th-text="#{report.template.section.aboutThisReport}">About
+				this report</h2>
+
+			<section
+				data-th-if="${reportData.isIncludeSection('reportDescription') and description != null and !description.isEmpty()}"
+				id="report-description">
+				<h3 data-th-text="#{report.template.section.reportDescription}">Report
+					description</h3>
+				<div class="report-description--container">
+					<th-block data-th-replace="~{::nl2pbr(text=${description})}">
+					<p>Report description</p>
+					</th-block>
+				</div>
+			</section>
+
+			<section
+				data-th-if="${reportData.isIncludeSection('reportParameters')}"
+				id="report-parameters">
+				<h3 data-th-text="#{report.template.section.reportParameters}">Report
+					parameters</h3>
+				<div class="report-parameters--container">
+					<h4 data-th-text="#{report.template.reportParameters.contexts}">Contexts</h4>
+					<th-block
+						data-th-with="includedContexts=${reportData.getContexts()}">
+					<th-block data-th-switch="${includedContexts.size}">
+					<p data-th-case="0"
+						data-th-text="#{report.template.reportParameters.contexts.noContextsSelected}">No
+						contexts were selected, so all contexts were included by default.</p>
+					<th-block data-th-case="*">
+					<p
+						data-th-text="#{report.template.reportParameters.contexts.selectedContexts}">The
+						following contexts were selected to be included:</p>
+					<ul class="contexts-list">
+						<li data-th-each="context: ${includedContexts}"><span
+							class="context" data-th-text="${context.name}">context</span></li>
+					</ul>
+					</th-block> </th-block> </th-block>
+
+					<h4 data-th-text="#{report.template.reportParameters.sites}">Sites</h4>
+					<th-block data-th-with="includedSites=${reportData.getSites()}">
+					<p
+						data-th-text="#{report.template.reportParameters.sites.includedSites}">The
+						following sites were included:</p>
+					<ul class="sites-list">
+						<li data-th-each="site: ${includedSites}"><span class="site"
+							data-th-text="${site}">site</span></li>
+					</ul>
+					</th-block>
+					<p
+						data-th-text="#{report.template.reportParameters.sites.noneSelectedAllIncluded}">(If
+						no sites were selected, all sites were included by default.)</p>
+					<p
+						data-th-text="#{report.template.reportParameters.sites.alsoWithinIncludedContext}">An
+						included site must also be within one of the included contexts for
+						its data to be included in the report.</p>
+
+					<h4 data-th-text="#{report.template.reportParameters.riskLevels}">Risk
+						levels</h4>
+					<p>
+						<span data-th-text="#{report.template.reportParameters.included}">Included</span>:
+						<th-block data-th-switch="${includedRiskCodesSize}"> <span
+							data-th-case="0"
+							data-th-text="#{report.template.reportParameters.none}">None</span>
+						<span data-th-case="*" class="included-risk-codes"><th-block data-th-each="riskCode, iterStat: ${includedRiskCodes}"><th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block><span class="risk-level" data-th-text="${helper.getRiskString(riskCode)}">risk level</span></th-block></span></th-block>
+					</p>
+					<p>
+						<span data-th-text="#{report.template.reportParameters.excluded}">Excluded</span>:
+						<th-block data-th-switch="${includedRiskCodesSize}"> <span
+							data-th-case="${MAX_RISK_CODE + 1}"
+							data-th-text="#{report.template.reportParameters.none}">None</span>
+						<span data-th-case="*" class="included-risk-codes"><th-block data-th-each="riskCode, iterStat: ${#numbers.sequence(MAX_RISK_CODE, 0, -1).{? #this not in #includedRiskCodes}}"><th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block><span class="risk-level" data-th-text="${helper.getRiskString(riskCode)}">risk level</span></th-block></span></th-block>
+					</p>
+
+					<h4
+						data-th-text="#{report.template.reportParameters.confidenceLevels}">Confidence
+						levels</h4>
+					<p>
+						<span data-th-text="#{report.template.reportParameters.included}">Included</span>:
+						<th-block data-th-switch="${includedConfidenceCodesSize}">
+						<span data-th-case="0"
+							data-th-text="#{report.template.reportParameters.none}">None</span>
+						<span data-th-case="*" class="included-confidence-codes"><th-block data-th-each="confidenceCode, iterStat: ${includedConfidenceCodes}"><th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block><span class="confidence-level" data-th-text="${helper.getConfidenceString(confidenceCode)}">confidence level</span></th-block></span></th-block>
+					</p>
+					<p>
+						<span data-th-text="#{report.template.reportParameters.excluded}">Excluded</span>:
+						<th-block data-th-switch="${includedConfidenceCodesSize}">
+						<span data-th-case="${MAX_CONFIDENCE_CODE + 1}"
+							data-th-text="#{report.template.reportParameters.none}">None</span>
+						<span data-th-case="*" class="included-confidence-codes"> <th-block data-th-each="confidenceCode, iterStat: ${#numbers.sequence(MAX_CONFIDENCE_CODE, 0, -1).{? #this not in #includedConfidenceCodes}}"><th-block data-th-text="${iterStat.index == 0? '': ', '}"></th-block><span class="confidence-level" data-th-text="${helper.getConfidenceString(confidenceCode)}">confidence level</span></th-block></span></th-block>
+					</p>
+				</div>
+			</section>
+		</section>
+
+		<th-block data-th-switch="${alerts.isEmpty()}">
+		<section>
+			<p data-th-case="true">
+				<strong data-th-text="#{report.template.noAlerts}">No
+					alerts were found within the report parameters.</strong>
+			</p>
+		</section>
+		<th-block data-th-case="false">
+		<section data-th-if="${reportData.isIncludeSection('summaries')}"
+			id="summaries" class="summaries">
+			<h2 data-th-text="#{report.template.section.summaries}">Summaries</h2>
+
+			<section
+				data-th-if="${reportData.isIncludeSection('riskConfidenceCounts')}"
+				id="risk-confidence-counts">
+				<h3 data-th-text="#{report.template.section.riskConfidenceCounts}">Alert
+					counts by risk and confidence</h3>
+				<table class="risk-confidence-counts-table"
+					data-th-with="alertsSize=${alerts.size()}">
+					<caption>
+						<p
+							data-th-text="#{report.template.riskConfidenceCounts.captionP1}">This
+							table shows the number of alerts for each level of risk and
+							confidence included in the report.</p>
+						<p
+							data-th-text="#{report.template.riskConfidenceCounts.captionP2}">(The
+							percentages in brackets represent the count as a percentage of
+							the total number of alerts included in the report, rounded to one
+							decimal place.)</p>
+					</caption>
+					<colgroup>
+						<col>
+						<col>
+					</colgroup>
+					<colgroup
+						data-th-with="widthCss=|width: ${70.0 / (includedConfidenceCodesSize + 1)}%|">
+						<col
+							data-th-each="i: ${#numbers.sequence(0, includedConfidenceCodesSize - 1)}"
+							data-th-style="${widthCss}">
+						<col data-th-style="${widthCss}">
+					</colgroup>
+					<thead>
+						<tr>
+							<td colspan="2" rowspan="2"></td>
+							<th scope="colgroup"
+								data-th-colspan="${includedConfidenceCodesSize + 1}"
+								data-th-text="#{report.template.confidence}">Confidence</th>
+						</tr>
+						<tr>
+							<th data-th-each="confidenceCode: ${includedConfidenceCodes}"
+								scope="col"
+								data-th-text="${helper.getConfidenceString(confidenceCode)}">Confidence
+								level</th>
+							<th scope="col"
+								data-th-text="#{report.template.riskConfidenceCounts.total}">Total</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr data-th-each="riskCode, iterStat: ${includedRiskCodes}">
+							<th data-th-if="${iterStat.first}" scope="rowgroup"
+								data-th-rowspan="${includedRiskCodesSize + 1}"
+								data-th-text="#{report.template.risk}">Risk</th>
+							<th scope="row" data-th-text="${helper.getRiskString(riskCode)}">Risk
+								level</th>
+							<td data-th-each="confidenceCode: ${includedConfidenceCodes}"
+								data-th-with="count=${#riskCode=riskCode, #confidenceCode=confidenceCode, alerts.{? #userObject=#this.userObject, #userObject.risk == #riskCode &amp;&amp; #userObject.confidence == #confidenceCode}.size()}"><span
+								data-th-text="${count}">count</span><br> <span
+								class="additional-info-percentages"
+								data-th-text="|(${#numbers.formatPercent(count * 1.0/alertsSize, 1, 1)})|">(%
+									of total number of alerts)</span></td>
+							<td
+								data-th-with="riskLevelTotal=${#riskCode=riskCode, alerts.{? #this.userObject.risk == #riskCode}.size()}"><span
+								data-th-text="${riskLevelTotal}">total count for risk
+									level</span><br> <span class="additional-info-percentages"
+								data-th-text="|(${#numbers.formatPercent(riskLevelTotal * 1.0/alertsSize, 1, 1)})|">(%
+									of total count for all included risk and confidence levels)</span></td>
+						</tr>
+						<tr>
+							<th scope="row"
+								data-th-text="#{report.template.riskConfidenceCounts.total}">Total</th>
+							<td data-th-each="confidenceCode: ${includedConfidenceCodes}"
+								data-th-with="confidenceLevelTotal=${#confidenceCode=confidenceCode, alerts.{? #this.userObject.confidence == #confidenceCode}.size()}"><span
+								data-th-text="${confidenceLevelTotal}">total count for
+									confidence level</span><br> <span
+								class="additional-info-percentages"
+								data-th-text="|(${#numbers.formatPercent(confidenceLevelTotal * 1.0/ alertsSize, 1, 1)})|">(%
+									of total count for all included risk and confidence levels)</span></td>
+							<td><span data-th-text="${alertsSize}">total count
+									for all included risk and confidence levels</span><br> <span
+								class="additional-info-percentages">(100%)</span></td>
+						</tr>
+					</tbody>
+				</table>
+			</section>
+
+			<section
+				data-th-if="${reportData.isIncludeSection('siteRiskCounts')}"
+				id="site-risk-counts">
+				<h3 data-th-text="#{report.template.section.siteRiskCounts}">Alert
+					counts by site and risk</h3>
+				<table class="site-risk-counts-table"
+					data-th-with="includedRiskCodesSize=${includedRiskCodes.size()}">
+					<caption>
+						<p data-th-text="#{report.template.siteRiskCounts.captionP1}">This
+							table shows, for each site for which one or more alerts were
+							raised, the number of alerts raised at each risk level.</p>
+						<p data-th-text="#{report.template.siteRiskCounts.captionP2}">Alerts
+							with a confidence level of "False Positive" have been excluded
+							from these counts.</p>
+						<p data-th-text="#{report.template.siteRiskCounts.captionP3}">(The
+							numbers in brackets are the number of alerts raised for the site
+							at or above that risk level.)</p>
+					</caption>
+					<colgroup>
+						<col>
+						<col>
+					</colgroup>
+					<colgroup
+						data-th-with="widthCss=|width: ${65.0 / includedRiskCodesSize}%|">
+						<col
+							data-th-each="i: ${#numbers.sequence(0, includedRiskCodesSize - 1)}"
+							data-th-style="${widthCss}">
+					</colgroup>
+					<thead>
+						<tr>
+							<td colspan="2" rowspan="2"></td>
+							<th scope="colgroup" data-th-colspan="${includedRiskCodesSize}"
+								data-th-text="#{report.template.risk}">Risk</th>
+						</tr>
+						<tr>
+							<th data-th-each="riskCode, iterStat: ${includedRiskCodes}"
+								scope="col"
+								data-th-with="riskString=${helper.getRiskString(riskCode)}">
+								<span data-th-text="${riskString}">Risk level</span><br> <th-block
+									data-th-switch="${iterStat.index}"> <span
+									data-th-case="0" class="additional-info-percentages"
+									data-th-text="|(= ${riskString})|">(= Risk level)</span> <span
+									data-th-case="*" class="additional-info-percentages"
+									data-th-text="|(&gt;= ${riskString})|">(&gt;= Risk
+									level)</span> </th-block>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr data-th-each="site, iterStat: ${sitesWithAlerts}">
+							<th data-th-if="${iterStat.first}" scope="rowgroup"
+								data-th-rowspan="${sitesWithAlerts.size()}"
+								data-th-text="#{report.template.site}">Site</th>
+							<th scope="row" data-th-text="${site}">Site</th>
+							<th-block
+								data-th-with="countsForRow=${#site=site, #helper=helper, #alerts=alerts, includedRiskCodes.{#riskCode=#this, #alerts.{? #userObject=#this.userObject, #msgUri=#userObject.msgUri, #userObject.confidence != 0 &amp;&amp; #userObject.risk == #riskCode &amp;&amp; #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) ==  #helper.getPortForSite(#msgUri.toString()) &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}.size()}}">
+							<td data-th-each="count, iterStat: ${countsForRow}"><span
+								data-th-text="${count}">count</span><br> <span
+								class="additional-info-percentages"
+								data-th-text="|(${#aggregates.sum(countsForRow.subList(0, iterStat.index + 1))})|">(Number
+									of alerts at or above this risk level for the site)</span></td>
+							</th-block>
+						</tr>
+					</tbody>
+				</table>
+			</section>
+
+			<section
+				data-th-if="${reportData.isIncludeSection('alertTypeCounts')}"
+				id="alert-type-counts">
+				<h3 data-th-text="#{report.template.section.alertTypeCounts}">Alert
+					counts by alert type</h3>
+				<table class="alert-type-counts-table"
+					data-th-with="alertsSize=${alerts.size()}">
+					<caption>
+						<p data-th-text="#{report.template.alertTypeCounts.captionP1}">This
+							table shows the number of alerts of each alert type, together
+							with the alert type's risk level.</p>
+						<p data-th-text="#{report.template.alertTypeCounts.captionP2}">(The
+							percentages in brackets represent each count as a percentage,
+							rounded to one decimal place, of the total number of alerts
+							included in this report.)</p>
+					</caption>
+					<thead>
+						<tr>
+							<th scope="col"
+								data-th-text="#{report.template.alertTypeCounts.alertType}">Alert
+								type</th>
+							<th scope="col"
+								data-th-text="#{report.template.alertTypeCounts.risk}">Risk</th>
+							<th scope="col"
+								data-th-text="#{report.template.alertTypeCounts.count}">Count</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr data-th-each="node, iterStat: ${alertTree.children}">
+							<th scope="row"><a
+								data-th-href="@{#alert-type-{index}(index=${iterStat.index})}"
+								data-th-text="${node.nodeName}">Alert type name</a></th>
+							<td class="risk-level"
+								data-th-text="${helper.getRiskString(node.risk)}">Risk
+								level</td>
+							<td data-th-with="count=${node.childCount}"><span
+								data-th-text="${count}">Count</span><br> <span
+								class="additional-info-percentages"
+								data-th-text="|(${#numbers.formatPercent(count * 1.0 / alertsSize, 1, 1)})|">(%
+									of total number of alerts)</span></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th scope="row"
+								data-th-text="#{report.template.alertTypeCounts.total}">Total</th>
+							<td></td>
+							<td data-th-text="${alertsSize}">Total count</td>
+						</tr>
+					</tfoot>
+				</table>
+			</section>
+		</section>
+
+		<section data-th-if="${reportData.isIncludeSection('alerts')}"
+			id="alerts" class="alerts">
+			<h2 data-th-text="#{report.template.section.alerts}">Alerts</h2>
+			<ol>
+				<th-block data-th-each="riskCode: ${includedRiskCodes}"
+					data-th-with="filteredAlerts=${#riskCode=riskCode, alerts.{? #this.userObject.risk == #riskCode}}">
+				<th-block data-th-unless="${filteredAlerts.isEmpty()}"> <th-block
+					data-th-each="confidenceCode: ${includedConfidenceCodes}"
+					data-th-with="filteredAlerts=${#confidenceCode=confidenceCode, filteredAlerts.{? #this.userObject.confidence == #confidenceCode}}">
+				<li data-th-unless="${filteredAlerts.isEmpty()}"
+					data-th-id="|alerts--risk-${riskCode}-confidence-${confidenceCode}|">
+					<h3>
+						<span data-th-text="#{report.template.risk}">Risk</span>=<span
+							class="risk-level"
+							data-th-text="${helper.getRiskString(riskCode)}">Risk
+							level</span>, <span data-th-text="#{report.template.confidence}">Confidence</span>=<span
+							class="confidence-level"
+							data-th-text="${helper.getConfidenceString(confidenceCode)}">Confidence
+							level</span> <span data-th-text="|(${filteredAlerts.size()})|">(count)</span>
+					</h3>
+					<ol>
+						<th-block data-th-each="site: ${sitesWithAlerts}"
+							data-th-with="filteredAlerts=${#helper=helper, #site=site, filteredAlerts.{? #userObject=#this.userObject, #msgUri=#userObject.msgUri, #helper.getHostForSite(#site) == #msgUri.host &amp;&amp; #helper.getPortForSite(#site) == #helper.getPortForSite(#msgUri.toString()) &amp;&amp; #helper.isSslSite(#site) == #msgUri.scheme.equals('https')}}">
+						<li data-th-unless="${filteredAlerts.isEmpty()}"
+							class="alerts--site-li">
+							<h4>
+								<span class="site" data-th-text="${site}">site</span> <span
+									data-th-text="|(${filteredAlerts.size()})|">(count)</span>
+							</h4>
+							<ol
+								data-th-with="alertTypeNames=${alertTree.children.{userObject}.{name}}">
+								<th-block
+									data-th-each="alertType: ${#lists.sort(#lists.toList(#sets.toSet(filteredAlerts.{userObject.name})))}"
+									data-th-with="filteredAlerts=${#alertType=alertType, filteredAlerts.{? #this.userObject.name.equals(#alertType)}}">
+								<li data-th-unless="${filteredAlerts.isEmpty()}">
+									<h5>
+										<a
+											data-th-href="@{#alert-type-{index}(index=${alertTypeNames.indexOf(alertType)})}"
+											data-th-text="${alertType}">alert type</a> <span
+											data-th-text="|(${filteredAlerts.size()})|">(count)</span>
+									</h5>
+									<ol>
+										<li data-th-each="filteredAlert: ${filteredAlerts}"><details>
+												<summary>
+													<span class="request-method-n-url"
+														data-th-text="|${filteredAlert.userObject.method} ${filteredAlert.userObject.uri}|">request
+														method and URL</span>
+												</summary>
+												<th-block
+													data-th-replace="~{::alertsTable(alert=${filteredAlert})}">
+												</th-block>
+											</details></li>
+									</ol>
+								</li>
+								</th-block>
+							</ol>
+						</li>
+						</th-block>
+					</ol>
+				</li>
+				</th-block> </th-block> </th-block>
+			</ol>
+		</section>
+
+		<section data-th-if="${reportData.isIncludeSection('appendix')}"
+			id="appendix" class="appendix">
+			<h2 data-th-text="#{report.template.section.appendix}">Appendix</h2>
+
+			<section data-th-if="${reportData.isIncludeSection('alertTypes')}"
+				id="alert-types" class="alert-types">
+				<h3 data-th-text="#{report.template.section.alertTypes}">Alert
+					types</h3>
+				<p class="alert-types-intro"
+					data-th-text="#{report.template.alertTypes.intro}">This section
+					contains additional information on the types of alerts in the
+					report.</p>
+				<ol>
+					<li
+						data-th-each="userObject, iterStat: ${alertTree.children.{userObject}}"
+						data-th-id="|alert-type-${iterStat.index}|">
+						<h4 data-th-text="${userObject.name}">alert type name</h4>
+						<table class="alert-types-table">
+							<tr>
+								<th scope="row"
+									data-th-text="#{report.template.alertType.source}">Source</th>
+								<td
+									data-th-with="sourceMsg=#{${'report.template.alertType.' + userObject.source.getI18nKey()}}">
+									<th-block
+										data-th-with="sourceStr=${userObject.source.toString()}, scanData=${#{'ACTIVE': 'activeScanData', 'PASSIVE': 'passiveScanData2'}.get(sourceStr)}, scanJobResultData=${reportData.reportObjects.get(scanData)}">
+									<th-block data-th-switch="${scanJobResultData}"> <th-block
+										data-th-case="${null}"> <th-block
+										data-th-switch="${userObject.pluginId}"> <th-block
+										data-th-case="${-1}"> <span
+										data-th-text="${sourceMsg}">Source</span> </th-block> <th-block
+										data-th-case="*"> <span data-th-text="${sourceMsg}">Source</span>
+									<th-block data-th-switch="${sourceStr}"> <th-block
+										data-th-case="ACTIVE">(<span
+										data-th-text="#{report.template.alertType.source.pluginId}">plugin
+										ID</span>: <a
+										data-th-href="@{https://www.zaproxy.org/docs/alerts/{id}/(id=${userObject.pluginId})}"
+										data-th-text="${userObject.pluginId}">pluginId</a>)</th-block> <span
+										data-th-case="*"
+										data-th-text="|(#{report.template.alertType.source.pluginId}: ${userObject.pluginId})|">(plugin
+										ID: pluginId)</span> </th-block> </th-block> </th-block> </th-block> <th-block data-th-case="*"> <span
+										data-th-text="${sourceMsg}">Source</span> <span>(<a
+										data-th-href="@{https://www.zaproxy.org/docs/alerts/{pluginId}/(pluginId=${userObject.pluginId})}"
+										href="https://www.zaproxy.org/docs/alerts/"
+										data-th-with="ruleData=${scanJobResultData.getRuleData(userObject.pluginId)}, pluginIdStr=|#{report.template.alertType.source.pluginId}: ${userObject.pluginId}|"
+										data-th-text="${ruleData == null? pluginIdStr: ruleData.name}">rule
+											name</a>)
+									</span> </th-block> </th-block> </th-block>
+								</td>
+							</tr>
+							<tr data-th-if="${userObject.cweId &gt; 0}">
+								<th scope="row"
+									data-th-text="#{report.template.alertType.cweId}">CWE ID</th>
+								<td><a
+									data-th-href="@{https://cwe.mitre.org/data/definitions/{id}.html(id=${userObject.cweId})}"
+									data-th-text="${userObject.cweId}"
+									href="https://cwe.mitre.org/data/index.html">CWE ID value</a></td>
+							</tr>
+							<tr data-th-if="${userObject.wascId &gt; 0}">
+								<th scope="row"
+									data-th-text="#{report.template.alertType.wascId}">WASC ID</th>
+								<td data-th-text="${userObject.wascId}">WASC ID value</td>
+							</tr>
+							<tr data-th-unless="${userObject.reference.isEmpty()}">
+								<th scope="row"
+									data-th-text="#{report.template.alertType.reference}">Reference</th>
+								<td>
+									<ol>
+										<li
+											data-th-each="url: ${#strings.arraySplit(userObject.reference, '\n')}"><a
+											data-th-href="${url}" data-th-text="${url}">URL</a></li>
+									</ol>
+								</td>
+							</tr>
+						</table>
+					</li>
+				</ol>
+			</section>
+		</section>
+		</th-block> </th-block>
+	</main>
+</body>
+</html>
+
+
+<th-block data-th-remove="all"> <th-block
+	data-th-fragment="nl2p(text)"> <th-block
+	data-th-each="paragraph: ${#strings.arraySplit(text, '\n')}">
+<p data-th-if="${!paragraph.isEmpty()}" data-th-text="${paragraph}">text</p>
+</th-block> </th-block> <th-block data-th-fragment="nl2pbr(text)"
+	data-th-each="paragraph, iterStat: ${#strings.arraySplit(#strings.trim(text), '\n\n')}">
+<th-block data-th-with="trimmedParagraph=${paragraph.trim()}">
+<p data-th-if="${!trimmedParagraph.isEmpty()}">
+	<th-block
+		data-th-each="line, iterStat: ${trimmedParagraph.split('\n')}">
+	<th-block data-th-with="trimmedLine=${line.trim()}"> <th-block
+		data-th-if="${!trimmedLine.isEmpty()}"> <th-block
+		data-th-text="${trimmedLine}"></th-block> <br
+		data-th-if="${!iterStat.last}">
+	</th-block> </th-block> </th-block>
+</p>
+</th-block> </th-block> <th-block data-th-fragment="alertsTable(alert)">
+<table data-th-with="userObject=${alert.userObject}"
+	class="alerts-table">
+	<tr>
+		<th scope="row" data-th-text="#{report.template.alertsTable.tags}">Tags</th>
+		<td>
+			<ul class="alert-tags-list">
+				<li data-th-each="entry: ${filteredAlert.userObject.tags}"
+					data-th-switch="${entry.value.startsWith('https://') or entry.value.startsWith('http://')}">
+					<span data-th-case="true"><a data-th-href="${entry.value}"
+						data-th-text="${entry.key}">URL</a></span> <span data-th-case="false"
+					data-th-text="|${entry.key} = ${entry.value}|">key = value</span>
+				</li>
+			</ul>
+		</td>
+	</tr>
+	<tr data-th-unless="${userObject.description.isEmpty()}">
+		<th scope="row"
+			data-th-text="#{report.template.alertsTable.description}">Description</th>
+		<td><th-block
+				data-th-replace="~{::nl2p(text=${userObject.description})}">Description</th-block></td>
+	</tr>
+	<tr data-th-unless="${userObject.otherInfo.isEmpty()}">
+		<th scope="row"
+			data-th-text="#{report.template.alertsTable.otherInfo}">Other
+			info</th>
+		<td><th-block
+				data-th-replace="~{::nl2p(text=${userObject.otherInfo})}">Other
+			info</th-block></td>
+	</tr>
+	<tr data-th-if="${userObject.message}">
+		<th scope="row" data-th-text="#{report.template.alertsTable.request}">Request</th>
+		<td><details
+				data-th-with="requestHeader=${userObject.message.requestHeader}, headerLength=${requestHeader.toString().length}"
+				data-th-open="${headerLength &lt; 2048 || !reportData.isIncludeSection('requestHeader')}">
+				<summary
+					data-th-text="|#{report.template.alertsTable.requestHeader} (${headerLength} ${headerLength == 1? 'byte': 'bytes'})|">Request
+					line and header section (x bytes)</summary>
+				<th-block
+					data-th-switch="${reportData.isIncludeSection('requestHeader')}">
+				<pre data-th-case="true"><code data-th-text="${userObject.message.requestHeader}">Request line and header section</code></pre>
+				<p data-th-case="false"
+					data-th-text="#{report.template.alertsTable.excludedFromReport}">[Excluded
+					from report]</p>
+				</th-block>
+			</details> <details class="request-body"
+				data-th-with="requestBody=${userObject.message.requestBody}, bodyLength=${requestBody.length}"
+				data-th-open="${bodyLength &lt; 2048 || !reportData.isIncludeSection('requestBody')}">
+				<summary
+					data-th-text="|#{report.template.alertsTable.requestBody} (${bodyLength} ${bodyLength == 1? 'byte': 'bytes'})|">Request
+					body (x bytes)</summary>
+				<th-block
+					data-th-switch="${reportData.isIncludeSection('requestBody')}">
+				<pre data-th-case="true"><code data-th-text="${userObject.message.requestBody}">Request body</code></pre>
+				<p data-th-case="false"
+					data-th-text="#{report.template.alertsTable.excludedFromReport}">[Excluded
+					from report]</p>
+				</th-block>
+			</details></td>
+	</tr>
+	<tr data-th-if="${userObject.message}">
+		<th scope="row" data-th-text="#{report.template.alertsTable.response}">Response</th>
+		<td><details
+				data-th-with="responseHeader=${userObject.message.responseHeader}, headerLength=${responseHeader.toString().length}"
+				data-th-open="${headerLength &lt; 2048 || !reportData.isIncludeSection('responseHeader')}">
+				<summary
+					data-th-text="|#{report.template.alertsTable.responseHeader} (${headerLength} ${headerLength == 1? 'byte': 'bytes'})|">Status
+					line and header section (x bytes)</summary>
+				<th-block
+					data-th-switch="${reportData.isIncludeSection('responseHeader')}">
+				<pre data-th-case="true"><code data-th-text="${userObject.message.responseHeader}">Status line and header section</code></pre>
+				<p data-th-case="false"
+					data-th-text="#{report.template.alertsTable.excludedFromReport}">[Excluded
+					from report]</p>
+				</th-block>
+			</details> <details class="response-body"
+				data-th-with="responseBody=${userObject.message.responseBody}, bodyLength=${responseBody.length}"
+				data-th-open="${bodyLength &lt; 2048 || !reportData.isIncludeSection('responseBody')}">
+				<summary
+					data-th-text="|#{report.template.alertsTable.responseBody} (${bodyLength} ${bodyLength == 1? 'byte': 'bytes'})|">Response
+					body (x bytes)</summary>
+				<th-block
+					data-th-switch="${reportData.isIncludeSection('responseBody')}">
+				<pre data-th-case="true"><code data-th-text="${userObject.message.responseBody}">Response body</code></pre>
+				<p data-th-case="false"
+					data-th-text="#{report.template.alertsTable.excludedFromReport}">[Excluded
+					from report]</p>
+				</th-block>
+			</details></td>
+	</tr>
+	<tr data-th-unless="${userObject.param.isEmpty()}">
+		<th scope="row"
+			data-th-text="#{report.template.alertsTable.parameter}">Parameter</th>
+		<td><pre><code data-th-text="${userObject.param}">Parameter</code></pre></td>
+	</tr>
+	<tr data-th-unless="${userObject.attack.isEmpty()}">
+		<th scope="row" data-th-text="#{report.template.alertsTable.attack}">Attack</th>
+		<td><pre><code data-th-text="${userObject.attack}">Attack</code></pre></td>
+	</tr>
+	<tr data-th-unless="${userObject.evidence.isEmpty()}">
+		<th scope="row" data-th-text="#{report.template.alertsTable.evidence}">Evidence</th>
+		<td><pre><code data-th-text="${userObject.evidence}">Evidence</code></pre></td>
+	</tr>
+	<tr data-th-unless="${userObject.solution.isEmpty()}">
+		<th scope="row" data-th-text="#{report.template.alertsTable.solution}">Solution</th>
+		<td><th-block
+				data-th-replace="~{::nl2p(text=${userObject.solution})}">Solution</th-block></td>
+	</tr>
+</table>
+</th-block> </th-block>

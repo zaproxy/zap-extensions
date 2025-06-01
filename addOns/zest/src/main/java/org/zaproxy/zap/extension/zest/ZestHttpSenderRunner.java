@@ -23,15 +23,17 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.script.ScriptException;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestResponse;
-import org.mozilla.zest.core.v1.ZestVariables;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.script.HttpSenderScript;
 import org.zaproxy.zap.extension.script.HttpSenderScriptHelper;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestResponse;
+import org.zaproxy.zest.core.v1.ZestVariables;
 
 public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScript {
 
@@ -42,10 +44,11 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
     private ExtensionZest extension = null;
     private HttpSenderScriptHelper helper = null;
 
-    private Logger logger = Logger.getLogger(ZestHttpSenderRunner.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestHttpSenderRunner.class);
 
-    public ZestHttpSenderRunner(ExtensionZest extension, ZestScriptWrapper script) {
-        super(extension, script);
+    public ZestHttpSenderRunner(
+            ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper script) {
+        super(extension, extensionNetwork, script);
         this.extension = extension;
         this.script = script;
     }
@@ -53,7 +56,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
     @Override
     public void sendingRequest(HttpMessage msg, int initiator, HttpSenderScriptHelper helper)
             throws ScriptException {
-        logger.debug("Zest sendingRequest script: " + this.script.getName());
+        LOGGER.debug("Zest sendingRequest script: {}", this.script.getName());
         this.helper = helper;
         this.msg = msg;
         try {
@@ -62,7 +65,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
 
             // Set the response url to empty to give us a way to work out this is a request in the
             // script
-            Map<String, String> params = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<>();
             params.put(ZestVariables.RESPONSE_URL, "");
             params.put(ZAP_INITIATOR, Integer.toString(initiator));
 
@@ -89,14 +92,14 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
     @Override
     public void responseReceived(HttpMessage msg, int initiator, HttpSenderScriptHelper helper)
             throws ScriptException {
-        logger.debug("Zest responseReceived script: " + this.script.getName());
+        LOGGER.debug("Zest responseReceived script: {}", this.script.getName());
         this.msg = msg;
         try {
             // Create the previous request so the script has something to run against
             ZestRequest req = ZestZapUtils.toZestRequest(msg, false, true, extension.getParam());
             req.setResponse(ZestZapUtils.toZestResponse(msg));
 
-            Map<String, String> params = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<>();
             params.put(ZAP_INITIATOR, Integer.toString(initiator));
 
             this.run(script.getZestScript(), req, params);
@@ -110,7 +113,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
             }
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return;
     }

@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+    <TITLE>
+        GraphQL Automation Framework Support
+    </TITLE>
+</HEAD>
+
+<BODY>
+<H1>Поддержка инфраструктуры автоматизации GraphQL </H1>
+Это дополнение поддерживает Automation Framework. 
+<br><br>
+Надстройка будет импортировать схемы GraphQL с помощью самоанализа, если во время поиска будут найдены конечные точки.  Однако рекомендуется указать конечную точку и (необязательно) файл схемы или URL-адрес, если они доступны. 
+
+<H2>Задание: graphql</H2>
+Задание <i>graphql</i> позволяет импортировать схемы GraphQL локально или по URL-адресу.  Он поддерживает следующие параметры: 
+<p>
+It is covered in the video: <a href="https://youtu.be/xuP00Ri460k">ZAP Chat 11 Automation Framework Part 5 - APIs</a>.
+<pre>
+  - type: graphql                      # GraphQL definition import
+    parameters:
+      endpoint:                        # String: the endpoint URL, default: null, no schema is imported
+      schemaUrl:                       # String: URL pointing to a GraphQL Schema, default: null, import using introspection on endpoint
+      schemaFile:                      # String: Local file path of a GraphQL Schema, default: null, import using schemaUrl
+      queryGenEnabled:                 # Bool: Whether the Query Generator is enabled, default: true
+      maxQueryDepth:                   # Int: The maximum query generation depth, default: 5
+      lenientMaxQueryDepthEnabled:     # Bool: Whether or not Maximum Query Depth is enforced leniently, default: true
+      maxAdditionalQueryDepth:         # Int: The maximum additional query generation depth (used if enforced leniently), default: 5
+      maxArgsDepth:                    # Int: The maximum arguments generation depth, default: 5
+      optionalArgsEnabled:             # Bool: Whether or not Optional Arguments should be specified, default: true
+      argsType:                        # Enum [inline, variables, both]: How arguments are specified, default: both 
+      querySplitType:                  # Enum [leaf, root_field, operation]: The level for which a single query is generated, default: leaf
+      requestMethod:                   # Enum [post_json, post_graphql, get]: The request method, default: post_json
+</pre>
+
+<H2>Смотрите также </H2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><a href="graphql.html">GraphQL</a></td>
+        <td>для обзора надстройки GraphQL. </td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><a href="options.html">Параметры GraphQL </a></td>
+        <td>для получения информации о дополнительных параметрах. </td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><a href="variant.html">GraphQL Variant</a></td>
+        <td>for information about the GraphQL variant.</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><a href="alerts.html">GraphQL Alerts</a></td>
+        <td>for information about alerts raised by the add-on.</td>
+    </tr>
+</table>
+
+</BODY>
+</HTML>

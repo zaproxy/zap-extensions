@@ -1,12 +1,10 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "22"
 description = "Allows you to inspect WebSocket communication."
 
 zapAddOn {
     addOnName.set("WebSockets")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.8.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -22,9 +20,29 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("fuzz") {
-                            semVer.set("2.*")
+                            version.set("2.* | 13.*")
                         }
                     }
+                }
+            }
+
+            register("org.zaproxy.zap.extension.websocket.manualsend.ExtensionWebSocketManualSend") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.websocket.manualsend"))
+                }
+                dependencies {
+                    addOns {
+                        register("requester") {
+                            version.set("7.*")
+                        }
+                    }
+                }
+            }
+        }
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">=1.23.0")
                 }
             }
         }
@@ -37,7 +55,9 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("fuzz")!!)
+    zapAddOn("commonlib")
+    zapAddOn("fuzz")
+    zapAddOn("requester")
 
     testImplementation(project(":testutils"))
 }

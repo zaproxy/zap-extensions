@@ -5,15 +5,15 @@
       
 require 'java'
 java_package 'org.zaproxy.zap.extension.ascan'
-java_import 'org.zaproxy.zap.extension.ascan.ActiveScript'
-java_import 'org.zaproxy.zap.extension.ascan.ScriptsActiveScanner'
+java_import 'org.zaproxy.zap.extension.scripts.scanrules.ActiveScript'
+java_import 'org.zaproxy.zap.extension.scripts.scanrules.ActiveScriptHelper'
 java_import 'org.parosproxy.paros.network.HttpMessage'
 java_import 'org.parosproxy.paros.view.View'
 
 class JRubyActiveScript 
-  include Java::org.zaproxy.zap.extension.ascan.ActiveScript
+  include Java::org.zaproxy.zap.extension.scripts.scanrules.ActiveScript
 
-  java_signature 'scan(ScriptsActiveScanner, HttpMessage, String, String)'
+  java_signature 'scan(ActiveScriptHelper, HttpMessage, String, String)'
   def scan(sas, msg, param, value)
     # Debugging can be done to the Output tab like this
     # (not sure why print/puts doesnt work yet :(
@@ -33,11 +33,11 @@ class JRubyActiveScript
     # Test the response here, and make other requests as required
     if (true)
   	  # Change to a test which detects the vulnerability
-      # raiseAlert(risk, int reliability, String name, String description, String uri, 
+      # raiseAlert(risk, int confidence, String name, String description, String uri, 
       #		String param, String attack, String otherInfo, String solution, String evidence, 
       #		int cweId, int wascId, HttpMessage msg)
       # risk: 0: info, 1: low, 2: medium, 3: high
-      # reliability: 0: falsePassitive, 1: suspicious, 2: warning
+      # confidence: 0: false positive, 1: low, 2: medium, 3: high
       sas.raiseAlert(1, 1, 'Active Vulnerability title', 'Full description', 
       msg.getRequestHeader().getURI().toString(), 
         param, 'Your attack', 'Any other info', 'The solution ', '', 0, 0, msg);

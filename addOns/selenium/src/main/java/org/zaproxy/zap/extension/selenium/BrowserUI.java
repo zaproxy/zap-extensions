@@ -20,7 +20,7 @@
 package org.zaproxy.zap.extension.selenium;
 
 import java.text.Collator;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 /**
  * A representation of a {@code Browser} for UI components.

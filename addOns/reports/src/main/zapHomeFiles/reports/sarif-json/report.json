@@ -1,0 +1,145 @@
+{[#th:block th:with="sarifSupport=${new org.zaproxy.addon.reports.sarif.SarifReportDataSupport(reportData)}"]
+   "runs": [
+      {
+         "results": [ [#th:block th:each="sarifResult, sarifResultState: ${sarifSupport.results}"]
+            {
+               "level": [[${sarifResult.level.value}]],
+               "locations": [[#th:block th:each="sarifLocation, sarifLocationState: ${sarifResult.locations}"]
+                  {
+                     "physicalLocation": {
+                        "artifactLocation": {
+                           "uri": [[${sarifLocation.physicalLocation.artifactLocation.uri}]]
+                        },
+                        
+                        "region": {
+                           "startLine": [[${sarifLocation.physicalLocation.region.validStartLineOrFallback}]],
+                           [#th:block th:if="${ sarifLocation.physicalLocation.region.startLineInvalid }"]
+                           "properties" : { 
+                               "startLineFailure" : "Resolved invalid start line: [[${sarifLocation.physicalLocation.region.startLine}]] - used fallback value instead."
+                            }, [/th:block]
+                           "snippet": {
+                               "text": [[${sarifLocation.physicalLocation.region.snippet.text}]]
+                           }
+                        }
+                     },
+                     "properties": {
+                         "attack": [[${sarifLocation.properties.attack}]]
+                     }
+                  }[#th:block th:if="${! sarifLocationState.last}"],[/th:block]
+               [/th:block]],
+               "message": {
+                  "text": [[${sarifResult.message.text}]]
+               },
+               "ruleId": [[${sarifResult.ruleId}]],
+               "webRequest": {[#th:block th:with="webRequest=${sarifResult.webRequest}"]
+                   "protocol": [[${webRequest.protocol}]],
+                   "version": [[${webRequest.version}]],
+                   "target": [[${webRequest.target}]],
+                   "method": [[${webRequest.method}]],
+                   "headers": {[#th:block th:each="header, headerState: ${webRequest.headers}"]
+                       [[${header.key}]] : [[${header.value}]][#th:block th:if="${! headerState.last}"],[/th:block]
+                   [/th:block]},
+                   "body": {
+                       [#th:block th:if="${webRequest.body.containingText}"]"text": [[${webRequest.body.text}]][/th:block][#th:block th:if="${webRequest.body.containingBinary}"]"binary": [[${webRequest.body.binary}]][/th:block]
+                   }
+               }[/th:block],
+               "webResponse": {[#th:block th:with="webResponse=${sarifResult.webResponse}"]
+                   "statusCode": [[${webResponse.statusCode}]],
+                   "reasonPhrase": [[${webResponse.reasonPhrase}]],
+                   "protocol": [[${webResponse.protocol}]],
+                   "version": [[${webResponse.version}]],
+                   "headers": {[#th:block th:each="header, headerState: ${webResponse.headers}"]
+                       [[${header.key}]] : [[${header.value}]][#th:block th:if="${! headerState.last}"],[/th:block]
+                   [/th:block]},
+                   "body": {
+                       [#th:block th:if="${webResponse.body.containingText}"]"text": [[${webResponse.body.text}]][/th:block][#th:block th:if="${webResponse.body.containingBinary}"]"binary": [[${webResponse.body.binary}]][/th:block]
+                   },
+                   "noResponseReceived": [[${webResponse.noResponseReceived}]]
+               }[/th:block]
+            }[#th:block th:if="${! sarifResultState.last}"],[/th:block]
+         [/th:block]],
+         "taxonomies": [[#th:block th:each="sarifTaxonomy, sarifTaxonomyState: ${sarifSupport.taxonomies}"]
+            {
+               "downloadUri": [[${sarifTaxonomy.downloadUri}]],
+               "guid":  [[${sarifTaxonomy.guid}]],
+               "informationUri": [[${sarifTaxonomy.informationUri}]],
+               "isComprehensive": [[${sarifTaxonomy.comprehensive}]],
+               "language": "en",
+               "minimumRequiredLocalizedDataSemanticVersion": [[${sarifTaxonomy.taxonomyVersion}]],
+               "name":  [[${sarifTaxonomy.name}]],
+               "organization": [[${sarifTaxonomy.organization}]],
+               "releaseDateUtc": [[${sarifTaxonomy.releaseDateUtc}]],
+               "shortDescription": {
+                  "text": [[${sarifTaxonomy.shortDescription.text}]]
+               },
+               "taxa": [[#th:block th:each="sarifTaxa, sarifTaxaState: ${sarifTaxonomy.taxa}"]
+                  {
+                     "guid": [[${sarifTaxa.guid}]],
+                     "helpUri": [[${sarifTaxa.helpUri}]],
+                     "id": [[${sarifTaxa.id}]]
+                  }[#th:block th:if="${! sarifTaxaState.last}"],[/th:block]
+               [/th:block]],
+               "version": [[${sarifTaxonomy.taxonomyVersion}]]
+            }[#th:block th:if="${! sarifTaxonomyState.last}"],[/th:block]
+         [/th:block]],
+         "tool": {
+            "driver": {
+               "guid": [[${sarifSupport.components.zap.guid}]],
+               "informationUri": [[${sarifSupport.components.zap.informationUri}]],
+               "name": [[${sarifSupport.components.zap.name}]],
+               "rules": [ [#th:block th:each="sarifRule, sarifRuleState: ${sarifSupport.rules}"]
+                  {
+                     "id": [[${sarifRule.id}]],
+                     "defaultConfiguration": {
+                        "level": [[${sarifRule.defaultLevel.value}]]
+                     },
+                     "fullDescription": {
+                        "text": [[${sarifRule.fullDescription}]]
+                     },
+                     "name": [[${sarifRule.name}]],
+                     "properties": {
+                            "references": [[#th:block th:each="sarifReference, sarifReferenceState: ${sarifRule.properties.references}"]
+                                [[${sarifReference}]][#th:block th:if="${! sarifReferenceState.last}"],[/th:block]
+                            [/th:block]],
+                            "solution": {
+                                "text": [[${sarifRule.properties.solution.text}]]
+                            },
+                            "confidence": [[${sarifRule.properties.confidence}]]
+                     },
+                     "relationships": [ [#th:block th:each="relationShip, relationShipState: ${sarifRule.relationShips}"]
+                        {
+                           "kinds": [
+                              "superset"
+                           ],
+                           "target": {
+                              "guid":[[${relationShip.target.guid}]],
+                              "id": [[${relationShip.target.id}]],
+                              "toolComponent": {
+                                 "guid": [[${relationShip.target.toolComponent.guid}]],
+                                 "name": [[${relationShip.target.toolComponent.name}]]
+                              }
+                           }
+                        }[#th:block th:if="${! relationShipState.last}"],[/th:block]
+                        [/th:block]
+                     ],
+                     "shortDescription": {
+                        "text": [[${sarifRule.shortDescription}]]
+                     }
+                  }[#th:block th:if="${! sarifRuleState.last}"],[/th:block]
+                  [/th:block]
+               ],
+               "semanticVersion": [[${sarifSupport.ensureSemanticVersion(zapVersion)}]],
+               "supportedTaxonomies": [ [#th:block th:each="sarifTaxonomy, sarifTaxonomyState: ${sarifSupport.taxonomies}"][#th:block th:if="${! sarifTaxonomyState.first}"],[/th:block]
+                  {
+                     "guid": [[${sarifTaxonomy.guid}]],
+                     "name": [[${sarifTaxonomy.name}]]
+                  }
+               ],[/th:block]
+               "version": [[${sarifSupport.ensureSemanticVersion(zapVersion)}]]
+            }
+         }
+      }
+   ],
+   "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+   "version": "2.1.0"
+}[/th:block]

@@ -19,30 +19,30 @@
  */
 package org.zaproxy.zap.extension.tokengen;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /** Unit test for {@link TokenRandomStream}. */
-@RunWith(MockitoJUnitRunner.class)
-public class TokenRandomStreamUnitTest {
+@ExtendWith(MockitoExtension.class)
+class TokenRandomStreamUnitTest {
 
     @Mock CharacterFrequencyMap characterFrequencyMap;
 
     TokenRandomStream stream;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         stream = new TokenRandomStream(characterFrequencyMap);
     }
 
     @Test
-    public void shouldAlwaysReturnMinusOneWhenStreamIsClosed() throws Exception {
+    void shouldAlwaysReturnMinusOneWhenStreamIsClosed() throws Exception {
         // Given
         stream.closeInputStream();
         // When/Then

@@ -23,7 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.apache.commons.configuration.ConversionException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.network.HttpHeader;
 import org.zaproxy.zap.extension.httpsessions.ExtensionHttpSessions;
@@ -82,26 +83,36 @@ public class ZestParam extends AbstractParam {
 
     private static final String IGNORE_HEADERS_KEY = DEFAULT_ZEST_KEY + ".ignoreHeaders";
     private static final String INCLUDE_RESPONSES_KEY = DEFAULT_ZEST_KEY + ".incResponses";
+    private static final String ZEST_FORMAT_KEY = DEFAULT_ZEST_KEY + ".scriptFormat";
 
     /** The Constant log. */
-    private static final Logger log = Logger.getLogger(ZestParam.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestParam.class);
 
     /** The full list of headers that can be ignored. */
-    private List<String> allHeaders = new ArrayList<String>();
+    private List<String> allHeaders = new ArrayList<>();
 
     /** The list of headers that will be ignored. */
-    private List<String> ignoredHeaders = new ArrayList<String>();
+    private List<String> ignoredHeaders = new ArrayList<>();
 
     private boolean includeResponses = true;
+
+    private String scriptFormat = "JSON";
 
     /** Instantiates a new Zest param. */
     public ZestParam() {}
 
+    public ZestParam(ZestParam param) {
+        allHeaders.addAll(param.allHeaders);
+        ignoredHeaders.addAll(param.ignoredHeaders);
+        includeResponses = param.includeResponses;
+        scriptFormat = param.scriptFormat;
+    }
+
     @Override
     protected void parse() {
-        // Parse the params
+        this.includeResponses = getBoolean(INCLUDE_RESPONSES_KEY, true);
+        this.scriptFormat = sanitizeScriptFormat(getString(ZEST_FORMAT_KEY, "JSON"));
         try {
-            this.includeResponses = getConfig().getBoolean(INCLUDE_RESPONSES_KEY, true);
 
             this.allHeaders.clear();
             for (String header : ALL_HEADERS) {
@@ -110,7 +121,7 @@ public class ZestParam extends AbstractParam {
 
             this.ignoredHeaders.clear();
             List<Object> ignoreList = getConfig().getList(IGNORE_HEADERS_KEY);
-            if (ignoreList == null || ignoreList.size() == 0) {
+            if (ignoreList == null || ignoreList.isEmpty()) {
                 // Use the defaults
                 for (String header : DEFAULT_IGNORED_HEADERS) {
                     this.ignoredHeaders.add(header);
@@ -122,7 +133,7 @@ public class ZestParam extends AbstractParam {
             }
 
         } catch (ConversionException e) {
-            log.error("Error while parsing config file: " + e.getMessage(), e);
+            LOGGER.error("Error while parsing config file: {}", e.getMessage(), e);
             // Use the defaults
             for (String header : DEFAULT_IGNORED_HEADERS) {
                 this.ignoredHeaders.add(header);
@@ -144,7 +155,7 @@ public class ZestParam extends AbstractParam {
      * @param ignoredHeaders the ignored Headers
      */
     public void setIgnoredHeaders(final List<String> ignoredHeaders) {
-        this.ignoredHeaders = new ArrayList<String>(ignoredHeaders);
+        this.ignoredHeaders = new ArrayList<>(ignoredHeaders);
         getConfig().setProperty(IGNORE_HEADERS_KEY, this.ignoredHeaders);
     }
 
@@ -155,5 +166,21 @@ public class ZestParam extends AbstractParam {
     public void setIncludeResponses(boolean includeResponses) {
         this.includeResponses = includeResponses;
         getConfig().setProperty(INCLUDE_RESPONSES_KEY, this.includeResponses);
+    }
+
+    public String getScriptFormat() {
+        return scriptFormat;
+    }
+
+    public void setScriptFormat(String scriptFormat) {
+        this.scriptFormat = sanitizeScriptFormat(scriptFormat);
+        getConfig().setProperty(ZEST_FORMAT_KEY, this.scriptFormat);
+    }
+
+    private static String sanitizeScriptFormat(String format) {
+        if (format != null && "YAML".equalsIgnoreCase(format.strip())) {
+            return "YAML";
+        }
+        return "JSON";
     }
 }

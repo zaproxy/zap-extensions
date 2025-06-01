@@ -35,8 +35,8 @@ public class ExtensionPscanRulesBeta extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
+    public String getUIName() {
+        return Constant.messages.getString("pscanbeta.name");
     }
 
     @Override

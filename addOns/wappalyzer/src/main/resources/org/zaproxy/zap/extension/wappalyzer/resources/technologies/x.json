@@ -1,0 +1,476 @@
+{
+  "X-Cart": {
+    "cats": [
+      6
+    ],
+    "description": " X-Cart is an open source PHP shopping cart ecommerce software platform.",
+    "icon": "X-Cart.svg",
+    "implies": [
+      "PHP"
+    ],
+    "js": {
+      "xcart_web_dir": "",
+      "xliteConfig": ""
+    },
+    "meta": {
+      "generator": "X-Cart(?: (\\d+))?\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://kb.x-cart.com"
+  },
+  "X.ai": {
+    "cats": [
+      72
+    ],
+    "description": "X.ai is a scheduling tool that organizes meeting times and improves lead conversion by adding embedded booking buttons to websites or within live chat applications.",
+    "icon": "X.ai.svg",
+    "js": {
+      "xdotaiAction": "",
+      "xdotaiButton": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "(?:cdn)?x\\.ai/.*/xdotai-embed\\.js"
+    ],
+    "website": "https://x.ai"
+  },
+  "XAMPP": {
+    "cats": [
+      22
+    ],
+    "html": [
+      "<title>XAMPP(?: Version ([\\d\\.]+))?</title>\\;version:\\1"
+    ],
+    "icon": "XAMPP.png",
+    "implies": [
+      "Apache HTTP Server",
+      "MySQL",
+      "PHP",
+      "Perl"
+    ],
+    "meta": {
+      "author": "Kai Oswald Seidler\\;confidence:10"
+    },
+    "website": "https://www.apachefriends.org/en/xampp.html"
+  },
+  "XGen Ai": {
+    "cats": [
+      76
+    ],
+    "description": "XGen Ai is a cloud-based customer journey mapping tool that helps businesses manage product recommendations via artificial intelligence (AI).",
+    "icon": "XGen Ai.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "//assets\\.xgen\\.dev/"
+    ],
+    "website": "https://xgen.ai"
+  },
+  "XMB": {
+    "cats": [
+      2
+    ],
+    "html": [
+      "<!-- Powered by XMB"
+    ],
+    "icon": "XMB.png",
+    "website": "https://www.xmbforum.com"
+  },
+  "XOOPS": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:xoops:xoops:*:*:*:*:*:*:*:*",
+    "icon": "XOOPS.png",
+    "implies": [
+      "PHP"
+    ],
+    "js": {
+      "xoops": ""
+    },
+    "meta": {
+      "generator": "XOOPS"
+    },
+    "website": "https://xoops.org"
+  },
+  "XRegExp": {
+    "cats": [
+      59
+    ],
+    "icon": "XRegExp.png",
+    "js": {
+      "XRegExp.version": "^(.+)$\\;version:\\1"
+    },
+    "scriptSrc": [
+      "xregexp[.-]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
+      "/([\\d.]+)/xregexp(?:\\.min)?\\.js\\;version:\\1",
+      "xregexp.*\\.js"
+    ],
+    "website": "https://xregexp.com"
+  },
+  "XSLT": {
+    "cats": [
+      27
+    ],
+    "description": "XSLT is designed for use as part of XSL, which is a stylesheet language for XML.",
+    "html": [
+      "<xsl[^>]* version=\"(.+)\"\\;version:\\1"
+    ],
+    "icon": "W3C.svg",
+    "website": "https://www.w3.org/TR/xslt-10"
+  },
+  "XWiki": {
+    "cats": [
+      8
+    ],
+    "cpe": "cpe:2.3:a:xwiki:xwiki:*:*:*:*:*:*:*:*",
+    "description": "XWiki is a free wiki software platform written in Java.",
+    "excludes": [
+      "MediaWiki"
+    ],
+    "html": [
+      "<html[^>]data-xwiki-[^>]>"
+    ],
+    "icon": "xwiki.svg",
+    "implies": [
+      "Java\\;confidence:99"
+    ],
+    "meta": {
+      "wiki": "xwiki"
+    },
+    "website": "https://www.xwiki.org"
+  },
+  "XYZScripts": {
+    "cats": [
+      87
+    ],
+    "description": "XYZScripts is a provider of PHP clone scripts and WordPress plugins. It offers top-quality PHP and MySQL scripts to help build online businesses, with ready-to-deploy solutions that enable website setup.",
+    "dom": [
+      "a[href*='xyzscripts.com/'] + a[href*='www.xyzscripts.com']"
+    ],
+    "icon": "XYZScripts.svg",
+    "saas": true,
+    "website": "https://xyzscripts.com"
+  },
+  "Xajax": {
+    "cats": [
+      59
+    ],
+    "cpe": "cpe:2.3:a:xajax:xajax:*:*:*:*:*:*:*:*",
+    "icon": "Xajax.png",
+    "scriptSrc": [
+      "xajax_core.*\\.js"
+    ],
+    "website": "https://xajax-project.org"
+  },
+  "Xanario": {
+    "cats": [
+      6
+    ],
+    "description": "Xanario is an ecommerce platform that offers a comprehensive system for online shop solutions, including CMS, CRM, shop management, blog integration, POS system, and warehouse management.",
+    "icon": "Xanario.svg",
+    "meta": {
+      "generator": "xanario shopsoftware"
+    },
+    "website": "https://xanario.de"
+  },
+  "Xano": {
+    "cats": [
+      3
+    ],
+    "description": "Xano is a no-code backend development platform that allows users to build and manage databases, APIs, and server-side logic without writing code.",
+    "icon": "Xano.svg",
+    "js": {
+      "XanoBaseStorage": "",
+      "XanoClient": "",
+      "XanoCookieStorage": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.xano.com"
+  },
+  "XenForo": {
+    "cats": [
+      2
+    ],
+    "cookies": {
+      "xf_csrf": "",
+      "xf_session": ""
+    },
+    "cpe": "cpe:2.3:a:xenforo:xenforo:*:*:*:*:*:*:*:*",
+    "description": "XenForo is a PHP-based forum hosting program for communities that is designed to be deployed on a remote web server.",
+    "html": [
+      "(?:jQuery\\.extend\\(true, XenForo|<a[^>]+>Forum software by XenForo™|<!--XF:branding|<html[^>]+id=\"XenForo\")",
+      "<html id=\"XF\" "
+    ],
+    "icon": "XenForo.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "js": {
+      "XF.GuestUsername": ""
+    },
+    "website": "https://xenforo.com"
+  },
+  "Xeora": {
+    "cats": [
+      18
+    ],
+    "headers": {
+      "Server": "XeoraEngine",
+      "X-Powered-By": "XeoraCube"
+    },
+    "html": [
+      "<input type=\"hidden\" name=\"_sys_bind_\\d+\" id=\"_sys_bind_\\d+\" />"
+    ],
+    "icon": "xeora.png",
+    "implies": [
+      "Microsoft ASP.NET"
+    ],
+    "scriptSrc": [
+      "/_bi_sps_v.+\\.js"
+    ],
+    "website": "https://www.xeora.org"
+  },
+  "Xitami": {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:xitami:xitami:*:*:*:*:*:*:*:*",
+    "headers": {
+      "Server": "Xitami(?:/([\\d.]+))?\\;version:\\1"
+    },
+    "icon": "Xitami.png",
+    "website": "https://xitami.com"
+  },
+  "Xiuno BBS": {
+    "cats": [
+      1,
+      2
+    ],
+    "cpe": "cpe:2.3:a:xiuno:xiunobbs:*:*:*:*:*:*:*:*",
+    "description": "Xiunobbs is an open-source, lightweight forum software designed for easy community management and customization.",
+    "icon": "Xiuno BBS.svg",
+    "implies": [
+      "PHP"
+    ],
+    "meta": {
+      "author": "XiunoBBS\\s([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://xiunobbs.cn"
+  },
+  "Xonic": {
+    "cats": [
+      6
+    ],
+    "html": [
+      "Powered by <a href=\"http://www\\.xonic-solutions\\.de/index\\.php\" target=\"_blank\">xonic-solutions Shopsoftware</a>"
+    ],
+    "icon": "xonic.png",
+    "meta": {
+      "keywords": "xonic-solutions"
+    },
+    "scriptSrc": [
+      "core/jslib/jquery\\.xonic\\.js\\.php"
+    ],
+    "website": "https://www.xonic-solutions.de"
+  },
+  "XpressEngine": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:xpressengine:xpressengine:*:*:*:*:*:*:*:*",
+    "description": "XpressEngine (XE) is an open-source content management system (CMS) designed for building and managing websites, blogs, and online communities.",
+    "icon": "XpressEngine.svg",
+    "meta": {
+      "generator": "XpressEngine"
+    },
+    "oss": true,
+    "website": "https://www.xpressengine.com/"
+  },
+  "Xpresslane": {
+    "cats": [
+      41
+    ],
+    "description": "Xpresslane is a checkout platform for ecommerce that focuses on increasing conversion during the checkout process.",
+    "dom": {
+      "link[href*='/assets/xpresslane.css']": {
+        "attributes": {
+          "href": "cdn\\.shopify\\.com/.+/assets/xpresslane\\.css"
+        }
+      }
+    },
+    "icon": "Xpresslane.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "apps\\.xpresslane\\.in/"
+    ],
+    "website": "https://www.xpresslane.in"
+  },
+  "Xretail": {
+    "cats": [
+      6
+    ],
+    "description": "Xretail is a subscription based product that enables the omni-channel ecommerce approach to its customers.",
+    "icon": "Xretail.svg",
+    "meta": {
+      "author": "^Xretail team$"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://xretail.com"
+  },
+  "Xserver": {
+    "cats": [
+      88
+    ],
+    "description": "Xserver engages in web hosting, web application and internet-related services.",
+    "dns": {
+      "SOA": [
+        "\\.xserver\\.jp"
+      ]
+    },
+    "icon": "Xserver.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.xserver.ne.jp"
+  },
+  "Xsolla": {
+    "cats": [
+      41
+    ],
+    "description": "Xsolla is a video game business system offering payment solutions and store management.",
+    "icon": "Xsolla.svg",
+    "saas": true,
+    "scriptSrc": [
+      "\\.xsolla\\.(com|net)"
+    ],
+    "website": "https://xsolla.com"
+  },
+  "Xtime": {
+    "cats": [
+      72
+    ],
+    "description": "Xtime is a company that provides automotive service scheduling and management solutions primarily for car dealerships and automotive service centers.",
+    "dom": [
+      "a[data-modified-by='xtime']"
+    ],
+    "icon": "Xtime.svg",
+    "js": {
+      "xtime": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "scriptSrc": [
+      "\\.xtime\\.com/scheduling"
+    ],
+    "website": "https://xtime.com"
+  },
+  "Xtra": {
+    "cats": [
+      80
+    ],
+    "description": "Xtra is a creative, responsive, live drag and drop and easy-to-use WordPress theme for any kind of websites.",
+    "dom": {
+      "link[href*='/wp-content/themes/xtra/']": {
+        "attributes": {
+          "href": "/wp-content/themes/xtra/.+core(?:-laptop|-mobile)?\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+        }
+      }
+    },
+    "icon": "Xtra.svg",
+    "pricing": [
+      "low",
+      "onetime"
+    ],
+    "requires": [
+      "WordPress"
+    ],
+    "scriptSrc": [
+      "/wp-content/themes/xtra/.+custom\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+    ],
+    "website": "https://xtratheme.com"
+  },
+  "Xtremepush": {
+    "cats": [
+      32
+    ],
+    "description": "Xtremepush is a customer engagement, personalisation and data platform. It's purpose-built for multichannel and mobile marketing.",
+    "icon": "Xtremepush.svg",
+    "js": {
+      "xtremepush": ""
+    },
+    "website": "https://xtremepush.com"
+  },
+  "Xzero Analytics": {
+    "cats": [
+      10
+    ],
+    "description": "Xzero Analytics is a tool for monitoring user journeys, analysing visitor sessions, gathering heatmaps, and more, enabling the observation and evolution of site traffic.",
+    "icon": "XZeroAnalytics.png",
+    "js": {
+      "xzero-analytics": ""
+    },
+    "pricing": [
+      "low",
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "analytics\\.xzero\\.co\\.uk"
+    ],
+    "website": "https://analytics.xzero.co.uk"
+  },
+  "xCharts": {
+    "cats": [
+      25
+    ],
+    "html": [
+      "<link[^>]* href=\"[^\"]*xcharts(?:\\.min)?\\.css"
+    ],
+    "implies": [
+      "D3"
+    ],
+    "js": {
+      "xChart": ""
+    },
+    "scriptSrc": [
+      "xcharts\\.js"
+    ],
+    "website": "https://tenxer.github.io/xcharts/"
+  },
+  "xtCommerce": {
+    "cats": [
+      6
+    ],
+    "description": "xtCommerce is an ecommerce platform offering a complete solution for online shop management, including SEO, mobile optimization, and integrated payment systems.",
+    "html": [
+      "<div class=\"copyright\">[^<]+<a[^>]+>xt:Commerce"
+    ],
+    "icon": "xtCommerce.svg",
+    "meta": {
+      "generator": "xt:Commerce"
+    },
+    "website": "https://www.xt-commerce.com"
+  }
+}

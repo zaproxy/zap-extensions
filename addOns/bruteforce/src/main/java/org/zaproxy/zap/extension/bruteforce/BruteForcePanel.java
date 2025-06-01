@@ -21,10 +21,8 @@ package org.zaproxy.zap.extension.bruteforce;
 
 import com.sittinglittleduck.DirBuster.BaseCase;
 import java.awt.CardLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URL;
@@ -41,10 +39,12 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jdesktop.swingx.JXComboBox;
+import org.jdesktop.swingx.decorator.FontHighlighter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -61,11 +61,14 @@ import org.zaproxy.zap.view.ScanStatus;
 import org.zaproxy.zap.view.ZapToggleButton;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
+@SuppressWarnings("serial")
 public class BruteForcePanel extends AbstractPanel implements BruteForceListenner {
 
     private static final long serialVersionUID = 1L;
 
-    /** @deprecated (2.3.0) Replaced by {@link #MESSAGE_CONTAINER_NAME}. */
+    /**
+     * @deprecated (2.3.0) Replaced by {@link #MESSAGE_CONTAINER_NAME}.
+     */
     @Deprecated public static final String PANEL_NAME = "bruteforce";
 
     /**
@@ -110,9 +113,11 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
     private TableExportButton<HistoryReferencesTable> exportButton = null;
 
-    private static Logger log = Logger.getLogger(BruteForcePanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(BruteForcePanel.class);
 
-    /** @param bruteForceParam */
+    /**
+     * @param bruteForceParam
+     */
     public BruteForcePanel(ExtensionBruteForce extension, BruteForceParam bruteForceParam) {
         super();
         this.extension = extension;
@@ -120,12 +125,6 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         this.fileSelectModel = new DefaultComboBoxModel<>();
         this.noSelectionScanTarget =
                 new DummyScanTarget(Constant.messages.getString("bruteforce.toolbar.site.select"));
-        initialize();
-    }
-
-    /** This method initializes this */
-    @SuppressWarnings("deprecation")
-    private void initialize() {
         this.setLayout(new CardLayout());
         this.setSize(474, 251);
         this.setName(Constant.messages.getString("bruteforce.panel.title"));
@@ -134,14 +133,12 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                         BruteForcePanel.class.getResource(
                                 ExtensionBruteForce.HAMMER_ICON_RESOURCE)));
         this.setDefaultAccelerator(
-                KeyStroke.getKeyStroke(
-                        // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke with
-                        // newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                        KeyEvent.VK_F,
-                        Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                | KeyEvent.ALT_DOWN_MASK
-                                | KeyEvent.SHIFT_DOWN_MASK,
-                        false));
+                extension
+                        .getView()
+                        .getMenuShortcutKeyStroke(
+                                KeyEvent.VK_F,
+                                KeyEvent.ALT_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK,
+                                false));
         this.setMnemonic(Constant.messages.getChar("bruteforce.panel.mnemonic"));
         this.add(getPanelCommand(), getPanelCommand().getName());
 
@@ -198,6 +195,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         }
         return panelCommand;
     }
+
     /**/
 
     private javax.swing.JToolBar getPanelToolbar() {
@@ -373,12 +371,9 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         getActiveScansValueLabel().setText(String.valueOf(activeScans.size()));
         StringBuilder sb = new StringBuilder();
         Iterator<ScanTarget> iter = activeScans.iterator();
-        sb.append("<html>");
         while (iter.hasNext()) {
-            sb.append(iter.next().toPlainString());
-            sb.append("<br>");
+            sb.append(iter.next()).append('\n');
         }
-        sb.append("</html>");
 
         final String toolTip = sb.toString();
 
@@ -406,14 +401,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
             startScanButton.setIcon(
                     new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/131.png")));
             startScanButton.setEnabled(false);
-            startScanButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            startScan();
-                        }
-                    });
+            startScanButton.addActionListener(e -> startScan());
         }
         return startScanButton;
     }
@@ -426,13 +414,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
             stopScanButton.setIcon(
                     new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/142.png")));
             stopScanButton.setEnabled(false);
-            stopScanButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            extension.stopScan(currentSite);
-                        }
-                    });
+            stopScanButton.addActionListener(e -> extension.stopScan(currentSite));
         }
         return stopScanButton;
     }
@@ -454,15 +436,12 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                     new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/131.png")));
             pauseScanButton.setEnabled(false);
             pauseScanButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            BruteForce bf = extension.getBruteForce(currentSite);
-                            if (bf.isPaused()) {
-                                extension.resumeScan(currentSite);
-                            } else {
-                                extension.pauseScan(currentSite);
-                            }
+                    e -> {
+                        BruteForce bf = extension.getBruteForce(currentSite);
+                        if (bf.isPaused()) {
+                            extension.resumeScan(currentSite);
+                        } else {
+                            extension.pauseScan(currentSite);
                         }
                     });
         }
@@ -477,16 +456,12 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
             optionsButton.setIcon(
                     new ImageIcon(BruteForcePanel.class.getResource("/resource/icon/16/041.png")));
             optionsButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
+                    e ->
                             Control.getSingleton()
                                     .getMenuToolsControl()
                                     .options(
                                             Constant.messages.getString(
-                                                    "bruteforce.options.title"));
-                        }
-                    });
+                                                    "bruteforce.options.title")));
         }
         return optionsButton;
     }
@@ -502,7 +477,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
     private TableExportButton<HistoryReferencesTable> getExportButton() {
         if (exportButton == null) {
-            exportButton = new TableExportButton<HistoryReferencesTable>(getBruteForceTable());
+            exportButton = new TableExportButton<>(getBruteForceTable());
         }
         return exportButton;
     }
@@ -528,9 +503,16 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         return fileSelect;
     }
 
+    @SuppressWarnings("unchecked")
     private JComboBox<ScanTarget> getSiteSelect() {
         if (siteSelect == null) {
-            siteSelect = new JComboBox<>(siteModel);
+            siteSelect = new JXComboBox(siteModel);
+            ((JXComboBox) siteSelect)
+                    .addHighlighter(
+                            new FontHighlighter(
+                                    (renderer, adapter) ->
+                                            ((ScanTarget) adapter.getValue()).isScanned(),
+                                    siteSelect.getFont().deriveFont(Font.BOLD)));
             siteSelect.addItem(noSelectionScanTarget);
             siteSelect.setSelectedIndex(0);
 
@@ -590,7 +572,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                 }
                 File file = selectedForcedBrowseFile.getFile();
                 if (!file.exists()) {
-                    log.error("No such file: " + file.getAbsolutePath());
+                    LOGGER.error("No such file: {}", file.getAbsolutePath());
                     return;
                 }
 
@@ -631,7 +613,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
     protected SiteNode getSiteNode(ScanTarget scanTarget) {
         SiteMap siteTree = Model.getSingleton().getSession().getSiteTree();
-        SiteNode rootNode = (SiteNode) siteTree.getRoot();
+        SiteNode rootNode = siteTree.getRoot();
 
         @SuppressWarnings("unchecked")
         Enumeration<TreeNode> en = rootNode.children();
@@ -676,7 +658,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                                 .getPath();
                 startScan(dir, false);
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -694,7 +676,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                                 .getPath();
                 startScan(dir, true);
             } catch (Exception e) {
-                log.error(e);
+                LOGGER.error(e);
             }
         }
     }
@@ -711,7 +693,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         }
         File file = selectedForcedBrowseFile.getFile();
         if (!file.exists()) {
-            log.error("No such file: " + file.getAbsolutePath());
+            LOGGER.error("No such file: {}", file.getAbsolutePath());
             return;
         }
 

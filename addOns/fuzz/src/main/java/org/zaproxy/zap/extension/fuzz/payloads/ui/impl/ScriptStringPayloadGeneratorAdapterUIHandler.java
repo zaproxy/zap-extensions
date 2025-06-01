@@ -19,10 +19,7 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.ui.impl;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -32,7 +29,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.fuzz.ScriptUIEntry;
@@ -57,7 +55,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                 ScriptStringPayloadGeneratorAdapterUI> {
 
     private static final Logger LOGGER =
-            Logger.getLogger(ScriptStringPayloadGeneratorAdapterUIHandler.class);
+            LogManager.getLogger(ScriptStringPayloadGeneratorAdapterUIHandler.class);
 
     private static final String PAYLOAD_GENERATOR_NAME =
             Constant.messages.getString("fuzz.payloads.generator.script.name");
@@ -130,9 +128,8 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                 return scriptPayloadGenerator.getNumberOfPayloads();
             } catch (Exception e) {
                 LOGGER.warn(
-                        "Failed to obtain number of payloads from script '"
-                                + scriptWrapper.getName()
-                                + "':",
+                        "Failed to obtain number of payloads from script '{}':",
+                        scriptWrapper.getName(),
                         e);
             }
             return PayloadGenerator.UNKNOWN_NUMBER_OF_PAYLOADS;
@@ -179,13 +176,9 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                 }
             }
             scriptComboBox.addItemListener(
-                    new ItemListener() {
-
-                        @Override
-                        public void itemStateChanged(ItemEvent e) {
-                            if (e.getStateChange() == ItemEvent.SELECTED) {
-                                updatePreviewFor((PayloadGeneratorScriptUIEntry) e.getItem());
-                            }
+                    e -> {
+                        if (e.getStateChange() == ItemEvent.SELECTED) {
+                            updatePreviewFor((PayloadGeneratorScriptUIEntry) e.getItem());
                         }
                     });
             setPreviewAndSaveButtonsEnabled(scriptComboBox.getSelectedIndex() >= 0);
@@ -242,13 +235,7 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                 payloadsPreviewGenerateButton.setEnabled(false);
 
                 payloadsPreviewGenerateButton.addActionListener(
-                        new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                updatePayloadsPreviewTextArea();
-                            }
-                        });
+                        e -> updatePayloadsPreviewTextArea());
             }
             return payloadsPreviewGenerateButton;
         }
@@ -389,10 +376,9 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
             } catch (Exception e) {
                 handleScriptExceptionImpl(scriptWrapper, e);
                 LOGGER.warn(
-                        "Failed to obtain number of payloads from script '"
-                                + scriptWrapper.getName()
-                                + "': "
-                                + e.getMessage());
+                        "Failed to obtain number of payloads from script '{}': {}",
+                        scriptWrapper.getName(),
+                        e.getMessage());
                 JOptionPane.showMessageDialog(
                         null,
                         Constant.messages.getString(
@@ -439,10 +425,9 @@ public class ScriptStringPayloadGeneratorAdapterUIHandler
                                     "fuzz.payloads.generator.script.warnNoInterface.title"),
                             JOptionPane.INFORMATION_MESSAGE);
                     LOGGER.warn(
-                            "Failed to initialise '"
-                                    + scriptWrapper.getName()
-                                    + "': "
-                                    + e.getMessage());
+                            "Failed to initialise '{}': {}",
+                            scriptWrapper.getName(),
+                            e.getMessage());
                     setPreviewAndSaveButtonsEnabled(false);
                     return false;
                 }

@@ -21,19 +21,14 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import org.mozilla.zest.core.v1.ZestClientLaunch;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -41,7 +36,10 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestClientLaunch;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestClientLaunchDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_WINDOW_HANDLE = "zest.dialog.client.label.windowHandle";
@@ -116,26 +114,27 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
                 0,
                 FIELD_BROWSER_TYPE,
                 getBrowserTypes(),
-                Constant.messages.getString(BROWSER_TYPE_PREFIX + browserType));
+                Constant.messages.getString(
+                        BROWSER_TYPE_PREFIX + browserType.toLowerCase(Locale.ROOT)));
         this.addCheckBoxField(0, FIELD_HEADLESS, client.isHeadless());
         this.addTextField(0, FIELD_URL, client.getUrl());
         this.addPadding(0);
 
         this.getParamsModel().setValues(getCapabilities(client));
 
-        List<JButton> buttons = new ArrayList<JButton>();
+        List<JButton> buttons = new ArrayList<>();
         buttons.add(getAddButton());
         buttons.add(getModifyButton());
         buttons.add(getRemoveButton());
 
         this.addTableField(1, this.getParamsTable(), buttons);
 
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_URL));
+        setFieldMainPopupMenu(FIELD_URL);
     }
 
     private List<String[]> getCapabilities(ZestClientLaunch client) {
         // TODO
-        List<String[]> list = new ArrayList<String[]>();
+        List<String[]> list = new ArrayList<>();
         if (client.getCapabilities() != null) {
             for (String capability : client.getCapabilities().split("\n")) {
                 if (capability != null && capability.trim().length() > 0) {
@@ -183,14 +182,11 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
             this.addButton =
                     new JButton(Constant.messages.getString("zest.dialog.script.button.add"));
             this.addButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            ZestParameterDialog dialog = getParamDialog();
-                            if (!dialog.isVisible()) {
-                                dialog.init(script, "", "", true, -1, true);
-                                dialog.setVisible(true);
-                            }
+                    e -> {
+                        ZestParameterDialog dialog = getParamDialog();
+                        if (!dialog.isVisible()) {
+                            dialog.init(script, "", "", true, -1, true);
+                            dialog.setVisible(true);
                         }
                     });
         }
@@ -202,13 +198,7 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
             this.modifyButton =
                     new JButton(Constant.messages.getString("zest.dialog.script.button.modify"));
             this.modifyButton.setEnabled(false);
-            this.modifyButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            showParamDialog();
-                        }
-                    });
+            this.modifyButton.addActionListener(e -> showParamDialog());
         }
         return this.modifyButton;
     }
@@ -235,17 +225,14 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
             this.removeButton.setEnabled(false);
             final ZestClientLaunchDialog parent = this;
             this.removeButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (JOptionPane.OK_OPTION
-                                    == View.getSingleton()
-                                            .showConfirmDialog(
-                                                    parent,
-                                                    Constant.messages.getString(
-                                                            "zest.dialog.script.remove.confirm"))) {
-                                getParamsModel().remove(getParamsTable().getSelectedRow());
-                            }
+                    e -> {
+                        if (JOptionPane.OK_OPTION
+                                == View.getSingleton()
+                                        .showConfirmDialog(
+                                                parent,
+                                                Constant.messages.getString(
+                                                        "zest.dialog.script.remove.confirm"))) {
+                            getParamsModel().remove(getParamsTable().getSelectedRow());
                         }
                     });
         }
@@ -267,20 +254,17 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
             paramsTable
                     .getSelectionModel()
                     .addListSelectionListener(
-                            new ListSelectionListener() {
-                                @Override
-                                public void valueChanged(ListSelectionEvent e) {
-                                    if (getParamsTable().getSelectedRowCount() == 0) {
-                                        modifyButton.setEnabled(false);
-                                        removeButton.setEnabled(false);
-                                    } else if (getParamsTable().getSelectedRowCount() == 1) {
-                                        modifyButton.setEnabled(true);
-                                        removeButton.setEnabled(true);
-                                    } else {
-                                        modifyButton.setEnabled(false);
-                                        // TODO allow multiple deletions?
-                                        removeButton.setEnabled(false);
-                                    }
+                            e -> {
+                                if (getParamsTable().getSelectedRowCount() == 0) {
+                                    modifyButton.setEnabled(false);
+                                    removeButton.setEnabled(false);
+                                } else if (getParamsTable().getSelectedRowCount() == 1) {
+                                    modifyButton.setEnabled(true);
+                                    removeButton.setEnabled(true);
+                                } else {
+                                    modifyButton.setEnabled(false);
+                                    // TODO allow multiple deletions?
+                                    removeButton.setEnabled(false);
                                 }
                             });
             paramsTable.addMouseListener(
@@ -338,7 +322,7 @@ public class ZestClientLaunchDialog extends StandardFieldsDialog implements Zest
 
     @Override
     public String validateFields() {
-        // Cant validate the url as it may contain tokens
+        // Can't validate the url as it may contain tokens
 
         if (!ZestZapUtils.isValidVariableName(this.getStringValue(FIELD_WINDOW_HANDLE))) {
             return Constant.messages.getString("zest.dialog.client.error.windowHandle");

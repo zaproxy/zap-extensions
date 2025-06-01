@@ -60,7 +60,7 @@ CONFIDENCE_HIGH = 3
 """
 def scan(helper,msg):
 
-    if( msg.opcode != OPCODE_TEXT or msg.isOutgoing):
+    if( msg.getOpcode() != OPCODE_TEXT or msg.isOutgoing()):
         return
 
     print(msg.getReadablePayload())

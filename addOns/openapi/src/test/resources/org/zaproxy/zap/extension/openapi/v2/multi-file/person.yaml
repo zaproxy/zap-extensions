@@ -1,0 +1,10 @@
+Person:
+  required:
+    - username
+  properties:
+    firstName:
+      type: string
+    lastName:
+      type: string
+    username:
+      type: string

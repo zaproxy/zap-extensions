@@ -25,6 +25,7 @@ import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
 import org.parosproxy.paros.Constant;
 
+@SuppressWarnings("serial")
 public class TokenAnalysisResultsTableModel extends DefaultTableModel {
 
     private static final long serialVersionUID = 1L;

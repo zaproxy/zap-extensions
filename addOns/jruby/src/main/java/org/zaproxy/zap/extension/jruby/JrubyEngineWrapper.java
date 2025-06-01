@@ -22,7 +22,7 @@ package org.zaproxy.zap.extension.jruby;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import javax.swing.ImageIcon;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.zaproxy.zap.extension.script.DefaultEngineWrapper;
@@ -32,8 +32,8 @@ public class JrubyEngineWrapper extends DefaultEngineWrapper {
 
     private final List<Path> defaultTemplates;
 
-    public JrubyEngineWrapper(ScriptEngine engine, List<Path> defaultTemplates) {
-        super(engine);
+    public JrubyEngineWrapper(ScriptEngineFactory engineFactory, List<Path> defaultTemplates) {
+        super(engineFactory);
 
         if (defaultTemplates == null) {
             throw new IllegalArgumentException("Parameter defaultTemplates must not be null.");
@@ -54,7 +54,7 @@ public class JrubyEngineWrapper extends DefaultEngineWrapper {
 
     @Override
     public List<String> getExtensions() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("rb");
         return list;
     }

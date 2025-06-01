@@ -1,16 +1,27 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "28"
-description = "The release quality Passive Scanner rules"
+description = "The release status Passive Scanner rules"
 
 zapAddOn {
     addOnName.set("Passive scanner rules")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.9.0")
 
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/")
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.32.0 & < 2.0.0")
+                }
+
+                // Not an actual dependency (yet) but allows to include passive scan add-on "by default".
+                // Can be removed for the next main core release.
+                register("pscan")
+            }
+        }
+
         extensions {
             register("org.zaproxy.zap.extension.pscanrules.payloader.ExtensionPayloader") {
                 classnames {
@@ -19,7 +30,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("custompayloads") {
-                            version.set("0.9.*")
+                            version.set(">= 0.9.0 & < 1.0.0")
                         }
                     }
                 }
@@ -29,17 +40,21 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.shapesecurity:salvation:2.7.1")
-    implementation(project(":sharedutils"))
-    compileOnly(parent!!.childProjects.get("custompayloads")!!)
+    implementation("com.google.re2j:re2j:1.7")
+    implementation("org.htmlunit:htmlunit-csp:4.0.0")
 
-    testImplementation(parent!!.childProjects.get("custompayloads")!!)
+    zapAddOn("commonlib")
+    zapAddOn("custompayloads")
+
     testImplementation(project(":testutils"))
-    testImplementation("org.apache.commons:commons-lang3:3.9")
 }
 
 spotless {
-    javaWith3rdPartyFormatted(project, listOf(
-        "**/TestInfoPrivateAddressDisclosure.java",
-        "**/TestInfoSessionIdURL.java"))
+    javaWith3rdPartyFormatted(
+        project,
+        listOf(
+            "src/**/InfoPrivateAddressDisclosureScanRule.java",
+            "src/**/InfoSessionIdUrlScanRule.java",
+        ),
+    )
 }

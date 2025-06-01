@@ -32,13 +32,14 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.dialogs.ZestDialog;
 
+@SuppressWarnings("serial")
 public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 2282358266003940700L;
 
     private JTextComponent lastInvoker = null;
     private ZestScriptWrapper script = null;
-    private List<ExtensionPopupMenuItem> subMenus = new ArrayList<ExtensionPopupMenuItem>();
+    private List<ExtensionPopupMenuItem> subMenus = new ArrayList<>();
 
     /** This method initializes */
     public ZestPasteVariablePopupMenu(ExtensionZest extension) {
@@ -99,11 +100,9 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
     private void reCreateSubMenu() {
         if (script != null) {
             final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
-            TreeSet<String> sortedSet =
-                    new TreeSet<String>(script.getZestScript().getVariableNames());
+            TreeSet<String> sortedSet = new TreeSet<>(script.getZestScript().getVariableNames());
             for (String var : sortedSet) {
                 ExtensionPopupMenuItem piicm = new ZestPasteVariableMenu(script, lastInvoker, var);
-                piicm.setMenuIndex(this.getMenuIndex());
                 mainPopupMenuItems.add(piicm);
                 this.subMenus.add(piicm);
             }
@@ -115,7 +114,9 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
         return true;
     }
 
-    /** @param lastInvoker The lastInvoker to set. */
+    /**
+     * @param lastInvoker The lastInvoker to set.
+     */
     public void setLastInvoker(JTextComponent lastInvoker) {
         this.lastInvoker = lastInvoker;
     }

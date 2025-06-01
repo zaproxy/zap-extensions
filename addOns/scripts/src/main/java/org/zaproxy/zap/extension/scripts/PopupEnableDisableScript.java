@@ -22,18 +22,19 @@ package org.zaproxy.zap.extension.scripts;
 import java.awt.Component;
 import javax.swing.JTree;
 import javax.swing.tree.TreePath;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
-/** ZAP: New Popup Menu Alert Delete */
+@SuppressWarnings("serial")
 public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = Logger.getLogger(PopupEnableDisableScript.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupEnableDisableScript.class);
 
     private ExtensionScriptsUI extension = null;
 
@@ -44,7 +45,9 @@ public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupEnableDisableScript(String label) {
         super(label);
     }
@@ -53,22 +56,18 @@ public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
     private void initialize() {
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        for (TreePath tp :
-                                extension.getScriptsPanel().getTree().getSelectionPaths()) {
-                            ScriptNode node = (ScriptNode) tp.getLastPathComponent();
+                e -> {
+                    for (TreePath tp : extension.getScriptsPanel().getTree().getSelectionPaths()) {
+                        ScriptNode node = (ScriptNode) tp.getLastPathComponent();
 
-                            if (node == null
-                                    || node.isTemplate()
-                                    || node.getUserObject() == null
-                                    || !(node.getUserObject() instanceof ScriptWrapper)) {
-                                continue;
-                            }
-                            ScriptWrapper script = (ScriptWrapper) node.getUserObject();
-                            extension.getExtScript().setEnabled(script, !script.isEnabled());
+                        if (node == null
+                                || node.isTemplate()
+                                || node.getUserObject() == null
+                                || !(node.getUserObject() instanceof ScriptWrapper)) {
+                            continue;
                         }
+                        ScriptWrapper script = (ScriptWrapper) node.getUserObject();
+                        extension.getExtScript().setEnabled(script, !script.isEnabled());
                     }
                 });
     }
@@ -85,7 +84,7 @@ public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
                     }
 
                     this.setEnabled(false);
-                    Boolean enable = null; // We dont know whetehr it will be Enable or Disable yet
+                    Boolean enable = null; // We dont know whether it will be Enable or Disable yet
 
                     for (TreePath tp : tree.getSelectionPaths()) {
                         ScriptNode node = (ScriptNode) tp.getLastPathComponent();
@@ -123,10 +122,10 @@ public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
                             }
                         }
                     }
-                    return true;
+                    return enable != null;
                 }
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return false;

@@ -38,6 +38,7 @@ import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.SingleColumnTableModel;
 
+@SuppressWarnings("serial")
 public class SessionMonitoredClientsPanel extends AbstractParamPanel {
 
     public static final String PANEL_NAME = Constant.messages.getString("plugnhack.session.title");
@@ -54,8 +55,8 @@ public class SessionMonitoredClientsPanel extends AbstractParamPanel {
     private MonitoredPagesManager mpm;
 
     // These are used to tell if the user made any changes
-    private ArrayList<String> includeCache = new ArrayList<String>();
-    private ArrayList<String> excludeCache = new ArrayList<String>();
+    private ArrayList<String> includeCache = new ArrayList<>();
+    private ArrayList<String> excludeCache = new ArrayList<>();
 
     public SessionMonitoredClientsPanel(MonitoredPagesManager mpm) {
         super();
@@ -140,7 +141,7 @@ public class SessionMonitoredClientsPanel extends AbstractParamPanel {
             changed = true;
         }
         if (changed) {
-            // Refresh the tree - too hard to work out excactly what has changed
+            // Refresh the tree - too hard to work out exactly what has changed
             this.mpm.setMonitorFlags();
         }
     }

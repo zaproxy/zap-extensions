@@ -20,9 +20,11 @@
 package org.zaproxy.zap.extension.selenium;
 
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.view.messagecontainer.MessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuHttpMessageContainer;
 
+@SuppressWarnings("serial")
 public class PopupMenuOpenInBrowser extends PopupMenuHttpMessageContainer {
 
     private static final long serialVersionUID = 1L;
@@ -31,12 +33,6 @@ public class PopupMenuOpenInBrowser extends PopupMenuHttpMessageContainer {
     public PopupMenuOpenInBrowser(ExtensionSelenium ext) {
         super(Constant.messages.getString("selenium.menu.openinbrowser"));
         this.ext = ext;
-    }
-
-    @Override
-    public int getMenuIndex() {
-        // This currently puts the menu just above the 'Open URL in System Browser' item
-        return 7;
     }
 
     @Override
@@ -59,5 +55,10 @@ public class PopupMenuOpenInBrowser extends PopupMenuHttpMessageContainer {
         }
 
         return super.isEnableForMessageContainer(invoker);
+    }
+
+    @Override
+    public int getWeight() {
+        return MenuWeights.MENU_OPEN_BROWSER_WEIGHT;
     }
 }

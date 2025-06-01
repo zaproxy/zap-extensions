@@ -27,7 +27,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker.State;
 import javafx.embed.swing.JFXPanel;
@@ -36,12 +35,14 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+@SuppressWarnings("serial")
 public class BrowserPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOGGER = Logger.getLogger(BrowserPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(BrowserPanel.class);
 
     private final JFXPanel jfxPanel = new JFXPanel();
     private WebEngine engine;
@@ -62,15 +63,12 @@ public class BrowserPanel extends JPanel {
 
     private void createScene() {
         Platform.runLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        WebView view = new WebView();
-                        view.setDisable(!enabled);
-                        engine = view.getEngine();
-                        listenToStateChangesForAdjustingPanelHeightToWebsite();
-                        jfxPanel.setScene(new Scene(view));
-                    }
+                () -> {
+                    WebView view = new WebView();
+                    view.setDisable(!enabled);
+                    engine = view.getEngine();
+                    listenToStateChangesForAdjustingPanelHeightToWebsite();
+                    jfxPanel.setScene(new Scene(view));
                 });
     }
 
@@ -78,23 +76,11 @@ public class BrowserPanel extends JPanel {
         engine.getLoadWorker()
                 .stateProperty()
                 .addListener(
-                        new ChangeListener<Object>() {
-                            @Override
-                            public void changed(
-                                    ObservableValue<?> observable,
-                                    Object oldValue,
-                                    Object newValue) {
-                                if (State.SUCCEEDED == newValue && resizeOnLoad) {
-                                    resizeOnLoad = false;
-                                    final int height = getWebsiteHeight();
-                                    SwingUtilities.invokeLater(
-                                            new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    setWebsiteHeight(height);
-                                                }
-                                            });
-                                }
+                        (ObservableValue<?> observable, Object oldValue, Object newValue) -> {
+                            if (State.SUCCEEDED == newValue && resizeOnLoad) {
+                                resizeOnLoad = false;
+                                final int height = getWebsiteHeight();
+                                SwingUtilities.invokeLater(() -> setWebsiteHeight(height));
                             }
                         });
     }
@@ -102,27 +88,18 @@ public class BrowserPanel extends JPanel {
     public void loadURL(final String url) {
         resizeOnLoad = true;
         Platform.runLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        String tmp = toURL(url);
-                        if (tmp == null) {
-                            tmp = toURL("http://" + url);
-                        }
-                        engine.load(tmp);
+                () -> {
+                    String tmp = toURL(url);
+                    if (tmp == null) {
+                        tmp = toURL("http://" + url);
                     }
+                    engine.load(tmp);
                 });
     }
 
     public void loadContent(final String content) {
         resizeOnLoad = true;
-        Platform.runLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        engine.loadContent(content);
-                    }
-                });
+        Platform.runLater(() -> engine.loadContent(content));
     }
 
     private static String toURL(String str) {
@@ -145,13 +122,10 @@ public class BrowserPanel extends JPanel {
         final CountDownLatch latch = new CountDownLatch(1);
 
         Platform.runLater(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        int height = getWebsiteHeight();
-                        webSiteHeight.set(height);
-                        latch.countDown();
-                    }
+                () -> {
+                    int height = getWebsiteHeight();
+                    webSiteHeight.set(height);
+                    latch.countDown();
                 });
 
         try {

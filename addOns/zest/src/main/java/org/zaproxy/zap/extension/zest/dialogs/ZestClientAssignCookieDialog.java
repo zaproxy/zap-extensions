@@ -24,15 +24,16 @@ import java.awt.Frame;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.mozilla.zest.core.v1.ZestClientAssignCookie;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestClientAssignCookie;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestClientAssignCookieDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_VARIABLE = "zest.dialog.assign.label.variable";
@@ -80,8 +81,7 @@ public class ZestClientAssignCookieDialog extends StandardFieldsDialog implement
         }
 
         // Pull down of all the valid window ids
-        List<String> windowIds =
-                new ArrayList<String>(script.getZestScript().getClientWindowHandles());
+        List<String> windowIds = new ArrayList<>(script.getZestScript().getClientWindowHandles());
         Collections.sort(windowIds);
         this.addComboField(FIELD_WINDOW_HANDLE, windowIds, client.getWindowHandle());
 

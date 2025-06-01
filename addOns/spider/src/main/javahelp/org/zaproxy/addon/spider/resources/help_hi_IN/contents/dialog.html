@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Spider dialog
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Spider dialog</H1>
+<p>
+This dialog launches the <a href="spider.html">Spider</a>.<br>
+
+<H2>Scope</H2>
+The first tab allows you to select or change the starting point.<br>
+If the starting point is in one or more Contexts then you will be able to choose one of them.<br>
+If that context has any Users defined then you will be able to select one of them.<br>
+If you select one of the users then the spider will be performed as that user, with ZAP (re)authenticating as that user whenever necessary.
+<br><br>
+If you select 'Recurse' then all of the nodes underneath the one selected will also be used to seed the Spider.
+<br><br>
+If you select 'Spider Subtree Only' the Spider will only access resources that are under the starting point (URI).
+When evaluating if a resource is found within the specified subtree, the Spider considers only the scheme, host, port, and path components of the URI.
+<br><br>
+If you select 'Show Advanced Options' then the following tab will be shown which provides fine grain control over the spider process.
+<br><br>
+Clicking on the 'Reset' button will reset all of the options to their default values. 
+
+<H2>Advanced</H2>
+
+The parameters on this tab correspond to the same parameters on the <a href="options.html">Options Spider screen</a>.
+
+<H2>Accessed via</H2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="tab.html">Spider tab</a></td><td>'New Scan' button</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Sites tab</td><td>'Attack / Spider...' right click menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>History tab</td><td>'Attack / Spider...' right click menu item</td></tr>
+</table>
+
+</BODY>
+</HTML>

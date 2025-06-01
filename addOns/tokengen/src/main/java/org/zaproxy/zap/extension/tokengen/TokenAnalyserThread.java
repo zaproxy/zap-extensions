@@ -31,7 +31,8 @@ import com.fasteasytrade.JRandTest.Tests.Count8Bits;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.tokengen.TokenAnalysisTestResult.Result;
 
 public class TokenAnalyserThread extends Thread {
@@ -39,11 +40,11 @@ public class TokenAnalyserThread extends Thread {
     public static final int NUM_TESTS = 9; // Change manually if you add any tests!
 
     private CharacterFrequencyMap cfm = null;
-    private List<TokenAnalyserListenner> listenners = new ArrayList<>();
+    private List<TokenAnalyserListenner> listeners = new ArrayList<>();
     private OutputDestination outputDestination = null;
     private boolean cancelled = false;
 
-    private static Logger log = Logger.getLogger(TokenAnalyserThread.class);
+    private static final Logger LOGGER = LogManager.getLogger(TokenAnalyserThread.class);
 
     private ResourceBundle messages;
 
@@ -53,10 +54,10 @@ public class TokenAnalyserThread extends Thread {
 
     @Override
     public void run() {
-        log.debug("run");
+        LOGGER.debug("run");
 
         if (cfm == null) {
-            log.debug("Cant run no map :(");
+            LOGGER.debug("Can't run no map :(");
             return;
         }
 
@@ -130,20 +131,20 @@ public class TokenAnalyserThread extends Thread {
             test.help(); // This outputs a summary to the specified outputDestination
             this.notifyListenners(result);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
     private void notifyListenners(TokenAnalysisTestResult result) {
-        log.debug("notifyListenners " + result.getType() + " " + result.getResult().name());
+        LOGGER.debug("notifyListenners {} {}", result.getType(), result.getResult().name());
 
-        for (TokenAnalyserListenner listenner : listenners) {
-            listenner.notifyTestResult(result);
+        for (TokenAnalyserListenner listener : listeners) {
+            listener.notifyTestResult(result);
         }
     }
 
-    public void addListenner(TokenAnalyserListenner listenner) {
-        this.listenners.add(listenner);
+    public void addListenner(TokenAnalyserListenner listener) {
+        this.listeners.add(listener);
     }
 
     public void setCfm(CharacterFrequencyMap cfm) {

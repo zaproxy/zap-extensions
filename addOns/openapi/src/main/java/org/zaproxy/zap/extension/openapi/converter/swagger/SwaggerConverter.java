@@ -27,45 +27,75 @@ import io.swagger.parser.SwaggerParser;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import io.swagger.v3.parser.OpenAPIV3Parser;
+import io.swagger.v3.parser.core.extensions.SwaggerParserExtension;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.log4j.Logger;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.commonlib.ValueProvider;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.EmptyDefinitionException;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidDefinitionException;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidUrlException;
+import org.zaproxy.zap.extension.openapi.VariantOpenApi;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
+import org.zaproxy.zap.extension.openapi.network.RequestMethod;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
-import org.zaproxy.zap.model.ValueGenerator;
+import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.utils.Pair;
 
 public class SwaggerConverter implements Converter {
+
+    private static final List<Pair<Function<PathItem, Operation>, RequestMethod>> OPERATIONS;
+
+    static {
+        OPERATIONS = new ArrayList<>(7);
+        OPERATIONS.add(new Pair<>(PathItem::getGet, RequestMethod.GET));
+        OPERATIONS.add(new Pair<>(PathItem::getPost, RequestMethod.POST));
+        OPERATIONS.add(new Pair<>(PathItem::getPut, RequestMethod.PUT));
+        OPERATIONS.add(new Pair<>(PathItem::getHead, RequestMethod.HEAD));
+        OPERATIONS.add(new Pair<>(PathItem::getOptions, RequestMethod.OPTIONS));
+        OPERATIONS.add(new Pair<>(PathItem::getDelete, RequestMethod.DELETE));
+        OPERATIONS.add(new Pair<>(PathItem::getPatch, RequestMethod.PATCH));
+    }
 
     /** The base key for internationalised messages. */
     private static final String BASE_KEY_I18N = "openapi.swaggerconverter.";
 
-    private static Logger LOG = Logger.getLogger(SwaggerConverter.class);
+    private static final Logger LOGGER = LogManager.getLogger(SwaggerConverter.class);
+    private static final Pattern PATH_PART_PATTERN = Pattern.compile("\\{.*?}");
     private final UriBuilder targetUriBuilder;
     private final UriBuilder definitionUriBuilder;
     private String defn;
-    private OperationHelper operationHelper;
     private RequestModelConverter requestConverter;
     private Generators generators;
-    private List<String> errors = new ArrayList<String>();
+    private List<String> errors = new ArrayList<>();
+    private Set<String> apiUrls;
+    private OpenAPI openApiModel;
+    private List<OperationModel> operationModels;
 
-    public SwaggerConverter(String defn, ValueGenerator valGen) {
-        this(null, null, defn, valGen);
+    public SwaggerConverter(String defn, ValueProvider valueProvider) {
+        this(null, null, defn, valueProvider);
     }
 
     /**
@@ -80,24 +110,24 @@ public class SwaggerConverter implements Converter {
      *     is not specified in the definition or {@code targetUrl}, it's also used to resolve
      *     relative server URLs.
      * @param defn the OpenAPI definition.
-     * @param valueGenerator the value generator, might be {@code null} in which case only default
+     * @param valueProvider the value generator, might be {@code null} in which case only default
      *     values are used.
      * @throws IllegalArgumentException if the definition is empty or {@code null}.
      * @throws InvalidUrlException if any of the conditions is true:
      *     <ul>
-     *       <li>the scheme component of {@code targeUrl} or {@code definitionUrl} is empty when it
+     *       <li>the scheme component of {@code targetUrl} or {@code definitionUrl} is empty when it
      *           shouldn't, for example, {@code ://authority};
-     *       <li>the scheme component of {@code targeUrl} or {@code definitionUrl} is not empty when
-     *           it should, for example, {@code notscheme//authority};
-     *       <li>the {@code targeUrl} or {@code definitionUrl} have an unsupported scheme;
+     *       <li>the scheme component of {@code targetUrl} or {@code definitionUrl} is not empty
+     *           when it should, for example, {@code notscheme//authority};
+     *       <li>the {@code targetUrl} or {@code definitionUrl} have an unsupported scheme;
      *       <li>when provided, the {@code definitionUrl} does not have the scheme and authority
      *           components.
      *     </ul>
      */
     public SwaggerConverter(
-            String targetUrl, String definitionUrl, String defn, ValueGenerator valueGenerator) {
+            String targetUrl, String definitionUrl, String defn, ValueProvider valueProvider) {
         if (defn == null || defn.isEmpty()) {
-            throw new IllegalArgumentException("The definition must not be null or empty.");
+            throw new EmptyDefinitionException();
         }
 
         try {
@@ -119,22 +149,29 @@ public class SwaggerConverter implements Converter {
                     e);
         }
 
-        if (!this.definitionUriBuilder.isEmpty()) {
-            if (this.definitionUriBuilder.getScheme() == null
-                    || this.definitionUriBuilder.getAuthority() == null) {
-                throw new InvalidUrlException(
-                        definitionUrl,
-                        Constant.messages.getString(
-                                BASE_KEY_I18N + "definitionurl.missingcomponents", definitionUrl));
-            }
+        if (!this.definitionUriBuilder.isEmpty()
+                && (this.definitionUriBuilder.getScheme() == null
+                        || this.definitionUriBuilder.getAuthority() == null)) {
+            throw new InvalidUrlException(
+                    definitionUrl,
+                    Constant.messages.getString(
+                            BASE_KEY_I18N + "definitionurl.missingcomponents", definitionUrl));
         }
 
-        generators = new Generators(valueGenerator);
-        operationHelper = new OperationHelper();
+        generators = new Generators(valueProvider);
         requestConverter = new RequestModelConverter();
         // Remove BOM, if any. Swagger library checks the first char to decide if it should be
         // parsed as JSON or YAML.
         this.defn = defn.replace("\uFEFF", "");
+
+        try {
+            openApiModel = createModelFromDefinition();
+            if (openApiModel == null) {
+                throw new InvalidDefinitionException();
+            }
+        } catch (SwaggerException e) {
+            throw new InvalidDefinitionException();
+        }
     }
 
     private static UriBuilder validateSupportedScheme(UriBuilder uriBuilder) {
@@ -153,53 +190,87 @@ public class SwaggerConverter implements Converter {
                 || "https".equalsIgnoreCase(scheme);
     }
 
-    public List<RequestModel> getRequestModels() throws SwaggerException {
-        List<OperationModel> operations = readOpenAPISpec();
-        return convertToRequest(operations);
+    public List<OperationModel> getOperationModels() throws SwaggerException {
+        if (operationModels == null) {
+            operationModels = readOpenAPISpec();
+        }
+        return operationModels;
     }
 
-    private List<RequestModel> convertToRequest(List<OperationModel> operations) {
+    @Override
+    public List<RequestModel> getRequestModels(Context context) throws SwaggerException {
+        return convertToRequest(context, getOperationModels());
+    }
+
+    private List<RequestModel> convertToRequest(Context context, List<OperationModel> operations) {
         List<RequestModel> requests = new LinkedList<>();
         for (OperationModel operation : operations) {
-            requests.add(requestConverter.convert(operation, generators));
+            var model = requestConverter.convert(operation, generators);
+            if (context == null || !context.isExcluded(model.getUrl())) {
+                requests.add(model);
+            }
         }
         return requests;
     }
 
     private List<OperationModel> readOpenAPISpec() throws SwaggerException {
-        OpenAPI openAPI = getOpenAPI();
-        if (openAPI == null) {
-            throw new SwaggerException(
-                    Constant.messages.getString(BASE_KEY_I18N + "parse.defn.exception", defn));
-        }
-
         List<OperationModel> operations = new ArrayList<>();
-        List<UriBuilder> serverUriBuilders =
-                createUriBuilders(openAPI.getServers(), definitionUriBuilder);
-        for (String url :
-                createApiUrls(serverUriBuilders, targetUriBuilder, definitionUriBuilder)) {
-            addOperations(openAPI, url, operations);
+        apiUrls = createApiUrls(openApiModel.getServers());
+        for (Map.Entry<String, PathItem> entry : openApiModel.getPaths().entrySet()) {
+            PathItem path = entry.getValue();
+            Set<String> pathApiUrls = createApiUrls(path.getServers(), apiUrls);
+
+            boolean operationsAdded = false;
+            for (Pair<Function<PathItem, Operation>, RequestMethod> operationData : OPERATIONS) {
+                Operation operation = operationData.first.apply(path);
+                if (operation != null) {
+                    operationsAdded = true;
+                    for (String url : createApiUrls(operation.getServers(), pathApiUrls)) {
+                        operations.add(
+                                new OperationModel(
+                                        url + entry.getKey(), operation, operationData.second));
+                    }
+                }
+            }
+
+            if (!operationsAdded) {
+                LOGGER.debug("Failed to find any operations for path={}", path);
+            }
         }
         return operations;
     }
 
-    private OpenAPI getOpenAPI() throws SwaggerException {
+    private Set<String> createApiUrls(List<Server> servers) throws SwaggerException {
+        List<UriBuilder> serverUriBuilders = createUriBuilders(servers, definitionUriBuilder);
+        return createApiUrls(serverUriBuilders, targetUriBuilder, definitionUriBuilder);
+    }
+
+    private Set<String> createApiUrls(List<Server> servers, Set<String> fallbackApiUrls)
+            throws SwaggerException {
+        if (servers == null || servers.isEmpty()) {
+            return fallbackApiUrls;
+        }
+        return createApiUrls(servers);
+    }
+
+    private OpenAPI createModelFromDefinition() throws SwaggerException {
         ParseOptions options = new ParseOptions();
         options.setResolve(true);
         options.setResolveFully(true);
 
-        OpenAPI openAPI = new OpenAPIV3Parser().readContents(this.defn, null, options).getOpenAPI();
+        OpenAPI openApiDefn =
+                new OpenAPIV3Parser().readContents(this.defn, null, options).getOpenAPI();
 
-        if (openAPI == null) {
+        if (openApiDefn == null) {
             // try v2
             Swagger swagger = new SwaggerParser().parse(this.defn);
             if (swagger == null) {
                 convertV1ToV2();
             }
             // parse v2
-            openAPI = parseV2(options);
+            openApiDefn = parseV2(options);
         }
-        return openAPI;
+        return openApiDefn;
     }
 
     private void convertV1ToV2() throws SwaggerException {
@@ -214,11 +285,8 @@ public class SwaggerConverter implements Converter {
             bw.close();
 
             swagger = new SwaggerCompatConverter().read(temp.getAbsolutePath());
-            if (!temp.delete()) {
-                String msg = "Failed to delete " + temp.getAbsolutePath();
-                LOG.warn(msg);
-                this.errors.add(msg);
-            }
+
+            cleanup(temp.toPath());
             this.defn = Json.mapper().writerWithDefaultPrettyPrinter().writeValueAsString(swagger);
 
         } catch (IOException e) {
@@ -229,19 +297,26 @@ public class SwaggerConverter implements Converter {
         }
     }
 
-    private OpenAPI parseV2(ParseOptions options) {
-        OpenAPI openAPI;
+    private void cleanup(Path path) {
         try {
-            openAPI = new OpenAPIParser().readContents(this.defn, null, options).getOpenAPI();
-            // parse again to resolve refs , may be there is a cleaner way
-            String string =
-                    Yaml.mapper().writerWithDefaultPrettyPrinter().writeValueAsString(openAPI);
-            openAPI = new OpenAPIV3Parser().readContents(string, null, options).getOpenAPI();
-        } catch (JsonProcessingException e) {
-            LOG.warn(e.getMessage());
-            openAPI = null;
+            Files.delete(path);
+        } catch (IOException e) {
+            LOGGER.debug("Failed to delete {}", path);
         }
-        return openAPI;
+    }
+
+    private OpenAPI parseV2(ParseOptions options) {
+        OpenAPI api;
+        try {
+            api = new OpenAPIParser().readContents(this.defn, null, options).getOpenAPI();
+            // parse again to resolve refs , may be there is a cleaner way
+            String string = Yaml.mapper().writerWithDefaultPrettyPrinter().writeValueAsString(api);
+            api = new OpenAPIV3Parser().readContents(string, null, options).getOpenAPI();
+        } catch (JsonProcessingException e) {
+            LOGGER.warn(e.getMessage());
+            api = null;
+        }
+        return api;
     }
 
     // Package access for testing.
@@ -261,7 +336,7 @@ public class SwaggerConverter implements Converter {
                     if (!definitionUriBuilder.isEmpty()) {
                         message += " Definition URL: " + definitionUriBuilder;
                     }
-                    LOG.warn(message, e);
+                    LOGGER.warn(message, e);
                 }
             }
 
@@ -332,20 +407,16 @@ public class SwaggerConverter implements Converter {
             String url = server.getUrl();
             if (server.getVariables() != null) {
                 for (Map.Entry<String, ServerVariable> entry : server.getVariables().entrySet()) {
-                    // default is always set
                     url = url.replace("{" + entry.getKey() + "}", entry.getValue().getDefault());
                 }
             }
             try {
                 UriBuilder uriBuilder = UriBuilder.parse(url);
                 if (!hasSupportedScheme(uriBuilder)) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Ignoring server URL "
-                                        + url
-                                        + " because of unsupported scheme: "
-                                        + uriBuilder.getScheme());
-                    }
+                    LOGGER.debug(
+                            "Ignoring server URL {} because of unsupported scheme: {}",
+                            url,
+                            uriBuilder.getScheme());
                     continue;
                 }
                 if (!uriBuilder.isEmpty()) {
@@ -354,7 +425,7 @@ public class SwaggerConverter implements Converter {
 
                 urls.add(uriBuilder.merge(definitionUriBuilder));
             } catch (IllegalArgumentException e) {
-                LOG.warn("Failed to create server URL from: " + url, e);
+                LOGGER.warn("Failed to create server URL from: {}", url, e);
             }
         }
         return urls;
@@ -376,10 +447,57 @@ public class SwaggerConverter implements Converter {
         return errors;
     }
 
-    private void addOperations(OpenAPI openApi, String url, List<OperationModel> operations) {
-        for (Map.Entry<String, PathItem> entry : openApi.getPaths().entrySet()) {
-            operations.addAll(
-                    operationHelper.getAllOperations(entry.getValue(), url + entry.getKey()));
+    /**
+     * File based parser for v2 and v3 specs that bundles external file refs.
+     *
+     * @param file V2 or V3 OpenAPI File spec, supporting external files via ref
+     * @return Populated either with a valid OpenAPI or a list of errors
+     */
+    public static SwaggerParseResult parse(File file) {
+        ParseOptions parseOptions = new ParseOptions();
+        parseOptions.setResolve(true);
+        parseOptions.setResolveFully(true);
+
+        List<String> errors = new ArrayList<>();
+        for (SwaggerParserExtension ex : OpenAPIV3Parser.getExtensions()) {
+            SwaggerParseResult swaggerParseResult =
+                    ex.readLocation(file.getAbsolutePath(), null, parseOptions);
+            if (swaggerParseResult.getOpenAPI() != null) {
+                return swaggerParseResult;
+            } else {
+                errors.addAll(swaggerParseResult.getMessages());
+            }
         }
+
+        SwaggerParseResult swaggerParseResult = new SwaggerParseResult();
+        swaggerParseResult.setMessages(errors);
+        return swaggerParseResult;
+    }
+
+    public void updateVariantChecks(
+            Context context, VariantOpenApi.VariantOpenApiChecks variantChecks)
+            throws SwaggerException {
+        for (OperationModel operation : getOperationModels()) {
+            String uri = operation.getPath();
+            if (PATH_PART_PATTERN.matcher(uri).find()) {
+                String regex = uri.replaceAll(PATH_PART_PATTERN.pattern(), "[^/?]+");
+                variantChecks.pathsWithParamsRegex.put(operation, Pattern.compile(regex));
+                if (isContextIncludeNeeded(context, uri.replaceAll("[{}]", ""))) {
+                    context.addIncludeInContextRegex(regex);
+                }
+            } else {
+                variantChecks.pathsWithNoParams.add(operation);
+                if (isContextIncludeNeeded(context, uri)) {
+                    context.addIncludeInContextRegex(uri);
+                }
+            }
+        }
+    }
+
+    private static boolean isContextIncludeNeeded(Context context, String uri) {
+        if (context.isExcluded(uri)) {
+            return false;
+        }
+        return !context.isIncluded(uri);
     }
 }

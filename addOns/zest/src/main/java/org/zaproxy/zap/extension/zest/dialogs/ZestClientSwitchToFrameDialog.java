@@ -21,24 +21,22 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import org.mozilla.zest.core.v1.ZestClientSwitchToFrame;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestClientSwitchToFrame;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestClientSwitchToFrameDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_WINDOW_HANDLE = "zest.dialog.client.label.windowHandle";
@@ -85,8 +83,7 @@ public class ZestClientSwitchToFrameDialog extends StandardFieldsDialog implemen
         }
 
         // Pull down of all the valid window ids
-        List<String> windowIds =
-                new ArrayList<String>(script.getZestScript().getClientWindowHandles());
+        List<String> windowIds = new ArrayList<>(script.getZestScript().getClientWindowHandles());
         Collections.sort(windowIds);
         this.addComboField(FIELD_WINDOW_HANDLE, windowIds, client.getWindowHandle());
 
@@ -94,7 +91,7 @@ public class ZestClientSwitchToFrameDialog extends StandardFieldsDialog implemen
         this.addNumberField(FIELD_FRAME_INDEX, -1, 1024, client.getFrameIndex());
         this.addCheckBoxField(FIELD_PARENT_FRAME, client.isParent());
 
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_FRAME_NAME));
+        setFieldMainPopupMenu(FIELD_FRAME_NAME);
 
         // Only allow one choice to be selected
         ((ZapTextField) getField(FIELD_FRAME_NAME))
@@ -132,13 +129,10 @@ public class ZestClientSwitchToFrameDialog extends StandardFieldsDialog implemen
                         });
         this.addFieldListener(
                 FIELD_PARENT_FRAME,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (getBoolValue(FIELD_PARENT_FRAME)) {
-                            setFieldValue(FIELD_FRAME_NAME, "");
-                            setFieldValue(FIELD_FRAME_INDEX, -1);
-                        }
+                e -> {
+                    if (getBoolValue(FIELD_PARENT_FRAME)) {
+                        setFieldValue(FIELD_FRAME_NAME, "");
+                        setFieldValue(FIELD_FRAME_INDEX, -1);
                     }
                 });
     }

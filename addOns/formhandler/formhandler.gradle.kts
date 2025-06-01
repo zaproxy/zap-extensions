@@ -1,12 +1,30 @@
-version = "3"
-description = "This Form Handler Add-on allows a user to define field names and values to be used in a form's fields. Fields can be added, modified, enabled, and deleted for use in form fields."
+import org.zaproxy.gradle.addon.AddOnStatus
+
+description = (
+    "This Value Generator Add-on allows a user to define field names and values to be used when submitting values to an app. " +
+        "Fields can be added, modified, enabled/disabled, and deleted."
+)
 
 zapAddOn {
-    addOnName.set("Form Handler")
-    zapVersion.set("2.6.0")
+    addOnName.set("Value Generator")
+    addOnStatus.set(AddOnStatus.BETA)
 
     manifest {
         author.set("ZAP Dev Team")
-        url.set("https://www.zaproxy.org/docs/desktop/addons/form-handler/")
+        url.set("https://www.zaproxy.org/docs/desktop/addons/value-generator/")
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.29.0 & < 2.0.0")
+                }
+            }
+        }
     }
+}
+
+dependencies {
+    zapAddOn("commonlib")
+
+    testImplementation(project(":testutils"))
 }

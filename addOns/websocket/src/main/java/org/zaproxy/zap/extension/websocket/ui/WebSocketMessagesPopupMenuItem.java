@@ -20,18 +20,18 @@
 package org.zaproxy.zap.extension.websocket.ui;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JTable;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 
 /** Menu Item for a right click menu on the {@link WebSocketMessagesView}. */
+@SuppressWarnings("serial")
 public abstract class WebSocketMessagesPopupMenuItem extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = 4774753835401981588L;
 
-    private static final Logger logger = Logger.getLogger(WebSocketMessagesPopupMenuItem.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketMessagesPopupMenuItem.class);
 
     /** Will be set by {@link WebSocketMessagesPopupMenuItem#isEnableForComponent(Component)}. */
     private WebSocketPopupHelper wsPopupHelper;
@@ -50,15 +50,11 @@ public abstract class WebSocketMessagesPopupMenuItem extends ExtensionPopupMenuI
         setText(getMenuText());
         final WebSocketMessagesPopupMenuItem item = this;
         addActionListener(
-                new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent evt) {
-                        try {
-                            item.performAction();
-                        } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
-                        }
+                evt -> {
+                    try {
+                        item.performAction();
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
                     }
                 });
     }
@@ -70,7 +66,7 @@ public abstract class WebSocketMessagesPopupMenuItem extends ExtensionPopupMenuI
      */
     protected abstract String getMenuText();
 
-    /** What happens if choosen? */
+    /** What happens if chosen? */
     protected abstract void performAction();
 
     /**
@@ -106,7 +102,7 @@ public abstract class WebSocketMessagesPopupMenuItem extends ExtensionPopupMenuI
                     setEnabled(false);
                 }
             } catch (Exception e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
             return true;
         }

@@ -4,14 +4,21 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Selenium</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 	<h1>Selenium</h1>
 
 	<p>The Selenium add-on provides WebDrivers, for other add-ons, to invoke and remotely
 		control web browsers. It's also bundled the HtmlUnit web browser, an headless Java based
 		web browser.
+		
+	<p>It adds a 'Selenium' script type - these scripts are invoked whenever selenium launches a browser,
+	for example for the Ajax Spider or for manual browsing. 
+	
 	<p>The add-on also adds a right click option to ZAP panels that list URLs (such at the History and Sites tree)
-	which allows you to open the selected URL in any of the supported browsers.
+	which allows you to open the selected URL in any of the supported browsers. The Selenium scripts have access to the 
+	launched browser and can interact with it, for example, run JavaScript scripts, access URLs, fill forms, click buttons...
+	<br><strong>Note:</strong> The Selenium scripts are executed synchronously for the AJAX Spider, to prevent interferences
+	with the crawler later, it's up to the scripts to access the required URLs.
 
 	<h2>Supported Browsers</h2>
 
@@ -33,6 +40,11 @@
 			</td>
 		</tr>
 		<tr>
+			<td>Chrome Headless</td>
+			<td>chrome-headless</td>
+			<td>Starts Chrome without GUI.</td>
+		</tr>
+		<tr>
 			<td>Firefox</td>
 			<td>firefox</td>
 			<td>The following versions are known to work: 45 (ESR), 46, 47.0.1, 54, and 55 (older
@@ -44,19 +56,14 @@
 			</td>
 		</tr>
 		<tr>
+			<td>Firefox Headless</td>
+			<td>firefox-headless</td>
+			<td>Starts Firefox without GUI.</td>
+		</tr>
+		<tr>
 			<td>HtmlUnit</td>
 			<td>htmlunit</td>
 			<td>Bundled browser, does not have any requirement.</td>
-		</tr>
-		<tr>
-			<td>Internet Explorer</td>
-			<td>ie</td>
-			<td>The following version is known to work: 11 (older versions might work too).
-				Requires IEDriverServer, if not on the system's PATH, it can be set in the options.
-				For more information on IEDriverServer refer to the <a
-				href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver">IEDriverServer
-					website</a> (see footer note for caveat when using Internet Explorer).
-			</td>
 		</tr>
 		<tr>
 			<td>Opera</td>
@@ -79,7 +86,7 @@
 			<td>&nbsp;</td>
 		</tr>
 	</table>
-	<p>To use Firefox, Chrome, Internet Explorer, Opera, PhantomJS and Safari, you must
+	<p>To use Firefox, Chrome, Opera, PhantomJS and Safari, you must
 		have them installed in your system. The ID of the browser can be used to choose the
 		browser when configuring ZAP through the command line or using the ZAP API (for example,
 		to set the AJAX Spider to use one or other browser).
@@ -110,11 +117,6 @@
 		available is advised to not use it in those cases. Some add-ons might choose to show
 		warning message when that happens. As workaround one could define, in the <code>hosts</code>
 		file, a domain name mapping to the local address and use that domain name instead.
-	<p>
-		<strong>Internet Explorer Note:</strong> Not all versions of Internet Explorer work out
-		of the box, refer to the <a
-			href="https://code.google.com/p/selenium/wiki/InternetExplorerDriver#Required_Configuration">IEDriverServer
-			website</a> for more details on how to configure them.
 
 	<h2>See also</h2>
 	<table>

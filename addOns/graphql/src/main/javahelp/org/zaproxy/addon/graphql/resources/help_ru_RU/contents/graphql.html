@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+GraphQL Support
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Поддержка GraphQL </H1>
+Это дополнение позволяет импортировать определения GraphQL и отправлять сгенерированные на их основе запросы. 
+<br><br>
+Надстройка автоматически обнаружит любые определения GraphQL и просканирует их, пока они находятся в области действия.  <br>
+Паук поддерживается в ZAP 2.10.0 и более поздних версиях. 
+
+<H2>Интерфейс</H2>
+A menu item is added to the Import menu:
+<ul>
+<li>Import a GraphQL schema</li>
+</ul>
+
+<h3>Формат URL-адреса конечной точки </h3>
+URL конечной точки имеет следующий формат: <br>
+<code>scheme://authority/path</code><br>
+со всеми компонентами URI, обязательными при импорте из файла. 
+
+<h3>Панель параметров </h3>
+Панель параметров GraphQL добавлена ​​в меню «Инструменты» -> «Параметры» -> «GraphQL». 
+Эти параметры позволяют управлять выводом Генератора запросов. 
+
+<H2>API</H2>
+В API добавлены следующие операции: 
+<h3> Просмотры </h3>
+<ul>
+<li> optionArgsType </li>
+<li> optionMaxArgsDepth </li>
+<li> optionMaxQueryDepth </li>
+<li> optionOptionalArgsEnabled </li>
+<li> optionQuerySplitType </li>
+<li> optionQueryGenEnabled </li>
+<li> optionRequestMethod </li>
+</ul>
+
+<h3> Действия </h3>
+<ul>
+<li> importFile (endurl*, file*) </li>
+<li> importUrl (endurl*, url) </li>
+<li> setOptionArgsType (String*) </li>
+<li> setOptionMaxArgsDepth (Integer*) </li>
+<li> setOptionMaxQueryDepth (Integer*) </li>
+<li> setOptionOptionalArgsEnabled (Boolean*) </li>
+<li> setOptionQueryGenEnabled (Boolean*) </li>
+<li> setOptionQuerySplitType (String*) </li>
+<li> setOptionRequestMethod (String*) </li>
+</ul>
+<code>endurl</code> supports the <code>Endpoint URL</code> формат, описанный ранее. 
+
+Определения будут импортированы синхронно, и будут возвращены все предупреждения. 
+
+<H2>командная строка</H2>
+Добавлены следующие параметры командной строки: 
+<ul>
+<li>-graphqlfile &lt;filename&gt;: импортирует определение GraphQL из файла. </li>
+<li>-graphqlurl &lt;url&gt;: импортирует определение GraphQL из URL-адреса. </li>
+<li>-graphqlendurl &lt;url&gt; : устанавливает URL-адрес конечной точки. </li>
+</ul>
+
+Определения будут импортированы синхронно, а все предупреждения будут отображаться в командной строке. 
+
+<H2>Смотрите также </H2>
+<table>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><a href="options.html">Параметры GraphQL </a></td>
+        <td>для получения информации о дополнительных параметрах. </td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><a href="variant.html">GraphQL Variant</a></td>
+        <td>for information about the GraphQL variant.</td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><a href="automation.html">GraphQL автоматизация </a></td>
+        <td>для получения информации о поддержке платформы автоматизации. </td>
+    </tr>
+    <tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><a href="alerts.html">GraphQL Alerts</a></td>
+        <td>for information about alerts raised by the add-on.</td>
+    </tr>
+</table>
+
+</BODY>
+</HTML>

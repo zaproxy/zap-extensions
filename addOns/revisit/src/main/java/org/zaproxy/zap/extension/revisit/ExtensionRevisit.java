@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.revisit;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,9 +28,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeSet;
 import javax.swing.tree.TreeNode;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -55,6 +53,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
+import org.zaproxy.zap.model.NameValuePair;
 import org.zaproxy.zap.model.ParameterParser;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.StructuralNode;
@@ -79,7 +78,8 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
     // The name is public so that other extensions can access it
     public static final String NAME = "ExtensionRevisit";
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionHistory.class, ExtensionAntiCSRF.class);
 
     // The i18n prefix, by default the package name - defined in one place to make it easier
     // to copy and change this example
@@ -88,16 +88,9 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
     public static final String ICON_RESOURCE = "/resource/icon/16/026.png";
     public static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionHistory.class);
-        dependencies.add(ExtensionAntiCSRF.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private Logger LOGGER = LogManager.getLogger(this.getClass());
 
-    private Logger log = Logger.getLogger(this.getClass());
-
-    private Map<String, TimeRange> sites = new HashMap<String, TimeRange>();
+    private Map<String, TimeRange> sites = new HashMap<>();
     private RevisitDialog revisitDialog;
     private RevisitAPI revisitAPI;
 
@@ -119,7 +112,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
         extensionHook.addProxyListener(this);
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
 
-        if (getView() != null) {
+        if (hasView()) {
             // Register our popup menu item
             extensionHook
                     .getHookMenu()
@@ -164,7 +157,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
     private void removeRevisitIconSiteNodes() {
         SiteMap siteMap = Model.getSingleton().getSession().getSiteTree();
-        SiteNode root = (SiteNode) siteMap.getRoot();
+        SiteNode root = siteMap.getRoot();
         @SuppressWarnings("unchecked")
         Enumeration<TreeNode> en = root.breadthFirstEnumeration();
         while (en.hasMoreElements()) {
@@ -173,22 +166,8 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 
     @Override
@@ -202,7 +181,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
         TimeRange rs = this.sites.get(getSiteForURL(url));
         if (rs != null) {
-            log.debug("Revisiting url: " + url);
+            LOGGER.debug("Revisiting url: {}", url);
             StructuralNode node = null;
             boolean found = false;
             StringBuilder urlsFor404 = new StringBuilder();
@@ -210,7 +189,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
             try {
                 node =
                         SessionStructure.find(
-                                Model.getSingleton().getSession().getSessionId(),
+                                Model.getSingleton(),
                                 msg.getRequestHeader().getURI(),
                                 msg.getRequestHeader().getMethod(),
                                 msg.getRequestBody().toString());
@@ -225,7 +204,8 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
                     for (int i = 1; i <= node.getHistoryReference().getHistoryId(); i++) {
                         HistoryReference hr = extHist.getHistoryReference(i);
-                        if (hr.getHistoryType() == HistoryReference.TYPE_PROXIED
+                        if (hr != null
+                                && hr.getHistoryType() == HistoryReference.TYPE_PROXIED
                                 && isSimilarRequest(url, hr.getURI().toString())) {
                             if (!url.equals(hr.getURI().toString())) {
                                 // We dont perform an exact match above so that we can
@@ -242,7 +222,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
                             }
                             if (hr.getTimeSentMillis() < rs.getStartTime().getTime()) {
                                 // Before specified range
-                                log.debug("Before specified range: " + url);
+                                LOGGER.debug("Before specified range: {}", url);
                                 if (urlCount <= 10) {
                                     // Add to 404 diags
                                     appendMsgToDiags(
@@ -256,7 +236,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
                             if (hr.getTimeSentMillis() < rs.getStartTime().getTime()
                                     || hr.getTimeSentMillis() > rs.getEndTime().getTime()) {
                                 // After specified range (so no point continuing)
-                                log.debug("After specified range: " + url);
+                                LOGGER.debug("After specified range: {}", url);
                                 // Always add so that they know there was something after the
                                 // time they specified
                                 appendMsgToDiags(
@@ -269,7 +249,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
                             // any checks we can without it before getting it
                             HttpMessage msg2 = hr.getHttpMessage();
                             if (this.isSameRequest(msg, msg2)) {
-                                log.debug("Returning revisited page: " + url);
+                                LOGGER.debug("Returning revisited page: {}", url);
                                 copyResponse(msg2, msg);
                                 found = true;
                                 break;
@@ -280,12 +260,12 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
                                         Constant.messages.getString("revisit.diags.params"));
                                 urlCount++;
                             }
-                            log.debug("Not the same request: " + url);
+                            LOGGER.debug("Not the same request: {}", url);
                         }
                     }
                 }
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             if (!found) {
                 // Display a 404 adding in any useful info we can
@@ -311,7 +291,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
                     msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
                     msg.setTimeSentMillis(new Date().getTime());
                 } catch (HttpMalformedHeaderException e) {
-                    log.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }
@@ -362,7 +342,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
         if (msg2 == null) {
             return false;
         }
-        if (!msg.getRequestHeader().getMethod().equals(msg.getRequestHeader().getMethod())) {
+        if (!msg.getRequestHeader().getMethod().equals(msg2.getRequestHeader().getMethod())) {
             // Different methods
             return false;
         }
@@ -379,42 +359,49 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
                                 .getExtension(ExtensionAntiCSRF.NAME);
         // Compare the normalised URL params
         ParameterParser upp = session.getUrlParamParser(msg.getRequestHeader().getURI().toString());
-        Map<String, String> upMap1 = upp.getParams(msg, Type.url);
-        Map<String, String> upMap2 = upp.getParams(msg2, Type.url);
+        List<NameValuePair> urlParamsMsg = upp.getParameters(msg, Type.url);
+        List<NameValuePair> urlParamsMsg2 = upp.getParameters(msg2, Type.url);
         if (extAcsrf != null) {
-            stripOutParams(upMap1, extAcsrf.getAntiCsrfTokenNames());
-            stripOutParams(upMap2, extAcsrf.getAntiCsrfTokenNames());
+            stripOutParams(urlParamsMsg, extAcsrf.getAntiCsrfTokenNames());
+            stripOutParams(urlParamsMsg2, extAcsrf.getAntiCsrfTokenNames());
         }
-        if (!normalise(upMap1, upp).equals(normalise(upMap2, upp))) {
+        if (!normalise(urlParamsMsg, upp).equals(normalise(urlParamsMsg2, upp))) {
             return false;
         }
         // Compare the normalised form params
         ParameterParser fpp =
                 session.getFormParamParser(msg.getRequestHeader().getURI().toString());
-        Map<String, String> fpMap1 = fpp.getParams(msg, Type.form);
-        Map<String, String> fpMap2 = fpp.getParams(msg2, Type.form);
+        List<NameValuePair> formParamsMsg1 = fpp.getParameters(msg, Type.form);
+        List<NameValuePair> formParamsMsg2 = fpp.getParameters(msg2, Type.form);
         if (extAcsrf != null) {
-            stripOutParams(fpMap1, extAcsrf.getAntiCsrfTokenNames());
-            stripOutParams(fpMap2, extAcsrf.getAntiCsrfTokenNames());
+            stripOutParams(formParamsMsg1, extAcsrf.getAntiCsrfTokenNames());
+            stripOutParams(formParamsMsg2, extAcsrf.getAntiCsrfTokenNames());
         }
-        if (!normalise(fpMap1, fpp).equals(normalise(fpMap2, fpp))) {
+        if (!normalise(formParamsMsg1, fpp).equals(normalise(formParamsMsg2, fpp))) {
             return false;
         }
         return true;
     }
 
-    private void stripOutParams(Map<String, String> map, List<String> excludes) {
-        for (String exc : excludes) {
-            map.remove(exc);
-        }
+    private void stripOutParams(List<NameValuePair> parameters, List<String> excludes) {
+        parameters.removeIf(e -> excludes.contains(e.getName()));
     }
 
-    private String normalise(Map<String, String> map, ParameterParser pp) {
+    private String normalise(List<NameValuePair> parameters, ParameterParser pp) {
         StringBuilder sb = new StringBuilder();
-        for (String key : new TreeSet<String>(map.keySet())) {
-            sb.append(key);
+        Collections.sort(
+                parameters,
+                (o1, o2) -> {
+                    int res = o1.getName().compareTo(o2.getName());
+                    if (res != 0) {
+                        return res;
+                    }
+                    return o1.getValue().compareTo(o2.getValue());
+                });
+        for (NameValuePair nvp : parameters) {
+            sb.append(nvp.getName());
             sb.append(pp.getDefaultKeyValueSeparator());
-            sb.append(map.get(key));
+            sb.append(nvp.getValue());
             sb.append(pp.getDefaultKeyValuePairSeparator());
         }
         return sb.toString();
@@ -526,7 +513,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
     }
 
     public List<String> getSites() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.addAll(sites.keySet());
         return list;
     }

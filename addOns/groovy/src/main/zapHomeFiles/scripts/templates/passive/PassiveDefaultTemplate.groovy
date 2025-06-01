@@ -5,48 +5,60 @@ Note that new passive scripts will initially be disabled
 Right click the script in the Scripts tree and select "enable"
 */
 
+
 import net.htmlparser.jericho.Source
-import org.parosproxy.paros.core.scanner.Alert
 import org.parosproxy.paros.core.scanner.Plugin
 import org.parosproxy.paros.network.HttpMessage
+import org.zaproxy.addon.commonlib.scanrules.ScanRuleMetadata
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner
-import org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner
+import org.zaproxy.zap.extension.scripts.scanrules.PassiveScriptHelper
+
+ScanRuleMetadata getMetadata() {
+    return ScanRuleMetadata.fromYaml("""
+id: 12345
+name: Passive Vulnerability Title
+description: Full description
+solution: The solution
+references:
+  - Reference 1
+  - Reference 2
+risk: INFO  # info, low, medium, high
+confidence: LOW  # false_positive, low, medium, high, user_confirmed
+cweId: 0
+wascId: 0
+alertTags:
+  name1: value1
+  name2: value2
+otherInfo: Any other info
+status: alpha
+""")
+}
 
 /**
  * Passively scans an HTTP message. The scan function will be called for 
  * request/response made via ZAP, actual messages depend on the function
  * "appliesToHistoryType", defined below.
  * 
- * @param ps - 	the PassiveScan parent object that will do all the core interface tasks
- * 				(i.e.: providing access to Threshold settings, raising alerts, etc.).
- * 				This is an ScriptsPassiveScanner object.
- * @param msg - the HTTP Message being scanned. This is an HttpMessage object.
- * @param src - the Jericho Source representation of the message being scanned.
+ * @param helper - the PassiveScan parent object that will do all the core interface tasks
+ * 				   (i.e.: providing access to Threshold settings, raising alerts, etc.).
+ * 				   This is a PassiveScriptHelper object.
+ * @param msg -    the HTTP Message being scanned. This is an HttpMessage object.
+ * @param src -    the Jericho Source representation of the message being scanned.
  */
-void scan(ScriptsPassiveScanner ps, HttpMessage msg, Source source){
+void scan(PassiveScriptHelper helper, HttpMessage msg, Source source){
 	// Test the request and/or response here
 
 	if (true) {	// Change to a test which detects the vulnerability
-		ps.raiseAlert(
-				Alert.RISK_INFO,
-				Alert.CONFIDENCE_LOW,
-				'Passive Vulnerability title',
-				'Full description',
-				msg.getRequestHeader().getURI().toString(),
-				'The param',
-				'Your attack',
-				'Any other info',
-				'The solution',
-				'The evidence',
-				0,
-				0,
-				msg)
+		helper.newAlert()
+				.setParam('The param')
+				.setEvidence('Evidence')
+				.raise()
 
-		//Add Tag
-		ps.addTag('Your tag')
+		//Add History Tag
+		helper.addHistoryTag('Your tag')
 
 		// Raise less reliable alert (that is, prone to false positives) when in LOW alert threshold
-		if (ps.getAlertThreshold() == Plugin.AlertThreshold.LOW) {
+		if (helper.getAlertThreshold() == Plugin.AlertThreshold.LOW) {
 			// ...
 		}
 	}

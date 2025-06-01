@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer.processors;
 
 import java.util.Collections;
 import java.util.Map;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzResult;
@@ -125,22 +124,11 @@ public class FuzzerHttpMessageScriptProcessorAdapter implements HttpFuzzerMessag
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         if (extensionScript != null) {
             try {
-                scriptProcessor =
-                        extensionScript.getInterface(
-                                scriptWrapper, HttpFuzzerProcessorScript.class);
-                if (scriptProcessor != null) {
-                    validateRequiredParameters();
-                } else {
-                    extensionScript.handleFailedScriptInterface(
-                            scriptWrapper,
-                            Constant.messages.getString(
-                                    "fuzz.httpfuzzer.processor.scriptProcessor.warnNoInterface.message",
-                                    scriptWrapper.getName()));
-                }
+                scriptProcessor = HttpFuzzerProcessorScriptProxy.create(scriptWrapper);
             } catch (Exception e) {
-                handleScriptException(e);
                 throw new ProcessingException("Failed to instantiate the script processor:", e);
             }
+            validateRequiredParameters();
         }
     }
 

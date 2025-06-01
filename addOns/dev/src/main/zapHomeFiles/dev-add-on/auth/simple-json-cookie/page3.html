@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer" id="div1">
+	<h1>Page 3</H1>
+	Protected by creds so that it can be used to test authenticated spidering.<p>
+	Will also include a link to a hidden page, but only if a specific localStorage item has been set during login.<p>
+</div>
+<script>
+let zapSecret = localStorage.getItem("zapSecret");
+if (zapSecret) {
+  let a = document.createElement('a');
+  let link = document.createTextNode("Link only present if logged in");
+  a.appendChild(link);
+  a.title = "Link only present if logged in";
+  a.href = zapSecret + ".html";
+  document.getElementById("div1").appendChild(a);
+}
+</script>
+
+</body>
+</html>

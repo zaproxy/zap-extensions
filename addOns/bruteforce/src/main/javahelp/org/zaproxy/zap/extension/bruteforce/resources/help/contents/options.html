@@ -4,7 +4,7 @@
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <TITLE>Options Forced Browse screen</TITLE>
 </HEAD>
-<BODY BGCOLOR="#ffffff">
+<BODY>
 	<H1>Options Forced Browse screen</H1>
 	<p>
 		This screen allows you to configure the <a href="concepts.html">Forced Browse</a>
@@ -25,6 +25,12 @@
 	Allows you to add your own files to be used when brute forcing files and directories.
 	<br> These should be text files with one file or directory name per line.
 	<br> Files are added to the 'dirbuster' directory underneath the ZAP home directory.
+
+    <H3>Force Browse files without extension</H3>
+    If selected then in addition to brute forcing directories, files without extension will also be brute forced.
+    <br> The URI of the file to be brute forced is derived by appending to the base path the entries of the selected forced browse text file.
+    <br> By default this option is unchecked.
+    <br> Enabling this will increase the scanning time.
 
 	<H3>Force Browse files</H3>
 	If checked then in addition to brute forcing directories, the files will also be brute forced.

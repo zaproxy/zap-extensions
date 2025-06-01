@@ -31,10 +31,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.ScanPanel2;
 
+@SuppressWarnings("serial")
 public class FuzzersStatusPanel extends ScanPanel2<Fuzzer<?>, FuzzersController> {
 
     private static final long serialVersionUID = -935993931749054827L;
@@ -65,6 +67,16 @@ public class FuzzersStatusPanel extends ScanPanel2<Fuzzer<?>, FuzzersController>
                 KeyStroke.getKeyStroke(
                         KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK, false));
         setMnemonic(Constant.messages.getString("fuzz.panel.mnemonic").charAt(0));
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+
+        SwingUtilities.updateComponentTreeUI(getDefaultPanel());
+        if (getController() != null) {
+            getController().updateUiFuzzResultsContentPanels();
+        }
     }
 
     @Override
@@ -174,26 +186,12 @@ public class FuzzersStatusPanel extends ScanPanel2<Fuzzer<?>, FuzzersController>
                 final long executedTasks,
                 final long tasksToExecute) {
             EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            scanProgress(
-                                    id, displayName, (int) executedTasks, (int) tasksToExecute);
-                        }
-                    });
+                    () -> scanProgress(id, displayName, (int) executedTasks, (int) tasksToExecute));
         }
 
         @Override
         public void fuzzerCompleted(final int id, final String displayName, boolean successfully) {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            scanFinshed(id, displayName);
-                        }
-                    });
+            EventQueue.invokeLater(() -> scanFinshed(id, displayName));
         }
     }
 }

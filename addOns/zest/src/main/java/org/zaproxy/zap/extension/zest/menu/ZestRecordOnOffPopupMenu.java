@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
 import javax.swing.JTree;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
@@ -30,11 +31,12 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 
 /** Popup for turning on and off recording for Zest standalone scripts */
+@SuppressWarnings("serial")
 public class ZestRecordOnOffPopupMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = Logger.getLogger(ZestRecordOnOffPopupMenu.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestRecordOnOffPopupMenu.class);
 
     private ExtensionZest extension = null;
     private boolean record;
@@ -56,12 +58,7 @@ public class ZestRecordOnOffPopupMenu extends ExtensionPopupMenuItem {
     private void initialize() {
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        extension.setRecording(extension.getSelectedZestNode(), record);
-                    }
-                });
+                e -> extension.setRecording(extension.getSelectedZestNode(), record));
     }
 
     @Override
@@ -87,7 +84,7 @@ public class ZestRecordOnOffPopupMenu extends ExtensionPopupMenuItem {
                     }
                 }
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return false;

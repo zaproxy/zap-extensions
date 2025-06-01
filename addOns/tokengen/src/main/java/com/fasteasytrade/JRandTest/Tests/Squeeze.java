@@ -110,6 +110,7 @@ public class Squeeze extends Base
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#help()
 	 */
+	@Override
 	public void help()
 	{
 		puts("\n\t|-------------------------------------------------------------|");
@@ -127,6 +128,7 @@ public class Squeeze extends Base
 	/**
 	 * @see com.fasteasytrade.JRandTest.Tests.Base#test(java.lang.String)
 	 */
+	@Override
 	public void test(String filename) throws Exception
 	{
 		printf("\t\t\tRESULTS OF SQUEEZE TEST FOR " + filename + "\n\n");

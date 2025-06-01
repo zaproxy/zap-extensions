@@ -34,7 +34,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SortOrder;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
@@ -60,33 +61,32 @@ public class BugTrackerBugzilla extends BugTracker {
     private BugTrackerBugzillaTableModel bugzillaModel = null;
     private RaiseSemiAutoIssueDialog dialog = null;
 
-    private static final Logger log = Logger.getLogger(BugTrackerBugzilla.class);
+    private static final Logger LOGGER = LogManager.getLogger(BugTrackerBugzilla.class);
 
+    @Override
     public void setDetails(Set<Alert> alerts) {
         setSummary(alerts);
         setDesc(alerts);
     }
 
+    @Override
     public void setDialog(RaiseSemiAutoIssueDialog dialog) {
         this.dialog = dialog;
     }
 
-    public BugTrackerBugzilla() {
-        initializeConfigTable();
-    }
-
-    public void initializeConfigTable() {
-        bugzillaPanel = new BugTrackerBugzillaMultipleOptionsPanel(getBugzillaModel());
-    }
-
+    @Override
     public JPanel getConfigPanel() {
+        if (bugzillaPanel == null) {
+            bugzillaPanel = new BugTrackerBugzillaMultipleOptionsPanel(getBugzillaModel());
+        }
         return bugzillaPanel;
     }
 
+    @Override
     public void createDialogs() {
         dialog.setXWeights(0.1D, 0.9D);
         List<BugTrackerBugzillaConfigParams> configs = getOptions().getConfigs();
-        List<String> configNames = new ArrayList<String>();
+        List<String> configNames = new ArrayList<>();
         for (BugTrackerBugzillaConfigParams config : configs) {
             configNames.add(config.getName());
         }
@@ -243,10 +243,10 @@ public class BugTrackerBugzilla extends BugTracker {
             conn.executeMethod(report);
             return null;
         } catch (ConnectionException e) {
-            log.debug(e.toString());
+            LOGGER.debug(e.toString());
             return e.getMessage();
         } catch (BugzillaException e) {
-            log.debug(e.toString());
+            LOGGER.debug(e.toString());
             return e.getMessage();
         }
     }
@@ -287,11 +287,12 @@ public class BugTrackerBugzilla extends BugTracker {
                             password);
             return response;
         } catch (IOException e) {
-            log.debug(e.toString());
+            LOGGER.debug(e.toString());
             return e.toString();
         }
     }
 
+    @Override
     public String raise(RaiseSemiAutoIssueDialog dialog) {
         String url,
                 summary,
@@ -348,15 +349,17 @@ public class BugTrackerBugzilla extends BugTracker {
                             password);
             return response;
         } catch (IOException e) {
-            log.debug(e.toString());
+            LOGGER.debug(e.toString());
             return e.toString();
         }
     }
 
+    @Override
     public String getName() {
         return NAME;
     }
 
+    @Override
     public String getId() {
         return NAME.toLowerCase();
     }
@@ -486,6 +489,7 @@ public class BugTrackerBugzilla extends BugTracker {
 
     private BugTrackerBugzillaOptionsPanel optionsPanel;
 
+    @Override
     public BugTrackerBugzillaOptionsPanel getOptionsPanel() {
         if (optionsPanel == null) {
             optionsPanel = new BugTrackerBugzillaOptionsPanel();

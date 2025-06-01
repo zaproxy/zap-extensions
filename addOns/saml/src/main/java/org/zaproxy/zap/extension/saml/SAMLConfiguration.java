@@ -19,7 +19,12 @@
  */
 package org.zaproxy.zap.extension.saml;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Set;
@@ -27,7 +32,8 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 
 public class SAMLConfiguration implements AttributeListener {
@@ -39,7 +45,7 @@ public class SAMLConfiguration implements AttributeListener {
 
     private SAMLConfigData configData;
 
-    protected static final Logger log = Logger.getLogger(SAMLConfiguration.class);
+    protected static final Logger LOGGER = LogManager.getLogger(SAMLConfiguration.class);
 
     /**
      * Get the singleton configurations object
@@ -74,12 +80,11 @@ public class SAMLConfiguration implements AttributeListener {
         if (!confFile.exists()) {
             URL confURL = getClass().getResource("resources/" + SAML_CONF_FILE);
             if (confURL == null) {
-                log.error("Configuration file not found ");
+                LOGGER.error("Configuration file not found ");
                 throw new SAMLException("Configuration file not found");
             }
             // try to copy configuration to user directory
             try {
-                confFile.createNewFile();
                 BufferedReader reader =
                         new BufferedReader(new InputStreamReader(confURL.openStream()));
                 BufferedWriter writer = new BufferedWriter(new FileWriter(confFile));
@@ -219,7 +224,7 @@ public class SAMLConfiguration implements AttributeListener {
             marshaller.marshal(configData, new File(SAML_CONF_FILE_PATH));
             return true;
         } catch (JAXBException e) {
-            log.error("Saving configuration failed");
+            LOGGER.error("Saving configuration failed");
         } finally {
             Thread.currentThread().setContextClassLoader(cl);
         }

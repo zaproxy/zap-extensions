@@ -21,17 +21,18 @@ package com.sittinglittleduck.DirBuster;
 
 import java.util.TimerTask;
 import java.util.Vector;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ProcessChecker extends TimerTask {
 
     private final Manager manager;
     private long timeStarted;
     private long lastTotal = 0L;
-    private Vector lastTen = new Vector(10, 1);
+    private Vector<Long> lastTen = new Vector<>(10, 1);
 
     /* Logger object for the class */
-    private static final Logger LOG = Logger.getLogger(ProcessChecker.class);
+    private static final Logger LOGGER = LogManager.getLogger(ProcessChecker.class);
 
     /** Creates a new instance of ProcessChecker */
     public interface ProcessUpdate {
@@ -44,10 +45,8 @@ public class ProcessChecker extends TimerTask {
         timeStarted = System.currentTimeMillis();
     }
 
+    @Override
     public void run() {
-        if (System.currentTimeMillis() - scheduledExecutionTime() > 5000) {
-            return;
-        }
         long timePassed = (scheduledExecutionTime() - timeStarted) / 1000;
         if (timePassed > 0) {
             int totalDirs = 1;
@@ -104,7 +103,7 @@ public class ProcessChecker extends TimerTask {
 
             long lastTenTotal = 0;
             for (int a = 0; a < lastTen.size(); a++) {
-                long temp = (Long) lastTen.elementAt(a);
+                long temp = lastTen.elementAt(a);
                 lastTenTotal = lastTenTotal + temp;
             }
 
@@ -116,53 +115,34 @@ public class ProcessChecker extends TimerTask {
                 parseQueueLength = String.valueOf(manager.parseQueue.size());
             }
 
-            if (LOG.isDebugEnabled()) {
+            if (LOGGER.isDebugEnabled()) {
                 if (average == 0 || lastTenTotal == 0 || averageLastTen == 0) {
-                    LOG.debug(
-                            "Current Speed: "
-                                    + current
-                                    + " requests/sec\n"
-                                    + "Average Speed: (T) "
-                                    + average
-                                    + ", (C) "
-                                    + averageLastTen
-                                    + " requests/sec\n"
-                                    + "Total Requests: "
-                                    + currentTotal
-                                    + "/"
-                                    + totalToDo
-                                    + "\n"
-                                    + "Time To Finish: ~"
-                                    + parseQueueLength);
+                    LOGGER.debug(
+                            "Current Speed: {} requests/sec\nAverage Speed: (T) {}, (C) {} requests/sec\nTotal Requests: {}/{}\nTime To Finish: ~{}",
+                            current,
+                            average,
+                            averageLastTen,
+                            currentTotal,
+                            totalToDo,
+                            parseQueueLength);
 
                 } else {
                     long timeLeft = (totalToDo - currentTotal) / averageLastTen;
                     String timeToCompelete = convertSecsToTime(timeLeft);
                     lastTotal = currentTotal;
-                    LOG.debug(
-                            "Current speed: "
-                                    + current
-                                    + " request/sec\n"
-                                    + "Average Speed: (T) "
-                                    + average
-                                    + ", (C) "
-                                    + averageLastTen
-                                    + " requests/sec\n"
-                                    + "Total Requests: "
-                                    + currentTotal
-                                    + "/"
-                                    + totalToDo
-                                    + "\n"
-                                    + "Time To Finish: "
-                                    + timeToCompelete
-                                    + "\n"
-                                    + parseQueueLength);
+                    LOGGER.debug(
+                            "Current speed: {} request/sec\nAverage Speed: (T) {}, (C) {} requests/sec\nTotal Requests: {}/{}\nTime To Finish: {}\n{}",
+                            current,
+                            average,
+                            averageLastTen,
+                            currentTotal,
+                            totalToDo,
+                            timeToCompelete,
+                            parseQueueLength);
                 }
 
                 // System.out.println("workQ: " + manager.workQueue.size());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("dirQ: " + manager.dirQueue.size());
-                }
+                LOGGER.debug("dirQ: {}", manager.dirQueue.size());
                 // System.out.println("parseQ: " + manager.parseQueue.size());
                 // manager.
             }

@@ -19,8 +19,8 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
-import java.awt.EventQueue;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
@@ -28,15 +28,30 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.openapi.network.RequesterListener;
+import org.zaproxy.zap.utils.Stats;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 public class HistoryPersister implements RequesterListener {
 
-    private static final Logger LOG = Logger.getLogger(ExtensionOpenApi.class);
+    private static final Logger LOGGER = LogManager.getLogger(HistoryPersister.class);
+
+    private final ExtensionHistory extHistory;
+
+    private OpenApiResults results;
+
+    public HistoryPersister() {
+        this.extHistory =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
+    }
+
+    public HistoryPersister(OpenApiResults results) {
+        this();
+        this.results = results;
+    }
 
     @Override
     public void handleMessage(final HttpMessage message, int initiator) {
-        // Add the message to the history panel and sites tree
-        final HistoryReference historyRef;
+        HistoryReference historyRef;
 
         try {
             historyRef =
@@ -46,29 +61,22 @@ public class HistoryPersister implements RequesterListener {
                                     ? HistoryReference.TYPE_SPIDER
                                     : HistoryReference.TYPE_ZAP_USER,
                             message);
+
+            if (results != null) {
+                results.addHistoryReference(historyRef);
+            }
+            Stats.incCounter(ExtensionOpenApi.URL_ADDED_STATS);
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LOGGER.warn("Failed to persist the message: {}", e.getMessage(), e);
             return;
         }
 
-        final ExtensionHistory extHistory =
-                (ExtensionHistory)
-                        Control.getSingleton()
-                                .getExtensionLoader()
-                                .getExtension(ExtensionHistory.NAME);
-        if (extHistory != null) {
-            EventQueue.invokeLater(
-                    new Runnable() {
-
-                        @Override
-                        public void run() {
-                            extHistory.addHistory(historyRef);
-                            Model.getSingleton()
-                                    .getSession()
-                                    .getSiteTree()
-                                    .addPath(historyRef, message);
-                        }
-                    });
-        }
+        ThreadUtils.invokeAndWaitHandled(
+                () -> {
+                    if (extHistory != null) {
+                        extHistory.addHistory(historyRef);
+                    }
+                    Model.getSingleton().getSession().getSiteTree().addPath(historyRef, message);
+                });
     }
 }

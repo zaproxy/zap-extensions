@@ -35,11 +35,6 @@ public class ExtensionCustomPayloads extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getUIName() {
         return Constant.messages.getString("custompayloads.name");
     }
@@ -59,8 +54,9 @@ public class ExtensionCustomPayloads extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         extensionHook.addOptionsParamSet(getParam());
+        extensionHook.addApiImplementor(new CustomPayloadsApi(this));
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
         }
     }

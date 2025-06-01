@@ -5,8 +5,162 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
+- All rules have been tagged of interest to Penetration Testers, as well as adding tags associated with DEV or QA applicability.
+
+### Changed
+- Depends on an updated version of the Common Library add-on.
+
+## [44] - 2025-03-04
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Maintenance changes.
+- Replace usage of CWE-200 for the Base64 Disclosure scan rule (Issue 8730).
+
+## [43] - 2024-09-02
+### Changed
+- Update minimum ZAP version to 2.15.0.
+
+### Fixed
+- Alert text for various rules has been updated to more consistently use periods and spaces in a uniform manner.
+
+## [42] - 2024-01-16
+### Changed
+- Update minimum ZAP version to 2.14.0.
+### Added
+- Website alert links (Issue 8189).
+- Full Path Disclosure vulnerability passive scanner (Issue 413).
+
+## [41] - 2023-09-08
+### Changed
+- Maintenance changes.
+- Use HTTPS and resolve redirections in the alert references.
+- The alerts ASP.NET ViewState Disclosure and ASP.NET ViewState Integrity no longer have the evidence duplicated in the Other Info field.
+- Depend on newer version of Common Library add-on.
+- Use vulnerability data directly from Common Library add-on.
+
+## [40] - 2023-07-20
+### Added
+- Fetch Metadata Request Headers scan rule (Issue 6955).
+
+### Changed
+- Update minimum ZAP version to 2.13.0.
+
+### Removed
+- The following scan rules were removed, having been promoted to Beta:
+  - Insufficient Site Isolation Against Spectre Vulnerability
+  - Source Code Disclosure
+
+## [39] - 2023-05-03
+### Added
+- Base64, Example, Site Isolation, and Source Code Disclosure scan rules now all provide example alerts for documentation purposes. 
+As well as Alert Refs where applicable (Issues 6119 & 7100).
+
+## [38] - 2023-03-03
+### Fixed
+- Use case insensitive HTTP field name check in Insufficient Site Isolation Against Spectre Vulnerability scan rule.
+
+### Changed
+- Maintenance changes.
+
+## [37] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+
+### Removed
+- The following scan rules were removed, having been promoted to Beta:
+  - Content Cacheable
+  - In Page Banner Info Leak
+  - JS Function
+  - JSO
+  - Permissions Policy
+  - Sub Resource Integrity Attribute
+
+## [36] - 2022-09-16
+### Changed
+- Update minimum ZAP version to 2.11.1.
+- Maintenance changes.
+- Sub Resource Integrity Attribute Missing scan rule now supports Trusted Domains.
+- The Base64 Disclosure scan rule will now ignore headers which are known to contain irrelevant Base64 like strings or are covered by other rules (ETag, Authorization, X-ChromeLogger-Data, X-ChromePhp-Data) (Issue 6619).
+- Added new Custom Payloads alert tag to the example alerts of the Dangerous JS Function scan rule.
+- Permissions Policy scan rule updated for consistency and documentation purposes (Issue 7458).
+
+### Fixed
+- False positive condition from Sub Resource Integrity Attribute Missing scan rule when rel=canonical is used (Issue 7040).
+- Threading issue in Dangerous JS Functions rule - only reproducible with currently unreleased core changes.
+
+## [35] - 2021-12-01
+### Changed
+- Maintenance changes.
+
+### Added
+- OWASP Web Security Testing Guide v4.2 mappings where applicable.
+- Sub Resource Integrity Attribute Missing scan rule will now include the suggested integrity hash (Base64 encoded SHA384 hash) as part of the relevant Alert's Other Info details if the referenced script can be found in the Sites Tree (Issue 5894).
+
+## [34] - 2021-10-07
+### Added
+- OWASP Top Ten 2021/2017 mappings.
+
+### Changed
+- Ignore CSS, JavaScript, images, or font files when scanning for source code disclosures (Issues: 6595, 6795, & 6820).
+- Update minimum ZAP version to 2.11.0.
+
+## [33] - 2021-07-07
+### Fixed
+- Correct dependency declaration on Common Library add-on (Issue 6674).
+
+## [32] - 2021-07-06
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Correct dependency requirements.
+
+## [31] - 2021-06-17
+### Changed
+- Now using 2.10 logging infrastructure (Log4j 2.x).
+- Discontinued use of CWE-16 and switched to more specific weaknesses in the following scan rules:
+  - Feature Policy
+  - Site Isolation
+  - Sub Resource Integrity
+- Maintenance changes.
+- Rename of Feature-Policy header to Permissions-Policy to follow spec change.
+- Update links to repository.
+
+### Fixed
+- Dangerous JS Function scan rule, use word boundaries to reduce false positives (Issue 6594).
+
+## [30] - 2021-02-08
+
+### Changed
+- Now targeting ZAP 2.10.
+- The In Page Banner Information Leak scan rule and Site Isolation scan rule now support Custom Page definitions.
+- Update links to zaproxy repo.
+
+## [29] - 2020-11-16
+
+### Added
+ - Add rule for Site Isolation (CORP/COEP/COOP).
+
+### Changed
+- Maintenance changes.
+
+## [28] - 2020-08-13
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Fixed bug where Sub Resource Integrity Attribute Missing scan rule alerts even when HTML asset is inline (Issue 6047).
+
+## [27] - 2020-06-01
+### Added
 - Added links to the code in the help.
 - Add info and repo URLs.
+- Add JS Function Scanner
+
+### Changed
+- Update minimum ZAP version to 2.9.0.
+- Update ZAP blog links.
+- Updated owasp.org references (Issue 5962).
 
 ### Fixed
 - Fixed NullPointerException in Sub Resource Integrity Attribute Missing scan rule (Issue 5789).
@@ -15,6 +169,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 - 'Insecure Component' was deprecated and removed (Issue 5788).
+- 'Modern Web Application' scan rule was removed in being promoted to Beta.
 
 ## [26] - 2019-12-16
 
@@ -175,7 +330,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Tweaked "Source Code Disclosure" scanner to reduce false positives
 - Added "Insecure Component" scanner
-- Addressed issue 1262 (Risk & Reliability for 'User controllable HTML element attribute (potential XSS)' and 'Timestamp Disclosure')
+- Addressed issue 1262 (Risk & Confidence for 'User controllable HTML element attribute (potential XSS)' and 'Timestamp Disclosure')
 - Add Big Redirect scanner (Issue 1257)
 - Fixed an issue in detecting SHA-512 Crypt hashes, and other hashes beginning with "$"
 - Detect Node.js source code
@@ -224,6 +379,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 - http://www.testcases.org/watcher/ test pages.
 
+[44]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v44
+[43]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v43
+[42]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v42
+[41]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v41
+[40]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v40
+[39]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v39
+[38]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v38
+[37]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v37
+[36]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v36
+[35]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v35
+[34]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v34
+[33]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v33
+[32]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v32
+[31]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v31
+[30]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v30
+[29]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v29
+[28]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v28
+[27]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v24

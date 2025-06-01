@@ -29,11 +29,8 @@ public class ReplaceRuleModifyDialog extends ReplaceRuleAddDialog {
     private String originalDesc;
 
     public ReplaceRuleModifyDialog(
-            Window owner,
-            String title,
-            ReplacerParam replacerParam,
-            OptionsReplacerTableModel replacerModel) {
-        super(owner, title, replacerParam, replacerModel);
+            Window owner, String title, OptionsReplacerTableModel replacerModel) {
+        super(owner, title, replacerModel);
     }
 
     @Override

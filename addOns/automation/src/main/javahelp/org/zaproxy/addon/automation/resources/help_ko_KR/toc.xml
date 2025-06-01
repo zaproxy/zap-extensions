@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+<toc version="2.0">
+	<tocitem text="ZAP User Guide" tocid="toplevelitem">
+		<tocitem text="Add Ons" tocid="addons">
+			<tocitem text="Automation Framework" image="automation-icon" target="automation">
+				<tocitem text="GUI" target="automation.gui"/>
+				<tocitem text="Environment" target="automation.env"/>
+				<tocitem text="Authentication" target="automation.auth"/>
+				<tocitem text="Job: addOns" target="automation.addons"/>
+				<tocitem text="Job: passiveScanConfig" target="automation.pscanconf"/>
+				<tocitem text="Job: passiveScanWait" target="automation.pscanwait"/>
+				<tocitem text="Job: spider" target="automation.spider"/>
+				<tocitem text="Job: activeScan" target="automation.ascan"/>
+				<tocitem text="Tests" target="automation.tests"/>
+				<tocitem text="About" target="automation.about"/>
+			</tocitem>
+		</tocitem>
+	</tocitem>
+</toc>

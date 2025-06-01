@@ -30,11 +30,6 @@ public class ExtensionTodoList extends ExtensionAdaptor {
         super();
     }
 
-    @Override
-    public String getAuthor() {
-        return "vishesh";
-    }
-
     private TodoList getTodoList() {
         if (todoList == null) {
             todoList = new TodoList();
@@ -47,8 +42,13 @@ public class ExtensionTodoList extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addWorkPanel(getTodoList());
         }
+    }
+
+    @Override
+    public boolean canUnload() {
+        return true;
     }
 }

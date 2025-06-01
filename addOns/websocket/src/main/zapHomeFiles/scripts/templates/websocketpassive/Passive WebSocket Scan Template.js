@@ -58,7 +58,7 @@ CONFIDENCE_HIGH = 3;
  */
 function scan(helper,msg) {
 
-    if(msg.opcode != OPCODE_TEXT || msg.isOutgoing){
+    if(msg.getOpcode() != OPCODE_TEXT || msg.isOutgoing()){
         return;
     }
 

@@ -168,7 +168,7 @@ function showLegal() {
 
 			// Sort as number if a currency key exists or number
 			if (item.match(/^-?[£\x24Û¢´€] ?\d/) || // prefixed currency
-			    item.match(/^-?\d+\s*[€]/) || // suffixed currencty
+			    item.match(/^-?\d+\s*[€]/) || // suffixed currency
 			    item.match(/^-?(\d+[,\.]?)+(E[\-+][\d]+)?%?$/) // number
 				) {
 				sortFunction = sortNumber;

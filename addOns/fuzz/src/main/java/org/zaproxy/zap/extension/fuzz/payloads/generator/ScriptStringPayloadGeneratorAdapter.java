@@ -19,7 +19,8 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.generator;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -30,7 +31,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerator {
 
     private static final Logger LOGGER =
-            Logger.getLogger(ScriptStringPayloadGeneratorAdapter.class);
+            LogManager.getLogger(ScriptStringPayloadGeneratorAdapter.class);
 
     private final ScriptWrapper scriptWrapper;
     private boolean initialised;
@@ -81,7 +82,7 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
             try {
                 scriptPayloadGenerator = initialiseImpl(scriptWrapper);
             } catch (Exception e) {
-                LOGGER.warn("Failed to initialise '" + scriptWrapper.getName() + "':", e);
+                LOGGER.warn("Failed to initialise '{}':", scriptWrapper.getName(), e);
             }
             initialised = true;
         }
@@ -92,9 +93,8 @@ public class ScriptStringPayloadGeneratorAdapter implements StringPayloadGenerat
                 return numberOfPayloads;
             } catch (Exception e) {
                 LOGGER.warn(
-                        "Failed to obtain number of payloads from script '"
-                                + scriptWrapper.getName()
-                                + "':",
+                        "Failed to obtain number of payloads from script '{}':",
+                        scriptWrapper.getName(),
                         e);
             }
         }

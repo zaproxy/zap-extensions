@@ -1,16 +1,24 @@
-version = "27"
-description = "The alpha quality Passive Scanner rules"
+description = "The alpha status Passive Scanner rules"
 
 zapAddOn {
     addOnName.set("Passive scanner rules (alpha)")
-    zapVersion.set("2.7.0")
 
     manifest {
         author.set("ZAP Dev Team")
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.32.0 & < 2.0.0")
+                }
+            }
+        }
         url.set("https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules-alpha/")
     }
 }
 
 dependencies {
+    zapAddOn("commonlib")
+
+    implementation("com.google.re2j:re2j:1.7")
     testImplementation(project(":testutils"))
 }

@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.quickstart;
 
-import java.awt.Color;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
@@ -30,19 +29,41 @@ import org.zaproxy.zap.utils.ZapLabel;
 public class QuickStartHelper {
 
     public static JPanel getHorizontalPanel() {
-        JPanel panel = new JPanel();
-        BoxLayout layout = new BoxLayout(panel, BoxLayout.X_AXIS);
-        panel.setLayout(layout);
-        panel.setBackground(Color.WHITE);
+        JPanel panel = new QuickStartBackgroundPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         return panel;
     }
 
-    public static ZapLabel getWrappedLabel(String key) {
-        ZapLabel label = new ZapLabel(Constant.messages.getString(key));
-        label.setBackground(Color.WHITE);
+    public static ZapLabel getWrappedLabel() {
+        ZapLabel label = new QuickStartLabel();
         label.setLineWrap(true);
         label.setWrapStyleWord(true);
         return label;
+    }
+
+    public static ZapLabel getWrappedLabel(String key) {
+        ZapLabel label = getWrappedLabel();
+        label.setText(Constant.messages.getString(key));
+        return label;
+    }
+
+    private static class QuickStartLabel extends ZapLabel {
+        private static final long serialVersionUID = 1L;
+
+        QuickStartLabel() {
+            this("");
+        }
+
+        public QuickStartLabel(String text) {
+            super(text);
+            setBackground(QuickStartBackgroundPanel.getBackgroundColor());
+        }
+
+        @Override
+        public void updateUI() {
+            super.updateUI();
+            setBackground(QuickStartBackgroundPanel.getBackgroundColor(true));
+        }
     }
 
     public static void raiseOptionsChangedEvent() {

@@ -19,9 +19,6 @@
  */
 package org.zaproxy.zap.extension.highlighter;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 
@@ -42,7 +39,7 @@ public class ExtensionHighlighter extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addStatusPanel(getHighlighterPanel());
 
             // TODO enable (and correct the key) once the add-on provides help
@@ -60,19 +57,5 @@ public class ExtensionHighlighter extends ExtensionAdaptor {
             highlighterPanel = new HighlighterPanel(this);
         }
         return highlighterPanel;
-    }
-
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
     }
 }

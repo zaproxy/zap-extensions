@@ -21,18 +21,22 @@ package org.zaproxy.zap.extension.sse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import org.apache.log4j.Logger;
+import java.net.Socket;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class EventStreamListener implements Runnable {
 
-    private static final Logger logger = Logger.getLogger(EventStreamListener.class);
+    private static final Logger LOGGER = LogManager.getLogger(EventStreamListener.class);
 
     private EventStreamProxy proxy;
     private BufferedReader reader;
+    private Socket socket;
 
-    public EventStreamListener(EventStreamProxy proxy, BufferedReader reader) {
+    public EventStreamListener(EventStreamProxy proxy, BufferedReader reader, Socket socket) {
         this.proxy = proxy;
         this.reader = reader;
+        this.socket = socket;
     }
 
     @Override
@@ -60,14 +64,16 @@ public class EventStreamListener implements Runnable {
         } catch (Exception e) {
             // includes SocketException
             // no more reading possible
-            logger.warn(
-                    "An exception occurred while reading Server-Sent Events: " + e.getMessage(), e);
+            LOGGER.warn(
+                    "An exception occurred while reading Server-Sent Events: {}",
+                    e.getMessage(),
+                    e);
         } finally {
             this.proxy.stop();
         }
     }
 
     public void close() throws IOException {
-        reader.close();
+        socket.close();
     }
 }

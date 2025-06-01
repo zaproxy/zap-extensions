@@ -35,13 +35,13 @@ public class ExtensionPscanRulesAlpha extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
+    public String getName() {
+        return "ExtensionPscanRulesAlpha";
     }
 
     @Override
-    public String getName() {
-        return "ExtensionPscanRulesAlpha";
+    public String getUIName() {
+        return Constant.messages.getString("pscanalpha.name");
     }
 
     @Override

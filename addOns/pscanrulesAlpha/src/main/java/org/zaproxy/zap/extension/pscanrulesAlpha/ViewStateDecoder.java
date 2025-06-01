@@ -19,12 +19,11 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.codec.binary.Hex;
-import org.parosproxy.paros.extension.encoder.Base64;
 
 /**
  * Decodes a ViewState into an XML based format.
@@ -38,7 +37,7 @@ public class ViewStateDecoder {
             Pattern.compile("[<>\\&]+", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
 
     /** a pattern to use when looking at the output to check if a ViewState is protected by a MAC */
-    public static Pattern patternNoHMAC =
+    protected static final Pattern PATTERN_NO_HMAC =
             Pattern.compile(
                     "^\\s*\\<hmac\\>false\\</hmac\\>\\s*$",
                     Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
@@ -77,13 +76,13 @@ public class ViewStateDecoder {
      * @return a String (not including the NULL byte)
      */
     private static String readNullTerminatedString(ByteBuffer bb) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         byte b = bb.get();
         while (b != 0x00) {
             sb.append((char) b);
             b = bb.get();
         }
-        return new String(sb);
+        return sb.toString();
     }
 
     /**
@@ -115,13 +114,13 @@ public class ViewStateDecoder {
     }
 
     /**
-     * gets a StringBuffer containing the specified amount of indentation
+     * Gets a {@code StringBuilder} containing the specified amount of indentation.
      *
      * @param n the depth for the indentation
-     * @return a StringBuffer containing the specified amount of indentation
+     * @return a {@code StringBuilder} containing the specified amount of indentation.
      */
-    private StringBuffer getIndentation(int n) {
-        StringBuffer sb = new StringBuffer();
+    private StringBuilder getIndentation(int n) {
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < this.indentationlevel; i++) sb.append("   ");
         return sb;
     }
@@ -130,14 +129,14 @@ public class ViewStateDecoder {
      * decodes a single (ViewState-specific) object from the ByteBuffer.
      *
      * @param bb the ByteBuffer from which to read the next ViewState object
-     * @return a StringBuffer containing the human-readable and machine parseable representation
-     *     (XML based)
+     * @return a {@code StringBuilder} containing the human-readable and machine parseable
+     *     representation (XML based).
      * @throws NoMoreDataException
      * @throws Exception
      */
-    public StringBuffer decodeObjectAsXML(ByteBuffer bb) throws NoMoreDataException, Exception {
+    public StringBuilder decodeObjectAsXML(ByteBuffer bb) throws NoMoreDataException, Exception {
         int b = (int) bb.get();
-        StringBuffer representation = new StringBuffer();
+        StringBuilder representation = new StringBuilder();
         Matcher matcher = null;
         boolean malicious = false;
         switch (b) {
@@ -344,8 +343,8 @@ public class ViewStateDecoder {
         byte[] decodeddata = null;
         // String viewstatebase64encoded = new String (base64encoded);
         try {
-            decodeddata = Base64.decode(base64encoded);
-        } catch (IOException e) {
+            decodeddata = Base64.getDecoder().decode(base64encoded);
+        } catch (IllegalArgumentException e) {
             throw new Exception("Invalid Base64 data");
         }
 
@@ -358,7 +357,7 @@ public class ViewStateDecoder {
             throw new Exception("Invalid Viewstate preamble");
         }
 
-        StringBuffer representation = new StringBuffer("<?xml version=\"1.0\" ?>\n");
+        StringBuilder representation = new StringBuilder("<?xml version=\"1.0\" ?>\n");
         representation.append("<viewstate>\n");
         this.indentationlevel++;
 
@@ -406,7 +405,7 @@ public class ViewStateDecoder {
         } else {
             // No unread bytes --> no MAC. The Viewstate can be messed with!! Yee-Ha!
             representation.append(getIndentation(this.indentationlevel));
-            // NOTE: if this pattern changes, change patternNoHMAC
+            // NOTE: if this pattern changes, change PATTERN_NO_HMAC
             representation.append("<hmac>false</hmac>\n");
         }
         // put in the original ViewState value, in Base64 encoded form.

@@ -35,6 +35,7 @@ import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.view.LayoutHelper;
 
+@SuppressWarnings("serial")
 public class TipsAndTricksDialog extends AbstractDialog {
 
     private static final long serialVersionUID = -1L;
@@ -49,7 +50,9 @@ public class TipsAndTricksDialog extends AbstractDialog {
     private JPanel jPanel1 = null;
     private String lastTip = null;
 
-    /** @throws HeadlessException */
+    /**
+     * @throws HeadlessException
+     */
     public TipsAndTricksDialog(ExtensionTipsAndTricks ext, Frame parent) throws HeadlessException {
         super(parent, true);
         this.ext = ext;
@@ -110,13 +113,7 @@ public class TipsAndTricksDialog extends AbstractDialog {
         if (btnAllTips == null) {
             btnAllTips = new JButton();
             btnAllTips.setText(Constant.messages.getString("tips.button.allTips"));
-            btnAllTips.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            ExtensionHelp.showHelp("tips");
-                        }
-                    });
+            btnAllTips.addActionListener(e -> ExtensionHelp.showHelp("tips"));
         }
         return btnAllTips;
     }
@@ -130,16 +127,11 @@ public class TipsAndTricksDialog extends AbstractDialog {
         if (btnNextTip == null) {
             btnNextTip = new JButton();
             btnNextTip.setText(Constant.messages.getString("tips.button.nextTip"));
-            btnNextTip.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            displayTip();
-                        }
-                    });
+            btnNextTip.addActionListener(e -> displayTip());
         }
         return btnNextTip;
     }
+
     /**
      * This method initializes the close button
      *
@@ -149,13 +141,7 @@ public class TipsAndTricksDialog extends AbstractDialog {
         if (btnClose == null) {
             btnClose = new JButton();
             btnClose.setText(Constant.messages.getString("all.button.close"));
-            btnClose.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent e) {
-                            TipsAndTricksDialog.this.setVisible(false);
-                        }
-                    });
+            btnClose.addActionListener(e -> TipsAndTricksDialog.this.setVisible(false));
         }
         return btnClose;
     }
@@ -186,6 +172,7 @@ public class TipsAndTricksDialog extends AbstractDialog {
         }
         return txtTip;
     }
+
     /**
      * This method initializes jPanel1
      *

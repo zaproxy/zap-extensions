@@ -35,6 +35,7 @@ public class NotesTableSelectionHandler implements ListSelectionListener {
         this.noteTable = noteTable;
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent e) {
         if (!e.getValueIsAdjusting()) {
             if (noteTable.getSelectedRow() == -1) {

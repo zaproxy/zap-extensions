@@ -25,11 +25,15 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.model.HistoryReference;
@@ -48,6 +52,8 @@ import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.extension.api.ApiResponseList;
 import org.zaproxy.zap.extension.api.ApiResponseSet;
 import org.zaproxy.zap.extension.api.ApiView;
+import org.zaproxy.zap.extension.spiderAjax.internal.ContextDataManager;
+import org.zaproxy.zap.extension.spiderAjax.internal.ExcludedElement;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
@@ -55,26 +61,43 @@ import org.zaproxy.zap.utils.ApiUtils;
 
 public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 
-    private static final Logger logger = Logger.getLogger(AjaxSpiderAPI.class);
+    private static final Logger LOGGER = LogManager.getLogger(AjaxSpiderAPI.class);
 
     private static final String PREFIX = "ajaxSpider";
 
     private static final String ACTION_START_SCAN = "scan";
     private static final String ACTION_START_SCAN_AS_USER = "scanAsUser";
     private static final String ACTION_STOP_SCAN = "stop";
+    private static final String ACTION_ADD_ALLOWED_RESOURCE = "addAllowedResource";
+    private static final String ACTION_ADD_EXCLUDED_ELEMENT = "addExcludedElement";
+    private static final String ACTION_REMOVE_ALLOWED_RESOURCE = "removeAllowedResource";
+    private static final String ACTION_REMOVE_EXCLUDED_ELEMENT = "removeExcludedElement";
+    private static final String ACTION_MODIFY_EXCLUDED_ELEMENT = "modifyExcludedElement";
+    private static final String ACTION_SET_ENABLED_ALLOWED_RESOURCE = "setEnabledAllowedResource";
 
+    private static final String VIEW_ALLOWED_RESOURCES = "allowedResources";
+    private static final String VIEW_EXCLUDED_ELEMENTS = "excludedElements";
     private static final String VIEW_STATUS = "status";
     private static final String VIEW_RESULTS = "results";
     private static final String VIEW_FULL_RESULTS = "fullResults";
     private static final String VIEW_NUMBER_OF_RESULTS = "numberOfResults";
 
+    private static final String PARAM_ATTRIBUTE_NAME = "attributeName";
+    private static final String PARAM_ATTRIBUTE_VALUE = "attributeValue";
     private static final String PARAM_CONTEXT_NAME = "contextName";
+    private static final String PARAM_DESCRIPTION = "description";
+    private static final String PARAM_DESCRIPTION_NEW = "descriptionNew";
+    private static final String PARAM_ELEMENT = "element";
     private static final String PARAM_URL = "url";
     private static final String PARAM_USER_NAME = "userName";
     private static final String PARAM_IN_SCOPE = "inScope";
     private static final String PARAM_START = "start";
     private static final String PARAM_COUNT = "count";
     private static final String PARAM_SUBTREE_ONLY = "subtreeOnly";
+    private static final String PARAM_REGEX = "regex";
+    private static final String PARAM_TEXT = "text";
+    private static final String PARAM_ENABLED = "enabled";
+    private static final String PARAM_XPATH = "xpath";
 
     private enum SpiderStatus {
         STOPPED,
@@ -123,6 +146,47 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         this.addApiAction(scanAsUser);
         this.addApiAction(new ApiAction(ACTION_STOP_SCAN));
 
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_ADD_ALLOWED_RESOURCE,
+                        new String[] {PARAM_REGEX},
+                        new String[] {PARAM_ENABLED}));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_ADD_EXCLUDED_ELEMENT,
+                        new String[] {PARAM_CONTEXT_NAME, PARAM_DESCRIPTION, PARAM_ELEMENT},
+                        new String[] {
+                            PARAM_XPATH,
+                            PARAM_TEXT,
+                            PARAM_ATTRIBUTE_NAME,
+                            PARAM_ATTRIBUTE_VALUE,
+                            PARAM_ENABLED
+                        }));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_MODIFY_EXCLUDED_ELEMENT,
+                        new String[] {PARAM_CONTEXT_NAME, PARAM_DESCRIPTION, PARAM_ELEMENT},
+                        new String[] {
+                            PARAM_DESCRIPTION_NEW,
+                            PARAM_XPATH,
+                            PARAM_TEXT,
+                            PARAM_ATTRIBUTE_NAME,
+                            PARAM_ATTRIBUTE_VALUE,
+                            PARAM_ENABLED
+                        }));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_REMOVE_EXCLUDED_ELEMENT,
+                        new String[] {PARAM_CONTEXT_NAME, PARAM_DESCRIPTION}));
+        this.addApiAction(
+                new ApiAction(ACTION_REMOVE_ALLOWED_RESOURCE, new String[] {PARAM_REGEX}));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_SET_ENABLED_ALLOWED_RESOURCE,
+                        new String[] {PARAM_REGEX, PARAM_ENABLED}));
+
+        this.addApiView(new ApiView(VIEW_ALLOWED_RESOURCES));
+        this.addApiView(new ApiView(VIEW_EXCLUDED_ELEMENTS, new String[] {PARAM_CONTEXT_NAME}));
         this.addApiView(new ApiView(VIEW_STATUS));
         this.addApiView(new ApiView(VIEW_RESULTS, null, new String[] {PARAM_START, PARAM_COUNT}));
         this.addApiView(new ApiView(VIEW_NUMBER_OF_RESULTS));
@@ -132,6 +196,11 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
     @Override
     public String getPrefix() {
         return PREFIX;
+    }
+
+    @Override
+    protected String getI18nPrefix() {
+        return "spiderajax";
     }
 
     @Override
@@ -183,10 +252,183 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
             case ACTION_STOP_SCAN:
                 stopSpider();
                 break;
+            case ACTION_ADD_ALLOWED_RESOURCE:
+                addAllowedResource(params);
+                break;
+            case ACTION_ADD_EXCLUDED_ELEMENT:
+                addExcludedElement(params);
+                break;
+            case ACTION_MODIFY_EXCLUDED_ELEMENT:
+                modifyExcludedElement(params);
+                break;
+            case ACTION_REMOVE_ALLOWED_RESOURCE:
+                removeAllowedResource(params);
+                break;
+            case ACTION_REMOVE_EXCLUDED_ELEMENT:
+                removeExcludedElement(params);
+                break;
+            case ACTION_SET_ENABLED_ALLOWED_RESOURCE:
+                setAllowedResourceEnabledState(params);
+                break;
             default:
                 throw new ApiException(ApiException.Type.BAD_ACTION);
         }
         return ApiResponseElement.OK;
+    }
+
+    private void addAllowedResource(JSONObject params) throws ApiException {
+        Pattern regex;
+        try {
+            regex = AllowedResource.createDefaultPattern(params.getString(PARAM_REGEX));
+        } catch (IllegalArgumentException e) {
+            throw new ApiException(Type.ILLEGAL_PARAMETER, PARAM_REGEX, e);
+        }
+        boolean enabled = getParam(params, PARAM_URL, true);
+        List<AllowedResource> allowedResources =
+                new ArrayList<>(extension.getAjaxSpiderParam().getAllowedResources());
+        allowedResources.add(new AllowedResource(regex, enabled));
+        extension.getAjaxSpiderParam().setAllowedResources(allowedResources);
+    }
+
+    private void removeAllowedResource(JSONObject params) throws ApiException {
+        String regex = params.getString(PARAM_REGEX);
+        boolean removed = false;
+        List<AllowedResource> allowedResources =
+                new ArrayList<>(extension.getAjaxSpiderParam().getAllowedResources());
+        for (Iterator<AllowedResource> it = allowedResources.iterator(); it.hasNext(); ) {
+            AllowedResource allowedResource = it.next();
+            if (allowedResource.getPattern().pattern().equals(regex)) {
+                it.remove();
+                removed = true;
+                break;
+            }
+        }
+        if (!removed) {
+            throw new ApiException(Type.DOES_NOT_EXIST, PARAM_REGEX);
+        }
+        extension.getAjaxSpiderParam().setAllowedResources(allowedResources);
+    }
+
+    private void setAllowedResourceEnabledState(JSONObject params) throws ApiException {
+        String regex = params.getString(PARAM_REGEX);
+        boolean enabled = ApiUtils.getBooleanParam(params, PARAM_ENABLED);
+        boolean changed = false;
+        List<AllowedResource> allowedResources =
+                extension.getAjaxSpiderParam().getAllowedResources();
+        for (Iterator<AllowedResource> it = allowedResources.iterator(); it.hasNext(); ) {
+            AllowedResource allowedResource = it.next();
+            if (allowedResource.getPattern().pattern().equals(regex)) {
+                allowedResource.setEnabled(enabled);
+                changed = true;
+                break;
+            }
+        }
+        if (!changed) {
+            throw new ApiException(Type.DOES_NOT_EXIST, PARAM_REGEX);
+        }
+        extension.getAjaxSpiderParam().setAllowedResources(allowedResources);
+    }
+
+    private void addExcludedElement(JSONObject params) throws ApiException {
+        Context context = ApiUtils.getContextByName(params, PARAM_CONTEXT_NAME);
+
+        ExcludedElement excludedElement = createElement(params);
+
+        validateExcludedElement(context, null, excludedElement);
+
+        ContextDataManager cdm = extension.getContextDataManager();
+        List<ExcludedElement> excludedElements = new ArrayList<>(cdm.getExcludedElements(context));
+        excludedElements.add(excludedElement);
+        cdm.setExcludedElements(context, excludedElements);
+    }
+
+    private static ExcludedElement createElement(JSONObject params) {
+        ExcludedElement excludedElement = new ExcludedElement();
+        excludedElement.setDescription(params.getString(PARAM_DESCRIPTION));
+        excludedElement.setElement(params.getString(PARAM_ELEMENT));
+        excludedElement.setXpath(params.optString(PARAM_XPATH));
+        excludedElement.setText(params.optString(PARAM_TEXT));
+        excludedElement.setAttributeName(params.optString(PARAM_ATTRIBUTE_NAME));
+        excludedElement.setAttributeValue(params.optString(PARAM_ATTRIBUTE_VALUE));
+        excludedElement.setEnabled(params.optBoolean(PARAM_ENABLED, true));
+        return excludedElement;
+    }
+
+    private void validateExcludedElement(
+            Context context, ExcludedElement oldElement, ExcludedElement newElement)
+            throws ApiException {
+        ContextDataManager cdm = extension.getContextDataManager();
+
+        ExcludedElement.ValidationResult result =
+                ExcludedElement.validate(oldElement, newElement, cdm.getExcludedElements(context));
+        switch (result) {
+            case EMPTY_DESCRIPTION:
+                throw new ApiException(Type.MISSING_PARAMETER, PARAM_DESCRIPTION);
+
+            case EMPTY_ELEMENT:
+                throw new ApiException(Type.MISSING_PARAMETER, PARAM_ELEMENT);
+
+            case MISSING_DATA:
+                throw new ApiException(
+                        Type.MISSING_PARAMETER, "At least one other property must be provided.");
+
+            case MISSING_ATTRIBUTE_FIELD:
+                throw new ApiException(
+                        Type.MISSING_PARAMETER,
+                        "Both the name and value of the attribute must be provided.");
+
+            case DUPLICATED:
+                throw new ApiException(
+                        Type.ALREADY_EXISTS,
+                        oldElement != null ? PARAM_DESCRIPTION_NEW : PARAM_DESCRIPTION);
+
+            case VALID:
+            default:
+                break;
+        }
+    }
+
+    private void modifyExcludedElement(JSONObject params) throws ApiException {
+        Context context = ApiUtils.getContextByName(params, PARAM_CONTEXT_NAME);
+        ContextDataManager cdm = extension.getContextDataManager();
+        List<ExcludedElement> excludedElements = cdm.getExcludedElements(context);
+        ExcludedElement excludedElement = createElement(params);
+
+        int idx = indexOf(excludedElements, excludedElement.getDescription());
+        if (idx == -1) {
+            throw new ApiException(Type.DOES_NOT_EXIST, PARAM_DESCRIPTION);
+        }
+        String newDescription = params.optString(PARAM_DESCRIPTION_NEW, "");
+        if (newDescription != null && !newDescription.isBlank()) {
+            excludedElement.setDescription(newDescription);
+        }
+
+        validateExcludedElement(context, excludedElements.get(idx), excludedElement);
+
+        excludedElements = new ArrayList<>(cdm.getExcludedElements(context));
+        excludedElements.set(idx, excludedElement);
+        cdm.setExcludedElements(context, excludedElements);
+    }
+
+    private static int indexOf(List<ExcludedElement> excludedElements, String description) {
+        for (int i = 0; i < excludedElements.size(); i++) {
+            if (description.equals(excludedElements.get(i).getDescription())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private void removeExcludedElement(JSONObject params) throws ApiException {
+        Context context = ApiUtils.getContextByName(params, PARAM_CONTEXT_NAME);
+        String description = params.getString(PARAM_DESCRIPTION);
+
+        ContextDataManager cdm = extension.getContextDataManager();
+        List<ExcludedElement> excludedElements = new ArrayList<>(cdm.getExcludedElements(context));
+        if (!excludedElements.removeIf(e -> description.equals(e.getDescription()))) {
+            throw new ApiException(Type.DOES_NOT_EXIST, PARAM_DESCRIPTION);
+        }
+        cdm.setExcludedElements(context, excludedElements);
     }
 
     /**
@@ -206,7 +448,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         if (usersExtension == null) {
             throw new ApiException(Type.NO_IMPLEMENTOR, ExtensionUserManagement.NAME);
         }
-        List<User> users = usersExtension.getContextUserAuthManager(context.getIndex()).getUsers();
+        List<User> users = usersExtension.getContextUserAuthManager(context.getId()).getUsers();
         for (User user : users) {
             if (userName.equals(user.getName())) {
                 return user;
@@ -279,9 +521,9 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         }
 
         AjaxSpiderTarget.Builder targetBuilder =
-                AjaxSpiderTarget.newBuilder(extension.getModel().getSession())
+                AjaxSpiderTarget.newBuilder(extension)
                         .setInScopeOnly(inScopeOnly)
-                        .setOptions(extension.getAjaxSpiderParam())
+                        .setOptions(extension.getAjaxSpiderParam().clone())
                         .setStartUri(startURI)
                         .setSubtreeOnly(subtreeOnly);
 
@@ -298,7 +540,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         try {
             new Thread(spiderThread, "ZAP-AjaxSpiderApi").start();
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
         }
     }
 
@@ -306,6 +548,40 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
         ApiResponse result;
         switch (name) {
+            case VIEW_ALLOWED_RESOURCES:
+                List<ApiResponse> allowedResources =
+                        extension.getAjaxSpiderParam().getAllowedResources().stream()
+                                .map(
+                                        e -> {
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("enabled", e.isEnabled());
+                                            map.put("regex", e.getPattern().pattern());
+                                            return new ApiResponseSet<>("allowedResource", map);
+                                        })
+                                .collect(Collectors.toList());
+
+                result = new ApiResponseList(name, allowedResources);
+                break;
+            case VIEW_EXCLUDED_ELEMENTS:
+                Context context = ApiUtils.getContextByName(params, PARAM_CONTEXT_NAME);
+                List<ApiResponse> excludedElements =
+                        extension.getContextDataManager().getExcludedElements(context).stream()
+                                .map(
+                                        e -> {
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("description", e.getDescription());
+                                            map.put("element", e.getElement());
+                                            map.put("xpath", e.getXpath());
+                                            map.put("text", e.getText());
+                                            map.put("attributeName", e.getAttributeName());
+                                            map.put("attributeValue", e.getAttributeValue());
+                                            map.put("enabled", e.isEnabled());
+                                            return new ApiResponseSet<>("excludedElement", map);
+                                        })
+                                .collect(Collectors.toList());
+
+                result = new ApiResponseList(name, excludedElements);
+                break;
             case VIEW_STATUS:
                 result =
                         new ApiResponseElement(
@@ -364,7 +640,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         return (extension.isSpiderRunning() && spiderThread != null);
     }
 
-    private void stopSpider() {
+    void stopSpider() {
         if (isSpiderRunning()) {
             spiderThread.stopSpider();
             spiderThread = null;
@@ -373,9 +649,9 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 
     @Override
     public void spiderStarted() {
-        historyReferences = Collections.synchronizedList(new ArrayList<HistoryReference>());
-        resourcesOutOfScope = Collections.synchronizedList(new ArrayList<SpiderResource>());
-        resourcesError = Collections.synchronizedList(new ArrayList<SpiderResource>());
+        historyReferences = Collections.synchronizedList(new ArrayList<>());
+        resourcesOutOfScope = Collections.synchronizedList(new ArrayList<>());
+        resourcesError = Collections.synchronizedList(new ArrayList<>());
     }
 
     @Override
@@ -436,7 +712,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         }
 
         private static ApiResponse resourceToSet(HistoryReference hr) {
-            return new ApiResponseSet<String>("resource", createDataMap(hr));
+            return new ApiResponseSet<>("resource", createDataMap(hr));
         }
 
         private static Map<String, String> createDataMap(HistoryReference hr) {
@@ -452,7 +728,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         private ApiResponseSet<String> spiderResourceToSet(SpiderResource spiderResource) {
             Map<String, String> map = createDataMap(spiderResource.getHistoryReference());
             map.put("state", spiderResource.getState().toString());
-            return new ApiResponseSet<String>("resource", map);
+            return new ApiResponseSet<>("resource", map);
         }
 
         @Override

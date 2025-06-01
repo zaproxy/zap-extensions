@@ -38,7 +38,7 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuTreeTools());
         }
     }
@@ -48,11 +48,6 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
             popupMenuTreeTools = new PopupMenuTreeTools();
         }
         return popupMenuTreeTools;
-    }
-
-    @Override
-    public String getAuthor() {
-        return "Carl Sampson";
     }
 
     @Override

@@ -22,7 +22,8 @@ package org.zaproxy.zap.extension.authstats;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -44,17 +45,13 @@ import org.zaproxy.zap.utils.Stats;
  */
 public class ExtensionAuthStats extends ExtensionAdaptor implements HttpSenderListener {
 
-    private static final Logger log = Logger.getLogger(ExtensionAuthStats.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionAuthStats.class);
 
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        HttpSender.addListener(this);
-    }
 
-    @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
+        extensionHook.addHttpSenderListener(this);
     }
 
     @Override
@@ -74,14 +71,7 @@ public class ExtensionAuthStats extends ExtensionAdaptor implements HttpSenderLi
 
     @Override
     public boolean canUnload() {
-        // TODO change when unload() can be implemented
-        return false;
-    }
-
-    @Override
-    public void unload() {
-        super.unload();
-        // TODO change to use HttpSender.removeListener when available
+        return true;
     }
 
     @Override
@@ -142,7 +132,7 @@ public class ExtensionAuthStats extends ExtensionAdaptor implements HttpSenderLi
                 }
             }
         } catch (URIException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

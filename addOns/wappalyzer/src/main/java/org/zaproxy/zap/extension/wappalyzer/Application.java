@@ -27,17 +27,22 @@ import javax.swing.ImageIcon;
 public class Application {
 
     private String name;
+    private String description;
     private String website;
     private ImageIcon icon = null;
-    private List<String> categories = new ArrayList<String>();
+    private List<String> categories = new ArrayList<>();
     private String cpe;
     private List<Map<String, AppPattern>> headers;
-    private List<AppPattern> url = new ArrayList<AppPattern>();
-    private List<AppPattern> html = new ArrayList<AppPattern>();
+    private List<Map<String, AppPattern>> cookies;
+    private List<AppPattern> url = new ArrayList<>();
+    private List<AppPattern> html = new ArrayList<>();
     private List<Map<String, AppPattern>> metas;
-    private List<AppPattern> script = new ArrayList<AppPattern>();
+    private List<Map<String, Map<String, Map<String, AppPattern>>>> dom;
+    private List<String> simpleDom;
+    private List<AppPattern> css = new ArrayList<>();
+    private List<AppPattern> script = new ArrayList<>();
 
-    private List<String> implies = new ArrayList<String>();
+    private List<String> implies = new ArrayList<>();
 
     public String getName() {
         return name;
@@ -45,6 +50,14 @@ public class Application {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getWebsite() {
@@ -75,6 +88,10 @@ public class Application {
         this.headers = headers;
     }
 
+    public void setCookies(List<Map<String, AppPattern>> cookies) {
+        this.cookies = cookies;
+    }
+
     public void setUrl(List<AppPattern> url) {
         this.url = url;
     }
@@ -83,8 +100,24 @@ public class Application {
         this.html = html;
     }
 
+    public void setCss(List<AppPattern> css) {
+        this.css = css;
+    }
+
     public void setMetas(List<Map<String, AppPattern>> metas) {
         this.metas = metas;
+    }
+
+    public void setDom(List<Map<String, Map<String, Map<String, AppPattern>>>> dom) {
+        this.dom = dom;
+    }
+
+    void setSimpleDom(List<String> simpleDom) {
+        this.simpleDom = simpleDom;
+    }
+
+    List<String> getSimpleDom() {
+        return simpleDom;
     }
 
     public void setScript(List<AppPattern> script) {
@@ -101,6 +134,10 @@ public class Application {
 
     public List<Map<String, AppPattern>> getHeaders() {
         return headers;
+    }
+
+    public List<Map<String, AppPattern>> getCookies() {
+        return cookies;
     }
 
     public void addHeaders(Map<String, AppPattern> header) {
@@ -129,6 +166,18 @@ public class Application {
 
     public void addMetas(Map<String, AppPattern> meta) {
         this.metas.add(meta);
+    }
+
+    public List<Map<String, Map<String, Map<String, AppPattern>>>> getDom() {
+        return dom;
+    }
+
+    public List<AppPattern> getCss() {
+        return css;
+    }
+
+    public void addMCss(AppPattern css) {
+        this.css.add(css);
     }
 
     public List<AppPattern> getScript() {

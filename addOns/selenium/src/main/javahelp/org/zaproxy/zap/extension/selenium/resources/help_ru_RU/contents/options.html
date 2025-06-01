@@ -2,62 +2,89 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Options Selenium screen</title>
+<title>Параметры Selenium экрана </title>
 </head>
-<body bgcolor="#ffffff">
-	<h1>Options Selenium screen</h1>
+<body>
+	<h1>Параметры Selenium экрана </h1>
 
-	This screen allows you to setup the requirements of some of the WebDrivers.
+	Этот экран позволяет настроить требования некоторых веб-драйверов. 
 	<br />
-	<h2>Configuration option explanation</h2>
+	<h2>Параметры конфигурации</h2>
+	<h3>WebDrivers</h3>
 	<table border="2">
 		<tr>
-			<th colspan="3">Configuration Options</th>
-		</tr>
-		<tr>
-			<th>Field</th>
-			<th>Details</th>
-			<th>Default</th>
-		</tr>
-		<tr>
-			<th colspan="3">WebDrivers</th>
+			<th>Поле</th>
+			<th>Детали</th>
+			<th>По умолчанию</th>
+			<th>Файл конфигурации</th>
 		</tr>
 		<tr>
 			<td>ChromeDriver</td>
-			<td>This allows you to select the location of ChromeDriver.</td>
-			<td align="center">The path to the bundled WebDriver, if available.</td>
+			<td>Это позволяет вам выбрать расположение ChromeDriver. </td>
+			<td align="center">Путь к связанному WebDriver, если он доступен. </td>
+			<td>Ключ: <code>selenium.chromeDriver</code><br>Значение: путь в файловой системе к ChromeDriver. </td>
 		</tr>
 		<tr>
 			<td>geckodriver</td>
-			<td>This allows you to select the location of geckodriver (Firefox driver).</td>
-			<td align="center">The path to the bundled WebDriver, if available.</td>
+			<td>Это позволяет вам выбрать местоположение geckodriver (драйвера Firefox). </td>
+			<td align="center">Путь (path) к связанному WebDriver, если он доступен. </td>
+			<td>Ключ: <code>selenium.firefoxDriver</code><br>Значение: путь в файловой системе к geckodriver </td>
+		</tr>
+	</table>
+
+	<h3>Двоичные файлы </h3>
+	<table border="2">
+		<tr>
+			<th>Поле</th>
+			<th>Детали</th>
+			<th>По умолчанию</th>
+			<th>Файл конфигурации</th>
 		</tr>
 		<tr>
-			<td>IEDriverServer</td>
-			<td>This allows you to select the location of IEDriverServer.</td>
-			<td align="center">The path to the bundled WebDriver, if available.</td>
-		</tr>
-		<tr>
-			<th colspan="3">Binaries</th>
+			<td>Chrome</td>
+			<td>This allows you to select the location of Chrome binary (for example, to use
+				a version other than the system default).</td>
+			<td align="center">(Нет)</td>
+			<td>Key: <code>selenium.chromeBinary</code><br>Value: file system path to the Chrome binary</td>
 		</tr>
 		<tr>
 			<td>Firefox</td>
 			<td>This allows you to select the location of Firefox binary (for example, to use
 				a version other than the system default).</td>
-			<td align="center">(None)</td>
-		</tr>
-		<tr>
-			<td>PhantomJS</td>
-			<td>This allows you to select the location of PhantomJS binary.</td>
-			<td align="center">(None)</td>
+			<td align="center">(Нет)</td>
+			<td>Key: <code>selenium.firefoxBinary</code><br>Value: file system path to the Firefox binary</td>
 		</tr>
 	</table>
-	<strong>Note:</strong> It's also possible to set the above locations (binaries and
-	WebDrivers) using Java system properties, in which case the above options will be
-	overridden and those values shown instead.
+	<strong>Примечание: </strong> Также возможно установить вышеуказанные местоположения (двоичные файлы и
+WebDrivers) с использованием системных свойств Java, и в этом случае указанные выше параметры будут
+переопределены, а вместо них показаны эти значения. 
 
 	<p>
 	More details about the bundled WebDrivers can be found on the overview page.
+
+	<h4>Browser Arguments</h4>
+	Both Chrome and Firefox binaries can have additional (CLI) arguments specified through the <code>Arguments...</code> button.
+
+	<p>
+	<strong>Note:</strong> Adding invalid arguments might cause the browser to fail to start. ZAP already adds some arguments (e.g. headless).
+
+	<h4>Browser Profiles</h4>
+	You can choose which Firefox profile to use by default.
+	The <code>&lt;temporary&gt;</code> profile is one which is created by Selenium each time the browser is launched.
+	<p>
+	<strong>Note:</strong> The 'client' add-on creates a profile called zap-client-profile - 
+	if you choose another profile then the Client add-on will not work without manual configuration.
+
+	<h3>Browser Extensions</h3>
+
+	You can add, remove, enable, or disable browser extensions via the relevant buttons on this screen.
+	Supported browsers and file extensions are:
+	<ul>
+	<li>Firefox: .xpi
+	<li>Chrome: .crx
+	</ul>
+	Add-ons can also add new browser extensions. If you delete a browser extension via this screen then it will be added again 
+	by the add-on so either just disable it or uninstall the add-on to remove the browser extension.
 
 	<h2>See also</h2>
 	<table>

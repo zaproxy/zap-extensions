@@ -20,10 +20,10 @@
 package org.zaproxy.zap.extension.replacer;
 
 import java.util.List;
-import org.parosproxy.paros.network.HttpSender;
+import java.util.regex.Pattern;
 import org.zaproxy.zap.utils.Enableable;
 
-class ReplacerParamRule extends Enableable {
+public class ReplacerParamRule extends Enableable {
 
     public enum MatchType {
         REQ_HEADER,
@@ -32,15 +32,18 @@ class ReplacerParamRule extends Enableable {
         RESP_HEADER,
         RESP_HEADER_STR,
         RESP_BODY_STR
-    };
+    }
 
     private String description;
+    private String url;
+    private Pattern urlPattern;
     private String matchString;
     private String replacement;
     private String escapedReplacement;
     private MatchType matchType;
     private boolean matchRegex;
     private List<Integer> initiators;
+    private boolean tokenProcessingEnabled;
 
     public ReplacerParamRule() {
         this("", MatchType.RESP_BODY_STR, "");
@@ -74,26 +77,68 @@ class ReplacerParamRule extends Enableable {
             String replacement,
             List<Integer> initiators,
             boolean enabled) {
+        this(
+                description,
+                "",
+                matchType,
+                matchString,
+                matchRegex,
+                replacement,
+                initiators,
+                enabled,
+                false);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param description whatever makes sense to the user
+     * @param url the URL that the rule applies to, interpreted as a regular expression.
+     * @param matchType the type of matching to be performed
+     * @param matchString the string to match against
+     * @param matchRegex true if the matchString is a regex
+     * @param replacement the string to replace with
+     * @param initiators a list of initiators as defined in {@link
+     *     org.parosproxy.paros.network.HttpSender}
+     * @param enabled true if the rule is enabled
+     * @param tokenProcessingEnabled true if token processing is enabled
+     */
+    public ReplacerParamRule(
+            String description,
+            String url,
+            MatchType matchType,
+            String matchString,
+            boolean matchRegex,
+            String replacement,
+            List<Integer> initiators,
+            boolean enabled,
+            boolean tokenProcessingEnabled) {
         super(enabled);
 
+        setUrl(url);
         this.description = description;
         this.matchType = matchType;
         this.matchString = matchString;
         this.matchRegex = matchRegex;
-        this.escapedReplacement = HexString.compile(replacement);
+        if (replacement != null) {
+            this.escapedReplacement = HexString.compile(replacement);
+        }
         this.replacement = replacement;
         this.initiators = initiators;
+        this.tokenProcessingEnabled = tokenProcessingEnabled;
     }
 
     public ReplacerParamRule(ReplacerParamRule token) {
         this(
                 token.description,
+                token.url,
                 token.matchType,
                 token.matchString,
                 token.matchRegex,
                 token.replacement,
                 token.initiators,
-                token.isEnabled());
+                token.isEnabled(),
+                token.isTokenProcessingEnabled());
     }
 
     public String getDescription() {
@@ -102,6 +147,28 @@ class ReplacerParamRule extends Enableable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        if (url == null || url.isEmpty()) {
+            this.url = "";
+            urlPattern = null;
+            return;
+        }
+
+        this.urlPattern = Pattern.compile(url);
+        this.url = url;
+    }
+
+    public boolean matchesUrl(String targetUrl) {
+        if (url.isEmpty()) {
+            return true;
+        }
+        return urlPattern.matcher(targetUrl).matches();
     }
 
     public String getMatchString() {
@@ -149,9 +216,6 @@ class ReplacerParamRule extends Enableable {
     }
 
     public boolean appliesToInitiator(int initiator) {
-        if (initiator == HttpSender.CHECK_FOR_UPDATES_INITIATOR) {
-            return false;
-        }
         return appliesToAllInitiators() || initiators.contains(initiator);
     }
 
@@ -159,11 +223,16 @@ class ReplacerParamRule extends Enableable {
         return initiators == null || initiators.isEmpty();
     }
 
+    public boolean isTokenProcessingEnabled() {
+        return tokenProcessingEnabled;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + url.hashCode();
         result = prime * result + ((initiators == null) ? 0 : initiators.hashCode());
         result = prime * result + (matchRegex ? 1231 : 1237);
         result = prime * result + ((matchString == null) ? 0 : matchString.hashCode());
@@ -187,6 +256,9 @@ class ReplacerParamRule extends Enableable {
         if (description == null) {
             if (other.description != null) return false;
         } else if (!description.equals(other.description)) return false;
+        if (!url.equals(other.url)) {
+            return false;
+        }
         if (initiators == null) {
             if (other.initiators != null) return false;
         } else if (!initiators.equals(other.initiators)) return false;
@@ -198,6 +270,8 @@ class ReplacerParamRule extends Enableable {
         if (replacement == null) {
             if (other.replacement != null) return false;
         } else if (!replacement.equals(other.replacement)) return false;
+        if (tokenProcessingEnabled != other.tokenProcessingEnabled) return false;
+
         return true;
     }
 }

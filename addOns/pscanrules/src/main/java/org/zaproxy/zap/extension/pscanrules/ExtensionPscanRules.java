@@ -30,13 +30,13 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 public class ExtensionPscanRules extends ExtensionAdaptor {
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
+    public String getName() {
+        return "ExtensionPscanRules";
     }
 
     @Override
-    public String getName() {
-        return "ExtensionPscanRules";
+    public String getUIName() {
+        return Constant.messages.getString("pscanrules.name");
     }
 
     @Override

@@ -2,35 +2,46 @@
 <html>
 <head>
 <title>
-DOM XSS Active Scan Rule
+Правило активного сканирования DOM XSS 
 </title>
 </head>
-<body bgcolor="#ffffff">
-<h1>DOM XSS Active Scan Rule</h1>
+<body>
+<h1>Правило активного сканирования DOM XSS </h1>
 <p>
-An Active Scan rule for detecting DOM XSS vulnerabilities.
+Правило Active Scan для обнаружения уязвимостей DOM XSS. 
 <p>
-It launches browser windows and sends attack payloads to all of the relevant DOM elements.<br>
-As it launches browser windows it is not suitable for headless environments,
-and will take significantly longer than other (non browser based) rules. 
+Он запускает окна браузера и отправляет полезные данные для атаки всем соответствующим элементам DOM.<br>
+Поскольку он запускает окна браузера, это займет значительно больше времени, чем другие (не основанные на браузере) правила.  
 </p>
 <p>
-This version only supports Firefox.<br>
-Future versions may support other browsers.
-</p>
-<p>
-The following Attack Strengths are supported, and related directly to the number of attack payloads used:
+This version supports Firefox (the default) and Chrome. They can be run with GUI or headless (default), it can be changed with
+the rule <code>rules.domxss.browserid</code>, via the Options 'Rule configuration' panel, with values
+<code>firefox</code>, <code>firefox-headless</code>, <code>chrome</code> and <code>chrome-headless</code>.
+
+<h3>Strengths and Thresholds</h3>
+Поддерживаются следующие силы атаки, которые напрямую связаны с количеством используемых полезных нагрузок атаки.
+для фрагмента URL и ввода полей формы (например:  <code>http://example.com/index.html?foo=bar#injection</code>):
 <ul>
-<li>LOW: 2 attack payloads 
-<li>MEDIUM: 4 attack payloads 
-<li>HIGH: 6 attack payloads 
-<li>INSANE: 8 attack payloads 
+<li>НИЗКИЙ: 1 атакующая полезная нагрузка  
+<li>СРЕДНЯЯ: 3 единицы атаки  
+<li>ВЫСОКИЙ: 6 полезных нагрузок атаки  
+<li>БЕЗУМИЕ: 9 полезных нагрузок атаки  
 </ul>
+Сканер также попытается внедрить параметры URL/запроса, на которые не влияет выбранная сила. 
 </p>
 <p>
-The rule will only report one DOM XSS vulnerability per node, unless the LOW Alert threshold
-is used, in which case it will keep trying all of the specified payloads. 
-</p>
+Правило будет сообщать только об одной уязвимости DOM XSS на узел, если только не установлен НИЗКИЙ порог оповещения.
+используется, и в этом случае он будет продолжать пробовать все указанные полезные нагрузки.  
+
+<h3>Exclusions</h3>
+The rule will block the browser it launches from accessing any URLs that are excluded by:
+<ul>
+<li>Global Exclusions
+<li>Context Exclusions, if invoked with the relevant context
+</ul>
+
+<p>
+Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/domxss/src/main/java/org/zaproxy/zap/extension/domxss/DomXssScanRule.java">DomXssScanRule.java</a> 
 
 </body>
 </html>

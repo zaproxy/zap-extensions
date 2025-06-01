@@ -21,22 +21,23 @@ package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
 import javax.swing.JTree;
-import org.apache.log4j.Logger;
-import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestStatement;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
+import org.zaproxy.zest.core.v1.ZestContainer;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
-/** ZAP: New Popup Menu Alert Delete */
+@SuppressWarnings("serial")
 public class ZestPopupNodePaste extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = Logger.getLogger(ZestPopupNodePaste.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestPopupNodePaste.class);
 
     private ExtensionZest extension = null;
 
@@ -47,7 +48,9 @@ public class ZestPopupNodePaste extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public ZestPopupNodePaste(String label) {
         super(label);
     }
@@ -57,17 +60,14 @@ public class ZestPopupNodePaste extends ExtensionPopupMenuItem {
         this.setText(Constant.messages.getString("zest.cnp.paste.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        ScriptNode node = extension.getSelectedZestNode();
-                        ZestElement elmt = ZestZapUtils.getElement(node);
-                        if (node != null) {
-                            if (elmt instanceof ZestContainer) {
-                                extension.pasteToNode(node);
-                            } else {
-                                extension.pasteToNode(node.getParent(), node);
-                            }
+                e -> {
+                    ScriptNode node = extension.getSelectedZestNode();
+                    ZestElement element = ZestZapUtils.getElement(node);
+                    if (node != null) {
+                        if (element instanceof ZestContainer) {
+                            extension.pasteToNode(node);
+                        } else {
+                            extension.pasteToNode(node.getParent(), node);
                         }
                     }
                 });
@@ -84,16 +84,17 @@ public class ZestPopupNodePaste extends ExtensionPopupMenuItem {
                         return false;
                     }
                     ScriptNode node = extension.getSelectedZestNode();
-                    ZestElement elmt = ZestZapUtils.getElement(node);
+                    ZestElement element = ZestZapUtils.getElement(node);
                     this.setEnabled(false);
 
-                    if (node == null || node.isRoot() || elmt == null) {
+                    if (node == null || node.isRoot() || element == null) {
                         return false;
 
-                    } else if (elmt instanceof ZestContainer && extension.canPasteNodesTo(node)) {
+                    } else if (element instanceof ZestContainer
+                            && extension.canPasteNodesTo(node)) {
                         this.setEnabled(true);
 
-                    } else if (elmt instanceof ZestStatement
+                    } else if (element instanceof ZestStatement
                             && extension.canPasteNodesTo(node.getParent())) {
                         this.setEnabled(true);
                     }
@@ -101,7 +102,7 @@ public class ZestPopupNodePaste extends ExtensionPopupMenuItem {
                     return true;
                 }
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return false;

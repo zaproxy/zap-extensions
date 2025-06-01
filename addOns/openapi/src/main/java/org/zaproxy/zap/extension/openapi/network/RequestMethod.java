@@ -23,7 +23,7 @@ public enum RequestMethod {
     GET,
     POST,
     PUT,
-    OPTION,
+    OPTIONS,
     HEAD,
     DELETE,
     PATCH

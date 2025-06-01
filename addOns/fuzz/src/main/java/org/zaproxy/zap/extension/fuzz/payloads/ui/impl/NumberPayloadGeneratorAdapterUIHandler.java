@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.fuzz.payloads.ui.impl;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -28,7 +26,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.DefaultPayload;
 import org.zaproxy.zap.extension.fuzz.payloads.generator.NumberPayloadGenerator;
@@ -48,11 +47,12 @@ public class NumberPayloadGeneratorAdapterUIHandler
                 NumberPayloadGeneratorAdapterUIHandler.NumberPayloadGeneratorUI> {
 
     private static final Logger LOGGER =
-            Logger.getLogger(NumberPayloadGeneratorAdapterUIHandler.class);
+            LogManager.getLogger(NumberPayloadGeneratorAdapterUIHandler.class);
     private static final String PAYLOAD_GENERATOR_NAME =
             Constant.messages.getString("fuzz.payloads.generator.numbers.name");
     private static final String PAYLOAD_GENERATOR_DESC =
             Constant.messages.getString("fuzz.payloads.generator.numbers.description");
+    private static final int DEFAULT_STEP = 1;
 
     @Override
     public String getName() {
@@ -167,7 +167,7 @@ public class NumberPayloadGeneratorAdapterUIHandler
 
             fromField = new ZapNumberSpinner(Integer.MIN_VALUE, 0, Integer.MAX_VALUE);
             toField = new ZapNumberSpinner(Integer.MIN_VALUE, 0, Integer.MAX_VALUE);
-            stepField = new ZapNumberSpinner(Integer.MIN_VALUE, 1, Integer.MAX_VALUE);
+            stepField = new ZapNumberSpinner(Integer.MIN_VALUE, DEFAULT_STEP, Integer.MAX_VALUE);
 
             JLabel fromLabel = new JLabel(PAYLOADS_FROM_LABEL);
             fromLabel.setLabelFor(fromField);
@@ -268,7 +268,7 @@ public class NumberPayloadGeneratorAdapterUIHandler
             getPayloadsPreviewTextArea().setText("");
             fromField.setValue(0);
             toField.setValue(0);
-            stepField.setValue(0);
+            stepField.setValue(DEFAULT_STEP);
         }
 
         @Override
@@ -299,13 +299,7 @@ public class NumberPayloadGeneratorAdapterUIHandler
                 payloadsPreviewGenerateButton.setEnabled(false);
 
                 payloadsPreviewGenerateButton.addActionListener(
-                        new ActionListener() {
-
-                            @Override
-                            public void actionPerformed(ActionEvent e) {
-                                updatePayloadsPreviewTextArea();
-                            }
-                        });
+                        e -> updatePayloadsPreviewTextArea());
             }
             return payloadsPreviewGenerateButton;
         }

@@ -25,6 +25,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 
+@SuppressWarnings("serial")
 public class HttpFuzzerErrorsTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = -7564323068526325209L;
@@ -43,14 +44,10 @@ public class HttpFuzzerErrorsTableModel extends AbstractTableModel {
 
     public void addFuzzerError(final long taskId, final String source, final String message) {
         EventQueue.invokeLater(
-                new Runnable() {
-
-                    @Override
-                    public void run() {
-                        int row = errors.size();
-                        errors.add(new FuzzerError(taskId, source, message));
-                        fireTableRowsInserted(row, row);
-                    }
+                () -> {
+                    int row = errors.size();
+                    errors.add(new FuzzerError(taskId, source, message));
+                    fireTableRowsInserted(row, row);
                 });
     }
 

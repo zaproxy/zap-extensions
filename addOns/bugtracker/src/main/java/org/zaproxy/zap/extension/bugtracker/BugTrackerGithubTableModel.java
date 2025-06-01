@@ -24,6 +24,7 @@ import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
+@SuppressWarnings("serial")
 public class BugTrackerGithubTableModel
         extends AbstractMultipleOptionsTableModel<BugTrackerGithubConfigParams> {
 
@@ -31,7 +32,7 @@ public class BugTrackerGithubTableModel
 
     private static final String[] COLUMN_NAMES = {
         Constant.messages.getString("bugtracker.trackers.github.table.header.username"),
-        Constant.messages.getString("bugtracker.trackers.github.table.header.password"),
+        Constant.messages.getString("bugtracker.trackers.github.table.header.token"),
         Constant.messages.getString("bugtracker.trackers.github.table.header.repoUrl")
     };
 
@@ -48,7 +49,9 @@ public class BugTrackerGithubTableModel
         return configs;
     }
 
-    /** @param configs The configs to set. */
+    /**
+     * @param configs The configs to set.
+     */
     public void setConfigs(List<BugTrackerGithubConfigParams> configs) {
         this.configs = new ArrayList<>(configs.size());
 

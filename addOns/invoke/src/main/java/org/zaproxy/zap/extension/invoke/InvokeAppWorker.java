@@ -24,12 +24,12 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.SwingWorker;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpHeader;
@@ -45,7 +45,7 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
     private boolean outputNote = false;
     private HttpMessage msg = null;
 
-    private Logger logger = Logger.getLogger(InvokeAppWorker.class);
+    private static final Logger LOGGER = LogManager.getLogger(InvokeAppWorker.class);
 
     public InvokeAppWorker(
             String command,
@@ -96,8 +96,8 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
         if (msg.getRequestBody().length() != 0) {
             postdata = msg.getRequestBody().toString().replaceAll("\n", "\\n");
         }
-        Vector<String> cookies = msg.getRequestHeader().getHeaders(HttpHeader.COOKIE);
-        if (cookies != null && cookies.size() > 0) {
+        List<String> cookies = msg.getRequestHeader().getHeaderValues(HttpHeader.COOKIE);
+        if (!cookies.isEmpty()) {
             cookie = cookies.get(0);
         }
 
@@ -130,7 +130,7 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
             }
         }
 
-        logger.debug("Invoking: " + cmd.toString());
+        LOGGER.debug("Invoking: {}", cmd);
         View.getSingleton().getOutputPanel().append("\n" + cmd.toString() + "\n");
         ProcessBuilder pb = new ProcessBuilder(cmd);
         if (workingDir != null) {
@@ -147,7 +147,7 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
                             Constant.messages.getString("invoke.error")
                                     + e.getLocalizedMessage()
                                     + "\n");
-            logger.warn("Failed to start the process: " + e.getMessage(), e);
+            LOGGER.warn("Failed to start the process: {}", e.getMessage(), e);
             return null;
         }
 
@@ -170,7 +170,7 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
                     isOutput = true;
                 }
                 if (isOutput) {
-                    // Somethings been written, switch to the Output tab
+                    // Something's been written, switch to the Output tab
                     View.getSingleton().getOutputPanel().setTabFocus();
                 }
 

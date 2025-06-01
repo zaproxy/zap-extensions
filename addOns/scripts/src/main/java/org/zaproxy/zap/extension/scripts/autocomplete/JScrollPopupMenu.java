@@ -8,10 +8,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.LayoutManager;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 
@@ -29,8 +26,7 @@ public class JScrollPopupMenu extends JPopupMenu {
         setLayout(new ScrollPopupMenuLayout());
 
         super.add(getScrollBar());
-        addMouseWheelListener(new MouseWheelListener() {
-            @Override public void mouseWheelMoved(MouseWheelEvent event) {
+        addMouseWheelListener(event -> {
                 JScrollBar scrollBar = getScrollBar();
                 int amount = (event.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL)
                              ? event.getUnitsToScroll() * scrollBar.getUnitIncrement()
@@ -38,20 +34,17 @@ public class JScrollPopupMenu extends JPopupMenu {
 
                 scrollBar.setValue(scrollBar.getValue() + amount);
                 event.consume();
-            }
-        });
+            });
     }
 
     private JScrollBar popupScrollBar;
     protected JScrollBar getScrollBar() {
         if(popupScrollBar == null) {
             popupScrollBar = new JScrollBar(JScrollBar.VERTICAL);
-            popupScrollBar.addAdjustmentListener(new AdjustmentListener() {
-                @Override public void adjustmentValueChanged(AdjustmentEvent e) {
+            popupScrollBar.addAdjustmentListener(e -> {
                     doLayout();
                     repaint();
-                }
-            });
+                });
 
             popupScrollBar.setVisible(false);
         }

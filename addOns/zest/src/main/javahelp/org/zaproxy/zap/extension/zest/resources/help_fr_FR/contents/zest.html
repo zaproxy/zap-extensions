@@ -4,13 +4,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <title>Zest</title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <h1>Zest</h1>
 <p>
-Zeste est un expérimentales spécialisées langage de script (aussi connu comme un domaine spécifique de la langue) 
-développé par la Mozilla équipe de sécurité et est destiné à être utilisé dans le web des outils de sécurité.
+Zest is an experimental specialized scripting language (also known as a domain-specific language) 
+originally developed by the Mozilla security team and is intended to be used in web oriented security tools.
 <p>
 Il est inclus par défaut avec ZAP.<br>
+
+<h2>Engine Name</h2>
+The engine is named <code>Mozilla Zest</code>, which should be used when manually/programmatically configuring ZAP.
 
 <h2>La création de Zeste de scripts</h2>
 
@@ -29,7 +32,11 @@ Toutes les demandes que vous faites sous le préfixe spécifié sera ajouté dan
 Appuyez sur le "Enregistrement d'un nouveau Zeste de script" à nouveau pour arrêter l'enregistrement de la demande.<br>
 Notez que vous pouvez seulement enregistrer 'Autonome' Zeste de scripts de cette façon. Si vous souhaitez créer d'autres types de Zeste de script, vous devez utiliser un autre mécanisme.
 <br><br>
-Vous pouvez également faire un clic droit n'importe Autonome Zeste de script et utiliser le "Démarrer l'enregistrement" et "Arrêter l'enregistrement" des boutons. 
+Vous pouvez également faire un clic droit n'importe Autonome Zeste de script et utiliser le "Démarrer l'enregistrement" et "Arrêter l'enregistrement" des boutons.
+<br><br>
+There are two primary methods for script recording: server-side and client-side. For client-side recording, we leverage the ZAP browser extension and a dedicated client add-on. 
+<br>
+This combination allows us to efficiently capture and save user interactions in Zest scripts. 
 
 <h3>New Script Button</h3>
 <ul>
@@ -83,16 +90,14 @@ There are also some right click options available when you select text in the Re
 Zest includes a set of 'built in' variables as well as allowing you to declare your own.<br>
 A right click menu is provided (where relevant) in the edit dialogs to allow you to paste in any of the available variable names.<br>
 
+<h2>Authentication Scripts</h2>
+Authentication scripts can use a custom ZAP variable, called <code>TOTP</code>, to send a value to an input field with a TOTP code generated from the user's credentials TOTP data.
+
 <h2>External links</h2>
 <table>
-<tr>
 	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="https://developer.mozilla.org/en-US/docs/zest">https://developer.mozilla.org/en-US/docs/zest</a></td>
-	<td>Zest overview</td></tr>
-<tr>
-	<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-	<td><a href="https://github.com/mozilla/zest">https://github.com/mozilla/zest</a></td>
-	<td>The Zest github repository, including details of the language</td>
+	<td><a href="https://github.com/zaproxy/zest/">https://github.com/zaproxy/zest/</a></td>
+	<td>The Zest GitHub repository, including details of the language</td>
 </tr>
 </table>
 

@@ -35,6 +35,7 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
 
     /** The event sent when a {@code WebSocketMessage} is seen. */
     public static final String EVENT_MESSAGE = "ws.message";
+
     /** The event sent when a {@code WebSocketProxy} state change occurs. */
     public static final String EVENT_STATE_CHANGE = "ws.stateChange";
 
@@ -58,9 +59,7 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
         this.extension = extension;
         executor =
                 Executors.newSingleThreadExecutor(
-                        r -> {
-                            return new Thread(r, "ZAP-WebSocketEventPublisher");
-                        });
+                        r -> new Thread(r, "ZAP-WebSocketEventPublisher"));
 
         ZAP.getEventBus().registerPublisher(this, new String[] {EVENT_MESSAGE, EVENT_STATE_CHANGE});
     }
@@ -79,16 +78,16 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
     @Override
     public void onMessageFrame(int channelId, WebSocketMessage message, Initiator initiator) {
         WebSocketProxy proxy = extension.getWebSocketProxy(channelId);
-        if (proxy.isAllowAPI()) {
+        if (proxy != null && proxy.isAllowAPI()) {
             // Sending an event on an API message will cause an infinite loop
             return;
         }
         if (message.isFinished) {
             this.executor.execute(
                     () -> {
-                        Map<String, String> map = new HashMap<String, String>();
+                        Map<String, String> map = new HashMap<>();
                         map.put(FIELD_CHANNEL_ID, Integer.toString(channelId));
-                        map.put(FIELD_CHANNEL_HOST, message.getDTO().channel.host);
+                        map.put(FIELD_CHANNEL_HOST, message.getDTO().getChannel().getHost());
                         map.put(FIELD_TIME_IN_MS, Long.toString(message.getTimestamp().getTime()));
                         map.put(FIELD_OP_CODE, Integer.toString(message.getOpcode()));
                         map.put(FIELD_OP_CODE_STRING, message.getOpcodeString());
@@ -129,7 +128,7 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
     public void onStateChange(State state, WebSocketProxy proxy) {
         this.executor.execute(
                 () -> {
-                    Map<String, String> map = new HashMap<String, String>();
+                    Map<String, String> map = new HashMap<>();
                     map.put(FIELD_STATE, state.name());
                     map.put(FIELD_CHANNEL_ID, Integer.toString(proxy.getChannelId()));
                     map.put(FIELD_LOCAL_SOCKET, socketToStr(proxy.localSocket));

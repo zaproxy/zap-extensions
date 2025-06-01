@@ -34,7 +34,7 @@
 
 package com.fasteasytrade.JRandTest.Algo;
 
-import java.math.*;
+import java.math.BigInteger;
 import java.util.Random;
 
 /**

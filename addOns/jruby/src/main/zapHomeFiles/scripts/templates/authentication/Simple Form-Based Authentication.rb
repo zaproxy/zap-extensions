@@ -39,6 +39,7 @@ def authenticate(helper, paramsValues, credentials)
 	msg=helper.prepareMessage();
 	msg.setRequestHeader(HttpRequestHeader.new(requestMethod, requestUri, HttpHeader::HTTP10));
 	msg.setRequestBody(requestBody);
+	msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
 
 	# Send the authentication message and return it
 	helper.sendAndReceive(msg);

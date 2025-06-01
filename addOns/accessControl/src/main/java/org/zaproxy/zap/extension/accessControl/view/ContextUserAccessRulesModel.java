@@ -31,6 +31,7 @@ import org.zaproxy.zap.extension.accessControl.widgets.SiteTreeNode;
  * The model used in the {@link ContextAccessControlPanel} for each user, in order to specify the
  * access rules for each Context node.
  */
+@SuppressWarnings("serial")
 public class ContextUserAccessRulesModel extends DefaultTreeModel implements TreeTableModel {
 
     private static final long serialVersionUID = -1876199137051156699L;

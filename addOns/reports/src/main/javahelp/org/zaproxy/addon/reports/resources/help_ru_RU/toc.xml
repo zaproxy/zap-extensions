@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE toc PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 2.0//EN" "http://java.sun.com/products/javahelp/toc_2_0.dtd">
+<toc version="2.0">
+	<tocitem text="Руководство пользователя ZAP "
+		tocid="toplevelitem">
+		<tocitem text="Дополнения" tocid="addons">
+			<tocitem text="Генерация отчетов " image="reports-icon"
+				target="reports">
+				<tocitem text="Шаблоны" target="reports.templates" />
+				<tocitem text="Автоматизация " target="reports.automation" />
+				<tocitem text="Создание отчетов " target="reports.create" />
+				<tocitem text="О программе" target="reports.about" />
+				<tocitem text="API" target="reports.api" />
+			</tocitem>
+		</tocitem>
+	</tocitem>
+</toc>

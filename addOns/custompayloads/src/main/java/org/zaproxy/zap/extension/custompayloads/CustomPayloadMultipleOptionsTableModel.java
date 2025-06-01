@@ -20,13 +20,14 @@
 package org.zaproxy.zap.extension.custompayloads;
 
 import java.util.List;
+import java.util.Set;
 
+@SuppressWarnings("serial")
 public class CustomPayloadMultipleOptionsTableModel
         extends AbstractMultipleOptionsColumnTableModel<CustomPayload> {
 
     private static final long serialVersionUID = 1L;
     private List<CustomPayload> defaultPayloads;
-    private int nextPayloadId;
 
     public CustomPayloadMultipleOptionsTableModel() {
         super(CustomPayloadColumns.createColumnsForOptionsTable());
@@ -36,35 +37,26 @@ public class CustomPayloadMultipleOptionsTableModel
         this.defaultPayloads = defaultPayloads;
     }
 
-    public void setNextPayloadId(int nextPayloadId) {
-        this.nextPayloadId = nextPayloadId;
-    }
-
-    public int getNextPayloadId() {
-        return nextPayloadId;
-    }
-
-    public void resetPayloadIds() {
-        nextPayloadId = 1;
-        for (CustomPayload payload : getElements()) {
-            setNextIdToPayload(payload);
-        }
-        if (this.getRowCount() > 0) {
-            fireTableRowsUpdated(0, getElements().size() - 1);
-        }
-    }
-
     public void resetToDefaults() {
         clear();
         for (CustomPayload defaultPayload : defaultPayloads) {
             CustomPayload newPayload = defaultPayload.copy();
-            setNextIdToPayload(newPayload);
             addModel(newPayload);
         }
     }
 
-    public void setNextIdToPayload(CustomPayload payload) {
-        payload.setId(nextPayloadId++);
+    public void addToTable(List<CustomPayload> payloads) {
+        for (CustomPayload payload : payloads) {
+            addModel(payload);
+        }
+    }
+
+    public void getPayloadsOfACategory(Set<String> payloads, String category) {
+        for (CustomPayload existingPayload : getElements()) {
+            if (category.equalsIgnoreCase(existingPayload.getCategory())) {
+                payloads.add(existingPayload.getPayload());
+            }
+        }
     }
 
     public void addMissingDefaultPayloads() {
@@ -80,7 +72,6 @@ public class CustomPayloadMultipleOptionsTableModel
 
             if (!alreadyExisting) {
                 CustomPayload newPayload = defaultPayload.copy();
-                setNextIdToPayload(newPayload);
                 addModel(newPayload);
             }
         }

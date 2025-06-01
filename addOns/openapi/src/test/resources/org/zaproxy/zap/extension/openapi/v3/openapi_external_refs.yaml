@@ -1,0 +1,14 @@
+openapi: 3.0.0
+servers:
+  - url: http://localhost:@@@PORT@@@/
+paths:
+  /path/:
+    get:
+      operationId: path
+      parameters:
+      - "$ref": "http://localhost:@@@EXT_PORT@@@/external/#/components/schemas/Name"
+      responses:
+        default:
+          content:
+            text/plain: {}
+

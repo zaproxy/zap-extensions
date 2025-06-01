@@ -78,6 +78,7 @@ public class HttpFuzzerMessageProcessorTagCreator implements HttpFuzzerMessagePr
         return getExistingTagsFromCustomState(state);
     }
 
+    @SuppressWarnings("unchecked")
     private List<String> getExistingTagsFromCustomState(Map<String, Object> state) {
         if (state.containsKey(TAG_CREATOR_LIST_STATE_KEY)) {
             return (List<String>) state.get(TAG_CREATOR_LIST_STATE_KEY);

@@ -67,7 +67,7 @@ public class ComboBoxChannelRenderer extends JLabel
         if (channel != null) {
             text = channel.toString();
 
-            if (channel.id != null) {
+            if (channel.getId() != null) {
                 setWebSocketIcon(channel);
             } else {
                 // unset icon
@@ -75,7 +75,7 @@ public class ComboBoxChannelRenderer extends JLabel
             }
         }
 
-        setText("<html><p style=\"padding:3px;white-space:nowrap;\">" + text + "</p></html>");
+        setText(text);
         setFont(list.getFont());
 
         return this;

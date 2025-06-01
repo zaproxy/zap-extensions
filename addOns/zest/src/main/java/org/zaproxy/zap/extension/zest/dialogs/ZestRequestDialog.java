@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,12 +28,6 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import org.mozilla.zest.core.v1.ZestCookie;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestResponse;
-import org.mozilla.zest.core.v1.ZestVariables;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpStatusCode;
@@ -45,7 +37,12 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestCookie;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestResponse;
+import org.zaproxy.zest.core.v1.ZestVariables;
 
+@SuppressWarnings("serial")
 public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_URL = "zest.dialog.request.label.url";
@@ -140,12 +137,12 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
         this.addMultilineField(0, FIELD_HEADERS, request.getHeaders());
         this.addMultilineField(0, FIELD_BODY, request.getData());
 
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_URL));
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_HEADERS));
-        ZestZapUtils.setMainPopupMenu(this.getField(FIELD_BODY));
+        setFieldMainPopupMenu(FIELD_URL);
+        setFieldMainPopupMenu(FIELD_HEADERS);
+        setFieldMainPopupMenu(FIELD_BODY);
 
         // Cookies tab
-        List<JButton> buttons = new ArrayList<JButton>();
+        List<JButton> buttons = new ArrayList<>();
         buttons.add(getAddButton());
         buttons.add(getModifyButton());
         buttons.add(getRemoveButton());
@@ -166,7 +163,10 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
                     0,
                     Integer.MAX_VALUE,
                     (int) request.getResponse().getResponseTimeInMs());
-            this.addMultilineField(2, FIELD_RESP_HEADERS, request.getResponse().getHeaders());
+            this.addMultilineField(
+                    2,
+                    FIELD_RESP_HEADERS,
+                    request.getResponse().getHeaders().replaceAll("\r\n", "\n"));
             this.addMultilineField(2, FIELD_RESP_BODY, request.getResponse().getBody());
         } else {
             this.addComboField(
@@ -211,7 +211,7 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
             }
         }
         this.request.setMethod(this.getStringValue(FIELD_METHOD));
-        this.request.setHeaders(this.getStringValue(FIELD_HEADERS));
+        this.request.setHeaders(this.getStringValue(FIELD_HEADERS).replaceAll("\r?\n", "\r\n"));
         this.request.setFollowRedirects(this.getBoolValue(FIELD_FOLLOW_REDIR));
         this.request.setData(this.getStringValue(FIELD_BODY));
 
@@ -253,32 +253,29 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
             this.addButton =
                     new JButton(Constant.messages.getString("zest.dialog.script.button.add"));
             this.addButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            ZestCookieDialog dialog = getCookieDialog();
-                            if (!dialog.isVisible()) {
-                                // Try to set up a sensible default domain
-                                String domain = "";
-                                URL url = request.getUrl();
-                                if (url == null) {
-                                    // Happens on a new request dialog
-                                    try {
-                                        url = new URL(getStringValue(FIELD_URL));
-                                    } catch (MalformedURLException e2) {
-                                        // Ignore - it could not be set up or parameterized
-                                    }
+                    e -> {
+                        ZestCookieDialog dialog = getCookieDialog();
+                        if (!dialog.isVisible()) {
+                            // Try to set up a sensible default domain
+                            String domain = "";
+                            URL url = request.getUrl();
+                            if (url == null) {
+                                // Happens on a new request dialog
+                                try {
+                                    url = new URL(getStringValue(FIELD_URL));
+                                } catch (MalformedURLException e2) {
+                                    // Ignore - it could not be set up or parameterized
                                 }
-                                if (url != null) {
-                                    if (url.getPort() > 0) {
-                                        domain = url.getHost() + ":" + url.getPort();
-                                    } else {
-                                        domain = url.getHost();
-                                    }
-                                }
-                                dialog.init(getScript(), domain, "", "", "/", true, -1, true);
-                                dialog.setVisible(true);
                             }
+                            if (url != null) {
+                                if (url.getPort() > 0) {
+                                    domain = url.getHost() + ":" + url.getPort();
+                                } else {
+                                    domain = url.getHost();
+                                }
+                            }
+                            dialog.init(getScript(), domain, "", "", "/", true, -1, true);
+                            dialog.setVisible(true);
                         }
                     });
         }
@@ -291,23 +288,20 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
                     new JButton(Constant.messages.getString("zest.dialog.script.button.modify"));
             this.modifyButton.setEnabled(false);
             this.modifyButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            ZestCookieDialog dialog = getCookieDialog();
-                            if (!dialog.isVisible()) {
-                                int row = getCookiesTable().getSelectedRow();
-                                dialog.init(
-                                        getScript(),
-                                        (String) getCookieModel().getValueAt(row, 0),
-                                        (String) getCookieModel().getValueAt(row, 1),
-                                        (String) getCookieModel().getValueAt(row, 2),
-                                        (String) getCookieModel().getValueAt(row, 3),
-                                        false,
-                                        row,
-                                        true);
-                                dialog.setVisible(true);
-                            }
+                    e -> {
+                        ZestCookieDialog dialog = getCookieDialog();
+                        if (!dialog.isVisible()) {
+                            int row = getCookiesTable().getSelectedRow();
+                            dialog.init(
+                                    getScript(),
+                                    (String) getCookieModel().getValueAt(row, 0),
+                                    (String) getCookieModel().getValueAt(row, 1),
+                                    (String) getCookieModel().getValueAt(row, 2),
+                                    (String) getCookieModel().getValueAt(row, 3),
+                                    false,
+                                    row,
+                                    true);
+                            dialog.setVisible(true);
                         }
                     });
         }
@@ -321,17 +315,14 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
             this.removeButton.setEnabled(false);
             final ZestRequestDialog parent = this;
             this.removeButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (JOptionPane.OK_OPTION
-                                    == View.getSingleton()
-                                            .showConfirmDialog(
-                                                    parent,
-                                                    Constant.messages.getString(
-                                                            "zest.dialog.script.remove.confirm"))) {
-                                getCookieModel().remove(getCookiesTable().getSelectedRow());
-                            }
+                    e -> {
+                        if (JOptionPane.OK_OPTION
+                                == View.getSingleton()
+                                        .showConfirmDialog(
+                                                parent,
+                                                Constant.messages.getString(
+                                                        "zest.dialog.script.remove.confirm"))) {
+                            getCookieModel().remove(getCookiesTable().getSelectedRow());
                         }
                     });
         }
@@ -353,20 +344,17 @@ public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialo
             cookiesTable
                     .getSelectionModel()
                     .addListSelectionListener(
-                            new ListSelectionListener() {
-                                @Override
-                                public void valueChanged(ListSelectionEvent e) {
-                                    if (getCookiesTable().getSelectedRowCount() == 0) {
-                                        modifyButton.setEnabled(false);
-                                        removeButton.setEnabled(false);
-                                    } else if (getCookiesTable().getSelectedRowCount() == 1) {
-                                        modifyButton.setEnabled(true);
-                                        removeButton.setEnabled(true);
-                                    } else {
-                                        modifyButton.setEnabled(false);
-                                        // TODO allow multiple deletions?
-                                        removeButton.setEnabled(false);
-                                    }
+                            e -> {
+                                if (getCookiesTable().getSelectedRowCount() == 0) {
+                                    modifyButton.setEnabled(false);
+                                    removeButton.setEnabled(false);
+                                } else if (getCookiesTable().getSelectedRowCount() == 1) {
+                                    modifyButton.setEnabled(true);
+                                    removeButton.setEnabled(true);
+                                } else {
+                                    modifyButton.setEnabled(false);
+                                    // TODO allow multiple deletions?
+                                    removeButton.setEnabled(false);
                                 }
                             });
         }

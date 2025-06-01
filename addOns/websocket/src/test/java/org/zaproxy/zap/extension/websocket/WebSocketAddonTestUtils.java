@@ -55,9 +55,9 @@ public abstract class WebSocketAddonTestUtils extends WebSocketTestUtils {
 
     public WebSocketMessageDTO sendOutgoingMessage(WebSocketProxy webSocketProxy, String message) {
         WebSocketMessageDTO webSocketMessage = new WebSocketMessageDTO(webSocketProxy.getDTO());
-        webSocketMessage.payload = message;
-        webSocketMessage.opcode = WebSocketMessage.OPCODE_TEXT;
-        webSocketMessage.isOutgoing = true;
+        webSocketMessage.setPayload(message);
+        webSocketMessage.setOpcode(WebSocketMessage.OPCODE_TEXT);
+        webSocketMessage.setOutgoing(true);
 
         try {
             return webSocketProxy.send(webSocketMessage, WebSocketProxy.Initiator.MANUAL_REQUEST)
@@ -91,15 +91,15 @@ public abstract class WebSocketAddonTestUtils extends WebSocketTestUtils {
         WebSocketProxy proxy = mock(WebSocketProxy.class);
         when(proxy.getDTO()).thenReturn(channel);
         when(proxy.getHandshakeReference()).thenReturn(handshakeRef);
-        when(proxy.getChannelId()).thenReturn(channel.id);
+        when(proxy.getChannelId()).thenReturn(channel.getId());
         return proxy;
     }
 
     public WebSocketChannelDTO getWebSocketChannelDTO(int id, String hostName, String url) {
         WebSocketChannelDTO channel = new WebSocketChannelDTO(hostName);
-        channel.id = id;
-        channel.port = 443;
-        channel.url = url;
+        channel.setId(id);
+        channel.setPort(443);
+        channel.setUrl(url);
         return channel;
     }
 
@@ -114,12 +114,12 @@ public abstract class WebSocketAddonTestUtils extends WebSocketTestUtils {
             Object payload,
             int id) {
         WebSocketMessageDTO message = new WebSocketMessageDTO(channel);
-        message.isOutgoing = isOutgoing;
-        message.opcode = opcode;
-        message.id = id;
-        message.payload = payload;
+        message.setOutgoing(isOutgoing);
+        message.setOpcode(opcode);
+        message.setId(id);
+        message.setPayload(payload);
         if (payload instanceof String) {
-            message.payloadLength = ((String) payload).length() * 4;
+            message.setPayloadLength(((String) payload).length() * 4);
         }
         return message;
     }

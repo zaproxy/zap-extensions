@@ -1,0 +1,47 @@
+.risk-3 {
+	background-color: red !important;
+	color: #FFF !important;
+}
+
+.risk-2 {
+	background-color: orange !important;
+	color: #FFF !important;
+}
+
+.risk-1 {
+	background-color: yellow !important;
+	color: #000 !important;
+}
+
+.risk-0 {
+	background-color: blue !important;
+	color: #FFF !important;
+}
+
+.hidden_class{
+	display: none;
+}
+
+header { position: relative; padding: 1em 0; }
+
+.styled_canvas{
+	border:1px solid #dee2e6;
+	border-radius: 5px;
+}
+
+.piChartWrapper {
+	display: block;
+	height: 400;
+	margin: 0 auto;
+	box-shadow: 0 1px 4px rgba(0,0,0,.16);
+	padding: 1em;
+}
+
+.horizontalBarChartWrapper {
+	display: block;
+	height: 400;
+	margin: 0 auto;
+	box-shadow: 0 1px 4px rgba(0,0,0,.16);
+	padding: 1em;
+}
+

@@ -25,9 +25,12 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
+import javax.inject.Inject;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileTree;
 import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.FileSystemOperations;
+import org.gradle.api.tasks.IgnoreEmptyDirectories;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.SkipWhenEmpty;
@@ -44,14 +47,21 @@ public class ProcessSvnDiggerFiles extends DefaultTask {
     private final ConfigurableFileTree sourceFiles;
     private final DirectoryProperty outputDir;
 
+    @SuppressWarnings("this-escape")
     public ProcessSvnDiggerFiles() {
         this.sourceFiles = getProject().fileTree(getProject().file("src/main/" + SVNDIGGER_DIR));
         this.sourceFiles.exclude(LICENCE_FILE_NAME, README_FILE_NAME);
         this.outputDir = getProject().getObjects().directoryProperty();
     }
 
+    @Inject
+    protected FileSystemOperations getFs() {
+        throw new UnsupportedOperationException();
+    }
+
     @InputFiles
     @SkipWhenEmpty
+    @IgnoreEmptyDirectories
     public ConfigurableFileTree getSourceFiles() {
         return sourceFiles;
     }
@@ -67,7 +77,7 @@ public class ProcessSvnDiggerFiles extends DefaultTask {
         Path dirbusterDir = outputDir.get().getAsFile().toPath().resolve(DIRBUSTER_DIR);
         Path svndiggerDir = dirbusterDir.resolve(SVNDIGGER_DIR);
 
-        getProject().delete(dirbusterDir.toFile());
+        getFs().delete(spec -> spec.delete(dirbusterDir.toFile()));
         Files.createDirectories(svndiggerDir);
         Files.copy(srcDir.resolve(LICENCE_FILE_NAME), svndiggerDir.resolve(LICENCE_FILE_NAME));
         Files.copy(srcDir.resolve(README_FILE_NAME), svndiggerDir.resolve(README_FILE_NAME));

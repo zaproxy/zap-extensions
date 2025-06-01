@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Session Management Identification
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Session Management Identification</H1>
+
+This <a href="authhelper.html">add-on</a> includes a passive scan rule which attempts to identify session management methods.<br>
+It identifies session management methods by the presence of commonly used session management identifiers 
+and any values specified in Authorization request headers.
+<p>
+The rule will not attempt to identify very unusual session management methods - automation is one of the end goals so false negatives
+(missing unusual session management methods) are more desirable than false positives (incorrectly identifying a session management method). 
+<p>
+If this rule identifies a session management method that is part of the context that you have set to use the
+<a href="autodetect-session.html">Auto-Detect Session Management Method</a> then this rule will update the context to use the session management method identified.
+<br>
+If a session management method is not identified then check to make sure it is made to a site which is included in the context.<br>
+If it is not then add the site to the context and authenticate again via your browser.
+<p>
+The 'Other Info' field is used to report the set of <a href="session-header.html">Header Based Session Management</a>
+tokens that need to be specified.
+<p>
+The rule will currently identify:
+<ul>
+<li>Header-based session management methods
+</ul>
+
+If this rule fails to identify one of the above method then you can raise an 
+<a href="https://github.com/zaproxy/zaproxy/issues">issue</a> with the complete request and response details 
+(having obfuscated any sensitive information) and we will investigate it.
+
+<p>
+
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/SessionDetectionScanRule.java">SessionDetectionScanRule.java</a>
+
+</BODY>
+</HTML>

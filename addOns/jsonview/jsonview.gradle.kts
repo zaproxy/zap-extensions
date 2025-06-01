@@ -1,9 +1,7 @@
-version = "2"
 description = "Adds a view that shows JSON messages nicely formatted"
 
 zapAddOn {
     addOnName.set("JSON View")
-    zapVersion.set("2.7.0")
 
     manifest {
         author.set("Juha Kivekäs")
@@ -13,5 +11,26 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.16.0 & < 2.0.0")
+                }
+            }
+        }
     }
+}
+
+crowdin {
+    configuration {
+        file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
+        tokens.put("%helpPath%", "")
+    }
+}
+
+dependencies {
+    zapAddOn("commonlib")
+
+    testImplementation(project(":testutils"))
 }

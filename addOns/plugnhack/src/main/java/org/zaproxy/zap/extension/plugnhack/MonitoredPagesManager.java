@@ -28,7 +28,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import javax.swing.SwingWorker;
 import org.apache.commons.httpclient.URI;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.model.HistoryReference;
@@ -46,14 +47,14 @@ public class MonitoredPagesManager {
 
     public static final String CLIENT_MESSAGE_TYPE_HEARTBEAT = "heartbeat";
     private boolean monitorAllInScope = false;
-    private List<Pattern> includeRegexes = new ArrayList<Pattern>();
-    private List<Pattern> excludeRegexes = new ArrayList<Pattern>();
-    private List<String> oneTimeURLs = new ArrayList<String>();
+    private List<Pattern> includeRegexes = new ArrayList<>();
+    private List<Pattern> excludeRegexes = new ArrayList<>();
+    private List<String> oneTimeURLs = new ArrayList<>();
 
-    private Map<String, MonitoredPage> monitoredPages = new HashMap<String, MonitoredPage>();
-    private Map<String, MonitoredPage> inactivePages = new HashMap<String, MonitoredPage>();
-    private List<MonitoredPageListener> listeners = new ArrayList<MonitoredPageListener>();
-    private List<ClientMessage> queuedMessages = new ArrayList<ClientMessage>();
+    private Map<String, MonitoredPage> monitoredPages = new HashMap<>();
+    private Map<String, MonitoredPage> inactivePages = new HashMap<>();
+    private List<MonitoredPageListener> listeners = new ArrayList<>();
+    private List<ClientMessage> queuedMessages = new ArrayList<>();
 
     private SessionMonitoredClientsPanel sessionPanel =
             null; // Note this wont be initialised in daemon mode
@@ -63,7 +64,7 @@ public class MonitoredPagesManager {
     private ExtensionPlugNHack extension;
     private ClientBreakpointMessageHandler brkMessageHandler = null;
 
-    private static final Logger logger = Logger.getLogger(MonitoredPagesManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(MonitoredPagesManager.class);
 
     public MonitoredPagesManager(ExtensionPlugNHack ext) {
         this.extension = ext;
@@ -80,20 +81,20 @@ public class MonitoredPagesManager {
         } else if (mode.equals(Mode.protect)) {
             if (!msg.isInScope()) {
                 // In protected mode and not in scope
-                logger.debug("URL not in scope in protected mode " + uri);
+                LOGGER.debug("URL not in scope in protected mode {}", uri);
                 return false;
             }
         }
 
         if (msg.getRequestHeader().isImage()) {
-            logger.debug("URL is an image " + uri);
+            LOGGER.debug("URL is an image {}", uri);
             return false;
         }
 
         // Onetime urls take precedence over everything
         for (String otu : this.oneTimeURLs) {
             if (uri.equals(otu)) {
-                logger.debug("URL is a onetime URL " + uri);
+                LOGGER.debug("URL is a onetime URL {}", uri);
                 // Note that this will be removed from the list when we receive the first client
                 // message from it
                 return true;
@@ -103,24 +104,24 @@ public class MonitoredPagesManager {
         // Then exclude regexes
         for (Pattern pattern : this.excludeRegexes) {
             if (pattern.matcher(uri).matches()) {
-                logger.debug("URL excluded " + uri);
+                LOGGER.debug("URL excluded {}", uri);
                 return false;
             }
         }
 
         if (this.monitorAllInScope && msg.isInScope()) {
-            logger.debug("URL in scope, which is being monitored " + uri);
+            LOGGER.debug("URL in scope, which is being monitored {}", uri);
             return true;
         }
 
         for (Pattern pattern : this.includeRegexes) {
             if (pattern.matcher(uri).matches()) {
-                logger.debug("URL included " + uri);
+                LOGGER.debug("URL included {}", uri);
                 return true;
             }
         }
 
-        logger.debug("URL not being monitored " + uri);
+        LOGGER.debug("URL not being monitored {}", uri);
         return false;
     }
 
@@ -230,7 +231,7 @@ public class MonitoredPagesManager {
             }
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -240,11 +241,9 @@ public class MonitoredPagesManager {
                 new SwingWorker<Void, Void>() {
                     @Override
                     protected Void doInBackground() throws Exception {
-                        logger.debug("Refreshing tree with monitor client flags");
+                        LOGGER.debug("Refreshing tree with monitor client flags");
                         setMonitorFlags(
-                                (SiteNode)
-                                        Model.getSingleton().getSession().getSiteTree().getRoot(),
-                                false);
+                                Model.getSingleton().getSession().getSiteTree().getRoot(), false);
                         return null;
                     }
                 };
@@ -289,7 +288,7 @@ public class MonitoredPagesManager {
     }
 
     protected List<String> getIncludeRegexes() {
-        List<String> list = new ArrayList<String>(this.includeRegexes.size());
+        List<String> list = new ArrayList<>(this.includeRegexes.size());
         for (Pattern pattern : this.includeRegexes) {
             list.add(pattern.pattern());
         }
@@ -297,7 +296,7 @@ public class MonitoredPagesManager {
     }
 
     protected List<String> getExcludeRegexes() {
-        List<String> list = new ArrayList<String>(this.excludeRegexes.size());
+        List<String> list = new ArrayList<>(this.excludeRegexes.size());
         for (Pattern pattern : this.excludeRegexes) {
             list.add(pattern.pattern());
         }
@@ -310,7 +309,7 @@ public class MonitoredPagesManager {
             try {
                 this.excludeRegexes.add(Pattern.compile(line));
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -321,13 +320,13 @@ public class MonitoredPagesManager {
             try {
                 this.includeRegexes.add(Pattern.compile(line));
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
 
     public ApiResponse messageReceived(ClientMessage msg) {
-        List<ApiResponse> responseSet = new ArrayList<ApiResponse>();
+        List<ApiResponse> responseSet = new ArrayList<>();
 
         MonitoredPage page = this.monitoredPages.get(msg.getClientId());
         if (page != null) {
@@ -338,7 +337,7 @@ public class MonitoredPagesManager {
             String uri = page.getMessage().getRequestHeader().getURI().toString();
             for (String otu : this.oneTimeURLs) {
                 if (uri.equals(otu)) {
-                    logger.debug("Removing onetime URL " + uri);
+                    LOGGER.debug("Removing onetime URL {}", uri);
                     this.oneTimeURLs.remove(otu);
                     break;
                 }
@@ -357,14 +356,14 @@ public class MonitoredPagesManager {
             if (brkMessageHandler != null
                     && !brkMessageHandler.handleMessageReceivedFromClient(msg, false)) {
                 // Drop the message
-                logger.debug("Dropping message " + msg.getData());
+                LOGGER.debug("Dropping message {}", msg.getData());
                 msg.setState(ClientMessage.State.dropped);
-                // Make sure the message table is updated immediatelly
+                // Make sure the message table is updated immediately
                 this.extension.messageChanged(msg);
             } else {
                 responseSet.add(this.msgToResponse(msg, false));
                 if (msg.isChanged()) {
-                    // Make sure the message table is updated immediatelly
+                    // Make sure the message table is updated immediately
                     this.extension.messageChanged(msg);
                 }
             }
@@ -372,16 +371,15 @@ public class MonitoredPagesManager {
 
         // Add any queued messages
         synchronized (this.queuedMessages) {
-            List<ClientMessage> handledMessages = new ArrayList<ClientMessage>();
+            List<ClientMessage> handledMessages = new ArrayList<>();
             for (ClientMessage qmsg : this.queuedMessages) {
                 if (qmsg.getClientId().equals(msg.getClientId())) {
                     // Only return messages for this page - simple way to handle multiple browsers
                     // ;)
-                    logger.debug(
-                            "Adding queued message for "
-                                    + qmsg.getClientId()
-                                    + " : "
-                                    + qmsg.getData());
+                    LOGGER.debug(
+                            "Adding queued message for {} : {}",
+                            qmsg.getClientId(),
+                            qmsg.getData());
                     qmsg.setReceived(new Date());
                     responseSet.add(this.msgToResponse(qmsg, true));
                     qmsg.setState(ClientMessage.State.resent);
@@ -432,8 +430,8 @@ public class MonitoredPagesManager {
     public void timeoutPages(int time) {
         long timenow = new Date().getTime();
         long timeout;
-        List<MonitoredPage> removeList = new ArrayList<MonitoredPage>();
-        List<SiteNode> activeNodes = new ArrayList<SiteNode>();
+        List<MonitoredPage> removeList = new ArrayList<>();
+        List<SiteNode> activeNodes = new ArrayList<>();
         for (MonitoredPage page : this.monitoredPages.values()) {
             if (page.getHeartbeat() > 0 && page.getHeartbeat() * 2000 > time) {
                 // Extend the timeout if the poll time is set long
@@ -468,7 +466,7 @@ public class MonitoredPagesManager {
                         node.addCustomIcon(ExtensionPlugNHack.CLIENT_INACTIVE_ICON_RESOURCE, false);
                     }
                 } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }
@@ -576,8 +574,7 @@ public class MonitoredPagesManager {
     public void send(ClientMessage msg) {
         msg.setState(ClientMessage.State.pending);
         synchronized (this.queuedMessages) {
-            logger.debug(
-                    "Adding message to queue for " + msg.getClientId() + " : " + msg.getData());
+            LOGGER.debug("Adding message to queue for {} : {}", msg.getClientId(), msg.getData());
             this.queuedMessages.add(msg);
         }
     }
@@ -587,7 +584,7 @@ public class MonitoredPagesManager {
     }
 
     public List<String> getActiveClientIds() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (MonitoredPage page : this.monitoredPages.values()) {
             list.add(page.getId());
         }
@@ -595,7 +592,7 @@ public class MonitoredPagesManager {
     }
 
     public List<MonitoredPage> getActiveClients() {
-        List<MonitoredPage> list = new ArrayList<MonitoredPage>();
+        List<MonitoredPage> list = new ArrayList<>();
         for (MonitoredPage page : this.monitoredPages.values()) {
             list.add(page);
         }
@@ -603,7 +600,7 @@ public class MonitoredPagesManager {
     }
 
     public List<String> getInactiveClientIds() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (MonitoredPage page : this.inactivePages.values()) {
             list.add(page.getId());
         }
@@ -611,7 +608,7 @@ public class MonitoredPagesManager {
     }
 
     public List<MonitoredPage> getInactiveClients() {
-        List<MonitoredPage> list = new ArrayList<MonitoredPage>();
+        List<MonitoredPage> list = new ArrayList<>();
         for (MonitoredPage page : this.inactivePages.values()) {
             list.add(page);
         }

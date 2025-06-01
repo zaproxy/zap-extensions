@@ -20,7 +20,7 @@
  */
 package org.zaproxy.zap.extension.sqliplugin;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * Service class used to store test's response detection model parsed from the XML payload
@@ -81,7 +81,9 @@ public class SQLiTestResponse {
     private static final String TAG_RESPONSE_TIME = "time";
     private static final String TAG_RESPONSE_UNION = "union";
 
-    /** @param el */
+    /**
+     * @param el
+     */
     protected SQLiTestResponse(Element el) {
         this();
 

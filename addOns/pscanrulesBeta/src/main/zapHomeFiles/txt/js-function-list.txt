@@ -1,0 +1,11 @@
+# This file lists all dangerous JS functions being scanned for.
+bypassSecurityTrustHtml
+bypassSecurityTrustScript
+bypassSecurityTrustStyle
+bypassSecurityTrustUrl
+bypassSecurityTrustResourceUrl
+trustAsHtml
+$sce.trustAsHtml
+$eval
+$evalAsync
+eval

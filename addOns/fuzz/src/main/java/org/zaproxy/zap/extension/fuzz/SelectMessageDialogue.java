@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.fuzz;
 import java.awt.CardLayout;
 import java.awt.Frame;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +36,7 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
+@SuppressWarnings("serial")
 public class SelectMessageDialogue extends AbstractFormDialog {
 
     private static final long serialVersionUID = -117024736933191325L;
@@ -163,19 +163,14 @@ public class SelectMessageDialogue extends AbstractFormDialog {
             }
 
             messageTypesComboBox.addItemListener(
-                    new ItemListener() {
+                    e -> {
+                        if (ItemEvent.SELECTED == e.getStateChange()) {
+                            String panelName = (String) e.getItem();
 
-                        @Override
-                        public void itemStateChanged(ItemEvent e) {
-                            if (ItemEvent.SELECTED == e.getStateChange()) {
-                                String panelName = (String) e.getItem();
+                            currentPanel = messageSelectionPanels.getEntry(panelName);
+                            contentsPanelCardLayout.show(contentsPanel, panelName);
 
-                                currentPanel = messageSelectionPanels.getEntry(panelName);
-                                contentsPanelCardLayout.show(contentsPanel, panelName);
-
-                                setHelpTarget(
-                                        currentPanel.getMessageSelectorPanel().getHelpTarget());
-                            }
+                            setHelpTarget(currentPanel.getMessageSelectorPanel().getHelpTarget());
                         }
                     });
         }

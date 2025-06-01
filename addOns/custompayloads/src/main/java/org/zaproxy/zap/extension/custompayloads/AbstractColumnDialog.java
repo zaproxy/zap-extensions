@@ -21,11 +21,11 @@ package org.zaproxy.zap.extension.custompayloads;
 
 import java.awt.Dimension;
 import java.awt.Window;
-import java.util.ArrayList;
 import java.util.List;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class AbstractColumnDialog<T> extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;
@@ -94,7 +94,7 @@ public class AbstractColumnDialog<T> extends StandardFieldsDialog {
     private void createStringComboFieldForColumn(Column<T> column) {
         EditableSelectColumn<T> selectColumn = (EditableSelectColumn<T>) column;
         String value = column.getTypedValue(model);
-        ArrayList<String> selectableValues = selectColumn.getTypedSelectableValues(model);
+        List<String> selectableValues = selectColumn.getTypedSelectableValues(model);
         this.addComboField(column.getNameKey(), selectableValues, value);
     }
 

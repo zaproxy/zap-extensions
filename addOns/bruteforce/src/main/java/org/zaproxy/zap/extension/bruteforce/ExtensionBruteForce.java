@@ -23,7 +23,6 @@ import com.sittinglittleduck.DirBuster.BaseCase;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -35,7 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.tree.TreeNode;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyListener;
@@ -61,7 +61,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
                 AddonFilesChangedListener,
                 BruteForceListenner {
 
-    private static final Logger logger = Logger.getLogger(ExtensionBruteForce.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionBruteForce.class);
 
     // Could be after the last one that saves the HttpMessage, as this ProxyListener doesn't change
     // the HttpMessage.
@@ -100,7 +100,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
         extensionHook.addOptionsParamSet(getBruteForceParam());
 
-        if (getView() != null) {
+        if (hasView()) {
             @SuppressWarnings("unused")
             ExtensionHookView pv = extensionHook.getHookView();
             extensionHook.getHookView().addStatusPanel(getBruteForcePanel());
@@ -117,7 +117,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             getBruteForcePanel().unload();
         }
 
@@ -131,7 +131,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
     @Override
     public List<String> getActiveActions() {
-        if (getView() == null) {
+        if (!hasView()) {
             return Collections.emptyList();
         }
 
@@ -139,9 +139,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
         List<String> activeActions = new ArrayList<>();
         for (BruteForce scan : getBruteForceScans()) {
             if (scan.isAlive()) {
-                activeActions.add(
-                        MessageFormat.format(
-                                activeActionPrefix, scan.getScanTarget().toPlainString()));
+                activeActions.add(MessageFormat.format(activeActionPrefix, scan.getScanTarget()));
             }
         }
         return activeActions;
@@ -163,7 +161,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
     @Override
     public void optionsLoaded() {
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().setDefaultFile(this.getBruteForceParam().getDefaultFile());
         }
     }
@@ -252,33 +250,33 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     boolean stopScan(ScanTarget target) {
         BruteForce bruteForce = getBruteForce(target);
         if (bruteForce != null) {
-            logger.debug("Stopping scan on " + target);
+            LOGGER.debug("Stopping scan on {}", target);
             bruteForce.stopScan();
             return true;
         }
-        logger.debug("Failed to find scan on " + target);
+        LOGGER.debug("Failed to find scan on {}", target);
         return false;
     }
 
     boolean pauseScan(ScanTarget target) {
         BruteForce bruteForce = getBruteForce(target);
         if (bruteForce != null) {
-            logger.debug("Pausing scan on " + target);
+            LOGGER.debug("Pausing scan on {}", target);
             bruteForce.pauseScan();
             return true;
         }
-        logger.debug("Failed to find scan on " + target);
+        LOGGER.debug("Failed to find scan on {}", target);
         return false;
     }
 
     boolean resumeScan(ScanTarget target) {
         BruteForce bruteForce = getBruteForce(target);
         if (bruteForce != null) {
-            logger.debug("Resuming scan on " + target);
+            LOGGER.debug("Resuming scan on {}", target);
             bruteForce.unpauseScan();
             return true;
         }
-        logger.debug("Failed to find scan on " + target);
+        LOGGER.debug("Failed to find scan on {}", target);
         return false;
     }
 
@@ -312,7 +310,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
         }
         // Allow 2 secs for the threads to stop - if we wait 'for ever' then we can get deadlocks
         for (int i = 0; i < 20; i++) {
-            if (activeScans.size() == 0) {
+            if (activeScans.isEmpty()) {
                 break;
             }
             try {
@@ -327,7 +325,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
     @Override
     public void sessionChanged(final Session session) {
-        if (getView() == null) {
+        if (!hasView()) {
             return;
         }
 
@@ -336,15 +334,9 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
         } else {
             try {
-                EventQueue.invokeAndWait(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                sessionChangedEventHandler(session);
-                            }
-                        });
+                EventQueue.invokeAndWait(() -> sessionChangedEventHandler(session));
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -353,14 +345,14 @@ public class ExtensionBruteForce extends ExtensionAdaptor
         stopAllScans();
         lastScanId = 0;
 
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().reset();
             if (session == null) {
                 // Closedown
                 return;
             }
             // Add new hosts
-            SiteNode root = (SiteNode) session.getSiteTree().getRoot();
+            SiteNode root = session.getSiteTree().getRoot();
             @SuppressWarnings("unchecked")
             Enumeration<TreeNode> en = root.children();
             while (en.hasMoreElements()) {
@@ -379,7 +371,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
     @Override
     public boolean onHttpRequestSend(HttpMessage msg) {
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().addSite(msg.getRequestHeader().getURI());
         }
         return true;
@@ -473,7 +465,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
     public void refreshFileList() {
         fileList = null;
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().refreshFileList();
         }
     }
@@ -511,7 +503,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     }
 
     public List<String> getFileNamesList() {
-        List<String> names = new ArrayList<String>();
+        List<String> names = new ArrayList<>();
         for (ForcedBrowseFile file : this.getFileList()) {
             names.add(file.getFile().getName());
         }
@@ -519,7 +511,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     }
 
     public void setDefaultFile(ForcedBrowseFile file) {
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().setDefaultFile(file);
         }
     }
@@ -528,27 +520,13 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     public void sessionAboutToChange(Session session) {}
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
-    }
-
-    @Override
     public String getDescription() {
         return Constant.messages.getString("bruteforce.desc");
     }
 
     @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_HOMEPAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
-    }
-
-    @Override
     public void sessionScopeChanged(Session session) {
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().sessionScopeChanged(session);
         }
     }
@@ -558,7 +536,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
         if (mode.equals(Mode.safe)) {
             stopAllScans();
         }
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().sessionModeChanged(mode);
         }
     }
@@ -576,14 +554,14 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     @Override
     public void scanFinshed(ScanTarget target) {
         this.activeScans.remove(target);
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().scanFinshed(target);
         }
     }
 
     @Override
     public void scanProgress(ScanTarget target, int done, int todo) {
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().scanProgress(target, done, todo);
         }
     }

@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.scripts.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,9 +32,9 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class LoadScriptDialog extends StandardFieldsDialog {
 
-    private static final String FIELD_FILE = "scripts.dialog.script.label.file";
     private static final String FIELD_NAME = "scripts.dialog.script.label.name";
     private static final String FIELD_ENGINE = "scripts.dialog.script.label.engine";
     private static final String FIELD_DESC = "scripts.dialog.script.label.desc";
@@ -69,62 +67,53 @@ public class LoadScriptDialog extends StandardFieldsDialog {
         this.getField(FIELD_ENABLED).setEnabled(false);
         this.addFieldListener(
                 FIELD_ENGINE,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        // Change the types based on which engine is selected
-                        ScriptEngineWrapper sew =
+                e -> {
+                    // Change the types based on which engine is selected
+                    ScriptEngineWrapper sew =
+                            extension.getExtScript().getEngineWrapper(getStringValue(FIELD_ENGINE));
+                    if (sew.isRawEngine()) {
+                        // Raw engines can only support targeted scripts as there will be no
+                        // templates
+                        ScriptType tsa =
                                 extension
                                         .getExtScript()
-                                        .getEngineWrapper(getStringValue(FIELD_ENGINE));
-                        if (sew.isRawEngine()) {
-                            // Raw engines can only support targeted scripts as there will be no
-                            // templates
-                            ScriptType tsa =
-                                    extension
-                                            .getExtScript()
-                                            .getScriptType(ExtensionScript.TYPE_STANDALONE);
-                            setComboFields(
-                                    FIELD_TYPE,
-                                    new String[] {Constant.messages.getString(tsa.getI18nKey())},
-                                    Constant.messages.getString(tsa.getI18nKey()));
-                        } else {
-                            setComboFields(FIELD_TYPE, getTypes(), "");
-                        }
+                                        .getScriptType(ExtensionScript.TYPE_STANDALONE);
+                        setComboFields(
+                                FIELD_TYPE,
+                                new String[] {Constant.messages.getString(tsa.getI18nKey())},
+                                Constant.messages.getString(tsa.getI18nKey()));
+                    } else {
+                        setComboFields(FIELD_TYPE, getTypes(), "");
                     }
                 });
 
         this.addFieldListener(
                 FIELD_TYPE,
-                new ActionListener() {
+                e -> {
+                    boolean scriptEnableable = false;
+                    boolean scriptEnabledByDefault = false;
 
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        boolean scriptEnableable = false;
-                        boolean scriptEnabledByDefault = false;
-
-                        if (!isEmptyField(FIELD_TYPE)) {
-                            ScriptType scriptType = nameToType(getStringValue(FIELD_TYPE));
-                            if (scriptType != null) {
-                                scriptEnableable = scriptType.isEnableable();
-                                scriptEnabledByDefault = scriptType.isEnabledByDefault();
-                            }
+                    if (!isEmptyField(FIELD_TYPE)) {
+                        ScriptType scriptType = nameToType(getStringValue(FIELD_TYPE));
+                        if (scriptType != null) {
+                            scriptEnableable = scriptType.isEnableable();
+                            scriptEnabledByDefault = scriptType.isEnabledByDefault();
                         }
-                        getField(FIELD_ENABLED).setEnabled(scriptEnableable);
-                        setFieldValue(FIELD_ENABLED, scriptEnabledByDefault);
                     }
+                    getField(FIELD_ENABLED).setEnabled(scriptEnableable);
+                    setFieldValue(FIELD_ENABLED, scriptEnabledByDefault);
                 });
         this.addPadding();
     }
 
     private List<String> getEngines() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         list.addAll(extension.getExtScript().getScriptingEngines());
         return list;
     }
 
     private List<String> getTypes() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (ScriptType type : extension.getExtScript().getScriptTypes()) {
             if (type.hasCapability(ExtensionScriptsUI.CAPABILITY_EXTERNAL)) {
                 // Ignore
@@ -171,7 +160,6 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 
     public void reset(ScriptWrapper script) {
         this.script = script;
-        this.setFieldValue(FIELD_FILE, script.getFile().getAbsolutePath());
         this.setFieldValue(FIELD_NAME, script.getFile().getName());
         int dotIndex = script.getFile().getName().lastIndexOf(".");
         if (dotIndex > 0) {

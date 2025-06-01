@@ -20,17 +20,59 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.function.Function;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 import org.zaproxy.zap.extension.selenium.Browser;
 
 public class AjaxSpiderParam extends VersionedAbstractParam {
 
-    private static final Logger logger = Logger.getLogger(AjaxSpiderParam.class);
+    public enum ScopeCheck {
+        FLEXIBLE,
+        STRICT;
+
+        private final String label;
+
+        ScopeCheck() {
+            label =
+                    Constant.messages.getString(
+                            "spiderajax.options.label.scope." + name().toLowerCase(Locale.ROOT));
+        }
+
+        @Override
+        public String toString() {
+            return label;
+        }
+
+        public static ScopeCheck getDefault() {
+            return STRICT;
+        }
+
+        public static ScopeCheck parse(String value) {
+            if (value == null || value.isBlank()) {
+                return getDefault();
+            }
+
+            try {
+                return valueOf(value.toUpperCase(Locale.ROOT));
+            } catch (Exception e) {
+                return getDefault();
+            }
+        }
+    }
+
+    private static final Logger LOGGER = LogManager.getLogger(AjaxSpiderParam.class);
 
     /**
      * The current version of the configurations. Used to keep track of configuration changes
@@ -41,7 +83,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 3;
+    private static final int CURRENT_CONFIG_VERSION = 6;
 
     private static final String AJAX_SPIDER_BASE_KEY = "ajaxSpider";
 
@@ -86,7 +128,11 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     private static final String CONFIRM_REMOVE_ELEM_KEY =
             AJAX_SPIDER_BASE_KEY + ".confirmRemoveElem";
 
-    private static final String[] DEFAULT_ELEMS_NAMES = {
+    private static final String ENABLE_EXTENSIONS_KEY = AJAX_SPIDER_BASE_KEY + ".enableExtensions";
+
+    private static final String SCOPE_CHECK_KEY = AJAX_SPIDER_BASE_KEY + ".scopeCheck";
+
+    public static final String[] DEFAULT_ELEMS_NAMES = {
         "a",
         "button",
         "td",
@@ -123,25 +169,42 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         "video"
     };
 
-    private static final int DEFAULT_NUMBER_OF_BROWSERS = 1;
+    public static final int DEFAULT_MAX_CRAWL_DEPTH = 10;
 
-    private static final int DEFAULT_MAX_CRAWL_DEPTH = 10;
+    public static final int DEFAULT_CRAWL_STATES = 0;
 
-    private static final int DEFAULT_CRAWL_STATES = 0;
+    public static final int DEFAULT_MAX_DURATION = 60;
 
-    private static final int DEFAULT_MAX_DURATION = 60;
+    public static final int DEFAULT_EVENT_WAIT_TIME = 1000;
 
-    private static final int DEFAULT_EVENT_WAIT_TIME = 1000;
+    public static final int DEFAULT_RELOAD_WAIT_TIME = 1000;
 
-    private static final int DEFAULT_RELOAD_WAIT_TIME = 1000;
+    static final String DEFAULT_BROWSER_ID = Browser.FIREFOX_HEADLESS.getId();
 
-    private static final String DEFAULT_BROWSER_ID = Browser.FIREFOX_HEADLESS.getId();
+    public static final boolean DEFAULT_CLICK_DEFAULT_ELEMS = true;
 
-    private static final boolean DEFAULT_CLICK_DEFAULT_ELEMS = true;
+    public static final boolean DEFAULT_CLICK_ELEMS_ONCE = true;
 
-    private static final boolean DEFAULT_CLICK_ELEMS_ONCE = true;
+    public static final boolean DEFAULT_RANDOM_INPUTS = true;
 
-    private static final boolean DEFAULT_RANDOM_INPUTS = true;
+    public static final boolean DEFAULT_ENABLE_EXTENSIONS = false;
+
+    private static final String ALL_ALLOWED_RESOURCES_KEY =
+            AJAX_SPIDER_BASE_KEY + ".allowedResources.allowedResource";
+
+    private static final String ALLOWED_RESOURCE_REGEX_KEY = "regex";
+
+    private static final String ALLOWED_RESOURCE_ENABLED_KEY = "enabled";
+
+    private static final String CONFIRM_REMOVE_ALLOWED_RESOURCE =
+            AJAX_SPIDER_BASE_KEY + ".confirmRemoveAllowedResource";
+
+    private static final List<AllowedResource> DEFAULT_ALLOWED_RESOURCES =
+            Arrays.asList(
+                    new AllowedResource(
+                            AllowedResource.createDefaultPattern("^http.*\\.js(?:\\?.*)?$")),
+                    new AllowedResource(
+                            AllowedResource.createDefaultPattern("^http.*\\.css(?:\\?.*)?$")));
 
     private int numberOfBrowsers;
     private int maxCrawlDepth;
@@ -160,6 +223,17 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     private boolean randomInputs;
     private boolean confirmRemoveElem = true;
     private boolean showAdvancedDialog;
+    private boolean enableExtensions;
+
+    private boolean confirmRemoveAllowedResource;
+    private List<AllowedResource> allowedResources = Collections.emptyList();
+
+    private ScopeCheck scopeCheck = ScopeCheck.getDefault();
+
+    @Override
+    public AjaxSpiderParam clone() {
+        return (AjaxSpiderParam) super.clone();
+    }
 
     @Override
     protected int getCurrentVersion() {
@@ -182,87 +256,29 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        try {
-            this.numberOfBrowsers =
-                    getConfig().getInt(NUMBER_OF_BROWSERS_KEY, DEFAULT_NUMBER_OF_BROWSERS);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the number of browsers: " + e.getMessage(), e);
-        }
+        this.numberOfBrowsers =
+                getInt(NUMBER_OF_BROWSERS_KEY, Constants.getDefaultThreadCount() / 2);
+        this.maxCrawlDepth = getInt(MAX_CRAWL_DEPTH_KEY, DEFAULT_MAX_CRAWL_DEPTH);
+        this.maxCrawlStates = getInt(MAX_CRAWL_STATES_KEY, DEFAULT_CRAWL_STATES);
+        this.maxDuration = getInt(MAX_DURATION_KEY, DEFAULT_MAX_DURATION);
+        this.eventWait = getInt(EVENT_WAIT_TIME_KEY, DEFAULT_EVENT_WAIT_TIME);
+        this.reloadWait = getInt(RELOAD_WAIT_TIME_KEY, DEFAULT_RELOAD_WAIT_TIME);
 
-        try {
-            this.maxCrawlDepth = getConfig().getInt(MAX_CRAWL_DEPTH_KEY, DEFAULT_MAX_CRAWL_DEPTH);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the max crawl depth: " + e.getMessage(), e);
-        }
+        browserId = getString(BROWSER_ID_KEY, DEFAULT_BROWSER_ID);
 
-        try {
-            this.maxCrawlStates = getConfig().getInt(MAX_CRAWL_STATES_KEY, DEFAULT_CRAWL_STATES);
-        } catch (ConversionException e) {
-            logger.error("Error while loading max crawl states: " + e.getMessage(), e);
-        }
-
-        try {
-            this.maxDuration = getConfig().getInt(MAX_DURATION_KEY, DEFAULT_MAX_DURATION);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the crawl duration: " + e.getMessage(), e);
-        }
-
-        try {
-            this.eventWait = getConfig().getInt(EVENT_WAIT_TIME_KEY, DEFAULT_EVENT_WAIT_TIME);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the event wait time: " + e.getMessage(), e);
-        }
-
-        try {
-            this.reloadWait = getConfig().getInt(RELOAD_WAIT_TIME_KEY, DEFAULT_RELOAD_WAIT_TIME);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the reload wait time: " + e.getMessage(), e);
-        }
-
-        try {
-            browserId = getConfig().getString(BROWSER_ID_KEY, DEFAULT_BROWSER_ID);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the browser id: " + e.getMessage(), e);
-            browserId = DEFAULT_BROWSER_ID;
-        }
         try {
             Browser.getBrowserWithId(browserId);
         } catch (IllegalArgumentException e) {
-            logger.warn(
-                    "Unknow browser ["
-                            + browserId
-                            + "] using default ["
-                            + DEFAULT_BROWSER_ID
-                            + "].",
-                    e);
+            LOGGER.warn(
+                    "Unknown browser [{}] using default [{}].", browserId, DEFAULT_BROWSER_ID, e);
             browserId = DEFAULT_BROWSER_ID;
         }
 
-        try {
-            this.clickDefaultElems =
-                    getConfig().getBoolean(CLICK_DEFAULT_ELEMS_KEY, DEFAULT_CLICK_DEFAULT_ELEMS);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the click default option: " + e.getMessage(), e);
-        }
-
-        try {
-            this.clickElemsOnce =
-                    getConfig().getBoolean(CLICK_ELEMS_ONCE_KEY, DEFAULT_CLICK_ELEMS_ONCE);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the click once option: " + e.getMessage(), e);
-        }
-
-        try {
-            this.randomInputs = getConfig().getBoolean(RANDOM_INPUTS_KEY, DEFAULT_RANDOM_INPUTS);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the random inputs option: " + e.getMessage(), e);
-        }
-
-        try {
-            this.showAdvancedDialog = getConfig().getBoolean(SHOW_ADV_OPTIONS_KEY, false);
-        } catch (ConversionException e) {
-            logger.error("Error while loading the show advanced option: " + e.getMessage(), e);
-        }
+        this.clickDefaultElems = getBoolean(CLICK_DEFAULT_ELEMS_KEY, DEFAULT_CLICK_DEFAULT_ELEMS);
+        this.clickElemsOnce = getBoolean(CLICK_ELEMS_ONCE_KEY, DEFAULT_CLICK_ELEMS_ONCE);
+        this.randomInputs = getBoolean(RANDOM_INPUTS_KEY, DEFAULT_RANDOM_INPUTS);
+        this.showAdvancedDialog = getBoolean(SHOW_ADV_OPTIONS_KEY, false);
+        this.enableExtensions = getBoolean(ENABLE_EXTENSIONS_KEY, DEFAULT_ENABLE_EXTENSIONS);
 
         try {
             List<HierarchicalConfiguration> fields =
@@ -282,24 +298,43 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                 }
             }
         } catch (ConversionException e) {
-            logger.error("Error while loading clickable elements: " + e.getMessage(), e);
+            LOGGER.error("Error while loading clickable elements: {}", e.getMessage(), e);
             this.elems = new ArrayList<>(DEFAULT_ELEMS_NAMES.length);
             this.enabledElemsNames = new ArrayList<>(DEFAULT_ELEMS_NAMES.length);
         }
 
-        if (this.elems.size() == 0) {
+        if (this.elems.isEmpty()) {
             for (String elemName : DEFAULT_ELEMS_NAMES) {
                 this.elems.add(new AjaxSpiderParamElem(elemName));
                 this.enabledElemsNames.add(elemName);
             }
         }
 
+        this.confirmRemoveElem = getBoolean(CONFIRM_REMOVE_ELEM_KEY, true);
+
         try {
-            this.confirmRemoveElem = getConfig().getBoolean(CONFIRM_REMOVE_ELEM_KEY, true);
+            List<HierarchicalConfiguration> fields =
+                    ((HierarchicalConfiguration) getConfig())
+                            .configurationsAt(ALL_ALLOWED_RESOURCES_KEY);
+            this.allowedResources = new ArrayList<>(fields.size());
+            List<String> regexes = new ArrayList<>(fields.size());
+            for (HierarchicalConfiguration sub : fields) {
+                String regex = sub.getString(ALLOWED_RESOURCE_REGEX_KEY, "");
+                if (!"".equals(regex) && !regexes.contains(regex)) {
+                    boolean enabled = sub.getBoolean(ALLOWED_RESOURCE_ENABLED_KEY, true);
+                    this.allowedResources.add(
+                            new AllowedResource(
+                                    AllowedResource.createDefaultPattern(regex), enabled));
+                    regexes.add(regex);
+                }
+            }
         } catch (ConversionException e) {
-            logger.error(
-                    "Error while loading the confirm remove element option: " + e.getMessage(), e);
+            LOGGER.error("Error while loading allowed resources: {}", e.getMessage(), e);
+            this.allowedResources = new ArrayList<>(DEFAULT_ALLOWED_RESOURCES);
         }
+        confirmRemoveAllowedResource = getBoolean(CONFIRM_REMOVE_ALLOWED_RESOURCE, true);
+
+        scopeCheck = getEnum(SCOPE_CHECK_KEY, ScopeCheck.getDefault());
     }
 
     @SuppressWarnings({"fallthrough"})
@@ -307,28 +342,63 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     protected void updateConfigsImpl(int fileVersion) {
         switch (fileVersion) {
             case NO_CONFIG_VERSION:
-                // No updates/changes needed, the configurations were not previously persisted
-                // and the current version is already written after this method.
+                List<HierarchicalConfiguration> fields =
+                        ((HierarchicalConfiguration) getConfig())
+                                .configurationsAt(ALL_ALLOWED_RESOURCES_KEY);
+                if (fields.isEmpty()) {
+                    setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
+                    break;
+                }
+
+                int i = 0;
+                for (; i < fields.size() && i < DEFAULT_ALLOWED_RESOURCES.size(); i++) {
+                    var field = fields.get(i);
+                    setDefaultAllowedResourceProperty(
+                            field, ALLOWED_RESOURCE_ENABLED_KEY, i, AllowedResource::isEnabled);
+                    setDefaultAllowedResourceProperty(
+                            field, ALLOWED_RESOURCE_REGEX_KEY, i, r -> r.getPattern().pattern());
+                }
+                persistAllowedResources(DEFAULT_ALLOWED_RESOURCES, i);
                 break;
             case 1:
                 String crawlInDepthKey = AJAX_SPIDER_BASE_KEY + ".crawlInDepth";
-                try {
-                    boolean crawlInDepth = getConfig().getBoolean(crawlInDepthKey, false);
-                    getConfig()
-                            .setProperty(CLICK_DEFAULT_ELEMS_KEY, Boolean.valueOf(!crawlInDepth));
-                } catch (ConversionException e) {
-                    logger.warn(
-                            "Failed to read (old) configuration '"
-                                    + crawlInDepthKey
-                                    + "', no update will be made.");
-                }
+                boolean crawlInDepth = getBoolean(crawlInDepthKey, false);
+                getConfig().setProperty(CLICK_DEFAULT_ELEMS_KEY, Boolean.valueOf(!crawlInDepth));
                 getConfig().clearProperty(crawlInDepthKey);
-                // $FALL-THROUGH$
+            // $FALL-THROUGH$
             case 2:
                 // Remove old version element, from now on the version is saved as an attribute of
                 // root element
                 getConfig().clearProperty(OLD_CONFIG_VERSION_KEY);
+            case 3:
+                setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
+            case 4:
+                if (getInt(NUMBER_OF_BROWSERS_KEY, 1) == 1) {
+                    // the old default
+                    this.setNumberOfBrowsers(Constants.getDefaultThreadCount() / 2);
+                }
+            case 5:
+                if (!getConfig().getKeys(ALL_ALLOWED_RESOURCES_KEY).hasNext()) {
+                    setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
+                }
         }
+    }
+
+    private static void setDefaultAllowedResourceProperty(
+            HierarchicalConfiguration field,
+            String name,
+            int i,
+            Function<AllowedResource, Object> value) {
+        if (field.getProperty(name) == null) {
+            field.setProperty(name, value.apply(DEFAULT_ALLOWED_RESOURCES.get(i)));
+        }
+    }
+
+    @Override
+    public void reset() {
+        super.reset();
+
+        setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
     }
 
     public int getNumberOfBrowsers() {
@@ -425,7 +495,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         return elems;
     }
 
-    protected void setElems(List<AjaxSpiderParamElem> elems) {
+    public void setElems(List<AjaxSpiderParamElem> elems) {
         this.elems = new ArrayList<>(elems);
 
         ((HierarchicalConfiguration) getConfig()).clearTree(ALL_ELEMS_KEY);
@@ -453,6 +523,15 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         return enabledElemsNames;
     }
 
+    public boolean isEnableExtensions() {
+        return enableExtensions;
+    }
+
+    public void setEnableExtensions(boolean enableExtensions) {
+        this.enableExtensions = enableExtensions;
+        getConfig().setProperty(ENABLE_EXTENSIONS_KEY, Boolean.valueOf(enableExtensions));
+    }
+
     @ZapApiIgnore
     public boolean isConfirmRemoveElem() {
         return this.confirmRemoveElem;
@@ -473,5 +552,66 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     public void setShowAdvancedDialog(boolean show) {
         this.showAdvancedDialog = show;
         getConfig().setProperty(SHOW_ADV_OPTIONS_KEY, Boolean.valueOf(showAdvancedDialog));
+    }
+
+    @ZapApiIgnore
+    public boolean isConfirmRemoveAllowedResource() {
+        return this.confirmRemoveAllowedResource;
+    }
+
+    @ZapApiIgnore
+    public void setConfirmRemoveAllowedResource(boolean confirmRemove) {
+        this.confirmRemoveAllowedResource = confirmRemove;
+        getConfig()
+                .setProperty(
+                        CONFIRM_REMOVE_ALLOWED_RESOURCE,
+                        Boolean.valueOf(confirmRemoveAllowedResource));
+    }
+
+    @ZapApiIgnore
+    public void setAllowedResources(List<AllowedResource> allowedResources) {
+        this.allowedResources = new ArrayList<>(Objects.requireNonNull(allowedResources));
+
+        ((HierarchicalConfiguration) getConfig()).clearTree(ALL_ALLOWED_RESOURCES_KEY);
+        persistAllowedResources(allowedResources, 0);
+    }
+
+    private void persistAllowedResources(List<AllowedResource> allowedResources, int start) {
+        for (int i = start, size = allowedResources.size(); i < size; ++i) {
+            String allowedResourceBaseKey = ALL_ALLOWED_RESOURCES_KEY + "(" + i + ").";
+            AllowedResource allowedResource = allowedResources.get(i);
+
+            getConfig()
+                    .setProperty(
+                            allowedResourceBaseKey + ALLOWED_RESOURCE_REGEX_KEY,
+                            allowedResource.getPattern().pattern());
+            getConfig()
+                    .setProperty(
+                            allowedResourceBaseKey + ALLOWED_RESOURCE_ENABLED_KEY,
+                            Boolean.valueOf(allowedResource.isEnabled()));
+        }
+    }
+
+    /**
+     * Gets the allowed resources.
+     *
+     * @return an unmodifiable list containing the allowed resources.
+     */
+    @ZapApiIgnore
+    public List<AllowedResource> getAllowedResources() {
+        return Collections.unmodifiableList(allowedResources);
+    }
+
+    public ScopeCheck getScopeCheck() {
+        return scopeCheck;
+    }
+
+    public void setScopeCheck(String scopeCheck) {
+        setScopeCheck(ScopeCheck.parse(scopeCheck));
+    }
+
+    public void setScopeCheck(ScopeCheck scopeCheck) {
+        this.scopeCheck = scopeCheck == null ? ScopeCheck.getDefault() : scopeCheck;
+        getConfig().setProperty(SCOPE_CHECK_KEY, this.scopeCheck.name());
     }
 }

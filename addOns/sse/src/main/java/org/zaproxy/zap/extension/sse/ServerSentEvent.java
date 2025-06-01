@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.sse;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.httppanel.Message;
 

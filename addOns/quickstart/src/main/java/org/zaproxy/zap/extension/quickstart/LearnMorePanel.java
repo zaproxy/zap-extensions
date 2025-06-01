@@ -19,11 +19,9 @@
  */
 package org.zaproxy.zap.extension.quickstart;
 
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
@@ -47,10 +45,11 @@ public class LearnMorePanel extends QuickStartSubPanel {
     private static final String WEBSITE_LINK = "https://www.zaproxy.org/";
     private static final String FAQ_LINK = "https://www.zaproxy.org/faq/";
     private static final String GETTING_STARTED_LINK = "https://www.zaproxy.org/getting-started/";
-    private static final String USER_GROUP_LINK = "https://groups.google.com/group/zaproxy-users";
     private static final String USER_GUIDE_LINK = "https://www.zaproxy.org/docs/desktop/";
-    private static final String ZAP_IN_TEN_LINK = "https://www.alldaydevops.com/zap-in-ten";
+    private static final String ZAP_VIDEOS_LINK = "https://www.zaproxy.org/videos/";
+    private static final String ZAP_AUTOMATE_LINK = "https://www.zaproxy.org/docs/automate/";
 
+    private ImageIcon icon;
     private JPanel contentPanel;
     private JLabel lowerPadding;
     private int paddingY;
@@ -66,8 +65,7 @@ public class LearnMorePanel extends QuickStartSubPanel {
 
     @Override
     public JPanel getDescriptionPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBackground(Color.WHITE);
+        JPanel panel = new QuickStartBackgroundPanel();
         panel.add(
                 QuickStartHelper.getWrappedLabel("quickstart.learn.panel.message1"),
                 LayoutHelper.getGBC(0, 0, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
@@ -90,8 +88,7 @@ public class LearnMorePanel extends QuickStartSubPanel {
     @Override
     public JPanel getContentPanel() {
         if (contentPanel == null) {
-            contentPanel = new JPanel(new GridBagLayout());
-            contentPanel.setBackground(Color.WHITE);
+            contentPanel = new QuickStartBackgroundPanel();
             int formPanelY = 0;
 
             ExtensionHelp extHelp =
@@ -132,10 +129,17 @@ public class LearnMorePanel extends QuickStartSubPanel {
                 if (isGuideAvailable) {
                     JLabel qsLabel =
                             ulJLabel(Constant.messages.getString("quickstart.link.startguide"));
-                    qsLabel.setIcon(ExtensionQuickStart.PDF_DOC_ICON);
+                    qsLabel.setIcon(
+                            DisplayUtils.getScaledIcon(
+                                    new ImageIcon(
+                                            getClass()
+                                                    .getResource(
+                                                            ExtensionQuickStart.RESOURCES
+                                                                    + "/document-pdf-text.png"))));
                     qsLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     qsLabel.addMouseListener(
                             new MouseAdapter() {
+                                @Override
                                 public void mouseClicked(MouseEvent e) {
                                     try {
                                         Desktop.getDesktop().open(finalGuide);
@@ -166,6 +170,7 @@ public class LearnMorePanel extends QuickStartSubPanel {
                     helpLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     helpLabel.addMouseListener(
                             new MouseAdapter() {
+                                @Override
                                 public void mouseClicked(MouseEvent e) {
                                     ExtensionHelp.showHelp();
                                 }
@@ -200,7 +205,12 @@ public class LearnMorePanel extends QuickStartSubPanel {
                             1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
 
             contentPanel.add(
-                    getOnlineLink("quickstart.link.zapinten", ZAP_IN_TEN_LINK),
+                    getOnlineLink("quickstart.link.videos", ZAP_VIDEOS_LINK),
+                    LayoutHelper.getGBC(
+                            1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
+
+            contentPanel.add(
+                    getOnlineLink("quickstart.link.automate", ZAP_AUTOMATE_LINK),
                     LayoutHelper.getGBC(
                             1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
 
@@ -229,10 +239,6 @@ public class LearnMorePanel extends QuickStartSubPanel {
                 // TODO move link if/when we detect the add-on is installed
             }
             contentPanel.add(
-                    getOnlineLink("quickstart.link.usergroup", USER_GROUP_LINK),
-                    LayoutHelper.getGBC(
-                            1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
-            contentPanel.add(
                     getOnlineLink("quickstart.link.faq", FAQ_LINK),
                     LayoutHelper.getGBC(
                             1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
@@ -246,10 +252,17 @@ public class LearnMorePanel extends QuickStartSubPanel {
 
     private JLabel getOnlineLink(String key, String url) {
         JLabel label = ulJLabel(Constant.messages.getString(key));
-        label.setIcon(ExtensionQuickStart.ONLINE_DOC_ICON);
+        label.setIcon(
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(
+                                getClass()
+                                        .getResource(
+                                                ExtensionQuickStart.RESOURCES
+                                                        + "/document-globe.png"))));
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         label.addMouseListener(
                 new MouseAdapter() {
+                    @Override
                     public void mouseClicked(MouseEvent e) {
                         DesktopUtils.openUrlInBrowser(url);
                     }
@@ -273,7 +286,15 @@ public class LearnMorePanel extends QuickStartSubPanel {
 
     @Override
     public ImageIcon getIcon() {
-        return ExtensionQuickStart.HELP_ICON;
+        if (icon == null) {
+            icon =
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    getClass()
+                                            .getResource(
+                                                    ExtensionQuickStart.RESOURCES + "/help.png")));
+        }
+        return icon;
     }
 
     @Override

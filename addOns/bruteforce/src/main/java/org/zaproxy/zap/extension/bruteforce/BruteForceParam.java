@@ -27,34 +27,51 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.configuration.ConversionException;
-import org.apache.log4j.Logger;
-import org.parosproxy.paros.common.AbstractParam;
+import org.zaproxy.addon.commonlib.Constants;
+import org.zaproxy.zap.common.VersionedAbstractParam;
 
-public class BruteForceParam extends AbstractParam {
+public class BruteForceParam extends VersionedAbstractParam {
 
-    private static final Logger logger = Logger.getLogger(BruteForceParam.class);
+    /**
+     * The current version of the configurations. Used to keep track of configuration changes
+     * between releases, in case changes/updates are needed.
+     *
+     * <p>It only needs to be incremented for configuration changes (not releases of the add-on).
+     *
+     * @see #CONFIG_VERSION_KEY
+     * @see #updateConfigsImpl(int)
+     */
+    private static final int CURRENT_CONFIG_VERSION = 1;
+
+    /**
+     * The key for the version of the configurations.
+     *
+     * @see #CURRENT_CONFIG_VERSION
+     */
+    private static final String CONFIG_VERSION_KEY = "bruteforce" + VERSION_ATTRIBUTE;
 
     private static final String THREAD_PER_SCAN = "bruteforce.threadPerHost";
     private static final String DEFAULT_FILE = "bruteforce.defaultFile";
     private static final String RECURSIVE = "bruteforce.recursive";
     private static final String BROWSE_FILES = "bruteforce.browsefiles";
+    private static final String BROWSE_FILES_WITHOUT_EXTENSION =
+            "bruteforce.browsefileswithoutextension";
     private static final String FILE_EXTENSIONS = "bruteforce.fileextensions";
     private static final String EXTENSIONS_TO_MISS = "bruteforce.extensionsToMiss";
     private static final String FAIL_CASE_STRING = "bruteforce.failCaseString";
 
-    public static final int DEFAULT_THREAD_PER_SCAN = 10;
-    public static final int MAXIMUM_THREADS_PER_SCAN = 200;
     public static final boolean DEFAULT_RECURSIVE = true;
     public static final boolean DEFAULT_BROWSE_FILES = false;
+    public static final boolean DEFAULT_BROWSE_FILES_WITHOUT_EXTENSION = false;
     public static final String EMPTY_STRING = "";
     public static final String DEFAULT_EXTENSIONS_TO_MISS = "jpg, gif, jpeg, ico, tiff, png, bmp";
     public static final String DEFAULT_FAIL_CASE_STRING = Config.failCaseString;
 
-    private int threadPerScan = DEFAULT_THREAD_PER_SCAN;
+    private int threadPerScan;
     private boolean recursive = DEFAULT_RECURSIVE;
     private ForcedBrowseFile defaultFile = null;
     private boolean browseFiles = DEFAULT_BROWSE_FILES;
+    private boolean browseFilesWithoutExtension = DEFAULT_BROWSE_FILES_WITHOUT_EXTENSION;
     // can't be null
     private String fileExtensions = EMPTY_STRING;
     private String extensionsToMiss = DEFAULT_EXTENSIONS_TO_MISS;
@@ -63,11 +80,27 @@ public class BruteForceParam extends AbstractParam {
     public BruteForceParam() {}
 
     @Override
-    protected void parse() {
+    protected String getConfigVersionKey() {
+        return CONFIG_VERSION_KEY;
+    }
+
+    @Override
+    protected int getCurrentVersion() {
+        return CURRENT_CONFIG_VERSION;
+    }
+
+    @Override
+    protected void parseImpl() {
         try {
-            this.threadPerScan = getConfig().getInt(THREAD_PER_SCAN, DEFAULT_THREAD_PER_SCAN);
+            this.threadPerScan =
+                    getConfig().getInt(THREAD_PER_SCAN, Constants.getDefaultThreadCount());
             this.recursive = getConfig().getBoolean(RECURSIVE, DEFAULT_RECURSIVE);
             this.browseFiles = getConfig().getBoolean(BROWSE_FILES, DEFAULT_BROWSE_FILES);
+            this.browseFilesWithoutExtension =
+                    getConfig()
+                            .getBoolean(
+                                    BROWSE_FILES_WITHOUT_EXTENSION,
+                                    DEFAULT_BROWSE_FILES_WITHOUT_EXTENSION);
             this.fileExtensions = getConfig().getString(FILE_EXTENSIONS, EMPTY_STRING);
             this.extensionsToMiss =
                     getConfig().getString(EXTENSIONS_TO_MISS, DEFAULT_EXTENSIONS_TO_MISS);
@@ -75,17 +108,24 @@ public class BruteForceParam extends AbstractParam {
         } catch (Exception e) {
         }
 
-        try {
-            String path = getConfig().getString(DEFAULT_FILE, "");
-            if (!"".equals(path)) {
-                this.defaultFile = new ForcedBrowseFile(new File(path));
-            } else {
-                this.defaultFile = null;
-            }
-        } catch (ConversionException e) {
-            logger.error(
-                    "Error while loading the forced browse default file: " + e.getMessage(), e);
+        String path = getString(DEFAULT_FILE, "");
+        if (!"".equals(path)) {
+            this.defaultFile = new ForcedBrowseFile(new File(path));
+        } else {
             this.defaultFile = null;
+        }
+    }
+
+    @Override
+    protected void updateConfigsImpl(int fileVersion) {
+        switch (fileVersion) {
+            case NO_CONFIG_VERSION:
+                if (getInt(THREAD_PER_SCAN, 10) == 10) {
+                    // the old default
+                    this.setThreadPerScan(Constants.getDefaultThreadCount());
+                }
+                break;
+            default:
         }
     }
 
@@ -120,6 +160,15 @@ public class BruteForceParam extends AbstractParam {
         }
 
         getConfig().setProperty(DEFAULT_FILE, absolutePath);
+    }
+
+    public boolean isBrowseFilesWithoutExtension() {
+        return browseFilesWithoutExtension;
+    }
+
+    public void setBrowseFilesWithoutExtension(boolean browseFilesWithoutExtension) {
+        this.browseFilesWithoutExtension = browseFilesWithoutExtension;
+        getConfig().setProperty(BROWSE_FILES_WITHOUT_EXTENSION, browseFilesWithoutExtension);
     }
 
     public boolean isBrowseFiles() {

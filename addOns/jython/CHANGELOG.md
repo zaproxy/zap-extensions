@@ -5,9 +5,54 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
+- Document the engine name in the help page.
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Update script template:
+  - httpsender/HttpSender default template.py - update documentation.
+
+## [15] - 2024-04-11
+### Changed
+- Maintenance changes.
+- Update Active and Passive Script Templates to include a `getMetadata` function. This will allow them to be used as regular scan rules.
+- Depend on the `commonlib` add-on for scan rule scripts.
+- Update minimum `scripts` add-on version to 45.1.0.
+
+## [14] - 2023-12-19
+### Changed
+- Update minimum ZAP version to 2.14.0.
+- Move "Jython" under "Scripts > Engine" in the Options panel list.
+
+### Fixed
+- Remove the script engine when the add-on is uninstalled.
+
+## [13] - 2023-09-07
+### Changed
+- Update minimum ZAP version to 2.13.0.
+- Replace usage of singletons with injected variables (e.g. `model`, `control`) in scripts.
+
+### Fixed
+- Updated encode-decode script templates to conform to the latest method signatures.
+- Update the content-length header field after setting the request body in the authentication template.
+
+## [12] - 2021-10-07
+### Added
+- encode-decode default and rot13 templates.
+
+### Changed
+- Update links to zaproxy repo.
+- Rename reliability to confidence in active/passive templates.
+- Maintenance changes.
+- Update minimum ZAP version to 2.11.0.
+
+## [11] - 2020-12-15
+### Added
 - Add info and repo URLs.
 
 ### Changed
+- Update minimum ZAP version to 2.10.0.
+- Update Jython from 2.7.1 to 2.7.2.
 - Update the help to mention the bundled Jython version.
 - Jython templates now includes an extender script (getInputsFromuser.py) for setting global script variables based on user input.
 
@@ -62,3 +107,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/jython-v15
+[14]: https://github.com/zaproxy/zap-extensions/releases/jython-v14
+[13]: https://github.com/zaproxy/zap-extensions/releases/jython-v13
+[12]: https://github.com/zaproxy/zap-extensions/releases/jython-v12
+[11]: https://github.com/zaproxy/zap-extensions/releases/jython-v11

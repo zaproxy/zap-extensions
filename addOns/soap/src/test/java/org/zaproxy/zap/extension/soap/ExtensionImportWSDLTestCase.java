@@ -19,34 +19,29 @@
  */
 package org.zaproxy.zap.extension.soap;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class ExtensionImportWSDLTestCase extends TestUtils {
+class ExtensionImportWSDLTestCase extends TestUtils {
 
     ExtensionImportWSDL extension;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         extension = new ExtensionImportWSDL();
         mockMessages(extension);
     }
 
     @Test
-    public void getAuthorTest() {
+    void getAuthorTest() {
         assertNotNull(extension.getAuthor());
     }
 
     @Test
-    public void getDescriptionTest() {
+    void getDescriptionTest() {
         assertNotNull(extension.getDescription());
-    }
-
-    @Test
-    public void getURLTest() {
-        assertNotNull(extension.getURL());
     }
 }

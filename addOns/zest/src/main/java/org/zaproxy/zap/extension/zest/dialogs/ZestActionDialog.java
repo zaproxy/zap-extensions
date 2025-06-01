@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -30,18 +28,6 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import org.mozilla.zest.core.v1.ZestAction;
-import org.mozilla.zest.core.v1.ZestActionFail;
-import org.mozilla.zest.core.v1.ZestActionGlobalVariableRemove;
-import org.mozilla.zest.core.v1.ZestActionGlobalVariableSet;
-import org.mozilla.zest.core.v1.ZestActionInvoke;
-import org.mozilla.zest.core.v1.ZestActionPrint;
-import org.mozilla.zest.core.v1.ZestActionScan;
-import org.mozilla.zest.core.v1.ZestActionSleep;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -49,9 +35,19 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
-import org.zaproxy.zap.extension.zest.ZestZapUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
+import org.zaproxy.zest.core.v1.ZestAction;
+import org.zaproxy.zest.core.v1.ZestActionFail;
+import org.zaproxy.zest.core.v1.ZestActionGlobalVariableRemove;
+import org.zaproxy.zest.core.v1.ZestActionGlobalVariableSet;
+import org.zaproxy.zest.core.v1.ZestActionInvoke;
+import org.zaproxy.zest.core.v1.ZestActionPrint;
+import org.zaproxy.zest.core.v1.ZestActionScan;
+import org.zaproxy.zest.core.v1.ZestActionSleep;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_MESSAGE = "zest.dialog.action.label.message";
@@ -113,7 +109,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 
         if (action instanceof ZestActionScan) {
             ZestActionScan za = (ZestActionScan) action;
-            List<String> namesList = new ArrayList<String>();
+            List<String> namesList = new ArrayList<>();
             if (stmt != null && stmt instanceof ZestRequest) {
                 ZestRequest req = (ZestRequest) stmt;
                 namesList = this.getParamNames(req.getUrl().getQuery());
@@ -142,12 +138,12 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
                         priorities,
                         priorityToStr(ZestActionFail.Priority.valueOf(za.getPriority())));
             }
-            ZestZapUtils.setMainPopupMenu(this.getField(FIELD_MESSAGE));
+            setFieldMainPopupMenu(FIELD_MESSAGE);
 
         } else if (action instanceof ZestActionPrint) {
             ZestActionPrint za = (ZestActionPrint) action;
             this.addMultilineField(FIELD_MESSAGE, za.getMessage());
-            ZestZapUtils.setMainPopupMenu(this.getField(FIELD_MESSAGE));
+            setFieldMainPopupMenu(FIELD_MESSAGE);
 
         } else if (action instanceof ZestActionSleep) {
             ZestActionSleep za = (ZestActionSleep) action;
@@ -162,7 +158,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
 
             this.getParamsModel().setValues(za.getParameters());
 
-            List<JButton> buttons = new ArrayList<JButton>();
+            List<JButton> buttons = new ArrayList<>();
             buttons.add(getAddButton());
             buttons.add(getModifyButton());
             buttons.add(getRemoveButton());
@@ -172,7 +168,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
             ZestActionGlobalVariableSet za = (ZestActionGlobalVariableSet) action;
             addTextField(FIELD_GLOBAL_VAR, za.getGlobalVariableName());
             addMultilineField(FIELD_GLOBAL_VAR_VALUE, za.getValue());
-            ZestZapUtils.setMainPopupMenu(getField(FIELD_GLOBAL_VAR_VALUE));
+            setFieldMainPopupMenu(FIELD_GLOBAL_VAR_VALUE);
         } else if (action instanceof ZestActionGlobalVariableRemove) {
             ZestActionGlobalVariableRemove za = (ZestActionGlobalVariableRemove) action;
             addTextField(FIELD_GLOBAL_VAR, za.getGlobalVariableName());
@@ -199,14 +195,11 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
             this.addButton =
                     new JButton(Constant.messages.getString("zest.dialog.script.button.add"));
             this.addButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            ZestParameterDialog dialog = getParamDialog();
-                            if (!dialog.isVisible()) {
-                                dialog.init(script, "", "", true, -1, true);
-                                dialog.setVisible(true);
-                            }
+                    e -> {
+                        ZestParameterDialog dialog = getParamDialog();
+                        if (!dialog.isVisible()) {
+                            dialog.init(script, "", "", true, -1, true);
+                            dialog.setVisible(true);
                         }
                     });
         }
@@ -218,13 +211,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
             this.modifyButton =
                     new JButton(Constant.messages.getString("zest.dialog.script.button.modify"));
             this.modifyButton.setEnabled(false);
-            this.modifyButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            showParamDialog();
-                        }
-                    });
+            this.modifyButton.addActionListener(e -> showParamDialog());
         }
         return this.modifyButton;
     }
@@ -251,17 +238,14 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
             this.removeButton.setEnabled(false);
             final ZestActionDialog parent = this;
             this.removeButton.addActionListener(
-                    new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            if (JOptionPane.OK_OPTION
-                                    == View.getSingleton()
-                                            .showConfirmDialog(
-                                                    parent,
-                                                    Constant.messages.getString(
-                                                            "zest.dialog.script.remove.confirm"))) {
-                                getParamsModel().remove(getParamsTable().getSelectedRow());
-                            }
+                    e -> {
+                        if (JOptionPane.OK_OPTION
+                                == View.getSingleton()
+                                        .showConfirmDialog(
+                                                parent,
+                                                Constant.messages.getString(
+                                                        "zest.dialog.script.remove.confirm"))) {
+                            getParamsModel().remove(getParamsTable().getSelectedRow());
                         }
                     });
         }
@@ -284,20 +268,17 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
             paramsTable
                     .getSelectionModel()
                     .addListSelectionListener(
-                            new ListSelectionListener() {
-                                @Override
-                                public void valueChanged(ListSelectionEvent e) {
-                                    if (getParamsTable().getSelectedRowCount() == 0) {
-                                        modifyButton.setEnabled(false);
-                                        removeButton.setEnabled(false);
-                                    } else if (getParamsTable().getSelectedRowCount() == 1) {
-                                        modifyButton.setEnabled(true);
-                                        removeButton.setEnabled(true);
-                                    } else {
-                                        modifyButton.setEnabled(false);
-                                        // TODO allow multiple deletions?
-                                        removeButton.setEnabled(false);
-                                    }
+                            e -> {
+                                if (getParamsTable().getSelectedRowCount() == 0) {
+                                    modifyButton.setEnabled(false);
+                                    removeButton.setEnabled(false);
+                                } else if (getParamsTable().getSelectedRowCount() == 1) {
+                                    modifyButton.setEnabled(true);
+                                    removeButton.setEnabled(true);
+                                } else {
+                                    modifyButton.setEnabled(false);
+                                    // TODO allow multiple deletions?
+                                    removeButton.setEnabled(false);
                                 }
                             });
             paramsTable.addMouseListener(
@@ -347,7 +328,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
     }
 
     private List<String> getScriptNames() {
-        List<String> vals = new ArrayList<String>();
+        List<String> vals = new ArrayList<>();
         for (ScriptWrapper script :
                 this.extension.getExtScript().getScripts(ExtensionScript.TYPE_STANDALONE)) {
             if (script.getFile() != null) {
@@ -359,7 +340,7 @@ public class ZestActionDialog extends StandardFieldsDialog implements ZestDialog
     }
 
     private List<String> getParamNames(String data) {
-        List<String> vals = new ArrayList<String>();
+        List<String> vals = new ArrayList<>();
         if (data != null && data.length() > 0) {
             String[] nameValues = data.split("&");
             for (String nameValue : nameValues) {

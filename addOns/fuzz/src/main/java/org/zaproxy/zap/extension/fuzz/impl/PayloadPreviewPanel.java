@@ -19,12 +19,9 @@
  */
 package org.zaproxy.zap.extension.fuzz.impl;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -34,7 +31,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.fuzz.payloads.Payload;
 import org.zaproxy.zap.extension.fuzz.payloads.processor.PayloadProcessingException;
@@ -45,7 +43,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 
 class PayloadPreviewPanel {
 
-    private static final Logger LOGGER = Logger.getLogger(PayloadPreviewPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(PayloadPreviewPanel.class);
 
     private static final String GENERATE_PREVIEW_BUTTON_LABEL =
             Constant.messages.getString("fuzz.fuzzer.processors.button.generatePreview.label");
@@ -122,14 +120,7 @@ class PayloadPreviewPanel {
         if (payloadsPreviewGenerateButton == null) {
             payloadsPreviewGenerateButton = new JButton(GENERATE_PREVIEW_BUTTON_LABEL);
             payloadsPreviewGenerateButton.setEnabled(false);
-            payloadsPreviewGenerateButton.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            updateProcessedPayloadsTextArea();
-                        }
-                    });
+            payloadsPreviewGenerateButton.addActionListener(e -> updateProcessedPayloadsTextArea());
         }
         return payloadsPreviewGenerateButton;
     }
@@ -167,9 +158,7 @@ class PayloadPreviewPanel {
             }
             textArea.setEnabled(true);
         } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Failed to iterate the payloads: " + e.getMessage());
-            }
+            LOGGER.debug("Failed to iterate the payloads: {}", e.getMessage());
             contents.setLength(0);
             contents.append(
                     Constant.messages.getString("fuzz.fuzzer.processors.payloadsPreview.error"));
@@ -178,15 +167,14 @@ class PayloadPreviewPanel {
             try {
                 payloads.reset();
             } catch (Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Failed to close iterator: " + e.getMessage());
-                }
+                LOGGER.debug("Failed to close iterator: {}", e.getMessage());
             }
         }
         textArea.setText(contents.toString());
         textArea.setCaretPosition(0);
     }
 
+    @SuppressWarnings("unchecked")
     private void updateProcessedPayloadsTextArea() {
         updatePayloadsTextArea(
                 getProcessedPayloadsTextArea(),
@@ -240,13 +228,7 @@ class PayloadPreviewPanel {
         JCheckBox syncScrollBarsCheckbox = new JCheckBox(LOCK_SCROLL_BARS_BUTTON_LABEL);
         syncScrollBarsCheckbox.setSelected(true);
         syncScrollBarsCheckbox.addItemListener(
-                new ItemListener() {
-
-                    @Override
-                    public void itemStateChanged(ItemEvent e) {
-                        syncScrollPanes.setSync(e.getStateChange() == ItemEvent.SELECTED);
-                    }
-                });
+                e -> syncScrollPanes.setSync(e.getStateChange() == ItemEvent.SELECTED));
 
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)

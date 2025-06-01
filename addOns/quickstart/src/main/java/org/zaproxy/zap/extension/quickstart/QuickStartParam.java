@@ -22,12 +22,15 @@ package org.zaproxy.zap.extension.quickstart;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.log4j.Logger;
-import org.parosproxy.paros.common.AbstractParam;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.zaproxy.zap.common.VersionedAbstractParam;
+import org.zaproxy.zap.extension.api.ZapApiIgnore;
+import org.zaproxy.zap.extension.quickstart.ajaxspider.AjaxSpiderExplorer;
 
-public class QuickStartParam extends AbstractParam {
+public class QuickStartParam extends VersionedAbstractParam {
 
-    private static final Logger LOGGER = Logger.getLogger(QuickStartParam.class);
+    private static final Logger LOGGER = LogManager.getLogger(QuickStartParam.class);
 
     private static final String PARAM_BASE_KEY = "quickstart";
 
@@ -53,30 +56,50 @@ public class QuickStartParam extends AbstractParam {
 
     private static final String PARAM_AJAX_SPIDER_ENABLED = PARAM_AJAX_BASE_KEY + ".enabled";
 
+    private static final String PARAM_AJAX_SPIDER_SELECTION = PARAM_AJAX_BASE_KEY + ".select";
+
     private static final String PARAM_AJAX_SPIDER_DEFAULT_BROWSER =
             PARAM_AJAX_BASE_KEY + ".browser";
 
     private static final String PARAM_CLEARED_NEWS_ITEM = PARAM_BASE_KEY + ".clearedNews";
 
+    /**
+     * The current version of the configurations. Used to keep track of configuration changes
+     * between releases, in case changes/updates are needed.
+     *
+     * <p>It only needs to be incremented for configuration changes (not releases of the add-on).
+     *
+     * @see #CONFIG_VERSION_KEY
+     * @see #updateConfigsImpl(int)
+     */
+    private static final int CURRENT_CONFIG_VERSION = 1;
+
+    /**
+     * The configuration key to read/write the version of the configurations.
+     *
+     * @see #CURRENT_CONFIG_VERSION
+     */
+    private static final String CONFIG_VERSION_KEY = PARAM_BASE_KEY + VERSION_ATTRIBUTE;
+
     private boolean isTradSpiderEnabled;
-    private List<Object> recentUrls = new ArrayList<Object>(0);
+    private List<Object> recentUrls = new ArrayList<>(0);
     private int maxRecentUrls;
     private String launchStartPage;
     private String launchDefaultBrowser = DEFAULT_BROWSER;
 
-    private boolean isAjaxSpiderEnabled;
+    private String ajaxSpiderSelection;
     private String ajaxSpiderDefaultBrowser;
     private String clearedNewsItem;
 
     @Override
-    protected void parse() {
+    protected void parseImpl() {
         try {
             isTradSpiderEnabled = getConfig().getBoolean(PARAM_TRAD_SPIDER_ENABLED, true);
         } catch (Exception e) {
             LOGGER.error("Failed to load the trad spider configuration", e);
         }
         try {
-            recentUrls = getConfig().getList(PARAM_RECENT_URLS, new ArrayList<Object>(0));
+            recentUrls = getConfig().getList(PARAM_RECENT_URLS, new ArrayList<>(0));
         } catch (Exception e) {
             LOGGER.error("Failed to load the recent urls configuration", e);
         }
@@ -96,9 +119,13 @@ public class QuickStartParam extends AbstractParam {
             LOGGER.error("Failed to load the \"Default Browser\" configuration", e);
         }
         try {
-            isAjaxSpiderEnabled = getConfig().getBoolean(PARAM_AJAX_SPIDER_ENABLED, false);
+            ajaxSpiderSelection =
+                    getConfig()
+                            .getString(
+                                    PARAM_AJAX_SPIDER_SELECTION,
+                                    AjaxSpiderExplorer.Select.MODERN.name());
         } catch (Exception e) {
-            LOGGER.error("Failed to load the ajax spider configuration", e);
+            LOGGER.error("Failed to load the ajax spider selection", e);
         }
         try {
             ajaxSpiderDefaultBrowser =
@@ -110,6 +137,29 @@ public class QuickStartParam extends AbstractParam {
             clearedNewsItem = getConfig().getString(PARAM_CLEARED_NEWS_ITEM, "");
         } catch (Exception e) {
             LOGGER.error("Failed to load the cleared news item configuration", e);
+        }
+    }
+
+    @Override
+    @ZapApiIgnore
+    protected String getConfigVersionKey() {
+        return CONFIG_VERSION_KEY;
+    }
+
+    @Override
+    @ZapApiIgnore
+    protected int getCurrentVersion() {
+        return CURRENT_CONFIG_VERSION;
+    }
+
+    @Override
+    protected void updateConfigsImpl(int fileVersion) {
+        switch (fileVersion) {
+            case -1:
+                // Previously unversioned
+                getConfig().clearProperty(PARAM_AJAX_SPIDER_ENABLED);
+                break;
+            default:
         }
     }
 
@@ -165,13 +215,13 @@ public class QuickStartParam extends AbstractParam {
         QuickStartHelper.raiseOptionsChangedEvent();
     }
 
-    public boolean isAjaxSpiderEnabled() {
-        return isAjaxSpiderEnabled;
+    public String getAjaxSpiderSelection() {
+        return ajaxSpiderSelection;
     }
 
-    public void setAjaxSpiderEnabled(boolean isAjaxSpiderEnabled) {
-        this.isAjaxSpiderEnabled = isAjaxSpiderEnabled;
-        getConfig().setProperty(PARAM_AJAX_SPIDER_ENABLED, isAjaxSpiderEnabled);
+    public void setAjaxSpiderSelection(String ajaxSpiderSelection) {
+        this.ajaxSpiderSelection = ajaxSpiderSelection;
+        getConfig().setProperty(PARAM_AJAX_SPIDER_SELECTION, ajaxSpiderSelection);
         QuickStartHelper.raiseOptionsChangedEvent();
     }
 

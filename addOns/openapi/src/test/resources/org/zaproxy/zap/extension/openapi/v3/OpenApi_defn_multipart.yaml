@@ -1,0 +1,80 @@
+openapi: 3.0.0
+paths:
+  /v3/openapi/multipartObject:
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                person:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    age:
+                      type: number
+      responses:
+        "200":
+          description: OK
+  /v3/openapi/multipartBinary:
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: OK
+  /v3/openapi/multipartArray:
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                people:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      age:
+                        type: number
+      responses:
+        "200":
+          description: OK
+  /v3/openapi/multipartOther:
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                organization:
+                  type: string
+      responses:
+        "200":
+          description: OK
+  /v3/openapi/multipartMultiple:
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              properties:
+                additionalMetadata:
+                  type: string
+                  description: Additional data to pass to server
+                file:
+                  type: string
+                  description: file to upload
+                  format: binary
+      responses:
+        "200":
+          description: OK

@@ -82,7 +82,7 @@ public class WebSocketBreakpointMessageHandler extends BreakpointMessageHandler2
     protected boolean isBreakOnStepping(Message aMessage, boolean isRequest) {
         if (aMessage instanceof WebSocketMessageDTO
                 && super.isBreakOnStepping(aMessage, isRequest)) {
-            return isBreakOnOpcode(((WebSocketMessageDTO) aMessage).opcode);
+            return isBreakOnOpcode(((WebSocketMessageDTO) aMessage).getOpcode());
         }
         return false;
     }
@@ -97,7 +97,7 @@ public class WebSocketBreakpointMessageHandler extends BreakpointMessageHandler2
      */
     private boolean isBreakOnAllWebSocket(Message aMessage, boolean isRequest) {
         if (aMessage instanceof WebSocketMessageDTO && config.isBreakOnAll()) {
-            return isBreakOnOpcode(((WebSocketMessageDTO) aMessage).opcode);
+            return isBreakOnOpcode(((WebSocketMessageDTO) aMessage).getOpcode());
         }
         return false;
     }

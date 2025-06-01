@@ -29,8 +29,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.net.ssl.SSLException;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.lang.exception.ExceptionUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
@@ -38,7 +39,6 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
-import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.websocket.WebSocketException;
 import org.zaproxy.zap.extension.websocket.WebSocketObserver;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy;
@@ -50,7 +50,7 @@ import org.zaproxy.zap.network.HttpRequestConfig;
 /** Sends a HandShake upgrade protocol request in order to establish a WebSocket connection. */
 public class ServerConnectionEstablisher {
 
-    private static final Logger LOGGER = Logger.getLogger(ServerConnectionEstablisher.class);
+    private static final Logger LOGGER = LogManager.getLogger(ServerConnectionEstablisher.class);
 
     /** Used to send HttpMessage */
     private HttpSender delegate;
@@ -75,12 +75,9 @@ public class ServerConnectionEstablisher {
         } catch (SSLException sslEx) {
             String sslExString = sslExceptionBuilder(sslEx, handshakeConfig.getHttpMessage());
             LOGGER.warn(sslExString);
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug(sslEx, sslEx);
-            }
+            LOGGER.debug(sslEx, sslEx);
             throw sslEx;
         }
-        cleanup();
         return webSocketProxy;
     }
 
@@ -130,13 +127,17 @@ public class ServerConnectionEstablisher {
                     ioe);
         }
 
-        ZapGetMethod method = (ZapGetMethod) handshakeConfig.getHttpMessage().getUserObject();
+        @SuppressWarnings("deprecation")
+        org.zaproxy.zap.ZapGetMethod method =
+                (org.zaproxy.zap.ZapGetMethod) handshakeConfig.getHttpMessage().getUserObject();
         webSocketProxy = setUpChannel(handshakeConfig, method);
 
         return webSocketProxy;
     }
 
-    private WebSocketProxy setUpChannel(HandshakeConfig handshakeConfig, ZapGetMethod method)
+    @SuppressWarnings("deprecation")
+    private WebSocketProxy setUpChannel(
+            HandshakeConfig handshakeConfig, org.zaproxy.zap.ZapGetMethod method)
             throws IOException {
 
         WebSocketProxy webSocketProxy;
@@ -179,14 +180,7 @@ public class ServerConnectionEstablisher {
             String targetHost = requestHeader.getHostName();
             int targetPort = requestHeader.getHostPort();
 
-            if (LOGGER.isDebugEnabled()) {
-                StringBuilder logMessage =
-                        new StringBuilder(200)
-                                .append("Got WebSockets channel from ")
-                                .append(" to ");
-                logMessage.append(targetHost).append(':').append(targetPort);
-                LOGGER.debug(logMessage.toString());
-            }
+            LOGGER.debug("Got WebSockets channel to {}:{}", targetHost, targetPort);
 
             // parse HTTP handshake
             Map<String, String> wsExtensions =
@@ -224,22 +218,12 @@ public class ServerConnectionEstablisher {
         return webSocketProxy;
     }
 
-    private void cleanup() {
-        if (delegate != null) {
-            delegate.shutdown();
-            delegate = null;
-        }
-    }
-
     // TODO State depends on the global state. That should be fixed if we want to refer also at the
     // specifically state
     private HttpSender getDelegate(HandshakeConfig handshakeConfig) {
         if (delegate == null) {
-            delegate =
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            handshakeConfig.isUseSessionState(),
-                            HttpSender.MANUAL_REQUEST_INITIATOR);
+            delegate = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
+            delegate.setUseGlobalState(handshakeConfig.isUseSessionState());
         }
         return delegate;
     }

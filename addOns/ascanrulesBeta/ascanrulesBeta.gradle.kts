@@ -1,45 +1,56 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "28"
-description = "The beta quality Active Scanner rules"
+description = "The beta status Active Scanner rules"
 
 zapAddOn {
     addOnName.set("Active scanner rules (beta)")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.8.0")
 
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/active-scan-rules-beta/")
-        extensions {
-            register("org.zaproxy.zap.extension.ascanrulesBeta.payloader.ExtensionPayloader") {
-                classnames {
-                    allowed.set(listOf("org.zaproxy.zap.extension.ascanrulesBeta.payloader"))
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.32.0 & < 2.0.0")
                 }
-                dependencies {
-                    addOns {
-                        register("custompayloads") {
-                            version.set("0.9.*")
-                        }
-                    }
+                register("network") {
+                    version.set(">= 0.3.0")
+                }
+                register("oast") {
+                    version.set(">= 0.7.0")
+                }
+                register("database") {
+                    version.set(">= 0.1.0")
                 }
             }
         }
     }
 }
 
+tasks.named("compileJava") {
+    mustRunAfter(parent!!.childProjects.get("oast")!!.tasks.named("enhance"))
+}
+
 dependencies {
-    compileOnly(parent!!.childProjects.get("custompayloads")!!)
+    zapAddOn("commonlib")
+    zapAddOn("database")
+    zapAddOn("network")
+    zapAddOn("oast")
 
-    implementation("com.googlecode.java-diff-utils:diffutils:1.2.1")
-    implementation("org.jsoup:jsoup:1.7.2")
-    implementation(project(":sharedutils"))
+    implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
+    implementation("org.jsoup:jsoup:1.17.2")
 
-    testImplementation(parent!!.childProjects.get("custompayloads")!!)
+    testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(project(":testutils"))
-    testImplementation("org.apache.commons:commons-lang3:3.5")
 }
 
 spotless {
-    javaWith3rdPartyFormatted(project, listOf("**/IntegerOverflow.java"))
+    javaWith3rdPartyFormatted(
+        project,
+        listOf(
+            "src/**/IntegerOverflowScanRule.java",
+        ),
+    )
 }

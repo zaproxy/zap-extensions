@@ -20,16 +20,16 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestScript;
-import org.mozilla.zest.core.v1.ZestStatement;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zest.core.v1.ZestContainer;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestScript;
+import org.zaproxy.zest.core.v1.ZestStatement;
 
-/** ZAP: New Popup Menu Alert Delete */
+@SuppressWarnings("serial")
 public abstract class ZestAddClientPopupMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
@@ -48,7 +48,9 @@ public abstract class ZestAddClientPopupMenu extends ExtensionPopupMenuItem {
         initialize(label);
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public ZestAddClientPopupMenu(String label) {
         super(label);
     }
@@ -68,14 +70,7 @@ public abstract class ZestAddClientPopupMenu extends ExtensionPopupMenuItem {
     private void initialize(String label) {
         this.setText(Constant.messages.getString(label));
 
-        this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        showDialog(parent, child, req);
-                    }
-                });
+        this.addActionListener(e -> showDialog(parent, child, req));
     }
 
     public abstract void showDialog(ScriptNode parent, ScriptNode child, ZestStatement request);
@@ -95,7 +90,7 @@ public abstract class ZestAddClientPopupMenu extends ExtensionPopupMenuItem {
                     // Launching a Window isnt passive, and it will just go down hill from there ;)
                     return false;
                 }
-                if (this.requiresHandle && script.getClientWindowHandles().size() == 0) {
+                if (this.requiresHandle && script.getClientWindowHandles().isEmpty()) {
                     // This type of popup requires a window handle, and there arent any in this
                     // script
                     this.setEnabled(false);

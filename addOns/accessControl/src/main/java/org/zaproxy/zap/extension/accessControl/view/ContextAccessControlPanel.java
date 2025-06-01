@@ -36,8 +36,6 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +46,8 @@ import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTreeTable;
 import org.jdesktop.swingx.treetable.DefaultTreeTableModel;
 import org.parosproxy.paros.Constant;
@@ -62,14 +61,17 @@ import org.zaproxy.zap.extension.accessControl.widgets.SiteTreeNode;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.zap.utils.ZapLabel;
 import org.zaproxy.zap.view.AbstractContextPropertiesPanel;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.widgets.ContextPanelUsersSelectComboBox;
 
 /** The context configuration panel used for specifying the Access Control rules. */
+@SuppressWarnings("serial")
 public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
-    private static final Logger log = Logger.getLogger(ContextAccessControlPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(ContextAccessControlPanel.class);
     private static final long serialVersionUID = -7569788230643264454L;
 
     private static final String PANEL_NAME =
@@ -98,13 +100,11 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     /** Initialize the panel. */
     private void initializeView() {
-        this.setName(getContextIndex() + ": " + PANEL_NAME);
+        this.setName(getContextId() + ": " + PANEL_NAME);
         this.setLayout(new GridBagLayout());
 
         this.add(
-                new JLabel(
-                        Constant.messages.getHtmlWrappedString(
-                                "accessControl.contextPanel.label.description")),
+                createLabel("accessControl.contextPanel.label.description"),
                 LayoutHelper.getGBC(0, 0, 2, 1.0D, new Insets(0, 0, 10, 0)));
 
         // The user selection box
@@ -120,11 +120,16 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
                         0, 2, 2, 1.0D, 1.0D, GridBagConstraints.BOTH, new Insets(10, 0, 0, 5)));
 
         // The warning regarding changing structure parameters
-        this.add(
-                new JLabel(
-                        Constant.messages.getHtmlWrappedString(
-                                "accessControl.contextPanel.label.warning")),
-                LayoutHelper.getGBC(0, 3, 2, 1.0D));
+        ZapLabel label = createLabel("accessControl.contextPanel.label.warning");
+        label.setFont(FontUtils.getFont(FontUtils.Size.smaller));
+        this.add(label, LayoutHelper.getGBC(0, 3, 2, 1.0D));
+    }
+
+    private static ZapLabel createLabel(String key) {
+        ZapLabel label = new ZapLabel(Constant.messages.getString(key));
+        label.setLineWrap(true);
+        label.setWrapStyleWord(true);
+        return label;
     }
 
     private JScrollPane getContextSiteTreePane() {
@@ -152,7 +157,7 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
     }
 
     private ContextUserAccessRulesModel getUserAccessRulesModel(int userId) {
-        log.debug("Getting user model for: " + userId);
+        LOGGER.debug("Getting user model for: {}", userId);
         ContextUserAccessRulesModel model = userModels.get(userId);
         if (model == null) {
             model = new ContextUserAccessRulesModel(userId, internalRulesManager);
@@ -163,34 +168,30 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     private ContextPanelUsersSelectComboBox getUsersComboBox() {
         if (usersComboBox == null) {
-            usersComboBox = new ContextPanelUsersSelectComboBox(getContextIndex());
+            usersComboBox = new ContextPanelUsersSelectComboBox(getContextId());
 
             // We need to add a 'custom' user for allowing setting access rules for unauthenticated
             // visitors. The custom user will have the id '-1' which is an id that should not be
             // generated for normal users.
             User unauthenticatedUser =
-                    new User(getContextIndex(), UNAUTHENTICATED_USER_NAME, UNAUTHENTICATED_USER_ID);
+                    new User(getContextId(), UNAUTHENTICATED_USER_NAME, UNAUTHENTICATED_USER_ID);
             unauthenticatedUser.setEnabled(true);
             usersComboBox.setCustomUsers(new User[] {unauthenticatedUser});
 
             usersComboBox.addActionListener(
-                    new ActionListener() {
-
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            User selectedUser = usersComboBox.getSelectedUser();
-                            if (selectedUser != null) {
-                                selectedUserId = selectedUser.getId();
-                                tree.setVisible(true);
-                                if (internalRulesManager != null) {
-                                    tree.setTreeTableModel(getUserAccessRulesModel(selectedUserId));
-                                }
-                                tree.expandAll();
-                            } else {
-                                tree.setVisible(false);
-                                tree.setTreeTableModel(new DefaultTreeTableModel());
-                                tree.expandAll();
+                    e -> {
+                        User selectedUser = usersComboBox.getSelectedUser();
+                        if (selectedUser != null) {
+                            selectedUserId = selectedUser.getId();
+                            tree.setVisible(true);
+                            if (internalRulesManager != null) {
+                                tree.setTreeTableModel(getUserAccessRulesModel(selectedUserId));
                             }
+                            tree.expandAll();
+                        } else {
+                            tree.setVisible(false);
+                            tree.setTreeTableModel(new DefaultTreeTableModel());
+                            tree.expandAll();
                         }
                     });
         }
@@ -204,7 +205,7 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     @Override
     public void initContextData(Session session, Context uiSharedContext) {
-        log.debug("Initing panel for context: " + uiSharedContext.getIndex());
+        LOGGER.debug("Initing panel for context: {}", uiSharedContext.getId());
 
         // Clone the Access Rules Manager so we can support canceling any changes. If the internal
         // manager already existed, just copy the rules, otherwise create a cloned one.
@@ -212,20 +213,20 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
         // NOTE: We are setting the internal context in the ContextAccessRulesManager as the 'real'
         // Context instead of the UI one, as the ContextSiteTree is, currently, reloaded only in
         // here and with the field separators that have been already defined. If any changes are
-        // done to the the field separators in the currently open SessionProperties Dialog, they
+        // done to the field separators in the currently open SessionProperties Dialog, they
         // will not be visible in the tree. Thus, in order to keep consistency, we stick to also
         // using the 'real' Context in the internal Rules Manager so any rules are inferred
         // according to the 'old' field separators.
         // TODO: Eventually we should find a better solution for the above issue
         ContextAccessRulesManager originalManager =
-                extension.getContextAccessRulesManager(uiSharedContext.getIndex());
+                extension.getContextAccessRulesManager(uiSharedContext.getId());
         if (internalRulesManager == null) {
-            Context context = Model.getSingleton().getSession().getContext(getContextIndex());
+            Context context = Model.getSingleton().getSession().getContext(getContextId());
             this.internalRulesManager = new ContextAccessRulesManager(context, originalManager);
         } else {
             internalRulesManager.copyRulesFrom(
                     originalManager,
-                    getUsersManagementExtension().getUIConfiguredUsers(getContextIndex()));
+                    getUsersManagementExtension().getUIConfiguredUsers(getContextId()));
         }
 
         // Re-generate the context tree so we are up-to-date
@@ -255,9 +256,9 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     @Override
     public void saveContextData(Session session) {
-        List<User> users = getUsersManagementExtension().getUIConfiguredUsers(getContextIndex());
+        List<User> users = getUsersManagementExtension().getUIConfiguredUsers(getContextId());
         extension
-                .getContextAccessRulesManager(getContextIndex())
+                .getContextAccessRulesManager(getContextId())
                 .copyRulesFrom(internalRulesManager, users);
     }
 
@@ -287,10 +288,8 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     private static final Color COLOR_DENIED = Color.RED;
     private static final Color COLOR_ALLOWED = new Color(31, 131, 31);
-    private static final Color COLOR_UNKNOWN = new Color(76, 76, 76);
     private static final Color COLOR_DENIED_FOCUS = new Color(255, 195, 195);
     private static final Color COLOR_ALLOWED_FOCUS = new Color(195, 255, 195);
-    private static final Color COLOR_UNKNOWN_FOCUS = new Color(220, 220, 220);
 
     /**
      * A custom cell renderer used for the tree of access rules that sets custom colors and icons
@@ -360,13 +359,6 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
                             }
                             break;
                         default:
-                            // Text color
-                            if (selected) {
-                                this.setForeground(COLOR_UNKNOWN_FOCUS);
-                            } else {
-                                this.setForeground(COLOR_UNKNOWN);
-                            }
-
                             // Icon
                             if (isLeaf) {
                                 setIcon(LEAF_ICON);

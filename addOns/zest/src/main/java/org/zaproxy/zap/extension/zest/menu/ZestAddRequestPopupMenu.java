@@ -20,16 +20,16 @@
 package org.zaproxy.zap.extension.zest.menu;
 
 import java.awt.Component;
-import org.mozilla.zest.core.v1.ZestContainer;
-import org.mozilla.zest.core.v1.ZestElement;
-import org.mozilla.zest.core.v1.ZestRequest;
-import org.mozilla.zest.core.v1.ZestScript;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
+import org.zaproxy.zest.core.v1.ZestContainer;
+import org.zaproxy.zest.core.v1.ZestElement;
+import org.zaproxy.zest.core.v1.ZestRequest;
+import org.zaproxy.zest.core.v1.ZestScript;
 
-/** ZAP: New Popup Menu Alert Delete */
+@SuppressWarnings("serial")
 public class ZestAddRequestPopupMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
@@ -49,13 +49,7 @@ public class ZestAddRequestPopupMenu extends ExtensionPopupMenuItem {
         this.setText(Constant.messages.getString("zest.request.popup"));
 
         this.addActionListener(
-                new java.awt.event.ActionListener() {
-
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent e) {
-                        extension.getDialogManager().showZestEditRequestDialog(parent, null);
-                    }
-                });
+                e -> extension.getDialogManager().showZestEditRequestDialog(parent, null));
     }
 
     @Override

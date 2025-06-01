@@ -19,17 +19,23 @@
  */
 package org.zaproxy.zap.extension.replacer;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.*;
-import org.apache.log4j.Logger;
+import java.util.stream.Collectors;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -46,6 +52,13 @@ import org.zaproxy.zap.view.ZapMenuItem;
  */
 public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderListener {
 
+    private static final Pattern TOKEN_PATTERN =
+            Pattern.compile("(?<=\\{\\{)[A-Z]+[\\|0-9]*(?=\\}\\})");
+    private static final Pattern INTEGER_PATTERN = Pattern.compile("^\\d+$");
+    private static final String RINT_TOKEN = "RINT";
+    private static final String UUID_TOKEN = "UUID";
+    private static final String TICKS_TOKEN = "TICKS";
+
     public static final String NAME = "ExtensionReplacer";
 
     // The i18n prefix
@@ -54,7 +67,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
     private OptionsReplacerPanel optionsReplacerPanel;
     private ReplacerParam params;
     private ZapMenuItem replacerMenuItem;
-    private static final Logger LOGGER = Logger.getLogger(ExtensionReplacer.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionReplacer.class);
 
     public ExtensionReplacer() {
         super(NAME);
@@ -68,7 +81,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
         extensionHook.addOptionsParamSet(getParams());
         HttpSender.addListener(this);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOptionsReplacerPanel());
             extensionHook.getHookMenu().addToolsMenuItem(getReplacerMenuItem());
         }
@@ -92,7 +105,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
         return optionsReplacerPanel;
     }
 
-    protected ReplacerParam getParams() {
+    public ReplacerParam getParams() {
         if (params == null) {
             params = new ReplacerParam();
         }
@@ -100,8 +113,8 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
+    public String getUIName() {
+        return Constant.messages.getString(PREFIX + ".name");
     }
 
     @Override
@@ -110,41 +123,22 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
     }
 
     @Override
-    public URL getURL() {
-        try {
-            return new URL(Constant.ZAP_EXTENSIONS_PAGE);
-        } catch (MalformedURLException e) {
-            return null;
-        }
-    }
-
-    @Override
     public int getListenerOrder() {
         return 0;
     }
 
-    @SuppressWarnings("deprecation")
     private ZapMenuItem getReplacerMenuItem() {
         if (replacerMenuItem == null) {
             replacerMenuItem =
                     new ZapMenuItem(
                             PREFIX + ".topmenu.tools.shortcut",
-                            // TODO Remove warn suppression and use View.getMenuShortcutKeyStroke
-                            // with newer ZAP (or use getMenuShortcutKeyMaskEx() with Java 10+)
-                            KeyStroke.getKeyStroke(
-                                    KeyEvent.VK_R,
-                                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),
-                                    false));
+                            getView().getMenuShortcutKeyStroke(KeyEvent.VK_R, 0, false));
 
             replacerMenuItem.addActionListener(
-                    new java.awt.event.ActionListener() {
-                        @Override
-                        public void actionPerformed(java.awt.event.ActionEvent ae) {
+                    e ->
                             Control.getSingleton()
                                     .getMenuToolsControl()
-                                    .options(OptionsReplacerPanel.PANEL_NAME);
-                        }
-                    });
+                                    .options(OptionsReplacerPanel.PANEL_NAME));
         }
         return replacerMenuItem;
     }
@@ -157,17 +151,88 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
         return original.contains(match);
     }
 
-    private static String replace(String original, String match, Pattern p, String replacement) {
+    private static String replace(
+            String original, String match, Pattern p, String replacement, boolean tokenProcessing) {
+        LOGGER.debug("Static Replacement function.");
+
+        if (tokenProcessing) {
+            List<String> tokens = parseReplacementTokens(replacement);
+
+            if (!tokens.isEmpty()) {
+                LOGGER.debug("Token replacement(s) detected.");
+
+                for (String token : tokens) {
+                    String toReplace = "\\{\\{" + token.replace("|", "\\|") + "\\}\\}";
+
+                    LOGGER.debug("Token replacement: {}", token);
+
+                    if (token.startsWith(RINT_TOKEN)) {
+                        int minVal = 0;
+                        int maxVal = Integer.MAX_VALUE;
+
+                        String[] repl = token.split("\\|");
+
+                        if (repl.length == 2) {
+                            maxVal = parseInt(repl[1], maxVal);
+                        } else if (repl.length == 3) {
+                            minVal = parseInt(repl[1], minVal);
+                            maxVal = parseInt(repl[2], maxVal);
+                        }
+
+                        Random rand = new Random();
+                        String newValue = String.valueOf(rand.nextInt(maxVal - minVal) + minVal);
+                        LOGGER.debug("replacement = replace({},{})", toReplace, newValue);
+                        replacement = replacement.replaceFirst(toReplace, newValue);
+                    } else if (token.equals(TICKS_TOKEN)) {
+                        String ticks = String.valueOf(System.currentTimeMillis());
+                        LOGGER.debug("replacement = replace({},{})", toReplace, ticks);
+                        replacement = replacement.replaceFirst(toReplace, ticks);
+                    } else if (token.equals(UUID_TOKEN)) {
+                        String uuid = UUID.randomUUID().toString();
+                        LOGGER.debug("replacement = replace({}, {})", toReplace, uuid);
+                        replacement = replacement.replaceFirst(toReplace, uuid);
+                    }
+                }
+            }
+            LOGGER.debug("Pattern is null? {}", (p == null));
+            LOGGER.debug("Final replacement: {} => {}", match, replacement);
+        }
+
         if (p != null) {
             return p.matcher(original).replaceAll(replacement);
         }
         return original.replace(match, replacement);
     }
 
+    private static int parseInt(String value, int defaultValue) {
+        if (INTEGER_PATTERN.matcher(value).matches()) {
+            return Integer.valueOf(value);
+        }
+        return defaultValue;
+    }
+
+    static List<String> parseReplacementTokens(String data) {
+        List<String> replacementTokens = new ArrayList<>();
+        Matcher m = TOKEN_PATTERN.matcher(data);
+
+        while (m.find()) {
+            String key = m.group();
+            if (key.equals(TICKS_TOKEN) || key.equals(UUID_TOKEN) || key.startsWith(RINT_TOKEN)) {
+                replacementTokens.add(key);
+            }
+        }
+
+        return replacementTokens;
+    }
+
     @Override
+    @SuppressWarnings("unchecked")
     public void onHttpRequestSend(HttpMessage msg, int initiator, HttpSender httpSender) {
+        boolean hostHeaderChanged = false;
         for (ReplacerParamRule rule : this.getParams().getRules()) {
-            if (rule.isEnabled() && rule.appliesToInitiator(initiator)) {
+            if (rule.isEnabled()
+                    && rule.appliesToInitiator(initiator)
+                    && rule.matchesUrl(msg.getRequestHeader().getURI().toString())) {
                 Pattern p = null;
                 if (rule.isMatchRegex()) {
                     p = Pattern.compile(rule.getMatchString());
@@ -175,10 +240,11 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                 switch (rule.getMatchType()) {
                     case REQ_HEADER:
                         LOGGER.debug(
-                                "Add in request header: "
-                                        + rule.getMatchString()
-                                        + " : "
-                                        + rule.getReplacement());
+                                "Add in request header: {} : {}",
+                                rule.getMatchString(),
+                                rule.getReplacement());
+                        hostHeaderChanged |=
+                                HttpRequestHeader.HOST.equalsIgnoreCase(rule.getMatchString());
                         if (rule.getReplacement().length() == 0) {
                             // Remove the header
                             msg.getRequestHeader().setHeader(rule.getMatchString(), null);
@@ -189,10 +255,9 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                         break;
                     case REQ_HEADER_STR:
                         LOGGER.debug(
-                                "Replace in request header: "
-                                        + rule.getMatchString()
-                                        + " with "
-                                        + rule.getReplacement());
+                                "Replace in request header: {} with {}",
+                                rule.getMatchString(),
+                                rule.getReplacement());
                         String header = msg.getRequestHeader().toString();
                         if (contains(header, rule.getMatchString(), p)) {
                             header =
@@ -200,9 +265,12 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                             header,
                                             rule.getMatchString(),
                                             p,
-                                            rule.getEscapedReplacement());
+                                            rule.getEscapedReplacement(),
+                                            rule.isTokenProcessingEnabled());
                             try {
+                                List<HttpHeaderField> oldHostHeaders = getHostHeaders(msg);
                                 msg.setRequestHeader(new HttpRequestHeader(header));
+                                hostHeaderChanged |= !oldHostHeaders.equals(getHostHeaders(msg));
                             } catch (HttpMalformedHeaderException e) {
                                 LOGGER.error(e.getMessage(), e);
                             }
@@ -210,10 +278,9 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                         break;
                     case REQ_BODY_STR:
                         LOGGER.debug(
-                                "Add in request body: "
-                                        + rule.getMatchString()
-                                        + " : "
-                                        + rule.getReplacement());
+                                "Add in request body: {} : {}",
+                                rule.getMatchString(),
+                                rule.getReplacement());
                         String body = msg.getRequestBody().toString();
                         if (contains(body, rule.getMatchString(), p)) {
                             body =
@@ -221,7 +288,8 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                             body,
                                             rule.getMatchString(),
                                             p,
-                                            rule.getEscapedReplacement());
+                                            rule.getEscapedReplacement(),
+                                            rule.isTokenProcessingEnabled());
                             msg.getRequestBody().setBody(body);
                             msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
                         }
@@ -230,17 +298,37 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                     case RESP_HEADER_STR:
                     case RESP_BODY_STR:
                         // Ignore response rules here
-                        LOGGER.debug("Ignore response rule " + rule.getDescription());
+                        LOGGER.debug("Ignore response rule {}", rule.getDescription());
                         break;
                 }
             }
         }
+
+        if (hostHeaderChanged) {
+            Map<String, Object> properties;
+            if (msg.getUserObject() instanceof Map<?, ?>) {
+                properties = (Map<String, Object>) msg.getUserObject();
+            } else {
+                properties = new HashMap<>();
+                msg.setUserObject(properties);
+            }
+
+            properties.put("host.normalization", Boolean.FALSE);
+        }
+    }
+
+    private static List<HttpHeaderField> getHostHeaders(HttpMessage msg) {
+        return msg.getRequestHeader().getHeaders().stream()
+                .filter(e -> HttpRequestHeader.HOST.equalsIgnoreCase(e.getName()))
+                .collect(Collectors.toList());
     }
 
     @Override
     public void onHttpResponseReceive(HttpMessage msg, int initiator, HttpSender httpSender) {
         for (ReplacerParamRule rule : this.getParams().getRules()) {
-            if (rule.isEnabled() && rule.appliesToInitiator(initiator)) {
+            if (rule.isEnabled()
+                    && rule.appliesToInitiator(initiator)
+                    && rule.matchesUrl(msg.getRequestHeader().getURI().toString())) {
                 Pattern p = null;
                 if (rule.isMatchRegex()) {
                     p = Pattern.compile(rule.getMatchString());
@@ -250,14 +338,13 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                     case REQ_HEADER_STR:
                     case REQ_BODY_STR:
                         // Ignore request rules here
-                        LOGGER.debug("Ignore request rule " + rule.getDescription());
+                        LOGGER.debug("Ignore request rule {}", rule.getDescription());
                         break;
                     case RESP_HEADER:
                         LOGGER.debug(
-                                "Add in response header: "
-                                        + rule.getMatchString()
-                                        + " : "
-                                        + rule.getReplacement());
+                                "Add in response header: {} : {}",
+                                rule.getMatchString(),
+                                rule.getReplacement());
                         if (rule.getReplacement().length() == 0) {
                             // Remove the header
                             msg.getResponseHeader().setHeader(rule.getMatchString(), null);
@@ -268,10 +355,9 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                         break;
                     case RESP_HEADER_STR:
                         LOGGER.debug(
-                                "Replace in response header: "
-                                        + rule.getMatchString()
-                                        + " with "
-                                        + rule.getReplacement());
+                                "Replace in response header: {} with {}",
+                                rule.getMatchString(),
+                                rule.getReplacement());
                         String header = msg.getResponseHeader().toString();
                         if (contains(header, rule.getMatchString(), p)) {
                             header =
@@ -279,7 +365,8 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                             header,
                                             rule.getMatchString(),
                                             p,
-                                            rule.getEscapedReplacement());
+                                            rule.getEscapedReplacement(),
+                                            rule.isTokenProcessingEnabled());
                             try {
                                 msg.setResponseHeader(new HttpResponseHeader(header));
                             } catch (HttpMalformedHeaderException e) {
@@ -289,10 +376,9 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                         break;
                     case RESP_BODY_STR:
                         LOGGER.debug(
-                                "Replace in response body: "
-                                        + rule.getMatchString()
-                                        + " with "
-                                        + rule.getReplacement());
+                                "Replace in response body: {} with {}",
+                                rule.getMatchString(),
+                                rule.getReplacement());
                         String body = msg.getResponseBody().toString();
                         if (contains(body, rule.getMatchString(), p)) {
                             body =
@@ -300,7 +386,8 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                             body,
                                             rule.getMatchString(),
                                             p,
-                                            rule.getEscapedReplacement());
+                                            rule.getEscapedReplacement(),
+                                            rule.isTokenProcessingEnabled());
                             msg.getResponseBody().setBody(body);
                             msg.getResponseHeader()
                                     .setContentLength(msg.getResponseBody().length());

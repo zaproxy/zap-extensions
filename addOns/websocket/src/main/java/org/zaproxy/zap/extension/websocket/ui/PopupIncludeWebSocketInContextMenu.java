@@ -23,7 +23,8 @@ import java.awt.Component;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 import javax.swing.JTable;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.Model;
@@ -34,11 +35,13 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.ContextIncludePanel;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 
+@SuppressWarnings("serial")
 public class PopupIncludeWebSocketInContextMenu extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = -2345060529128495874L;
 
-    private static final Logger logger = Logger.getLogger(PopupIncludeWebSocketInContextMenu.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(PopupIncludeWebSocketInContextMenu.class);
 
     private WebSocketPopupHelper wsPopupHelper;
     private Context context;
@@ -53,7 +56,6 @@ public class PopupIncludeWebSocketInContextMenu extends ExtensionPopupMenuItem {
     public PopupIncludeWebSocketInContextMenu() {
         super(Constant.messages.getString("context.new.title"));
         this.context = null;
-        this.setPrecedeWithSeparator(true);
 
         initialize();
     }
@@ -75,14 +77,11 @@ public class PopupIncludeWebSocketInContextMenu extends ExtensionPopupMenuItem {
 
     private void initialize() {
         addActionListener(
-                new java.awt.event.ActionListener() {
-                    @Override
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        try {
-                            performAction();
-                        } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
-                        }
+                evt -> {
+                    try {
+                        performAction();
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
                     }
                 });
     }
@@ -90,21 +89,21 @@ public class PopupIncludeWebSocketInContextMenu extends ExtensionPopupMenuItem {
     protected void performAction() throws SQLException {
         WebSocketMessageDTO message = wsPopupHelper.getSelectedMessage();
         if (message != null) {
-            String url = Pattern.quote(message.channel.getContextUrl());
+            String url = Pattern.quote(message.getChannel().getContextUrl());
 
             Session session = Model.getSingleton().getSession();
             if (context == null) {
-                context = session.getNewContext(message.channel.host);
+                context = session.getNewContext(message.getChannel().getHost());
             }
             View.getSingleton().getSessionDialog().recreateUISharedContexts(session);
 
             Context uiSharedContext =
-                    View.getSingleton().getSessionDialog().getUISharedContext(context.getIndex());
+                    View.getSingleton().getSessionDialog().getUISharedContext(context.getId());
             uiSharedContext.addIncludeInContextRegex(url);
 
             View.getSingleton()
                     .showSessionDialog(
-                            session, ContextIncludePanel.getPanelName(context.getIndex()), false);
+                            session, ContextIncludePanel.getPanelName(context.getId()), false);
         }
     }
 
@@ -116,7 +115,7 @@ public class PopupIncludeWebSocketInContextMenu extends ExtensionPopupMenuItem {
             WebSocketMessageDTO message = wsPopupHelper.getSelectedMessage();
 
             if (message != null) {
-                setEnabled(isEnabledForUrl(message.channel.getContextUrl()));
+                setEnabled(isEnabledForUrl(message.getChannel().getContextUrl()));
             } else {
                 setEnabled(false);
             }

@@ -37,7 +37,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.websocket.client.HandshakeConfig;
@@ -60,7 +61,7 @@ import org.zaproxy.zap.utils.Stats;
  */
 public abstract class WebSocketProxy {
 
-    private static final Logger logger = Logger.getLogger(WebSocketProxy.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketProxy.class);
 
     public static final String WEBSOCKET_OPEN_STATS = "stats.websockets.open";
     public static final String WEBSOCKET_CLOSE_STATS = "stats.websockets.close";
@@ -75,7 +76,7 @@ public abstract class WebSocketProxy {
         CLOSING,
         CLOSED, // ready state
         EXCLUDED,
-        INCLUDED; // no WebSocket state, used for new black- or whitelisted channels
+        INCLUDED; // no WebSocket state, used for new allow/deny listed channels
     }
 
     /** WebSocket frame initiator - to be kept in step with the ZAP HttpSender class. */
@@ -281,7 +282,7 @@ public abstract class WebSocketProxy {
             String subprotocol,
             Map<String, String> extensions)
             throws WebSocketException {
-        logger.debug("Create WebSockets proxy for version '" + version + "'.");
+        LOGGER.debug("Create WebSockets proxy for version '{}'.", version);
         WebSocketProxy wsProxy = null;
 
         // TODO: provide a registry for WebSocketProxy versions
@@ -426,9 +427,7 @@ public abstract class WebSocketProxy {
             throw new WebSocketException(e);
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Start listeners for channel '" + toString() + "'.");
-        }
+        LOGGER.debug("Start listeners for channel '{}'.", this);
 
         try {
             if (!isServerMode()) {
@@ -532,14 +531,14 @@ public abstract class WebSocketProxy {
         // will be called again by him, which ensures a closedCount of 2
         // and subsequent closing sockets
         if (closedCount == 2) {
-            logger.debug("close WebSockets");
+            LOGGER.debug("close WebSockets");
 
             try {
                 if (localSocket != null) {
                     localSocket.close();
                 }
             } catch (IOException e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
 
             try {
@@ -547,7 +546,7 @@ public abstract class WebSocketProxy {
                     remoteSocket.close();
                 }
             } catch (IOException e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
 
             setState(State.CLOSED);
@@ -555,7 +554,9 @@ public abstract class WebSocketProxy {
         }
     }
 
-    /** @return True if proxy's state is {@link State#OPEN}. */
+    /**
+     * @return True if proxy's state is {@link State#OPEN}.
+     */
     public boolean isConnected() {
         if (state != null && state.equals(State.OPEN)) {
             return true;
@@ -578,7 +579,7 @@ public abstract class WebSocketProxy {
         int opcode = (frameHeader & 0x0F); // last 4 bits represent opcode
         String readableOpcode = WebSocketMessage.opcode2string(opcode);
 
-        logger.debug("Process WebSocket frame: " + opcode + " (" + readableOpcode + ")");
+        LOGGER.debug("Process WebSocket frame: {} ({})", opcode, readableOpcode);
 
         if (WebSocketMessage.isControl(opcode)) {
             // control messages may interrupt non-control messages
@@ -637,13 +638,13 @@ public abstract class WebSocketProxy {
      */
     private void handleInvalidContinuation(InputStream in, OutputStream out, byte frameHeader)
             throws IOException {
-        logger.warn(
+        LOGGER.warn(
                 "Got continuation frame, but there is no message to continue - forward frame in any case!");
 
         WebSocketMessage message = createWebSocketMessage(in, frameHeader);
         if (!isForwardOnly) {
             if (!notifyMessageObservers(message)) {
-                logger.warn(
+                LOGGER.warn(
                         "Ignore observer's wish to skip forwarding as we have received an invalid frame!");
             }
         }
@@ -709,13 +710,13 @@ public abstract class WebSocketProxy {
         if (isForwardOnly && !shouldBeForwardOnly) {
             // formerly channel was ignored - maybe the whole time
             // be sure that observers got to know this channel
-            logger.info(toString() + " is re-included in storage & UI!");
+            LOGGER.info("{} is re-included in storage & UI!", this);
 
             isForwardOnly = false;
             notifyStateObservers(State.INCLUDED);
         } else if (!isForwardOnly && shouldBeForwardOnly) {
             // current channel is not tracked in future
-            logger.info(toString() + " is excluded from storage & UI!");
+            LOGGER.info("{} is excluded from storage & UI!", this);
 
             isForwardOnly = true;
             notifyStateObservers(State.EXCLUDED);
@@ -731,16 +732,16 @@ public abstract class WebSocketProxy {
      */
     private void sendPongResponse(WebSocketMessage webSocketMessage) {
         WebSocketMessageDTO webSocketMessageDTO = webSocketMessage.getDTO();
-        webSocketMessageDTO.readableOpcode =
-                WebSocketMessage.opcode2string(WebSocketMessage.OPCODE_PONG);
-        webSocketMessageDTO.opcode = WebSocketMessage.OPCODE_PONG;
-        webSocketMessageDTO.isOutgoing = !webSocketMessageDTO.isOutgoing;
-        webSocketMessageDTO.hasChanged = true;
+        webSocketMessageDTO.setReadableOpcode(
+                WebSocketMessage.opcode2string(WebSocketMessage.OPCODE_PONG));
+        webSocketMessageDTO.setOpcode(WebSocketMessage.OPCODE_PONG);
+        webSocketMessageDTO.setOutgoing(!webSocketMessageDTO.isOutgoing());
+        webSocketMessageDTO.setHasChanged(true);
 
         try {
             sendAndNotify(webSocketMessageDTO, Initiator.MANUAL_REQUEST);
         } catch (IOException e) {
-            logger.warn("Failed to send Pong response:", e);
+            LOGGER.warn("Failed to send Pong response:", e);
         }
     }
 
@@ -770,7 +771,7 @@ public abstract class WebSocketProxy {
                     return false;
                 }
             } catch (Exception e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
         return true;
@@ -778,7 +779,7 @@ public abstract class WebSocketProxy {
 
     /**
      * Helper to inform about new {@link WebSocketProxy#state}. Also called when a former {@link
-     * WebSocketProxy#isForwardOnly} channel is no longer blacklisted {@link State#INCLUDED} or
+     * WebSocketProxy#isForwardOnly} channel is no longer deny listed {@link State#INCLUDED} or
      * vice-versa {@link State#EXCLUDED}.
      */
     protected void notifyStateObservers(State state) {
@@ -822,21 +823,17 @@ public abstract class WebSocketProxy {
     private static synchronized void createObserversComparator() {
         if (observersComparator == null) {
             observersComparator =
-                    new Comparator<WebSocketObserver>() {
+                    (o1, o2) -> {
+                        int order1 = o1.getObservingOrder();
+                        int order2 = o2.getObservingOrder();
 
-                        @Override
-                        public int compare(WebSocketObserver o1, WebSocketObserver o2) {
-                            int order1 = o1.getObservingOrder();
-                            int order2 = o2.getObservingOrder();
-
-                            if (order1 < order2) {
-                                return -1;
-                            } else if (order1 > order2) {
-                                return 1;
-                            }
-
-                            return 0;
+                        if (order1 < order2) {
+                            return -1;
+                        } else if (order1 > order2) {
+                            return 1;
                         }
+
+                        return 0;
                     };
         }
     }
@@ -854,7 +851,7 @@ public abstract class WebSocketProxy {
             try {
                 senderListener.onMessageFrame(channelId, message, initiator);
             } catch (Exception e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
     }
@@ -892,12 +889,7 @@ public abstract class WebSocketProxy {
     private static synchronized Comparator<WebSocketSenderListener> getSenderListenersComparator() {
         if (null == senderListenersComparator) {
             senderListenersComparator =
-                    new Comparator<WebSocketSenderListener>() {
-                        @Override
-                        public int compare(WebSocketSenderListener o1, WebSocketSenderListener o2) {
-                            return Integer.compare(o1.getListenerOrder(), o2.getListenerOrder());
-                        }
-                    };
+                    (o1, o2) -> Integer.compare(o1.getListenerOrder(), o2.getListenerOrder());
         }
 
         return senderListenersComparator;
@@ -921,19 +913,19 @@ public abstract class WebSocketProxy {
 
     public WebSocketChannelDTO getDTO() {
         WebSocketChannelDTO dto = new WebSocketChannelDTO();
-        dto.id = getChannelId();
-        dto.host = host;
-        dto.port = port;
-        dto.startTimestamp = (start != null) ? start.getTime() : null;
-        dto.endTimestamp = (end != null) ? end.getTime() : null;
+        dto.setId(getChannelId());
+        dto.setHost(host);
+        dto.setPort(port);
+        dto.setStartTimestamp((start != null) ? start.getTime() : null);
+        dto.setEndTimestamp((end != null) ? end.getTime() : null);
 
         HistoryReference handshakeRef = getHandshakeReference();
         if (handshakeRef != null) {
-            dto.url = handshakeRef.getURI().toString();
-            dto.historyId = handshakeRef.getHistoryId();
+            dto.setUrl(handshakeRef.getURI().toString());
+            dto.setHistoryId(handshakeRef.getHistoryId());
         } else {
-            dto.url = "";
-            dto.historyId = null;
+            dto.setUrl("");
+            dto.setHistoryId(null);
         }
 
         return dto;
@@ -952,22 +944,20 @@ public abstract class WebSocketProxy {
      */
     @Deprecated
     public void sendAndNotify(WebSocketMessageDTO msg) throws IOException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("sending custom message");
-        }
+        LOGGER.debug("sending custom message");
         WebSocketMessage message = createWebSocketMessage(msg);
 
-        if (message.forward(getOuputStream(msg))) {
+        if (message.forward(getOutputStream(msg))) {
             notifyMessageObservers(message);
         }
     }
 
-    private OutputStream getOuputStream(WebSocketMessageDTO msg) {
+    private OutputStream getOutputStream(WebSocketMessageDTO msg) {
         if (isServerMode()) {
             return localListener.getOutputStream();
         }
 
-        if (msg.isOutgoing) {
+        if (msg.isOutgoing()) {
             // an outgoing message is caught by the local listener
             // and forwarded to its output stream
             return localListener.getOutputStream();
@@ -985,35 +975,29 @@ public abstract class WebSocketProxy {
      * @throws IOException
      */
     public void sendAndNotify(WebSocketMessageDTO msg, Initiator initiator) throws IOException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("sending custom message");
-        }
+        LOGGER.debug("sending custom message");
         WebSocketMessage message = createWebSocketMessage(msg);
 
         notifyMessageSenderListeners(message, initiator);
-        if (message.forward(getOuputStream(msg))) {
+        if (message.forward(getOutputStream(msg))) {
             notifyMessageObservers(message);
         }
     }
 
     @Deprecated
     public boolean send(WebSocketMessageDTO msg) throws IOException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("sending custom message");
-        }
+        LOGGER.debug("sending custom message");
         WebSocketMessage message = createWebSocketMessage(msg);
 
-        return message.forward(getOuputStream(msg));
+        return message.forward(getOutputStream(msg));
     }
 
     public boolean send(WebSocketMessageDTO msg, Initiator initiator) throws IOException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("sending custom message");
-        }
+        LOGGER.debug("sending custom message");
         WebSocketMessage message = createWebSocketMessage(msg);
 
         notifyMessageSenderListeners(message, initiator);
-        return message.forward(getOuputStream(msg));
+        return message.forward(getOutputStream(msg));
     }
 
     public boolean isClientMode() {

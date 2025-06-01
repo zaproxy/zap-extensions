@@ -1,20 +1,28 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-version = "2"
 description = "Image Location and Privacy Passive Scanner"
 
 zapAddOn {
     addOnName.set("Image Location and Privacy Scanner")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.7.0")
 
     manifest {
-        author.set("Veggiespam and the ZAP Dev Team")
+        author.set("Jay Ball (veggiespam) and the ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/image-location-and-privacy-scanner/")
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.32.0 & < 2.0.0")
+                }
+            }
+        }
     }
 }
 
 dependencies {
+    zapAddOn("commonlib")
+
     implementation("com.adobe.xmp:xmpcore:6.0.6")
     implementation("com.drewnoakes:metadata-extractor:2.13.0")
 
@@ -22,11 +30,11 @@ dependencies {
 }
 
 spotless {
-    java {
-        target(fileTree(projectDir) {
-            include("**/*.java")
-            // Ignore ILS classes.
-            exclude("**/com/veggiespam/**", "**/ImageLocationScanner.java")
-        })
-    }
+    javaWith3rdPartyFormatted(
+        project,
+        listOf(
+            "src/**/ImageLocationScanRule.java",
+        ),
+        listOf("src/**/com/veggiespam/**"),
+    )
 }

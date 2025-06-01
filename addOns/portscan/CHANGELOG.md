@@ -5,11 +5,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
+- Support for menu weights (Issue 8369)
+
+### Changed
+- Update minimum ZAP version to 2.16.0.
+- Maintenance changes.
+- Default number of threads to 2 * processor count.
+
+### Fixed
+- Help content typos.
+
+## [10] - 2022-10-27
+### Changed
+- Use the Network add-on to obtain the outgoing proxy.
+- Maintenance changes.
+- Update minimum ZAP version to 2.12.0.
+
+## [9] - 2021-10-07
+### Added
 - Add info and repo URLs.
 
 ### Changed
-- Update minimum ZAP version to 2.5.0.
+- Update minimum ZAP version to 2.11.0.
 - Update default values in the options to match the ones in the default configuration file.
+- Maintenance changes.
 
 ## 8 - 2017-11-24
 
@@ -52,3 +71,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release as an add-on (previously bundled in ZAP).
 
+[10]: https://github.com/zaproxy/zap-extensions/releases/portscan-v10
+[9]: https://github.com/zaproxy/zap-extensions/releases/portscan-v9

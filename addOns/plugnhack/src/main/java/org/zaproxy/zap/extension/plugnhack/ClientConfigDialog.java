@@ -23,6 +23,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class ClientConfigDialog extends StandardFieldsDialog {
 
     private static final String FIELD_HEARTBEAT = "plugnhack.dialog.clientconf.heartbeat";

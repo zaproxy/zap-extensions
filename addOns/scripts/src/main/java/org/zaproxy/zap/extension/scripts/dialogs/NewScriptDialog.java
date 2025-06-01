@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.scripts.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +31,7 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class NewScriptDialog extends StandardFieldsDialog {
 
     private static final String FIELD_NAME = "scripts.dialog.script.label.name";
@@ -112,43 +111,37 @@ public class NewScriptDialog extends StandardFieldsDialog {
 
         this.addFieldListener(
                 FIELD_TYPE,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        boolean scriptEnableable = false;
-                        boolean scriptEnabledByDefault = false;
+                e -> {
+                    boolean scriptEnableable = false;
+                    boolean scriptEnabledByDefault = false;
 
-                        if (isEmptyField(FIELD_TYPE)) {
-                            // Unset the template, otherwise it just resets the type again ;)
-                            if (!isEmptyField(FIELD_ENGINE)) {
-                                setFieldValue(FIELD_ENGINE, "");
-                            }
-                            setFieldValue(FIELD_TEMPLATE, "");
-                        } else {
-                            ScriptType scriptType = nameToType(getStringValue(FIELD_TYPE));
-                            if (scriptType != null) {
-                                scriptEnableable = scriptType.isEnableable();
-                                scriptEnabledByDefault = scriptType.isEnabledByDefault();
-                            }
+                    if (isEmptyField(FIELD_TYPE)) {
+                        // Unset the template, otherwise it just resets the type again ;)
+                        if (!isEmptyField(FIELD_ENGINE)) {
+                            setFieldValue(FIELD_ENGINE, "");
                         }
-                        getField(FIELD_ENABLED).setEnabled(scriptEnableable);
-                        setFieldValue(FIELD_ENABLED, scriptEnabledByDefault);
-
-                        resetTemplates();
+                        setFieldValue(FIELD_TEMPLATE, "");
+                    } else {
+                        ScriptType scriptType = nameToType(getStringValue(FIELD_TYPE));
+                        if (scriptType != null) {
+                            scriptEnableable = scriptType.isEnableable();
+                            scriptEnabledByDefault = scriptType.isEnabledByDefault();
+                        }
                     }
+                    getField(FIELD_ENABLED).setEnabled(scriptEnableable);
+                    setFieldValue(FIELD_ENABLED, scriptEnabledByDefault);
+
+                    resetTemplates();
                 });
 
         this.addFieldListener(
                 FIELD_ENGINE,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        if (isEmptyField(FIELD_ENGINE)) {
-                            // Unset the template, otherwise it just resets the engine again ;)
-                            setFieldValue(FIELD_TEMPLATE, "");
-                        }
-                        resetTemplates();
+                e -> {
+                    if (isEmptyField(FIELD_ENGINE)) {
+                        // Unset the template, otherwise it just resets the engine again ;)
+                        setFieldValue(FIELD_TEMPLATE, "");
                     }
+                    resetTemplates();
                 });
 
         this.addPadding();
@@ -156,7 +149,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
 
     private void resetTemplates() {
         List<String> templates = getTemplates();
-        if (templates.size() == 0) {
+        if (templates.isEmpty()) {
             // None to select :(
             setComboFields(FIELD_TEMPLATE, templates, "");
         } else if (!this.isEmptyField(FIELD_TEMPLATE)
@@ -173,7 +166,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
     }
 
     private List<String> getEngines() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         int engineCount = extension.getExtScript().getScriptingEngines().size();
         if (engineCount > 1) {
             list.add("");
@@ -183,7 +176,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
     }
 
     private List<String> getTypes() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         list.add("");
         for (ScriptType type : extension.getExtScript().getScriptTypes()) {
             if (type.hasCapability(ExtensionScriptsUI.CAPABILITY_EXTERNAL)) {
@@ -213,7 +206,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
     }
 
     private List<String> getTemplates() {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         ScriptEngineWrapper selectedEngine = getSelectedEngine();
         for (ScriptWrapper template :
                 extension
@@ -261,6 +254,7 @@ public class NewScriptDialog extends StandardFieldsDialog {
         script.setDescription(this.getStringValue(FIELD_DESC));
         script.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
         script.setEnabled(getBoolValue(FIELD_ENABLED));
+        script.setChanged(true);
 
         extension.getExtScript().addScript(script);
     }

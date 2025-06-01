@@ -120,20 +120,20 @@ public class WebSocketBreakpointMessage extends AbstractBreakPointMessage {
             WebSocketMessageDTO msg = (WebSocketMessageDTO) aMessage;
 
             if (opcode != null) {
-                if (!msg.readableOpcode.equals(opcode)) {
+                if (!msg.getReadableOpcode().equals(opcode)) {
                     return false;
                 }
             }
 
             if (channelId != null) {
-                if (!channelId.equals(msg.channel.id)) {
+                if (!channelId.equals(msg.getChannel().getId())) {
                     return false;
                 }
             }
 
             if (payloadPattern != null) {
-                if (msg.payload instanceof String) {
-                    Matcher m = payloadPattern.matcher((String) msg.payload);
+                if (msg.getPayload() instanceof String) {
+                    Matcher m = payloadPattern.matcher((String) msg.getPayload());
                     if (!m.find()) {
                         // when m.matches() is used, the whole string has to match
                         return false;
@@ -145,9 +145,9 @@ public class WebSocketBreakpointMessage extends AbstractBreakPointMessage {
             }
 
             if (direction != null) {
-                if (msg.isOutgoing && !direction.equals(Direction.OUTGOING)) {
+                if (msg.isOutgoing() && !direction.equals(Direction.OUTGOING)) {
                     return false;
-                } else if (!msg.isOutgoing && !direction.equals(Direction.INCOMING)) {
+                } else if (!msg.isOutgoing() && !direction.equals(Direction.INCOMING)) {
                     return false;
                 }
             }

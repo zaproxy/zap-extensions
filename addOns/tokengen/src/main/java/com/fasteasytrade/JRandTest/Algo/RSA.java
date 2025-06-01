@@ -33,8 +33,9 @@
  */
 package com.fasteasytrade.JRandTest.Algo;
 
-import com.fasteasytrade.JRandTest.IO.*;
 import java.math.BigInteger;
+
+import com.fasteasytrade.JRandTest.IO.FileAlgoRandomStream;
 
 /**
  * RSA algorithm as a random stream. Use RSACrypt class.
@@ -67,6 +68,7 @@ public class RSA extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.AlgoRandomStream#setupKeys()
 	 */
+	@Override
 	public void setupKeys() {
 		publicKeyLength = SIZE;
 		privateKeyLength = SIZE;
@@ -76,6 +78,7 @@ public class RSA extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.AlgoRandomStream#setup()
 	 */
+	@Override
 	public void setup() {
 		algo = new RSACrypt();
 		algo.generateKeys(bitlen);
@@ -92,6 +95,7 @@ public class RSA extends FileAlgoRandomStream {
 	 *      if filename exists (not null), we open file and later will encrypt
 	 *      it. Else, algorithm will generate random data (as PRNG).
 	 */
+	@Override
 	public boolean openInputStream() throws Exception {
 		if (filename != null)
 			super.openInputStream();
@@ -107,6 +111,7 @@ public class RSA extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readByte()
 	 */
+	@Override
 	public byte readByte() throws Exception {
 		if (!isOpen())
 			return -1;
@@ -139,6 +144,7 @@ public class RSA extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readInt()
 	 */
+	@Override
 	public int readInt() throws Exception {
 		if (!isOpen())
 			return -1;
@@ -159,6 +165,7 @@ public class RSA extends FileAlgoRandomStream {
 	/**
 	 * @see com.fasteasytrade.JRandTest.IO.RandomStream#readLong()
 	 */
+	@Override
 	public long readLong() throws Exception {
 		if (!isOpen())
 			return -1;
@@ -177,18 +184,18 @@ public class RSA extends FileAlgoRandomStream {
 
 	public static void main(String[] args) {
 		if (args != null && args.length > 0 && args[0] != null) {
-			RSA algo = new RSA();
-			algo.setup();
-			try {
-				algo.openInputStream();
-				byte temp;
-				for (int i = 0; i < 100; i++) {
-					System.out.print(algo.readByte());
-					System.out.print(",");
+			try (RSA algo = new RSA()) {
+				algo.setup();
+				try {
+					algo.openInputStream();
+					for (int i = 0; i < 100; i++) {
+						System.out.print(algo.readByte());
+						System.out.print(",");
+					}
+					System.out.println();
+				} catch (Exception e) {
+					System.out.println("" + e);
 				}
-				System.out.println();
-			} catch (Exception e) {
-				System.out.println("" + e);
 			}
 		}
 	}

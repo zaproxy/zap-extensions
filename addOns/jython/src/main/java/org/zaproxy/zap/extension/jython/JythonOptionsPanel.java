@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.jython;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.NotDirectoryException;
@@ -75,19 +73,16 @@ public class JythonOptionsPanel extends AbstractParamPanel {
                                         .addComponent(this.pathChooseButton)));
 
         this.pathChooseButton.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        JFileChooser chooser =
-                                new JFileChooser(
-                                        JythonOptionsPanel.this.modulesPathTextField.getText());
-                        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                        chooser.setAcceptAllFileFilterUsed(false);
-                        if (JFileChooser.APPROVE_OPTION
-                                == chooser.showOpenDialog(JythonOptionsPanel.this)) {
-                            JythonOptionsPanel.this.modulesPathTextField.setText(
-                                    chooser.getSelectedFile().getPath());
-                        }
+                e -> {
+                    JFileChooser chooser =
+                            new JFileChooser(
+                                    JythonOptionsPanel.this.modulesPathTextField.getText());
+                    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                    chooser.setAcceptAllFileFilterUsed(false);
+                    if (JFileChooser.APPROVE_OPTION
+                            == chooser.showOpenDialog(JythonOptionsPanel.this)) {
+                        JythonOptionsPanel.this.modulesPathTextField.setText(
+                                chooser.getSelectedFile().getPath());
                     }
                 });
     }

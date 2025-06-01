@@ -19,17 +19,31 @@
  */
 package org.zaproxy.zap.extension.saml.ui;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.Map;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.saml.*;
+import org.zaproxy.zap.extension.saml.Attribute;
+import org.zaproxy.zap.extension.saml.SAMLException;
+import org.zaproxy.zap.extension.saml.SAMLMessage;
+import org.zaproxy.zap.extension.saml.SAMLResender;
+import org.zaproxy.zap.extension.saml.SamlI18n;
+import org.zaproxy.zap.utils.ZapLabel;
 
+@SuppressWarnings("serial")
 public class SamlManualEditor extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -64,11 +78,12 @@ public class SamlManualEditor extends JFrame {
         tabbedPane.addTab(SamlI18n.getMessage("saml.editor.tab.request"), null, reqPanel, null);
         reqPanel.setLayout(new BorderLayout(0, 0));
 
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JPanel topPanel = new JPanel(new BorderLayout());
         reqPanel.add(topPanel, BorderLayout.NORTH);
 
-        JLabel lblNote = new JLabel(SamlI18n.getMessage("saml.editor.headerwarn"));
+        ZapLabel lblNote = new ZapLabel(SamlI18n.getMessage("saml.editor.headerwarn"));
+        lblNote.setLineWrap(true);
+        lblNote.setWrapStyleWord(true);
         topPanel.add(lblNote);
 
         JPanel centerPanel = new JPanel();
@@ -91,38 +106,32 @@ public class SamlManualEditor extends JFrame {
         bottomPanel.add(btnReset);
 
         btnResend.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent event) {
-                        // wait till the message is updated
-                        while (msgUpdating) {
-                            try {
-                                Thread.sleep(50);
-                            } catch (InterruptedException ignored) {
-                            }
-                        }
+                evt -> {
+                    // wait till the message is updated
+                    while (msgUpdating) {
                         try {
-                            SAMLResender.resendMessage(
-                                    SamlManualEditor.this.samlMessage.getChangedMessage());
-                            updateResponse(SamlManualEditor.this.samlMessage.getChangedMessage());
-                            btnResend.setEnabled(false);
-                            btnReset.setEnabled(false);
-                        } catch (SAMLException e) {
-                            JOptionPane.showMessageDialog(
-                                    reqPanel,
-                                    e.getMessage(),
-                                    SamlI18n.getMessage("saml.editor.msg.cantresend"),
-                                    JOptionPane.ERROR_MESSAGE);
+                            Thread.sleep(50);
+                        } catch (InterruptedException ignored) {
                         }
+                    }
+                    try {
+                        SAMLResender.resendMessage(
+                                SamlManualEditor.this.samlMessage.getChangedMessage());
+                        updateResponse(SamlManualEditor.this.samlMessage.getChangedMessage());
+                        btnResend.setEnabled(false);
+                        btnReset.setEnabled(false);
+                    } catch (SAMLException e) {
+                        JOptionPane.showMessageDialog(
+                                reqPanel,
+                                e.getMessage(),
+                                SamlI18n.getMessage("saml.editor.msg.cantresend"),
+                                JOptionPane.ERROR_MESSAGE);
                     }
                 });
         btnReset.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        SamlManualEditor.this.samlMessage.resetChanges();
-                        updateFields();
-                    }
+                e -> {
+                    SamlManualEditor.this.samlMessage.resetChanges();
+                    updateFields();
                 });
 
         JPanel respPanel = new JPanel();

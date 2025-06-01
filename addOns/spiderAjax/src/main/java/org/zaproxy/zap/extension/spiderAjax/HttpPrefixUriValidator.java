@@ -23,7 +23,8 @@ import java.util.Arrays;
 import java.util.Locale;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * A {@code URI} validator based on a HTTP or HTTPS {@code URI}.
@@ -35,22 +36,26 @@ import org.apache.log4j.Logger;
  */
 class HttpPrefixUriValidator {
 
-    private static final Logger LOGGER = Logger.getLogger(HttpPrefixUriValidator.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpPrefixUriValidator.class);
 
     /** The normalised form of HTTP scheme, that is, all letters lowercase. */
     private static final String HTTP_SCHEME = "http";
+
     /** The normalised form of HTTPS scheme, that is, all letters lowercase. */
     private static final String HTTPS_SCHEME = "https";
 
     /** The port number that indicates that a port is the default of a scheme. */
     private static final int DEFAULT_PORT = -1;
+
     /**
      * The port number that indicates that a port is of an unknown scheme (that is, non HTTP and
      * HTTPS).
      */
     private static final int UNKNOWN_PORT = -2;
+
     /** The default port number of HTTP scheme. */
     private static final int DEFAULT_HTTP_PORT = 80;
+
     /** The default port number of HTTPS scheme. */
     private static final int DEFAULT_HTTPS_PORT = 443;
 
@@ -299,7 +304,7 @@ class HttpPrefixUriValidator {
         try {
             return host.equals(normalisedHost(uri));
         } catch (URIException e) {
-            LOGGER.warn("Failed to normalise host: " + Arrays.toString(uri.getRawHost()), e);
+            LOGGER.warn("Failed to normalise host: {}", Arrays.toString(uri.getRawHost()), e);
         }
         return false;
     }

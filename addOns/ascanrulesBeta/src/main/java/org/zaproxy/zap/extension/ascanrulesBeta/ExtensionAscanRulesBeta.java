@@ -35,13 +35,13 @@ public class ExtensionAscanRulesBeta extends ExtensionAdaptor {
     }
 
     @Override
-    public String getAuthor() {
-        return Constant.ZAP_TEAM;
+    public String getName() {
+        return "ExtensionAscanRulesBeta";
     }
 
     @Override
-    public String getName() {
-        return "ExtensionAscanRulesBeta";
+    public String getUIName() {
+        return Constant.messages.getString("ascanbeta.name");
     }
 
     @Override
@@ -52,10 +52,5 @@ public class ExtensionAscanRulesBeta extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
-    }
-
-    @Override
-    public void unload() {
-        XXEPlugin.unload();
     }
 }

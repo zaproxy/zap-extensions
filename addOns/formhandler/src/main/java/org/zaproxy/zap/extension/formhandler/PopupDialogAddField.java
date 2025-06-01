@@ -20,10 +20,12 @@
 package org.zaproxy.zap.extension.formhandler;
 
 import java.awt.Dialog;
+import java.util.Locale;
 import java.util.Set;
 import javax.swing.JComboBox;
 import org.parosproxy.paros.control.Control;
 
+@SuppressWarnings("serial")
 class PopupDialogAddField extends DialogAddField {
 
     private static final long serialVersionUID = 4460797449668634319L;
@@ -54,7 +56,8 @@ class PopupDialogAddField extends DialogAddField {
      */
     @Override
     protected boolean validateFields() {
-        String fieldName = getNameTextField().getText().toLowerCase();
+        String name = getNameTextField().getText();
+        String fieldName = getRegexCheckBox().isSelected() ? name : name.toLowerCase(Locale.ROOT);
         for (String field :
                 Control.getSingleton()
                         .getExtensionLoader()
@@ -76,15 +79,15 @@ class PopupDialogAddField extends DialogAddField {
      */
     @Override
     protected void performAction() {
-        extFormHandler.addFormHandlerFieldName(
-                getNameTextField().getText().toLowerCase(),
-                getValueField().getSelectedItem().toString());
+        String name = getNameTextField().getText();
+        extFormHandler.addFormHandlerFieldName(name, getValueField().getSelectedItem().toString());
+        ExtensionFormHandler.incStat(ExtensionFormHandler.STATS_ADD, name);
     }
 
     @Override
     protected JComboBox<String> getValueField() {
         if (valueField == null) {
-            valueField = new JComboBox<String>();
+            valueField = new JComboBox<>();
             valueField.setEditable(true);
         }
 

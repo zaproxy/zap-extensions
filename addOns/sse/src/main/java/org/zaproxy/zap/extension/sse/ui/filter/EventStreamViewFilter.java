@@ -38,7 +38,7 @@ public class EventStreamViewFilter {
         return isShowJustInScope;
     }
 
-    /** Resets this filter. Events will no longer be blacklisted. */
+    /** Resets this filter. Events will no longer be deny listed. */
     public void reset() {}
 
     /**
@@ -47,7 +47,7 @@ public class EventStreamViewFilter {
      * @param event
      * @return True if the given entry is filtered out, false if valid.
      */
-    public boolean isBlacklisted(ServerSentEvent event) {
+    public boolean isDenylisted(ServerSentEvent event) {
         if (isShowJustInScope && !event.isInScope()) {
             return true;
         }
@@ -55,12 +55,16 @@ public class EventStreamViewFilter {
         return false;
     }
 
-    /** @return short description of applied filter */
+    /**
+     * @return short description of applied filter
+     */
     public String toShortString() {
         return toString(false);
     }
 
-    /** @return description of applied filter */
+    /**
+     * @return description of applied filter
+     */
     public String toLongString() {
         return toString(true);
     }

@@ -20,13 +20,14 @@
 package org.zaproxy.zap.extension.browserView;
 
 import org.apache.commons.configuration.ConversionException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.common.AbstractParam;
 
 /** The class to handle the (persisted) configurations of "Browser View" add-on. */
 public class BrowserViewParam extends AbstractParam {
 
-    private static final Logger LOGGER = Logger.getLogger(BrowserViewParam.class);
+    private static final Logger LOGGER = LogManager.getLogger(BrowserViewParam.class);
 
     /**
      * The current version of the configurations. Used to keep track of configuration changes
@@ -81,18 +82,10 @@ public class BrowserViewParam extends AbstractParam {
     protected void parse() {
         updateConfigFile();
 
-        try {
-            warnOnJavaFXInitError =
-                    getConfig()
-                            .getBoolean(
-                                    PARAM_WARN_ON_JAVA_FX_INIT_ERROR,
-                                    PARAM_WARN_ON_JAVA_FX_INIT_ERROR_DEFAULT_VALUE);
-        } catch (ConversionException e) {
-            LOGGER.error(
-                    "Error while loading the '" + PARAM_WARN_ON_JAVA_FX_INIT_ERROR + "' option: ",
-                    e);
-            warnOnJavaFXInitError = PARAM_WARN_ON_JAVA_FX_INIT_ERROR_DEFAULT_VALUE;
-        }
+        warnOnJavaFXInitError =
+                getBoolean(
+                        PARAM_WARN_ON_JAVA_FX_INIT_ERROR,
+                        PARAM_WARN_ON_JAVA_FX_INIT_ERROR_DEFAULT_VALUE);
     }
 
     /**
@@ -116,7 +109,7 @@ public class BrowserViewParam extends AbstractParam {
             configVersion = getConfig().getInt(CONFIG_VERSION_KEY, NO_CONFIG_VERSION);
         } catch (ConversionException e) {
             LOGGER.error(
-                    "Error while getting the version of the configurations: " + e.getMessage(), e);
+                    "Error while getting the version of the configurations: {}", e.getMessage(), e);
             configVersion = ERROR_READING_CONFIG_VERSION;
         }
 
@@ -181,18 +174,13 @@ public class BrowserViewParam extends AbstractParam {
         if (fileVersion != NO_CONFIG_VERSION) {
             if (fileVersion > CURRENT_CONFIG_VERSION) {
                 LOGGER.warn(
-                        "Configurations will not be updated, file version (v"
-                                + fileVersion
-                                + ") is greater than the version of running code (v"
-                                + CURRENT_CONFIG_VERSION
-                                + "), errors might happen...");
+                        "Configurations will not be updated, file version (v{}) is greater than the version of running code (v{}), errors might happen...",
+                        fileVersion,
+                        CURRENT_CONFIG_VERSION);
                 return;
             }
             LOGGER.info(
-                    "Updating configurations from v"
-                            + fileVersion
-                            + " to v"
-                            + CURRENT_CONFIG_VERSION);
+                    "Updating configurations from v{} to v{}", fileVersion, CURRENT_CONFIG_VERSION);
         }
 
         switch (fileVersion) {
